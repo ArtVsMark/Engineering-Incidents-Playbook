@@ -86,6 +86,9 @@
 | [080](080-every-new-rule-goes-into-the-catalogue.md) | Правило, родившееся в проекте, записывается в общий каталог | процесс, каталог |
 | [081](081-untrusted-code-runs-in-a-private-directory.md) | Чужой код запускают из приватного каталога | безопасность |
 | [082](082-roles-must-cover-every-layer.md) | Состав ролей покрывает все пласты продукта | роли |
+| [083](083-generated-output-is-checked-by-properties.md) | Сгенерированное проверяют свойствами и выборкой, а не эталоном | ИИ, качество |
+| [084](084-best-effort-channels-never-block-the-main-path.md) | Необязательный канал не задерживает и не роняет основную работу | архитектура |
+| [085](085-content-from-the-subject-is-untrusted-input-to-the-prompt.md) | Текст от проверяемого — недоверенный вход в промпт | ИИ, безопасность |
 
 ## Как добавить своё
 
