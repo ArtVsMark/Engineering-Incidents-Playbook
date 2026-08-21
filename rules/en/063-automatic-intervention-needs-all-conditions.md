@@ -1,5 +1,7 @@
 # Automatic intervention fires only when all conditions hold
 
+**Area.** automation
+
 **The rule.** If a false positive damages somebody else's work, write the
 criterion as a conjunction: intervene only when **every** condition is met. Any
 unmet condition means "do not touch".

@@ -1,5 +1,7 @@
 # Write the field, not the snapshot, when there are several writers
 
+**Area.** code, concurrency
+
 **The rule.** When one store is edited from several places, save **the changed
 field**, not the whole snapshot you read. Otherwise every writer overwrites
 others' edits with its own stale copy.

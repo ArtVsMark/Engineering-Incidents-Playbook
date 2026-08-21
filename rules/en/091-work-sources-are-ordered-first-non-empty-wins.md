@@ -1,5 +1,7 @@
 # Work sources are ordered: the first non-empty one is the plan
 
+**Area.** process
+
 **The rule.** The list of places to look for what to do is defined by an order.
 You go top to bottom; the first non-empty source is the plan. Statuses live
 **only** in the tracker and are not duplicated into files.

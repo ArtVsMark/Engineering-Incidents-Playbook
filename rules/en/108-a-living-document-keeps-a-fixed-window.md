@@ -1,5 +1,7 @@
 # A living document keeps a fixed window; the rest moves out verbatim
 
+**Area.** documentation
+
 **The rule.** A growing document has a limit expressed as a number: this many
 most recent sections. Everything beyond the window moves to the archive
 **verbatim** — not shortened, not ticked off. A gate holds the limit.

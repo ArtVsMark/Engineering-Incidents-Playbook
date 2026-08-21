@@ -1,5 +1,7 @@
 # Calibrating against an external signal requires a complete input
 
+**Area.** metrics, quotas
+
 **The rule.** If your scale is built from the moment an external indicator
 flips, the input must cover **everything** that indicator reacts to. A sum over
 the visible part is not the sum.

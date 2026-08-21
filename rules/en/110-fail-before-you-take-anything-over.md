@@ -1,5 +1,7 @@
 # Everything that can fail happens before you replace global state
 
+**Area.** code, reliability
+
 **The rule.** Parsing input, validating arguments, compiling — all **before**
 acquiring a resource or replacing shared state. Otherwise an exception leaves the
 system replaced, and the user gets an internal error instead of their own.

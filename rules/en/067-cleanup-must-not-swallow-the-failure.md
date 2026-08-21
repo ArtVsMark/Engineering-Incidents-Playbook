@@ -1,5 +1,7 @@
 # Cleanup after a failure must not turn the failure into a success
 
+**Area.** code, reliability
+
 **The rule.** A handler that cleans up after itself catches **everything** that
 interrupted the work and always re-raises the cause. A narrow catch misses the
 interruption; a broad catch without re-raising hides the failure.

@@ -1,5 +1,7 @@
 # A link to a task belongs in a log and hurts in an explanation
 
+**Area.** documentation
+
 **The rule.** An issue number is a date stamp. Logs need it; text explaining how
 something works is worse for it.
 

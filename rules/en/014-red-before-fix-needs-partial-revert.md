@@ -1,5 +1,7 @@
 # "The test goes red without the fix" is proved by a partial revert, not a full one
 
+**Area.** tests
+
 **The rule.** Remove only the behaviour and keep the new names. Otherwise you
 have proved something other than what you think.
 

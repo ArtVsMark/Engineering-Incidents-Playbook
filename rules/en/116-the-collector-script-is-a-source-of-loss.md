@@ -1,5 +1,7 @@
 # The collector script is also a source of loss, and it has its own reconciliation
 
+**Area.** parallel work
+
 **The rule.** The script that assembles the results of parallel work is verified
 alongside the work itself. The mandatory reconciliation is **count in against
 count out**; a mismatch stops the assembly.

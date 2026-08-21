@@ -1,5 +1,7 @@
 # Count unique names, not records
 
+**Area.** metrics
+
 **The rule.** A counter that sums records about one object lies whenever the
 object repeats. Collapse by identifier first.
 

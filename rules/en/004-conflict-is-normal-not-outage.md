@@ -1,5 +1,7 @@
 # A conflict is normal pipeline traffic, not an outage
 
+**Area.** pipeline, automation
+
 **The rule.** Machinery that meets a predictable obstacle must skip the item,
 mark it, and carry on. Failing outright is a defect in the machinery.
 

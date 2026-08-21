@@ -1,5 +1,7 @@
 # A live document carries no work log
 
+**Area.** documentation
+
 **The rule.** A document describes how things work **now**. "What we did", "what
 we plan" and "how it went" live in three other places.
 

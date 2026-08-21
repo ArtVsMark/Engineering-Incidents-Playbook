@@ -1,5 +1,7 @@
 # An audit is planned from the product's surfaces, not from its files
 
+**Area.** audit
+
 **The rule.** Walking the files gives you code coverage and misses everything
 that is not in the code. Start from the list of things the user meets.
 

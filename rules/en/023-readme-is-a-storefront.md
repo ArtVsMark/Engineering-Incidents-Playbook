@@ -1,5 +1,7 @@
 # The README is a storefront, not a dumping ground for technical memory
 
+**Area.** showcases
+
 **The rule.** The README holds only what a person needs in the first five
 minutes. Everything else is behind a link.
 

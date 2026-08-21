@@ -1,5 +1,7 @@
 # An empty state must be declared explicitly
 
+**Area.** documentation, interface
+
 **The rule.** "Nothing here right now, as of this date" is information. A merely
 empty file is an ambiguity.
 

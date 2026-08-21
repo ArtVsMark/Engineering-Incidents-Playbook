@@ -1,5 +1,7 @@
 # A check has three outcomes, not two
 
+**Area.** CI, reliability
+
 **The rule.** "Clean", "found a problem" and **"the check did not run"** are
 three different outcomes with three different responses. The third is told apart
 by the presence of a result, not by an exit code.

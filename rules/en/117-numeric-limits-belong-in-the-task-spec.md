@@ -1,5 +1,7 @@
 # An executor's brief carries numeric limits
 
+**Area.** parallel work
+
 **The rule.** Numbers go into the brief: a size limit for every field of the
 answer, a budget of tool calls, a list of file types that must not be opened.
 Without numbers the executor chooses them itself — and chooses badly.

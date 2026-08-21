@@ -1,5 +1,7 @@
 # When the quota is exhausted, stop — do not retry
 
+**Area.** quotas
+
 **The rule.** Past zero the counter keeps growing: a retry does not "try again",
 it pushes the reset further away. And worse than the spending are the half-done
 states left behind by rejected calls.

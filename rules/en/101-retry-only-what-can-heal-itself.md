@@ -1,5 +1,7 @@
 # Retry only the failures that can pass on their own
 
+**Area.** network, reliability
+
 **The rule.** A retry makes sense for transient failures — overload, a connection
 glitch, unavailability. A permanent failure is not cured by retrying: "not found"
 does not become found on the second attempt. And if the server named a pause,

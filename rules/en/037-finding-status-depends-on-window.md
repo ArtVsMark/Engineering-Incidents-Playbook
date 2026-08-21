@@ -1,5 +1,7 @@
 # A finding obtained on the wrong surface is a hypothesis
 
+**Area.** audit
+
 **The rule.** A defect found against a fake but living on a real surface gets no
 severity until it is confirmed on the real one. It goes into the other
 environment's checklist with the status "hypothesis".

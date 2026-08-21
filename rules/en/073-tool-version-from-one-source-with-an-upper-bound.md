@@ -1,5 +1,7 @@
 # A tool's version comes from one source and has an upper bound
 
+**Area.** tooling
+
 **The rule.** The version of a linter, formatter or builder is set in **one**
 place, and it has an upper bound. Otherwise the local check and the shared build
 diverge, and the local one stops meaning anything.

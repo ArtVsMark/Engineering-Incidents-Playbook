@@ -1,5 +1,7 @@
 # If the tool can do it itself, it does it rather than advising
 
+**Area.** interface
+
 **The rule.** A hint saying "type this command" is appropriate only when the tool
 genuinely cannot execute it itself. And you check whether the user has a
 **channel** for that hint to arrive through.

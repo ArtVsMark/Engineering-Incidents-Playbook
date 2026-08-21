@@ -1,5 +1,7 @@
 # A rejected finding is recorded together with its reason
 
+**Area.** audit
+
 **The rule.** A finding deleted in silence will come back with the next review.
 Rejection is as much a decision as a fix, and it needs a trace.
 

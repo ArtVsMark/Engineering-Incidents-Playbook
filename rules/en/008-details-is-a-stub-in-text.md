@@ -1,5 +1,7 @@
 # A collapsible block reads as a stub wherever the page is consumed as text
 
+**Area.** showcases
+
 **The rule.** On a page read automatically or at a glance, `<details>` yields a
 heading with no content. Expand it or drop it.
 

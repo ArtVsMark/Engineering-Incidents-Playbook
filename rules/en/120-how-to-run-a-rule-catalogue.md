@@ -1,5 +1,7 @@
 # A rule catalogue runs by its own rules, and its index is generated
 
+**Area.** catalogue, process
+
 **The rule.** The catalogue has a unit (a file), a number, mandatory sections, and
 **a two-way link to the project through the Trace field**. The reverse index —
 "which rules apply here" — is **built from the traces**, not maintained by hand.
@@ -101,4 +103,5 @@ searching the repository.
 This catalogue; ArtVsMark/Stepik-Python-Grader#1342. Related:
 [080](080-every-new-rule-goes-into-the-catalogue.md),
 [049](049-derive-state-from-live-artifacts.md),
-[005](005-hand-written-numbers-rot.md).
+[005](005-hand-written-numbers-rot.md),
+[125](125-a-generated-file-is-not-a-store.md).

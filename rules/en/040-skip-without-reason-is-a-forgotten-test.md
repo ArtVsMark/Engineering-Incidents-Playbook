@@ -1,5 +1,7 @@
 # A skip without a reason is indistinguishable from a forgotten test
 
+**Area.** tests
+
 **The rule.** Every skip must carry a reason, and the number of skips must be
 visible by name. A suite of thousands of tests gives confidence exactly as long
 as the skips are explained.

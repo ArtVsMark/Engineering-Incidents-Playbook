@@ -1,5 +1,7 @@
 # A compatibility shim makes the migration permanent
 
+**Area.** architecture, migrations
+
 **The rule.** A migration is either clean or does not start. A compatibility
 layer left in "for the time being" turns one canonical path into two and outlives
 the migration itself.

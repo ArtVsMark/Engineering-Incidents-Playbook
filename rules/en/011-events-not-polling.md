@@ -1,5 +1,7 @@
 # Watching: events over polling, and if polling, then conditional
 
+**Area.** quotas, observation
+
 **The rule.** A watch loop is the most expensive way to use an API. Prefer
 subscription to polling; poll only conditionally and only over the delta.
 

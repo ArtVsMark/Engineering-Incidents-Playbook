@@ -1,5 +1,7 @@
 # A contract states the rules of its own evolution
 
+**Area.** contracts
+
 **The rule.** Listing the fields is not enough. A contract must say **what in it
 is stable, what is extensible and how new things are added** — otherwise every
 change becomes a negotiation from scratch and the consumers diverge.

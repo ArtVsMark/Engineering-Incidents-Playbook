@@ -1,5 +1,7 @@
 # After a failure, restart the delta, not the whole wave
 
+**Area.** parallel work
+
 **The rule.** Work out what is already done and repeat only what is missing. A
 full restart pays twice for one result.
 

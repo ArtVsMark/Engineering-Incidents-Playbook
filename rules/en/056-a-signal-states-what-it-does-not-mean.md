@@ -1,5 +1,7 @@
 # A signal also states what it does not mean
 
+**Area.** contracts, documentation
+
 **The rule.** The description of a status, code or label has two halves: what it
 means and **what it does not mean**. The second half matters more.
 

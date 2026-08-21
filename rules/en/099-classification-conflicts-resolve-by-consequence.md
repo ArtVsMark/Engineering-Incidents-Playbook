@@ -1,5 +1,7 @@
 # A classification conflict is resolved by consequence, not by correctness
 
+**Area.** taxonomy
+
 **The rule.** When an entity fits two sections at once, the winner is the one
 whose absence would leave a section empty or meaningless. An argument about the
 "correct" place has no solution; an argument about consequence does.

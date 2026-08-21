@@ -1,5 +1,7 @@
 # Labels are machine input, not decoration
 
+**Area.** process, pipeline
+
 **The rule.** Classifying a task and a change is mandatory and machine-checked.
 Closing the task, queue order and the zone of work all depend on it — so a
 missing label breaks behaviour, not presentation.

@@ -1,5 +1,7 @@
 # A gate that cannot find its subject must fail
 
+**Area.** gates
+
 **The rule.** A check that looks up an object by name **fails with an explicit
 error** when the object is absent, instead of going green on empty input.
 

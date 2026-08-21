@@ -1,5 +1,7 @@
 # One executor's zone must be small
 
+**Area.** parallel work
+
 **The rule.** Split a role across two or three executors and give each plan no
 more than three items. A large zone dies whole.
 

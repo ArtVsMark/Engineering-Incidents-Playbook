@@ -1,5 +1,7 @@
 # A heuristic guard is relaxed deliberately — with the residual risk written down
 
+**Area.** security
+
 **The rule.** A check that is a guess by nature **lets things through** when data
 is missing rather than refusing — but only if real barriers stand beside it and
 the residual risk is stated in writing.

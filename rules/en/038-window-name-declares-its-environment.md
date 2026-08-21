@@ -1,5 +1,7 @@
 # A session's name starts with its environment, not with its task
 
+**Area.** agent sessions
+
 **The rule.** The first thing in an agent session's title is an environment tag:
 `[WEB]`, `[LOCAL]` or `[CLI]`. The task comes after. The name is assigned when
 the session opens, not when you need to find it.

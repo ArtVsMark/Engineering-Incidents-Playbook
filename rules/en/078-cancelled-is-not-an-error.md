@@ -1,5 +1,7 @@
 # Cancellation is its own outcome, not a kind of error
 
+**Area.** contracts
+
 **The rule.** Termination by the user's own will gets its own terminal status.
 Mixing it with failure is not allowed: the response differs for both machine and
 human.

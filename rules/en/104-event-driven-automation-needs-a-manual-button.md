@@ -1,5 +1,7 @@
 # Event-driven automation needs a manual button
 
+**Area.** CI, automation
+
 **The rule.** Events get lost. If the only way to start is an event, add a manual
 launch — otherwise the only way to wake it becomes a junk change.
 

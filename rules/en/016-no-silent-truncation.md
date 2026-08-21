@@ -1,5 +1,7 @@
 # Output is never truncated silently — only with a marker
 
+**Area.** output, reports
+
 **The rule.** A trimmed result must state that it was trimmed, and by how much.
 Otherwise it looks complete.
 

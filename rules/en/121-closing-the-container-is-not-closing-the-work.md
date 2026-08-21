@@ -1,5 +1,7 @@
 # Closing the container is not proof that the work is closed
 
+**Area.** process, audit
+
 **The rule.** An epic, a milestone, a sprint close by their own criteria; units of
 work close by theirs. Completion is proved by **a count of unclosed units**, not
 by the container looking empty.

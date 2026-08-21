@@ -1,5 +1,7 @@
 # An agent session lives three to five days
 
+**Area.** agent sessions
+
 **The rule.** A long-lived session grows expensive and preserves obsolete rules.
 Past that span, restart it and hand over the baton.
 

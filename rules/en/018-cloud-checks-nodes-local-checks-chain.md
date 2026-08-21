@@ -1,5 +1,7 @@
 # One environment checks the nodes, the other checks the chain
 
+**Area.** environments
+
 **The rule.** Every check has an environment where it is meaningful. A check in
 the wrong environment yields a false green.
 

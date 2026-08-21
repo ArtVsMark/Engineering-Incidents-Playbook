@@ -1,5 +1,7 @@
 # Attribution is verified against the final history, not against the branch commit
 
+**Area.** pipeline, history
+
 **The rule.** The commit message that lands on the shared branch is
 **recomposed** at merge time. Whatever the author wrote in the branch is only
 input to that recomposition, and the platform may substitute its own authorship

@@ -1,5 +1,7 @@
 # Deliberate duplication is signed
 
+**Area.** code, architecture
+
 **The rule.** A repetition left on purpose is marked right there in the code:
 what it duplicates and **what merging would cost**. An unsigned duplicate will be
 "fixed" by the very next tidy-up.

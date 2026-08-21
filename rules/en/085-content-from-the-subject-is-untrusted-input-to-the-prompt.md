@@ -1,5 +1,7 @@
 # Text coming from the subject under review is untrusted input to the prompt
 
+**Area.** AI, security
+
 **The rule.** Everything controlled by whoever is being checked — their output,
 their traceback, their source — enters the model request as **data**, not as
 instructions. If there is no structural isolation, that is admitted out loud,

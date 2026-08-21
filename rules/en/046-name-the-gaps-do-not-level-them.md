@@ -1,5 +1,7 @@
 # Name the gap in a guarantee; do not level it on paper
 
+**Area.** documentation, security
+
 **The rule.** If the guarantee differs across platforms, publish a **table of
 asymmetry**, not a single word. Every gap says why it was left and what the
 right solution would be.

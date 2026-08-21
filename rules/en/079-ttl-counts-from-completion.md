@@ -1,5 +1,7 @@
 # Retention is counted from completion, not from enqueueing
 
+**Area.** code, resources
+
 **The rule.** A record's lifetime is measured from **the moment it became
 terminal**. Counting from enqueueing sweeps the result away faster the longer the
 work took.

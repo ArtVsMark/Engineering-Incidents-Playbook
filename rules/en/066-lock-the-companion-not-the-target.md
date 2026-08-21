@@ -1,5 +1,7 @@
 # Lock the companion file, not the file that gets replaced wholesale
 
+**Area.** code, concurrency
+
 **The rule.** If writing is made atomic by replacing the file, lock a **separate
 companion file**. A lock on the target itself disappears together with the
 target at the moment of replacement.

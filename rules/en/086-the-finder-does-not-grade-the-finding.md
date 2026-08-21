@@ -1,5 +1,7 @@
 # The severity of a finding is not set by whoever found it — but the refuter needs a scale
 
+**Area.** audit
+
 **The rule.** A finding is graded by a separate checker instructed to "refute by
 default". And that checker's scale is calibrated with examples, or it will not
 filter out the weak but downgrade everything.

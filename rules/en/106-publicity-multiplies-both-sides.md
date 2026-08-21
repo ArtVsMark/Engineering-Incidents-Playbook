@@ -1,5 +1,7 @@
 # Publicity multiplies both the good and the bad — do the real run first
 
+**Area.** product, release
+
 **The rule.** A product is not shown widely until it has been through a **real**
 scenario end to end. Promotion does not create quality; it magnifies both quality
 and its absence.

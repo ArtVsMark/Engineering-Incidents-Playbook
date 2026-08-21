@@ -1,5 +1,7 @@
 # Two honest metrics beat one averaged number
 
+**Area.** metrics
+
 **The rule.** If no single truthful number exists, publish two — each with a
 note saying what exactly it measures. Averaging them into one means lying twice.
 
