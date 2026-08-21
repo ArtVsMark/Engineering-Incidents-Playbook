@@ -103,15 +103,15 @@
 | [097](097-a-checker-has-two-error-types.md) | У проверяющего инструмента две ошибки, и каждая держится своим тестом | тесты, качество |
 | [098](098-the-unit-of-splitting-follows-usage.md) | Единица дробления определяется употреблением | данные, документация |
 | [099](099-classification-conflicts-resolve-by-consequence.md) | Конфликт классификации разрешается по последствию | таксономия |
-| [108](108-a-living-document-keeps-a-fixed-window.md) | Живой документ держит фиксированное окно | документация |
-| [105](105-an-outside-audit-needs-outside-eyes.md) | Внешний аудит делает тот, кто не писал этот код | аудит |
-| [106](106-publicity-multiplies-both-sides.md) | Огласка умножает и хорошее, и плохое | продукт, релиз |
-| [107](107-it-works-for-the-author-means-tested-on-the-authors-sample.md) | «У автора работает» означает «проверено на выборке автора» | заимствование |
-| [103](103-a-side-effect-guard-blames-the-wrong-suspect.md) | Сторож побочных эффектов обвиняет не виновника | тесты, гейты |
-| [104](104-event-driven-automation-needs-a-manual-button.md) | У событийной автоматики должна быть ручная кнопка | CI, автоматика |
 | [100](100-two-deadlines-start-and-work.md) | Дедлайнов два: на запуск и на работу | надёжность |
 | [101](101-retry-only-what-can-heal-itself.md) | Повторяют только те отказы, которые могут пройти сами | сеть, надёжность |
 | [102](102-leniency-is-enumerated-and-switchable.md) | Снисхождение перечисляется таблицей и отключается режимом | сравнение, качество |
+| [103](103-a-side-effect-guard-blames-the-wrong-suspect.md) | Сторож побочных эффектов обвиняет не виновника | тесты, гейты |
+| [104](104-event-driven-automation-needs-a-manual-button.md) | У событийной автоматики должна быть ручная кнопка | CI, автоматика |
+| [105](105-an-outside-audit-needs-outside-eyes.md) | Внешний аудит делает тот, кто не писал этот код | аудит |
+| [106](106-publicity-multiplies-both-sides.md) | Огласка умножает и хорошее, и плохое | продукт, релиз |
+| [107](107-it-works-for-the-author-means-tested-on-the-authors-sample.md) | «У автора работает» означает «проверено на выборке автора» | заимствование |
+| [108](108-a-living-document-keeps-a-fixed-window.md) | Живой документ держит фиксированное окно | документация |
 | [109](109-every-exit-from-a-transient-state-must-be-terminal.md) | Каждый выход из переходного состояния обязан быть терминальным | код, интерфейс |
 | [110](110-fail-before-you-take-anything-over.md) | Всё, что может отказать, делается до подмены состояния | код, надёжность |
 | [111](111-do-it-instead-of-advising-it.md) | Если инструмент может сделать сам — он делает, а не советует | интерфейс |
