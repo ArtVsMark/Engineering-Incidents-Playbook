@@ -1,4 +1,4 @@
-# engineering-incidents
+# Engineering Incidents Playbook
 
 **Каталог правил для Claude Code и GitHub, где каждое правило выросло из
 реальной поломки.** Работа с агентскими окнами и сводом проекта (`CLAUDE.md`),
