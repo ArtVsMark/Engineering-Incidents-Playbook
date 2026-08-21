@@ -92,6 +92,10 @@
 | [086](086-the-finder-does-not-grade-the-finding.md) | Тяжесть находки ставит не тот, кто её нашёл | аудит |
 | [087](087-a-second-pass-needs-a-novelty-rule.md) | Повторный проход получает правило новизны | аудит |
 | [088](088-the-critic-checks-the-method-not-the-subject.md) | Критик проверяет метод фазы, а не предмет работы | аудит, процесс |
+| [089](089-never-link-from-the-original-to-its-copy.md) | Из оригинала в его копию не ссылаются | документация |
+| [090](090-shared-helpers-move-up-not-sideways.md) | Общий хелпер поднимают вверх, а не втягивают вбок | архитектура |
+| [091](091-work-sources-are-ordered-first-non-empty-wins.md) | Источники работы упорядочены: первый непустой и есть план | процесс |
+| [092](092-findings-and-ordering-live-in-different-documents.md) | Находки и порядок разбора — разные документы | аудит, документация |
 
 ## Как добавить своё
 
