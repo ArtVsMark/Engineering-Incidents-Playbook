@@ -33,8 +33,10 @@ They cannot be combined, and the choice must favour the first: serving is easier
 from a dedicated document, while attracting has nothing else to work with — the
 project has no second front page.
 
-Separately: **numbers do not belong in prose**. Test counts, coverage, data
-volume live in badges that are recomputed, not in text that goes stale silently.
+Separately: **a number belongs in prose only together with its mechanism** — a
+marker, a build and a guard on that marker
+([127](127-a-number-in-prose-needs-a-guarded-marker.md)). Without one, a badge
+that is recomputed beats text that goes stale silently.
 
 ## Where it applies
 
