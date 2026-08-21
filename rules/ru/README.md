@@ -75,6 +75,12 @@
 | [069](069-write-the-field-not-the-snapshot.md) | Пишем поле, а не снимок, если писателей несколько | код, конкурентность |
 | [070](070-a-heuristic-guard-fails-open-with-a-written-risk.md) | Эвристическая защита ослабляется осознанно — с записью риска | безопасность |
 | [071](071-deliberate-duplication-is-signed.md) | Намеренный дубль подписывается | код, архитектура |
+| [072](072-guard-the-cause-and-the-effect.md) | Причину ловит гейт, факт — фикстура: нужны обе | тесты, гейты |
+| [073](073-tool-version-from-one-source-with-an-upper-bound.md) | Версия инструмента — из одного источника и с верхней границей | инструменты |
+| [074](074-one-shot-irreversible-steps-get-their-own-guard.md) | Необратимый шаг проверяется инвариантами заранее | релиз, CI |
+| [075](075-a-guard-that-finds-nothing-must-fail.md) | Гейт, не нашедший предмета проверки, обязан упасть | гейты |
+| [076](076-messages-point-at-what-the-user-actually-has.md) | Сообщение ссылается на то, что есть у получателя | интерфейс |
+| [077](077-key-parity-is-not-translation.md) | Совпадение ключей — ещё не перевод | локализация |
 
 ## Как добавить своё
 
