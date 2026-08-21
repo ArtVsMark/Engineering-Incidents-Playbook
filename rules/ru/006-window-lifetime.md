@@ -56,4 +56,5 @@ $392 против $335.
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader#1283
+ArtVsMark/Stepik-Python-Grader#1283. Событийный повод к перезапуску, не
+связанный с возрастом, — [047](047-rule-change-restarts-the-windows.md).
