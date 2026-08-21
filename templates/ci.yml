@@ -1,0 +1,93 @@
+# Заготовка CI. Реализует правила каталога:
+#   104 — события теряются: набор типов перечислен явно + ручной запуск;
+#   074 — необратимый шаг (публикация) проверяется инвариантами заранее;
+#   018 — матрица ОС: одно окружение проверяет узлы, другое цепочку;
+#   041 — покрытие двумя числами, а не одним усреднённым;
+#   039 — у неблокирующей проверки три исхода, а не два.
+#
+# Правьте: имена шагов, версии, матрицу. Не убирайте: `types:`, `workflow_dispatch`,
+# `permissions`, шаг «нечего публиковать — падать».
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    # Правило 104: без явного списка умолчание НЕ включает ready_for_review —
+    # PR, созданный черновиком, останется вовсе без проверок до первого пуша.
+    types: [opened, synchronize, reopened, ready_for_review]
+  # Правило 104: события теряются (замер: 4 PR из 9 не получили проверок при
+  # создании). Без этой кнопки единственный способ добудиться CI — пустой
+  # коммит, который навсегда остаётся в истории.
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Ветка или тег для прогона
+        required: false
+
+# Правило 074: умолчание — тоже решение, только принятое не вами.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      # Гейт тот же, что и локально: вердикт обязан быть переносим (правило 073).
+      - run: python preflight.py --only format --only lint --only types --only secrets
+
+  test:
+    # Правило 018: цепочка проверяется там, где есть все звенья; узлы — везде.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      - run: python preflight.py --only tests
+      # Правило 040: число пропусков видно поимённо, иначе «5074 passed»
+      # ничего не говорит о том, сколько тестов молчит.
+      - run: pytest -q -rs
+        if: always()
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.os }}-${{ matrix.python }}
+          path: .coverage.*
+          if-no-files-found: error   # правило 075: пустой вход — ошибка входа
+
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { path: cov }
+      # Правило 041: публикуем два числа — по одной ОС и объединённое.
+      # Правило 116: сверка «сколько срезов ждали / сколько приехало» обязательна;
+      # не приехал срез — число не публикуется вовсе, дата честнее неверной цифры.
+      - run: python scripts/combine_coverage.py --expect 6 --strict
+
+  # Правило 074: то, что срабатывает один раз и не отменяется, защищают
+  # инвариантами ДО того, как повод наступит. Опубликованную версию не
+  # перезаписать, страницу релиза видят раньше, чем заметят пустой dist/.
+  release-invariants:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python scripts/check_workflow_guardrails.py

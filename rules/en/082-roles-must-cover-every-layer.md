@@ -72,6 +72,7 @@ questions do not.
 | Data and privacy | what goes outside and with whose consent | consents, collection volume, storage |
 | Performance and resources | has it become dearer and slower | measurements, baselines, limits |
 | Compatibility | where does this not work, and is that stated | platform matrix, asymmetry table |
+| Legitimacy | are we entitled to do this, and on what terms | our licence and our dependencies', external service terms, third-party content |
 
 **Understanding and steering**
 
@@ -83,6 +84,8 @@ questions do not.
 | External practice | what has appeared outside and is it applicable here | review, justification for adopting |
 | Methodology | does the product teach the right thing | didactics, feedback to the user |
 | Economics of the work | what does this cost and in what units | spending, quotas, pace |
+| Researcher | what is the quantity, if nobody measured it | a measurement with method, number and limits |
+| Scholarly work | is this reproducible and what do we cite | dataset, protocol, publication, citation |
 
 **Explaining**
 
@@ -148,6 +151,41 @@ second often has more documentation.
 somebody else's, there is one direction, and the questions about datasets and
 drift have nobody to address. Your own trained model is its own layer: data,
 quality measurement, degradation over time.
+
+**The researcher is neither a trend-watcher nor a tester.** The trend-watcher
+answers "what has appeared outside and is it applicable"; the tester answers "how
+do I break this". The researcher answers a third question: **what is the
+quantity, if nobody measured it**. They do not read surveys and do not break the
+product; they run a measurement and bring back a number with a method.
+
+Checking that this is a separate direction is easy from the trace: the cost of an
+operation over the expensive transport versus the cheap one (300 against 1), the
+cost of a session by age, the density of findings by method (8 confirmed out of
+489 against 33 where reading gave 2), the share of a five-hour window taken by
+one wave (9–10%). None of those numbers came from usage analytics, from tests, or
+from a survey of other people's practice — they were measured deliberately in
+order to make a decision. Half the rules in this catalogue were obtained that
+way.
+
+The direction's objection is its own and addressed: to the product analyst — "you
+have usage data, and the question was about the cost of our own work, which
+nobody measured"; to the product owner — "the decision is being made on a feeling,
+the quantity was never measured".
+
+**Legitimacy separates from security by its question.** Security asks "what will
+a bad actor do", privacy asks "with whose consent". Legitimacy asks "are we
+entitled to do this at all": a dependency's licence permitting or forbidding our
+way of distributing; an external service's terms; third-party content ending up
+in our artefacts; the licence on what we hand out. Its objection to the release
+engineer: "this dependency is copyleft, the distribution cannot ship under our
+licence" — that one is about the build, this one about the right.
+
+**"Scholarly work" is a conditional direction, like model training.** While there
+is no artefact (a protocol, a dataset, a publication), no role is created and the
+direction is marked "no such layer yet". Once there is an academic output, its
+questions arrive too: is the run reproducible from the description, what
+validates the method, what do we cite and how are we cited, and what about
+research ethics if people take part.
 
 A special case is directions people are tempted to split along the wrong axis.
 Splitting the explaining roles by **audience and quality criterion** works:
