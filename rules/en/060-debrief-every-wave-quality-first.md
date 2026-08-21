@@ -1,5 +1,7 @@
 # Debrief after every wave, and quality matters more than mechanics
 
+**Area.** parallel work
+
 **The rule.** The next wave launches only after the previous one is reviewed,
 along two axes: who fell over — and **what came out**. The second axis matters
 more.

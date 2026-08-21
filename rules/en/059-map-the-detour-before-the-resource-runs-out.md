@@ -1,5 +1,7 @@
 # Every exhaustible resource has a detour map prepared in advance
 
+**Area.** quotas, planning
+
 **The rule.** Know beforehand what stops working and what keeps working when
 each resource runs out. The mode on exhaustion is **accumulate**, not wait.
 

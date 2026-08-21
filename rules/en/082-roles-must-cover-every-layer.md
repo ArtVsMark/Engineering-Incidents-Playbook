@@ -1,5 +1,7 @@
 # The role line-up covers every layer of the product, not just development
 
+**Area.** roles
+
 **The rule.** There are as many directions as the product has layers. Every layer
 has an owner; a layer without one is not a detail but a blind spot. At the same
 time, coverage **does not equal** a separate role: a direction may be a profile

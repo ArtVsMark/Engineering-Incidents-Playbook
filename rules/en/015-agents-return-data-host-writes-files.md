@@ -1,5 +1,7 @@
 # Agents return data — the host writes the files
 
+**Area.** parallel work
+
 **The rule.** Parallel executors hand back a result; they do not write into the
 shared tree. Writing belongs to one party.
 

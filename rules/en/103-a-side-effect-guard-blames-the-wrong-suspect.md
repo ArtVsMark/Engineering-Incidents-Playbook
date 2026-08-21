@@ -1,5 +1,7 @@
 # A side-effect guard blames the wrong suspect — and exclusions are defined by shape
 
+**Area.** tests, gates
+
 **The rule.** A guard comparing "before" and "after" snapshots attributes a change
 to whoever it was completing when it noticed. Neighbouring processes produce false
 accusations, and they must be excluded **by the shape of the name**, not by a

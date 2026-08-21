@@ -1,5 +1,7 @@
 # "It works for the author" means "tested on the author's sample"
 
+**Area.** borrowing
+
 **The rule.** Somebody else's tool was tested on whatever its author had. Beyond
 the bounds of their sample it is not broken — it is **untested**, and those are
 different diagnoses.

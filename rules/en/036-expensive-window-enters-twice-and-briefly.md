@@ -1,5 +1,7 @@
 # The expensive environment enters an audit twice, and briefly
 
+**Area.** audit, environments
+
 **The rule.** An audit runs in three phases: a short snapshot of reality
 **before** the mass work, all the mass work in the cheap environment, and a
 short confirmation against an accumulated checklist **at the end**. The

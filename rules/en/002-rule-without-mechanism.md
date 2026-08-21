@@ -1,5 +1,7 @@
 # A rule without a mechanism is a promise, not a guarantee
 
+**Area.** process, CI
+
 **The rule.** A requirement that cannot be checked by machine will not be
 followed. Either build a gate, or do not write it down.
 

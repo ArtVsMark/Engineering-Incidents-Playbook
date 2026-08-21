@@ -1,5 +1,7 @@
 # One topic, one canonical document; everything else links to it
 
+**Area.** documentation
+
 **The rule.** Duplicated descriptions diverge. Always. The only question is how
 many weeks pass before you notice.
 

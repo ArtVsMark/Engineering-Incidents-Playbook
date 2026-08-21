@@ -1,5 +1,7 @@
 # A second pass receives the previous findings and a ban on reopening them
 
+**Area.** audit
+
 **The rule.** A second audit of the same subject starts from the first one's
 findings file and from a novelty rule: what is already found does not count as a
 finding — it can only be deepened or discarded.

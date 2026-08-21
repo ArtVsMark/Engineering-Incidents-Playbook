@@ -1,5 +1,7 @@
 # The changelog is assembled from fragments, not written afterwards
 
+**Area.** release
+
 **The rule.** The entry arrives with the change, as a separate file. Assembly
 happens at release.
 

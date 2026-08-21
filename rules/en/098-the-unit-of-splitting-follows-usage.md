@@ -1,5 +1,7 @@
 # The unit of splitting follows usage, not a formal criterion
 
+**Area.** data, documentation
+
 **The rule.** What counts as one entity is decided by **how it is used**, not by
 a formal criterion such as "one call, one entry". A technical problem with
 splitting is cured by metadata, not by splitting further.

@@ -1,5 +1,7 @@
 # Parallel executors launch in waves of fixed size
 
+**Area.** parallel work
+
 **The rule.** Not in a salvo. A wave, a debrief, the next wave. A large salvo
 manufactures its own failure, and the bigger it is, the more expensive the loss.
 

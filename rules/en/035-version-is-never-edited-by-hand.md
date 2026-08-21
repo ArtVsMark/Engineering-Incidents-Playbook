@@ -1,5 +1,7 @@
 # The version is never edited by hand, in any file
 
+**Area.** release
+
 **The rule.** The version is set in one place and substituted everywhere. Manual
 editing produces a mismatch that surfaces after publication.
 

@@ -1,5 +1,7 @@
 # A complex task keeps a checklist, not a narrative
 
+**Area.** tracker
+
 **The rule.** From three items upwards, use tick boxes rather than prose.
 Otherwise the state of the task has to be computed by reading.
 

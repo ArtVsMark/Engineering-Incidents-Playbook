@@ -1,5 +1,7 @@
 # Measure what is left of the quota instead of guessing — and look first
 
+**Area.** quotas, diagnostics
+
 **The rule.** Diagnosis starts with facts about the quota, not with hypotheses
 about causes. Asking for the remainder is usually free.
 

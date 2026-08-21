@@ -1,5 +1,7 @@
 # If a role's subject is observable in the running product, the role must run it
 
+**Area.** roles, audit
+
 **The rule.** A conclusion reached by reading code where you could have run the
 thing counts as incomplete.
 

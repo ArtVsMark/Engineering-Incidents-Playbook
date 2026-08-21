@@ -1,5 +1,7 @@
 # Your own reference answer is also a hypothesis
 
+**Area.** tests, audit
+
 **The rule.** An expectation written by your own hand proves nothing. Until an
 external source confirms it, a discrepancy means "one of the two is wrong", not
 "the product is broken".

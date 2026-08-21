@@ -1,5 +1,7 @@
 # A checking tool has two errors, and each is held by its own test
 
+**Area.** tests, quality
+
 **The rule.** A false "passed" and a false "failed" are different defects with
 different consequences. A regression test is written for **both** sides
 separately; covering one creates the illusion of covering both.

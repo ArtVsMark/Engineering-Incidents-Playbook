@@ -1,5 +1,7 @@
 # An empty list of checks means "never started", not "all clear"
 
+**Area.** CI
+
 **The rule.** The condition "nothing red and nothing pending" is true of the
 empty set. Verify that the checks were created at all.
 

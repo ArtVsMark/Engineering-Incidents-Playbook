@@ -1,5 +1,7 @@
 # A decision is recorded together with the options rejected
 
+**Area.** decisions
+
 **The rule.** A decision record consists of context, the decision itself, **the
 alternatives considered**, and the consequences. Without alternatives it is not
 a decision but an announcement.

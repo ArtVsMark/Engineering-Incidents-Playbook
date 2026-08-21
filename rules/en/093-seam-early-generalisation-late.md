@@ -1,5 +1,7 @@
 # Introduce the seam early, generalise on the third case
 
+**Area.** architecture
+
 **The rule.** A known future fork gets a **seam** immediately: a minimal
 reversible refactor that fixes the contract. A shared abstraction over similar
 implementations is created only when a **third** appears.

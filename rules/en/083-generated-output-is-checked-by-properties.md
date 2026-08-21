@@ -1,5 +1,7 @@
 # Generated output is checked by properties and by sampling, not against a reference answer
 
+**Area.** AI, quality
+
 **The rule.** A non-deterministic component has no "correct answer" to compare
 against. Acceptance runs on properties that must always hold, plus a sample that
 somebody actually reads.

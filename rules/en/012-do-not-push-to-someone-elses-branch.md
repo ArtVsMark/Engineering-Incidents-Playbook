@@ -1,5 +1,7 @@
 # Do not push into somebody else's branch
 
+**Area.** collaboration
+
 **The rule.** A change to a branch driven by another person or another session
 is made by its owner. You report what needs resolving and how.
 

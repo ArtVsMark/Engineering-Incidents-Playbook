@@ -1,5 +1,7 @@
 # The newcomer's entry point speaks their language — and there is more than one
 
+**Area.** community
+
 **The rule.** Tasks marked as an entry point for new contributors are written in
 the language of the audience the label exists for. And there must be more than
 one such label: a newcomer's path does not end at the first contribution.

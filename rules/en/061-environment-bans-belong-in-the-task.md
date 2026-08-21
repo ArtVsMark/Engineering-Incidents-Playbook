@@ -1,5 +1,7 @@
 # Environment prohibitions go into the task text, never implied
 
+**Area.** parallel work
+
 **The rule.** An executor that will run the product receives the list of
 prohibitions **in the task text**. It cannot see what the host knows, and it
 will hit a guard without understanding what it hit.

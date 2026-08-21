@@ -1,5 +1,7 @@
 # Ship the raw value next to the formatted one
 
+**Area.** contracts, data
+
 **The rule.** Formatting is a lossy operation. When you emit a quantity for
 display, emit the original number beside it: parsing the string back is
 reconstructing what you destroyed yourself.

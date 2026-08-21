@@ -1,5 +1,7 @@
 # An outside audit is done by somebody who did not write this code
 
+**Area.** audit
+
 **The rule.** A second pass by **your own** tool reproduces the same blind spots.
 An outside view means a different executor with a different history, not another
 attempt.

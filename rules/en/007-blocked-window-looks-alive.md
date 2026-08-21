@@ -1,5 +1,7 @@
 # A session stalled on a permission prompt looks exactly like a working one
 
+**Area.** agent sessions
+
 **The rule.** Before deciding that work has been abandoned, check the session
 registry: the session may be waiting for permission, and then it needs a person,
 not a repair.

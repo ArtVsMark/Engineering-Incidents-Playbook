@@ -1,5 +1,7 @@
 # A number typed by hand goes stale in silence
 
+**Area.** documentation
+
 **The rule.** A figure in documentation is either recomputed automatically, or
 it does not belong there.
 

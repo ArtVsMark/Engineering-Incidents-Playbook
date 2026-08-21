@@ -1,5 +1,7 @@
 # There is no silent fallback — failure is loud
 
+**Area.** reliability
+
 **The rule.** If the requested mode is unavailable, the work **fails with a
 clear error** rather than continuing quietly in a weakened mode.
 

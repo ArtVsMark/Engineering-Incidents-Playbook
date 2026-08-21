@@ -1,5 +1,7 @@
 # A rule no machine can check is named explicitly
 
+**Area.** process
+
 **The rule.** If no mechanism exists for a rule, it is neither discarded nor
 treated as obvious — it is written into its own section, marked as having no
 gate and saying why.

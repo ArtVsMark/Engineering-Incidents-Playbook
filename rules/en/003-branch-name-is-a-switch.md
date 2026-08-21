@@ -1,5 +1,7 @@
 # A branch name can be a behaviour switch, not a style convention
 
+**Area.** pipeline
+
 **The rule.** If the pipeline reacts to a branch prefix, that belongs in the
 first line of the project's rules — together with what happens under any other
 name.

@@ -1,5 +1,7 @@
 # Warn about the likely, block only the certain
 
+**Area.** gates
+
 **The rule.** A signal that fires on legitimate cases must be a warning and must
 **not block**. Only what is proven blocks.
 

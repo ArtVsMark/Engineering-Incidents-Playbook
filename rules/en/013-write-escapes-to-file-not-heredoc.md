@@ -1,5 +1,7 @@
 # Write code containing escapes to a file, not through a heredoc
 
+**Area.** tooling
+
 **The rule.** Escape sequences pass through the shell and change on the way. A
 file is the only reliable carrier.
 

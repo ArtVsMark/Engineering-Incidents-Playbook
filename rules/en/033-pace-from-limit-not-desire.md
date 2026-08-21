@@ -1,5 +1,7 @@
 # The pace of long work is derived from the limit, not from eagerness
 
+**Area.** quotas, pace
+
 **The rule.** The interval between launches follows arithmetically from the
 budget. Otherwise the work hits the wall mid-wave — and loses the whole wave.
 

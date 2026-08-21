@@ -13,7 +13,11 @@
     ради которой указатель и сделан единым;
   • номер встречается дважды;
   • перекрёстная ссылка ведёт в несуществующий файл;
-  • в дереве не нашлось ни одного правила.
+  • в дереве не нашлось ни одного правила;
+  • у правила нет строки «Область» — молча пустая колонка уже стоила каталогу
+    всей классификации (правило 125);
+  • область не значится в словаре AREAS: опечатка иначе заводит новую область;
+  • области ru и en не соответствуют друг другу через словарь.
 
 Пропуск в нумерации — не ошибка: номера не переиспользуются даже после
 удаления (правило 120). Он печатается как факт.
@@ -34,11 +38,20 @@ RULES = ROOT / "rules"
 LANGS = ("ru", "en")
 OUT = RULES / "README.md"
 
+#: Пути правил, заполняется в main() — из него строятся ссылки навигации.
+FILES: dict[str, dict[str, Path]] = {}
+
 RULE_RE = re.compile(r"^(\d{3})-[a-z0-9-]+\.md$")
 LINK_RE = re.compile(r"\]\((\d{3}-[^)#]+\.md)\)")
+#: Область живёт в самом правиле, строкой под заголовком.
+AREA_RE = {
+    "ru": re.compile(r"^\*\*Область\.\*\*\s*(.+?)\s*$", re.M),
+    "en": re.compile(r"^\*\*Area\.\*\*\s*(.+?)\s*$", re.M),
+}
 
-#: Область правила — в паре «по-русски / in English». Ключ берётся из русской
-#: колонки прежнего указателя; новые области дописываются сюда осознанно.
+#: Словарь областей — в паре «по-русски / in English». Это закрытый список:
+#: область, которой здесь нет, сборку не проходит. Иначе опечатка заводит новую
+#: область молча, и рядом живут «интерфейс» и «интерфейсы» (правило 099).
 AREAS = {
     "квоты": "quotas", "API": "API", "процесс": "process", "CI": "CI",
     "конвейер": "pipeline", "автоматика": "automation", "документация": "documentation",
@@ -56,6 +69,7 @@ AREAS = {
     "качество": "quality", "сравнение": "comparison", "заимствование": "borrowing",
     "планирование": "planning", "каталог": "catalogue", "ИИ": "AI",
     "история": "history", "конфигурация": "configuration",
+    "трекер": "tracker", "прогоны": "runs",
 }
 
 
@@ -115,21 +129,67 @@ def check_pairs(found: dict[str, dict[str, Path]]) -> list[str]:
     return problems
 
 
-def old_areas() -> dict[str, str]:
-    """Область берётся из прежнего указателя, если он ещё существует."""
-    areas: dict[str, str] = {}
-    for legacy in (RULES / "ru" / "README.md", OUT):
-        if not legacy.exists():
+def areas_of(path: Path, lang: str) -> list[str]:
+    """Область правила — из самого файла. Пусто, если строки нет."""
+    m = AREA_RE[lang].search(path.read_text(encoding="utf-8"))
+    return [a.strip() for a in m.group(1).split(",") if a.strip()] if m else []
+
+
+def check_areas(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list[str]], list[str]]:
+    """Читает области из правил и сверяет деревья.
+
+    Область хранится в самих правилах, а не в этом указателе: производный файл
+    не может быть хранилищем — регенерация обнуляет его молча (правило 125).
+    """
+    problems: list[str] = []
+    result: dict[str, list[str]] = {}
+    for num in sorted(found):
+        slot = found[num]
+        if not all(l in slot for l in LANGS):
+            continue                      # об этом уже скажет check_pairs
+        ru = areas_of(slot["ru"], "ru")
+        en = areas_of(slot["en"], "en")
+        for lang, got in (("ru", ru), ("en", en)):
+            if not got:
+                problems.append(f"{num}: нет строки «Область» в {lang}/{slot[lang].name}")
+        if not ru or not en:
             continue
-        for line in legacy.read_text(encoding="utf-8").split("\n"):
-            m = re.match(r"\| \[(\d{3})\][^|]*\|[^|]*\|(?:[^|]*\|)*\s*([^|]+?)\s*\|$", line)
-            if m:
-                areas.setdefault(m.group(1), m.group(2))
-    return areas
+        unknown = [a for a in ru if a not in AREAS]
+        if unknown:
+            problems.append(
+                f"{num}: область вне словаря AREAS — {', '.join(unknown)}"
+                " (опечатка или новая область: допишите её в словарь осознанно)"
+            )
+            continue
+        expected = [AREAS[a] for a in ru]
+        if en != expected:
+            problems.append(
+                f"{num}: области деревьев расходятся — ru «{', '.join(ru)}»"
+                f" ждёт en «{', '.join(expected)}», а стоит «{', '.join(en)}»"
+            )
+            continue
+        result[num] = ru
+    return result, problems
 
 
-def render(found: dict[str, dict[str, Path]], gaps: list[int]) -> str:
-    areas = old_areas()
+def by_area(areas: dict[str, list[str]], lang: str) -> str:
+    """Строки навигации по областям: сначала крупные, потом одиночные."""
+    buckets: dict[str, list[str]] = {}
+    for num, names in areas.items():
+        for a in names:
+            buckets.setdefault(a, []).append(num)
+    name_of = (lambda a: a) if lang == "ru" else (lambda a: AREAS[a])
+    order = sorted(buckets, key=lambda a: (-len(buckets[a]), name_of(a)))
+    lines = []
+    for a in order:
+        nums = sorted(buckets[a])
+        links = ", ".join(f"[{n}]({lang}/{FILES[n][lang].name})" for n in nums)
+        lines.append(f"- **{name_of(a)}** ({len(nums)}) — {links}")
+    return "\n".join(lines)
+
+
+def render(found: dict[str, dict[str, Path]], gaps: list[int],
+           areas: dict[str, list[str]]) -> str:
     rows = []
     for num in sorted(found):
         slot = found[num]
@@ -139,9 +199,8 @@ def render(found: dict[str, dict[str, Path]], gaps: list[int]) -> str:
         t_en = title_of(en) if en else "—"
         l_ru = f"[ru](ru/{ru.name})" if ru else "—"
         l_en = f"[en](en/{en.name})" if en else "—"
-        area = areas.get(num, "")
-        area_en = ", ".join(AREAS.get(a.strip(), a.strip()) for a in area.split(",")) if area else ""
-        both = f"{area} · {area_en}" if area else ""
+        names = areas.get(num, [])
+        both = f"{', '.join(names)} · {', '.join(AREAS[a] for a in names)}" if names else ""
         rows.append(f"| {num} | {t_ru} | {t_en} | {l_ru} {l_en} | {both} |")
 
     gap_note = ""
@@ -174,6 +233,26 @@ Shape: rule → incident → why → where it applies → trace.
 | № | Правило | Rule | Файлы · Files | Область · Area |
 |---|---|---|---|---|
 {chr(10).join(rows)}
+
+---
+
+## По областям
+
+Быстрый вход в каталог не по номеру, а по предмету. Правило стоит в нескольких
+областях, если относится к нескольким, — поэтому сумма по областям больше числа
+правил. Порядок — по числу правил: крупные области сверху, одиночные внизу.
+Ссылки ведут в русское дерево.
+
+{by_area(areas, "ru")}
+
+## By area
+
+A way into the catalogue by subject rather than by number. A rule sits in several
+areas when it belongs to several, so the areas add up to more than the number of
+rules. Ordered by rule count: the large areas first, the singletons last. Links
+point at the English tree.
+
+{by_area(areas, "en")}
 
 ---
 
@@ -222,6 +301,9 @@ def main() -> int:
     found, problems = collect()
     problems += check_pairs(found)
     problems += check_links(found)
+    FILES.update(found)
+    areas, area_problems = check_areas(found)
+    problems += area_problems
 
     nums = sorted(int(n) for n in found)
     gaps = [i for i in range(nums[0], nums[-1] + 1) if i not in set(nums)] if nums else []
@@ -232,18 +314,21 @@ def main() -> int:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
-    text = render(found, gaps)
+    text = render(found, gaps, areas)
     if args.check:
         current = OUT.read_text(encoding="utf-8") if OUT.exists() else ""
         if current != text:
             print("указатель устарел — пересоберите: python scripts/build_rules_index.py",
                   file=sys.stderr)
             return 1
-        print(f"указатель актуален: {len(found)} правил на {len(LANGS)} языках")
+        print(f"указатель актуален: {len(found)} правил на {len(LANGS)} языках,"
+              f" областей {len({a for v in areas.values() for a in v})}")
         return 0
 
     OUT.write_text(text, encoding="utf-8")
-    print(f"собрано: {len(found)} правил, языков {len(LANGS)}, пропуски в нумерации: {gaps or 'нет'}")
+    print(f"собрано: {len(found)} правил, языков {len(LANGS)},"
+          f" областей {len({a for v in areas.values() for a in v})},"
+          f" пропуски в нумерации: {gaps or 'нет'}")
     return 0
 
 

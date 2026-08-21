@@ -1,5 +1,7 @@
 # Collecting and analysing are separate passes
 
+**Area.** runs, process
+
 **The rule.** Nothing is analysed during a collection step: run it, write the
 raw result, move on. Analysis is a separate pass, at the boundary of a natural
 unit of work.

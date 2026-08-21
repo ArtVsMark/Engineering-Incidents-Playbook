@@ -1,5 +1,7 @@
 # Split documentation by reader, not by topic
 
+**Area.** documentation
+
 **The rule.** First ask who reads this, then decide where it goes. A topical
 layout mixes audiences together.
 

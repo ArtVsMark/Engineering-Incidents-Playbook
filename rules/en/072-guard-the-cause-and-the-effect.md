@@ -1,5 +1,7 @@
 # The gate catches the cause, the fixture catches the effect: you need both
 
+**Area.** tests, gates
+
 **The rule.** One defence checks intent before the run, the other checks the
 consequence after. Each is blind exactly where the other sees.
 

@@ -1,5 +1,7 @@
 # There are two deadlines: one for starting, one for working
 
+**Area.** reliability
+
 **The rule.** A time limit on execution does not cover **startup**. You can hang
 before the first line, and that needs its own, short deadline. Raising it locally
 is allowed; the default stays short.

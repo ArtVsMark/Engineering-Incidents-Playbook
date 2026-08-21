@@ -1,5 +1,7 @@
 # Every exit from a transient state must be terminal
 
+**Area.** code, interface
+
 **The rule.** You cannot leave a state of "starting", "stopping" or "checking"
 silently. Every branch, including the early ones, must leave a **final** status —
 otherwise the system is stuck in the transient state forever.

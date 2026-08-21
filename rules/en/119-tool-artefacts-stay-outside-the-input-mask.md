@@ -1,5 +1,7 @@
 # A tool's own artefacts stay outside its input mask
 
+**Area.** code, data
+
 **The rule.** Files the tool creates are named so that they **do not fall under
 its own input selection rule**. Otherwise it starts processing its own output.
 

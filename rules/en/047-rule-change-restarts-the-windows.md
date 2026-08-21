@@ -1,5 +1,7 @@
 # Changing the working rules is a reason to restart the sessions, not to send a memo
 
+**Area.** agent sessions
+
 **The rule.** If you changed the rules the sessions work by, restart the
 sessions. Age has nothing to do with it: the rule changes by an event, while
 context is read once, at startup.
