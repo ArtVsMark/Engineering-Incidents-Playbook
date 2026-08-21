@@ -1,0 +1,41 @@
+# Гейты самого каталога. Без них правила 002 и 120 остались бы обещанием:
+# скрипт, который никто не запускает, ничего не гарантирует.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    # Умолчание НЕ включает ready_for_review — правило 104.
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  catalogue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Правило 120: указатель собирается из файлов. Падает, если правило
+      # добавлено только на одном языке, номер продублирован, имена файлов в
+      # деревьях разошлись или перекрёстная ссылка ведёт в никуда.
+      - name: указатель актуален и деревья не разошлись
+        run: python scripts/build_rules_index.py --check
+
+      # Правило 002: разовая проверка ссылок руками ничего не гарантирует.
+      - name: локальные ссылки ведут в существующие файлы
+        run: python scripts/check_links.py
+
+      # Правило 002 же: заготовка гейта обязана хотя бы запускаться.
+      - name: заготовка preflight запускается
+        run: python templates/preflight.py --list
