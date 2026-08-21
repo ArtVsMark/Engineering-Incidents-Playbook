@@ -17,7 +17,8 @@
   • у правила нет строки «Область» — молча пустая колонка уже стоила каталогу
     всей классификации (правило 125);
   • область не значится в словаре AREAS: опечатка иначе заводит новую область;
-  • области ru и en не соответствуют друг другу через словарь.
+  • области ru и en не соответствуют друг другу через словарь;
+  • у области в словаре нет описания: пустая ячейка снова прошла бы за данные.
 
 Пропуск в нумерации — не ошибка: номера не переиспользуются даже после
 удаления (правило 120). Он печатается как факт.
@@ -49,27 +50,266 @@ AREA_RE = {
     "en": re.compile(r"^\*\*Area\.\*\*\s*(.+?)\s*$", re.M),
 }
 
-#: Словарь областей — в паре «по-русски / in English». Это закрытый список:
-#: область, которой здесь нет, сборку не проходит. Иначе опечатка заводит новую
+#: Словарь областей: английское имя и описание «что в области лежит» —
+#: оно печатается в разделах навигации указателя. Список закрытый: область,
+#: которой здесь нет, сборку не проходит. Иначе опечатка заводит новую
 #: область молча, и рядом живут «интерфейс» и «интерфейсы» (правило 099).
 AREAS = {
-    "квоты": "quotas", "API": "API", "процесс": "process", "CI": "CI",
-    "конвейер": "pipeline", "автоматика": "automation", "документация": "documentation",
-    "агентские сессии": "agent sessions", "витрины": "showcases", "метрики": "metrics",
-    "наблюдение": "observation", "командная работа": "collaboration", "инструменты": "tooling",
-    "тесты": "tests", "параллельная работа": "parallel work", "вывод": "output",
-    "отчёты": "reports", "диагностика": "diagnostics", "среды": "environments",
-    "аудит": "audit", "темп": "pace", "релиз": "release", "роли": "roles",
-    "надёжность": "reliability", "решения": "decisions", "безопасность": "security",
-    "гейты": "gates", "данные": "data", "ресурсы": "resources", "код": "code",
-    "конкурентность": "concurrency", "архитектура": "architecture",
-    "локализация": "localisation", "интерфейс": "interface", "приватность": "privacy",
-    "продукт": "product", "сообщество": "community", "миграции": "migrations",
-    "контракты": "contracts", "таксономия": "taxonomy", "сеть": "network",
-    "качество": "quality", "сравнение": "comparison", "заимствование": "borrowing",
-    "планирование": "planning", "каталог": "catalogue", "ИИ": "AI",
-    "история": "history", "конфигурация": "configuration",
-    "трекер": "tracker", "прогоны": "runs",
+    "аудит": {
+        "en": "audit",
+        "about_ru": "как искать неизвестное и что делать с найденным: поверхности, статус находки, вердикты",
+        "about_en": "finding the unknown and handling what turns up: surfaces, finding status, verdicts",
+    },
+    "документация": {
+        "en": "documentation",
+        "about_ru": "кто это читает, где канон и что в документе устаревает",
+        "about_en": "who reads this, where the canon lives, and what goes stale in a document",
+    },
+    "процесс": {
+        "en": "process",
+        "about_ru": "как устроена сама работа: чем правило держится, откуда берётся план, чем доказано завершение",
+        "about_en": "how the work itself is arranged: what backs a rule, where the plan comes from, what proves completion",
+    },
+    "код": {
+        "en": "code",
+        "about_ru": "решения внутри кода: блокировки, запись, уборка после сбоя, переходные состояния",
+        "about_en": "decisions inside the code: locks, writes, cleanup after failure, transient states",
+    },
+    "параллельная работа": {
+        "en": "parallel work",
+        "about_ru": "несколько исполнителей одновременно: волны, зоны, задания, сборка результата",
+        "about_en": "several executors at once: waves, zones, briefs, collecting the result",
+    },
+    "данные": {
+        "en": "data",
+        "about_ru": "где данные лежат, как переезжают и что теряется по дороге",
+        "about_en": "where data lives, how it migrates, and what is lost on the way",
+    },
+    "квоты": {
+        "en": "quotas",
+        "about_ru": "исчерпаемое: лимиты, цена операции, темп и что делать на нуле",
+        "about_en": "what runs out: limits, cost per operation, pace, and what to do at zero",
+    },
+    "конвейер": {
+        "en": "pipeline",
+        "about_ru": "путь изменения до основной ветки: ветки, очередь, конфликты, метки",
+        "about_en": "a change's path to the main branch: branches, queue, conflicts, labels",
+    },
+    "тесты": {
+        "en": "tests",
+        "about_ru": "чем доказано, что тест проверяет именно то и краснеет когда надо",
+        "about_en": "what proves a test checks the right thing and goes red when it should",
+    },
+    "CI": {
+        "en": "CI",
+        "about_ru": "проверки в облаке: исходы, пустой список, необратимые шаги, перезапуски",
+        "about_en": "checks in the cloud: outcomes, an empty list, irreversible steps, re-runs",
+    },
+    "архитектура": {
+        "en": "architecture",
+        "about_ru": "границы и швы: где обобщать, куда поднимать общее, чем платит заглушка",
+        "about_en": "boundaries and seams: when to generalise, where shared code goes, what a shim costs",
+    },
+    "надёжность": {
+        "en": "reliability",
+        "about_ru": "поведение при отказе: громкий провал, дедлайны, повторы, порядок операций",
+        "about_en": "behaviour on failure: loud failure, deadlines, retries, order of operations",
+    },
+    "безопасность": {
+        "en": "security",
+        "about_ru": "недоверенный вход и права: списки разрешённого, изоляция, осознанное ослабление",
+        "about_en": "untrusted input and privilege: allowlists, isolation, deliberate weakening",
+    },
+    "гейты": {
+        "en": "gates",
+        "about_ru": "устройство самих проверок: что ловят, чем краснеют, куда двигают бюджет",
+        "about_en": "how the guards themselves work: what they catch, when they go red, which way the budget moves",
+    },
+    "агентские сессии": {
+        "en": "agent sessions",
+        "about_ru": "жизнь окна: срок, состояние, имя, повод перезапустить",
+        "about_en": "the life of a session: its span, its state, its name, when to restart it",
+    },
+    "интерфейс": {
+        "en": "interface",
+        "about_ru": "что видит и понимает получатель: пустое состояние, сообщения, завершённость действия",
+        "about_en": "what the recipient sees and understands: empty states, messages, whether an action finished",
+    },
+    "контракты": {
+        "en": "contracts",
+        "about_ru": "договор между частями: что значит сигнал, что такое отмена, как контракт меняется",
+        "about_en": "the agreement between parts: what a signal means, what cancellation is, how a contract may change",
+    },
+    "релиз": {
+        "en": "release",
+        "about_ru": "выпуск наружу: версия, журнал изменений, необратимые шаги, огласка",
+        "about_en": "shipping outward: version, changelog, irreversible steps, publicity",
+    },
+    "автоматика": {
+        "en": "automation",
+        "about_ru": "когда машина вмешивается сама и как остановить её руками",
+        "about_en": "when the machine intervenes on its own, and how to stop it by hand",
+    },
+    "каталог": {
+        "en": "catalogue",
+        "about_ru": "как ведётся сам этот каталог и чем он связан с проектом",
+        "about_en": "how this catalogue itself is kept, and how it links back to a project",
+    },
+    "качество": {
+        "en": "quality",
+        "about_ru": "чем измеряют качество проверки, а не продукта",
+        "about_en": "how the quality of a check is measured, rather than of the product",
+    },
+    "метрики": {
+        "en": "metrics",
+        "about_ru": "что именно считать и когда среднее врёт",
+        "about_en": "what exactly to count, and when an average lies",
+    },
+    "продукт": {
+        "en": "product",
+        "about_ru": "решения в пользу пользователя: умолчания, право удалить, момент показа",
+        "about_en": "decisions made in the user's favour: defaults, the right to delete, when to show it",
+    },
+    "роли": {
+        "en": "roles",
+        "about_ru": "зачем нужна роль, что она обязана делать и все ли пласты покрыты",
+        "about_en": "why a role exists, what it must do, and whether every layer is covered",
+    },
+    "ИИ": {
+        "en": "AI",
+        "about_ru": "модель как часть продукта: чем проверяют сгенерированное, что уходит в промпт",
+        "about_en": "the model as part of the product: what verifies generated output, what goes into the prompt",
+    },
+    "витрины": {
+        "en": "showcases",
+        "about_ru": "первые пять минут читателя: что на виду и что за ссылкой",
+        "about_en": "the reader's first five minutes: what is on show and what sits behind a link",
+    },
+    "инструменты": {
+        "en": "tooling",
+        "about_ru": "чем работают: версии инструментов и способ передать им код",
+        "about_en": "what you work with: tool versions and how code reaches them",
+    },
+    "конкурентность": {
+        "en": "concurrency",
+        "about_ru": "несколько писателей одновременно: что блокировать и что записывать",
+        "about_en": "several writers at once: what to lock and what to write",
+    },
+    "миграции": {
+        "en": "migrations",
+        "about_ru": "переход со старого на новое: откуда считать и чем кончается заглушка",
+        "about_en": "moving from old to new: where to count from, and how a shim ends",
+    },
+    "приватность": {
+        "en": "privacy",
+        "about_ru": "что собирают о пользователе и что он может стереть",
+        "about_en": "what is collected about the user, and what they can erase",
+    },
+    "решения": {
+        "en": "decisions",
+        "about_ru": "запись решения: отвергнутые варианты и запрет правки задним числом",
+        "about_en": "recording a decision: the rejected options, and no edits after the fact",
+    },
+    "среды": {
+        "en": "environments",
+        "about_ru": "чем окружения различаются и что проверяется только в своём",
+        "about_en": "how environments differ, and what can only be checked in its own",
+    },
+    "API": {
+        "en": "API",
+        "about_ru": "выбор транспорта к внешнему сервису и его цена",
+        "about_en": "choosing the transport to an external service, and what it costs",
+    },
+    "вывод": {
+        "en": "output",
+        "about_ru": "то, что печатается: обрыв, маркеры, полнота",
+        "about_en": "what gets printed: truncation, markers, completeness",
+    },
+    "диагностика": {
+        "en": "diagnostics",
+        "about_ru": "как узнать состояние, прежде чем действовать",
+        "about_en": "finding out the state before acting on it",
+    },
+    "заимствование": {
+        "en": "borrowing",
+        "about_ru": "перенос чужого решения и границы «у автора работает»",
+        "about_en": "adopting somebody else's solution, and the limits of \u201cit works for the author\u201d",
+    },
+    "история": {
+        "en": "history",
+        "about_ru": "что остаётся в истории репозитория и где это проверять",
+        "about_en": "what stays in the repository's history, and where to verify it",
+    },
+    "командная работа": {
+        "en": "collaboration",
+        "about_ru": "границы чужого: во что нельзя вмешиваться",
+        "about_en": "somebody else's boundaries: what not to touch",
+    },
+    "конфигурация": {
+        "en": "configuration",
+        "about_ru": "откуда берутся настройки и где их ищут",
+        "about_en": "where settings come from and where they are looked up",
+    },
+    "локализация": {
+        "en": "localisation",
+        "about_ru": "второй язык: чем перевод отличается от совпадения ключей",
+        "about_en": "the second language: how translation differs from key parity",
+    },
+    "наблюдение": {
+        "en": "observation",
+        "about_ru": "как узнавать об изменениях: событие против опроса",
+        "about_en": "learning that something changed: events versus polling",
+    },
+    "отчёты": {
+        "en": "reports",
+        "about_ru": "форма отчёта: что в нём обязано быть видно",
+        "about_en": "the shape of a report: what must be visible in it",
+    },
+    "планирование": {
+        "en": "planning",
+        "about_ru": "что готовят заранее, пока ресурс ещё есть",
+        "about_en": "what to prepare in advance, while the resource lasts",
+    },
+    "прогоны": {
+        "en": "runs",
+        "about_ru": "разделение проходов: сбор отдельно, разбор отдельно",
+        "about_en": "separating the passes: collecting apart from analysing",
+    },
+    "ресурсы": {
+        "en": "resources",
+        "about_ru": "что занимает место и когда это освобождается",
+        "about_en": "what takes up space, and when it is released",
+    },
+    "сеть": {
+        "en": "network",
+        "about_ru": "отказы, которые приходят снаружи и проходят сами",
+        "about_en": "failures that arrive from outside and pass on their own",
+    },
+    "сообщество": {
+        "en": "community",
+        "about_ru": "как сюда попадает новый человек",
+        "about_en": "how a newcomer gets here",
+    },
+    "сравнение": {
+        "en": "comparison",
+        "about_ru": "сопоставление с ожидаемым и допуски в нём",
+        "about_en": "comparing against what was expected, and the tolerances in it",
+    },
+    "таксономия": {
+        "en": "taxonomy",
+        "about_ru": "как классифицировать, когда признаки спорят",
+        "about_en": "how to classify when the criteria disagree",
+    },
+    "темп": {
+        "en": "pace",
+        "about_ru": "с какой скоростью вести длинную работу",
+        "about_en": "how fast to run long work",
+    },
+    "трекер": {
+        "en": "tracker",
+        "about_ru": "как выглядит задача, по которой ведут работу",
+        "about_en": "what a task looks like when work runs on it",
+    },
 }
 
 
@@ -129,6 +369,19 @@ def check_pairs(found: dict[str, dict[str, Path]]) -> list[str]:
     return problems
 
 
+def check_vocabulary() -> list[str]:
+    """Область без описания дала бы пустую ячейку — а пустота проходит за
+    значение (правило 125). Поэтому неполная запись словаря роняет сборку."""
+    problems = []
+    for name, fields in AREAS.items():
+        missing = [k for k in ("en", "about_ru", "about_en") if not fields.get(k)]
+        if missing:
+            problems.append(f"словарь AREAS, «{name}»: не заполнено — {', '.join(missing)}")
+    if not AREAS:
+        problems.append("словарь AREAS пуст")
+    return problems
+
+
 def areas_of(path: Path, lang: str) -> list[str]:
     """Область правила — из самого файла. Пусто, если строки нет."""
     m = AREA_RE[lang].search(path.read_text(encoding="utf-8"))
@@ -161,7 +414,7 @@ def check_areas(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list[str]]
                 " (опечатка или новая область: допишите её в словарь осознанно)"
             )
             continue
-        expected = [AREAS[a] for a in ru]
+        expected = [AREAS[a]["en"] for a in ru]
         if en != expected:
             problems.append(
                 f"{num}: области деревьев расходятся — ru «{', '.join(ru)}»"
@@ -173,19 +426,29 @@ def check_areas(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list[str]]
 
 
 def by_area(areas: dict[str, list[str]], lang: str) -> str:
-    """Строки навигации по областям: сначала крупные, потом одиночные."""
+    """Таблица навигации по областям: сначала крупные, потом одиночные.
+
+    Колонка «о чём» берётся из словаря AREAS: имя области само по себе не
+    объясняет, что в ней лежит, а по одному названию правило не ищут.
+    """
     buckets: dict[str, list[str]] = {}
     for num, names in areas.items():
         for a in names:
             buckets.setdefault(a, []).append(num)
-    name_of = (lambda a: a) if lang == "ru" else (lambda a: AREAS[a])
-    order = sorted(buckets, key=lambda a: (-len(buckets[a]), name_of(a)))
-    lines = []
-    for a in order:
+
+    if lang == "ru":
+        name_of, about_of = (lambda a: a), (lambda a: AREAS[a]["about_ru"])
+        head = "| Область | О чём это | Правил | Правила |"
+    else:
+        name_of, about_of = (lambda a: AREAS[a]["en"]), (lambda a: AREAS[a]["about_en"])
+        head = "| Area | What it covers | Count | Rules |"
+
+    rows = [head, "|---|---|---:|---|"]
+    for a in sorted(buckets, key=lambda a: (-len(buckets[a]), name_of(a))):
         nums = sorted(buckets[a])
-        links = ", ".join(f"[{n}]({lang}/{FILES[n][lang].name})" for n in nums)
-        lines.append(f"- **{name_of(a)}** ({len(nums)}) — {links}")
-    return "\n".join(lines)
+        links = " · ".join(f"[{n}]({lang}/{FILES[n][lang].name})" for n in nums)
+        rows.append(f"| **{name_of(a)}** | {about_of(a)} | {len(nums)} | {links} |")
+    return "\n".join(rows)
 
 
 def render(found: dict[str, dict[str, Path]], gaps: list[int],
@@ -200,7 +463,7 @@ def render(found: dict[str, dict[str, Path]], gaps: list[int],
         l_ru = f"[ru](ru/{ru.name})" if ru else "—"
         l_en = f"[en](en/{en.name})" if en else "—"
         names = areas.get(num, [])
-        both = f"{', '.join(names)} · {', '.join(AREAS[a] for a in names)}" if names else ""
+        both = f"{', '.join(names)} · {', '.join(AREAS[a]['en'] for a in names)}" if names else ""
         rows.append(f"| {num} | {t_ru} | {t_en} | {l_ru} {l_en} | {both} |")
 
     gap_note = ""
@@ -301,6 +564,7 @@ def main() -> int:
     found, problems = collect()
     problems += check_pairs(found)
     problems += check_links(found)
+    problems += check_vocabulary()
     FILES.update(found)
     areas, area_problems = check_areas(found)
     problems += area_problems
