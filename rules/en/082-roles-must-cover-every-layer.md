@@ -57,6 +57,7 @@ questions do not.
 | Domain developer | is this correct by the rules of the language or platform itself | a narrow layer: language, idioms, standard |
 | Client side | what happens on the user's side | interface code, markup, styles |
 | Platform engineer | does this reproduce in somebody else's environment | pipeline, environments, build |
+| Data engineer | where does the data come from, what is lost on the way, and is the recomputation reproducible | ingestion pipelines, storage schemas and migrations, quality at the input |
 | Release and supply chain | what exactly ships to the user and what it is built from | release, versions, dependencies |
 | AI in the product | what verifies the generated output and what goes into the model | model integration, prompts, grounding, consent |
 | Model training | on what data, and has the quality drifted | dataset, quality measurement, drift |
@@ -80,11 +81,15 @@ questions do not.
 
 | Direction | Question | Owns |
 |---|---|---|
+| Systems analyst | what the system is obliged to do, and how that is written down before the code | requirements, scenarios, contracts between systems, acceptance criteria |
 | Product analyst | what does the data say about usage | metrics, reports |
+| Data analyst | what the domain's own data shows, as opposed to a guess about it | slices, recurring reports, data marts |
+| Modelling and forecasting | what here is predictable at all, and with what error | features, model, validation, an honest error metric |
 | Product owner | what we do now and what we do not | plan, priorities, refusals |
 | Direction | where is this going in a year | roadmap, major forks |
 | External practice | what has appeared outside and is it applicable here | review, justification for adopting |
 | Methodology | does the product teach the right thing | didactics, feedback to the user |
+| Domain expert | is this correct by the rules of the activity the product serves | domain rules, terminology, scenario acceptance |
 | Economics of the work | what does this cost and in what units | spending, quotas, pace |
 | Researcher | what is the quantity, if nobody measured it | a measurement with method, number and limits |
 | Scholarly work | is this reproducible and what do we cite | dataset, protocol, publication, citation |
@@ -188,6 +193,44 @@ direction is marked "no such layer yet". Once there is an academic output, its
 questions arrive too: is the run reproducible from the description, what
 validates the method, what do we cite and how are we cited, and what about
 research ethics if people take part.
+
+**Data breaks into four questions, and they get confused constantly.** The data
+engineer answers "where did this come from and what was lost on the way" — their
+subject is the pipeline and the schema, not the conclusions. The data analyst
+answers "what is visible in this data" and looks at the product's domain, whereas
+the product analyst looks at the use of the product: for a learning platform
+those are different things — grades against clicks. Modelling answers "what here
+is predictable at all, and with what error", while model training starts later
+and owns an already chosen model: the dataset, the quality measurement, the
+drift. The objections are their own and addressed: data engineer to analyst —
+"that slice is computed over a table half the events never reach"; modelling to
+the product owner — "on this feature the error is larger than the effect, there
+is nothing here to decide on".
+
+**The systems analyst separates from the architect by subject, not by seniority.**
+The architect answers "what boundary we hold and what we pay for it" — that is
+the systems architect, and it needs no separate row. The systems analyst answers
+"what the system is obliged to do": requirements, scenarios, contracts between
+systems, acceptance criteria — what gets written down **before** the code and
+what acceptance later runs against. Its objection to the developer: "this is
+built, but there is nothing to accept it against — no criterion was written
+down"; to the product owner: "these are two different scenarios, not one".
+
+**The domain expert is not the domain developer.** The latter is responsible for
+the rules of the language and the platform, the former for the rules of the
+activity the product serves: an accountant for a bookkeeping system, a lawyer for
+a contract one, an economist for a financial model, a teacher for a learning
+platform. It separates from methodology the same way: the methodologist asks "does
+the product teach in the right manner", the domain expert asks "is this correct
+on the merits". The gap here is not theoretical: a product without its own domain
+expert learns about wrong behaviour from its users, and usually in public.
+
+**The web designer is a profile, not a direction.** The questions "is this clear
+to the eye" and "what happens on the user's side" are already covered by design
+and the client side, and beyond their mock-ups, tokens and states the web
+designer has no artefacts of their own. Created as a separate role, they will
+repeat one of the two on the very first walk — precisely the case where coverage
+exists and the role does not need to.
 
 A special case is directions people are tempted to split along the wrong axis.
 Splitting the explaining roles by **audience and quality criterion** works:
