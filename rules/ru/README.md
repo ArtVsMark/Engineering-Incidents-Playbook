@@ -121,6 +121,8 @@
 | [115](115-config-has-one-anchor-and-a-bounded-search.md) | У настроек один якорь и ограниченная зона поиска | конфигурация |
 | [116](116-the-collector-script-is-a-source-of-loss.md) | Сборщик результатов — тоже источник потерь | параллельная работа |
 | [117](117-numeric-limits-belong-in-the-task-spec.md) | У задания исполнителя есть числовые границы | параллельная работа |
+| [118](118-keep-the-source-next-to-the-derived.md) | Исходник хранится рядом с производным | данные |
+| [119](119-tool-artefacts-stay-outside-the-input-mask.md) | Свои артефакты держат вне маски входа | код, данные |
 
 ## Как добавить своё
 
