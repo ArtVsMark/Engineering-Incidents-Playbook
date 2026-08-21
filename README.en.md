@@ -41,6 +41,17 @@ Trace           the issue or PR where the failure is visible
 **The trace is mandatory.** Without a link to evidence, a record turns into
 "someone said this was better" within a month.
 
+## How it grows
+
+**A rule born in any project gets recorded here** — not selectively, not after
+the fact. The project keeps the working wording and a link; the incident, the
+reasoning and the limits of applicability live here. A rule without its own
+history cannot be defended a month later, and it never travels to the next
+project.
+
+The record is written **the same day**. Material spoils fast: rules a month old
+had to be reconstructed from documents, because nobody remembered them any more.
+
 ## Language
 
 Records are in Russian; the front page is bilingual. Translation of individual
