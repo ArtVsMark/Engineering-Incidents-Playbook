@@ -21,7 +21,7 @@ broke, recognise your own situation, take the rule together with its reason.
 **Starting a new project** — walk through [`START.md`](START.md): what to set up
 on day one and what can wait. Boilerplate lives in [`templates/`](templates/).
 
-**Looking for a specific fix** — see [`rules/`](rules/), one file per rule.
+**Looking for a specific fix** — see [`rules/en/`](rules/en/README.md), one file per rule.
 
 **Do not copy the catalogue wholesale.** Every rule has an "Applicability"
 section stating plainly **where it does not work**. Half of what is here is
@@ -54,8 +54,10 @@ had to be reconstructed from documents, because nobody remembered them any more.
 
 ## Language
 
-Records are in Russian; the front page is bilingual. Translation of individual
-rules is in progress — open an issue if you need a specific one.
+The catalogue is kept in two languages: [`rules/en/`](rules/en/README.md) and
+[`rules/ru/`](rules/ru/README.md). The file names match, so cross-references
+between rules resolve identically in both trees, and any divergence shows up as a
+difference in the file listings.
 
 ## License
 
