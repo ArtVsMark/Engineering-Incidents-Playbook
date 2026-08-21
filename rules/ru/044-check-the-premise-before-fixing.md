@@ -56,5 +56,5 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — ADR-0010 § Контекст («премиса фактически
-неверна»). Смежное: [026](026-rejected-finding-needs-a-reason.md),
+неверна»). Смежное: [026](026-rejected-findings-must-be-recorded.md),
 [037](037-finding-status-depends-on-window.md).
