@@ -96,6 +96,10 @@
 | [090](090-shared-helpers-move-up-not-sideways.md) | Общий хелпер поднимают вверх, а не втягивают вбок | архитектура |
 | [091](091-work-sources-are-ordered-first-non-empty-wins.md) | Источники работы упорядочены: первый непустой и есть план | процесс |
 | [092](092-findings-and-ordering-live-in-different-documents.md) | Находки и порядок разбора — разные документы | аудит, документация |
+| [093](093-seam-early-generalisation-late.md) | Шов вводят рано, обобщение — по третьему случаю | архитектура |
+| [094](094-a-compatibility-shim-makes-migration-permanent.md) | Переходная заглушка делает миграцию вечной | архитектура, миграции |
+| [095](095-the-default-is-chosen-for-the-user.md) | Умолчание выбирается в пользу пользователя, а не продукта | приватность, продукт |
+| [096](096-storage-follows-lifecycle-not-convenience.md) | Хранилище выбирается по жизненному циклу данных | архитектура, данные |
 
 ## Как добавить своё
 
