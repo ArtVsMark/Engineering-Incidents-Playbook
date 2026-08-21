@@ -24,6 +24,20 @@ The same technique is applied to the command set: exactly what is implemented is
 enumerated, with a note saying "do not append here". The list is a contract, not
 a convenient constant.
 
+**A second case, of a different kind: the names in the list belong to somebody
+else.** An agent project's rulebook denied a third-party MCP server's tools by
+name — twenty-nine `deny` entries, so that the expensive transport (GraphQL,
+~300 units out of 5000 an hour) would be unavailable to the session.
+
+The vendor consolidated the tools and **renamed them**: `get_issue`,
+`list_issues`, `search_issues` and `get_issue_comments` became a single
+`issue_read`; `list_workflow_runs` and `get_workflow_run` became `actions_list`
+and `actions_get`. Not one of the twenty-nine denied names still exists.
+
+The ban stopped working entirely — and **said nothing about it**. An entry that
+matches no tool is indistinguishable from one that fired: silence either way. It
+surfaced weeks later, through a manual reconciliation.
+
 ## Why
 
 Allowlists and denylists err in **opposite directions**, and that settles
@@ -39,6 +53,15 @@ Third, organisational: an allowlist **makes addition a decision**. To accept a
 new format you must add a line — and at that moment somebody wonders whether it
 is safe. In a denylist, the new thing passes on its own, with no decision at all.
 
+Fourth, and in the second incident this is the whole of it: **whose names are in
+the list**. The gap there did not come from incompleteness — the subject of the
+ban was still present and its properties had not changed. What changed was the
+**name**, and the name is owned by somebody other than the author of the list. An
+allowlist would have failed loudly in the same situation: a tool under a new name
+would not be found in `allow` and would be refused on the first attempt. Hence
+the general sign: a list built on somebody else's identifiers goes stale on
+**their** release schedule, not yours, and stays silent until it does.
+
 ## In practice
 
 - next to each exclusion from the list, **the reason for the exclusion**, not a
@@ -48,6 +71,10 @@ is safe. In a denylist, the new thing passes on its own, with no decision at all
   it;
 - a rejection says **what exactly** was not accepted, or a legitimate user will
   not know what to do;
+- a list that refers to **external identifiers** must verify that they exist: an
+  orphan entry is a failed check, not silence
+  ([075](075-a-guard-that-finds-nothing-must-fail.md)). Otherwise the protection
+  lasts until the vendor's next release;
 - where an allowlist is impossible (free-form input), protection comes not from
   filtering but from handling: escaping, isolation, restricted permissions.
 
@@ -58,9 +85,12 @@ is safe. In a denylist, the new thing passes on its own, with no decision at all
 **Does not work** where the set of acceptable values is open by design —
 filtering user text through a list is meaningless.
 
-**Sign of trouble:** the list grows after every incident.
+**Sign of trouble:** the list grows after every incident. For a list built on
+somebody else's names — not one entry has ever fired, and nobody finds that odd.
 
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/statement_adapter.py`
-(`_IMAGE_TYPES`), `web/commands.py`.
+(`_IMAGE_TYPES`), `web/commands.py`. The second incident —
+ArtVsMark/Stepik-Python-Grader#1346, predecessor #1280. See also:
+[075](075-a-guard-that-finds-nothing-must-fail.md).
