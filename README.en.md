@@ -21,7 +21,7 @@ broke, recognise your own situation, take the rule together with its reason.
 **Starting a new project** — walk through [`START.md`](START.md): what to set up
 on day one and what can wait. Boilerplate lives in [`templates/`](templates/).
 
-**Looking for a specific fix** — see [`rules/en/`](rules/en/README.md), one file per rule.
+**Looking for a specific fix** — see [`rules/`](rules/README.md), one file per rule.
 
 **Do not copy the catalogue wholesale.** Every rule has an "Applicability"
 section stating plainly **where it does not work**. Half of what is here is
@@ -54,10 +54,14 @@ had to be reconstructed from documents, because nobody remembered them any more.
 
 ## Language
 
-The catalogue is kept in two languages: [`rules/en/`](rules/en/README.md) and
-[`rules/ru/`](rules/ru/README.md). The file names match, so cross-references
-between rules resolve identically in both trees, and any divergence shows up as a
-difference in the file listings.
+The catalogue is kept in two languages, `rules/en/` and `rules/ru/`, with
+**identical file names** — so cross-references between rules resolve the same way
+in both trees.
+
+The index [`rules/README.md`](rules/README.md) is **shared between the two
+languages** and generated from the files themselves. A rule added in only one
+language fails the build: that is the mechanism keeping the trees from diverging.
+Two separate indexes would not do this — each looks complete on its own.
 
 ## License
 
