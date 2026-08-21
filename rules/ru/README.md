@@ -60,6 +60,9 @@
 | [054](054-collect-and-analyse-are-separate-passes.md) | Сбор и разбор — разные проходы | прогоны, процесс |
 | [055](055-your-own-expectations-are-a-hypothesis.md) | Собственный эталон — тоже гипотеза | тесты, аудит |
 | [056](056-a-signal-states-what-it-does-not-mean.md) | У сигнала пишут и то, чего он не означает | контракты, документация |
+| [057](057-unmechanizable-rules-are-named-explicitly.md) | Правило, которое нельзя проверить машиной, называется явно | процесс |
+| [058](058-when-the-quota-is-out-stop.md) | Исчерпав квоту — остановиться, а не повторять | квоты |
+| [059](059-map-the-detour-before-the-resource-runs-out.md) | У каждого исчерпаемого ресурса есть карта обхода | квоты, планирование |
 
 ## Как добавить своё
 
