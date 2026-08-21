@@ -484,6 +484,14 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
     появилось тогда, когда появился его файл (правило 049).
     """
     try:
+        shallow = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "--is-shallow-repository"],
+            capture_output=True, text=True, check=True,
+        ).stdout.strip()
+        if shallow == "true":
+            return {}, [("клон мелкий: истории нет, а дата появления взялась бы от "
+                        "единственного коммита — правдоподобная и неверная. "
+                        "Нужен полный клон (fetch-depth: 0)")]
         out = subprocess.run(
             ["git", "-C", str(ROOT), "log", "--diff-filter=A", "--name-only",
              "--format=%aI", "--", "rules/ru/[0-9][0-9][0-9]-*.md"],
