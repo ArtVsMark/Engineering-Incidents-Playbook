@@ -81,7 +81,7 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader#1171, #924, #1345; правило
+ArtVsMark/Stepik-Python-Grader#1171, #924, #1344; правило
 [103](103-a-side-effect-guard-blames-the-wrong-suspect.md) — 14 ложных
 обвинений. Смежное: [009](009-count-unique-not-total.md) — считать уникальные
 имена, [052](052-only-the-head-of-the-queue-moves.md) — проверка на актуальном
