@@ -103,6 +103,9 @@
 | [097](097-a-checker-has-two-error-types.md) | У проверяющего инструмента две ошибки, и каждая держится своим тестом | тесты, качество |
 | [098](098-the-unit-of-splitting-follows-usage.md) | Единица дробления определяется употреблением | данные, документация |
 | [099](099-classification-conflicts-resolve-by-consequence.md) | Конфликт классификации разрешается по последствию | таксономия |
+| [105](105-an-outside-audit-needs-outside-eyes.md) | Внешний аудит делает тот, кто не писал этот код | аудит |
+| [106](106-publicity-multiplies-both-sides.md) | Огласка умножает и хорошее, и плохое | продукт, релиз |
+| [107](107-it-works-for-the-author-means-tested-on-the-authors-sample.md) | «У автора работает» означает «проверено на выборке автора» | заимствование |
 | [103](103-a-side-effect-guard-blames-the-wrong-suspect.md) | Сторож побочных эффектов обвиняет не виновника | тесты, гейты |
 | [104](104-event-driven-automation-needs-a-manual-button.md) | У событийной автоматики должна быть ручная кнопка | CI, автоматика |
 | [100](100-two-deadlines-start-and-work.md) | Дедлайнов два: на запуск и на работу | надёжность |
