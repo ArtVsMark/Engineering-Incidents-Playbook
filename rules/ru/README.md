@@ -118,6 +118,7 @@
 | [112](112-whatever-the-tool-created-it-must-be-able-to-delete.md) | Что инструмент создал — он обязан уметь удалить | приватность, продукт |
 | [113](113-a-contract-states-how-it-may-change.md) | Контракт описывает правила собственной эволюции | контракты |
 | [114](114-migrate-from-the-current-version-not-from-zero.md) | Миграция идёт от текущей версии, а не от нуля | данные, миграции |
+| [115](115-config-has-one-anchor-and-a-bounded-search.md) | У настроек один якорь и ограниченная зона поиска | конфигурация |
 
 ## Как добавить своё
 
