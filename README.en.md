@@ -1,11 +1,15 @@
 # engineering-incidents
 
-**Rules that grew out of failures.** Each one comes with its history: what
-broke, how it surfaced, what it cost.
+**A catalogue of rules for Claude Code and GitHub, where every rule grew out of
+a real failure.** Agent sessions and the project rulebook (`CLAUDE.md`), the
+GitHub delivery pipeline, parallel executors, audits. Every record comes with its
+history: what broke, how it surfaced, what it cost.
 
-> 🇷🇺 [Русская версия](README.md) · Field notes from running Claude Code agent
-> sessions and a GitHub delivery pipeline. Unofficial, not affiliated with
-> Anthropic.
+> 🇷🇺 [Русская версия](README.md) · Unofficial, not affiliated with Anthropic.
+
+**Start here:** [ten rules to start with](TOP-10.md) ·
+[day-one order](START.md) ·
+[the whole catalogue, by area](rules/README.md)
 
 ## Why
 
@@ -21,7 +25,11 @@ broke, recognise your own situation, take the rule together with its reason.
 **Starting a new project** — walk through [`START.md`](START.md): what to set up
 on day one and what can wait. Boilerplate lives in [`templates/`](templates/).
 
-**Looking for a specific fix** — see [`rules/`](rules/README.md), one file per rule.
+**Looking for a specific fix** — see [`rules/`](rules/README.md), one file per
+rule, entered by number or [by area](rules/README.md#by-area).
+
+**Not sure where to start reading** — [`TOP-10.md`](TOP-10.md): ten rules that
+travel beyond the stack they came from.
 
 **Do not copy the catalogue wholesale.** Every rule has an "Applicability"
 section stating plainly **where it does not work**. Half of what is here is

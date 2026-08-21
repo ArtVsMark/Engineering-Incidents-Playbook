@@ -1,12 +1,11 @@
 # Десять правил, с которых начать · Ten rules to start with
 
-Каталог [на 125 записей](rules/README.md) читать подряд незачем. Здесь десять,
+Читать [весь каталог](rules/README.md) подряд незачем. Здесь десять,
 которые переносятся дальше своего стека: они про механику проверок, состояние и
 доверие к находкам, а не про GitHub и агентские окна. Порядок — не по номеру, а
 по тому, в каком порядке они начинают окупаться.
 
-The [125-record catalogue](rules/README.md) is not meant to be read front to
-back. These ten travel beyond the stack they came from: they are about the
+The [catalogue](rules/README.md) is not meant to be read front to back. These ten travel beyond the stack they came from: they are about the
 mechanics of checks, about state, and about trusting your own findings — not
 about GitHub and agent sessions. Ordered by when each starts paying off, not by
 number.
@@ -83,9 +82,9 @@ number.
 ---
 
 Дальше: [`START.md`](START.md) — порядок первого дня · [`rules/`](rules/README.md) —
-все 125 записей и вход по областям · [`templates/`](templates/README.md) —
+все записи и вход по областям · [`templates/`](templates/README.md) —
 исполняемые заготовки.
 
 Next: [`START.md`](START.md) for day-one order · [`rules/`](rules/README.md) for
-all 125 records and the by-area entry point · [`templates/`](templates/README.md)
+every record and the by-area entry point · [`templates/`](templates/README.md)
 for executable boilerplate.
