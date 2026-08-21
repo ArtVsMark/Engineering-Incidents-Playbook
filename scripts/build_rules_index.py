@@ -38,6 +38,12 @@ ROOT = Path(__file__).resolve().parent.parent
 RULES = ROOT / "rules"
 LANGS = ("ru", "en")
 OUT = RULES / "README.md"
+#: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
+#: у них разная. Файлы производные и руками не правятся, как и указатель.
+BADGES = {
+    "ru": (ROOT / ".github" / "badges" / "rules-ru.json", "правил в каталоге"),
+    "en": (ROOT / ".github" / "badges" / "rules-en.json", "rules in the catalogue"),
+}
 
 #: Пути правил, заполняется в main() — из него строятся ссылки навигации.
 FILES: dict[str, dict[str, Path]] = {}
@@ -451,6 +457,32 @@ def by_area(areas: dict[str, list[str]], lang: str) -> str:
     return "\n".join(rows)
 
 
+def area_stats(areas: dict[str, list[str]]) -> tuple[int, int]:
+    """Сколько всего областей и сколько из них держат единственное правило.
+
+    Второе число — не дефект, а наблюдение: одиночная область это либо пустая
+    полка, которая заполнится, либо тег к чужому правилу. Различить можно
+    только по движению, поэтому число печатается каждой сборкой (правило 005).
+    """
+    buckets: dict[str, int] = {}
+    for names in areas.values():
+        for a in names:
+            buckets[a] = buckets.get(a, 0) + 1
+    return len(buckets), sum(1 for n in buckets.values() if n == 1)
+
+
+def render_badge(label: str, count: int) -> str:
+    """Значок shields.io в формате endpoint. Число — из этой же сборки."""
+    return (
+        "{\n"
+        '  "schemaVersion": 1,\n'
+        f'  "label": "{label}",\n'
+        f'  "message": "{count}",\n'
+        '  "color": "blue"\n'
+        "}\n"
+    )
+
+
 def render(found: dict[str, dict[str, Path]], gaps: list[int],
            areas: dict[str, list[str]]) -> str:
     rows = []
@@ -579,19 +611,27 @@ def main() -> int:
         return 1
 
     text = render(found, gaps, areas)
+    total_areas, singles = area_stats(areas)
+    badges = {p: render_badge(label, len(found)) for p, label in BADGES.values()}
+
     if args.check:
-        current = OUT.read_text(encoding="utf-8") if OUT.exists() else ""
-        if current != text:
-            print("указатель устарел — пересоберите: python scripts/build_rules_index.py",
-                  file=sys.stderr)
+        stale = [OUT] if (OUT.read_text(encoding="utf-8") if OUT.exists() else "") != text else []
+        stale += [p for p, want in badges.items()
+                  if (p.read_text(encoding="utf-8") if p.exists() else "") != want]
+        if stale:
+            print("устарело — пересоберите (python scripts/build_rules_index.py): "
+                  + ", ".join(str(p.relative_to(ROOT)) for p in stale), file=sys.stderr)
             return 1
         print(f"указатель актуален: {len(found)} правил на {len(LANGS)} языках,"
-              f" областей {len({a for v in areas.values() for a in v})}")
+              f" областей {total_areas} (с одним правилом {singles})")
         return 0
 
     OUT.write_text(text, encoding="utf-8")
+    for path, want in badges.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(want, encoding="utf-8")
     print(f"собрано: {len(found)} правил, языков {len(LANGS)},"
-          f" областей {len({a for v in areas.values() for a in v})},"
+          f" областей {total_areas} (с одним правилом {singles}),"
           f" пропуски в нумерации: {gaps or 'нет'}")
     return 0
 
