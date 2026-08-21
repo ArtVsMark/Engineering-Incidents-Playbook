@@ -89,6 +89,9 @@
 | [083](083-generated-output-is-checked-by-properties.md) | Сгенерированное проверяют свойствами и выборкой, а не эталоном | ИИ, качество |
 | [084](084-best-effort-channels-never-block-the-main-path.md) | Необязательный канал не задерживает и не роняет основную работу | архитектура |
 | [085](085-content-from-the-subject-is-untrusted-input-to-the-prompt.md) | Текст от проверяемого — недоверенный вход в промпт | ИИ, безопасность |
+| [086](086-the-finder-does-not-grade-the-finding.md) | Тяжесть находки ставит не тот, кто её нашёл | аудит |
+| [087](087-a-second-pass-needs-a-novelty-rule.md) | Повторный проход получает правило новизны | аудит |
+| [088](088-the-critic-checks-the-method-not-the-subject.md) | Критик проверяет метод фазы, а не предмет работы | аудит, процесс |
 
 ## Как добавить своё
 
