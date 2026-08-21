@@ -101,4 +101,6 @@
 [080](080-every-new-rule-goes-into-the-catalogue.md),
 [049](049-derive-state-from-live-artifacts.md),
 [005](005-hand-written-numbers-rot.md),
-[125](125-a-generated-file-is-not-a-store.md).
+[125](125-a-generated-file-is-not-a-store.md),
+[129](129-a-catalogue-needs-a-consumption-contract.md) — продолжение этого
+правила на потребление: «нет следа» больше не значит «не действует».
