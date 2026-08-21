@@ -104,4 +104,6 @@ This catalogue; ArtVsMark/Stepik-Python-Grader#1342. Related:
 [080](080-every-new-rule-goes-into-the-catalogue.md),
 [049](049-derive-state-from-live-artifacts.md),
 [005](005-hand-written-numbers-rot.md),
-[125](125-a-generated-file-is-not-a-store.md).
+[125](125-a-generated-file-is-not-a-store.md),
+[129](129-a-catalogue-needs-a-consumption-contract.md) — this rule continued
+into consumption: "no trail" no longer means "not in force".
