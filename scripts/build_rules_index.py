@@ -18,7 +18,9 @@
     всей классификации (правило 125);
   • область не значится в словаре AREAS: опечатка иначе заводит новую область;
   • области ru и en не соответствуют друг другу через словарь;
-  • у области в словаре нет описания: пустая ячейка снова прошла бы за данные.
+  • у области в словаре нет описания: пустая ячейка снова прошла бы за данные;
+  • у правила нет раздела «След» или его ссылки не разбираются;
+  • следы русского и английского деревьев расходятся.
 
 Пропуск в нумерации — не ошибка: номера не переиспользуются даже после
 удаления (правило 120). Он печатается как факт.
@@ -30,7 +32,9 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -40,6 +44,12 @@ LANGS = ("ru", "en")
 OUT = RULES / "README.md"
 #: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
 #: у них разная. Файлы производные и руками не правятся, как и указатель.
+#: Машиночитаемый экспорт каталога: его тянет проект-потребитель обычным HTTP,
+#: без GitHub API и без клона. Формат и правила его эволюции — export/README.md.
+EXPORT = ROOT / "export" / "rules.json"
+EXPORT_SCHEMA = "1.0"
+CATALOGUE_URL = "https://github.com/ArtVsMark/claude-code-playbook"
+
 BADGES = {
     "ru": (ROOT / ".github" / "badges" / "rules-ru.json", "правил в каталоге"),
     "en": (ROOT / ".github" / "badges" / "rules-en.json", "rules in the catalogue"),
@@ -51,6 +61,15 @@ FILES: dict[str, dict[str, Path]] = {}
 RULE_RE = re.compile(r"^(\d{3})-[a-z0-9-]+\.md$")
 LINK_RE = re.compile(r"\]\((\d{3}-[^)#]+\.md)\)")
 #: Область живёт в самом правиле, строкой под заголовком.
+#: След — обязательный раздел записи. Из него достаётся структура
+#: {репозиторий, задача}: строка раздела потребителю бесполезна (правило 129).
+TRACE_HEAD = {"ru": "## След", "en": "## Trace"}
+TRAIL_RE = re.compile(
+    r"([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)#(\d+)"   # владелец/репозиторий#номер
+    r"|([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)"          # репозиторий без номера — контекст
+    r"|#(\d+)"                                     # голый номер — к последнему контексту
+)
+
 AREA_RE = {
     "ru": re.compile(r"^\*\*Область\.\*\*\s*(.+?)\s*$", re.M),
     "en": re.compile(r"^\*\*Area\.\*\*\s*(.+?)\s*$", re.M),
@@ -457,6 +476,123 @@ def by_area(areas: dict[str, list[str]], lang: str) -> str:
     return "\n".join(rows)
 
 
+def added_dates() -> tuple[dict[str, str], list[str]]:
+    """Дата появления правила — из истории, а не из поля в файле.
+
+    Поле пришлось бы заполнять руками, а руками вписанная дата устаревает и
+    врёт так же, как число (правило 005). История — живой артефакт: правило
+    появилось тогда, когда появился его файл (правило 049).
+    """
+    try:
+        out = subprocess.run(
+            ["git", "-C", str(ROOT), "log", "--diff-filter=A", "--name-only",
+             "--format=%aI", "--", "rules/ru/[0-9][0-9][0-9]-*.md"],
+            capture_output=True, text=True, check=True,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError) as e:
+        return {}, [f"история недоступна, дату появления взять неоткуда: {e}"]
+
+    dates: dict[str, str] = {}
+    stamp = ""
+    for line in out.split("\n"):
+        line = line.strip()
+        if not line:
+            continue
+        if line[0].isdigit() and "T" in line:
+            stamp = line[:10]
+        elif line.startswith("rules/ru/"):
+            dates.setdefault(Path(line).name[:3], stamp)
+    return dates, []
+
+
+def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]],
+                  dates: dict[str, str], trails: dict[str, list]) -> str:
+    rules = []
+    for num in sorted(found):
+        ru, en = found[num]["ru"], found[num]["en"]
+        names = areas.get(num, [])
+        rules.append({
+            "id": num,
+            "slug": ru.stem[4:],
+            "title": {"ru": title_of(ru), "en": title_of(en)},
+            "areas": {"ru": names, "en": [AREAS[a]["en"] for a in names]},
+            "added": dates[num],
+            "files": {"ru": f"rules/ru/{ru.name}", "en": f"rules/en/{en.name}"},
+            "trails": trails.get(num, []),
+        })
+    doc = {
+        "schema": EXPORT_SCHEMA,
+        "catalogue": CATALOGUE_URL,
+        "count": len(rules),
+        "rules": rules,
+    }
+    return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
+
+
+def trails_of(path: Path, lang: str) -> tuple[list[dict[str, str]], str | None]:
+    """Ссылки на задачи из раздела «След», по порядку и без повторов.
+
+    Голый номер наследует последний упомянутый рядом репозиторий — так он и
+    читается человеком. Номер, которому не предшествует ни один репозиторий,
+    разобрать нельзя: это не пустой след, а неразбираемый, и он назван ошибкой,
+    а не пропущен молча (правила 075, 128).
+    """
+    text = path.read_text(encoding="utf-8")
+    head = TRACE_HEAD[lang]
+    if head not in text:
+        return [], f"нет раздела «{head}» — это обязательный раздел записи"
+
+    out: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    current: str | None = None
+    for m in TRAIL_RE.finditer(text[text.index(head) + len(head):]):
+        full, num, repo_only, bare = m.groups()
+        if full:
+            current = full
+            key = (full, num)
+        elif repo_only:
+            current = repo_only
+            continue
+        else:
+            if current is None:
+                return [], f"ссылка #{bare} без репозитория рядом — непонятно, чья задача"
+            key = (current, bare)
+        if key not in seen:
+            seen.add(key)
+            out.append({"repo": key[0], "issue": key[1]})
+    return out, None
+
+
+def check_trails(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list], list[str]]:
+    """Следы читаются из русского дерева и сверяются с английским.
+
+    Расхождение — не мелочь оформления: потребитель получает один список задач
+    на правило, и если деревья спорят, непонятно, какое из них право.
+    """
+    problems: list[str] = []
+    result: dict[str, list] = {}
+    for num in sorted(found):
+        slot = found[num]
+        if not all(l in slot for l in LANGS):
+            continue
+        ru, err_ru = trails_of(slot["ru"], "ru")
+        en, err_en = trails_of(slot["en"], "en")
+        for lang, err in (("ru", err_ru), ("en", err_en)):
+            if err:
+                problems.append(f"{num}: {lang}/{slot[lang].name}: {err}")
+        if err_ru or err_en:
+            continue
+        if {(d["repo"], d["issue"]) for d in ru} != {(d["repo"], d["issue"]) for d in en}:
+            problems.append(
+                f"{num}: следы деревьев расходятся — "
+                f"ru {[d['repo'] + '#' + d['issue'] for d in ru]}, "
+                f"en {[d['repo'] + '#' + d['issue'] for d in en]}"
+            )
+            continue
+        result[num] = ru
+    return result, problems
+
+
 def area_stats(areas: dict[str, list[str]]) -> tuple[int, int]:
     """Сколько всего областей и сколько из них держат единственное правило.
 
@@ -597,6 +733,10 @@ def main() -> int:
     problems += check_pairs(found)
     problems += check_links(found)
     problems += check_vocabulary()
+    dates, date_problems = added_dates()
+    problems += date_problems
+    trails, trail_problems = check_trails(found)
+    problems += trail_problems
     FILES.update(found)
     areas, area_problems = check_areas(found)
     problems += area_problems
@@ -610,7 +750,17 @@ def main() -> int:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
+    # Дата без источника — пустое поле, а пустота проходит за данные (125, 128).
+    problems = [f"{n}: нет даты появления в истории — нужен полный клон"
+                for n in sorted(found) if n not in dates] if dates else []
+    if problems:
+        print("экспорт не собран:", file=sys.stderr)
+        for p in problems:
+            print(f"  • {p}", file=sys.stderr)
+        return 1
+
     text = render(found, gaps, areas)
+    export = render_export(found, areas, dates, trails)
     total_areas, singles = area_stats(areas)
     badges = {p: render_badge(label, len(found)) for p, label in BADGES.values()}
 
@@ -618,6 +768,8 @@ def main() -> int:
         stale = [OUT] if (OUT.read_text(encoding="utf-8") if OUT.exists() else "") != text else []
         stale += [p for p, want in badges.items()
                   if (p.read_text(encoding="utf-8") if p.exists() else "") != want]
+        if (EXPORT.read_text(encoding="utf-8") if EXPORT.exists() else "") != export:
+            stale.append(EXPORT)
         if stale:
             print("устарело — пересоберите (python scripts/build_rules_index.py): "
                   + ", ".join(str(p.relative_to(ROOT)) for p in stale), file=sys.stderr)
@@ -630,6 +782,8 @@ def main() -> int:
     for path, want in badges.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(want, encoding="utf-8")
+    EXPORT.parent.mkdir(parents=True, exist_ok=True)
+    EXPORT.write_text(export, encoding="utf-8")
     print(f"собрано: {len(found)} правил, языков {len(LANGS)},"
           f" областей {total_areas} (с одним правилом {singles}),"
           f" пропуски в нумерации: {gaps or 'нет'}")
