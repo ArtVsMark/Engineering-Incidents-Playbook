@@ -10,7 +10,7 @@
     "002": {
       "status": "active",
       "mechanism": "gate",
-      "where": ".github/workflows/ci.yml — четыре гейта на каждый PR"
+      "where": ".github/workflows/ci.yml — гейты на каждый PR"
     },
     "003": {
       "status": "unreviewed"
@@ -146,8 +146,8 @@
     },
     "039": {
       "status": "active",
-      "mechanism": "none",
-      "where": "три исхода есть у check_attribution и collect_changelog, у build_rules_index и check_links два"
+      "mechanism": "gate",
+      "where": "все скрипты проверок различают исходы кодом возврата"
     },
     "040": {
       "status": "unreviewed"
@@ -303,8 +303,8 @@
     },
     "082": {
       "status": "active",
-      "mechanism": "none",
-      "where": "карта направлений каталога не записана, два направления из девяти покрыты"
+      "mechanism": "process-step",
+      "where": "CLAUDE.md — карта направлений; непокрытые названы поимённо"
     },
     "083": {
       "status": "not-applicable",
@@ -451,7 +451,7 @@
     "123": {
       "status": "active",
       "mechanism": "gate",
-      "where": "scripts/check_attribution.py + шаг в ci.yml на pull_request"
+      "where": ".github/workflows/ci.yml — шаг на pull_request; проверяются коммиты ветки, до первопредков атрибуция пока не доходит"
     },
     "124": {
       "status": "unreviewed"
