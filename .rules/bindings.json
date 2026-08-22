@@ -1,0 +1,486 @@
+{
+  "schema": "1.0",
+  "project": "ArtVsMark/claude-code-playbook",
+  "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
+  "rules": {
+    "001": {
+      "status": "not-applicable",
+      "why": "каталог не ходит во внешний API из кода"
+    },
+    "002": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": ".github/workflows/ci.yml — четыре гейта на каждый PR"
+    },
+    "003": {
+      "status": "unreviewed"
+    },
+    "004": {
+      "status": "unreviewed"
+    },
+    "005": {
+      "status": "active",
+      "mechanism": "none",
+      "where": "числа держатся договорённостью «только в таблицах», гейта нет"
+    },
+    "006": {
+      "status": "unreviewed"
+    },
+    "007": {
+      "status": "unreviewed"
+    },
+    "008": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "витрины и записи пишутся без сворачиваемых блоков"
+    },
+    "009": {
+      "status": "unreviewed"
+    },
+    "010": {
+      "status": "unreviewed"
+    },
+    "011": {
+      "status": "unreviewed"
+    },
+    "012": {
+      "status": "unreviewed"
+    },
+    "013": {
+      "status": "unreviewed"
+    },
+    "014": {
+      "status": "unreviewed"
+    },
+    "015": {
+      "status": "unreviewed"
+    },
+    "016": {
+      "status": "unreviewed"
+    },
+    "017": {
+      "status": "unreviewed"
+    },
+    "018": {
+      "status": "unreviewed"
+    },
+    "019": {
+      "status": "unreviewed"
+    },
+    "020": {
+      "status": "rejected",
+      "why": "работа идёт в одно окно, волн нет"
+    },
+    "021": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "README · START · TOP-10 · HISTORY · CHANGELOG — по читателю"
+    },
+    "022": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "HISTORY отвечает «как пришли», CHANGELOG — «что изменилось»"
+    },
+    "023": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "README.md — витрина, подробности по ссылкам"
+    },
+    "024": {
+      "status": "unreviewed"
+    },
+    "025": {
+      "status": "unreviewed"
+    },
+    "026": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "отвергнутые варианты записаны в export/README.md"
+    },
+    "027": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "пустой реестр потребителей объявлен в export/README.md"
+    },
+    "028": {
+      "status": "unreviewed"
+    },
+    "029": {
+      "status": "unreviewed"
+    },
+    "030": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/collect_changelog.py --check"
+    },
+    "031": {
+      "status": "rejected",
+      "why": "работа идёт в одно окно, волны дороже пользы на этом объёме"
+    },
+    "032": {
+      "status": "not-applicable",
+      "why": "у каталога нет запускаемого продукта"
+    },
+    "033": {
+      "status": "not-applicable",
+      "why": "прогонов, упирающихся в лимит, нет"
+    },
+    "034": {
+      "status": "rejected",
+      "why": "работа идёт в одно окно"
+    },
+    "035": {
+      "status": "active",
+      "mechanism": "none",
+      "where": "версия живёт только тегом, в файлы не попадает — гейта на это нет"
+    },
+    "036": {
+      "status": "not-applicable",
+      "why": "дорогих окружений в аудите нет"
+    },
+    "037": {
+      "status": "unreviewed"
+    },
+    "038": {
+      "status": "unreviewed"
+    },
+    "039": {
+      "status": "active",
+      "mechanism": "none",
+      "where": "три исхода есть у check_attribution и collect_changelog, у build_rules_index и check_links два"
+    },
+    "040": {
+      "status": "unreviewed"
+    },
+    "041": {
+      "status": "unreviewed"
+    },
+    "042": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "export/README.md § Отвергнутые варианты"
+    },
+    "043": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "пересмотр правила — новая запись, старая помечается"
+    },
+    "044": {
+      "status": "unreviewed"
+    },
+    "045": {
+      "status": "unreviewed"
+    },
+    "046": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "пробелы названы в export/README.md и в описаниях PR"
+    },
+    "047": {
+      "status": "unreviewed"
+    },
+    "048": {
+      "status": "unreviewed"
+    },
+    "049": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/build_rules_index.py — области, даты и следы из файлов"
+    },
+    "050": {
+      "status": "not-applicable",
+      "why": "ограничителей с бюджетом нет"
+    },
+    "051": {
+      "status": "unreviewed"
+    },
+    "052": {
+      "status": "unreviewed"
+    },
+    "053": {
+      "status": "unreviewed"
+    },
+    "054": {
+      "status": "unreviewed"
+    },
+    "055": {
+      "status": "unreviewed"
+    },
+    "056": {
+      "status": "unreviewed"
+    },
+    "057": {
+      "status": "unreviewed"
+    },
+    "058": {
+      "status": "not-applicable",
+      "why": "квоты сборкой не расходуются"
+    },
+    "059": {
+      "status": "unreviewed"
+    },
+    "060": {
+      "status": "rejected",
+      "why": "волн нет, разбирать нечего"
+    },
+    "061": {
+      "status": "rejected",
+      "why": "заданий параллельным исполнителям не выдаётся"
+    },
+    "062": {
+      "status": "unreviewed"
+    },
+    "063": {
+      "status": "unreviewed"
+    },
+    "064": {
+      "status": "active",
+      "mechanism": "none",
+      "where": ".github/labels.yml заведён, но в репозитории не синхронизирован"
+    },
+    "065": {
+      "status": "active",
+      "mechanism": "none",
+      "where": "точки входа новичка (CONTRIBUTING) нет"
+    },
+    "066": {
+      "status": "not-applicable",
+      "why": "конкурентной записи в файлы нет"
+    },
+    "067": {
+      "status": "unreviewed"
+    },
+    "068": {
+      "status": "unreviewed"
+    },
+    "069": {
+      "status": "not-applicable",
+      "why": "конкурентных писателей нет"
+    },
+    "070": {
+      "status": "unreviewed"
+    },
+    "071": {
+      "status": "unreviewed"
+    },
+    "072": {
+      "status": "unreviewed"
+    },
+    "073": {
+      "status": "not-applicable",
+      "why": "внешних инструментов нет, сборка на стандартной библиотеке"
+    },
+    "074": {
+      "status": "unreviewed"
+    },
+    "075": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/build_rules_index.py — пустой словарь и пустое поле роняют сборку"
+    },
+    "076": {
+      "status": "unreviewed"
+    },
+    "077": {
+      "status": "active",
+      "mechanism": "none",
+      "where": "английское дерево сверяется по именам и следам, но не как перевод"
+    },
+    "078": {
+      "status": "unreviewed"
+    },
+    "079": {
+      "status": "unreviewed"
+    },
+    "080": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "правило записывается тем же заходом, что и правка"
+    },
+    "081": {
+      "status": "not-applicable",
+      "why": "чужой код не запускается"
+    },
+    "082": {
+      "status": "active",
+      "mechanism": "none",
+      "where": "карта направлений каталога не записана, два направления из девяти покрыты"
+    },
+    "083": {
+      "status": "not-applicable",
+      "why": "сгенерированного продукта, требующего проверки свойствами, нет"
+    },
+    "084": {
+      "status": "unreviewed"
+    },
+    "085": {
+      "status": "unreviewed"
+    },
+    "086": {
+      "status": "unreviewed"
+    },
+    "087": {
+      "status": "unreviewed"
+    },
+    "088": {
+      "status": "unreviewed"
+    },
+    "089": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "из оригинала в копию не ссылаемся"
+    },
+    "090": {
+      "status": "unreviewed"
+    },
+    "091": {
+      "status": "unreviewed"
+    },
+    "092": {
+      "status": "unreviewed"
+    },
+    "093": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "второй уровень группировки областей не введён до третьего случая"
+    },
+    "094": {
+      "status": "unreviewed"
+    },
+    "095": {
+      "status": "not-applicable",
+      "why": "продукта с умолчаниями для пользователя нет"
+    },
+    "096": {
+      "status": "unreviewed"
+    },
+    "097": {
+      "status": "unreviewed"
+    },
+    "098": {
+      "status": "unreviewed"
+    },
+    "099": {
+      "status": "unreviewed"
+    },
+    "100": {
+      "status": "unreviewed"
+    },
+    "101": {
+      "status": "not-applicable",
+      "why": "повторов сетевых отказов в сборке нет"
+    },
+    "102": {
+      "status": "unreviewed"
+    },
+    "103": {
+      "status": "unreviewed"
+    },
+    "104": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": ".github/workflows/ci.yml — workflow_dispatch"
+    },
+    "105": {
+      "status": "unreviewed"
+    },
+    "106": {
+      "status": "unreviewed"
+    },
+    "107": {
+      "status": "unreviewed"
+    },
+    "108": {
+      "status": "unreviewed"
+    },
+    "109": {
+      "status": "unreviewed"
+    },
+    "110": {
+      "status": "unreviewed"
+    },
+    "111": {
+      "status": "unreviewed"
+    },
+    "112": {
+      "status": "not-applicable",
+      "why": "инструмент ничего не создаёт у пользователя"
+    },
+    "113": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "export/README.md § Как схема меняется"
+    },
+    "114": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/check_attribution.py — подрезка до объявленного начала"
+    },
+    "115": {
+      "status": "unreviewed"
+    },
+    "116": {
+      "status": "rejected",
+      "why": "сборщика результатов исполнителей нет — исполнителей нет"
+    },
+    "117": {
+      "status": "rejected",
+      "why": "заданий исполнителям не выдаётся"
+    },
+    "118": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/build_rules_index.py — экспорт рядом с источником"
+    },
+    "119": {
+      "status": "unreviewed"
+    },
+    "120": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "весь каталог; указатель собирается скриптом"
+    },
+    "121": {
+      "status": "unreviewed"
+    },
+    "122": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "export/rules.json отдаёт следы структурой рядом с текстом"
+    },
+    "123": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/check_attribution.py + шаг в ci.yml на pull_request"
+    },
+    "124": {
+      "status": "unreviewed"
+    },
+    "125": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/build_rules_index.py — область и даты из источников"
+    },
+    "126": {
+      "status": "unreviewed"
+    },
+    "127": {
+      "status": "active",
+      "mechanism": "none",
+      "where": "значок несёт подпись, а не значение: парсер числа не видит"
+    },
+    "128": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/build_rules_index.py — check_vocabulary"
+    },
+    "129": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "export/rules.json, export/README.md, этот файл"
+    },
+    "130": {
+      "status": "unreviewed"
+    }
+  }
+}
