@@ -17,7 +17,7 @@
     {
       "repo": "ArtVsMark/ArtVsMark",
       "role": "потребитель",
-      "bindings": null,
+      "bindings": "https://raw.githubusercontent.com/ArtVsMark/ArtVsMark/main/.rules/bindings.json",
       "access": "public"
     },
     {
