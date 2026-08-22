@@ -1191,7 +1191,12 @@
         "ru": "rules/ru/049-derive-state-from-live-artifacts.md",
         "en": "rules/en/049-derive-state-from-live-artifacts.md"
       },
-      "trails": []
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "41"
+        }
+      ]
     },
     {
       "id": "050",
@@ -1659,6 +1664,10 @@
         {
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1280"
+        },
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "42"
         }
       ]
     },

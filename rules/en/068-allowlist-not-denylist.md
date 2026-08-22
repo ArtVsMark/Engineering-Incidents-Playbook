@@ -38,6 +38,28 @@ The ban stopped working entirely — and **said nothing about it**. An entry tha
 matches no tool is indistinguishable from one that fired: silence either way. It
 surfaced weeks later, through a manual reconciliation.
 
+**A third case, and in it the allowlist was written.** A profile showcase runs a
+classification gate: a change without a content label does not pass. The
+docstring of that very file enumerates what counts as a content label — the list
+is complete and precise. Thirty lines below, the check computes
+`labels - {"hold"}`: a classification is **anything that is not `hold`**.
+
+Measured against the live labels: seven of the repository's twelve labels satisfy
+the gate as a classification, among them `wontfix`, `invalid`, `question` and
+`duplicate`. A change labelled "question" passes a check meant to require saying
+**what kind of work this is**. Five of the seven are platform defaults, present
+since day one: the hole did not open with some future release, it has been open
+since the gate was written.
+
+The failure cause differs from the first two. The list was not forgotten — it was
+written, complete and precise. What was not written is the **link** between it
+and the check: it stayed prose in a docstring, which puts it in the class "a rule
+without a mechanism" ([002](002-rule-without-mechanism.md)) inside the mechanism
+itself. It costs more than an ordinary violation for two reasons: the code looks
+compliant — the list is in plain view of anyone who opens the file — and nobody
+checks the checker, so a false "passed" here is indistinguishable from a real one
+([097](097-a-checker-has-two-error-types.md)).
+
 ## Why
 
 Allowlists and denylists err in **opposite directions**, and that settles
@@ -75,6 +97,12 @@ the general sign: a list built on somebody else's identifiers goes stale on
   orphan entry is a failed check, not silence
   ([075](075-a-guard-that-finds-nothing-must-fail.md)). Otherwise the protection
   lasts until the vendor's next release;
+- **an enumeration living in a comment or a docstring is not an allowlist**:
+  either it is the constant the check reads, or it does not exist. The sign is a
+  search for the list's name returning a single occurrence;
+- extending an allowlist means editing a constant, and that shows up in a diff;
+  extending "everything except" shows up nowhere, which is why it is never
+  discussed;
 - where an allowlist is impossible (free-form input), protection comes not from
   filtering but from handling: escaping, isolation, restricted permissions.
 
@@ -87,10 +115,17 @@ filtering user text through a list is meaningless.
 
 **Sign of trouble:** the list grows after every incident. For a list built on
 somebody else's names — not one entry has ever fired, and nobody finds that odd.
+For a list that stayed prose — an enumeration of the acceptable exists, and
+searching for it returns a single occurrence, in a comment.
 
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/statement_adapter.py`
 (`_IMAGE_TYPES`), `web/commands.py`. The second incident —
-ArtVsMark/Stepik-Python-Grader#1346, predecessor #1280. See also:
-[075](075-a-guard-that-finds-nothing-must-fail.md).
+ArtVsMark/Stepik-Python-Grader#1346, predecessor #1280. The third —
+ArtVsMark/claude-code-playbook#42; ArtVsMark/ArtVsMark — the change
+classification gate. See also:
+[075](075-a-guard-that-finds-nothing-must-fail.md),
+[002](002-rule-without-mechanism.md),
+[097](097-a-checker-has-two-error-types.md),
+[064](064-labels-are-machine-input-not-decoration.md).
