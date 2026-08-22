@@ -1,36 +1,42 @@
 {
   "schema": "1.0",
-  "about": "Проекты, с которыми каталог связан. Список закрытый и разрешительный: только то, что здесь названо, считается репозиторием в разделе «След» правила. Всё прочее — путь, кусок URL или проза, и контекстом не становится. Правило 068.",
+  "about": "Проекты, с которыми каталог связан. Список закрытый и разрешительный: только то, что здесь названо, считается репозиторием в разделе «След» правила. Всё прочее — путь, кусок URL или проза, и контекстом не становится. Правило 068. Поле bindings — адрес ответа потребителя: путь внутри каталога или обычная HTTPS-ссылка. Пусто означает «не подключён», а у приватного проекта — «неизвестно», и это разные состояния.",
   "consumers": [
     {
       "repo": "ArtVsMark/claude-code-playbook",
       "role": "каталог",
-      "bindings": ".rules/bindings.json"
+      "bindings": ".rules/bindings.json",
+      "access": "public"
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
       "role": "потребитель",
-      "bindings": null
+      "bindings": null,
+      "access": "public"
     },
     {
       "repo": "ArtVsMark/ArtVsMark",
       "role": "потребитель",
-      "bindings": null
+      "bindings": null,
+      "access": "public"
     },
     {
       "repo": "ArtVsMark/claude-code-usage",
       "role": "потребитель",
-      "bindings": null
+      "bindings": null,
+      "access": "public"
     },
     {
       "repo": "ArtVsMark/claude-code-usage-dat",
       "role": "потребитель, приватный",
-      "bindings": null
+      "bindings": null,
+      "access": "private"
     },
     {
       "repo": "ArtVsMark/Glossary-Python",
       "role": "потребитель",
-      "bindings": null
+      "bindings": null,
+      "access": "public"
     }
   ]
 }
