@@ -51,6 +51,11 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: python scripts/check_attribution.py --range "$BASE..$HEAD_SHA"
 
+      # Правило 030: запись приезжает вместе с изменением, отдельным файлом.
+      # Проверяется форма фрагментов — пустой файл выглядит сделанной работой.
+      - name: фрагменты журнала изменений в порядке
+        run: python scripts/collect_changelog.py --check
+
       # Правило 002 же: заготовка гейта обязана хотя бы запускаться.
       - name: заготовка preflight запускается
         run: python templates/preflight.py --list
