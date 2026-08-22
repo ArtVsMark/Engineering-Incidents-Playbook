@@ -78,10 +78,13 @@ def main() -> int:
     try:
         git("merge-base", "--is-ancestor", BASELINE, "HEAD")
         low, _, high = rng.partition("..")
-        if low and subprocess.run(
+        # Сравниваем разрешённые хеши, а не строки: «d1297ff» и полный хеш —
+        # один коммит, и сообщать о подрезке там, где её нет, значит шуметь.
+        same = low and git("rev-parse", low).strip() == git("rev-parse", BASELINE).strip()
+        if low and not same and subprocess.run(
             ["git", "-C", str(ROOT), "merge-base", "--is-ancestor", low, BASELINE],
             capture_output=True,
-        ).returncode == 0 and low != BASELINE:
+        ).returncode == 0:
             rng = f"{BASELINE}..{high or 'HEAD'}"
             print(f"диапазон подрезан до объявленного начала: {rng}")
     except subprocess.CalledProcessError:
