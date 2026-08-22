@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 134,
+  "count": 135,
   "rules": [
     {
       "id": "001",
@@ -3465,6 +3465,39 @@
         {
           "repo": "ArtVsMark/issues",
           "issue": "21"
+        }
+      ]
+    },
+    {
+      "id": "135",
+      "slug": "session-identity-is-established-by-a-write",
+      "title": {
+        "ru": "Чьим именем подпишется запись — свойство конкретного окна, и узнаётся оно записью",
+        "en": "Whose name a write carries belongs to the individual session, and only a write tells you"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии",
+          "конвейер"
+        ],
+        "en": [
+          "agent sessions",
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-22",
+      "files": {
+        "ru": "rules/ru/135-session-identity-is-established-by-a-write.md",
+        "en": "rules/en/135-session-identity-is-established-by-a-write.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "34"
+        },
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "36"
         }
       ]
     }

@@ -1,5 +1,11 @@
 # No writes from a cloud session: credentials are substituted on writes
 
+> **The criterion has been revised.** The tie to the "cloud session" class is
+> superseded by [135](135-session-identity-is-established-by-a-write.md):
+> identity on writes belongs to the individual session and is established by a
+> probing write. Everything else here stands. The record is not edited after the
+> fact ([043](043-decisions-are-superseded-not-edited.md)).
+
 **Area.** agent sessions, pipeline
 
 **The rule.** An operation that must carry a human's identity is never run from
