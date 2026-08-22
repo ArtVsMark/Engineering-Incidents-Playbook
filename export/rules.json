@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 138,
+  "count": 140,
   "rules": [
     {
       "id": "001",
@@ -3594,6 +3594,68 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "35"
+        }
+      ]
+    },
+    {
+      "id": "139",
+      "slug": "a-mechanism-is-confirmed-by-a-run",
+      "title": {
+        "ru": "Механизм подтверждается прогоном, а не чтением",
+        "en": "A mechanism is confirmed by a run, not by reading"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "конвейер"
+        ],
+        "en": [
+          "gates",
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-22",
+      "files": {
+        "ru": "rules/ru/139-a-mechanism-is-confirmed-by-a-run.md",
+        "en": "rules/en/139-a-mechanism-is-confirmed-by-a-run.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "34"
+        },
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "54"
+        }
+      ]
+    },
+    {
+      "id": "140",
+      "slug": "a-gate-is-tested-by-what-it-must-reject",
+      "title": {
+        "ru": "Гейт проверяется тем, что он обязан отвергнуть",
+        "en": "A gate is tested by what it must reject"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "тесты"
+        ],
+        "en": [
+          "gates",
+          "tests"
+        ]
+      },
+      "added": "2026-08-22",
+      "files": {
+        "ru": "rules/ru/140-a-gate-is-tested-by-what-it-must-reject.md",
+        "en": "rules/en/140-a-gate-is-tested-by-what-it-must-reject.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "54"
         }
       ]
     }
