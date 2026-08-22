@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 135,
+  "count": 137,
   "rules": [
     {
       "id": "001",
@@ -3498,6 +3498,64 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "36"
+        }
+      ]
+    },
+    {
+      "id": "136",
+      "slug": "a-verdict-comes-after-enumerating-every-subject",
+      "title": {
+        "ru": "Вердикт по правилу выносится после перечисления всех его предметов, а не первого",
+        "en": "A verdict on a rule comes after enumerating every subject of it, not the first one"
+      },
+      "areas": {
+        "ru": [
+          "каталог",
+          "контракты"
+        ],
+        "en": [
+          "catalogue",
+          "contracts"
+        ]
+      },
+      "added": "2026-08-22",
+      "files": {
+        "ru": "rules/ru/136-a-verdict-comes-after-enumerating-every-subject.md",
+        "en": "rules/en/136-a-verdict-comes-after-enumerating-every-subject.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "39"
+        }
+      ]
+    },
+    {
+      "id": "137",
+      "slug": "the-guard-sees-the-raw-value",
+      "title": {
+        "ru": "Сторож смотрит на сырое значение: форматирование идёт после него",
+        "en": "The guard sees the raw value: formatting comes after it"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "метрики"
+        ],
+        "en": [
+          "gates",
+          "metrics"
+        ]
+      },
+      "added": "2026-08-22",
+      "files": {
+        "ru": "rules/ru/137-the-guard-sees-the-raw-value.md",
+        "en": "rules/en/137-the-guard-sees-the-raw-value.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "40"
         }
       ]
     }
