@@ -38,7 +38,9 @@
 2. **Оба дерева сразу**, `rules/ru/` и `rules/en/`, имя файла одинаковое.
 3. Строка `**Область.**` / `**Area.**` из словаря в `scripts/build_rules_index.py`.
 4. Раздел «След» с ссылкой вида `владелец/репозиторий#номер`.
-5. Пересобрать: `python scripts/build_rules_index.py`.
+5. **Закоммитить правило**, потом пересобрать:
+   `python scripts/build_rules_index.py`. Порядок именно такой — дата
+   появления берётся из истории файла, и до коммита её нет.
 6. Ответ о самом каталоге в `.rules/bindings.json` — статус по новому правилу.
 
 Заготовка — [`templates/rule-template.md`](templates/rule-template.md).

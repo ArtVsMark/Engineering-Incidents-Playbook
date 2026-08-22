@@ -20,7 +20,8 @@
   • области ru и en не соответствуют друг другу через словарь;
   • у области в словаре нет описания: пустая ячейка снова прошла бы за данные;
   • у правила нет раздела «След» или его ссылки не разбираются;
-  • следы русского и английского деревьев расходятся.
+  • следы русского и английского деревьев расходятся;
+  • в витрине пропал маркер числа правил.
 
 Пропуск в нумерации — не ошибка: номера не переиспользуются даже после
 удаления (правило 120). Он печатается как факт.
@@ -51,6 +52,12 @@ CATALOGUE_URL = "https://github.com/ArtVsMark/claude-code-playbook"
 
 #: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
 #: у них разная. Файлы производные и руками не правятся, как и указатель.
+#: Число правил в прозе витрин: значок несёт подпись, а не значение, и парсер,
+#: скринридер и модель числа из него не получают (правила 127, 008). Маркер
+#: переписывается этой же сборкой, а пропажа маркера роняет её.
+MARKERS = (ROOT / "README.md", ROOT / "README.en.md")
+MARKER_RE = re.compile(r"(<!--m:rules-->)\d+(<!--/m:rules-->)")
+
 BADGES = {
     "ru": (ROOT / ".github" / "badges" / "rules-ru.json", "правил в каталоге"),
     "en": (ROOT / ".github" / "badges" / "rules-en.json", "rules in the catalogue"),
@@ -610,6 +617,16 @@ def check_trails(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list], li
     return result, problems
 
 
+def marked(path: Path, count: int) -> tuple[str, str | None]:
+    """Подставляет число в маркер. Возвращает текст и находку, если маркера нет."""
+    text = path.read_text(encoding="utf-8")
+    if not MARKER_RE.search(text):
+        return text, (f"{path.name}: маркера <!--m:rules--> нет. Число, которое "
+                      "некому переписать, устареет молча — а витрина будет "
+                      "выглядеть свежей")
+    return MARKER_RE.sub(rf"\g<1>{count}\g<2>", text), None
+
+
 def area_stats(areas: dict[str, list[str]]) -> tuple[int, int]:
     """Сколько всего областей и сколько из них держат единственное правило.
 
@@ -776,16 +793,32 @@ def main() -> int:
         return 1
 
     # Дата без источника — пустое поле, а пустота проходит за данные (125, 128).
-    undated = [f"{n}: нет даты появления в истории — нужен полный клон"
+    # Клон полный (иначе вышли бы выше), значит правила просто ещё не в истории:
+    # их только что завели. Сказать про «мелкий клон» здесь значит отправить
+    # автора чинить не то — сторож обязан называть виновника (правило 103).
+    undated = [f"{n}: правило ещё не в истории — закоммитьте его и пересоберите. "
+               "Дата появления берётся из истории, а не из поля (правило 049)"
                for n in sorted(found) if n not in dates]
     if undated:
-        print("проверка не отработала:", file=sys.stderr)
+        print("указатель не собран:", file=sys.stderr)
         for u in undated:
             print(f"  • {u}", file=sys.stderr)
-        return 2
+        return 1
 
     text = render(found, gaps, areas)
     export = render_export(found, areas, dates, trails)
+    marks: dict[Path, str] = {}
+    for path in MARKERS:
+        body, gap = marked(path, len(found))
+        if gap:
+            problems.append(gap)
+        else:
+            marks[path] = body
+    if problems:
+        print("указатель не собран:", file=sys.stderr)
+        for p in problems:
+            print(f"  • {p}", file=sys.stderr)
+        return 1
     total_areas, singles = area_stats(areas)
     badges = {p: render_badge(label, len(found)) for p, label in BADGES.values()}
 
@@ -795,6 +828,8 @@ def main() -> int:
                   if (p.read_text(encoding="utf-8") if p.exists() else "") != want]
         if (EXPORT.read_text(encoding="utf-8") if EXPORT.exists() else "") != export:
             stale.append(EXPORT)
+        stale += [p for p, want in marks.items()
+                  if p.read_text(encoding="utf-8") != want]
         if stale:
             print("устарело — пересоберите (python scripts/build_rules_index.py): "
                   + ", ".join(str(p.relative_to(ROOT)) for p in stale), file=sys.stderr)
@@ -809,6 +844,8 @@ def main() -> int:
         path.write_text(want, encoding="utf-8")
     EXPORT.parent.mkdir(parents=True, exist_ok=True)
     EXPORT.write_text(export, encoding="utf-8")
+    for path, body in marks.items():
+        path.write_text(body, encoding="utf-8")
     print(f"собрано: {len(found)} правил, языков {len(LANGS)},"
           f" областей {total_areas} (с одним правилом {singles}),"
           f" пропуски в нумерации: {gaps or 'нет'}")
