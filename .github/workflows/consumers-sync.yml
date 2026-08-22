@@ -1,0 +1,56 @@
+# Свежесть сводки «где действует». Отдельно от `ci.yml` намеренно: здесь есть
+# сеть и чужой сервер, а обязательная проверка изменения зависеть от чужого
+# сервера не должна — сетевой сбой покрасил бы чужую работу и остановил
+# автомерж.
+#
+# Красное здесь означает одно из двух, и оба требуют человека: объявленный
+# потребитель перестал отдавать ответ (правило 075) либо его ответ изменился, а
+# сводка в репозитории осталась прежней (правило 049 — вычисляемое состояние
+# протухло).
+name: consumers-sync
+
+on:
+  schedule:
+    # Не в 0 и не в 30: минута выбрана так, чтобы не совпадать с пиком, когда
+    # площадка обслуживает все расписания планеты разом.
+    - cron: "23 6 * * *"
+  # У события всегда есть ручная кнопка (правило 104).
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".rules/consumers.json"
+      - "scripts/aggregate_bindings.py"
+
+permissions:
+  contents: read
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: опросить потребителей и пересобрать сводку
+        run: python scripts/aggregate_bindings.py
+
+      # Дата последнего чтения меняется каждым прогоном, и сравнивать по ней
+      # нечего: сверяется всё остальное. Иначе прогон краснел бы ежедневно и
+      # приучал читать красное как фон (правило 051).
+      - name: сводка в репозитории не отстала
+        run: |
+          set -uo pipefail
+          if git diff --quiet -- export/where.md; then
+            echo "сводка совпадает с тем, что отдают потребители"
+            exit 0
+          fi
+          echo "::error::Ответ потребителя изменился, а сводка в репозитории осталась прежней. Пересоберите: python scripts/aggregate_bindings.py"
+          git --no-pager diff --stat -- export/where.md
+          git --no-pager diff -- export/where.md | head -60
+          exit 1

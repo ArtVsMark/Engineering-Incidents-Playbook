@@ -20,8 +20,13 @@ HTTPS, без API и без клона, и сводятся в одну табл
 Исходы:
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 
-Запуск:  python scripts/aggregate_bindings.py            # собрать
-         python scripts/aggregate_bindings.py --check    # сверить с собранным
+Сеть нужна только сборке. Проверка ходит по диску намеренно: обязательный гейт
+изменения не должен зависеть от чужого сервера — иначе сетевой сбой красит
+чужую работу и останавливает автомерж. Свежесть сводки держит отдельный прогон
+по расписанию, у него другой предмет и другая цена красного.
+
+Запуск:  python scripts/aggregate_bindings.py            # собрать, нужна сеть
+         python scripts/aggregate_bindings.py --check    # сверить, сеть не нужна
 """
 
 from __future__ import annotations
@@ -184,6 +189,41 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def check_offline(consumers: list[dict], rule_ids: list[str]) -> int:
+    """Сверка без сети: сводка на диске согласована и покрывает весь реестр.
+
+    Сюда не ходят наружу сознательно. Обязательная проверка изменения не должна
+    зависеть от чужого сервера: сетевой сбой покрасил бы чужую работу и
+    остановил автомерж, а предмет у этой проверки другой — «собрано ли то, что
+    лежит», а не «что сейчас у потребителей».
+    """
+    try:
+        stored = json.loads(EXPORT_JSON.read_text(encoding="utf-8"))
+        stored_md = EXPORT_MD.read_text(encoding="utf-8")
+    except (OSError, ValueError) as e:
+        print(f"нет собранной сводки или она не разобрана — {e}. Соберите: "
+              "python scripts/aggregate_bindings.py", file=sys.stderr)
+        return 1
+
+    slices = stored.get("consumers", [])
+    seen = {s.get("repo") for s in slices}
+    missing = [c["repo"] for c in consumers if c.get("repo") not in seen]
+    if missing:
+        print("в реестре есть потребители, которых нет в сводке: "
+              + ", ".join(missing) + ".\n  Пересоберите: "
+              "python scripts/aggregate_bindings.py", file=sys.stderr)
+        return 1
+    if as_markdown(slices, rule_ids) != stored_md:
+        print(f"устарело — пересоберите: {EXPORT_MD.relative_to(ROOT)} не "
+              f"соответствует {EXPORT_JSON.relative_to(ROOT)}", file=sys.stderr)
+        return 1
+
+    connected = sum(1 for s in slices if s.get("rules"))
+    print(f"сводка согласована: потребителей {len(slices)}, из них подключено "
+          f"{connected}; сеть не опрашивалась")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--check", action="store_true",
@@ -210,6 +250,9 @@ def main() -> int:
               file=sys.stderr)
         return 2
 
+    if args.check:
+        return check_offline(consumers, rule_ids)
+
     slices, problems = collect(consumers)
     warnings = stale(slices)
 
@@ -221,21 +264,8 @@ def main() -> int:
     text_json = json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
     text_md = as_markdown(slices, rule_ids)
 
-    if args.check:
-        for path, fresh in ((EXPORT_JSON, text_json), (EXPORT_MD, text_md)):
-            try:
-                current = path.read_text(encoding="utf-8")
-            except OSError:
-                print(f"нет {path.relative_to(ROOT)} — соберите "
-                      "(python scripts/aggregate_bindings.py)", file=sys.stderr)
-                return 1
-            if current != fresh:
-                print(f"устарело — пересоберите: {path.relative_to(ROOT)}",
-                      file=sys.stderr)
-                return 1
-    else:
-        EXPORT_JSON.write_text(text_json, encoding="utf-8")
-        EXPORT_MD.write_text(text_md, encoding="utf-8")
+    EXPORT_JSON.write_text(text_json, encoding="utf-8")
+    EXPORT_MD.write_text(text_md, encoding="utf-8")
 
     # ── исход 1: находки ───────────────────────────────────────────────────
     if problems:
