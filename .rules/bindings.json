@@ -235,8 +235,8 @@
     },
     "064": {
       "status": "active",
-      "mechanism": "none",
-      "where": ".github/labels.yml заведён, но в репозитории не синхронизирован"
+      "mechanism": "gate",
+      "where": ".github/workflows/labels-sync.yml — объявленные метки применяются к репозиторию, неучтённые называются списком"
     },
     "065": {
       "status": "active",
