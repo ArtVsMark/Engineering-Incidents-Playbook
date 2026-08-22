@@ -1,0 +1,155 @@
+# Автомерж с атрибуцией. Без него объединяющий коммит составляет площадка:
+# трейлеры остаются в коммитах ветки и до первопредков `main` не доезжают —
+# гейт зелёный на каждом изменении, а в итоговой истории атрибуции нет вовсе
+# (задача #34, правила 002 и 123).
+#
+# Здесь автомерж ВКЛЮЧАЕТСЯ, а не выполняется: слияние делает площадка. Тело
+# объединяющего коммита задаётся в момент включения — это единственное место,
+# где трейлеры попадают в первопредки.
+#
+# Почему запуск от `ci`, а не от события изменения. Задача #34 называет условие:
+# автомерж без обязательной проверки сливает МГНОВЕННО, и пять гейтов
+# становятся украшением (правило 010). Читать настройку защиты ветки конвейер
+# не может — у `GITHUB_TOKEN` нет таких прав. Поэтому условие обеспечено иначе,
+# и надёжнее настройки: включать автомерж только после ЗЕЛЁНОГО прогона `ci` на
+# этом же коммите. Тогда «слить мимо гейтов» невозможно даже на незащищённой
+# ветке. Защита `main` остаётся полезной, но перестаёт быть условием.
+name: automerge
+
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+  workflow_dispatch:
+    # У события всегда есть ручная кнопка (правило 104).
+    inputs:
+      pr:
+        description: "номер изменения"
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  arm:
+    runs-on: ubuntu-latest
+    # Красный или отменённый прогон — не повод сливать. Ручной запуск проверяет
+    # состояние сам, ниже.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      # Трейлеры берутся из коммитов ветки, значит нужна история.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Событие `workflow_run` не знает про изменение напрямую: у него есть
+      # коммит. Изменение ищется по коммиту, и «не нашлось» — это штатный
+      # случай (прогон на `main`), а не поломка (правило 027).
+      - name: найти изменение
+        id: find
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DISPATCH_PR: ${{ inputs.pr }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -uo pipefail
+          if [ -n "${DISPATCH_PR:-}" ]; then
+            pr="$DISPATCH_PR"
+          else
+            pr=$(gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/pulls" \
+                   --jq '[.[] | select(.state == "open")][0].number // empty')
+          fi
+          if [ -z "$pr" ]; then
+            echo "коммит ${HEAD_SHA:-—} не принадлежит открытому изменению, включать нечего"
+            echo "skip=1" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "pr=$pr" >> "$GITHUB_OUTPUT"
+
+      - name: состояние изменения
+        id: pr
+        if: steps.find.outputs.skip != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.find.outputs.pr }}
+        run: |
+          set -euo pipefail
+          gh pr view "$PR" \
+            --json number,title,isDraft,state,headRefName,baseRefOid,headRefOid \
+            --jq '"number=\(.number)", "title=\(.title)", "draft=\(.isDraft)",
+                  "state=\(.state)", "head=\(.headRefName)",
+                  "base_sha=\(.baseRefOid)", "head_sha=\(.headRefOid)"' >> "$GITHUB_OUTPUT"
+
+      # Черновик — это «ещё не беру» (#34). Пропуск, а не отказ: красное на
+      # штатном состоянии приучает читать красное как фон (правило 051).
+      - name: черновик пропускается
+        if: >-
+          steps.find.outputs.skip != '1' &&
+          (steps.pr.outputs.draft == 'true' || steps.pr.outputs.state != 'OPEN')
+        run: |
+          echo "изменение ${{ steps.pr.outputs.number }} — черновик или уже закрыто"
+          echo "SKIP=1" >> "$GITHUB_ENV"
+
+      # Тело объединяющего коммита — единственное место, где атрибуция попадает
+      # в первопредки. Собирается из трейлеров коммитов ветки, без повторов.
+      - name: сообщение слияния с трейлерами
+        id: msg
+        if: steps.find.outputs.skip != '1' && env.SKIP != '1'
+        env:
+          BASE_SHA: ${{ steps.pr.outputs.base_sha }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          TITLE: ${{ steps.pr.outputs.title }}
+          HEAD_REF: ${{ steps.pr.outputs.head }}
+          NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$BASE_SHA" "$HEAD_SHA" 2>/dev/null || true
+          rng="$BASE_SHA..$HEAD_SHA"
+          co=$(git log "$rng" --format='%(trailers:key=Co-Authored-By,valueonly)' \
+                 | sed '/^[[:space:]]*$/d' | sort -u)
+          se=$(git log "$rng" --format='%(trailers:key=Claude-Session,valueonly)' \
+                 | sed '/^[[:space:]]*$/d' | sort -u | head -1)
+          if [ -z "$co" ]; then
+            # Гейт атрибуции стоит на этом же изменении и должен был поймать это
+            # раньше. Если не поймал — молча слить нельзя (правило 075).
+            echo "::error::В коммитах $rng нет ни одного трейлера Co-Authored-By: класть в объединяющий коммит нечего."
+            exit 1
+          fi
+          echo "subject=Merge pull request #$NUMBER from $GITHUB_REPOSITORY_OWNER/$HEAD_REF" >> "$GITHUB_OUTPUT"
+          {
+            echo "body<<MERGEBODY"
+            echo "$TITLE"
+            echo
+            printf '%s\n' "$co" | sed 's/^/Co-Authored-By: /'
+            if [ -n "$se" ]; then echo "Claude-Session: $se"; fi
+            echo "MERGEBODY"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: включить автомерж
+        if: steps.find.outputs.skip != '1' && env.SKIP != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+          SUBJECT: ${{ steps.msg.outputs.subject }}
+          BODY: ${{ steps.msg.outputs.body }}
+        run: |
+          set -uo pipefail
+          # Включение автомержа умеет только GraphQL — REST такого не отдаёт.
+          # Это ровно та оговорка, ради которой правило 001 написано с «только
+          # там, где REST не умеет»; gh делает этот вызов за нас.
+          out=$(gh pr merge "$PR" --auto --merge --subject "$SUBJECT" --body "$BODY" 2>&1) && rc=0 || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            case "$out" in
+              *uto-merge*|*"not enabled"*)
+                echo "::error::Автомерж в репозитории не разрешён. Settings -> General -> Pull Requests -> Allow auto-merge. Без этой настройки кнопки не существует, и включить её из окна нельзя."
+                exit 1 ;;
+              *)
+                echo "::error::Автомерж не включился: $out"
+                exit 1 ;;
+            esac
+          fi
+          printf '%s\n' "$out"
+          echo "автомерж включён с составленным телом; проверка ci на этом коммите уже зелёная"
