@@ -15,6 +15,23 @@ A reader who came to understand the design got a link to a three-year-old
 discussion instead of an answer. And the link itself lost meaning over time: the
 context of the task was forgotten faster than the code changed.
 
+## Why
+
+**An issue number is a date stamp, while an explanatory document answers "how it
+is now".** Those are two different questions, and answering the second is not
+helped by answering the first: a reader who came to understand the design is
+offered archaeology instead of an answer.
+
+**A link decays faster than the code.** The discussion is forgotten, the
+participants move on, the issue's context stops being recoverable — and the line
+stays, looking like a justification. Meanwhile the code may have been rewritten
+twice, and the number points at a decision that no longer exists.
+
+**The cost is one-sided.** A number removed from an explanation is not lost: it
+stays in the changelog and in the history, where it belongs. A number left in an
+explanation quietly turns a specification into an archive — and the only sign is
+that people stop reading the document.
+
 ## Zone by zone
 
 | Where | Number | Why |

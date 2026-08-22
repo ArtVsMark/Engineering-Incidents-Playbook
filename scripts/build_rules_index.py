@@ -72,6 +72,15 @@ LINK_RE = re.compile(r"\]\((\d{3}-[^)#]+\.md)\)")
 #: След — обязательный раздел записи. Из него достаётся структура
 #: {репозиторий, задача}: строка раздела потребителю бесполезна (правило 129).
 TRACE_HEAD = {"ru": "## След", "en": "## Trace"}
+#: Форма записи объявлена в своде: правило → инцидент → почему → применимость →
+#: след. Объявлена — и не проверялась ничем: одно правило из ста тридцати шло
+#: без «Почему», и заметил это не гейт, а разбор руками (правило 002).
+#: Заголовок сверяется по началу строки: «Почему знание не помогло» засчитывается,
+#: потому что отвечает на тот же вопрос, а лишние разделы не запрещены.
+SHAPE = {
+    "ru": ("## Инцидент", "## Почему", "## Применимость", "## След"),
+    "en": ("## The incident", "## Why", "## Where it applies", "## Trace"),
+}
 #: Реестр потребителей. Разрешительный список: репозиторием в следе считается
 #: только то, что здесь названо. Запретительным («не начинается с src/») это не
 #: закрывается — завтра появится tools/foo (правило 068).
@@ -383,6 +392,27 @@ def collect() -> tuple[dict[str, dict[str, Path]], list[str], list[str]]:
         blockers.append("в дереве не нашлось ни одного правила — "
                         "это ошибка входа, а не пустой каталог")
     return found, problems, blockers
+
+
+def check_shape(found: dict[str, dict[str, Path]]) -> list[str]:
+    """Каждая запись несёт разделы, объявленные сводом.
+
+    Раздел «Применимость» отвечает, где правило НЕ работает, — без него каталог
+    копируют целиком, включая заведомо чужое. «Почему» отвечает за механизм
+    поломки: без него запись становится предпочтением, а не правилом.
+    """
+    problems: list[str] = []
+    for num in sorted(found):
+        for lang, path in sorted(found[num].items()):
+            text = path.read_text(encoding="utf-8")
+            missing = [h for h in SHAPE[lang]
+                       if not re.search("^" + re.escape(h), text, re.M)]
+            if missing:
+                problems.append(
+                    f"{num}: {lang}/{path.name} — нет разделов "
+                    f"{', '.join(chr(171) + m[3:] + chr(187) for m in missing)}. "
+                    "Форма записи объявлена в своде и одинакова для всех")
+    return problems
 
 
 def check_links(found: dict[str, dict[str, Path]]) -> list[str]:
@@ -804,6 +834,7 @@ def main() -> int:
 
     found, problems, blockers = collect()
     problems += check_pairs(found)
+    problems += check_shape(found)
     problems += check_links(found)
     problems += check_vocabulary()
     # История недоступна или клон мелкий — это невозможность проверки, а не
