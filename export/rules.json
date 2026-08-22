@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 130,
+  "count": 133,
   "rules": [
     {
       "id": "001",
@@ -3325,6 +3325,113 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "15"
+        }
+      ]
+    },
+    {
+      "id": "131",
+      "slug": "no-writes-from-a-cloud-session",
+      "title": {
+        "ru": "Из облачного окна не пишут: на записи учётные данные подменяются",
+        "en": "No writes from a cloud session: credentials are substituted on writes"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии",
+          "конвейер"
+        ],
+        "en": [
+          "agent sessions",
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-22",
+      "files": {
+        "ru": "rules/ru/131-no-writes-from-a-cloud-session.md",
+        "en": "rules/en/131-no-writes-from-a-cloud-session.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1302"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "20"
+        }
+      ]
+    },
+    {
+      "id": "132",
+      "slug": "one-change-carries-one-topic",
+      "title": {
+        "ru": "Изменение везут одной темой: сборное честно, но неразбираемо",
+        "en": "One change carries one topic: a combined one is honest but unreviewable"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "конвейер"
+        ],
+        "en": [
+          "process",
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-22",
+      "files": {
+        "ru": "rules/ru/132-one-change-carries-one-topic.md",
+        "en": "rules/en/132-one-change-carries-one-topic.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "19"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "20"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "21"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1350"
+        }
+      ]
+    },
+    {
+      "id": "133",
+      "slug": "file-overlap-sets-the-boundary",
+      "title": {
+        "ru": "Границу изменения задаёт пересечение файлов, а не число задач",
+        "en": "File overlap sets the boundary of a change, not the number of tasks"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "планирование"
+        ],
+        "en": [
+          "pipeline",
+          "planning"
+        ]
+      },
+      "added": "2026-08-22",
+      "files": {
+        "ru": "rules/ru/133-file-overlap-sets-the-boundary.md",
+        "en": "rules/en/133-file-overlap-sets-the-boundary.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1345"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1350"
         }
       ]
     }
