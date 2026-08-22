@@ -27,6 +27,7 @@
 
 Запуск:  python scripts/build_rules_index.py          # записать rules/README.md
          python scripts/build_rules_index.py --check   # только проверить
+Коды:    0 чисто · 1 есть находки · 2 проверка не отработала
 """
 
 from __future__ import annotations
@@ -343,13 +344,20 @@ def title_of(path: Path) -> str:
     return first.lstrip("# ").strip()
 
 
-def collect() -> tuple[dict[str, dict[str, Path]], list[str]]:
+def collect() -> tuple[dict[str, dict[str, Path]], list[str], list[str]]:
+    """Возвращает найденное, находки и то, из-за чего проверка невозможна.
+
+    Различие не косметическое (правило 039): «правило есть только на одном
+    языке» — находка, её чинит автор. «Дерева правил нет вовсе» — проверка не
+    отработала, и чинить надо запуск, а не содержимое.
+    """
     found: dict[str, dict[str, Path]] = {}
     problems: list[str] = []
+    blockers: list[str] = []
     for lang in LANGS:
         d = RULES / lang
         if not d.is_dir():
-            problems.append(f"нет каталога {d.relative_to(ROOT)}")
+            blockers.append(f"нет каталога {d.relative_to(ROOT)} — проверять нечего")
             continue
         for f in sorted(d.iterdir()):
             m = RULE_RE.match(f.name)
@@ -361,8 +369,9 @@ def collect() -> tuple[dict[str, dict[str, Path]], list[str]]:
                 problems.append(f"{lang}: номер {num} встречается дважды")
             slot[lang] = f
     if not found:
-        problems.append("в дереве не нашлось ни одного правила")
-    return found, problems
+        blockers.append("в дереве не нашлось ни одного правила — "
+                        "это ошибка входа, а не пустой каталог")
+    return found, problems, blockers
 
 
 def check_links(found: dict[str, dict[str, Path]]) -> list[str]:
@@ -737,12 +746,14 @@ def main() -> int:
     ap.add_argument("--check", action="store_true", help="только проверить, не записывать")
     args = ap.parse_args()
 
-    found, problems = collect()
+    found, problems, blockers = collect()
     problems += check_pairs(found)
     problems += check_links(found)
     problems += check_vocabulary()
+    # История недоступна или клон мелкий — это невозможность проверки, а не
+    # находка: чинится запуском, а не правкой правил.
     dates, date_problems = added_dates()
-    problems += date_problems
+    blockers += date_problems
     trails, trail_problems = check_trails(found)
     problems += trail_problems
     FILES.update(found)
@@ -751,6 +762,12 @@ def main() -> int:
 
     nums = sorted(int(n) for n in found)
     gaps = [i for i in range(nums[0], nums[-1] + 1) if i not in set(nums)] if nums else []
+
+    if blockers:
+        print("проверка не отработала:", file=sys.stderr)
+        for b in blockers:
+            print(f"  • {b}", file=sys.stderr)
+        return 2
 
     if problems:
         print("указатель не собран:", file=sys.stderr)
@@ -762,10 +779,10 @@ def main() -> int:
     undated = [f"{n}: нет даты появления в истории — нужен полный клон"
                for n in sorted(found) if n not in dates]
     if undated:
-        print("экспорт не собран:", file=sys.stderr)
+        print("проверка не отработала:", file=sys.stderr)
         for u in undated:
             print(f"  • {u}", file=sys.stderr)
-        return 1
+        return 2
 
     text = render(found, gaps, areas)
     export = render_export(found, areas, dates, trails)
