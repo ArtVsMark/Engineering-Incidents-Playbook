@@ -451,7 +451,7 @@
     "123": {
       "status": "active",
       "mechanism": "gate",
-      "where": ".github/workflows/ci.yml — шаг на pull_request; проверяются коммиты ветки, до первопредков атрибуция пока не доходит"
+      "where": ".github/workflows/ci.yml — коммиты ветки на pull_request, первопредки main на push; долг прошлой истории виден числом, а не подрезан"
     },
     "124": {
       "status": "unreviewed"
