@@ -42,14 +42,14 @@ ROOT = Path(__file__).resolve().parent.parent
 RULES = ROOT / "rules"
 LANGS = ("ru", "en")
 OUT = RULES / "README.md"
-#: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
-#: у них разная. Файлы производные и руками не правятся, как и указатель.
 #: Машиночитаемый экспорт каталога: его тянет проект-потребитель обычным HTTP,
 #: без GitHub API и без клона. Формат и правила его эволюции — export/README.md.
 EXPORT = ROOT / "export" / "rules.json"
 EXPORT_SCHEMA = "1.0"
 CATALOGUE_URL = "https://github.com/ArtVsMark/claude-code-playbook"
 
+#: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
+#: у них разная. Файлы производные и руками не правятся, как и указатель.
 BADGES = {
     "ru": (ROOT / ".github" / "badges" / "rules-ru.json", "правил в каталоге"),
     "en": (ROOT / ".github" / "badges" / "rules-en.json", "rules in the catalogue"),
@@ -759,12 +759,12 @@ def main() -> int:
         return 1
 
     # Дата без источника — пустое поле, а пустота проходит за данные (125, 128).
-    problems = [f"{n}: нет даты появления в истории — нужен полный клон"
-                for n in sorted(found) if n not in dates] if dates else []
-    if problems:
+    undated = [f"{n}: нет даты появления в истории — нужен полный клон"
+               for n in sorted(found) if n not in dates]
+    if undated:
         print("экспорт не собран:", file=sys.stderr)
-        for p in problems:
-            print(f"  • {p}", file=sys.stderr)
+        for u in undated:
+            print(f"  • {u}", file=sys.stderr)
         return 1
 
     text = render(found, gaps, areas)
