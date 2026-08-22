@@ -209,6 +209,34 @@ rules do not fail the run; only the third outcome does.
 Файла `.rules/bindings.json` может ещё не быть — тогда нерассмотрено всё, и
 первая же задача-«входящие» об этом и скажет. Отдельного шага «подключение» нет.
 
+## Что каталог отдаёт помимо правил · What else the catalogue publishes
+
+Механизм, а не только текст: гейт, который стоит у нас, подключается
+потребителем ссылкой на версию. Логика остаётся в одном месте — копия в третьем
+репозитории разъехалась бы с первой правкой
+([090](../rules/ru/090-shared-helpers-move-up-not-sideways.md)).
+
+```yaml
+- uses: actions/checkout@v4
+  with: { fetch-depth: 0 }        # гейту нужна история
+- uses: ArtVsMark/claude-code-playbook/.github/actions/attribution@main
+  with:
+    authors: .github/authors.txt  # СВОЙ список согласованных имён
+    baseline: ""                  # свой коммит, с которого спрашивать
+```
+
+**Список имён и начало отсчёта принадлежат проекту, а не инструменту.** У
+каждого потребителя свои согласованные авторы; подставить чужие — значит
+получить красное на верных коммитах, то есть гейт хуже отсутствующего
+([051](../rules/ru/051-warn-on-likely-block-on-certain.md)).
+
+**The authors list and the baseline belong to the project, not to the tool.**
+Substituting somebody else's turns the gate red on correct commits — worse than
+having no gate.
+
+Версию каталога стоит закрепить тегом: подключаться к движущейся ветке значит
+получать чужую правку гейта в свой красный прогон.
+
 ## Сводная таблица · The summary table
 
 [`where.md`](where.md) и [`where.json`](where.json) собираются

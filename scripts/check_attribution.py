@@ -40,6 +40,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+#: Дом самого скрипта. От него берутся ТОЛЬКО умолчания: список имён и начало
+#: отсчёта принадлежат проверяемому проекту, а не инструменту, и у третьего
+#: потребителя они другие (задача #54, правило 090 — общее уезжает вверх, а не
+#: копируется вбок).
 ROOT = Path(__file__).resolve().parent.parent
 AUTHORS = ROOT / ".github" / "authors.txt"
 
@@ -52,17 +56,17 @@ COAUTHOR = re.compile(r"^Co-Authored-By:\s*(.+?)\s*$", re.M | re.I)
 SESSION = re.compile(r"^Claude-Session:\s*(.+?)\s*$", re.M | re.I)
 
 
-def git(*args: str) -> str:
-    return subprocess.run(["git", "-C", str(ROOT), *args],
+def git(repo: Path, *args: str) -> str:
+    return subprocess.run(["git", "-C", str(repo), *args],
                           capture_output=True, text=True, check=True).stdout
 
 
-def agreed() -> set[str]:
-    lines = AUTHORS.read_text(encoding="utf-8").split("\n")
+def agreed(authors: Path) -> set[str]:
+    lines = authors.read_text(encoding="utf-8").split("\n")
     return {l.strip() for l in lines if l.strip() and not l.startswith("#")}
 
 
-def first_parents(ref: str, since: str | None, names: set[str]) -> int:
+def first_parents(repo: Path, ref: str, since: str | None, names: set[str]) -> int:
     """Атрибуция в итоговой истории общей ветки.
 
     Спрашиваются ВСЕ первопредки, а не только объединяющие коммиты. Это не
@@ -72,7 +76,7 @@ def first_parents(ref: str, since: str | None, names: set[str]) -> int:
     от чего предостерегает правило 075.
     """
     try:
-        git("rev-parse", "--verify", ref)
+        git(repo, "rev-parse", "--verify", ref)
     except subprocess.CalledProcessError:
         print(f"проверка не отработала: {ref} недоступен — "
               "нужен полный клон и общая ветка", file=sys.stderr)
@@ -80,7 +84,7 @@ def first_parents(ref: str, since: str | None, names: set[str]) -> int:
 
     scope = f"{since}..{ref}" if since else ref
     try:
-        out = git("log", "--first-parent",
+        out = git(repo, "log", "--first-parent",
                   "--format=%H%x00%s%x00%b%x00", scope)
     except subprocess.CalledProcessError as e:
         print(f"проверка не отработала: {scope!r} не разобран — "
@@ -139,30 +143,43 @@ def main() -> int:
                     help="проверить первопредки общей ветки, а не коммиты ветки")
     ap.add_argument("--ref", default="origin/main",
                     help="общая ветка для --first-parents, по умолчанию origin/main")
+    ap.add_argument("--repo", default=str(ROOT),
+                    help="репозиторий, чью историю проверяем; по умолчанию тот, "
+                         "где лежит скрипт")
+    ap.add_argument("--authors", default=None,
+                    help="список согласованных имён проверяемого проекта; "
+                         "по умолчанию .github/authors.txt рядом со скриптом")
+    ap.add_argument("--baseline", default=BASELINE,
+                    help="коммит, с которого атрибуция обязательна; пустая "
+                         "строка отключает подрезку")
     ap.add_argument("--since", default=None,
                     help="объявленное начало для --first-parents: раньше него "
                          "не спрашивать. Без него спрашивается вся история — "
                          "долг виден числом, а не спрятан подрезкой")
     args = ap.parse_args()
 
+    repo = Path(args.repo).resolve()
+    authors = Path(args.authors).resolve() if args.authors else AUTHORS
+    baseline = args.baseline
+
     # ── исход 2: проверка не отработала ────────────────────────────────────
     try:
-        names = agreed()
+        names = agreed(authors)
     except OSError as e:
         print(f"проверка не отработала: список имён не прочитан — {e}", file=sys.stderr)
         return 2
     if not names:
-        print(f"проверка не отработала: {AUTHORS.relative_to(ROOT)} пуст — "
+        print(f"проверка не отработала: {authors} пуст — "
               "сверять не с чем, а молча пропускать нельзя", file=sys.stderr)
         return 2
 
     if args.first_parents:
-        return first_parents(args.ref, args.since, names)
+        return first_parents(repo, args.ref, args.since, names)
 
     rng = args.range
     if rng is None:
         try:
-            git("rev-parse", "--verify", "origin/main")
+            git(repo, "rev-parse", "--verify", "origin/main")
             rng = "origin/main..HEAD"
         except subprocess.CalledProcessError:
             print("проверка не отработала: origin/main недоступен, диапазон "
@@ -171,23 +188,25 @@ def main() -> int:
     # Диапазон не уходит глубже объявленного начала: до него история писалась
     # без трейлеров, переписать её нельзя, и требовать оттуда нечего (114).
     try:
-        git("merge-base", "--is-ancestor", BASELINE, "HEAD")
+        if not baseline:
+            raise subprocess.CalledProcessError(1, "git")  # подрезка отключена
+        git(repo, "merge-base", "--is-ancestor", baseline, "HEAD")
         low, _, high = rng.partition("..")
         # Сравниваем разрешённые хеши, а не строки: «d1297ff» и полный хеш —
         # один коммит, и сообщать о подрезке там, где её нет, значит шуметь.
-        same = low and git("rev-parse", low).strip() == git("rev-parse", BASELINE).strip()
+        same = low and git(repo, "rev-parse", low).strip() == git(repo, "rev-parse", baseline).strip()
         if low and not same and subprocess.run(
-            ["git", "-C", str(ROOT), "merge-base", "--is-ancestor", low, BASELINE],
+            ["git", "-C", str(repo), "merge-base", "--is-ancestor", low, baseline],
             capture_output=True,
         ).returncode == 0:
-            rng = f"{BASELINE}..{high or 'HEAD'}"
+            rng = f"{baseline}..{high or 'HEAD'}"
             print(f"диапазон подрезан до объявленного начала: {rng}")
     except subprocess.CalledProcessError:
-        pass  # BASELINE вне этой истории — проверяем, что просили
+        pass  # начала нет в этой истории — проверяем, что просили
 
     try:
         # Слияния пропускаем: их сообщение составляет площадка, а не автор.
-        out = git("log", "--no-merges", "--format=%H%x00%s%x00%b%x00", rng)
+        out = git(repo, "log", "--no-merges", "--format=%H%x00%s%x00%b%x00", rng)
     except subprocess.CalledProcessError as e:
         print(f"проверка не отработала: диапазон {rng!r} не разобран — "
               f"{e.stderr.strip()}", file=sys.stderr)
