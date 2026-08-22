@@ -1,0 +1,3332 @@
+{
+  "schema": "1.0",
+  "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
+  "count": 130,
+  "rules": [
+    {
+      "id": "001",
+      "slug": "transport-rest-not-graphql",
+      "title": {
+        "ru": "Транспорт к GitHub: REST по умолчанию, GraphQL только там, где REST не умеет",
+        "en": "Talking to GitHub: REST by default, GraphQL only where REST cannot"
+      },
+      "areas": {
+        "ru": [
+          "квоты",
+          "API"
+        ],
+        "en": [
+          "quotas",
+          "API"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/001-transport-rest-not-graphql.md",
+        "en": "rules/en/001-transport-rest-not-graphql.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1265"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1233"
+        }
+      ]
+    },
+    {
+      "id": "002",
+      "slug": "rule-without-mechanism",
+      "title": {
+        "ru": "Правило без механизма — обещание, а не гарантия",
+        "en": "A rule without a mechanism is a promise, not a guarantee"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "CI"
+        ],
+        "en": [
+          "process",
+          "CI"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/002-rule-without-mechanism.md",
+        "en": "rules/en/002-rule-without-mechanism.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1296"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1329"
+        }
+      ]
+    },
+    {
+      "id": "003",
+      "slug": "branch-name-is-a-switch",
+      "title": {
+        "ru": "Имя ветки может быть переключателем поведения, а не соглашением о стиле",
+        "en": "A branch name can be a behaviour switch, not a style convention"
+      },
+      "areas": {
+        "ru": [
+          "конвейер"
+        ],
+        "en": [
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/003-branch-name-is-a-switch.md",
+        "en": "rules/en/003-branch-name-is-a-switch.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1320"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1302"
+        }
+      ]
+    },
+    {
+      "id": "004",
+      "slug": "conflict-is-normal-not-outage",
+      "title": {
+        "ru": "Конфликт — штатная ситуация конвейера, а не авария",
+        "en": "A conflict is normal pipeline traffic, not an outage"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "автоматика"
+        ],
+        "en": [
+          "pipeline",
+          "automation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/004-conflict-is-normal-not-outage.md",
+        "en": "rules/en/004-conflict-is-normal-not-outage.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1313"
+        }
+      ]
+    },
+    {
+      "id": "005",
+      "slug": "hand-written-numbers-rot",
+      "title": {
+        "ru": "Число, вписанное руками, устаревает молча",
+        "en": "A number typed by hand goes stale in silence"
+      },
+      "areas": {
+        "ru": [
+          "документация"
+        ],
+        "en": [
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/005-hand-written-numbers-rot.md",
+        "en": "rules/en/005-hand-written-numbers-rot.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "7"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "8"
+        }
+      ]
+    },
+    {
+      "id": "006",
+      "slug": "window-lifetime",
+      "title": {
+        "ru": "Агентское окно живёт три–пять дней",
+        "en": "An agent session lives three to five days"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии"
+        ],
+        "en": [
+          "agent sessions"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/006-window-lifetime.md",
+        "en": "rules/en/006-window-lifetime.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1283"
+        }
+      ]
+    },
+    {
+      "id": "007",
+      "slug": "blocked-window-looks-alive",
+      "title": {
+        "ru": "Окно, зависшее на разрешении, снаружи неотличимо от работающего",
+        "en": "A session stalled on a permission prompt looks exactly like a working one"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии"
+        ],
+        "en": [
+          "agent sessions"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/007-blocked-window-looks-alive.md",
+        "en": "rules/en/007-blocked-window-looks-alive.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1323"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1321"
+        }
+      ]
+    },
+    {
+      "id": "008",
+      "slug": "details-is-a-stub-in-text",
+      "title": {
+        "ru": "Сворачиваемый блок выглядит обрубком там, где страницу читают текстом",
+        "en": "A collapsible block reads as a stub wherever the page is consumed as text"
+      },
+      "areas": {
+        "ru": [
+          "витрины"
+        ],
+        "en": [
+          "showcases"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/008-details-is-a-stub-in-text.md",
+        "en": "rules/en/008-details-is-a-stub-in-text.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "9"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "10"
+        }
+      ]
+    },
+    {
+      "id": "009",
+      "slug": "count-unique-not-total",
+      "title": {
+        "ru": "Считайте уникальные имена, а не записи",
+        "en": "Count unique names, not records"
+      },
+      "areas": {
+        "ru": [
+          "метрики"
+        ],
+        "en": [
+          "metrics"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/009-count-unique-not-total.md",
+        "en": "rules/en/009-count-unique-not-total.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "7"
+        }
+      ]
+    },
+    {
+      "id": "010",
+      "slug": "empty-checklist-is-not-green",
+      "title": {
+        "ru": "Пустой список проверок означает «не стартовало», а не «всё хорошо»",
+        "en": "An empty list of checks means \"never started\", not \"all clear\""
+      },
+      "areas": {
+        "ru": [
+          "CI"
+        ],
+        "en": [
+          "CI"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/010-empty-checklist-is-not-green.md",
+        "en": "rules/en/010-empty-checklist-is-not-green.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1232"
+        }
+      ]
+    },
+    {
+      "id": "011",
+      "slug": "events-not-polling",
+      "title": {
+        "ru": "Наблюдение: событие вместо опроса, а если опрос — то условный",
+        "en": "Watching: events over polling, and if polling, then conditional"
+      },
+      "areas": {
+        "ru": [
+          "квоты",
+          "наблюдение"
+        ],
+        "en": [
+          "quotas",
+          "observation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/011-events-not-polling.md",
+        "en": "rules/en/011-events-not-polling.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "012",
+      "slug": "do-not-push-to-someone-elses-branch",
+      "title": {
+        "ru": "В чужую ветку не пушить",
+        "en": "Do not push into somebody else's branch"
+      },
+      "areas": {
+        "ru": [
+          "командная работа"
+        ],
+        "en": [
+          "collaboration"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/012-do-not-push-to-someone-elses-branch.md",
+        "en": "rules/en/012-do-not-push-to-someone-elses-branch.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "013",
+      "slug": "write-escapes-to-file-not-heredoc",
+      "title": {
+        "ru": "Код с экранированием писать файлом, а не heredoc'ом",
+        "en": "Write code containing escapes to a file, not through a heredoc"
+      },
+      "areas": {
+        "ru": [
+          "инструменты"
+        ],
+        "en": [
+          "tooling"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/013-write-escapes-to-file-not-heredoc.md",
+        "en": "rules/en/013-write-escapes-to-file-not-heredoc.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "014",
+      "slug": "red-before-fix-needs-partial-revert",
+      "title": {
+        "ru": "«Тест краснеет до фикса» доказывается полу-откатом, а не откатом всего",
+        "en": "\"The test goes red without the fix\" is proved by a partial revert, not a full one"
+      },
+      "areas": {
+        "ru": [
+          "тесты"
+        ],
+        "en": [
+          "tests"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/014-red-before-fix-needs-partial-revert.md",
+        "en": "rules/en/014-red-before-fix-needs-partial-revert.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "015",
+      "slug": "agents-return-data-host-writes-files",
+      "title": {
+        "ru": "Агенты возвращают данные — файлы правит хост",
+        "en": "Agents return data — the host writes the files"
+      },
+      "areas": {
+        "ru": [
+          "параллельная работа"
+        ],
+        "en": [
+          "parallel work"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/015-agents-return-data-host-writes-files.md",
+        "en": "rules/en/015-agents-return-data-host-writes-files.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "016",
+      "slug": "no-silent-truncation",
+      "title": {
+        "ru": "Обрезать вывод молча нельзя — только с маркером обрыва",
+        "en": "Output is never truncated silently — only with a marker"
+      },
+      "areas": {
+        "ru": [
+          "вывод",
+          "отчёты"
+        ],
+        "en": [
+          "output",
+          "reports"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/016-no-silent-truncation.md",
+        "en": "rules/en/016-no-silent-truncation.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "017",
+      "slug": "measure-quota-do-not-guess",
+      "title": {
+        "ru": "Остаток лимита мерить, а не угадывать — и смотреть первым шагом",
+        "en": "Measure what is left of the quota instead of guessing — and look first"
+      },
+      "areas": {
+        "ru": [
+          "квоты",
+          "диагностика"
+        ],
+        "en": [
+          "quotas",
+          "diagnostics"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/017-measure-quota-do-not-guess.md",
+        "en": "rules/en/017-measure-quota-do-not-guess.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "018",
+      "slug": "cloud-checks-nodes-local-checks-chain",
+      "title": {
+        "ru": "Одно окружение проверяет узлы, другое — цепочку",
+        "en": "One environment checks the nodes, the other checks the chain"
+      },
+      "areas": {
+        "ru": [
+          "среды"
+        ],
+        "en": [
+          "environments"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/018-cloud-checks-nodes-local-checks-chain.md",
+        "en": "rules/en/018-cloud-checks-nodes-local-checks-chain.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "019",
+      "slug": "audit-from-surfaces-not-files",
+      "title": {
+        "ru": "Аудит планируется от поверхностей продукта, а не от файлов",
+        "en": "An audit is planned from the product's surfaces, not from its files"
+      },
+      "areas": {
+        "ru": [
+          "аудит"
+        ],
+        "en": [
+          "audit"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/019-audit-from-surfaces-not-files.md",
+        "en": "rules/en/019-audit-from-surfaces-not-files.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "020",
+      "slug": "restart-only-the-delta",
+      "title": {
+        "ru": "После сбоя перезапускать дельту, а не всю волну",
+        "en": "After a failure, restart the delta, not the whole wave"
+      },
+      "areas": {
+        "ru": [
+          "параллельная работа"
+        ],
+        "en": [
+          "parallel work"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/020-restart-only-the-delta.md",
+        "en": "rules/en/020-restart-only-the-delta.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "021",
+      "slug": "split-docs-by-reader",
+      "title": {
+        "ru": "Документацию делят по читателю, а не по теме",
+        "en": "Split documentation by reader, not by topic"
+      },
+      "areas": {
+        "ru": [
+          "документация"
+        ],
+        "en": [
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/021-split-docs-by-reader.md",
+        "en": "rules/en/021-split-docs-by-reader.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "022",
+      "slug": "one-canonical-document",
+      "title": {
+        "ru": "Одна тема — один канонический документ, остальные ссылаются",
+        "en": "One topic, one canonical document; everything else links to it"
+      },
+      "areas": {
+        "ru": [
+          "документация"
+        ],
+        "en": [
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/022-one-canonical-document.md",
+        "en": "rules/en/022-one-canonical-document.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "023",
+      "slug": "readme-is-a-storefront",
+      "title": {
+        "ru": "README — витрина, а не свалка технической памяти",
+        "en": "The README is a storefront, not a dumping ground for technical memory"
+      },
+      "areas": {
+        "ru": [
+          "витрины"
+        ],
+        "en": [
+          "showcases"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/023-readme-is-a-storefront.md",
+        "en": "rules/en/023-readme-is-a-storefront.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "024",
+      "slug": "no-worklog-in-active-docs",
+      "title": {
+        "ru": "В действующем документе нет журнала работ",
+        "en": "A live document carries no work log"
+      },
+      "areas": {
+        "ru": [
+          "документация"
+        ],
+        "en": [
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/024-no-worklog-in-active-docs.md",
+        "en": "rules/en/024-no-worklog-in-active-docs.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "025",
+      "slug": "issue-links-by-zone",
+      "title": {
+        "ru": "Ссылка на задачу уместна в журнале и вредна в объяснении",
+        "en": "A link to a task belongs in a log and hurts in an explanation"
+      },
+      "areas": {
+        "ru": [
+          "документация"
+        ],
+        "en": [
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/025-issue-links-by-zone.md",
+        "en": "rules/en/025-issue-links-by-zone.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "026",
+      "slug": "rejected-findings-must-be-recorded",
+      "title": {
+        "ru": "Отклонённая находка фиксируется с причиной",
+        "en": "A rejected finding is recorded together with its reason"
+      },
+      "areas": {
+        "ru": [
+          "аудит"
+        ],
+        "en": [
+          "audit"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/026-rejected-findings-must-be-recorded.md",
+        "en": "rules/en/026-rejected-findings-must-be-recorded.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "027",
+      "slug": "empty-state-is-a-state",
+      "title": {
+        "ru": "Пустое состояние надо объявлять явно",
+        "en": "An empty state must be declared explicitly"
+      },
+      "areas": {
+        "ru": [
+          "документация",
+          "интерфейс"
+        ],
+        "en": [
+          "documentation",
+          "interface"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/027-empty-state-is-a-state.md",
+        "en": "rules/en/027-empty-state-is-a-state.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "028",
+      "slug": "checklist-not-a-list-of-findings",
+      "title": {
+        "ru": "Комплексная задача ведёт чек-лист, а не перечисление",
+        "en": "A complex task keeps a checklist, not a narrative"
+      },
+      "areas": {
+        "ru": [
+          "трекер"
+        ],
+        "en": [
+          "tracker"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/028-checklist-not-a-list-of-findings.md",
+        "en": "rules/en/028-checklist-not-a-list-of-findings.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "029",
+      "slug": "triggers-and-canon",
+      "title": {
+        "ru": "Компактный триггер в главном файле, детали — в каноне",
+        "en": "A compact trigger in the main file, the details in the canon"
+      },
+      "areas": {
+        "ru": [
+          "документация"
+        ],
+        "en": [
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/029-triggers-and-canon.md",
+        "en": "rules/en/029-triggers-and-canon.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "030",
+      "slug": "changelog-from-fragments",
+      "title": {
+        "ru": "Журнал изменений собирается из фрагментов, а не пишется задним числом",
+        "en": "The changelog is assembled from fragments, not written afterwards"
+      },
+      "areas": {
+        "ru": [
+          "релиз"
+        ],
+        "en": [
+          "release"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/030-changelog-from-fragments.md",
+        "en": "rules/en/030-changelog-from-fragments.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "031",
+      "slug": "waves-not-salvos",
+      "title": {
+        "ru": "Параллельные исполнители запускаются волнами фиксированного размера",
+        "en": "Parallel executors launch in waves of fixed size"
+      },
+      "areas": {
+        "ru": [
+          "параллельная работа"
+        ],
+        "en": [
+          "parallel work"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/031-waves-not-salvos.md",
+        "en": "rules/en/031-waves-not-salvos.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "032",
+      "slug": "role-must-run-the-product",
+      "title": {
+        "ru": "Если предмет роли наблюдаем в работающем продукте — роль обязана его запустить",
+        "en": "If a role's subject is observable in the running product, the role must run it"
+      },
+      "areas": {
+        "ru": [
+          "роли",
+          "аудит"
+        ],
+        "en": [
+          "roles",
+          "audit"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/032-role-must-run-the-product.md",
+        "en": "rules/en/032-role-must-run-the-product.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "033",
+      "slug": "pace-from-limit-not-desire",
+      "title": {
+        "ru": "Темп длинной работы считается от лимита, а не от желания",
+        "en": "The pace of long work is derived from the limit, not from eagerness"
+      },
+      "areas": {
+        "ru": [
+          "квоты",
+          "темп"
+        ],
+        "en": [
+          "quotas",
+          "pace"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/033-pace-from-limit-not-desire.md",
+        "en": "rules/en/033-pace-from-limit-not-desire.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "034",
+      "slug": "small-zone-per-executor",
+      "title": {
+        "ru": "Зона одного исполнителя должна быть маленькой",
+        "en": "One executor's zone must be small"
+      },
+      "areas": {
+        "ru": [
+          "параллельная работа"
+        ],
+        "en": [
+          "parallel work"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/034-small-zone-per-executor.md",
+        "en": "rules/en/034-small-zone-per-executor.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "035",
+      "slug": "version-is-never-edited-by-hand",
+      "title": {
+        "ru": "Версия не правится руками ни в одном файле",
+        "en": "The version is never edited by hand, in any file"
+      },
+      "areas": {
+        "ru": [
+          "релиз"
+        ],
+        "en": [
+          "release"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/035-version-is-never-edited-by-hand.md",
+        "en": "rules/en/035-version-is-never-edited-by-hand.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "036",
+      "slug": "expensive-window-enters-twice-and-briefly",
+      "title": {
+        "ru": "Дорогое окружение входит в аудит дважды и коротко",
+        "en": "The expensive environment enters an audit twice, and briefly"
+      },
+      "areas": {
+        "ru": [
+          "аудит",
+          "среды"
+        ],
+        "en": [
+          "audit",
+          "environments"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/036-expensive-window-enters-twice-and-briefly.md",
+        "en": "rules/en/036-expensive-window-enters-twice-and-briefly.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "037",
+      "slug": "finding-status-depends-on-window",
+      "title": {
+        "ru": "Находка, полученная не на той поверхности, — гипотеза",
+        "en": "A finding obtained on the wrong surface is a hypothesis"
+      },
+      "areas": {
+        "ru": [
+          "аудит"
+        ],
+        "en": [
+          "audit"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/037-finding-status-depends-on-window.md",
+        "en": "rules/en/037-finding-status-depends-on-window.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "038",
+      "slug": "window-name-declares-its-environment",
+      "title": {
+        "ru": "Имя окна начинается с окружения, а не с задачи",
+        "en": "A session's name starts with its environment, not with its task"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии"
+        ],
+        "en": [
+          "agent sessions"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/038-window-name-declares-its-environment.md",
+        "en": "rules/en/038-window-name-declares-its-environment.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "039",
+      "slug": "three-outcomes-not-two",
+      "title": {
+        "ru": "У проверки три исхода, а не два",
+        "en": "A check has three outcomes, not two"
+      },
+      "areas": {
+        "ru": [
+          "CI",
+          "надёжность"
+        ],
+        "en": [
+          "CI",
+          "reliability"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/039-three-outcomes-not-two.md",
+        "en": "rules/en/039-three-outcomes-not-two.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "040",
+      "slug": "skip-without-reason-is-a-forgotten-test",
+      "title": {
+        "ru": "Пропуск без причины неотличим от забытого теста",
+        "en": "A skip without a reason is indistinguishable from a forgotten test"
+      },
+      "areas": {
+        "ru": [
+          "тесты"
+        ],
+        "en": [
+          "tests"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/040-skip-without-reason-is-a-forgotten-test.md",
+        "en": "rules/en/040-skip-without-reason-is-a-forgotten-test.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "041",
+      "slug": "two-honest-numbers-beat-one-averaged",
+      "title": {
+        "ru": "Две честные метрики лучше одной усреднённой",
+        "en": "Two honest metrics beat one averaged number"
+      },
+      "areas": {
+        "ru": [
+          "метрики"
+        ],
+        "en": [
+          "metrics"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/041-two-honest-numbers-beat-one-averaged.md",
+        "en": "rules/en/041-two-honest-numbers-beat-one-averaged.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "042",
+      "slug": "decision-records-its-alternatives",
+      "title": {
+        "ru": "Решение записывается вместе с отвергнутыми вариантами",
+        "en": "A decision is recorded together with the options rejected"
+      },
+      "areas": {
+        "ru": [
+          "решения"
+        ],
+        "en": [
+          "decisions"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/042-decision-records-its-alternatives.md",
+        "en": "rules/en/042-decision-records-its-alternatives.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "043",
+      "slug": "decisions-are-superseded-not-edited",
+      "title": {
+        "ru": "Решение не правится задним числом — его отменяет новое",
+        "en": "A decision is not edited after the fact — a new one supersedes it"
+      },
+      "areas": {
+        "ru": [
+          "решения"
+        ],
+        "en": [
+          "decisions"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/043-decisions-are-superseded-not-edited.md",
+        "en": "rules/en/043-decisions-are-superseded-not-edited.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "044",
+      "slug": "check-the-premise-before-fixing",
+      "title": {
+        "ru": "Премиса находки проверяется прежде, чем по ней работают",
+        "en": "Verify a finding's premise before working from it"
+      },
+      "areas": {
+        "ru": [
+          "аудит"
+        ],
+        "en": [
+          "audit"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/044-check-the-premise-before-fixing.md",
+        "en": "rules/en/044-check-the-premise-before-fixing.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "045",
+      "slug": "no-silent-fallback",
+      "title": {
+        "ru": "Тихого запасного пути нет — отказ громкий",
+        "en": "There is no silent fallback — failure is loud"
+      },
+      "areas": {
+        "ru": [
+          "надёжность"
+        ],
+        "en": [
+          "reliability"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/045-no-silent-fallback.md",
+        "en": "rules/en/045-no-silent-fallback.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "046",
+      "slug": "name-the-gaps-do-not-level-them",
+      "title": {
+        "ru": "Пробел в гарантии называется поимённо, а не выравнивается на бумаге",
+        "en": "Name the gap in a guarantee; do not level it on paper"
+      },
+      "areas": {
+        "ru": [
+          "документация",
+          "безопасность"
+        ],
+        "en": [
+          "documentation",
+          "security"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/046-name-the-gaps-do-not-level-them.md",
+        "en": "rules/en/046-name-the-gaps-do-not-level-them.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "047",
+      "slug": "rule-change-restarts-the-windows",
+      "title": {
+        "ru": "Смена правил работы — повод перезапустить окна, а не рассылка",
+        "en": "Changing the working rules is a reason to restart the sessions, not to send a memo"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии"
+        ],
+        "en": [
+          "agent sessions"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/047-rule-change-restarts-the-windows.md",
+        "en": "rules/en/047-rule-change-restarts-the-windows.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1283"
+        }
+      ]
+    },
+    {
+      "id": "048",
+      "slug": "calibration-needs-a-complete-input",
+      "title": {
+        "ru": "Калибровка по внешнему сигналу требует полноты входа",
+        "en": "Calibrating against an external signal requires a complete input"
+      },
+      "areas": {
+        "ru": [
+          "метрики",
+          "квоты"
+        ],
+        "en": [
+          "metrics",
+          "quotas"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/048-calibration-needs-a-complete-input.md",
+        "en": "rules/en/048-calibration-needs-a-complete-input.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-usage",
+          "issue": "13"
+        }
+      ]
+    },
+    {
+      "id": "049",
+      "slug": "derive-state-from-live-artifacts",
+      "title": {
+        "ru": "Состояние выводится из живых артефактов, а не из реестра, который ведут руками",
+        "en": "Derive state from live artefacts, not from a register kept by hand"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "процесс"
+        ],
+        "en": [
+          "pipeline",
+          "process"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/049-derive-state-from-live-artifacts.md",
+        "en": "rules/en/049-derive-state-from-live-artifacts.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "050",
+      "slug": "limits-move-down-only",
+      "title": {
+        "ru": "Бюджет ограничителя двигают только вниз",
+        "en": "A gate's budget only moves down"
+      },
+      "areas": {
+        "ru": [
+          "гейты"
+        ],
+        "en": [
+          "gates"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/050-limits-move-down-only.md",
+        "en": "rules/en/050-limits-move-down-only.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "051",
+      "slug": "warn-on-likely-block-on-certain",
+      "title": {
+        "ru": "Предупреждают о вероятном, запрещают достоверное",
+        "en": "Warn about the likely, block only the certain"
+      },
+      "areas": {
+        "ru": [
+          "гейты"
+        ],
+        "en": [
+          "gates"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/051-warn-on-likely-block-on-certain.md",
+        "en": "rules/en/051-warn-on-likely-block-on-certain.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "052",
+      "slug": "only-the-head-of-the-queue-moves",
+      "title": {
+        "ru": "Из общей ветки обновляется только голова очереди",
+        "en": "Only the head of the queue updates from the shared branch"
+      },
+      "areas": {
+        "ru": [
+          "конвейер"
+        ],
+        "en": [
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/052-only-the-head-of-the-queue-moves.md",
+        "en": "rules/en/052-only-the-head-of-the-queue-moves.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "053",
+      "slug": "queue-order-is-a-rule-not-arrival",
+      "title": {
+        "ru": "Порядок очереди задаётся правилом, а не готовностью",
+        "en": "Queue order is set by a rule, not by who went green first"
+      },
+      "areas": {
+        "ru": [
+          "конвейер"
+        ],
+        "en": [
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/053-queue-order-is-a-rule-not-arrival.md",
+        "en": "rules/en/053-queue-order-is-a-rule-not-arrival.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1325"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1326"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1329"
+        }
+      ]
+    },
+    {
+      "id": "054",
+      "slug": "collect-and-analyse-are-separate-passes",
+      "title": {
+        "ru": "Сбор и разбор — разные проходы",
+        "en": "Collecting and analysing are separate passes"
+      },
+      "areas": {
+        "ru": [
+          "прогоны",
+          "процесс"
+        ],
+        "en": [
+          "runs",
+          "process"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/054-collect-and-analyse-are-separate-passes.md",
+        "en": "rules/en/054-collect-and-analyse-are-separate-passes.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "055",
+      "slug": "your-own-expectations-are-a-hypothesis",
+      "title": {
+        "ru": "Собственный эталон — тоже гипотеза",
+        "en": "Your own reference answer is also a hypothesis"
+      },
+      "areas": {
+        "ru": [
+          "тесты",
+          "аудит"
+        ],
+        "en": [
+          "tests",
+          "audit"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/055-your-own-expectations-are-a-hypothesis.md",
+        "en": "rules/en/055-your-own-expectations-are-a-hypothesis.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "056",
+      "slug": "a-signal-states-what-it-does-not-mean",
+      "title": {
+        "ru": "У сигнала пишут и то, чего он не означает",
+        "en": "A signal also states what it does not mean"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "документация"
+        ],
+        "en": [
+          "contracts",
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/056-a-signal-states-what-it-does-not-mean.md",
+        "en": "rules/en/056-a-signal-states-what-it-does-not-mean.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "057",
+      "slug": "unmechanizable-rules-are-named-explicitly",
+      "title": {
+        "ru": "Правило, которое нельзя проверить машиной, называется явно",
+        "en": "A rule no machine can check is named explicitly"
+      },
+      "areas": {
+        "ru": [
+          "процесс"
+        ],
+        "en": [
+          "process"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/057-unmechanizable-rules-are-named-explicitly.md",
+        "en": "rules/en/057-unmechanizable-rules-are-named-explicitly.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "058",
+      "slug": "when-the-quota-is-out-stop",
+      "title": {
+        "ru": "Исчерпав квоту — остановиться, а не повторять",
+        "en": "When the quota is exhausted, stop — do not retry"
+      },
+      "areas": {
+        "ru": [
+          "квоты"
+        ],
+        "en": [
+          "quotas"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/058-when-the-quota-is-out-stop.md",
+        "en": "rules/en/058-when-the-quota-is-out-stop.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "059",
+      "slug": "map-the-detour-before-the-resource-runs-out",
+      "title": {
+        "ru": "У каждого исчерпаемого ресурса есть заранее составленная карта обхода",
+        "en": "Every exhaustible resource has a detour map prepared in advance"
+      },
+      "areas": {
+        "ru": [
+          "квоты",
+          "планирование"
+        ],
+        "en": [
+          "quotas",
+          "planning"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/059-map-the-detour-before-the-resource-runs-out.md",
+        "en": "rules/en/059-map-the-detour-before-the-resource-runs-out.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "060",
+      "slug": "debrief-every-wave-quality-first",
+      "title": {
+        "ru": "Разбор после каждой волны, и качество важнее механики",
+        "en": "Debrief after every wave, and quality matters more than mechanics"
+      },
+      "areas": {
+        "ru": [
+          "параллельная работа"
+        ],
+        "en": [
+          "parallel work"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/060-debrief-every-wave-quality-first.md",
+        "en": "rules/en/060-debrief-every-wave-quality-first.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "061",
+      "slug": "environment-bans-belong-in-the-task",
+      "title": {
+        "ru": "Запреты окружения пишутся в задании, а не подразумеваются",
+        "en": "Environment prohibitions go into the task text, never implied"
+      },
+      "areas": {
+        "ru": [
+          "параллельная работа"
+        ],
+        "en": [
+          "parallel work"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/061-environment-bans-belong-in-the-task.md",
+        "en": "rules/en/061-environment-bans-belong-in-the-task.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "062",
+      "slug": "a-role-must-be-able-to-object",
+      "title": {
+        "ru": "Роль заводится, если способна возразить, а не дополнить",
+        "en": "A role is created if it can object, not merely add"
+      },
+      "areas": {
+        "ru": [
+          "роли"
+        ],
+        "en": [
+          "roles"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/062-a-role-must-be-able-to-object.md",
+        "en": "rules/en/062-a-role-must-be-able-to-object.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "063",
+      "slug": "automatic-intervention-needs-all-conditions",
+      "title": {
+        "ru": "Автоматическое вмешательство включается по всем условиям сразу",
+        "en": "Automatic intervention fires only when all conditions hold"
+      },
+      "areas": {
+        "ru": [
+          "автоматика"
+        ],
+        "en": [
+          "automation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/063-automatic-intervention-needs-all-conditions.md",
+        "en": "rules/en/063-automatic-intervention-needs-all-conditions.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "064",
+      "slug": "labels-are-machine-input-not-decoration",
+      "title": {
+        "ru": "Метки — вход механизма, а не украшение",
+        "en": "Labels are machine input, not decoration"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "конвейер"
+        ],
+        "en": [
+          "process",
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/064-labels-are-machine-input-not-decoration.md",
+        "en": "rules/en/064-labels-are-machine-input-not-decoration.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1329"
+        }
+      ]
+    },
+    {
+      "id": "065",
+      "slug": "the-onramp-must-speak-the-newcomers-language",
+      "title": {
+        "ru": "Точка входа для новичка пишется на его языке — и не одна",
+        "en": "The newcomer's entry point speaks their language — and there is more than one"
+      },
+      "areas": {
+        "ru": [
+          "сообщество"
+        ],
+        "en": [
+          "community"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/065-the-onramp-must-speak-the-newcomers-language.md",
+        "en": "rules/en/065-the-onramp-must-speak-the-newcomers-language.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "066",
+      "slug": "lock-the-companion-not-the-target",
+      "title": {
+        "ru": "Блокировку берут на спутника, а не на файл, который заменяется целиком",
+        "en": "Lock the companion file, not the file that gets replaced wholesale"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "конкурентность"
+        ],
+        "en": [
+          "code",
+          "concurrency"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/066-lock-the-companion-not-the-target.md",
+        "en": "rules/en/066-lock-the-companion-not-the-target.md"
+      },
+      "trails": [
+        {
+          "repo": "src/stepik_grader",
+          "issue": "1136"
+        }
+      ]
+    },
+    {
+      "id": "067",
+      "slug": "cleanup-must-not-swallow-the-failure",
+      "title": {
+        "ru": "Уборка после сбоя не превращает сбой в успех",
+        "en": "Cleanup after a failure must not turn the failure into a success"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "надёжность"
+        ],
+        "en": [
+          "code",
+          "reliability"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/067-cleanup-must-not-swallow-the-failure.md",
+        "en": "rules/en/067-cleanup-must-not-swallow-the-failure.md"
+      },
+      "trails": [
+        {
+          "repo": "src/stepik_grader",
+          "issue": "996"
+        }
+      ]
+    },
+    {
+      "id": "068",
+      "slug": "allowlist-not-denylist",
+      "title": {
+        "ru": "Список разрешённого, а не список запрещённого",
+        "en": "An allowlist, not a denylist"
+      },
+      "areas": {
+        "ru": [
+          "безопасность"
+        ],
+        "en": [
+          "security"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/068-allowlist-not-denylist.md",
+        "en": "rules/en/068-allowlist-not-denylist.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1346"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1280"
+        }
+      ]
+    },
+    {
+      "id": "069",
+      "slug": "write-the-field-not-the-snapshot",
+      "title": {
+        "ru": "Пишем поле, а не снимок, если писателей несколько",
+        "en": "Write the field, not the snapshot, when there are several writers"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "конкурентность"
+        ],
+        "en": [
+          "code",
+          "concurrency"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/069-write-the-field-not-the-snapshot.md",
+        "en": "rules/en/069-write-the-field-not-the-snapshot.md"
+      },
+      "trails": [
+        {
+          "repo": "web/settings_adapter.py",
+          "issue": "997"
+        }
+      ]
+    },
+    {
+      "id": "070",
+      "slug": "a-heuristic-guard-fails-open-with-a-written-risk",
+      "title": {
+        "ru": "Эвристическая защита ослабляется осознанно — с записью остаточного риска",
+        "en": "A heuristic guard is relaxed deliberately — with the residual risk written down"
+      },
+      "areas": {
+        "ru": [
+          "безопасность"
+        ],
+        "en": [
+          "security"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/070-a-heuristic-guard-fails-open-with-a-written-risk.md",
+        "en": "rules/en/070-a-heuristic-guard-fails-open-with-a-written-risk.md"
+      },
+      "trails": [
+        {
+          "repo": "web/http_guards.py",
+          "issue": "631"
+        }
+      ]
+    },
+    {
+      "id": "071",
+      "slug": "deliberate-duplication-is-signed",
+      "title": {
+        "ru": "Намеренный дубль подписывается",
+        "en": "Deliberate duplication is signed"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "архитектура"
+        ],
+        "en": [
+          "code",
+          "architecture"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/071-deliberate-duplication-is-signed.md",
+        "en": "rules/en/071-deliberate-duplication-is-signed.md"
+      },
+      "trails": [
+        {
+          "repo": "web/auth_adapter.py",
+          "issue": "433"
+        }
+      ]
+    },
+    {
+      "id": "072",
+      "slug": "guard-the-cause-and-the-effect",
+      "title": {
+        "ru": "Причину ловит гейт, факт — фикстура: нужны обе",
+        "en": "The gate catches the cause, the fixture catches the effect: you need both"
+      },
+      "areas": {
+        "ru": [
+          "тесты",
+          "гейты"
+        ],
+        "en": [
+          "tests",
+          "gates"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/072-guard-the-cause-and-the-effect.md",
+        "en": "rules/en/072-guard-the-cause-and-the-effect.md"
+      },
+      "trails": [
+        {
+          "repo": "tests/conftest.py",
+          "issue": "997"
+        }
+      ]
+    },
+    {
+      "id": "073",
+      "slug": "tool-version-from-one-source-with-an-upper-bound",
+      "title": {
+        "ru": "Версия инструмента — из одного источника и с верхней границей",
+        "en": "A tool's version comes from one source and has an upper bound"
+      },
+      "areas": {
+        "ru": [
+          "инструменты"
+        ],
+        "en": [
+          "tooling"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/073-tool-version-from-one-source-with-an-upper-bound.md",
+        "en": "rules/en/073-tool-version-from-one-source-with-an-upper-bound.md"
+      },
+      "trails": [
+        {
+          "repo": "scripts/check_ruff_pin.py",
+          "issue": "791"
+        }
+      ]
+    },
+    {
+      "id": "074",
+      "slug": "one-shot-irreversible-steps-get-their-own-guard",
+      "title": {
+        "ru": "Необратимый шаг проверяется инвариантами заранее",
+        "en": "An irreversible step is guarded by invariants checked in advance"
+      },
+      "areas": {
+        "ru": [
+          "релиз",
+          "CI"
+        ],
+        "en": [
+          "release",
+          "CI"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/074-one-shot-irreversible-steps-get-their-own-guard.md",
+        "en": "rules/en/074-one-shot-irreversible-steps-get-their-own-guard.md"
+      },
+      "trails": [
+        {
+          "repo": "scripts/check_workflow_guardrails.py",
+          "issue": "988"
+        }
+      ]
+    },
+    {
+      "id": "075",
+      "slug": "a-guard-that-finds-nothing-must-fail",
+      "title": {
+        "ru": "Гейт, не нашедший предмета проверки, обязан упасть",
+        "en": "A gate that cannot find its subject must fail"
+      },
+      "areas": {
+        "ru": [
+          "гейты"
+        ],
+        "en": [
+          "gates"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/075-a-guard-that-finds-nothing-must-fail.md",
+        "en": "rules/en/075-a-guard-that-finds-nothing-must-fail.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "076",
+      "slug": "messages-point-at-what-the-user-actually-has",
+      "title": {
+        "ru": "Сообщение ссылается на то, что есть у получателя",
+        "en": "A message points at what the recipient actually has"
+      },
+      "areas": {
+        "ru": [
+          "интерфейс"
+        ],
+        "en": [
+          "interface"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/076-messages-point-at-what-the-user-actually-has.md",
+        "en": "rules/en/076-messages-point-at-what-the-user-actually-has.md"
+      },
+      "trails": [
+        {
+          "repo": "scripts/check_locale_guardrails.py",
+          "issue": "1005"
+        }
+      ]
+    },
+    {
+      "id": "077",
+      "slug": "key-parity-is-not-translation",
+      "title": {
+        "ru": "Совпадение ключей — ещё не перевод",
+        "en": "Matching keys are not a translation"
+      },
+      "areas": {
+        "ru": [
+          "локализация"
+        ],
+        "en": [
+          "localisation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/077-key-parity-is-not-translation.md",
+        "en": "rules/en/077-key-parity-is-not-translation.md"
+      },
+      "trails": [
+        {
+          "repo": "scripts/check_locale_guardrails.py",
+          "issue": "821"
+        },
+        {
+          "repo": "scripts/check_locale_guardrails.py",
+          "issue": "264"
+        }
+      ]
+    },
+    {
+      "id": "078",
+      "slug": "cancelled-is-not-an-error",
+      "title": {
+        "ru": "Отмена — отдельный исход, а не разновидность ошибки",
+        "en": "Cancellation is its own outcome, not a kind of error"
+      },
+      "areas": {
+        "ru": [
+          "контракты"
+        ],
+        "en": [
+          "contracts"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/078-cancelled-is-not-an-error.md",
+        "en": "rules/en/078-cancelled-is-not-an-error.md"
+      },
+      "trails": [
+        {
+          "repo": "web/runs.py",
+          "issue": "262"
+        },
+        {
+          "repo": "web/runs.py",
+          "issue": "296"
+        }
+      ]
+    },
+    {
+      "id": "079",
+      "slug": "ttl-counts-from-completion",
+      "title": {
+        "ru": "Срок хранения отсчитывается от завершения, а не от постановки",
+        "en": "Retention is counted from completion, not from enqueueing"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "ресурсы"
+        ],
+        "en": [
+          "code",
+          "resources"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/079-ttl-counts-from-completion.md",
+        "en": "rules/en/079-ttl-counts-from-completion.md"
+      },
+      "trails": [
+        {
+          "repo": "web/runs.py",
+          "issue": "408"
+        },
+        {
+          "repo": "web/runs.py",
+          "issue": "811"
+        }
+      ]
+    },
+    {
+      "id": "080",
+      "slug": "every-new-rule-goes-into-the-catalogue",
+      "title": {
+        "ru": "Правило, родившееся в проекте, записывается в общий каталог",
+        "en": "A rule born in a project is recorded in the shared catalogue"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "каталог"
+        ],
+        "en": [
+          "process",
+          "catalogue"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/080-every-new-rule-goes-into-the-catalogue.md",
+        "en": "rules/en/080-every-new-rule-goes-into-the-catalogue.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "081",
+      "slug": "untrusted-code-runs-in-a-private-directory",
+      "title": {
+        "ru": "Чужой код запускают из приватного каталога, а не из общего временного",
+        "en": "Untrusted code runs from a private directory, not from the shared temp"
+      },
+      "areas": {
+        "ru": [
+          "безопасность"
+        ],
+        "en": [
+          "security"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/081-untrusted-code-runs-in-a-private-directory.md",
+        "en": "rules/en/081-untrusted-code-runs-in-a-private-directory.md"
+      },
+      "trails": [
+        {
+          "repo": "web/playground.py",
+          "issue": "799"
+        }
+      ]
+    },
+    {
+      "id": "082",
+      "slug": "roles-must-cover-every-layer",
+      "title": {
+        "ru": "Состав ролей покрывает все пласты продукта, а не только разработку",
+        "en": "The role line-up covers every layer of the product, not just development"
+      },
+      "areas": {
+        "ru": [
+          "роли"
+        ],
+        "en": [
+          "roles"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/082-roles-must-cover-every-layer.md",
+        "en": "rules/en/082-roles-must-cover-every-layer.md"
+      },
+      "trails": [
+        {
+          "repo": "docs/agent",
+          "issue": "1007"
+        },
+        {
+          "repo": "docs/agent",
+          "issue": "1005"
+        }
+      ]
+    },
+    {
+      "id": "083",
+      "slug": "generated-output-is-checked-by-properties",
+      "title": {
+        "ru": "Сгенерированное проверяют свойствами и выборкой, а не эталонным ответом",
+        "en": "Generated output is checked by properties and by sampling, not against a reference answer"
+      },
+      "areas": {
+        "ru": [
+          "ИИ",
+          "качество"
+        ],
+        "en": [
+          "AI",
+          "quality"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/083-generated-output-is-checked-by-properties.md",
+        "en": "rules/en/083-generated-output-is-checked-by-properties.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "084",
+      "slug": "best-effort-channels-never-block-the-main-path",
+      "title": {
+        "ru": "Необязательный канал не задерживает и не роняет основную работу",
+        "en": "An optional channel neither delays nor breaks the main work"
+      },
+      "areas": {
+        "ru": [
+          "архитектура"
+        ],
+        "en": [
+          "architecture"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/084-best-effort-channels-never-block-the-main-path.md",
+        "en": "rules/en/084-best-effort-channels-never-block-the-main-path.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "085",
+      "slug": "content-from-the-subject-is-untrusted-input-to-the-prompt",
+      "title": {
+        "ru": "Текст, пришедший от проверяемого, — недоверенный вход в промпт",
+        "en": "Text coming from the subject under review is untrusted input to the prompt"
+      },
+      "areas": {
+        "ru": [
+          "ИИ",
+          "безопасность"
+        ],
+        "en": [
+          "AI",
+          "security"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/085-content-from-the-subject-is-untrusted-input-to-the-prompt.md",
+        "en": "rules/en/085-content-from-the-subject-is-untrusted-input-to-the-prompt.md"
+      },
+      "trails": [
+        {
+          "repo": "core/ai_grounding.py",
+          "issue": "931"
+        }
+      ]
+    },
+    {
+      "id": "086",
+      "slug": "the-finder-does-not-grade-the-finding",
+      "title": {
+        "ru": "Тяжесть находки ставит не тот, кто её нашёл — но опровергателю нужна шкала",
+        "en": "The severity of a finding is not set by whoever found it — but the refuter needs a scale"
+      },
+      "areas": {
+        "ru": [
+          "аудит"
+        ],
+        "en": [
+          "audit"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/086-the-finder-does-not-grade-the-finding.md",
+        "en": "rules/en/086-the-finder-does-not-grade-the-finding.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "087",
+      "slug": "a-second-pass-needs-a-novelty-rule",
+      "title": {
+        "ru": "Повторный проход получает на вход прошлые находки и запрет их переоткрывать",
+        "en": "A second pass receives the previous findings and a ban on reopening them"
+      },
+      "areas": {
+        "ru": [
+          "аудит"
+        ],
+        "en": [
+          "audit"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/087-a-second-pass-needs-a-novelty-rule.md",
+        "en": "rules/en/087-a-second-pass-needs-a-novelty-rule.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "088",
+      "slug": "the-critic-checks-the-method-not-the-subject",
+      "title": {
+        "ru": "Критик проверяет метод фазы, а не предмет работы",
+        "en": "The critic checks the phase's method, not the subject of the work"
+      },
+      "areas": {
+        "ru": [
+          "аудит",
+          "процесс"
+        ],
+        "en": [
+          "audit",
+          "process"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/088-the-critic-checks-the-method-not-the-subject.md",
+        "en": "rules/en/088-the-critic-checks-the-method-not-the-subject.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "089",
+      "slug": "never-link-from-the-original-to-its-copy",
+      "title": {
+        "ru": "Из оригинала в его копию не ссылаются",
+        "en": "Never link from the original to its copy"
+      },
+      "areas": {
+        "ru": [
+          "документация"
+        ],
+        "en": [
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/089-never-link-from-the-original-to-its-copy.md",
+        "en": "rules/en/089-never-link-from-the-original-to-its-copy.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "090",
+      "slug": "shared-helpers-move-up-not-sideways",
+      "title": {
+        "ru": "Общий хелпер поднимают вверх, а не втягивают вбок",
+        "en": "A shared helper moves up, not sideways"
+      },
+      "areas": {
+        "ru": [
+          "архитектура"
+        ],
+        "en": [
+          "architecture"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/090-shared-helpers-move-up-not-sideways.md",
+        "en": "rules/en/090-shared-helpers-move-up-not-sideways.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "091",
+      "slug": "work-sources-are-ordered-first-non-empty-wins",
+      "title": {
+        "ru": "Источники работы упорядочены: первый непустой и есть план",
+        "en": "Work sources are ordered: the first non-empty one is the plan"
+      },
+      "areas": {
+        "ru": [
+          "процесс"
+        ],
+        "en": [
+          "process"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/091-work-sources-are-ordered-first-non-empty-wins.md",
+        "en": "rules/en/091-work-sources-are-ordered-first-non-empty-wins.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "97"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "151"
+        }
+      ]
+    },
+    {
+      "id": "092",
+      "slug": "findings-and-ordering-live-in-different-documents",
+      "title": {
+        "ru": "Находки и порядок разбора — разные документы",
+        "en": "Findings and the order of work live in different documents"
+      },
+      "areas": {
+        "ru": [
+          "аудит",
+          "документация"
+        ],
+        "en": [
+          "audit",
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/092-findings-and-ordering-live-in-different-documents.md",
+        "en": "rules/en/092-findings-and-ordering-live-in-different-documents.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "093",
+      "slug": "seam-early-generalisation-late",
+      "title": {
+        "ru": "Шов вводят рано, обобщение — по третьему случаю",
+        "en": "Introduce the seam early, generalise on the third case"
+      },
+      "areas": {
+        "ru": [
+          "архитектура"
+        ],
+        "en": [
+          "architecture"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/093-seam-early-generalisation-late.md",
+        "en": "rules/en/093-seam-early-generalisation-late.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "094",
+      "slug": "a-compatibility-shim-makes-migration-permanent",
+      "title": {
+        "ru": "Переходная заглушка делает миграцию вечной",
+        "en": "A compatibility shim makes the migration permanent"
+      },
+      "areas": {
+        "ru": [
+          "архитектура",
+          "миграции"
+        ],
+        "en": [
+          "architecture",
+          "migrations"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/094-a-compatibility-shim-makes-migration-permanent.md",
+        "en": "rules/en/094-a-compatibility-shim-makes-migration-permanent.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "095",
+      "slug": "the-default-is-chosen-for-the-user",
+      "title": {
+        "ru": "Умолчание выбирается в пользу пользователя, а не продукта",
+        "en": "The default is chosen in the user's favour, not the product's"
+      },
+      "areas": {
+        "ru": [
+          "приватность",
+          "продукт"
+        ],
+        "en": [
+          "privacy",
+          "product"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/095-the-default-is-chosen-for-the-user.md",
+        "en": "rules/en/095-the-default-is-chosen-for-the-user.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "096",
+      "slug": "storage-follows-lifecycle-not-convenience",
+      "title": {
+        "ru": "Хранилище выбирается по жизненному циклу данных, а не по удобству",
+        "en": "Storage is chosen by the data's lifecycle, not by convenience"
+      },
+      "areas": {
+        "ru": [
+          "архитектура",
+          "данные"
+        ],
+        "en": [
+          "architecture",
+          "data"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/096-storage-follows-lifecycle-not-convenience.md",
+        "en": "rules/en/096-storage-follows-lifecycle-not-convenience.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "097",
+      "slug": "a-checker-has-two-error-types",
+      "title": {
+        "ru": "У проверяющего инструмента две ошибки, и каждая держится своим тестом",
+        "en": "A checking tool has two errors, and each is held by its own test"
+      },
+      "areas": {
+        "ru": [
+          "тесты",
+          "качество"
+        ],
+        "en": [
+          "tests",
+          "quality"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/097-a-checker-has-two-error-types.md",
+        "en": "rules/en/097-a-checker-has-two-error-types.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "098",
+      "slug": "the-unit-of-splitting-follows-usage",
+      "title": {
+        "ru": "Единица дробления определяется употреблением, а не формальным признаком",
+        "en": "The unit of splitting follows usage, not a formal criterion"
+      },
+      "areas": {
+        "ru": [
+          "данные",
+          "документация"
+        ],
+        "en": [
+          "data",
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/098-the-unit-of-splitting-follows-usage.md",
+        "en": "rules/en/098-the-unit-of-splitting-follows-usage.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "099",
+      "slug": "classification-conflicts-resolve-by-consequence",
+      "title": {
+        "ru": "Конфликт классификации разрешается по последствию, а не по правильности",
+        "en": "A classification conflict is resolved by consequence, not by correctness"
+      },
+      "areas": {
+        "ru": [
+          "таксономия"
+        ],
+        "en": [
+          "taxonomy"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/099-classification-conflicts-resolve-by-consequence.md",
+        "en": "rules/en/099-classification-conflicts-resolve-by-consequence.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "100",
+      "slug": "two-deadlines-start-and-work",
+      "title": {
+        "ru": "Дедлайнов два: на запуск и на работу",
+        "en": "There are two deadlines: one for starting, one for working"
+      },
+      "areas": {
+        "ru": [
+          "надёжность"
+        ],
+        "en": [
+          "reliability"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/100-two-deadlines-start-and-work.md",
+        "en": "rules/en/100-two-deadlines-start-and-work.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "101",
+      "slug": "retry-only-what-can-heal-itself",
+      "title": {
+        "ru": "Повторяют только те отказы, которые могут пройти сами",
+        "en": "Retry only the failures that can pass on their own"
+      },
+      "areas": {
+        "ru": [
+          "сеть",
+          "надёжность"
+        ],
+        "en": [
+          "network",
+          "reliability"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/101-retry-only-what-can-heal-itself.md",
+        "en": "rules/en/101-retry-only-what-can-heal-itself.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "102",
+      "slug": "leniency-is-enumerated-and-switchable",
+      "title": {
+        "ru": "Снисхождение перечисляется таблицей и отключается режимом",
+        "en": "Leniency is enumerated in a table and switched off by a mode"
+      },
+      "areas": {
+        "ru": [
+          "сравнение",
+          "качество"
+        ],
+        "en": [
+          "comparison",
+          "quality"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/102-leniency-is-enumerated-and-switchable.md",
+        "en": "rules/en/102-leniency-is-enumerated-and-switchable.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "103",
+      "slug": "a-side-effect-guard-blames-the-wrong-suspect",
+      "title": {
+        "ru": "Сторож побочных эффектов обвиняет не виновника — и исключения задаются формой",
+        "en": "A side-effect guard blames the wrong suspect — and exclusions are defined by shape"
+      },
+      "areas": {
+        "ru": [
+          "тесты",
+          "гейты"
+        ],
+        "en": [
+          "tests",
+          "gates"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/103-a-side-effect-guard-blames-the-wrong-suspect.md",
+        "en": "rules/en/103-a-side-effect-guard-blames-the-wrong-suspect.md"
+      },
+      "trails": [
+        {
+          "repo": "tests/conftest.py",
+          "issue": "818"
+        },
+        {
+          "repo": "tests/conftest.py",
+          "issue": "646"
+        }
+      ]
+    },
+    {
+      "id": "104",
+      "slug": "event-driven-automation-needs-a-manual-button",
+      "title": {
+        "ru": "У событийной автоматики должна быть ручная кнопка",
+        "en": "Event-driven automation needs a manual button"
+      },
+      "areas": {
+        "ru": [
+          "CI",
+          "автоматика"
+        ],
+        "en": [
+          "CI",
+          "automation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/104-event-driven-automation-needs-a-manual-button.md",
+        "en": "rules/en/104-event-driven-automation-needs-a-manual-button.md"
+      },
+      "trails": [
+        {
+          "repo": ".github/workflows",
+          "issue": "1095"
+        },
+        {
+          "repo": ".github/workflows",
+          "issue": "988"
+        }
+      ]
+    },
+    {
+      "id": "105",
+      "slug": "an-outside-audit-needs-outside-eyes",
+      "title": {
+        "ru": "Внешний аудит делает тот, кто не писал этот код",
+        "en": "An outside audit is done by somebody who did not write this code"
+      },
+      "areas": {
+        "ru": [
+          "аудит"
+        ],
+        "en": [
+          "audit"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/105-an-outside-audit-needs-outside-eyes.md",
+        "en": "rules/en/105-an-outside-audit-needs-outside-eyes.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "106",
+      "slug": "publicity-multiplies-both-sides",
+      "title": {
+        "ru": "Огласка умножает и хорошее, и плохое — сначала настоящий прогон",
+        "en": "Publicity multiplies both the good and the bad — do the real run first"
+      },
+      "areas": {
+        "ru": [
+          "продукт",
+          "релиз"
+        ],
+        "en": [
+          "product",
+          "release"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/106-publicity-multiplies-both-sides.md",
+        "en": "rules/en/106-publicity-multiplies-both-sides.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "107",
+      "slug": "it-works-for-the-author-means-tested-on-the-authors-sample",
+      "title": {
+        "ru": "«У автора работает» означает «проверено на выборке автора»",
+        "en": "\"It works for the author\" means \"tested on the author's sample\""
+      },
+      "areas": {
+        "ru": [
+          "заимствование"
+        ],
+        "en": [
+          "borrowing"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/107-it-works-for-the-author-means-tested-on-the-authors-sample.md",
+        "en": "rules/en/107-it-works-for-the-author-means-tested-on-the-authors-sample.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "108",
+      "slug": "a-living-document-keeps-a-fixed-window",
+      "title": {
+        "ru": "Живой документ держит фиксированное окно, остальное переезжает дословно",
+        "en": "A living document keeps a fixed window; the rest moves out verbatim"
+      },
+      "areas": {
+        "ru": [
+          "документация"
+        ],
+        "en": [
+          "documentation"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/108-a-living-document-keeps-a-fixed-window.md",
+        "en": "rules/en/108-a-living-document-keeps-a-fixed-window.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "109",
+      "slug": "every-exit-from-a-transient-state-must-be-terminal",
+      "title": {
+        "ru": "Каждый выход из переходного состояния обязан быть терминальным",
+        "en": "Every exit from a transient state must be terminal"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "интерфейс"
+        ],
+        "en": [
+          "code",
+          "interface"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/109-every-exit-from-a-transient-state-must-be-terminal.md",
+        "en": "rules/en/109-every-exit-from-a-transient-state-must-be-terminal.md"
+      },
+      "trails": [
+        {
+          "repo": "src/stepik_grader",
+          "issue": "823"
+        }
+      ]
+    },
+    {
+      "id": "110",
+      "slug": "fail-before-you-take-anything-over",
+      "title": {
+        "ru": "Всё, что может отказать, делается до подмены глобального состояния",
+        "en": "Everything that can fail happens before you replace global state"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "надёжность"
+        ],
+        "en": [
+          "code",
+          "reliability"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/110-fail-before-you-take-anything-over.md",
+        "en": "rules/en/110-fail-before-you-take-anything-over.md"
+      },
+      "trails": [
+        {
+          "repo": "core/tracer.py",
+          "issue": "806"
+        },
+        {
+          "repo": "core/tracer.py",
+          "issue": "1135"
+        }
+      ]
+    },
+    {
+      "id": "111",
+      "slug": "do-it-instead-of-advising-it",
+      "title": {
+        "ru": "Если инструмент может сделать сам — он делает, а не советует",
+        "en": "If the tool can do it itself, it does it rather than advising"
+      },
+      "areas": {
+        "ru": [
+          "интерфейс"
+        ],
+        "en": [
+          "interface"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/111-do-it-instead-of-advising-it.md",
+        "en": "rules/en/111-do-it-instead-of-advising-it.md"
+      },
+      "trails": [
+        {
+          "repo": "src/stepik_grader",
+          "issue": "1134"
+        }
+      ]
+    },
+    {
+      "id": "112",
+      "slug": "whatever-the-tool-created-it-must-be-able-to-delete",
+      "title": {
+        "ru": "Что инструмент создал — он обязан уметь удалить",
+        "en": "Whatever the tool created, it must be able to delete"
+      },
+      "areas": {
+        "ru": [
+          "приватность",
+          "продукт"
+        ],
+        "en": [
+          "privacy",
+          "product"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/112-whatever-the-tool-created-it-must-be-able-to-delete.md",
+        "en": "rules/en/112-whatever-the-tool-created-it-must-be-able-to-delete.md"
+      },
+      "trails": [
+        {
+          "repo": "cli/__init__.py",
+          "issue": "813"
+        }
+      ]
+    },
+    {
+      "id": "113",
+      "slug": "a-contract-states-how-it-may-change",
+      "title": {
+        "ru": "Контракт описывает правила собственной эволюции",
+        "en": "A contract states the rules of its own evolution"
+      },
+      "areas": {
+        "ru": [
+          "контракты"
+        ],
+        "en": [
+          "contracts"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/113-a-contract-states-how-it-may-change.md",
+        "en": "rules/en/113-a-contract-states-how-it-may-change.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "114",
+      "slug": "migrate-from-the-current-version-not-from-zero",
+      "title": {
+        "ru": "Миграция идёт от текущей версии, а не от нуля",
+        "en": "Migrate from the current version, not from zero"
+      },
+      "areas": {
+        "ru": [
+          "данные",
+          "миграции"
+        ],
+        "en": [
+          "data",
+          "migrations"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/114-migrate-from-the-current-version-not-from-zero.md",
+        "en": "rules/en/114-migrate-from-the-current-version-not-from-zero.md"
+      },
+      "trails": [
+        {
+          "repo": "core/history.py",
+          "issue": "990"
+        },
+        {
+          "repo": "core/history.py",
+          "issue": "947"
+        }
+      ]
+    },
+    {
+      "id": "115",
+      "slug": "config-has-one-anchor-and-a-bounded-search",
+      "title": {
+        "ru": "У настроек один якорь и ограниченная зона поиска",
+        "en": "Settings have one anchor and a bounded search area"
+      },
+      "areas": {
+        "ru": [
+          "конфигурация"
+        ],
+        "en": [
+          "configuration"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/115-config-has-one-anchor-and-a-bounded-search.md",
+        "en": "rules/en/115-config-has-one-anchor-and-a-bounded-search.md"
+      },
+      "trails": [
+        {
+          "repo": "docs/use",
+          "issue": "993"
+        },
+        {
+          "repo": "docs/use",
+          "issue": "984"
+        }
+      ]
+    },
+    {
+      "id": "116",
+      "slug": "the-collector-script-is-a-source-of-loss",
+      "title": {
+        "ru": "Сборщик результатов — тоже источник потерь, и у него своя сверка",
+        "en": "The collector script is also a source of loss, and it has its own reconciliation"
+      },
+      "areas": {
+        "ru": [
+          "параллельная работа"
+        ],
+        "en": [
+          "parallel work"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/116-the-collector-script-is-a-source-of-loss.md",
+        "en": "rules/en/116-the-collector-script-is-a-source-of-loss.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "117",
+      "slug": "numeric-limits-belong-in-the-task-spec",
+      "title": {
+        "ru": "У задания исполнителя есть числовые границы",
+        "en": "An executor's brief carries numeric limits"
+      },
+      "areas": {
+        "ru": [
+          "параллельная работа"
+        ],
+        "en": [
+          "parallel work"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/117-numeric-limits-belong-in-the-task-spec.md",
+        "en": "rules/en/117-numeric-limits-belong-in-the-task-spec.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "118",
+      "slug": "keep-the-source-next-to-the-derived",
+      "title": {
+        "ru": "Исходник хранится рядом с производным",
+        "en": "Keep the source next to the derived"
+      },
+      "areas": {
+        "ru": [
+          "данные"
+        ],
+        "en": [
+          "data"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/118-keep-the-source-next-to-the-derived.md",
+        "en": "rules/en/118-keep-the-source-next-to-the-derived.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "119",
+      "slug": "tool-artefacts-stay-outside-the-input-mask",
+      "title": {
+        "ru": "Свои артефакты держат вне маски входа",
+        "en": "A tool's own artefacts stay outside its input mask"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "данные"
+        ],
+        "en": [
+          "code",
+          "data"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/119-tool-artefacts-stay-outside-the-input-mask.md",
+        "en": "rules/en/119-tool-artefacts-stay-outside-the-input-mask.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "120",
+      "slug": "how-to-run-a-rule-catalogue",
+      "title": {
+        "ru": "Каталог правил ведётся по своим правилам, а указатель к нему генерируется",
+        "en": "A rule catalogue runs by its own rules, and its index is generated"
+      },
+      "areas": {
+        "ru": [
+          "каталог",
+          "процесс"
+        ],
+        "en": [
+          "catalogue",
+          "process"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/120-how-to-run-a-rule-catalogue.md",
+        "en": "rules/en/120-how-to-run-a-rule-catalogue.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1342"
+        }
+      ]
+    },
+    {
+      "id": "121",
+      "slug": "closing-the-container-is-not-closing-the-work",
+      "title": {
+        "ru": "Закрытие контейнера — не доказательство закрытия работы",
+        "en": "Closing the container is not proof that the work is closed"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "аудит"
+        ],
+        "en": [
+          "process",
+          "audit"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/121-closing-the-container-is-not-closing-the-work.md",
+        "en": "rules/en/121-closing-the-container-is-not-closing-the-work.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "122",
+      "slug": "ship-the-raw-value-next-to-the-formatted-one",
+      "title": {
+        "ru": "Рядом с отформатированным значением отдают сырое",
+        "en": "Ship the raw value next to the formatted one"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "данные"
+        ],
+        "en": [
+          "contracts",
+          "data"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/122-ship-the-raw-value-next-to-the-formatted-one.md",
+        "en": "rules/en/122-ship-the-raw-value-next-to-the-formatted-one.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "123",
+      "slug": "attribution-is-verified-on-the-final-history",
+      "title": {
+        "ru": "Атрибуция проверяется в конечной истории, а не в коммите ветки",
+        "en": "Attribution is verified against the final history, not against the branch commit"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "история"
+        ],
+        "en": [
+          "pipeline",
+          "history"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/123-attribution-is-verified-on-the-final-history.md",
+        "en": "rules/en/123-attribution-is-verified-on-the-final-history.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "124",
+      "slug": "rerun-the-minimum-and-record-the-flake",
+      "title": {
+        "ru": "Перезапускать минимум, но зелёное со второго раза — находка, а не починка",
+        "en": "Re-run the minimum — but green on the second try is a finding, not a fix"
+      },
+      "areas": {
+        "ru": [
+          "CI",
+          "тесты"
+        ],
+        "en": [
+          "CI",
+          "tests"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/124-rerun-the-minimum-and-record-the-flake.md",
+        "en": "rules/en/124-rerun-the-minimum-and-record-the-flake.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1171"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "924"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1344"
+        }
+      ]
+    },
+    {
+      "id": "125",
+      "slug": "a-generated-file-is-not-a-store",
+      "title": {
+        "ru": "Производный файл не может быть хранилищем",
+        "en": "A generated file cannot be a store"
+      },
+      "areas": {
+        "ru": [
+          "каталог",
+          "данные"
+        ],
+        "en": [
+          "catalogue",
+          "data"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/125-a-generated-file-is-not-a-store.md",
+        "en": "rules/en/125-a-generated-file-is-not-a-store.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "2"
+        }
+      ]
+    },
+    {
+      "id": "126",
+      "slug": "a-freeze-needs-a-thaw-path",
+      "title": {
+        "ru": "У заморозки должен быть выход, не проходящий через замороженное действие",
+        "en": "A freeze needs a thaw path that does not run through the frozen action"
+      },
+      "areas": {
+        "ru": [
+          "автоматика",
+          "конвейер"
+        ],
+        "en": [
+          "automation",
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/126-a-freeze-needs-a-thaw-path.md",
+        "en": "rules/en/126-a-freeze-needs-a-thaw-path.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1347"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1326"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1344"
+        }
+      ]
+    },
+    {
+      "id": "127",
+      "slug": "a-number-in-prose-needs-a-guarded-marker",
+      "title": {
+        "ru": "Число в тексте живёт только с маркером, сборкой и гейтом на этот маркер",
+        "en": "A number in prose lives only with a marker, a build and a guard on that marker"
+      },
+      "areas": {
+        "ru": [
+          "документация",
+          "гейты"
+        ],
+        "en": [
+          "documentation",
+          "gates"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/127-a-number-in-prose-needs-a-guarded-marker.md",
+        "en": "rules/en/127-a-number-in-prose-needs-a-guarded-marker.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "12"
+        }
+      ]
+    },
+    {
+      "id": "128",
+      "slug": "a-required-field-is-checked-for-completeness",
+      "title": {
+        "ru": "Обязательное поле проверяется на полноту, а не на непустоту",
+        "en": "A required field is checked for completeness, not for non-emptiness"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "трекер"
+        ],
+        "en": [
+          "gates",
+          "tracker"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/128-a-required-field-is-checked-for-completeness.md",
+        "en": "rules/en/128-a-required-field-is-checked-for-completeness.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1350"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1345"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1329"
+        }
+      ]
+    },
+    {
+      "id": "129",
+      "slug": "a-catalogue-needs-a-consumption-contract",
+      "title": {
+        "ru": "У каталога есть контракт потребления, а не только правила ведения",
+        "en": "A catalogue needs a consumption contract, not only an authoring order"
+      },
+      "areas": {
+        "ru": [
+          "каталог",
+          "контракты"
+        ],
+        "en": [
+          "catalogue",
+          "contracts"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/129-a-catalogue-needs-a-consumption-contract.md",
+        "en": "rules/en/129-a-catalogue-needs-a-consumption-contract.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "14"
+        },
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "15"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1351"
+        }
+      ]
+    },
+    {
+      "id": "130",
+      "slug": "a-rule-arrives-with-candidates-from-the-backlog",
+      "title": {
+        "ru": "Новое правило приходит к получателю вместе с кандидатами из его бэклога",
+        "en": "A new rule arrives with candidates from the recipient's backlog"
+      },
+      "areas": {
+        "ru": [
+          "каталог",
+          "трекер"
+        ],
+        "en": [
+          "catalogue",
+          "tracker"
+        ]
+      },
+      "added": "2026-08-21",
+      "files": {
+        "ru": "rules/ru/130-a-rule-arrives-with-candidates-from-the-backlog.md",
+        "en": "rules/en/130-a-rule-arrives-with-candidates-from-the-backlog.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "16"
+        },
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "14"
+        },
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "15"
+        }
+      ]
+    }
+  ]
+}

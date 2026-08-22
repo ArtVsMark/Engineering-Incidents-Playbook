@@ -1,0 +1,33 @@
+{
+  "schema": "1.0",
+  "project": "<владелец>/<репозиторий>",
+  "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
+  "rules": {
+    "002": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/preflight.py"
+    },
+    "021": {
+      "status": "active",
+      "mechanism": "process-step",
+      "where": "CONTRIBUTING.md — ревью документации"
+    },
+    "038": {
+      "status": "active",
+      "mechanism": "none",
+      "where": "CLAUDE.md — раздел про имена окон"
+    },
+    "018": {
+      "status": "not-applicable",
+      "why": "одна целевая ОС, матрицы прогонов нет"
+    },
+    "031": {
+      "status": "rejected",
+      "why": "работа идёт в одно окно, волны дороже пользы"
+    },
+    "104": {
+      "status": "unreviewed"
+    }
+  }
+}
