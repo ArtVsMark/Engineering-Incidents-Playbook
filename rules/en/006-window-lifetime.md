@@ -46,6 +46,10 @@ that are not being reopened → links to the tasks.
 the opening message means carrying the problem across with the baton: the new
 session starts with a bloated context immediately.
 
+This says what shape a handover has. *When* it is assembled is a separate
+question and a separate record:
+[138](138-the-handover-is-assembled-as-you-go.md) — as you go, not at the end.
+
 ## Where it applies
 
 **Works** for any long-lived agent session that accumulates context.

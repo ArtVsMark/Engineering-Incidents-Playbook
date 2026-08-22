@@ -77,6 +77,8 @@
    `python scripts/build_rules_index.py`. Порядок именно такой — дата
    появления берётся из истории файла, и до коммита её нет.
 6. Ответ о самом каталоге в `.rules/bindings.json` — статус по новому правилу.
+7. Пересобрать сводку: `python scripts/aggregate_bindings.py` — таблица «где
+   действует» перечисляет правила поимённо и без этого отстанет на одно.
 
 Заготовка — [`templates/rule-template.md`](templates/rule-template.md).
 Полностью — [`120`](rules/ru/120-how-to-run-a-rule-catalogue.md).

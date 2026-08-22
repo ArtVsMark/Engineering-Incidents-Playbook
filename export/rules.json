@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 137,
+  "count": 138,
   "rules": [
     {
       "id": "001",
@@ -3565,6 +3565,35 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "40"
+        }
+      ]
+    },
+    {
+      "id": "138",
+      "slug": "the-handover-is-assembled-as-you-go",
+      "title": {
+        "ru": "Эстафета собирается по ходу, а не в конце",
+        "en": "The handover is assembled as you go, not at the end"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии",
+          "процесс"
+        ],
+        "en": [
+          "agent sessions",
+          "process"
+        ]
+      },
+      "added": "2026-08-22",
+      "files": {
+        "ru": "rules/ru/138-the-handover-is-assembled-as-you-go.md",
+        "en": "rules/en/138-the-handover-is-assembled-as-you-go.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "35"
         }
       ]
     }
