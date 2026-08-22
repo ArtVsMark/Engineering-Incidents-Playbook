@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -31,6 +32,14 @@ EXPORT = ROOT / "export" / "rules.json"
 
 STATUSES = ("active", "rejected", "not-applicable", "unreviewed")
 MECHANISMS = ("gate", "process-step", "none")
+
+#: Ревизор входит от списка деклараций и ищет расхождение с фактом. Ответ
+#: каталога — это список деклараций: «держится гейтом вот здесь». Проверять
+#: надо не форму записи, а то, что заявленное существует (правило 082 —
+#: направление без владельца; здесь владелец машинный).
+PATH_RE = re.compile(r"[\w./-]+\.(?:py|yml|yaml|json|md|txt)")
+#: Число словом внутри ответа устареет так же, как цифра (правила 005, 127).
+COUNT_RE = re.compile(r"\b(два|две|три|четыре|пять|шесть|семь|восемь|девять|десять)\b")
 
 
 def main() -> int:
@@ -56,6 +65,7 @@ def main() -> int:
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     problems: list[str] = []
+    warnings: list[str] = []
     for rid in sorted(set(known) - set(rules)):
         problems.append(f"{rid}: ответа нет. «Не дошли руки» — это статус "
                         "unreviewed, а не отсутствующая запись")
@@ -73,7 +83,20 @@ def main() -> int:
                                 f"{rec.get('mechanism')!r} вне набора {MECHANISMS}")
             if not rec.get("where"):
                 problems.append(f"{rid}: действует, а где именно — не сказано")
-        elif status in ("rejected", "not-applicable") and not rec.get("why"):
+        # Ревизия: заявленное должно существовать, а не звучать правдоподобно.
+        claim = f"{rec.get('where', '')} {rec.get('why', '')}"
+        for token in PATH_RE.findall(claim):
+            if not (ROOT / token).exists():
+                problems.append(f"{rid}: заявлено «{token}», а такого файла нет — "
+                                "декларация разошлась с фактом")
+        # Правило 051: запрещают достоверное, предупреждают о вероятном.
+        # Несуществующий путь — факт. Число словом — подозрение: «два дерева»
+        # не устареет, «четыре гейта» устареет. Отказ здесь был бы ложным.
+        if COUNT_RE.search(claim):
+            warnings.append(f"{rid}: число словом — «{claim.strip()[:60]}». "
+                            "Считать должен тот, кто печатает метрику")
+
+        if status in ("rejected", "not-applicable") and not rec.get("why"):
             problems.append(f"{rid}: статус {status!r} без причины — "
                             "решение без причины вернётся следующей ревизией")
 
@@ -96,6 +119,10 @@ def main() -> int:
             days = (dt.date.today() - dt.date.fromisoformat(min(dates))).days
             oldest = f", самому старому {days} дн."
 
+    if warnings:
+        print("на что стоит посмотреть (не отказ):")
+        for w in warnings:
+            print(f"  ~ {w}")
     print(f"ответ каталога о себе полон: {len(rules)} правил")
     print(f"  действует {by_status['active']}: "
           f"гейтом {by_mech['gate']}, шагом процесса {by_mech['process-step']}, "
