@@ -1,0 +1,50 @@
+# Метки репозитория из `.github/labels.yml`. Правило 064: метка — вход
+# механизма, а не украшение. До этого прогона механизма не было с обеих сторон:
+# файл никем не применялся, а расстановкой пользовались метки, которых файл не
+# признаёт (задача #44).
+#
+# Токен нужен обычный: метка не несёт личности человека, и правила 131 и 135
+# здесь ни при чём.
+name: labels-sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/labels.yml"
+      - "scripts/sync_labels.py"
+  # У события всегда есть ручная кнопка (правило 104).
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: применить объявленные метки
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          python scripts/sync_labels.py
+          rc=$?
+          # Исход 1 — «есть метки, которых файл не объявляет». Это находка для
+          # человека, а не поломка прогона: удаление метки снимает её со всех
+          # задач разом и решается не синхронизатором (правило 051). Красным
+          # остаётся только третий исход: механизм не отработал.
+          if [ "$rc" -eq 2 ]; then exit 1; fi
+          if [ "$rc" -eq 1 ]; then
+            echo "::warning::В репозитории есть метки, которых labels.yml не объявляет. Либо вычеркнуть их в репозитории, либо вписать в файл с причиной — смотрите вывод шага."
+          fi
+          exit 0
