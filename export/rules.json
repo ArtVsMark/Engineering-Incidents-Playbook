@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 133,
+  "count": 134,
   "rules": [
     {
       "id": "001",
@@ -3432,6 +3432,39 @@
         {
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1350"
+        }
+      ]
+    },
+    {
+      "id": "134",
+      "slug": "a-window-reopens-only-after-the-rulebook-exists",
+      "title": {
+        "ru": "Окно открывается с контекстом проекта, а не со знанием прошлого окна",
+        "en": "A window opens with the project's context, not with the last window's knowledge"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии",
+          "процесс"
+        ],
+        "en": [
+          "agent sessions",
+          "process"
+        ]
+      },
+      "added": "2026-08-22",
+      "files": {
+        "ru": "rules/ru/134-a-window-reopens-only-after-the-rulebook-exists.md",
+        "en": "rules/en/134-a-window-reopens-only-after-the-rulebook-exists.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "20"
+        },
+        {
+          "repo": "ArtVsMark/issues",
+          "issue": "21"
         }
       ]
     }
