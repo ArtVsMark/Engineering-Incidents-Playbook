@@ -3,8 +3,6 @@
 # гейт зелёный на каждом изменении, а в итоговой истории атрибуции нет вовсе
 # (задача #34, правила 002 и 123).
 #
-# Здесь автомерж ВКЛЮЧАЕТСЯ, а не выполняется: слияние делает площадка.
-#
 # ПОЧЕМУ SQUASH И ПОЧЕМУ ТОКЕН ВЛАДЕЛЬЦА. Это не выбор вкуса, а перенос
 # измеренного решения из ArtVsMark/Stepik-Python-Grader#1302 — там тот же
 # вопрос уже оплачен инцидентом. Squash атрибутирует коммит АВТОРУ изменения,
@@ -18,38 +16,40 @@
 # автором становится бот (правила 131 и 135). Секрет тот же, что в грейдере, —
 # MERGE_QUEUE_TOKEN.
 #
-# Почему запуск от `ci`, а не от события изменения. Задача #34 называет условие:
-# автомерж без обязательной проверки сливает МГНОВЕННО, и пять гейтов
-# становятся украшением (правило 010). Читать настройку защиты ветки конвейер
-# не может — у `GITHUB_TOKEN` нет таких прав. Поэтому условие обеспечено иначе,
-# и надёжнее настройки: включать автомерж только после ЗЕЛЁНОГО прогона `ci` на
-# этом же коммите. Тогда «слить мимо гейтов» невозможно даже на незащищённой
-# ветке. Защита `main` остаётся полезной, но перестаёт быть условием.
+# ПОЧЕМУ ВКЛЮЧАЕМ РАНО, А НЕ ПО ЗЕЛЁНОМУ. Замер: `enablePullRequestAutoMerge`
+# ОТКАЗЫВАЕТ изменению в чистом состоянии — ждать уже нечего. Значит включать
+# надо, пока проверки ещё идут, иначе автомерж не включится никогда. Отсюда же
+# следует, что защита ветки с обязательной проверкой — не удобство, а условие
+# работы: без неё «чистым» изменение становится сразу и сливается мимо гейтов
+# (правило 010). Проверить наличие защиты можно тем же токеном владельца —
+# у GITHUB_TOKEN прав на это нет, у PAT есть.
 name: automerge
 
 on:
-  workflow_run:
-    workflows: [ci]
-    types: [completed]
+  pull_request:
+    # Умолчание типов не включает ready_for_review (правило 104). Снятие
+    # черновика — это и есть «беру на слияние» (#34).
+    types: [opened, ready_for_review, synchronize, reopened]
   workflow_dispatch:
-    # У события всегда есть ручная кнопка (правило 104).
     inputs:
       pr:
         description: "номер изменения"
         required: true
 
+# Записи делает токен владельца, штатному хватает чтения.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: automerge-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
 
 jobs:
   arm:
     runs-on: ubuntu-latest
-    # Красный или отменённый прогон — не повод сливать. Ручной запуск проверяет
-    # состояние сам, ниже.
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      github.event.workflow_run.conclusion == 'success'
+    # issue #1271 грейдера: без этого действует умолчание площадки в 6 часов.
+    timeout-minutes: 10
     # Секрет кладётся в env, а не проверяется в `if` напрямую: контекст
     # `secrets` в условиях шага не гарантирован. Приём взят из грейдера.
     env:
@@ -67,72 +67,81 @@ jobs:
 
       # Трейлеры берутся из коммитов ветки, значит нужна история.
       - uses: actions/checkout@v4
+        if: env.SKIP != '1'
         with:
           fetch-depth: 0
 
-      # Событие `workflow_run` не знает про изменение напрямую: у него есть
-      # коммит. Изменение ищется по коммиту, и «не нашлось» — это штатный
-      # случай (прогон на `main`), а не поломка (правило 027).
-      - name: найти изменение
-        id: find
-        if: env.SKIP != '1'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          DISPATCH_PR: ${{ inputs.pr }}
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-        run: |
-          set -uo pipefail
-          if [ -n "${DISPATCH_PR:-}" ]; then
-            pr="$DISPATCH_PR"
-          else
-            pr=$(gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/pulls" \
-                   --jq '[.[] | select(.state == "open")][0].number // empty')
-          fi
-          if [ -z "$pr" ]; then
-            echo "коммит ${HEAD_SHA:-—} не принадлежит открытому изменению, включать нечего"
-            echo "skip=1" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "pr=$pr" >> "$GITHUB_OUTPUT"
-
       - name: состояние изменения
         id: pr
-        if: steps.find.outputs.skip != '1' && env.SKIP != '1'
+        if: env.SKIP != '1'
         env:
-          GH_TOKEN: ${{ github.token }}
-          PR: ${{ steps.find.outputs.pr }}
+          GH_TOKEN: ${{ env.MERGE_QUEUE_TOKEN }}
+          PR: ${{ github.event.pull_request.number || inputs.pr }}
         run: |
           set -euo pipefail
           gh pr view "$PR" \
-            --json number,title,isDraft,state,headRefName,baseRefOid,headRefOid \
+            --json number,title,isDraft,state,baseRefName,headRefName,baseRefOid,headRefOid,autoMergeRequest \
             --jq '"number=\(.number)", "title=\(.title)", "draft=\(.isDraft)",
-                  "state=\(.state)", "head=\(.headRefName)",
-                  "base_sha=\(.baseRefOid)", "head_sha=\(.headRefOid)"' >> "$GITHUB_OUTPUT"
+                  "state=\(.state)", "base=\(.baseRefName)", "head=\(.headRefName)",
+                  "base_sha=\(.baseRefOid)", "head_sha=\(.headRefOid)",
+                  "armed=\(.autoMergeRequest != null)"' >> "$GITHUB_OUTPUT"
 
-      # Черновик — это «ещё не беру» (#34). Пропуск, а не отказ: красное на
-      # штатном состоянии приучает читать красное как фон (правило 051).
-      - name: черновик пропускается
+      # Черновик — это «ещё не беру». Пропуск, а не отказ: красное на штатном
+      # состоянии приучает читать красное как фон (правило 051). Уже включённый
+      # автомерж — тоже пропуск: повторное включение ничего не меняет.
+      - name: пропустить черновик и уже включённые
         if: >-
-          steps.find.outputs.skip != '1' &&
-          (steps.pr.outputs.draft == 'true' || steps.pr.outputs.state != 'OPEN')
+          env.SKIP != '1' &&
+          (steps.pr.outputs.draft == 'true' ||
+           steps.pr.outputs.state != 'OPEN' ||
+           steps.pr.outputs.armed == 'true')
         run: |
-          echo "изменение ${{ steps.pr.outputs.number }} — черновик или уже закрыто"
+          echo "изменение ${{ steps.pr.outputs.number }}: черновик, закрыто или автомерж уже включён"
           echo "SKIP=1" >> "$GITHUB_ENV"
+
+      # Правило 010: пустой чек-лист — не зелёный. Без обязательной проверки
+      # изменение становится «чистым» сразу, и автомерж сливает НЕ ДОЖИДАЯСЬ
+      # гейтов, то есть тихо отключает их все. Поэтому отсутствие защиты —
+      # отказ, а не предупреждение (правило 075).
+      - name: обязательная проверка на общей ветке есть
+        if: env.SKIP != '1'
+        env:
+          GH_TOKEN: ${{ env.MERGE_QUEUE_TOKEN }}
+          BASE: ${{ steps.pr.outputs.base }}
+        run: |
+          set -uo pipefail
+          out=$(gh api "repos/$GITHUB_REPOSITORY/branches/$BASE/protection" 2>&1) && rc=0 || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            case "$out" in
+              *"Branch not protected"*)
+                echo "::error::Ветка $BASE не защищена. Автомерж без обязательной проверки сливает мгновенно, не дожидаясь гейтов — это хуже, чем отсутствие автомержа (#34). Settings -> Branches -> Require status checks to pass -> catalogue."
+                exit 1 ;;
+              *)
+                # Третий исход: не «нашли нарушение», а «не смогли посмотреть».
+                echo "::error::Проверка не отработала: состояние защиты $BASE не прочитано. Токену нужны права на чтение администрирования репозитория. $out"
+                exit 1 ;;
+            esac
+          fi
+          contexts=$(printf '%s' "$out" | jq -r '[.required_status_checks.contexts // [], (.required_status_checks.checks // [] | map(.context))] | flatten | unique | length')
+          if [ "$contexts" -eq 0 ]; then
+            echo "::error::У ветки $BASE есть защита, но обязательных проверок в ней нет. Автомерж слил бы мимо гейтов."
+            exit 1
+          fi
+          echo "обязательных проверок на $BASE: $contexts"
 
       # Трейлеры площадка соберёт при squash сама — это её документированное
       # поведение и оно подтверждено историей грейдера. Здесь тело собирается
       # ЕЩЁ РАЗ и передаётся явно: замер из #34 показал, что составленное
       # сообщение может не примениться, а два независимых пути к одной цели
-      # дешевле одного предположения. Какой из них сработал, покажет гейт
+      # дешевле одного предположения. Какой сработал, покажет гейт
       # `attribution-history` на первом же слиянии.
       - name: тело коммита с трейлерами
         id: msg
-        if: steps.find.outputs.skip != '1' && env.SKIP != '1'
+        if: env.SKIP != '1'
         env:
           BASE_SHA: ${{ steps.pr.outputs.base_sha }}
           HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
           TITLE: ${{ steps.pr.outputs.title }}
-          HEAD_REF: ${{ steps.pr.outputs.head }}
           NUMBER: ${{ steps.pr.outputs.number }}
         run: |
           set -euo pipefail
@@ -157,7 +166,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: включить автомерж
-        if: steps.find.outputs.skip != '1' && env.SKIP != '1'
+        if: env.SKIP != '1'
         env:
           # Токен владельца, а не github.token: при squash автором коммита в
           # main становится автор изменения, и включать должен тот, чью личность
@@ -174,10 +183,15 @@ jobs:
           out=$(gh pr merge "$PR" --auto --squash --subject "$SUBJECT" --body "$BODY" 2>&1) && rc=0 || rc=$?
           if [ "$rc" -ne 0 ]; then
             case "$out" in
+              *"lean status"*|*"already"*)
+                # Ждать нечему: все проверки уже прошли. Это не поломка, но и
+                # не тишина — иначе изменение останется стоять зелёным.
+                echo "::warning::Изменение #$PR уже в чистом состоянии — автомерж включить нельзя, ждать нечего. Слить его должен человек."
+                exit 0 ;;
               *uto-merge*|*"not enabled"*)
-                echo "::error::Автомерж в репозитории не разрешён. Settings -> General -> Pull Requests -> Allow auto-merge. Без этой настройки кнопки не существует, и включить её из окна нельзя."
+                echo "::error::Автомерж в репозитории не разрешён. Settings -> General -> Pull Requests -> Allow auto-merge."
                 exit 1 ;;
-              *"Squash merges are not allowed"*|*quash*not*allow*)
+              *quash*)
                 echo "::error::Squash в репозитории запрещён. Settings -> General -> Pull Requests -> Allow squash merging. Именно squash атрибутирует коммит автору изменения, а не тому, кто нажал кнопку."
                 exit 1 ;;
               *)
@@ -186,4 +200,4 @@ jobs:
             esac
           fi
           printf '%s\n' "$out"
-          echo "автомерж включён с составленным телом; проверка ci на этом коммите уже зелёная"
+          echo "автомерж включён: сольётся, когда обязательные проверки позеленеют"
