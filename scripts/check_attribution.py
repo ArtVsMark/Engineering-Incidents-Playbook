@@ -73,6 +73,20 @@ def main() -> int:
             print("проверка не отработала: origin/main недоступен, диапазон "
                   "не определён — задайте --range", file=sys.stderr)
             return 2
+    # Диапазон не уходит глубже объявленного начала: до него история писалась
+    # без трейлеров, переписать её нельзя, и требовать оттуда нечего (114).
+    try:
+        git("merge-base", "--is-ancestor", BASELINE, "HEAD")
+        low, _, high = rng.partition("..")
+        if low and subprocess.run(
+            ["git", "-C", str(ROOT), "merge-base", "--is-ancestor", low, BASELINE],
+            capture_output=True,
+        ).returncode == 0 and low != BASELINE:
+            rng = f"{BASELINE}..{high or 'HEAD'}"
+            print(f"диапазон подрезан до объявленного начала: {rng}")
+    except subprocess.CalledProcessError:
+        pass  # BASELINE вне этой истории — проверяем, что просили
+
     try:
         # Слияния пропускаем: их сообщение составляет площадка, а не автор.
         out = git("log", "--no-merges", "--format=%H%x00%s%x00%b%x00", rng)

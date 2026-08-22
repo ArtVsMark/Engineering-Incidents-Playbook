@@ -40,6 +40,17 @@ jobs:
       - name: локальные ссылки ведут в существующие файлы
         run: python scripts/check_links.py
 
+      # Правило 123: атрибуцию проверяют ДО слияния — историю общей ветки не
+      # переписать, а объединяющее слияние составляет площадка, не автор.
+      # Поэтому шаг только на PR: на push проверять уже поздно.
+      # Границы диапазона идут через env, а не подстановкой в команду.
+      - name: атрибуция сверена со списком согласованных имён
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python scripts/check_attribution.py --range "$BASE..$HEAD_SHA"
+
       # Правило 002 же: заготовка гейта обязана хотя бы запускаться.
       - name: заготовка preflight запускается
         run: python templates/preflight.py --list
