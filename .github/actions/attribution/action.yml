@@ -1,0 +1,78 @@
+# Гейт атрибуции, который каталог отдаёт потребителям.
+#
+# Логика живёт в одном месте и подключается ссылкой на версию, а не копируется
+# в третий репозиторий (правила 090 и 022). Копия разъедется с первой же
+# правкой, и разойдутся при этом гейты — то есть то, чем всё держится.
+#
+# Что принадлежит ПРОЕКТУ, а не инструменту, и потому вынесено в параметры:
+# список согласованных имён и коммит, с которого атрибуция обязательна. У
+# каждого потребителя они свои, и подстановка чужих даёт красное на верных
+# коммитах — гейт хуже отсутствующего (правило 051, задача #54).
+name: Гейт атрибуции
+description: >-
+  Сверяет трейлеры соавторства со списком согласованных имён проекта. Умеет два
+  предмета: коммиты ветки до слияния и первопредки общей ветки после.
+
+inputs:
+  authors:
+    description: "Путь к списку согласованных имён внутри репозитория проекта"
+    required: false
+    default: .github/authors.txt
+  baseline:
+    description: >-
+      Коммит, с которого атрибуция обязательна. Пусто — проверять всю историю:
+      требовать задним числом от истории, которую не переписать, значит
+      требовать невозможного (правило 114).
+    required: false
+    default: ""
+  mode:
+    description: "branch — коммиты ветки; first-parents — первопредки общей ветки"
+    required: false
+    default: branch
+  range:
+    description: "Диапазон для mode=branch, например base..head. Пусто — origin/main..HEAD"
+    required: false
+    default: ""
+  ref:
+    description: "Общая ветка для mode=first-parents"
+    required: false
+    default: origin/main
+  catalogue:
+    description: "Репозиторий каталога, откуда берётся сам гейт"
+    required: false
+    default: ArtVsMark/claude-code-playbook
+  catalogue-ref:
+    description: >-
+      Версия каталога. Закрепите тегом: подключаться к движущейся ветке значит
+      получить чужую правку гейта в свой красный прогон.
+    required: false
+    default: main
+
+runs:
+  using: composite
+  steps:
+    # Каталог кладётся рядом, а не поверх: рабочий каталог проекта — это и есть
+    # то, чью историю проверяют.
+    - uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.catalogue }}
+        ref: ${{ inputs.catalogue-ref }}
+        path: .attribution-gate
+        fetch-depth: 1
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: сверить атрибуцию
+      shell: bash
+      run: |
+        set -euo pipefail
+        args=(--repo "$GITHUB_WORKSPACE" --authors "${{ inputs.authors }}")
+        args+=(--baseline "${{ inputs.baseline }}")
+        if [ "${{ inputs.mode }}" = "first-parents" ]; then
+          args+=(--first-parents --ref "${{ inputs.ref }}")
+        elif [ -n "${{ inputs.range }}" ]; then
+          args+=(--range "${{ inputs.range }}")
+        fi
+        python .attribution-gate/scripts/check_attribution.py "${args[@]}"
