@@ -33,6 +33,9 @@ rule, entered by number or [by area](rules/README.md#by-area).
 **Not sure where to start reading** — [`TOP-10.md`](TOP-10.md): ten rules that
 travel beyond the stack they came from.
 
+**Want to contribute** — [`CONTRIBUTING.md`](CONTRIBUTING.md): what is accepted
+here, in what shape, and why a rule without an incident is not.
+
 **Do not copy the catalogue wholesale.** Every rule has an "Applicability"
 section stating plainly **where it does not work**. Half of what is here is
 shaped by agent sessions, GitHub and rate limits; on a different stack it is
