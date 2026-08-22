@@ -1,0 +1,36 @@
+{
+  "schema": "1.0",
+  "about": "Проекты, с которыми каталог связан. Список закрытый и разрешительный: только то, что здесь названо, считается репозиторием в разделе «След» правила. Всё прочее — путь, кусок URL или проза, и контекстом не становится. Правило 068.",
+  "consumers": [
+    {
+      "repo": "ArtVsMark/claude-code-playbook",
+      "role": "каталог",
+      "bindings": ".rules/bindings.json"
+    },
+    {
+      "repo": "ArtVsMark/Stepik-Python-Grader",
+      "role": "потребитель",
+      "bindings": null
+    },
+    {
+      "repo": "ArtVsMark/ArtVsMark",
+      "role": "потребитель",
+      "bindings": null
+    },
+    {
+      "repo": "ArtVsMark/claude-code-usage",
+      "role": "потребитель",
+      "bindings": null
+    },
+    {
+      "repo": "ArtVsMark/claude-code-usage-dat",
+      "role": "потребитель, приватный",
+      "bindings": null
+    },
+    {
+      "repo": "ArtVsMark/Glossary-Python",
+      "role": "потребитель",
+      "bindings": null
+    }
+  ]
+}

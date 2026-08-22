@@ -72,6 +72,10 @@ LINK_RE = re.compile(r"\]\((\d{3}-[^)#]+\.md)\)")
 #: След — обязательный раздел записи. Из него достаётся структура
 #: {репозиторий, задача}: строка раздела потребителю бесполезна (правило 129).
 TRACE_HEAD = {"ru": "## След", "en": "## Trace"}
+#: Реестр потребителей. Разрешительный список: репозиторием в следе считается
+#: только то, что здесь названо. Запретительным («не начинается с src/») это не
+#: закрывается — завтра появится tools/foo (правило 068).
+CONSUMERS = ROOT / ".rules" / "consumers.json"
 TRAIL_RE = re.compile(
     r"([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)#(\d+)"   # владелец/репозиторий#номер
     r"|([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)"          # репозиторий без номера — контекст
@@ -553,13 +557,37 @@ def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]]
     return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
 
 
-def trails_of(path: Path, lang: str) -> tuple[list[dict[str, str]], str | None]:
+def known_consumers() -> tuple[set[str], str | None]:
+    """Репозитории, которые вообще могут стоять в следе.
+
+    Без этого списка «репозиторием» становился любой токен с косой чертой, и
+    путь в обратных кавычках перетирал настоящий репозиторий: у 23 правил след
+    уезжал в экспорт в виде куска пути. Поле было непустым, а бессмысленным —
+    правило 128.
+    """
+    try:
+        data = json.loads(CONSUMERS.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        return set(), (f"реестр потребителей не прочитан — {e}. Без него "
+                       "следы разбирать нечем, а разбирать наугад нельзя")
+    repos = {c.get("repo") for c in data.get("consumers", []) if c.get("repo")}
+    if not repos:
+        return set(), (f"{CONSUMERS.relative_to(ROOT)} не называет ни одного "
+                       "потребителя — пустой список это состояние, но не "
+                       "основание разбирать следы")
+    return repos, None
+
+
+def trails_of(path: Path, lang: str, known: set[str]) -> tuple[list[dict[str, str]], str | None]:
     """Ссылки на задачи из раздела «След», по порядку и без повторов.
 
     Голый номер наследует последний упомянутый рядом репозиторий — так он и
     читается человеком. Номер, которому не предшествует ни один репозиторий,
     разобрать нельзя: это не пустой след, а неразбираемый, и он назван ошибкой,
     а не пропущен молча (правила 075, 128).
+
+    Репозиторием считается только тот, что есть в реестре потребителей. Токен
+    вида «путь/файл.py» контекст не перебивает — он просто проза.
     """
     text = path.read_text(encoding="utf-8")
     head = TRACE_HEAD[lang]
@@ -572,10 +600,18 @@ def trails_of(path: Path, lang: str) -> tuple[list[dict[str, str]], str | None]:
     for m in TRAIL_RE.finditer(text[text.index(head) + len(head):]):
         full, num, repo_only, bare = m.groups()
         if full:
+            if full not in known:
+                return [], (f"след ведёт в {full}#{num}, а такого потребителя "
+                            f"нет в {CONSUMERS.relative_to(ROOT)}. Либо опечатка, "
+                            "либо реестр пора дополнить — осознанно, а не молча")
             current = full
             key = (full, num)
         elif repo_only:
-            current = repo_only
+            # Не потребитель — значит это путь, кусок URL или проза. Контекст
+            # не трогаем: перетереть его тем, что репозиторием не является, и
+            # значит потерять след.
+            if repo_only in known:
+                current = repo_only
             continue
         else:
             if current is None:
@@ -595,12 +631,15 @@ def check_trails(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list], li
     """
     problems: list[str] = []
     result: dict[str, list] = {}
+    known, err = known_consumers()
+    if err:
+        return {}, [f"реестр потребителей: {err}"]
     for num in sorted(found):
         slot = found[num]
         if not all(l in slot for l in LANGS):
             continue
-        ru, err_ru = trails_of(slot["ru"], "ru")
-        en, err_en = trails_of(slot["en"], "en")
+        ru, err_ru = trails_of(slot["ru"], "ru", known)
+        en, err_en = trails_of(slot["en"], "en", known)
         for lang, err in (("ru", err_ru), ("en", err_en)):
             if err:
                 problems.append(f"{num}: {lang}/{slot[lang].name}: {err}")

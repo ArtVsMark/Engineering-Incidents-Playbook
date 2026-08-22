@@ -1597,7 +1597,7 @@
       },
       "trails": [
         {
-          "repo": "src/stepik_grader",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1136"
         }
       ]
@@ -1626,7 +1626,7 @@
       },
       "trails": [
         {
-          "repo": "src/stepik_grader",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "996"
         }
       ]
@@ -1686,7 +1686,7 @@
       },
       "trails": [
         {
-          "repo": "web/settings_adapter.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "997"
         }
       ]
@@ -1713,7 +1713,7 @@
       },
       "trails": [
         {
-          "repo": "web/http_guards.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "631"
         }
       ]
@@ -1742,7 +1742,7 @@
       },
       "trails": [
         {
-          "repo": "web/auth_adapter.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "433"
         }
       ]
@@ -1771,7 +1771,7 @@
       },
       "trails": [
         {
-          "repo": "tests/conftest.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "997"
         }
       ]
@@ -1798,7 +1798,7 @@
       },
       "trails": [
         {
-          "repo": "scripts/check_ruff_pin.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "791"
         }
       ]
@@ -1827,7 +1827,7 @@
       },
       "trails": [
         {
-          "repo": "scripts/check_workflow_guardrails.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "988"
         }
       ]
@@ -1876,7 +1876,7 @@
       },
       "trails": [
         {
-          "repo": "scripts/check_locale_guardrails.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1005"
         }
       ]
@@ -1903,11 +1903,11 @@
       },
       "trails": [
         {
-          "repo": "scripts/check_locale_guardrails.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "821"
         },
         {
-          "repo": "scripts/check_locale_guardrails.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "264"
         }
       ]
@@ -1934,11 +1934,11 @@
       },
       "trails": [
         {
-          "repo": "web/runs.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "262"
         },
         {
-          "repo": "web/runs.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "296"
         }
       ]
@@ -1967,11 +1967,11 @@
       },
       "trails": [
         {
-          "repo": "web/runs.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "408"
         },
         {
-          "repo": "web/runs.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "811"
         }
       ]
@@ -2022,7 +2022,7 @@
       },
       "trails": [
         {
-          "repo": "web/playground.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "799"
         }
       ]
@@ -2049,11 +2049,11 @@
       },
       "trails": [
         {
-          "repo": "docs/agent",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1007"
         },
         {
-          "repo": "docs/agent",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1005"
         }
       ]
@@ -2128,7 +2128,7 @@
       },
       "trails": [
         {
-          "repo": "core/ai_grounding.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "931"
         }
       ]
@@ -2558,11 +2558,11 @@
       },
       "trails": [
         {
-          "repo": "tests/conftest.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "818"
         },
         {
-          "repo": "tests/conftest.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "646"
         }
       ]
@@ -2591,11 +2591,11 @@
       },
       "trails": [
         {
-          "repo": ".github/workflows",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1095"
         },
         {
-          "repo": ".github/workflows",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "988"
         }
       ]
@@ -2714,7 +2714,7 @@
       },
       "trails": [
         {
-          "repo": "src/stepik_grader",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "823"
         }
       ]
@@ -2743,11 +2743,11 @@
       },
       "trails": [
         {
-          "repo": "core/tracer.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "806"
         },
         {
-          "repo": "core/tracer.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1135"
         }
       ]
@@ -2774,7 +2774,7 @@
       },
       "trails": [
         {
-          "repo": "src/stepik_grader",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1134"
         }
       ]
@@ -2803,7 +2803,7 @@
       },
       "trails": [
         {
-          "repo": "cli/__init__.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "813"
         }
       ]
@@ -2854,11 +2854,11 @@
       },
       "trails": [
         {
-          "repo": "core/history.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "990"
         },
         {
-          "repo": "core/history.py",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "947"
         }
       ]
@@ -2885,11 +2885,11 @@
       },
       "trails": [
         {
-          "repo": "docs/use",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "993"
         },
         {
-          "repo": "docs/use",
+          "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "984"
         }
       ]
@@ -3463,7 +3463,7 @@
           "issue": "20"
         },
         {
-          "repo": "ArtVsMark/issues",
+          "repo": "ArtVsMark/ArtVsMark",
           "issue": "21"
         }
       ]
