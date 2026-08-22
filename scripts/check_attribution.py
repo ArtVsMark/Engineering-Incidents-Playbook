@@ -7,7 +7,19 @@
   039 — у проверки три исхода, а не два;
   114 — миграция идёт от текущей версии, а не от нуля: требование действует
         с объявленного коммита, а не задним числом на всю историю;
-  046 — пробел называется поимённо: коммиты без атрибуции печатаются числом.
+  046 — пробел называется поимённо: коммиты без атрибуции печатаются числом;
+  041 — два честных числа вместо одного усреднённого: сколько всего и сколько
+        без атрибуции, а не «процент покрытия».
+
+Два режима, потому что вопроса два.
+
+  Коммиты ветки  (--range)  — проверка ДО слияния: историю ветки ещё можно
+  переписать, и находка здесь чинится автором.
+
+  Первопредки    (--first-parents) — проверка ПОСЛЕ: коммит общей ветки
+  составляет площадка, и в итоговой истории атрибуции может не быть вовсе при
+  зелёном гейте на каждом изменении. Починить прошлое нельзя — но не знать о
+  нём хуже (правила 002, 075).
 
 Исходы:
   0 — чисто;
@@ -16,6 +28,8 @@
 
 Запуск:  python scripts/check_attribution.py                 # origin/main..HEAD
          python scripts/check_attribution.py --range A..B
+         python scripts/check_attribution.py --first-parents  # origin/main
+         python scripts/check_attribution.py --first-parents --ref main --since d1297ff
 """
 
 from __future__ import annotations
@@ -48,9 +62,87 @@ def agreed() -> set[str]:
     return {l.strip() for l in lines if l.strip() and not l.startswith("#")}
 
 
+def first_parents(ref: str, since: str | None, names: set[str]) -> int:
+    """Атрибуция в итоговой истории общей ветки.
+
+    Спрашиваются ВСЕ первопредки, а не только объединяющие коммиты. Это не
+    придирка: способ слияния — настройка репозитория, и при squash слияний в
+    истории не остаётся вовсе. Проверка, привязанная к виду коммита, после
+    смены настройки нашла бы ноль предметов и промолчала бы зелёным — ровно то,
+    от чего предостерегает правило 075.
+    """
+    try:
+        git("rev-parse", "--verify", ref)
+    except subprocess.CalledProcessError:
+        print(f"проверка не отработала: {ref} недоступен — "
+              "нужен полный клон и общая ветка", file=sys.stderr)
+        return 2
+
+    scope = f"{since}..{ref}" if since else ref
+    try:
+        out = git("log", "--first-parent",
+                  "--format=%H%x00%s%x00%b%x00", scope)
+    except subprocess.CalledProcessError as e:
+        print(f"проверка не отработала: {scope!r} не разобран — "
+              f"{e.stderr.strip()}", file=sys.stderr)
+        return 2
+
+    records = [r for r in out.split("\x00\n") if r.strip()]
+    if not records:
+        # Пусто — это состояние, а не тишина (правило 027). И это не «чисто»:
+        # проверка, которой нечего смотреть, не подтверждает ничего (075).
+        print(f"проверка не отработала: в {scope} нет первопредков — "
+              "подтверждать нечего", file=sys.stderr)
+        return 2
+
+    missing: list[str] = []
+    stranger: list[str] = []
+    for rec in records:
+        sha, subject, body = (rec.split("\x00") + ["", ""])[:3]
+        sha, subject = sha.strip(), subject.strip()
+        coauthors = [m.strip() for m in COAUTHOR.findall(body)]
+        if not coauthors:
+            missing.append(f"{sha[:7]} {subject[:64]}")
+            continue
+        for name in coauthors:
+            if name not in names:
+                stranger.append(f"{sha[:7]} соавтор вне списка: {name!r}")
+
+    total = len(records)
+    if missing or stranger:
+        print(f"атрибуция в итоговой истории {scope}: "
+              f"первопредков {total}, без атрибуции {len(missing)}",
+              file=sys.stderr)
+        for line in missing[:5]:
+            print(f"  • {line}", file=sys.stderr)
+        if len(missing) > 5:
+            print(f"  • …и ещё {len(missing) - 5}", file=sys.stderr)
+        for line in stranger:
+            print(f"  • {line}", file=sys.stderr)
+        print("\n  Прошлое не переписать: общая ветка защищена, и это долг, а не "
+              "задача (правило 114).\n  Красное здесь означает, что коммит в общей "
+              "ветке составляется без трейлеров — чинится\n  на стороне слияния, "
+              "а не правкой истории. Объявить долг и спрашивать с\n  определённого "
+              "коммита — ключ --since.", file=sys.stderr)
+        return 1
+
+    print(f"атрибуция в итоговой истории в порядке: {scope}, "
+          f"объединяющих коммитов {total}, без атрибуции 0")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--range", default=None, help="диапазон коммитов, по умолчанию origin/main..HEAD")
+    ap.add_argument("--range", default=None,
+                    help="диапазон коммитов, по умолчанию origin/main..HEAD")
+    ap.add_argument("--first-parents", action="store_true",
+                    help="проверить первопредки общей ветки, а не коммиты ветки")
+    ap.add_argument("--ref", default="origin/main",
+                    help="общая ветка для --first-parents, по умолчанию origin/main")
+    ap.add_argument("--since", default=None,
+                    help="объявленное начало для --first-parents: раньше него "
+                         "не спрашивать. Без него спрашивается вся история — "
+                         "долг виден числом, а не спрятан подрезкой")
     args = ap.parse_args()
 
     # ── исход 2: проверка не отработала ────────────────────────────────────
@@ -63,6 +155,9 @@ def main() -> int:
         print(f"проверка не отработала: {AUTHORS.relative_to(ROOT)} пуст — "
               "сверять не с чем, а молча пропускать нельзя", file=sys.stderr)
         return 2
+
+    if args.first_parents:
+        return first_parents(args.ref, args.since, names)
 
     rng = args.range
     if rng is None:

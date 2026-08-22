@@ -1,0 +1,226 @@
+# Автомерж с атрибуцией. Без него объединяющий коммит составляет площадка:
+# трейлеры остаются в коммитах ветки и до первопредков `main` не доезжают —
+# гейт зелёный на каждом изменении, а в итоговой истории атрибуции нет вовсе
+# (задача #34, правила 002 и 123).
+#
+# ПОЧЕМУ SQUASH И ПОЧЕМУ ТОКЕН ВЛАДЕЛЬЦА. Это не выбор вкуса, а перенос
+# измеренного решения из ArtVsMark/Stepik-Python-Grader#1302 — там тот же
+# вопрос уже оплачен инцидентом. Squash атрибутирует коммит АВТОРУ изменения,
+# а не тому, кто нажал кнопку, и площадка сама собирает трейлеры соавторства из
+# коммитов ветки. Значит:
+#
+#   автор изменения = человек  →  автор коммита в main = человек;
+#   трейлеры в коммитах ветки  →  трейлеры в первопредках main.
+#
+# Включать при этом обязан токен владельца, а не GITHUB_TOKEN: с последним
+# автором становится бот (правила 131 и 135). Секрет тот же, что в грейдере, —
+# MERGE_QUEUE_TOKEN.
+#
+# ПОЧЕМУ ВКЛЮЧАЕМ РАНО, А НЕ ПО ЗЕЛЁНОМУ. Замер: `enablePullRequestAutoMerge`
+# ОТКАЗЫВАЕТ изменению в чистом состоянии — ждать уже нечего. Значит включать
+# надо, пока проверки ещё идут, иначе автомерж не включится никогда. Отсюда же
+# следует, что защита ветки с обязательной проверкой — не удобство, а условие
+# работы: без неё «чистым» изменение становится сразу и сливается мимо гейтов
+# (правило 010). Проверить наличие защиты можно тем же токеном владельца —
+# у GITHUB_TOKEN прав на это нет, у PAT есть.
+name: automerge
+
+on:
+  pull_request:
+    # Умолчание типов не включает ready_for_review (правило 104). Снятие
+    # черновика — это и есть «беру на слияние» (#34).
+    types: [opened, ready_for_review, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "номер изменения"
+        required: true
+
+# Записи делает токен владельца, штатному хватает чтения.
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: automerge-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+jobs:
+  arm:
+    runs-on: ubuntu-latest
+    # issue #1271 грейдера: без этого действует умолчание площадки в 6 часов.
+    timeout-minutes: 10
+    # Секрет кладётся в env, а не проверяется в `if` напрямую: контекст
+    # `secrets` в условиях шага не гарантирован. Приём взят из грейдера.
+    env:
+      MERGE_QUEUE_TOKEN: ${{ secrets.MERGE_QUEUE_TOKEN }}
+    steps:
+      # Секрета нет — предупреждение и выход, а не отказ: красное здесь означало
+      # бы поломку механизма, тогда как это ненастроенная возможность. Молча
+      # уйти на GITHUB_TOKEN нельзя — это дало бы ботовское авторство, ровно ту
+      # подмену, ради которой правило 131 и написано.
+      - name: токен владельца не задан
+        if: env.MERGE_QUEUE_TOKEN == ''
+        run: |
+          echo "::warning::MERGE_QUEUE_TOKEN не задан — автомерж не включается. Нужен токен владельца с правами contents:write и pull-requests:write. GITHUB_TOKEN не подходит: с ним автором коммита в main станет бот."
+          echo "SKIP=1" >> "$GITHUB_ENV"
+
+      # Трейлеры берутся из коммитов ветки, значит нужна история.
+      - uses: actions/checkout@v4
+        if: env.SKIP != '1'
+        with:
+          fetch-depth: 0
+
+      - name: состояние изменения
+        id: pr
+        if: env.SKIP != '1'
+        env:
+          GH_TOKEN: ${{ env.MERGE_QUEUE_TOKEN }}
+          PR: ${{ github.event.pull_request.number || inputs.pr }}
+        run: |
+          set -euo pipefail
+          gh pr view "$PR" \
+            --json number,title,isDraft,state,baseRefName,headRefName,baseRefOid,headRefOid,autoMergeRequest \
+            --jq '"number=\(.number)", "title=\(.title)", "draft=\(.isDraft)",
+                  "state=\(.state)", "base=\(.baseRefName)", "head=\(.headRefName)",
+                  "base_sha=\(.baseRefOid)", "head_sha=\(.headRefOid)",
+                  "armed=\(.autoMergeRequest != null)"' >> "$GITHUB_OUTPUT"
+
+      # Черновик — это «ещё не беру». Пропуск, а не отказ: красное на штатном
+      # состоянии приучает читать красное как фон (правило 051). Уже включённый
+      # автомерж — тоже пропуск: повторное включение ничего не меняет.
+      - name: пропустить черновик и уже включённые
+        if: >-
+          env.SKIP != '1' &&
+          (steps.pr.outputs.draft == 'true' ||
+           steps.pr.outputs.state != 'OPEN' ||
+           steps.pr.outputs.armed == 'true')
+        run: |
+          echo "изменение ${{ steps.pr.outputs.number }}: черновик, закрыто или автомерж уже включён"
+          echo "SKIP=1" >> "$GITHUB_ENV"
+
+      # Правило 010: пустой чек-лист — не зелёный. Без обязательной проверки
+      # изменение становится «чистым» сразу, и автомерж сливает НЕ ДОЖИДАЯСЬ
+      # гейтов, то есть тихо отключает их все.
+      #
+      # ПОЧЕМУ ПРЕДУПРЕЖДЕНИЕ, А НЕ ОТКАЗ. Ненастроенная защита — не поломка
+      # изменения, и краснеть на каждом изменении за настройку репозитория
+      # значит приучать читать красное как фон (правило 051). Вред здесь
+      # предотвращён тем, что автомерж не включается вовсе; сказать об этом
+      # достаточно словами.
+      #
+      # ПОЧЕМУ ДВА ЗАПРОСА. Полный состав обязательных проверок отдаёт только
+      # эндпоинт защиты, а он требует прав администрирования — замер показал у
+      # токена 403. Тогда спрашивается то, на что прав хватает: сам факт
+      # защиты. Пробел при этом называется вслух, а не заминается (правило 046).
+      - name: обязательная проверка на общей ветке есть
+        if: env.SKIP != '1'
+        env:
+          GH_TOKEN: ${{ env.MERGE_QUEUE_TOKEN }}
+          BASE: ${{ steps.pr.outputs.base }}
+        run: |
+          set -uo pipefail
+          skip() { echo "SKIP=1" >> "$GITHUB_ENV"; exit 0; }
+
+          out=$(gh api "repos/$GITHUB_REPOSITORY/branches/$BASE/protection" 2>&1) && rc=0 || rc=$?
+          if [ "$rc" -eq 0 ]; then
+            contexts=$(printf '%s' "$out" | jq -r '[.required_status_checks.contexts // [], (.required_status_checks.checks // [] | map(.context))] | flatten | unique | length')
+            if [ "$contexts" -eq 0 ]; then
+              echo "::warning::У ветки $BASE есть защита, но обязательных проверок в ней нет — автомерж слил бы мимо гейтов, поэтому не включается. Settings -> Branches -> Require status checks to pass -> catalogue."
+              skip
+            fi
+            echo "обязательных проверок на $BASE: $contexts"
+            exit 0
+          fi
+
+          case "$out" in
+            *"Branch not protected"*)
+              echo "::warning::Ветка $BASE не защищена — автомерж не включается. Без обязательной проверки он сливает мгновенно, не дожидаясь гейтов, и это хуже, чем его отсутствие (#34). Settings -> Branches -> Require status checks to pass -> catalogue."
+              skip ;;
+          esac
+
+          # Прав на состав проверок нет. Спрашиваем то, что доступно: защищена
+          # ли ветка вообще. Это меньше, чем хотелось, и об этом говорится.
+          protected=$(gh api "repos/$GITHUB_REPOSITORY/branches/$BASE" --jq '.protected' 2>&1) && prc=0 || prc=$?
+          if [ "$prc" -ne 0 ]; then
+            echo "::warning::Проверка не отработала: состояние ветки $BASE не прочитано, автомерж не включается. $protected"
+            skip
+          fi
+          if [ "$protected" != "true" ]; then
+            echo "::warning::Ветка $BASE не защищена — автомерж не включается (#34). Settings -> Branches -> Require status checks to pass -> catalogue."
+            skip
+          fi
+          echo "::warning::Ветка $BASE защищена, но состав обязательных проверок прочитать нечем: токену не хватает права читать администрирование репозитория (403). Продолжаю с названным пробелом — если обязательных проверок в защите нет, автомерж сольёт мимо гейтов."
+
+      # Трейлеры площадка соберёт при squash сама — это её документированное
+      # поведение и оно подтверждено историей грейдера. Здесь тело собирается
+      # ЕЩЁ РАЗ и передаётся явно: замер из #34 показал, что составленное
+      # сообщение может не примениться, а два независимых пути к одной цели
+      # дешевле одного предположения. Какой сработал, покажет гейт
+      # `attribution-history` на первом же слиянии.
+      - name: тело коммита с трейлерами
+        id: msg
+        if: env.SKIP != '1'
+        env:
+          BASE_SHA: ${{ steps.pr.outputs.base_sha }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          TITLE: ${{ steps.pr.outputs.title }}
+          NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$BASE_SHA" "$HEAD_SHA" 2>/dev/null || true
+          rng="$BASE_SHA..$HEAD_SHA"
+          co=$(git log "$rng" --format='%(trailers:key=Co-Authored-By,valueonly)' \
+                 | sed '/^[[:space:]]*$/d' | sort -u)
+          se=$(git log "$rng" --format='%(trailers:key=Claude-Session,valueonly)' \
+                 | sed '/^[[:space:]]*$/d' | sort -u | head -1)
+          if [ -z "$co" ]; then
+            # Гейт атрибуции стоит на этом же изменении и должен был поймать это
+            # раньше. Если не поймал — молча слить нельзя (правило 075).
+            echo "::error::В коммитах $rng нет ни одного трейлера Co-Authored-By: класть в коммит нечего."
+            exit 1
+          fi
+          echo "subject=$TITLE (#$NUMBER)" >> "$GITHUB_OUTPUT"
+          {
+            echo "body<<MERGEBODY"
+            printf '%s\n' "$co" | sed 's/^/Co-Authored-By: /'
+            if [ -n "$se" ]; then echo "Claude-Session: $se"; fi
+            echo "MERGEBODY"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: включить автомерж
+        if: env.SKIP != '1'
+        env:
+          # Токен владельца, а не github.token: при squash автором коммита в
+          # main становится автор изменения, и включать должен тот, чью личность
+          # этот коммит обязан нести (правила 131, 135).
+          GH_TOKEN: ${{ env.MERGE_QUEUE_TOKEN }}
+          PR: ${{ steps.pr.outputs.number }}
+          SUBJECT: ${{ steps.msg.outputs.subject }}
+          BODY: ${{ steps.msg.outputs.body }}
+        run: |
+          set -uo pipefail
+          # Включение автомержа умеет только GraphQL — REST такого не отдаёт.
+          # Это ровно та оговорка, ради которой правило 001 написано с «только
+          # там, где REST не умеет»; gh делает этот вызов за нас.
+          out=$(gh pr merge "$PR" --auto --squash --subject "$SUBJECT" --body "$BODY" 2>&1) && rc=0 || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            case "$out" in
+              *"lean status"*|*"already"*)
+                # Ждать нечему: все проверки уже прошли. Это не поломка, но и
+                # не тишина — иначе изменение останется стоять зелёным.
+                echo "::warning::Изменение #$PR уже в чистом состоянии — автомерж включить нельзя, ждать нечего. Слить его должен человек."
+                exit 0 ;;
+              *uto-merge*|*"not enabled"*)
+                echo "::error::Автомерж в репозитории не разрешён. Settings -> General -> Pull Requests -> Allow auto-merge."
+                exit 1 ;;
+              *quash*)
+                echo "::error::Squash в репозитории запрещён. Settings -> General -> Pull Requests -> Allow squash merging. Именно squash атрибутирует коммит автору изменения, а не тому, кто нажал кнопку."
+                exit 1 ;;
+              *)
+                echo "::error::Автомерж не включился: $out"
+                exit 1 ;;
+            esac
+          fi
+          printf '%s\n' "$out"
+          echo "автомерж включён: сольётся, когда обязательные проверки позеленеют"
