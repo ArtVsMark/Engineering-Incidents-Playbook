@@ -540,11 +540,6 @@
       "status": "active",
       "mechanism": "gate",
       "where": ".github/workflows/consumers-sync.yml — шаг «у находки есть адресат» заводит задачу при отказе"
-    },
-    "143": {
-      "status": "active",
-      "mechanism": "gate",
-      "where": ".github/workflows/agent-pr.yml — авторство в общей ветке задаёт тот, кто открыл изменение; открывает конвейер"
     }
   }
 }
