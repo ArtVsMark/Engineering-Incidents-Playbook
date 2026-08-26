@@ -1,0 +1,238 @@
+#!/usr/bin/env python3
+"""Проверяет содержательную полноту записи, а не наличие заголовков.
+
+Разделы на месте — это уже держит `build_rules_index.py --check`: он сверяет
+форму записи со сводом и роняет сборку, если раздела нет. Заголовок, однако,
+можно поставить и оставить под ним что угодно: раздел «Применимость» без
+границы «где НЕ работает» структурно неотличим от полного, а след из одной
+прозаической фразы неотличим от следа, ведущего в живой артефакт.
+
+Здесь проверяется то, что остаётся после структуры:
+
+  • утверждение правила стоит строкой, а не растворено в прозе;
+  • «Применимость» называет границу «не работает» — без неё каталог копируют
+    целиком, включая заведомо чужое;
+  • «След» РАЗРЕШАЕТСЯ: ведёт в задачу «владелец/репозиторий#номер» или в
+    потребителя из реестра. Проза следом не считается;
+  • деревья ru и en совпадают по составу разделов — не переводом, а структурой.
+
+Чего здесь НЕТ и не будет: проверки перевода. Совпадение разделов переводом не
+является (правило 077), и утверждать обратное этот гейт не должен.
+
+Реализует правила каталога:
+  002 — правило без механизма остаётся пожеланием; форма записи объявлена
+        сводом, и до сих пор часть её держалась договорённостью;
+  120 — как ведётся каталог: обязательные разделы и след;
+  077 — паритет ключей переводом не является, поэтому проверяется структура
+        и только она;
+  051 — запрещают достоверное, предупреждают о вероятном: нерасрешимый след —
+        факт, иначе названный раздел — подозрение;
+  039 — у проверки три исхода, а не два;
+  075 — «не смогли прочитать» не должно быть неотличимо от «всё хорошо».
+
+Исходы:
+  0 — чисто;  1 — есть находки;  2 — проверка не отработала.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+#: Корень по умолчанию — сам каталог. Ключ `--root` нужен не для гибкости, а
+#: чтобы гейт можно было прогнать по подделке, которую он обязан отвергнуть:
+#: иначе «не пропустит» остаётся обещанием (правило 140). Тот же приём, что у
+#: check_attribution.py с его `--repo`.
+ROOT = Path(__file__).resolve().parent.parent
+
+LANGS = ("ru", "en")
+RULE_RE = re.compile(r"^(\d{3})-[a-z0-9-]+\.md$")
+
+#: Утверждение правила — строка под заголовком, а не пересказ в «Инциденте».
+#: Свод требует именно её: «правило → инцидент → почему → применимость → след».
+CLAIM_RE = {
+    "ru": re.compile(r"^\*\*Правило\.\*\*\s*\S", re.M),
+    "en": re.compile(r"^\*\*The rule\.\*\*\s*\S", re.M),
+}
+
+#: Раздел, в котором ищется граница. Искать по всему файлу нельзя: фраза
+#: «не работает» встречается в прозе «Инцидента», и тогда проверка зеленела бы
+#: на записи без границы.
+APPLIES_HEAD = {"ru": "## Применимость", "en": "## Where it applies"}
+#: Двоеточие внутри выделения и снаружи — обе формы живут в каталоге, и обе
+#: законны. Отвергать одну из них значило бы завести правку ради проверки.
+BOUNDARY_RE = {
+    "ru": re.compile(r"\*\*Не работает:?\*\*:?"),
+    "en": re.compile(r"\*\*Does not work:?\*\*:?"),
+}
+
+TRACE_HEAD = {"ru": "## След", "en": "## Trace"}
+#: Задача в следе. Тот же вид, что разбирает build_rules_index.py, — второй
+#: разбор одной территории разошёлся бы молча (правило 022).
+ISSUE_RE = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+#\d+")
+#: Хвост «Смежное» — ссылки на соседние правила, а не след. Считать их следом
+#: значит зеленеть на записи, у которой следа нет вовсе.
+RELATED = {"ru": "Смежное", "en": "Related"}
+
+#: Соответствие разделов между деревьями. Закрытый словарь: раздел, которого
+#: здесь нет, свободный, и сверяется он только по месту и числу.
+CANON = {
+    "## Инцидент": "## The incident",
+    "## Почему": "## Why",
+    "## Применимость": "## Where it applies",
+    "## След": "## Trace",
+    "## Практические границы": "## In practice",
+    "## Решение": "## The fix",
+    "## Механизм": "## The mechanism",
+}
+HEAD_RE = re.compile(r"^## .+$", re.M)
+
+
+def section(text: str, head: str) -> str | None:
+    """Тело раздела до следующего заголовка того же уровня.
+
+    Заголовок сверяется целой строкой, а не началом. «## Следствие второго
+    порядка» начинается с «## След», и поиск подстрокой открыл бы не тот
+    раздел — молча и с правдоподобным результатом.
+    """
+    m = re.search("^" + re.escape(head) + r"[ \t]*$", text, re.M)
+    if m is None:
+        return None
+    rest = text[m.end():]
+    nxt = rest.find("\n## ")
+    return rest if nxt < 0 else rest[:nxt]
+
+
+def trace_resolves(body: str, known: set[str]) -> bool:
+    """След ведёт в задачу или в названного потребителя, а не в прозу."""
+    for stop in RELATED.values():
+        cut = body.find("\n" + stop)
+        if cut >= 0:
+            body = body[:cut]
+    return bool(ISSUE_RE.search(body)) or any(repo in body for repo in known)
+
+
+def collect(root: Path) -> tuple[dict[str, dict[str, Path]], str | None]:
+    """Правила обоих деревьев по номерам. Вторым значением — причина отказа."""
+    found: dict[str, dict[str, Path]] = {}
+    for lang in LANGS:
+        tree = root / "rules" / lang
+        if not tree.is_dir():
+            return {}, f"нет дерева rules/{lang}"
+        for path in sorted(tree.glob("*.md")):
+            m = RULE_RE.match(path.name)
+            if m:
+                found.setdefault(m.group(1), {})[lang] = path
+    if not found:
+        return {}, "в деревьях не нашлось ни одного правила — это ошибка входа"
+    return found, None
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=ROOT,
+                        help="корень каталога; по умолчанию сам этот репозиторий")
+    args = parser.parse_args(argv)
+    root: Path = args.root
+    consumers = root / ".rules" / "consumers.json"
+
+    # ── исход 2 ────────────────────────────────────────────────────────────
+    found, err = collect(root)
+    if err:
+        print(f"проверка не отработала: {err}", file=sys.stderr)
+        return 2
+    if not consumers.exists():
+        print("проверка не отработала: нет .rules/consumers.json — "
+              "разрешительный список потребителей, без него след не разобрать",
+              file=sys.stderr)
+        return 2
+    try:
+        registry = json.loads(consumers.read_text(encoding="utf-8"))
+        known = {c["repo"] for c in registry["consumers"]}
+    except (ValueError, KeyError, TypeError) as e:
+        print(f"проверка не отработала: реестр потребителей не разобрать — {e}",
+              file=sys.stderr)
+        return 2
+
+    # ── исход 1 ────────────────────────────────────────────────────────────
+    problems: list[str] = []
+    warnings: list[str] = []
+
+    for num in sorted(found):
+        slot = found[num]
+        # Расхождение деревьев по составу файлов — предмет build_rules_index.py.
+        # Здесь оно означает лишь, что сверять паритет не с чем.
+        for lang in LANGS:
+            path = slot.get(lang)
+            if path is None:
+                continue
+            text = path.read_text(encoding="utf-8")
+            where = f"{lang}/{path.name}"
+
+            if not CLAIM_RE[lang].search(text):
+                problems.append(
+                    f"{num}: {where} — нет строки с утверждением правила. "
+                    "Заголовок называет тему, утверждение говорит, что делать")
+
+            body = section(text, APPLIES_HEAD[lang])
+            if body is not None and not BOUNDARY_RE[lang].search(body):
+                problems.append(
+                    f"{num}: {where} — «Применимость» без границы «не работает». "
+                    "Без неё каталог копируют целиком, включая заведомо чужое")
+
+            body = section(text, TRACE_HEAD[lang])
+            if body is not None and not trace_resolves(body, known):
+                problems.append(
+                    f"{num}: {where} — след не разрешается: ни задачи "
+                    "«владелец/репозиторий#номер», ни потребителя из "
+                    ".rules/consumers.json. Проза следом не считается")
+
+        if len(slot) == len(LANGS):
+            heads = {lang: HEAD_RE.findall(slot[lang].read_text(encoding="utf-8"))
+                     for lang in LANGS}
+            if len(heads["ru"]) != len(heads["en"]):
+                problems.append(
+                    f"{num}: разделов в ru {len(heads['ru'])}, в en "
+                    f"{len(heads['en'])} — деревья разошлись по структуре")
+                continue
+            for i, (a, b) in enumerate(zip(heads["ru"], heads["en"])):
+                a, b = a.strip(), b.strip()
+                # Правило 051: имя раздела — не факт расхождения. Свободные
+                # разделы каталогу разрешены, и синоним ещё не поломка.
+                # Но одна сторона канонична, другая нет — повод посмотреть.
+                if a in CANON and CANON[a] != b:
+                    warnings.append(
+                        f"{num}: раздел {i + 1} — ru «{a[3:]}», en «{b[3:]}», "
+                        f"а канон для него — «{CANON[a][3:]}»")
+                elif a not in CANON and b in CANON.values():
+                    warnings.append(
+                        f"{num}: раздел {i + 1} — en «{b[3:]}» каноничен, "
+                        f"ru «{a[3:]}» нет")
+
+    if problems:
+        print("записи каталога неполны по содержанию:", file=sys.stderr)
+        for p in problems:
+            print(f"  • {p}", file=sys.stderr)
+        print("\n  Разделы на месте — это проверяет сборка указателя. Здесь "
+              "проверено,\n  что под заголовком есть то, ради чего он стоит "
+              "(правило 002).", file=sys.stderr)
+        return 1
+
+    # ── исход 0 ────────────────────────────────────────────────────────────
+    if warnings:
+        print("на что стоит посмотреть (не отказ):")
+        for w in warnings:
+            print(f"  ~ {w}")
+    pairs = sum(1 for slot in found.values() if len(slot) == len(LANGS))
+    print(f"записи полны по содержанию: правил {len(found)}, "
+          f"сверено парами {pairs}")
+    print("  утверждение, граница «не работает», разрешимый след, "
+          "паритет разделов")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

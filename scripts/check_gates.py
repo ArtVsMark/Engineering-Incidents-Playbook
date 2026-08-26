@@ -45,8 +45,119 @@ CASES = [
 ]
 
 
+AUDIT_GATE = ROOT / "scripts" / "audit_catalogue.py"
+
+#: Законная запись, с которой снимается каждая подделка. Порча делается ЗАМЕНОЙ
+#: куска: так видно, чем именно случай отличается от проходящего, — а список
+#: «что должно отвергаться» стоит рядом с предметом, а не в прозе свода.
+GOOD = {
+    "ru": """# Заголовок подделки
+
+**Область.** гейты
+
+**Правило.** Утверждение подделки в одну строку.
+
+## Инцидент
+
+Что сломалось.
+
+## Почему
+
+Механизм поломки.
+
+## Применимость
+
+**Работает** там-то.
+
+**Не работает** там-то.
+
+## След
+
+ArtVsMark/claude-code-playbook#1
+""",
+    "en": """# Fixture heading
+
+**Area.** gates
+
+**The rule.** The fixture claim in one line.
+
+## The incident
+
+What broke.
+
+## Why
+
+The mechanism.
+
+## Where it applies
+
+**Works** here.
+
+**Does not work** there.
+
+## Trace
+
+ArtVsMark/claude-code-playbook#1
+""",
+}
+
+#: Порча: (язык, что заменить, на что). Пусто — подделка остаётся законной.
+AUDIT_CASES = [
+    ("полная запись", [], 0,
+     "законная запись обязана проходить, иначе гейт заставит править корпус "
+     "под себя"),
+    ("«Применимость» без границы", [("ru", "**Не работает** там-то.\n\n", "")], 1,
+     "без границы каталог копируют целиком, включая заведомо чужое — "
+     "ради этого раздел и заведён"),
+    ("след прозой", [("ru", "ArtVsMark/claude-code-playbook#1",
+                      "Этот каталог, кажется.")], 1,
+     "след, не ведущий ни в задачу, ни в потребителя, за месяц становится "
+     "«кто-то говорил, что так лучше»"),
+    ("нет утверждения правила", [("en", "**The rule.** The fixture claim in "
+                                  "one line.\n\n", "")], 1,
+     "заголовок называет тему, утверждение говорит, что делать; без него "
+     "запись — заметка"),
+    ("деревья разошлись по числу разделов",
+     [("en", "## Why\n", "## Why\n\nProse.\n\n## An extra section\n")], 1,
+     "разное число разделов — расхождение деревьев, а не стилистика"),
+    ("«## Следствие» вместо «## След»",
+     [("ru", "## След\n", "## Следствие второго порядка\n")], 0,
+     "ОТСУТСТВИЕ раздела — предмет сборки указателя, а не этого гейта; здесь "
+     "проверено, что заголовок сверяется целой строкой и «Следствие» не "
+     "засчитывается за «След» (задача #69)"),
+    ("нет реестра потребителей", [("!", "consumers", "")], 2,
+     "нечитаемый вход — третий исход, а не «всё хорошо» (правило 075)"),
+]
+
+
 def run(*args: str, cwd: Path) -> subprocess.CompletedProcess:
     return subprocess.run(args, cwd=cwd, capture_output=True, text=True)
+
+
+def build_catalogue(root: Path, spoil: list[tuple[str, str, str]]) -> str | None:
+    """Собирает каталог из одного правила и портит его по описанию случая."""
+    text = dict(GOOD)
+    drop_consumers = False
+    for lang, old, new in spoil:
+        if lang == "!":
+            drop_consumers = True
+            continue
+        if old not in text[lang]:
+            return f"порча не нашла кусок {old!r} в дереве {lang}"
+        text[lang] = text[lang].replace(old, new)
+
+    for lang in ("ru", "en"):
+        tree = root / "rules" / lang
+        tree.mkdir(parents=True, exist_ok=True)
+        (tree / "001-fixture-rule.md").write_text(text[lang], encoding="utf-8")
+
+    if not drop_consumers:
+        registry = root / ".rules"
+        registry.mkdir(parents=True, exist_ok=True)
+        (registry / "consumers.json").write_text(
+            '{"schema": "1.0", "consumers": '
+            '[{"repo": "ArtVsMark/claude-code-playbook"}]}\n', encoding="utf-8")
+    return None
 
 
 def build(repo: Path) -> str | None:
@@ -80,11 +191,12 @@ def build(repo: Path) -> str | None:
     return None
 
 
-def main() -> int:
+def suite_attribution() -> tuple[list[str], int]:
+    """Гейт атрибуции. Возвращает расхождения и код инфраструктурного отказа."""
     if not GATE.exists():
         print(f"проверка не отработала: {GATE.relative_to(ROOT)} не найден",
               file=sys.stderr)
-        return 2
+        return [], 2
 
     with tempfile.TemporaryDirectory() as tmp:
         repo = Path(tmp) / "fixture"
@@ -93,7 +205,7 @@ def main() -> int:
         if err:
             print(f"проверка не отработала: подделка не собралась — {err}",
                   file=sys.stderr)
-            return 2
+            return [], 2
 
         # Каждый случай проверяется по одному коммиту: иначе один отказ
         # закрывал бы собой все остальные, и «отверг» перестало бы означать
@@ -103,7 +215,7 @@ def main() -> int:
         if len(log) != len(CASES) + 1:
             print("проверка не отработала: подделка собралась не той формы",
                   file=sys.stderr)
-            return 2
+            return [], 2
 
         findings: list[str] = []
         for i, (name, _, want, why) in enumerate(CASES):
@@ -119,6 +231,57 @@ def main() -> int:
                     f"{name}: ожидалось {want}, получено {got}. {why}\n"
                     f"        вывод гейта: {(done.stdout or done.stderr).strip()[:160]}")
 
+    return findings, 0
+
+
+def suite_audit() -> tuple[list[str], int]:
+    """Гейт содержательной полноты записи. Подделка — каталог из одного правила.
+
+    Каждый случай получает СВОЙ корень: иначе один отказ закрывал бы собой
+    остальные, и «отверг» перестало бы означать «отверг именно это» — та же
+    причина, по которой атрибуция проверяется по одному коммиту.
+    """
+    if not AUDIT_GATE.exists():
+        print(f"проверка не отработала: {AUDIT_GATE.relative_to(ROOT)} не найден",
+              file=sys.stderr)
+        return [], 2
+
+    findings: list[str] = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for i, (name, spoil, want, why) in enumerate(AUDIT_CASES):
+            root = Path(tmp) / f"case{i}"
+            err = build_catalogue(root, spoil)
+            if err:
+                print(f"проверка не отработала: подделка {name!r} не собралась "
+                      f"— {err}", file=sys.stderr)
+                return [], 2
+            done = run(sys.executable, str(AUDIT_GATE), "--root", str(root),
+                       cwd=ROOT)
+            got = done.returncode
+            mark = "ок" if got == want else "РАСХОЖДЕНИЕ"
+            print(f"  {mark}: {name} — ожидалось {want}, получено {got}")
+            if got != want:
+                findings.append(
+                    f"{name}: ожидалось {want}, получено {got}. {why}\n"
+                    f"        вывод гейта: "
+                    f"{(done.stdout or done.stderr).strip()[:160]}")
+    return findings, 0
+
+
+def main() -> int:
+    findings: list[str] = []
+    print("гейт атрибуции:")
+    got, broke = suite_attribution()
+    if broke:
+        return broke
+    findings += got
+
+    print("гейт полноты записи:")
+    got, broke = suite_audit()
+    if broke:
+        return broke
+    findings += got
+
     if findings:
         print("\nгейт ведёт себя не так, как объявлено:", file=sys.stderr)
         for f in findings:
@@ -128,8 +291,8 @@ def main() -> int:
               "(правило 140).", file=sys.stderr)
         return 1
 
-    print(f"гейт атрибуции отвергает то, что обязан: случаев {len(CASES)}, "
-          "расхождений нет")
+    print(f"гейты отвергают то, что обязаны: случаев "
+          f"{len(CASES) + len(AUDIT_CASES)}, расхождений нет")
     return 0
 
 

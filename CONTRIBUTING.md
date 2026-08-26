@@ -51,7 +51,9 @@ left to defend it with.
 3. Строка `**Область.**` / `**Area.**` — из словаря в
    `scripts/build_rules_index.py`. Новая область дописывается туда осознанно и
    сразу с описанием.
-4. Раздел «След» — ссылкой вида `владелец/репозиторий#номер`.
+4. Раздел «След» — задачей `владелец/репозиторий#номер` либо потребителем из
+   [`.rules/consumers.json`](.rules/consumers.json) с названным артефактом.
+   Проза следом не считается.
 5. **Закоммитить правило**, затем пересобрать производные:
    `python scripts/build_rules_index.py`. Порядок именно такой: дата появления
    берётся из истории файла.
@@ -68,7 +70,9 @@ fails the index build, and that is the mechanism keeping the trees together.
 
 ## Прежде чем открывать PR · Before opening a PR
 
-Пять гейтов, все запускаются локально и стоят в конвейере:
+Гейты запускаются локально теми же командами, что и в конвейере. Канонический
+список — шаги в [`.github/workflows/ci.yml`](.github/workflows/ci.yml); ниже
+он повторён для удобства, и если два списка разошлись, прав файл конвейера:
 
 ```
 python scripts/build_rules_index.py --check
@@ -76,6 +80,9 @@ python scripts/check_links.py
 python scripts/check_attribution.py
 python scripts/collect_changelog.py --check
 python scripts/check_bindings.py
+python scripts/aggregate_bindings.py --check
+python scripts/audit_catalogue.py
+python scripts/check_gates.py
 ```
 
 У каждого **три исхода**: `0` чисто · `1` есть находки · `2` проверка не

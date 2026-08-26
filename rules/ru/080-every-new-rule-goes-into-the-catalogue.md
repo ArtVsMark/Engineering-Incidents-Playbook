@@ -66,6 +66,8 @@
 
 ## След
 
-Этот каталог. Смежное: [042](042-decision-records-its-alternatives.md) —
-решения, [043](043-decisions-are-superseded-not-edited.md) — пересмотр,
+ArtVsMark/claude-code-playbook — этот каталог.
+
+Смежное: [042](042-decision-records-its-alternatives.md) — решения,
+[043](043-decisions-are-superseded-not-edited.md) — пересмотр,
 [029](029-triggers-and-canon.md) — компактный триггер и канон.
