@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 142,
+  "count": 143,
   "rules": [
     {
       "id": "001",
@@ -3714,6 +3714,39 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "77"
+        }
+      ]
+    },
+    {
+      "id": "143",
+      "slug": "authorship-is-set-by-who-opens-the-change",
+      "title": {
+        "ru": "Авторство в общей ветке задаёт тот, кто открыл изменение",
+        "en": "Authorship in the shared branch is set by whoever opens the change"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии",
+          "конвейер"
+        ],
+        "en": [
+          "agent sessions",
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-26",
+      "files": {
+        "ru": "rules/ru/143-authorship-is-set-by-who-opens-the-change.md",
+        "en": "rules/en/143-authorship-is-set-by-who-opens-the-change.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "79"
+        },
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "78"
         }
       ]
     }

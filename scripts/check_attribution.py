@@ -14,7 +14,10 @@
 Два режима, потому что вопроса два.
 
   Коммиты ветки  (--range)  — проверка ДО слияния: историю ветки ещё можно
-  переписать, и находка здесь чинится автором.
+  переписать, и находка здесь чинится автором. Здесь же — и только здесь —
+  проверяется ПОЛЕ АВТОРА: при слиянии объединяющим коммитом именно оно едет
+  в общую ветку. Авторство при уплотнении задаёт не оно, а тот, кто открыл
+  изменение, и эта проверка его не заменяет (правило 143).
 
   Первопредки    (--first-parents) — проверка ПОСЛЕ: коммит общей ветки
   составляет площадка, и в итоговой истории атрибуции может не быть вовсе при
@@ -102,8 +105,8 @@ def first_parents(repo: Path, ref: str, since: str | None, names: set[str]) -> i
     missing: list[str] = []
     stranger: list[str] = []
     for rec in records:
-        sha, subject, body = (rec.split("\x00") + ["", ""])[:3]
-        sha, subject = sha.strip(), subject.strip()
+        sha, author, subject, body = (rec.split("\x00") + ["", "", ""])[:4]
+        sha, author, subject = sha.strip(), author.strip(), subject.strip()
         coauthors = [m.strip() for m in COAUTHOR.findall(body)]
         if not coauthors:
             missing.append(f"{sha[:7]} {subject[:64]}")
@@ -206,7 +209,8 @@ def main() -> int:
 
     try:
         # Слияния пропускаем: их сообщение составляет площадка, а не автор.
-        out = git(repo, "log", "--no-merges", "--format=%H%x00%s%x00%b%x00", rng)
+        out = git(repo, "log", "--no-merges",
+                  "--format=%H%x00%an <%ae>%x00%s%x00%b%x00", rng)
     except subprocess.CalledProcessError as e:
         print(f"проверка не отработала: диапазон {rng!r} не разобран — "
               f"{e.stderr.strip()}", file=sys.stderr)
@@ -221,10 +225,23 @@ def main() -> int:
     findings: list[str] = []
     unattributed = 0
     for rec in records:
-        sha, subject, body = (rec.split("\x00") + ["", ""])[:3]
-        sha, subject = sha.strip(), subject.strip()
+        sha, author, subject, body = (rec.split("\x00") + ["", "", ""])[:4]
+        sha, author, subject = sha.strip(), author.strip(), subject.strip()
         coauthors = [m.strip() for m in COAUTHOR.findall(body)]
         session = SESSION.search(body)
+
+        # Подпись агента принадлежит трейлеру, а не полю автора. Авторство в
+        # общей ветке этим НЕ чинится — его задаёт тот, кто открыл изменение
+        # (правило 143, замер по шести изменениям). Проверка остаётся потому,
+        # что при слиянии объединяющим коммитом в историю едет именно эта
+        # подпись, и тогда она решает.
+        if author in names:
+            findings.append(
+                f"{sha[:7]} {subject[:56]}\n"
+                f"        автором стоит {author!r} — это согласованный "
+                f"СОАВТОР, а не автор\n"
+                f"        squash перенесёт эту подпись в общую ветку, и там "
+                f"её не переписать")
 
         for name in coauthors:
             if name not in names:

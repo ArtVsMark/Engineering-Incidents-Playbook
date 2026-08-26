@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Ответов · Answers | Почему · Why |
 |---|---|---|---|
-| `ArtVsMark/claude-code-playbook` | подключён | 142 |  |
+| `ArtVsMark/claude-code-playbook` | подключён | 143 |  |
 | `ArtVsMark/Stepik-Python-Grader` | не подключён | — | ответ потребителя ещё не заведён |
 | `ArtVsMark/ArtVsMark` | подключён | 140 |  |
 | `ArtVsMark/claude-code-usage` | не подключён | — | ответ потребителя ещё не заведён |
@@ -165,3 +165,4 @@
 | 140 | действует | действует |
 | 141 | действует | — |
 | 142 | действует | — |
+| 143 | действует | — |
