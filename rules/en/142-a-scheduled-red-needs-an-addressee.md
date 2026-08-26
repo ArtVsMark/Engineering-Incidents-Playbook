@@ -1,6 +1,6 @@
 # A scheduled red needs an addressee, or nobody reads it
 
-**Area.** pipeline, observability
+**Area.** pipeline, observation
 
 **The rule.** A check that runs on a schedule must, when it fails, **reach a
 person** — through an issue, a message, anything addressed. Red on the runs tab

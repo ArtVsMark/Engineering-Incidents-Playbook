@@ -530,6 +530,11 @@
       "status": "active",
       "mechanism": "gate",
       "where": "scripts/check_gates.py — гейт атрибуции прогоняется по подделанному предмету, и ожидается отказ"
+    },
+    "142": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": ".github/workflows/consumers-sync.yml — шаг «у находки есть адресат» заводит задачу при отказе"
     }
   }
 }
