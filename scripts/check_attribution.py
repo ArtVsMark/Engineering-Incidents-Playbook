@@ -105,8 +105,11 @@ def first_parents(repo: Path, ref: str, since: str | None, names: set[str]) -> i
     missing: list[str] = []
     stranger: list[str] = []
     for rec in records:
-        sha, author, subject, body = (rec.split("\x00") + ["", "", ""])[:4]
-        sha, author, subject = sha.strip(), author.strip(), subject.strip()
+        # Формат здесь трёхпольный: %H %s %b. Автора первопредка не
+        # спрашиваем — при уплотнении его задаёт не подпись коммита, а тот,
+        # кто открыл изменение (правило 143), и чинить это здесь нечем.
+        sha, subject, body = (rec.split("\x00") + ["", ""])[:3]
+        sha, subject = sha.strip(), subject.strip()
         coauthors = [m.strip() for m in COAUTHOR.findall(body)]
         if not coauthors:
             missing.append(f"{sha[:7]} {subject[:64]}")
