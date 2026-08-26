@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 140,
+  "count": 141,
   "rules": [
     {
       "id": "001",
@@ -3656,6 +3656,35 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "54"
+        }
+      ]
+    },
+    {
+      "id": "142",
+      "slug": "a-scheduled-red-needs-an-addressee",
+      "title": {
+        "ru": "У красного по расписанию должен быть адресат, иначе его не читает никто",
+        "en": "A scheduled red needs an addressee, or nobody reads it"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "наблюдение"
+        ],
+        "en": [
+          "pipeline",
+          "observation"
+        ]
+      },
+      "added": "2026-08-26",
+      "files": {
+        "ru": "rules/ru/142-a-scheduled-red-needs-an-addressee.md",
+        "en": "rules/en/142-a-scheduled-red-needs-an-addressee.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "77"
         }
       ]
     }

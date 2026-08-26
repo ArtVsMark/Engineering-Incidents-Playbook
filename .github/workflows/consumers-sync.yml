@@ -24,6 +24,11 @@ on:
 
 permissions:
   contents: read
+  # Красному нужен адресат. Прогон по расписанию не прикреплён ни к чьему
+  # изменению и никого не блокирует: он краснеет на отдельной вкладке, куда
+  # никто не ходит (правило 142). Право на запись в трекер — минимальное, и
+  # оно здесь единственный способ довести находку до человека.
+  issues: write
 
 jobs:
   aggregate:
@@ -54,3 +59,35 @@ jobs:
           git --no-pager diff --stat -- export/where.md
           git --no-pager diff -- export/where.md | head -60
           exit 1
+
+      # Правило 142: находка без адресата не находка. Задача заводится ОДНА —
+      # пока она открыта, следующие прогоны молчат. Иначе ежедневный прогон
+      # завалит трекер копиями, и это приучит читать красное как фон
+      # (правило 051), то есть починит видимость ровно тем способом, который
+      # её и ломает.
+      #
+      # Текст задачи лежит файлом, а не строкой внутри YAML: между текстом и
+      # получателем стояли бы две интерпретации подряд — YAML и оболочка
+      # (правило 013). Переменная часть здесь одна — ссылка на прогон, и она
+      # дописывается, а не подставляется.
+      - name: у находки есть адресат
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "Сводка «где действует» отстала от ответов потребителей"
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          open=$(gh issue list --state open --search "$TITLE in:title" \
+                   --json number --jq 'length')
+          if [ "$open" != "0" ]; then
+            echo "задача уже открыта — второй раз не завожу"
+            exit 0
+          fi
+          {
+            cat .github/consumers-sync-issue.md
+            echo
+            echo "Прогон: $RUN"
+          } > "$RUNNER_TEMP/body.md"
+          gh issue create --title "$TITLE" --label "area/export" \
+            --body-file "$RUNNER_TEMP/body.md"
