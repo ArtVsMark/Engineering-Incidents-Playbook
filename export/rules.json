@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 141,
+  "count": 142,
   "rules": [
     {
       "id": "001",
@@ -3656,6 +3656,35 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "54"
+        }
+      ]
+    },
+    {
+      "id": "141",
+      "slug": "a-marker-is-matched-whole-not-by-prefix",
+      "title": {
+        "ru": "Маркер сверяется целиком, а не началом",
+        "en": "A marker is matched whole, not by prefix"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "код"
+        ],
+        "en": [
+          "gates",
+          "code"
+        ]
+      },
+      "added": "2026-08-26",
+      "files": {
+        "ru": "rules/ru/141-a-marker-is-matched-whole-not-by-prefix.md",
+        "en": "rules/en/141-a-marker-is-matched-whole-not-by-prefix.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "69"
         }
       ]
     },

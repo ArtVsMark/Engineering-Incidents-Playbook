@@ -7,10 +7,10 @@
       "role": "каталог",
       "state": "подключён",
       "read_at": "2026-08-26",
-      "answered": 141,
+      "answered": 142,
       "by_status": {
         "not-applicable": 15,
-        "active": 44,
+        "active": 45,
         "unreviewed": 75,
         "rejected": 7
       },
@@ -155,6 +155,7 @@
         "138": "active",
         "139": "active",
         "140": "active",
+        "141": "active",
         "142": "active"
       }
     },

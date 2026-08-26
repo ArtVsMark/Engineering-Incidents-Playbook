@@ -394,6 +394,18 @@ def collect() -> tuple[dict[str, dict[str, Path]], list[str], list[str]]:
     return found, problems, blockers
 
 
+def head_at(text: str, head: str) -> int | None:
+    """Позиция сразу за заголовком, если он стоит ЦЕЛОЙ строкой.
+
+    Сверять началом строки нельзя: «## След» — префикс заголовка «## Следствие
+    второго порядка», который живёт в 002. От такого сравнения ломались обе
+    стороны сразу — запись без обязательного раздела проходила проверку формы,
+    а разбор следа начинался не с того места (задача #69, правило 141).
+    """
+    m = re.search("^" + re.escape(head) + r"[ \t]*$", text, re.M)
+    return None if m is None else m.end()
+
+
 def check_shape(found: dict[str, dict[str, Path]]) -> list[str]:
     """Каждая запись несёт разделы, объявленные сводом.
 
@@ -405,8 +417,7 @@ def check_shape(found: dict[str, dict[str, Path]]) -> list[str]:
     for num in sorted(found):
         for lang, path in sorted(found[num].items()):
             text = path.read_text(encoding="utf-8")
-            missing = [h for h in SHAPE[lang]
-                       if not re.search("^" + re.escape(h), text, re.M)]
+            missing = [h for h in SHAPE[lang] if not head_at(text, h)]
             if missing:
                 problems.append(
                     f"{num}: {lang}/{path.name} — нет разделов "
@@ -621,13 +632,14 @@ def trails_of(path: Path, lang: str, known: set[str]) -> tuple[list[dict[str, st
     """
     text = path.read_text(encoding="utf-8")
     head = TRACE_HEAD[lang]
-    if head not in text:
+    at = head_at(text, head)
+    if at is None:
         return [], f"нет раздела «{head}» — это обязательный раздел записи"
 
     out: list[dict[str, str]] = []
     seen: set[tuple[str, str]] = set()
     current: str | None = None
-    for m in TRAIL_RE.finditer(text[text.index(head) + len(head):]):
+    for m in TRAIL_RE.finditer(text[at:]):
         full, num, repo_only, bare = m.groups()
         if full:
             if full not in known:

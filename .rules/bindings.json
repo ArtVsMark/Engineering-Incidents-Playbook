@@ -531,6 +531,11 @@
       "mechanism": "gate",
       "where": "scripts/check_gates.py — гейт атрибуции прогоняется по подделанному предмету, и ожидается отказ"
     },
+    "141": {
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/check_gates.py — набор «сборка указателя»: маркер и его расширение прогоняются как отдельный случай"
+    },
     "142": {
       "status": "active",
       "mechanism": "gate",
