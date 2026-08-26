@@ -240,8 +240,8 @@
     },
     "065": {
       "status": "active",
-      "mechanism": "none",
-      "where": "точки входа новичка (CONTRIBUTING) нет"
+      "mechanism": "process-step",
+      "where": "CONTRIBUTING.md, раздел «Путь новичка»: обе метки входа объявлены в .github/labels.yml, тело задачи ведётся на двух языках, и правило действует в момент навешивания метки. Двуязычие тела не проверяется ничем — метку вешает человек"
     },
     "066": {
       "status": "not-applicable",
