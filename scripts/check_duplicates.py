@@ -48,8 +48,11 @@
   140 — у гейта есть предмет, который он обязан отвергнуть (см. check_gates.py).
 
 Режимы:
-  --near <файл|номер>   печатает ближайших соседей: инструмент для автора,
-                        вызывается ДО того, как правило написано;
+  --near <номер|файл|-> печатает ближайших соседей: инструмент для автора,
+                        вызывается ДО того, как правило написано. Предмет —
+                        номер в дереве, любой файл-черновик или поток: у
+                        ненаписанной записи номера нет, а у приехавшей из
+                        чужого проекта его нет и не должно быть;
   --check               гейт: у каждого правила новее baseline есть ответ.
 
 Исходы:
@@ -174,18 +177,64 @@ def read_answers(root: Path) -> tuple[int, dict]:
     return baseline, answers
 
 
+def subject(root: Path, target: str, rules: dict[str, dict]):
+    """Предмет сравнения: номер в дереве, ЛЮБОЙ файл-черновик или `-` (поток).
+
+    Черновик — не роскошь. Спрашивать полагается ДО того, как запись написана,
+    а у ненаписанной записи нет ни номера, ни места в дереве. Правило, приехавшее
+    из чужого проекта, номера не имеет тем более: его присваивает каталог при
+    приёме, а не отправитель. Требовать `rules/ru/NNN-*.md` значило бы требовать
+    номер раньше решения — то есть закрывать вход тем, ради кого вход и заведён.
+
+    Возвращает (имя, текст, номер-или-None) либо (None, ошибка, None).
+    """
+    if target == "-":
+        return "черновик из потока", sys.stdin.read(), None
+
+    if target in rules:
+        return f"{target} — {rules[target]['title']}", rules[target]["text"], target
+
+    path = Path(target)
+    num = rule_number(path.name)
+    if num and num in rules:
+        return f"{num} — {rules[num]['title']}", rules[num]["text"], num
+
+    if path.is_file():
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as exc:
+            return None, f"черновик {target!r} не прочитан — {exc}", None
+        if not tokens(text):
+            return None, (f"черновик {target!r} пуст после нормализации — "
+                          f"сравнивать нечего"), None
+        return f"черновик {path.name}", text, None
+
+    return None, (f"{target!r} — не номер правила в {RULES_RU}, не файл и "
+                  f"не `-`"), None
+
+
 def mode_near(root: Path, target: str) -> int:
-    """Печатает соседей. Это не гейт: исход всегда 0, если предмет нашёлся."""
+    """Печатает соседей. Это не гейт: исход 0, если предмет нашёлся."""
     rules = load_rules(root)
-    num = target if target in rules else rule_number(Path(target).name) or ""
-    if num not in rules:
-        print(f"проверка не отработала: правило {target!r} не найдено "
-              f"в {RULES_RU}", file=sys.stderr)
+    label, text, num = subject(root, target, rules)
+    if label is None:
+        print(f"проверка не отработала: {text}", file=sys.stderr)
         return 2
 
-    print(f"{num} — {rules[num]['title']}")
+    if num is not None:
+        scored = neighbours(num, rules, NEAR)
+    else:
+        # Черновика в корпусе нет, значит и исключать нечего: сравниваем со
+        # всеми. Тот же порядок сортировки, что и у соседей записи, — иначе
+        # верхушка «до» и «после» коммита разъехалась бы (правило 049).
+        target_sh = shingles(text)
+        scored = sorted(
+            ((jaccard(target_sh, r["shingles"]), n) for n, r in rules.items()),
+            key=lambda p: (-p[0], p[1]))[:NEAR]
+
+    print(label)
     print(f"\nближайшие {NEAR} записей каталога:\n")
-    for score, other in neighbours(num, rules, NEAR):
+    for score, other in scored:
         print(f"  {score:.3f}  {other}  {rules[other]['title']}")
     print(f"\n  Близость — повод прочитать, а не приговор: самая близкая пара "
           f"каталога\n  законна. Ответ записывается в {ANSWERS}.")
@@ -291,8 +340,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=ROOT,
                         help="корень каталога; по умолчанию сам этот репозиторий")
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--near", metavar="ПРАВИЛО",
-                       help="показать ближайших соседей: номер либо имя файла")
+    group.add_argument("--near", metavar="ПРЕДМЕТ",
+                       help="показать ближайших соседей: номер правила, файл-черновик\n(ещё без номера) или `-` — читать черновик из потока")
     group.add_argument("--check", action="store_true",
                        help="гейт: у каждого правила новее baseline есть ответ")
     args = parser.parse_args(argv)
