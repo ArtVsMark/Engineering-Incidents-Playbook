@@ -44,6 +44,12 @@ left to defend it with.
 
 ## Порядок · The steps
 
+0. **Спросить каталог, нет ли уже такого:**
+   `python scripts/check_duplicates.py --near <номер|файл>`. Шаг нулевой,
+   потому что он делается **до** того, как запись написана: правило 143
+   переоткрыло то, что уже говорили 131 и 135, и было удалено — а искали бы,
+   не написали бы. Ответ записывается в
+   [`.rules/neighbours.json`](.rules/neighbours.json) и проверяется гейтом.
 1. Номер — следующий свободный. **Номера не переиспользуются**, даже после
    удаления: пропуск в нумерации — законное состояние.
 2. Имя файла латиницей, **одинаковое в обоих деревьях**: `rules/ru/` и
@@ -83,6 +89,7 @@ python scripts/check_bindings.py
 python scripts/aggregate_bindings.py --check
 python scripts/audit_catalogue.py
 python scripts/check_charter.py
+python scripts/check_duplicates.py --check
 python scripts/check_gates.py
 ```
 

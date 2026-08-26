@@ -28,6 +28,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 import tempfile
@@ -512,6 +513,104 @@ def suite_charter() -> tuple[list[str], int]:
     return findings, 0
 
 
+NEAR_GATE = ROOT / "scripts" / "check_duplicates.py"
+
+#: Подделка каталога для гейта соседей: три старых правила и одно новое.
+#: Старые дают верхушку, новое обязано на неё ответить. Тексты разные, но
+#: одного жанра — иначе близость выродится в ноль и случай перестанет быть
+#: похожим на живой.
+NEAR_RULES = {
+    "001": "учётные данные подменяются на записи, и автором становится приложение",
+    "002": "подпись записи это свойство окна, и узнаётся она пробой, а не доверием",
+    "003": "атрибуция сверяется в конечной истории, а не в коммите ветки",
+}
+#: Новое правило: номер больше baseline подделки, значит ответ обязателен.
+NEAR_NEW = "145"
+
+#: (имя, порча ответа, ожидаемый код, зачем случай нужен)
+NEAR_CASES = [
+    ("ответ о соседях на месте", None, 0,
+     "законное состояние обязано проходить: ложный отказ здесь заставит "
+     "писать отписки, а не читать соседей"),
+    ("правило новее baseline без ответа", "drop", 1,
+     "ровно инцидент #91: запись появилась, вопроса о соседях никто не задал"),
+    ("верхний сосед не рассмотрен", "partial", 1,
+     "ответ по двум из трёх — это не ответ: пропущенный и окажется тем самым"),
+    ("вердикт-отписка", "terse", 1,
+     "«не дубль» под заголовком структурно неотличимо от разбора; гейт "
+     "полноты записи ловит то же самое в другом месте (128)"),
+    ("ответ по несуществующему правилу", "ghost", 1,
+     "номер опечатан либо запись удалена — иначе ответы станут вторым "
+     "источником правды о составе каталога"),
+    ("правило старше baseline без ответа", "old", 0,
+     "долг объявлен, а не забыт: краснеть на 144 записях, написанных до "
+     "вопроса, значит требовать 144 отписки за присест (051)"),
+]
+
+
+def suite_near() -> tuple[list[str], int]:
+    """Гейт «вопрос о соседях задан»: обе стороны."""
+    if not NEAR_GATE.exists():
+        print(f"проверка не отработала: {NEAR_GATE.relative_to(ROOT)} не найден",
+              file=sys.stderr)
+        return [], 2
+
+    def rule(num: str, claim: str) -> str:
+        return (f"# Подделка {num}\n\n**Область.** гейты\n\n"
+                f"**Правило.** {claim}.\n\n## Инцидент\n\n"
+                f"Механизм сломался так, что {claim}, и это стоило прогона.\n\n"
+                f"## Почему\n\n{claim} — свойство площадки, а не намерения.\n\n"
+                f"## Применимость\n\n**Работает** там, где {claim}.\n\n"
+                f"**Не работает** там, где предмета нет.\n\n"
+                f"## След\n\nArtVsMark/claude-code-playbook#1\n")
+
+    findings: list[str] = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for i, (name, spoil, want, why) in enumerate(NEAR_CASES):
+            root = Path(tmp) / f"nb{i}"
+            tree = root / "rules" / "ru"
+            tree.mkdir(parents=True)
+            for num, claim in NEAR_RULES.items():
+                (tree / f"{num}-fixture.md").write_text(rule(num, claim),
+                                                        encoding="utf-8")
+            new_num = "144" if spoil == "old" else NEAR_NEW
+            (tree / f"{new_num}-fresh.md").write_text(
+                rule(new_num, "учётные данные подменяются, и автором "
+                              "становится приложение"), encoding="utf-8")
+
+            verdict = ("Предмет другой: соседи говорят про подпись записи, "
+                       "эта запись — про порядок очереди.")
+            answers: dict = {NEAR_NEW: {"considered": sorted(NEAR_RULES),
+                                        "verdict": verdict}}
+            if spoil == "drop" or spoil == "old":
+                answers = {}
+            elif spoil == "partial":
+                answers[NEAR_NEW]["considered"] = ["001", "002"]
+            elif spoil == "terse":
+                answers[NEAR_NEW]["verdict"] = "не дубль"
+            elif spoil == "ghost":
+                answers["999"] = {"considered": ["001"], "verdict": verdict}
+
+            registry = root / ".rules"
+            registry.mkdir(parents=True)
+            (registry / "neighbours.json").write_text(
+                json.dumps({"baseline": 144, "answers": answers},
+                           ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8")
+
+            done = run(sys.executable, str(NEAR_GATE), "--check",
+                       "--root", str(root), cwd=ROOT)
+            got = done.returncode
+            mark = "ок" if got == want else "РАСХОЖДЕНИЕ"
+            print(f"  {mark}: {name} — ожидалось {want}, получено {got}")
+            if got != want:
+                findings.append(
+                    f"{name}: ожидалось {want}, получено {got}. {why}\n"
+                    f"        вывод гейта: "
+                    f"{(done.stdout or done.stderr).strip()[:160]}")
+    return findings, 0
+
+
 def main() -> int:
     findings: list[str] = []
     ran = 0
@@ -522,7 +621,9 @@ def main() -> int:
                                 ("гейт атрибуции, первопредки:",
                                  suite_first_parents, len(FIRST_PARENT_CASES)),
                                 ("свод против конвейера:", suite_charter,
-                                 len(CHARTER_CASES))):
+                                 len(CHARTER_CASES)),
+                                ("вопрос о соседях:", suite_near,
+                                 len(NEAR_CASES))):
         print(title)
         got, broke = suite()
         if broke:
