@@ -3719,10 +3719,10 @@
     },
     {
       "id": "143",
-      "slug": "the-agents-signature-belongs-in-the-trailer",
+      "slug": "authorship-is-set-by-who-opens-the-change",
       "title": {
-        "ru": "Подпись агента принадлежит трейлеру, а не полю автора",
-        "en": "The agent's signature belongs in the trailer, not in the author field"
+        "ru": "Авторство в общей ветке задаёт тот, кто открыл изменение",
+        "en": "Authorship in the shared branch is set by whoever opens the change"
       },
       "areas": {
         "ru": [
@@ -3736,8 +3736,8 @@
       },
       "added": "2026-08-26",
       "files": {
-        "ru": "rules/ru/143-the-agents-signature-belongs-in-the-trailer.md",
-        "en": "rules/en/143-the-agents-signature-belongs-in-the-trailer.md"
+        "ru": "rules/ru/143-authorship-is-set-by-who-opens-the-change.md",
+        "en": "rules/en/143-authorship-is-set-by-who-opens-the-change.md"
       },
       "trails": [
         {
