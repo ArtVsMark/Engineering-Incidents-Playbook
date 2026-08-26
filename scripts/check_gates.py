@@ -373,13 +373,79 @@ def suite_shape() -> tuple[list[str], int]:
     return findings, 0
 
 
+#: Режим первопредков — вторая половина гейта атрибуции, и до этого набора её
+#: не проверял никто. Цена: правка соседнего режима сломала разбор здесь,
+#: все восемь гейтов остались зелёными, а общая ветка покраснела после слияния.
+FIRST_PARENT_CASES = [
+    ("вся история с атрибуцией", [True, True], None, 0,
+     "законная история обязана проходить: ложный отказ здесь краснит общую "
+     "ветку, где чинить уже нечего"),
+    ("коммит без трейлеров в истории", [True, False], None, 1,
+     "это и есть предмет проверки — иначе она бесполезна"),
+    ("долг объявлен ключом --since", [False, True], 1, 0,
+     "объявленный долг остаётся позади границы и краснить не должен: иначе "
+     "объявить его невозможно (правило 114)"),
+]
+
+
+def suite_first_parents() -> tuple[list[str], int]:
+    """Гейт атрибуции в режиме первопредков: обе стороны."""
+    if not GATE.exists():
+        print(f"проверка не отработала: {GATE.relative_to(ROOT)} не найден",
+              file=sys.stderr)
+        return [], 2
+
+    findings: list[str] = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for i, (name, marks, since_at, want, why) in enumerate(FIRST_PARENT_CASES):
+            repo = Path(tmp) / f"fp{i}"
+            repo.mkdir()
+            for step in (("git", "init", "-q", "-b", "main"),
+                         ("git", "config", "user.email", "fixture@example.invalid"),
+                         ("git", "config", "user.name", "Подделка")):
+                if run(*step, cwd=repo).returncode != 0:
+                    print(f"проверка не отработала: подделка {name!r} не собралась",
+                          file=sys.stderr)
+                    return [], 2
+            shas: list[str] = []
+            for j, signed in enumerate(marks):
+                (repo / f"f{j}.txt").write_text(f"{j}\n", encoding="utf-8")
+                run("git", "add", f"f{j}.txt", cwd=repo)
+                msg = f"первопредок {j}"
+                if signed:
+                    msg += f"\n\n{TRAILER_OK}\n{SESSION}"
+                if run("git", "commit", "-q", "-m", msg, cwd=repo).returncode != 0:
+                    print(f"проверка не отработала: коммит подделки {name!r} не создан",
+                          file=sys.stderr)
+                    return [], 2
+                shas.append(run("git", "rev-parse", "HEAD", cwd=repo).stdout.strip())
+
+            args = [sys.executable, str(GATE), "--repo", str(repo),
+                    "--authors", str(ROOT / ".github" / "authors.txt"),
+                    "--first-parents", "--ref", "HEAD"]
+            if since_at is not None:
+                args += ["--since", shas[since_at - 1]]
+            done = run(*args, cwd=ROOT)
+            got = done.returncode
+            mark = "ок" if got == want else "РАСХОЖДЕНИЕ"
+            print(f"  {mark}: {name} — ожидалось {want}, получено {got}")
+            if got != want:
+                findings.append(
+                    f"{name}: ожидалось {want}, получено {got}. {why}\n"
+                    f"        вывод гейта: "
+                    f"{(done.stdout or done.stderr).strip()[:160]}")
+    return findings, 0
+
+
 def main() -> int:
     findings: list[str] = []
     ran = 0
     for title, suite, count in (("гейт атрибуции:", suite_attribution, len(CASES)),
                                 ("гейт полноты записи:", suite_audit,
                                  len(AUDIT_CASES)),
-                                ("сборка указателя:", suite_shape, SHAPE_COUNT)):
+                                ("сборка указателя:", suite_shape, SHAPE_COUNT),
+                                ("гейт атрибуции, первопредки:",
+                                 suite_first_parents, len(FIRST_PARENT_CASES))):
         print(title)
         got, broke = suite()
         if broke:
