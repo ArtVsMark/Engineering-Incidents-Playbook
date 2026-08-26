@@ -154,6 +154,9 @@ AUDIT_CASES = [
      "ОТСУТСТВИЕ раздела — предмет сборки указателя, а не этого гейта; здесь "
      "проверено, что заголовок сверяется целой строкой и «Следствие» не "
      "засчитывается за «След» (задача #69)"),
+    ("заготовки правила нет", [("!template", "", "")], 1,
+     "заготовку берут другие проекты: разъехавшись, она разносит расхождение "
+     "дальше, и заметят это они, а не мы"),
     ("нет реестра потребителей", [("!", "consumers", "")], 2,
      "нечитаемый вход — третий исход, а не «всё хорошо» (правило 075)"),
 ]
@@ -171,6 +174,8 @@ def build_catalogue(root: Path, spoil: list[tuple[str, str, str]]) -> str | None
         if lang == "!":
             drop_consumers = True
             continue
+        if lang == "!template":
+            continue
         if old not in text[lang]:
             return f"порча не нашла кусок {old!r} в дереве {lang}"
         text[lang] = text[lang].replace(old, new)
@@ -179,6 +184,13 @@ def build_catalogue(root: Path, spoil: list[tuple[str, str, str]]) -> str | None
         tree = root / "rules" / lang
         tree.mkdir(parents=True, exist_ok=True)
         (tree / "001-fixture-rule.md").write_text(text[lang], encoding="utf-8")
+
+    # Заготовку каталог требует от себя же: гейт полноты сверяет её с каноном
+    # разделов. В подделке она законная, а случай «заготовки нет» — отдельный.
+    if "!template" not in {lang for lang, _, _ in spoil}:
+        tpl = root / "templates"
+        tpl.mkdir(parents=True, exist_ok=True)
+        (tpl / "rule-template.md").write_text(GOOD["ru"], encoding="utf-8")
 
     if not drop_consumers:
         registry = root / ".rules"
@@ -437,6 +449,69 @@ def suite_first_parents() -> tuple[list[str], int]:
     return findings, 0
 
 
+CHARTER_GATE = ROOT / "scripts" / "check_charter.py"
+
+#: Подделка свода: таблица гейтов, список для участника и шаги конвейера.
+#: Порча — снятие одной строки: так видно, чем случай отличается от законного.
+CHARTER_CASES = [
+    ("свод, участник и конвейер совпадают", None, 0,
+     "законное состояние обязано проходить: ложный отказ здесь заставит "
+     "править свод под гейт"),
+    ("гейт есть в конвейере, но не в своде", "charter", 1,
+     "окно читает свод целиком при старте — проверка, о которой там не "
+     "сказано, остановит его без объяснения"),
+    ("гейт обещан участнику, но не стоит в конвейере", "onramp-extra", 1,
+     "обещание, которое никто не исполняет: новичок прогонит и решит, "
+     "что защищён"),
+]
+
+
+def suite_charter() -> tuple[list[str], int]:
+    """Гейт сходимости свода с конвейером: обе стороны."""
+    if not CHARTER_GATE.exists():
+        print(f"проверка не отработала: {CHARTER_GATE.relative_to(ROOT)} не найден",
+              file=sys.stderr)
+        return [], 2
+
+    charter = ("# Подделка\n\n## \U0001F6E1 Гейты\n\n"
+               "| Команда | Что держит |\n|---|---|\n"
+               "| `python scripts/one.py` | первое |\n"
+               "| `python scripts/two.py` | второе |\n\n## Дальше\n\nпроза\n")
+    onramp = ("# Участнику\n\n```\npython scripts/one.py\n"
+              "python scripts/two.py\n```\n")
+    pipeline = ("name: ci\njobs:\n  x:\n    steps:\n"
+                "      - run: python scripts/one.py\n"
+                "      - run: python scripts/two.py\n")
+
+    findings: list[str] = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for i, (name, spoil, want, why) in enumerate(CHARTER_CASES):
+            root = Path(tmp) / f"ch{i}"
+            (root / ".github" / "workflows").mkdir(parents=True)
+            c, o = charter, onramp
+            if spoil == "charter":
+                c = c.replace("| `python scripts/two.py` | второе |\n", "")
+            elif spoil == "onramp-extra":
+                o = o.replace("python scripts/two.py\n",
+                              "python scripts/two.py\npython scripts/three.py\n")
+            (root / "CLAUDE.md").write_text(c, encoding="utf-8")
+            (root / "CONTRIBUTING.md").write_text(o, encoding="utf-8")
+            (root / ".github" / "workflows" / "ci.yml").write_text(
+                pipeline, encoding="utf-8")
+
+            done = run(sys.executable, str(CHARTER_GATE), "--root", str(root),
+                       cwd=ROOT)
+            got = done.returncode
+            mark = "ок" if got == want else "РАСХОЖДЕНИЕ"
+            print(f"  {mark}: {name} — ожидалось {want}, получено {got}")
+            if got != want:
+                findings.append(
+                    f"{name}: ожидалось {want}, получено {got}. {why}\n"
+                    f"        вывод гейта: "
+                    f"{(done.stdout or done.stderr).strip()[:160]}")
+    return findings, 0
+
+
 def main() -> int:
     findings: list[str] = []
     ran = 0
@@ -445,7 +520,9 @@ def main() -> int:
                                  len(AUDIT_CASES)),
                                 ("сборка указателя:", suite_shape, SHAPE_COUNT),
                                 ("гейт атрибуции, первопредки:",
-                                 suite_first_parents, len(FIRST_PARENT_CASES))):
+                                 suite_first_parents, len(FIRST_PARENT_CASES)),
+                                ("свод против конвейера:", suite_charter,
+                                 len(CHARTER_CASES))):
         print(title)
         got, broke = suite()
         if broke:

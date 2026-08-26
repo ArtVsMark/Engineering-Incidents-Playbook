@@ -78,8 +78,8 @@
     },
     "022": {
       "status": "active",
-      "mechanism": "process-step",
-      "where": "HISTORY отвечает «как пришли», CHANGELOG — «что изменилось»"
+      "mechanism": "gate",
+      "where": "scripts/check_charter.py — свод и CONTRIBUTING.md сверяются с шагами .github/workflows/ci.yml"
     },
     "023": {
       "status": "active",
@@ -304,7 +304,7 @@
     "082": {
       "status": "active",
       "mechanism": "process-step",
-      "where": "CLAUDE.md — карта направлений; непокрытые названы поимённо"
+      "where": "карта направлений в CLAUDE.md; полнота проверена обходом артефактов, три направления закрыты гейтами"
     },
     "083": {
       "status": "not-applicable",

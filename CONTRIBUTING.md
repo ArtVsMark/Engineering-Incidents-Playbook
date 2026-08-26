@@ -82,6 +82,7 @@ python scripts/collect_changelog.py --check
 python scripts/check_bindings.py
 python scripts/aggregate_bindings.py --check
 python scripts/audit_catalogue.py
+python scripts/check_charter.py
 python scripts/check_gates.py
 ```
 
