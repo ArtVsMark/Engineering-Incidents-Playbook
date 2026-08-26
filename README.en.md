@@ -1,5 +1,7 @@
 # Engineering Incidents Playbook
 
+[![Release](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Frelease.json&cacheSeconds=300)](https://github.com/ArtVsMark/claude-code-playbook/releases)
+[![Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](VERSIONING.md)
 [![Rules in the catalogue](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Frules-en.json)](rules/README.md)
 
 **A catalogue of <!--m:rules-->143<!--/m:rules--> rules for Claude Code and GitHub,
