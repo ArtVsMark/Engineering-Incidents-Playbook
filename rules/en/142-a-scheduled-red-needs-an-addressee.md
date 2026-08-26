@@ -61,6 +61,11 @@ accident — that is, the later the less often somebody looks.
   ([051](051-warn-on-likely-block-on-certain.md));
 - the issue text carries the fix command, not a description of the symptom: the
   addressee must be able to close it without studying how the run works;
+- **a scheduled red does not clear when you fix it** — it clears on the next run
+  only. If the next run is a day away, the tab shows a failure that is already
+  fixed for a day, and it cannot be told apart from a live one. So such a check
+  needs a cheap reason to re-run — a merge into the shared branch, not just the
+  schedule;
 - the self-check: open the runs tab and look at the schedules. Red for longer
   than one cycle is already an incident.
 
