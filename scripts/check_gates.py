@@ -46,19 +46,31 @@ TRAILER_OK = "Co-Authored-By: Claude <noreply@anthropic.com>"
 TRAILER_STRANGER = "Co-Authored-By: Кто-то Посторонний <nobody@example.com>"
 SESSION = "Claude-Session: https://example.invalid/session"
 
+#: Подпись агента в поле АВТОРА — то, из чего squash делает бота в общей
+#: ветке. Предмет подделывается именно ею, а не похожей на неё строкой.
+AUTHOR_AGENT = "Claude <noreply@anthropic.com>"
+AUTHOR_HUMAN = "Человек Подделкин <human@example.invalid>"
+
 #: Что гейт обязан сделать с каждым предметом. Ожидание записано ЗДЕСЬ, рядом с
 #: подделкой, а не в прозе свода: строку в своде никто не исполняет.
+#: Пятое поле — автор коммита; None означает подпись сборщика подделки.
 CASES = [
     ("подпись из согласованного списка", [TRAILER_OK, SESSION], 0,
-     "законный коммит обязан проходить"),
+     "законный коммит обязан проходить", None),
     ("подпись вне списка", [TRAILER_STRANGER], 1,
-     "чужое имя — то, ради чего список и заведён"),
+     "чужое имя — то, ради чего список и заведён", None),
     ("след сессии без соавторства", [SESSION], 1,
-     "половина атрибуции хуже отсутствующей: выглядит подписанным"),
+     "половина атрибуции хуже отсутствующей: выглядит подписанным", None),
     ("без трейлеров вовсе", [], 0,
      "считается и печатается числом, но не отвергается — "
      "требование трейлеров это договорённость про агентские коммиты, "
-     "а не запрет для человека со стороны"),
+     "а не запрет для человека со стороны", None),
+    ("агент стоит АВТОРОМ", [TRAILER_OK, SESSION], 1,
+     "squash берёт автора из коммитов ветки: в общей ветке окажется бот, "
+     "и переписать это нечем (правило 143)", AUTHOR_AGENT),
+    ("человек автором, агент соавтором", [TRAILER_OK, SESSION], 0,
+     "это и есть требуемая форма — отвергать её значило бы запретить "
+     "единственный законный способ подписи", AUTHOR_HUMAN),
 ]
 
 
@@ -196,13 +208,14 @@ def build(repo: Path) -> str | None:
     if done.returncode != 0:
         return f"основание не создано — {done.stderr.strip()}"
 
-    for i, (name, trailers, _, _) in enumerate(CASES):
+    for i, (name, trailers, _, _, author) in enumerate(CASES):
         (repo / f"case{i}.txt").write_text(f"{name}\n", encoding="utf-8")
         run("git", "add", f"case{i}.txt", cwd=repo)
         message = f"случай: {name}"
         if trailers:
             message += "\n\n" + "\n".join(trailers)
-        done = run("git", "commit", "-q", "-m", message, cwd=repo)
+        extra = ("--author", author) if author else ()
+        done = run("git", "commit", "-q", *extra, "-m", message, cwd=repo)
         if done.returncode != 0:
             return f"коммит случая {name!r} не создан — {done.stderr.strip()}"
     return None
@@ -235,7 +248,7 @@ def suite_attribution() -> tuple[list[str], int]:
             return [], 2
 
         findings: list[str] = []
-        for i, (name, _, want, why) in enumerate(CASES):
+        for i, (name, _, want, why, _author) in enumerate(CASES):
             rng = f"{log[i]}..{log[i + 1]}"
             done = run(sys.executable, str(GATE), "--repo", str(repo),
                        "--authors", str(ROOT / ".github" / "authors.txt"),
