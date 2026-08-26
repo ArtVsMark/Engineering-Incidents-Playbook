@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 142,
+  "count": 143,
   "rules": [
     {
       "id": "001",
@@ -3714,6 +3714,39 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "77"
+        }
+      ]
+    },
+    {
+      "id": "143",
+      "slug": "the-agents-signature-belongs-in-the-trailer",
+      "title": {
+        "ru": "Подпись агента принадлежит трейлеру, а не полю автора",
+        "en": "The agent's signature belongs in the trailer, not in the author field"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии",
+          "конвейер"
+        ],
+        "en": [
+          "agent sessions",
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-26",
+      "files": {
+        "ru": "rules/ru/143-the-agents-signature-belongs-in-the-trailer.md",
+        "en": "rules/en/143-the-agents-signature-belongs-in-the-trailer.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "79"
+        },
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "78"
         }
       ]
     }
