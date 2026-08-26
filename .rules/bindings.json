@@ -294,8 +294,8 @@
     },
     "080": {
       "status": "active",
-      "mechanism": "process-step",
-      "where": "правило записывается тем же заходом, что и правка"
+      "mechanism": "gate",
+      "where": "scripts/collect_proposals.py — опрос предложений потребителей и одна задача-адресат; --check держит вердикт каталога"
     },
     "081": {
       "status": "not-applicable",

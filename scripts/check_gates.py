@@ -611,6 +611,83 @@ def suite_near() -> tuple[list[str], int]:
     return findings, 0
 
 
+PROPOSALS_GATE = ROOT / "scripts" / "collect_proposals.py"
+
+#: Вердикт каталога о правиле, приехавшем из проекта. Порча — подмена одного
+#: поля: так видно, чем случай отличается от законного.
+PROPOSAL_OK = {"status": "admitted", "rule": "001",
+               "why": "принято под номером, который присвоил каталог"}
+
+PROPOSAL_CASES = [
+    ("вердикт цел", None, 0,
+     "законный ответ обязан проходить: ложный отказ здесь заставит писать "
+     "вердикты под гейт"),
+    ("статус не из набора", "status", 1,
+     "четвёртый статус означает, что отправитель и каталог понимают исход "
+     "по-разному, а выглядит это как решение"),
+    ("принято без номера", "no-rule", 1,
+     "«принято» без номера — не решение: отправитель не узнает, чем стало "
+     "его предложение"),
+    ("номер назван, а правила нет", "ghost-rule", 1,
+     "вердикт ссылается в пустоту; корпус — канон нумерации, а не вердикты"),
+    ("отклонено без причины", "no-why", 1,
+     "отказ без причины вернётся тем же предложением через месяц "
+     "(правило 026)"),
+    ("два предложения под одним номером", "dup-number", 1,
+     "номера не переиспользуются: второе предложение потеряно молча"),
+    ("вердикты не объект", "broken", 2,
+     "нечитаемый вход — третий исход, а не «всё хорошо» (правило 075)"),
+]
+
+
+def suite_proposals() -> tuple[list[str], int]:
+    """Гейт вердикта о правилах из проектов: обе стороны."""
+    if not PROPOSALS_GATE.exists():
+        print(f"проверка не отработала: "
+              f"{PROPOSALS_GATE.relative_to(ROOT)} не найден", file=sys.stderr)
+        return [], 2
+
+    findings: list[str] = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for i, (name, spoil, want, why) in enumerate(PROPOSAL_CASES):
+            root = Path(tmp) / f"pr{i}"
+            (root / "rules" / "ru").mkdir(parents=True)
+            (root / "rules" / "ru" / "001-fixture.md").write_text(
+                "# Подделка\n", encoding="utf-8")
+            (root / ".rules").mkdir(parents=True)
+
+            v = dict(PROPOSAL_OK)
+            verdicts = {"owner/repo:slug": v}
+            if spoil == "status":
+                v["status"] = "почти-принято"
+            elif spoil == "no-rule":
+                v.pop("rule")
+            elif spoil == "ghost-rule":
+                v["rule"] = "999"
+            elif spoil == "no-why":
+                verdicts = {"owner/repo:slug": {"status": "rejected",
+                                                "why": "   "}}
+            elif spoil == "dup-number":
+                verdicts["owner/repo:other"] = dict(PROPOSAL_OK)
+
+            doc = ({"verdicts": "не объект"} if spoil == "broken"
+                   else {"schema": "1.0", "verdicts": verdicts})
+            (root / ".rules" / "proposals.json").write_text(
+                json.dumps(doc, ensure_ascii=False), encoding="utf-8")
+
+            done = run(sys.executable, str(PROPOSALS_GATE), "--check",
+                       "--root", str(root), cwd=ROOT)
+            got = done.returncode
+            mark = "ок" if got == want else "РАСХОЖДЕНИЕ"
+            print(f"  {mark}: {name} — ожидалось {want}, получено {got}")
+            if got != want:
+                findings.append(
+                    f"{name}: ожидалось {want}, получено {got}. {why}\n"
+                    f"        вывод гейта: "
+                    f"{(done.stdout or done.stderr).strip()[:160]}")
+    return findings, 0
+
+
 def main() -> int:
     findings: list[str] = []
     ran = 0
@@ -623,7 +700,9 @@ def main() -> int:
                                 ("свод против конвейера:", suite_charter,
                                  len(CHARTER_CASES)),
                                 ("вопрос о соседях:", suite_near,
-                                 len(NEAR_CASES))):
+                                 len(NEAR_CASES)),
+                                ("вердикт о правилах из проектов:",
+                                 suite_proposals, len(PROPOSAL_CASES))):
         print(title)
         got, broke = suite()
         if broke:

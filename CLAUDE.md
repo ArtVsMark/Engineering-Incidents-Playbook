@@ -64,6 +64,7 @@
 | `python scripts/audit_catalogue.py` | содержание записи: утверждение, граница «не работает», разрешимый след, паритет разделов |
 | `python scripts/check_charter.py` | этот свод и `CONTRIBUTING` называют те же гейты, что стоят в конвейере |
 | `python scripts/check_duplicates.py --check` | у нового правила спрошено о соседях — вопрос задан, решение за человеком |
+| `python scripts/collect_proposals.py --check` | вердикт по правилам, приехавшим из проектов: принято под каким номером, отклонено почему |
 | `python scripts/check_gates.py` | гейты отвергают то, что обязаны, **и пропускают то, что обязаны** |
 
 Отдельно от них — проверка **уже слитого**, в `attribution-history.yml`:
