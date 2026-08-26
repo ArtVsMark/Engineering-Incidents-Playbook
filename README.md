@@ -2,7 +2,7 @@
 
 [![Правил в каталоге](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Frules-ru.json)](rules/README.md)
 
-**Каталог из <!--m:rules-->143<!--/m:rules--> правил для Claude Code и GitHub,
+**Каталог из <!--m:rules-->144<!--/m:rules--> правил для Claude Code и GitHub,
 где каждое выросло из реальной поломки.** Работа с агентскими окнами и сводом проекта (`CLAUDE.md`),
 конвейер GitHub, параллельные исполнители, аудит. Каждая запись — с историей:
 что сломалось, как обнаружили, чем обошлось.

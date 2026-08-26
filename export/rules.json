@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 143,
+  "count": 144,
   "rules": [
     {
       "id": "001",
@@ -3749,6 +3749,30 @@
           "issue": "78"
         }
       ]
+    },
+    {
+      "id": "144",
+      "slug": "context-window-for-prose-is-a-paragraph",
+      "title": {
+        "ru": "Окно контекста для разбора прозы — абзац, а не предложение",
+        "en": "The context window for prose is a paragraph, not a sentence"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "инструменты"
+        ],
+        "en": [
+          "gates",
+          "tooling"
+        ]
+      },
+      "added": "2026-08-26",
+      "files": {
+        "ru": "rules/ru/144-context-window-for-prose-is-a-paragraph.md",
+        "en": "rules/en/144-context-window-for-prose-is-a-paragraph.md"
+      },
+      "trails": []
     }
   ]
 }
