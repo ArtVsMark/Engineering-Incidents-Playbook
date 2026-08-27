@@ -336,6 +336,24 @@ rules do not fail the run; only the third outcome does.
 Файла `.rules/bindings.json` может ещё не быть — тогда нерассмотрено всё, и
 первая же задача-«входящие» об этом и скажет. Отдельного шага «подключение» нет.
 
+**Второй названный пробел: у приватного потребителя может не быть трекера.**
+Механизм «входящих» ведёт ОДНУ задачу — в этом вся его идемпотентность. Если
+задачи в репозитории отключены, вести нечего: механизм не сломан, ему негде
+работать. Замер: у одного из шести объявленных потребителей задачи выключены,
+и попытка завести первую вернула `410 Issues has been disabled`.
+
+Что это значит практически: входящая половина канала там не работает вовсе, а
+не работает наполовину. Обходной путь один и он ручной — инцидент приносится в
+каталог задачей у каталога. Автоматики под это нет и не предлагается: чинить
+чужие настройки репозитория механизм не должен.
+
+**A second named gap: a private consumer may have issues disabled.** The inbox
+mechanism maintains exactly one issue — that is its whole idempotency. With
+issues off there is nothing to maintain: the mechanism is not broken, it has
+nowhere to run. Measured: one of six declared consumers returns
+`410 Issues has been disabled`. There, the inbound half does not work at all
+rather than partially, and the workaround is manual by design.
+
 ## Как отключиться · How to disconnect
 
 Выход описан наравне со входом, и это не вежливость. Без описанного выхода
