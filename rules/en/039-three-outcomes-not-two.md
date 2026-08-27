@@ -6,6 +6,8 @@
 three different outcomes with three different responses. The third is told apart
 by the presence of a result, not by an exit code.
 
+**Portable beyond Claude Code.** yes — any checker needs three outcomes, and the remedy is the same: the third is told apart by the presence of a result, not by an exit code.
+
 ## The incident
 
 The dependency audit exited non-zero both when it found a vulnerability and when

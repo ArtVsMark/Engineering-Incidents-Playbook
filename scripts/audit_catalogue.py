@@ -150,6 +150,48 @@ def check_template(root: Path) -> list[str]:
     return problems
 
 
+#: Переносимость: поле НЕОБЯЗАТЕЛЬНОЕ, но заполненное проверяется на полноту,
+#: а не на непустоту (правило 128). «частично» без причины — худший из ответов:
+#: он выглядит осторожным и не сообщает ничего.
+PORTABLE_RE = {
+    "ru": re.compile(r"^\*\*Переносится вне Claude Code\.\*\*\s*(.+?)\s*$", re.M),
+    "en": re.compile(r"^\*\*Portable beyond Claude Code\.\*\*\s*(.+?)\s*$", re.M),
+}
+PORTABLE_VALUES = {"ru": ("да", "нет", "частично"), "en": ("yes", "no", "partly")}
+
+
+def check_portable(num: str, slot: dict) -> list[str]:
+    """Поле переносимости: паритет между деревьями и полнота ответа."""
+    out: list[str] = []
+    seen = {}
+    for lang in LANGS:
+        path = slot.get(lang)
+        seen[lang] = (PORTABLE_RE[lang].search(path.read_text(encoding="utf-8"))
+                      if path is not None else None)
+    if all(slot.get(l) is not None for l in LANGS) \
+            and bool(seen["ru"]) != bool(seen["en"]):
+        has = "ru" if seen["ru"] else "en"
+        out.append(f"{num}: переносимость объявлена только в дереве {has} — "
+                   "деревья расходятся именно так, по одному полю за раз")
+        return out
+    for lang in LANGS:
+        m = seen[lang]
+        if not m:
+            continue
+        raw = m.group(1)
+        head, why = (raw.split("—", 1) if "—" in raw else (raw, ""))
+        value = head.strip().lower()
+        if value not in PORTABLE_VALUES[lang]:
+            out.append(f"{num} ({lang}): переносимость «{value}» вне набора "
+                       f"{PORTABLE_VALUES[lang]}")
+            continue
+        if not why.strip():
+            out.append(f"{num} ({lang}): переносимость объявлена без причины. "
+                       "Ответ без причины не проверить и не оспорить — а "
+                       "«частично» без неё вообще ничего не сообщает")
+    return out
+
+
 def collect(root: Path) -> tuple[dict[str, dict[str, Path]], str | None]:
     """Правила обоих деревьев по номерам. Вторым значением — причина отказа."""
     found: dict[str, dict[str, Path]] = {}
@@ -199,6 +241,7 @@ def main(argv: list[str] | None = None) -> int:
 
     for num in sorted(found):
         slot = found[num]
+        problems += check_portable(num, slot)
         # Расхождение деревьев по составу файлов — предмет build_rules_index.py.
         # Здесь оно означает лишь, что сверять паритет не с чем.
         for lang in LANGS:
