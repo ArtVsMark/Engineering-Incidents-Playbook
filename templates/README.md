@@ -30,6 +30,7 @@ incident** each line came from.
 | [`audit-document.md`](audit-document.md) | Документ аудита: находки, вердикты, условие архивации · Audit document | [019](../rules/ru/019-audit-from-surfaces-not-files.md) · [037](../rules/ru/037-finding-status-depends-on-window.md) · [086](../rules/ru/086-the-finder-does-not-grade-the-finding.md) · [121](../rules/ru/121-closing-the-container-is-not-closing-the-work.md) |
 | [`bindings.json`](bindings.json) | Ответ проекта каталогу: что он сделал с каждым правилом и чем оно здесь держится · A project's answer to the catalogue | [129](../rules/ru/129-a-catalogue-needs-a-consumption-contract.md) · [026](../rules/ru/026-rejected-findings-must-be-recorded.md) · [113](../rules/ru/113-a-contract-states-how-it-may-change.md) |
 | [`rule-template.md`](rule-template.md) | Запись правила в каталог · A catalogue entry | [120](../rules/ru/120-how-to-run-a-rule-catalogue.md) · [080](../rules/ru/080-every-new-rule-goes-into-the-catalogue.md) |
+| [`candidate-template.md`](candidate-template.md) | Кандидат в правило: наблюдение из чужого проекта без своего инцидента · Rule candidate | [026](../rules/ru/026-rejected-findings-must-be-recorded.md) · [080](../rules/ru/080-every-new-rule-goes-into-the-catalogue.md) |
 
 Порядок подключения — по цене ошибки: [`START.md`](../START.md).
 Order of adoption, sorted by cost of getting it wrong: [`START.md`](../START.md).
