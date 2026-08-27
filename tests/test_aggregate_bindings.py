@@ -307,7 +307,7 @@ def test_таблица_потребителей_называет_чем_дер�
 
     ab.main()
     md = (repo / "export" / "where.md").read_text(encoding="utf-8")
-    строка = next(l for l in md.splitlines() if l.startswith("| `o/a`"))
+    строка = next(l for l in md.splitlines() if l.startswith("| `a`"))
 
     assert "| 1 | 0 | 1 |" in строка
 
@@ -400,3 +400,73 @@ def test_смена_механизма_без_пересборки_это_нах
 
     assert код == 1
     assert "ЧЕМ держит" in capsys.readouterr().err
+
+
+# ── отчёт: у кого что и как ───────────────────────────────────────────────
+#
+# «Ответов N» пряталo сразу три разных числа: сколько правил осталось без
+# ответа, сколько ответов относится к удалённым записям и сколько правил
+# признано действующими. Замер поймал оба края: у грейдера тринадцать без
+# ответа, у витрины один ЛИШНИЙ — ответ за правило, которого в экспорте нет.
+
+def test_следы_считаются_по_экспорту(repo):
+    counts = ab.trail_counts([
+        {"id": "001", "trails": [{"repo": "o/a"}, {"repo": "o/b"}]},
+        {"id": "002", "trails": [{"repo": "o/a"}]},
+        {"id": "003"},
+    ])
+
+    assert counts == {"o/a": 2, "o/b": 1}
+
+
+def test_след_есть_а_потребитель_не_подключён(monkeypatch, repo):
+    """Следы считаются и у неподключённого: иначе его вклад не виден вовсе."""
+    write(repo / "export" / "rules.json", json.dumps(
+        {"rules": [{"id": "001", "trails": [{"repo": "o/тихий"}]}]}))
+    prepare(monkeypatch, repo, [{"repo": "o/тихий", "bindings": None}],
+            rules=("001",))
+    write(repo / "export" / "rules.json", json.dumps(
+        {"rules": [{"id": "001", "trails": [{"repo": "o/тихий"}]}]}))
+    cli(monkeypatch)
+
+    ab.main()
+    строка = next(l for l in (repo / "export" / "where.md")
+                  .read_text(encoding="utf-8").splitlines()
+                  if l.startswith("| `тихий`"))
+
+    assert "| не подключён | 1 |" in строка
+
+
+def test_без_ответа_и_лишний_ответ_разные_числа(monkeypatch, repo):
+    """Оба края видны: правило без ответа и ответ за несуществующее правило."""
+    write(repo / ".rules/a.json", json.dumps({"rules": {
+        "001": {"status": "active", "mechanism": "gate", "where": "s/g.py"},
+        "999": {"status": "active", "mechanism": "gate", "where": "s/g.py"}}}))
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": ".rules/a.json"}],
+            rules=("001", "002"))
+    cli(monkeypatch)
+
+    ab.main()
+    строка = next(l for l in (repo / "export" / "where.md")
+                  .read_text(encoding="utf-8").splitlines()
+                  if l.startswith("| `a`"))
+    _, _, _, следы, ответов, без_ответа, лишних, действует, *_ = строка.split("|")
+
+    assert без_ответа.strip() == "1" and лишних.strip() == "1"
+    assert ответов.strip() == "2" and действует.strip() == "2"
+
+
+def test_механизмы_считаются_различными_адресами(monkeypatch, repo):
+    """Два правила на одном файле — один механизм, а не два."""
+    prepare(monkeypatch, repo, [{
+        "repo": "o/a", "bindings": held(repo, ".rules/a.json",
+                                        **{"001": ("active", "gate", "s/g.py"),
+                                           "002": ("active", "gate", "s/g.py")})}])
+    cli(monkeypatch)
+
+    ab.main()
+    строка = next(l for l in (repo / "export" / "where.md")
+                  .read_text(encoding="utf-8").splitlines()
+                  if l.startswith("| `a`"))
+
+    assert строка.split("|")[11].strip() == "1"
