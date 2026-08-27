@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 147,
+  "count": 150,
   "rules": [
     {
       "id": "001",
@@ -3863,6 +3863,78 @@
           "issue": "74"
         }
       ]
+    },
+    {
+      "id": "149",
+      "slug": "the-suite-owns-its-temp",
+      "title": {
+        "ru": "Общую площадку набор забирает себе, а не вносит в исключения",
+        "en": "The suite takes the shared ground over, it does not add it to the exclusions"
+      },
+      "areas": {
+        "ru": [
+          "тесты",
+          "гейты"
+        ],
+        "en": [
+          "tests",
+          "gates"
+        ]
+      },
+      "added": "2026-08-27",
+      "files": {
+        "ru": "rules/ru/149-the-suite-owns-its-temp.md",
+        "en": "rules/en/149-the-suite-owns-its-temp.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "150",
+      "slug": "a-test-asks-the-mechanism-not-its-condition",
+      "title": {
+        "ru": "Тест спрашивает решение механизма, а не повторяет его условие",
+        "en": "A test asks the mechanism for its verdict, it does not restate the condition"
+      },
+      "areas": {
+        "ru": [
+          "тесты",
+          "гейты"
+        ],
+        "en": [
+          "tests",
+          "gates"
+        ]
+      },
+      "added": "2026-08-27",
+      "files": {
+        "ru": "rules/ru/150-a-test-asks-the-mechanism-not-its-condition.md",
+        "en": "rules/en/150-a-test-asks-the-mechanism-not-its-condition.md"
+      },
+      "trails": []
+    },
+    {
+      "id": "151",
+      "slug": "the-trail-goes-where-the-fixer-can-reach",
+      "title": {
+        "ru": "Диагностический след кладут туда, куда достаёт тот, кто чинит",
+        "en": "Put the diagnostic trail where the one who fixes it can reach"
+      },
+      "areas": {
+        "ru": [
+          "диагностика",
+          "агентские сессии"
+        ],
+        "en": [
+          "diagnostics",
+          "agent sessions"
+        ]
+      },
+      "added": "2026-08-27",
+      "files": {
+        "ru": "rules/ru/151-the-trail-goes-where-the-fixer-can-reach.md",
+        "en": "rules/en/151-the-trail-goes-where-the-fixer-can-reach.md"
+      },
+      "trails": []
     }
   ]
 }
