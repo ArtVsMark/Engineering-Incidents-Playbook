@@ -12,6 +12,8 @@ on:
 
 permissions:
   contents: read
+  # Тело изменения спрашивается живым — см. шаг связи с задачей.
+  pull-requests: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -58,13 +60,20 @@ jobs:
       # изменения, а на push его не существует.
       # Освобождение предусмотрено явное и заполненное — «Без задачи, потому
       # что…», — потому что 064 требует именно поля с причиной, а не пустоты.
+      # ТЕЛО СПРАШИВАЕТСЯ ЖИВЫМ, А НЕ БЕРЁТСЯ ИЗ СОБЫТИЯ. `github.event` — это
+      # снимок, сделанный в момент события, и он НЕ обновляется: правка тела
+      # изменения его не трогает, а пере-прогон проигрывает тот же снимок
+      # заново. Замер: тело поправлено, `rerun_failed_jobs` запущен, гейт
+      # снова прочитал старое и снова отказал. Правило 148 на третьем за день
+      # артефакте — запись состояния есть кэш, отстающий от событий.
       - name: изменение связано с задачей или освобождено с причиной
         if: github.event_name == 'pull_request'
         env:
-          PR_BODY: ${{ github.event.pull_request.body }}
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
-          printf '%s' "$PR_BODY" > "$RUNNER_TEMP/pr-body.md"
+          gh pr view "$PR" --json body --jq .body > "$RUNNER_TEMP/pr-body.md"
           python scripts/pr_body.py --check --body-file "$RUNNER_TEMP/pr-body.md"
 
       # Правило 030: запись приезжает вместе с изменением, отдельным файлом.
