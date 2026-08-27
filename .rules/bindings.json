@@ -355,7 +355,9 @@
       "status": "unreviewed"
     },
     "097": {
-      "status": "unreviewed"
+      "status": "active",
+      "mechanism": "gate",
+      "where": "tests/test_coverage_badge.py — пороги цвета проверяются с ОБЕИХ сторон границы, и ложный отказ ловится тем же прогоном, что и ложное «прошло»; tests/test_aggregate_bindings.py — отсутствие связи и нечитаемый ответ разведены нарочно, чтобы состояние не стало находкой"
     },
     "098": {
       "status": "unreviewed"
@@ -529,7 +531,7 @@
     "140": {
       "status": "active",
       "mechanism": "gate",
-      "where": "scripts/check_gates.py — гейт атрибуции прогоняется по подделанному предмету, и ожидается отказ"
+      "where": "scripts/check_gates.py и tests/ — отвергаемый предмет получает каждый гейт конвейера, кроме самого check_gates; сколько и каким из двух механизмов, печатает scripts/check_charter.py, а не эта строка"
     },
     "141": {
       "status": "active",
