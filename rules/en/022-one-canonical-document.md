@@ -5,6 +5,8 @@
 **The rule.** Duplicated descriptions diverge. Always. The only question is how
 many weeks pass before you notice.
 
+**Portable beyond Claude Code.** yes — the claim about duplicated descriptions depends on neither the agent nor the platform: any two copies edited separately will drift.
+
 ## The incident
 
 The same things were described in several places: working rules in the main file
