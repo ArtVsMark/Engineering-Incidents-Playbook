@@ -4,3 +4,9 @@
 # каталога, переписывает .pyc (задача #70).
 __pycache__/
 *.pyc
+
+# Значки версии собираются прогоном и живут на ветке `badges`, а не в `main`:
+# версия — свойство истории и тегов, а не дерева, и в общей ветке она устаревала
+# бы на каждом слиянии (см. .github/workflows/badges.yml и VERSIONING.md).
+.github/badges/release.json
+.github/badges/version.json

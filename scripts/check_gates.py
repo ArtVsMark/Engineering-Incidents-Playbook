@@ -666,6 +666,49 @@ def suite_require_coauthor() -> tuple[list[str], int]:
     return findings, 0
 
 
+#: Режим `--near` объявляет три исхода, и прогонять надо все три (#83).
+#: Он не гейт — красным не бывает; но «предмет не разобран» обязан отличаться
+#: от «соседей нет», иначе окно примет отказ за пустой ответ (правило 039).
+NEAR_SUBJECTS = [
+    ("номер правила в дереве", "001", 0,
+     "основная форма: у записи в корпусе соседи есть всегда"),
+    ("черновик без номера, вне дерева", "@draft", 0,
+     "ровно та форма, ради которой режим и нужен: спрашивают ДО того, как "
+     "запись написана, а у ненаписанной нет ни номера, ни места в дереве"),
+    ("предмет не разобран", "ни-номер-ни-файл", 2,
+     "третий исход обязан отличаться от пустого ответа: «не отработала» и "
+     "«соседей нет» — разные вещи (039)"),
+]
+
+
+def suite_near_subject() -> tuple[list[str], int]:
+    """Режим `--near`: все три объявленных исхода, на живом корпусе."""
+    if not NEAR_GATE.exists():
+        print(f"проверка не отработала: {NEAR_GATE.relative_to(ROOT)} не найден",
+              file=sys.stderr)
+        return [], 2
+
+    findings: list[str] = []
+    with tempfile.TemporaryDirectory() as tmp:
+        draft = Path(tmp) / "draft.md"
+        draft.write_text(
+            "# Черновик подделки\n\n**Правило.** Учётные данные подменяются "
+            "на записи, и автором становится приложение.\n", encoding="utf-8")
+        for name, arg, want, why in NEAR_SUBJECTS:
+            target = str(draft) if arg == "@draft" else arg
+            done = run(sys.executable, str(NEAR_GATE), "--near", target,
+                       cwd=ROOT)
+            got = done.returncode
+            mark = "ок" if got == want else "РАСХОЖДЕНИЕ"
+            print(f"  {mark}: {name} — ожидалось {want}, получено {got}")
+            if got != want:
+                findings.append(
+                    f"{name}: ожидалось {want}, получено {got}. {why}\n"
+                    f"        вывод: "
+                    f"{(done.stdout or done.stderr).strip()[:160]}")
+    return findings, 0
+
+
 PROPOSALS_GATE = ROOT / "scripts" / "collect_proposals.py"
 
 #: Вердикт каталога о правиле, приехавшем из проекта. Порча — подмена одного
@@ -758,6 +801,8 @@ def main() -> int:
                                  len(NEAR_CASES)),
                                 ("требование соавторства:",
                                  suite_require_coauthor, len(REQUIRE_CASES)),
+                                ("предмет вопроса о соседях:",
+                                 suite_near_subject, len(NEAR_SUBJECTS)),
                                 ("вердикт о правилах из проектов:",
                                  suite_proposals, len(PROPOSAL_CASES))):
         print(title)

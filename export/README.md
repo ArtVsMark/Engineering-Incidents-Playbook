@@ -247,10 +247,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ArtVsMark/claude-code-playbook@main
+      - uses: ArtVsMark/claude-code-playbook@<!--m:ref-->v1.0.0<!--/m:ref-->
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+**Пример закреплён тегом, а не веткой — и это не мелочь оформления.** Раньше
+здесь стоял `@main`, то есть контракт **показывал** ровно то, от чего
+**предостерегает** абзацем ниже. Потребитель копирует пример, а не абзац
+([#76](https://github.com/ArtVsMark/claude-code-playbook/issues/76)). Номер в
+примере переписывает выпуск, а не человек ([035](../rules/ru/035-version-is-never-edited-by-hand.md));
+схема нумерации — [`VERSIONING.md`](../VERSIONING.md). Закрепиться на более
+старом релизе законно: это и значит «закрепиться».
+
+**The example pins a tag, not a branch.** It used to show `@main` — the contract
+displaying exactly what it warns against one paragraph later. The number is
+rewritten by the release, never by hand.
 
 Действие тянет `rules.json`, сверяет со своим `.rules/bindings.json` и ведёт
 **одну** задачу-«входящие» со списком нерассмотренных — обновляет ту же, а не
@@ -276,7 +288,7 @@ rules do not fail the run; only the third outcome does.
 ```yaml
 - uses: actions/checkout@v4
   with: { fetch-depth: 0 }        # гейту нужна история
-- uses: ArtVsMark/claude-code-playbook/.github/actions/attribution@main
+- uses: ArtVsMark/claude-code-playbook/.github/actions/attribution@<!--m:ref-->v1.0.0<!--/m:ref-->
   with:
     authors: .github/authors.txt  # СВОЙ список согласованных имён
     baseline: ""                  # свой коммит, с которого спрашивать
