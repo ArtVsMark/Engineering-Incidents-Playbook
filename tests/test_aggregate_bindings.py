@@ -197,3 +197,86 @@ def test_отставший_ответ_это_предупреждение_а_н
            - __import__("datetime").timedelta(days=ab.TTL_DAYS + 1)).isoformat()
     assert ab.stale([{"repo": "owner/one", "read_at": old}])
     assert ab.stale([{"repo": "owner/one", "read_at": "не дата"}]) == []
+
+
+# ── объявленный и не подключившийся: срок делает адресата ─────────────────
+#
+# Замер, из которого это выросло: из шести объявленных потребителей пятеро не
+# отдают ответа, шестеро не отдают предложений. Канал построен с обеих сторон
+# и не пронёс НИ ОДНОГО предложения. «Не подключён» при этом печаталось
+# спокойно как законное состояние — и потому не читалось никем, ровно как
+# красное по расписанию без адресата (142).
+#
+# Срок делает адресата. Набор двусторонний: свежий и подключённый обязаны
+# проходить, иначе состояние станет находкой на пустом месте.
+
+def days_ago(n: int) -> str:
+    import datetime as dt
+    return (dt.date.today() - dt.timedelta(days=n)).isoformat()
+
+
+def test_свежий_неподключённый_это_состояние():
+    assert ab.unconnected([{"repo": "o/a", "since": days_ago(1)}]) == []
+
+
+def test_просроченный_неподключённый_это_находка():
+    out = ab.unconnected([{"repo": "o/a", "since": days_ago(ab.UNCONNECTED_DAYS + 1)}])
+    assert out and "объявлен потребителем" in out[0]
+
+
+def test_на_границе_срока_ещё_состояние():
+    """Здоровый предмет у самой границы: ровно срок — ещё не находка."""
+    assert ab.unconnected([{"repo": "o/a", "since": days_ago(ab.UNCONNECTED_DAYS)}]) == []
+
+
+def test_подключённый_срока_не_знает():
+    assert ab.unconnected([{"repo": "o/a", "since": days_ago(999),
+                            "bindings": "x.json"}]) == []
+
+
+def test_приватный_подключения_не_требует():
+    """Его ответ недоступен по объявленной причине — требовать нечего."""
+    assert ab.unconnected([{"repo": "o/a", "since": days_ago(999),
+                            "access": "private"}]) == []
+
+
+def test_без_начала_отсчёта_это_находка():
+    """Срок без начала не считается, и молчать об этом нельзя (075)."""
+    out = ab.unconnected([{"repo": "o/a"}])
+    assert out and "since" in out[0]
+
+
+def test_неразбираемая_дата_это_находка():
+    out = ab.unconnected([{"repo": "o/a", "since": "вчера"}])
+    assert out and "не разбирается" in out[0]
+
+
+def test_отказ_живёт_в_сборке_а_не_в_проверке_изменения(monkeypatch, repo, capsys):
+    """Разные предметы — разные исходы, и это главное в этой паре.
+
+    Сборку запускает ночной прогон, и его отказ заводит задачу: у находки
+    появляется адресат (142). Проверку `--check` запускает изменение, и там
+    тот же список только печатается: автор изменения чужой репозиторий
+    подключить не может, а красить его работу за это значит приучать к
+    красному (051).
+    """
+    src = answer(repo, ".rules/bindings.json", **{"001": "active"})
+    prepare(monkeypatch, repo, [
+        {"repo": "owner/one", "bindings": src, "since": days_ago(1)},
+        {"repo": "owner/two", "since": days_ago(ab.UNCONNECTED_DAYS + 1)},
+    ])
+    cli(monkeypatch)
+    assert ab.main() == 1
+    assert "owner/two" in capsys.readouterr().err
+    cli(monkeypatch, "--check")
+    assert ab.main() == 0
+    assert "owner/two" in capsys.readouterr().out
+
+
+def test_сводка_всё_равно_записана_при_находке(monkeypatch, repo):
+    """Отказ не отменяет работу: сводка собрана, иначе чинить было бы нечем."""
+    prepare(monkeypatch, repo, [{"repo": "owner/two",
+                                 "since": days_ago(ab.UNCONNECTED_DAYS + 1)}])
+    cli(monkeypatch)
+    assert ab.main() == 1
+    assert ab.EXPORT_MD.exists() and ab.EXPORT_JSON.exists()
