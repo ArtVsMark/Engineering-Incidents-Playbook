@@ -102,8 +102,13 @@ def body_for(template: str, red: list[str], run_url: str) -> str:
 
 def find_issue(title_marker: str = MARKER) -> tuple[int | None, str | None]:
     """Номер открытой задачи дежурного, либо None. Вторая строка — причина отказа."""
-    code, out = gh("issue", "list", "--state", "open", "--search", title_marker,
-                   "--json", "number,body", "--limit", "50")
+    # СПИСОК, А НЕ ПОИСК. `--search` ходит в поисковый индекс площадки, а он
+    # догоняет с задержкой в минуты: два прогона с разницей в три минуты оба
+    # не нашли только что заведённую задачу и завели по своей — #133 и #134,
+    # при обещанной ОДНОЙ (правило 142). Обычный список отдаёт актуальное
+    # состояние сразу, и отбор по маркеру идёт ниже, у себя.
+    code, out = gh("issue", "list", "--state", "open",
+                   "--json", "number,body", "--limit", "200")
     if code != 0:
         return None, out
     try:
