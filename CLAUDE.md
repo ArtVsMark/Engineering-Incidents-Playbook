@@ -65,6 +65,7 @@
 | `python scripts/check_charter.py` | этот свод и `CONTRIBUTING` называют те же гейты, что стоят в конвейере |
 | `python scripts/check_duplicates.py --check` | у нового правила спрошено о соседях — вопрос задан, решение за человеком |
 | `python scripts/collect_proposals.py --check` | вердикт по правилам, приехавшим из проектов: принято под каким номером, отклонено почему |
+| `python scripts/check_candidates.py` | кандидаты не притворяются правилами, и ни одно правило на них не ссылается |
 | `python scripts/check_gates.py` | гейты отвергают то, что обязаны, **и пропускают то, что обязаны** |
 | `python scripts/coverage_badge.py --check` | значок покрытия не разошёлся с замером: число в артефакте ставит сборка, а не автор |
 
