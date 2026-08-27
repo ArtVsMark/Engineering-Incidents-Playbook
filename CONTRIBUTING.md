@@ -93,7 +93,6 @@ python scripts/check_duplicates.py --check
 python scripts/collect_proposals.py --check
 python scripts/check_gates.py
 python scripts/check_candidates.py
-python scripts/coverage_badge.py --check
 python scripts/check_showcase.py
 python scripts/pr_body.py --check --body-file <файл с телом изменения>
 ```

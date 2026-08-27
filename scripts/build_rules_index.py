@@ -940,9 +940,14 @@ def main() -> int:
     badges = {p: render_badge(label, len(found)) for p, label in BADGES.values()}
 
     if args.check:
+        # ЗНАЧКИ В СВЕРКЕ НЕ УЧАСТВУЮТ. Они живут на отдельной ветке `badges` и
+        # в дереве общей ветки их нет вовсе — сверять здесь нечего и не с чем.
+        # Держать их в `main` под гейтом значило бы требовать пересборки
+        # значка от КАЖДОГО изменения: конфликт на каждом слиянии и красная
+        # общая ветка после каждого — то есть проверка, которую приучаются
+        # пропускать (051). Свежесть значков держит работа badges.yml, которая
+        # запускается на каждый толчок в main.
         stale = [OUT] if (OUT.read_text(encoding="utf-8") if OUT.exists() else "") != text else []
-        stale += [p for p, want in badges.items()
-                  if (p.read_text(encoding="utf-8") if p.exists() else "") != want]
         if (EXPORT.read_text(encoding="utf-8") if EXPORT.exists() else "") != export:
             stale.append(EXPORT)
         stale += [p for p, want in marks.items()
