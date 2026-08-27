@@ -1,42 +1,48 @@
 {
-  "schema": "1.0",
-  "about": "Проекты, с которыми каталог связан. Список закрытый и разрешительный: только то, что здесь названо, считается репозиторием в разделе «След» правила. Всё прочее — путь, кусок URL или проза, и контекстом не становится. Правило 068. Поле bindings — адрес ответа потребителя: путь внутри каталога или обычная HTTPS-ссылка. Пусто означает «не подключён», а у приватного проекта — «неизвестно», и это разные состояния.",
+  "schema": "1.1",
+  "about": "Проекты, с которыми каталог связан. Список закрытый и разрешительный: только то, что здесь названо, считается репозиторием в разделе «След» правила. Всё прочее — путь, кусок URL или проза, и контекстом не становится. Правило 068. Поле bindings — адрес ответа потребителя: путь внутри каталога или обычная HTTPS-ссылка. Пусто означает «не подключён», а у приватного проекта — «неизвестно», и это разные состояния. Поле proposals — адрес предложений потребителя: правила, родившиеся у него и предлагаемые каталогу. Пусто означает «канал не подключён», и это не отказ. Номера в предложении нет: его присваивает каталог при приёме (правило 080).",
   "consumers": [
     {
       "repo": "ArtVsMark/claude-code-playbook",
       "role": "каталог",
       "bindings": ".rules/bindings.json",
-      "access": "public"
+      "access": "public",
+      "proposals": null
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
       "role": "потребитель",
       "bindings": null,
-      "access": "public"
+      "access": "public",
+      "proposals": null
     },
     {
       "repo": "ArtVsMark/ArtVsMark",
       "role": "потребитель",
       "bindings": "https://raw.githubusercontent.com/ArtVsMark/ArtVsMark/main/.rules/bindings.json",
-      "access": "public"
+      "access": "public",
+      "proposals": null
     },
     {
       "repo": "ArtVsMark/claude-code-usage",
       "role": "потребитель",
       "bindings": null,
-      "access": "public"
+      "access": "public",
+      "proposals": null
     },
     {
       "repo": "ArtVsMark/claude-code-usage-dat",
       "role": "потребитель, приватный",
       "bindings": null,
-      "access": "private"
+      "access": "private",
+      "proposals": null
     },
     {
       "repo": "ArtVsMark/Glossary-Python",
       "role": "потребитель",
       "bindings": null,
-      "access": "public"
+      "access": "public",
+      "proposals": null
     }
   ]
 }

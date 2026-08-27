@@ -96,6 +96,63 @@ subject exists, the decision differs. `not-applicable` — there is no subject.
 `unreviewed` — nobody has looked yet. The third is the real loss, and merging it
 into the first two is exactly what this contract exists to prevent.
 
+## Что отдаёт потребитель наверх · What the consumer sends upstream
+
+`.rules/proposals.json` в своём репозитории — правила, родившиеся **у него** и
+предлагаемые каталогу. Адрес называется в реестре, поле `proposals`. Заготовка:
+[`templates/proposals.json`](../templates/proposals.json).
+
+`.rules/proposals.json` in its own repository: rules born **there** and offered
+to the catalogue. Its address goes in the registry field `proposals`.
+
+| Поле · Field | Что значит · Meaning | Обязательно · Required |
+|---|---|---|
+| `slug` | короткое имя латиницей, `[a-z0-9-]` · short latin name | всегда · always |
+| `claim` | утверждение: что делать и чего не делать · the claim | всегда · always |
+| `incident` | что сломалось, с конкретикой · what broke, concretely | всегда · always |
+| `trail` | артефакт в этом репозитории, где поломка видна · the artefact where it shows | всегда · always |
+
+**Номера у предложения нет и быть не может.** Его присваивает каталог при
+приёме. Не из вкуса: номера не переиспользуются, и если два проекта выберут
+номер независимо, столкновение уже нечем починить — ни переименованием, ни
+заменой. Единственный канон нумерации — [`rules.json`](rules.json). Поля `id`,
+`number`, `rule` в предложении — попытка занять номер снаружи канона, и прогон
+о ней скажет.
+
+**A proposal carries no number, and cannot.** The catalogue assigns it on
+admission. Numbers are never reused, so two projects choosing independently
+produce a collision nothing can repair. `rules.json` is the only canon.
+
+**Потребитель шлёт инцидент, а не готовую запись.** Словарь областей, оба
+языковых дерева, ответ о соседях и разрешимый след живут в каталоге; требовать
+их от отправителя значило бы разносить туда же и знание о том, как их делать
+([090](../rules/ru/090-shared-helpers-move-up-not-sideways.md)).
+
+**The consumer sends an incident, not a finished record.** The area vocabulary,
+both language trees, the neighbours answer and a resolvable trail live here.
+
+**Каталог отвечает по каждому предложению** — в `.rules/proposals.json` у себя,
+ключ `владелец/репозиторий:слаг`:
+
+| Статус · Status | Что несёт · Carries |
+|---|---|
+| `admitted` | номер, который присвоил каталог · the number the catalogue assigned |
+| `rejected` | причину · the reason |
+| `merged-into` | номер существующей записи и причину · the existing rule and why |
+
+Без ответа отправитель не узнаёт исход — ровно та асимметрия, ради которой
+заведён `bindings.json` вниз по течению. Держится гейтом
+`scripts/collect_proposals.py --check`; опрос — тем же скриптом без ключа, из
+`consumers-sync`.
+
+**Тянет каталог, а не толкает потребитель.** Та же причина, по которой рассылка
+вниз отвергнута: толчок наверх потребовал бы у потребителя права писать в
+каталог. Обычный HTTPS по «сырой» ссылке — ни токена, ни клона, ни прав
+([080](../rules/ru/080-every-new-rule-goes-into-the-catalogue.md)).
+
+**The catalogue pulls; the consumer does not push.** A push upstream would need
+write rights into the catalogue. Plain HTTPS from a raw link needs none.
+
 ## Как схема меняется · How the schema evolves
 
 Правила эволюции записаны здесь же, рядом со схемой — иначе их не прочитает тот,
