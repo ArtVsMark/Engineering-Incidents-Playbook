@@ -7,16 +7,16 @@
       "role": "каталог",
       "state": "подключён",
       "read_at": "2026-08-27",
-      "answered": 147,
+      "answered": 150,
       "by_status": {
-        "not-applicable": 34,
-        "active": 106,
+        "not-applicable": 35,
+        "active": 108,
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 53,
+        "gate": 54,
         "none": 11,
-        "process-step": 42
+        "process-step": 43
       },
       "rules": {
         "001": "not-applicable",
@@ -165,7 +165,10 @@
         "145": "active",
         "146": "active",
         "147": "active",
-        "148": "active"
+        "148": "active",
+        "149": "not-applicable",
+        "150": "active",
+        "151": "active"
       },
       "holds": {
         "002": {
@@ -591,6 +594,14 @@
         "148": {
           "mechanism": "process-step",
           "where": ".github/workflows/automerge.yml ждёт появления коммита в общей ветке, а не поля merged записи изменения; разбор отказа начинается со сверки метки времени записи с проверками на голове"
+        },
+        "150": {
+          "mechanism": "gate",
+          "where": "scripts/check_gates.py — каждый гейт проверяется своим вердиктом на подделанном предмете, а не пересказом условия в утверждении"
+        },
+        "151": {
+          "mechanism": "process-step",
+          "where": "прогон гейтов идёт локально теми же командами, что и в конвейере (CONTRIBUTING.md § Прежде чем открывать PR), и каждый печатает находки в вывод — читателю не нужны права на артефакты"
         }
       },
       "trails": 23

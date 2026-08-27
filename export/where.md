@@ -12,9 +12,9 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Шагом · Step | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 23 | 147 | 0 | 0 | 106 | 53 | 42 | 11 | 37 |  |
-| `Stepik-Python-Grader` | подключён | 67 | 134 | 13 | 0 | 59 | 9 | 0 | 50 | 7 |  |
-| `ArtVsMark` | подключён | 12 | 148 | 0 | 1 | 74 | 20 | 43 | 11 | 26 |  |
+| `claude-code-playbook` | подключён | 23 | 150 | 0 | 0 | 108 | 54 | 43 | 11 | 37 |  |
+| `Stepik-Python-Grader` | подключён | 67 | 134 | 16 | 0 | 59 | 9 | 0 | 50 | 7 |  |
+| `ArtVsMark` | подключён | 12 | 148 | 3 | 1 | 74 | 20 | 43 | 11 | 26 |  |
 | `claude-code-usage` | не подключён | 1 | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 | `claude-code-usage-dat` | неизвестно | 0 | — | — | — | — | — | — | — | — | ответ приватен и публично недоступен |
 | `Glossary-Python` | не подключён | 0 | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
@@ -82,14 +82,14 @@
 | `claude-code-playbook` | `.github/workflows/ci.yml` | 5 |
 | `claude-code-playbook` | `scripts/build_rules_index.py` | 5 |
 | `claude-code-playbook` | `scripts/check_charter.py` | 5 |
+| `claude-code-playbook` | `scripts/check_gates.py` | 5 |
 | `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 4 |
 | `claude-code-playbook` | `scripts/aggregate_bindings.py` | 4 |
-| `claude-code-playbook` | `scripts/check_gates.py` | 4 |
+| `claude-code-playbook` | `CONTRIBUTING.md` | 3 |
 | `claude-code-playbook` | `.github/workflows/consumers-sync.yml` | 2 |
 | `claude-code-playbook` | `.github/workflows/labels-sync.yml` | 2 |
 | `claude-code-playbook` | `.github/workflows/main-red.yml` | 2 |
 | `claude-code-playbook` | `CLAUDE.md` | 2 |
-| `claude-code-playbook` | `CONTRIBUTING.md` | 2 |
 | `claude-code-playbook` | `HISTORY.md` | 2 |
 | `claude-code-playbook` | `README.md` | 2 |
 | `claude-code-playbook` | `export/rules.json` | 2 |
@@ -100,7 +100,7 @@
 | `claude-code-playbook` | `scripts/collect_proposals.py` | 2 |
 | `claude-code-playbook` | `scripts/ghcli.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 14 механизмов по одному правилу; без названного адреса: 34 из 95 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 14 механизмов по одному правилу; без названного адреса: 34 из 97 |
 | `Stepik-Python-Grader` | `scripts/check_locale_guardrails.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_workflow_guardrails.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 5 механизмов по одному правилу; без названного адреса: 0 из 9 |
@@ -278,3 +278,6 @@
 | 146 | действует | — | действует |
 | 147 | действует | — | действует |
 | 148 | действует | — | действует |
+| 149 | нет предмета | — | — |
+| 150 | действует | — | — |
+| 151 | действует | — | — |
