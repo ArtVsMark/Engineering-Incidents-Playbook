@@ -89,7 +89,16 @@ jobs:
             exit 0
           fi
           git log -1 --format=%s "$first" > "$RUNNER_TEMP/title.txt"
-          git log -1 --format=%b "$first" > "$RUNNER_TEMP/body.md"
+          git log -1 --format=%b "$first" > "$RUNNER_TEMP/raw-body.md"
+          # Задачу закрывает слово в ТЕЛЕ. Ссылка `(#83)` в заголовке — только
+          # упоминание, и двенадцать слияний подряд не закрыли ничего (#120,
+          # правило 064). Здесь упоминание превращается в связь.
+          # Сборка предупреждает, но не отказывает: изменение без задачи всё
+          # равно обязано открыться, иначе отмена останется без адресата
+          # (правило 147). Отказ живёт в ci.yml, на самом изменении.
+          python3 scripts/pr_body.py --build \
+            --subject "$(cat "$RUNNER_TEMP/title.txt")" \
+            --body-file "$RUNNER_TEMP/raw-body.md" > "$RUNNER_TEMP/body.md"
           gh pr create \
             --base "$BASE" --head "$BRANCH" \
             --title "$(cat "$RUNNER_TEMP/title.txt")" \

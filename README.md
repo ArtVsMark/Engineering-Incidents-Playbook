@@ -3,6 +3,10 @@
 [![Релиз](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Frelease.json&cacheSeconds=300)](https://github.com/ArtVsMark/claude-code-playbook/releases)
 [![Версия](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](VERSIONING.md)
 [![Правил в каталоге](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Frules-ru.json)](rules/README.md)
+[![Покрытие](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
+[![Тестов](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Ftests.json)](tests/)
+[![Тестовых модулей](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Ftest-modules.json)](tests/)
+[![Проверок на изменении](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Fgates.json)](.github/workflows/ci.yml)
 
 **Каталог из <!--m:rules-->146<!--/m:rules--> правил для Claude Code и GitHub,
 где каждое выросло из реальной поломки.** Работа с агентскими окнами и сводом проекта (`CLAUDE.md`),
@@ -10,6 +14,15 @@
 что сломалось, как обнаружили, чем обошлось.
 
 > 🇬🇧 [English](README.en.md) · Неофициально, к Anthropic отношения не имеет.
+
+> **На что витрина не отвечает и почему.** Набор вопросов один на все проекты
+> ([`.rules/showcase.json`](.rules/showcase.json)), и пробел в нём называется, а
+> не опускается: значка **PyPI** нет, потому что каталог не пакет и предмета не
+> существует; значка **CI** нет, потому что состояние прогонов отдаёт сама
+> площадка, а второй источник того же расходится с первым молча
+> ([022](rules/ru/022-one-canonical-document.md)). Отсутствующий значок и
+> застывший значок с витрины неотличимы — поэтому пробел назван
+> ([046](rules/ru/046-name-the-gaps-do-not-level-them.md)).
 
 **С чего начать:** [десять правил, с которых начать](TOP-10.md) ·
 [порядок первого дня](START.md) ·

@@ -3656,6 +3656,10 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "54"
+        },
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "72"
         }
       ]
     },
