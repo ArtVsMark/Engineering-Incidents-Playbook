@@ -196,6 +196,16 @@ def check_offline(consumers: list[dict], rule_ids: list[str]) -> int:
     зависеть от чужого сервера: сетевой сбой покрасил бы чужую работу и
     остановил автомерж, а предмет у этой проверки другой — «собрано ли то, что
     лежит», а не «что сейчас у потребителей».
+
+    МЕСТНЫЕ ОТВЕТЫ СВЕРЯЮТСЯ ЗДЕСЬ ЖЕ, И РАНЬШЕ ЭТОГО НЕ БЫЛО. Проверка
+    убеждалась, что реестр покрыт и что markdown отвечает json, — то есть что
+    сводка согласована САМА С СОБОЙ. Ответ каталога о себе при этом мог уехать
+    вперёд молча: изменение правит `.rules/bindings.json`, сводку не
+    пересобирает, гейт зелен. Так и вышло (#122): ответ по 097 стал
+    «действует», в сводке осталось «не рассмотрено», и заметил это НОЧНОЙ
+    прогон с сетью, а не обязательная проверка на самом изменении. Ровно 146 —
+    зелёный гейт подтверждал себя, а не своё основание. Сеть для этого не
+    нужна: ответ каталога лежит на диске.
     """
     try:
         stored = json.loads(EXPORT_JSON.read_text(encoding="utf-8"))
@@ -213,6 +223,31 @@ def check_offline(consumers: list[dict], rule_ids: list[str]) -> int:
               + ", ".join(missing) + ".\n  Пересоберите: "
               "python scripts/aggregate_bindings.py", file=sys.stderr)
         return 1
+    # Потребитель с местным ответом читается прямо здесь: сети это не требует,
+    # а расхождение ловит на том же изменении, которое его создало.
+    for c in consumers:
+        source = c.get("bindings")
+        if not source or source.startswith("http"):
+            continue
+        data, err = read_local(source)
+        if err:
+            print(f"объявленный местный ответ не читается: {c['repo']}: "
+                  f"{source} {err}", file=sys.stderr)
+            return 1
+        want = {rid: rec.get("status") for rid, rec in data.get("rules", {}).items()}
+        have = next((s.get("rules") or {} for s in slices
+                     if s.get("repo") == c.get("repo")), {})
+        if want != have:
+            diff = sorted(set(want) | set(have))
+            names = [r for r in diff if want.get(r) != have.get(r)]
+            shown = ", ".join(f"{r} ({have.get(r, '—')} → {want.get(r, '—')})"
+                              for r in names[:5])
+            more = "" if len(names) <= 5 else f" и ещё: {len(names) - 5}"
+            print(f"сводка отстала от ответа {c['repo']} — расходится: "
+                  f"{shown}{more}.\n  Пересоберите: "
+                  "python scripts/aggregate_bindings.py", file=sys.stderr)
+            return 1
+
     if as_markdown(slices, rule_ids) != stored_md:
         print(f"устарело — пересоберите: {EXPORT_MD.relative_to(ROOT)} не "
               f"соответствует {EXPORT_JSON.relative_to(ROOT)}", file=sys.stderr)
