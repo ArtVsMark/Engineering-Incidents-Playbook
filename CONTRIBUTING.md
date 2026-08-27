@@ -92,6 +92,7 @@ python scripts/check_charter.py
 python scripts/check_duplicates.py --check
 python scripts/collect_proposals.py --check
 python scripts/check_gates.py
+python scripts/coverage_badge.py --check
 ```
 
 У каждого **три исхода**: `0` чисто · `1` есть находки · `2` проверка не
