@@ -1,0 +1,128 @@
+# Выпуск релиза. Схема — VERSIONING.md, и это НЕ SemVer: тег ставится только на
+# границе MINOR, поэтому все теги имеют вид vX.Y.0.
+#
+# ПОЧЕМУ КНОПКА, А НЕ АВТОМАТ. Постановка тега и публикация релиза несут личность
+# человека, а на записи из агентского окна прокси подменяет учётные данные
+# (правило 131). Кнопку жмёт владелец; окно готовит журнал и проверяет форму.
+#
+# ПОЧЕМУ ПРОВЕРКИ ДО ПУБЛИКАЦИИ, А НЕ ПОСЛЕ. Тег в общей ветке не переписать, а
+# пустое тело релиза читается как «ничего не изменилось» — хуже, чем отсутствие
+# релиза (правило 075: страж, который ничего не нашёл, обязан краснеть).
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Версия вида vX.Y.0 — только граница MINOR"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      notes: ${{ steps.notes.outputs.path }}
+    steps:
+      # Схема считает изменения по всей истории и по тегам: мелкий клон даст
+      # неверное число молча.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: форма тега и инкремент MINOR
+        env:
+          WANT: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if ! printf '%s' "$WANT" | grep -qE '^v[0-9]+\.[0-9]+\.0$'; then
+            echo "::error::«$WANT» не годится: схема требует vX.Y.0. PATCH-тегов не бывает — VERSIONING.md"
+            exit 1
+          fi
+          if git rev-parse -q --verify "refs/tags/$WANT" >/dev/null; then
+            echo "::error::тег $WANT уже есть. Номера не переиспользуются"
+            exit 1
+          fi
+          prev=$(git describe --tags --abbrev=0 --match 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null || true)
+          if [ -n "$prev" ]; then
+            echo "предыдущий релиз: $prev, следующий: $WANT"
+          else
+            echo "первый релиз по схеме: $WANT"
+          fi
+
+      # Тело релиза — раздел журнала. Забытая запись роняет выпуск, а не отдаёт
+      # пустоту: это единственный момент, когда её ещё можно дописать.
+      - name: раздел журнала под тег не пуст
+        id: notes
+        env:
+          WANT: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          num="${WANT#v}"
+          python - "$num" <<'PY' > "$RUNNER_TEMP/notes.md"
+          import re, sys, pathlib
+          num = sys.argv[1]
+          text = pathlib.Path("CHANGELOG.md").read_text(encoding="utf-8")
+          m = re.search(r"^## \[Unreleased\]\s*\n(.*?)(?=^## \[)", text, re.M | re.S)
+          body = (m.group(1).strip() if m else "")
+          if not body:
+              sys.exit(f"раздел [Unreleased] пуст: соберите фрагменты — "
+                       f"python scripts/collect_changelog.py --collect")
+          print(f"# {num}\n")
+          print(body)
+          PY
+          echo "path=$RUNNER_TEMP/notes.md" >> "$GITHUB_OUTPUT"
+          echo "тело релиза собрано, строк: $(wc -l < "$RUNNER_TEMP/notes.md")"
+
+      - name: публичная поверхность на месте
+        run: |
+          set -euo pipefail
+          missing=0
+          for p in export/rules.json action.yml .github/actions/attribution/action.yml; do
+            if [ ! -e "$p" ]; then echo "::error::нет $p"; missing=1; fi
+          done
+          [ "$missing" = 0 ] || exit 1
+          echo "потребитель, закрепившийся на этом теге, получит всё, к чему его зовут"
+
+      # Правило 035: версия задаётся в одном месте и подставляется везде.
+      # Пример подключения в контракте — единственное место в прозе, где номер
+      # виден потребителю, и переписывать его руками значит завести второй
+      # источник истины.
+      - name: закрепить пример контракта на новом теге
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WANT: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          git tag -a "$WANT" -m "$WANT"
+          python scripts/version.py --pin
+          if git diff --quiet -- export/README.md; then
+            echo "пример уже закреплён на $WANT"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -am "chore(release): pin examples [skip ci]"
+            git push origin HEAD:main
+            # Тег переставляется на коммит с закреплённым примером: иначе
+            # потребитель, закрепившийся на теге, увидел бы в примере
+            # ПРЕДЫДУЩУЮ версию.
+            git tag -f -a "$WANT" -m "$WANT"
+          fi
+
+      - name: тег и релиз
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WANT: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          git push origin "refs/tags/$WANT"
+          gh release create "$WANT" --title "$WANT" \
+            --notes-file "$RUNNER_TEMP/notes.md"
+          echo "выпущено: $WANT"

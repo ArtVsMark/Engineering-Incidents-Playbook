@@ -1,0 +1,96 @@
+# Значки версии. Живут на ОТДЕЛЬНОЙ ветке `badges`, а не в `main`.
+#
+# ПОЧЕМУ НЕ КАК ЗНАЧОК ЧИСЛА ПРАВИЛ. Тот вычисляется из файлов дерева: он
+# детерминирован коммитом, поэтому лежит в `main` и держится гейтом сборки
+# указателя. Версия — свойство ИСТОРИИ и тегов, а не дерева: она меняется на
+# каждое принятое изменение. Положив её в `main` под гейт, мы получили бы
+# красную общую ветку после каждого слияния — то есть проверку, которую
+# приучаются пропускать (правило 051).
+#
+# Две механики на одну территорию — то, о чём предупреждает 022, поэтому
+# разница названа здесь, а не оставлена читателю на догадку: предметы разные,
+# и потому механики разные.
+#
+# Схема нумерации — VERSIONING.md. Взята у грейдера, и это не SemVer.
+name: badges
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+  # У события всегда есть ручная кнопка (правило 104).
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: badges
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Счётчик считает по всей истории и по тегам: мелкий клон даст неверное
+      # число МОЛЧА, а значок будет выглядеть свежим.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Третий исход здесь законен и ожидаем: пока тега схемы нет, значки не
+      # пересобираются, и это не поломка — это «схема ещё не начата»
+      # (правило 039). Ронять прогон нечем: значка просто не будет.
+      - name: посчитать версию
+        id: v
+        run: |
+          set -uo pipefail
+          rc=0
+          python scripts/version.py --badges || rc=$?
+          if [ "$rc" -eq 2 ]; then
+            echo "релизного тега схемы нет — значки не пересобираю"
+            echo "skip=1" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          [ "$rc" -eq 0 ] || exit 1
+          echo "skip=0" >> "$GITHUB_OUTPUT"
+
+      # Ветка `badges` осиротевшая: истории кода в ней нет, только значки.
+      # Так обновление значка не заводит коммит в общей ветке и не двигает
+      # счётчик, который сам же и считает.
+      - name: положить на ветку badges
+        if: steps.v.outputs.skip != '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tmp="$RUNNER_TEMP/badges"
+          mkdir -p "$tmp/.github/badges"
+          cp .github/badges/release.json .github/badges/version.json "$tmp/.github/badges/"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git ls-remote --exit-code --heads origin badges >/dev/null 2>&1; then
+            git fetch origin badges --depth 1
+            git checkout badges
+          else
+            git checkout --orphan badges
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
+
+          mkdir -p .github/badges
+          cp "$tmp/.github/badges/"*.json .github/badges/
+          git add .github/badges
+          if git diff --cached --quiet; then
+            echo "значки не изменились"
+            exit 0
+          fi
+          git commit -m "chore(ci): update badges [skip ci]"
+          git push origin badges
+          echo "значки обновлены на ветке badges"
