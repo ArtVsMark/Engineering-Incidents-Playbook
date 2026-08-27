@@ -1,5 +1,5 @@
 {
-  "schema": "1.0",
+  "schema": "1.1",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
   "count": 146,
   "rules": [
@@ -98,7 +98,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1302"
         }
-      ]
+      ],
+      "portable": "partly"
     },
     {
       "id": "004",
@@ -571,7 +572,8 @@
         "ru": "rules/ru/022-one-canonical-document.md",
         "en": "rules/en/022-one-canonical-document.md"
       },
-      "trails": []
+      "trails": [],
+      "portable": "yes"
     },
     {
       "id": "023",
@@ -955,7 +957,8 @@
         "ru": "rules/ru/039-three-outcomes-not-two.md",
         "en": "rules/en/039-three-outcomes-not-two.md"
       },
-      "trails": []
+      "trails": [],
+      "portable": "yes"
     },
     {
       "id": "040",

@@ -20,7 +20,7 @@ edited by hand.
 
 ```jsonc
 {
-  "schema": "1.0",
+  "schema": "1.1",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
   "count": 130,                       // пример · example value
   "rules": [
@@ -33,7 +33,9 @@ edited by hand.
       "files": { "ru": "rules/ru/129-….md", "en": "rules/en/129-….md" },
       "trails": [                          // структурно, а не строкой · structured
         { "repo": "ArtVsMark/claude-code-playbook", "issue": "15" }
-      ]
+      ],
+      "portable": "partly"                 // ключа может НЕ БЫТЬ · key may be ABSENT
+                                           // да · нет · частично → yes · no · partly
     }
   ]
 }
@@ -49,6 +51,19 @@ anyone can subscribe, including a project the catalogue has nothing to do with.
 ```
 https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/main/export/rules.json
 ```
+
+**`portable` — необязательный ключ, и его отсутствие значит «не отвечали».**
+Не «не переносится» и не «неизвестно»: у большинства записей поля нет, потому
+что вопрос им не задавали, и задним числом он не проставляется. Отбирать по
+нему можно только те записи, где ключ есть; остальные — не «нет», а молчание.
+README каталога предупреждает «не копируйте целиком, половина заточена под
+агентские окна» — этот ключ делает предупреждение выбираемым по записям вместо
+общего на весь корпус.
+
+**`portable` is an optional key, and its absence means "we did not answer".**
+Not "not portable" and not "unknown": most records have no such field because
+the question was never put to them, and it is never filled in retroactively.
+Filter on it only among records that carry it; the rest are silence, not "no".
 
 **`trails` бывает пустым, и это значение, а не пробел.** У большинства правил
 след ведёт в файл или документ, а не в задачу. Пустой список означает «ссылок на
