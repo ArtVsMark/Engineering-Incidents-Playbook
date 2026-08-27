@@ -166,3 +166,72 @@ def test_сборка_пустого_не_трогает_журнал(monkeypatc
     cli(monkeypatch, repo, {}, HEADER, "--collect")
     assert cc.main() == 0
     assert (repo / "CHANGELOG.md").read_text(encoding="utf-8") == HEADER
+
+
+# ── вердикт починки: момент, которого не было ──────────────────────────────
+#
+# Фильтр «тянет ли это на правило» есть и работает машинно, но срабатывает для
+# того, кто УЖЕ решил писать. Здесь стоит момент, в который решают: фрагмент
+# пишут ровно тогда, когда починка сделана и инцидент ещё цел (правило 138).
+#
+# Набор двусторонний, и здоровые предметы взяты у границы: секции, кроме
+# `fixed`, вердикта не требуют — иначе вопрос задавался бы там, где починки
+# не было.
+
+def frag(repo: Path, name: str, text: str) -> Path:
+    return write(repo / "changelog.d" / name, text)
+
+
+def test_починка_без_вердикта_это_находка(repo):
+    out = cc.verdict_problems([frag(repo, "a.fixed.md", "Починили.\n")])
+    assert out and "не ответила" in out[0]
+
+
+def test_отказ_с_причиной_проходит(repo):
+    assert cc.verdict_problems([frag(
+        repo, "a.fixed.md",
+        "Починили.\n\n> правилом не становится, потому что это местная настройка.\n")]) == []
+
+
+def test_отказ_без_причины_это_находка(repo):
+    out = cc.verdict_problems([frag(repo, "a.fixed.md", "Починили.\n\n> не правило.\n")])
+    assert out and "не разбирается" in out[0]
+
+
+def test_ссылка_на_правило_проходит(repo):
+    assert cc.verdict_problems([frag(
+        repo, "a.fixed.md", "Починили.\n\n> правило 145 — тот же класс.\n")]) == []
+
+
+def test_ссылка_путём_в_дерево_тоже_проходит(repo):
+    assert cc.verdict_problems([frag(
+        repo, "a.fixed.md",
+        "Починили.\n\n> см. rules/ru/145-every-declared-outcome-is-run.md\n")]) == []
+
+
+def test_у_остальных_секций_вердикта_не_спрашивают(repo):
+    """Здоровый предмет у границы: вопрос адресован починке, а не всякой работе."""
+    assert cc.verdict_problems([
+        frag(repo, "a.added.md", "Завели.\n"),
+        frag(repo, "b.changed.md", "Поменяли.\n"),
+        frag(repo, "c.internal.md", "Внутреннее.\n"),
+    ]) == []
+
+
+def test_имя_не_по_форме_вердиктом_не_проверяется(repo):
+    """Форму имени судит validate(); дважды об одном не сообщают."""
+    assert cc.verdict_problems([frag(repo, "a.md", "Что-то.\n")]) == []
+
+
+def test_вердикт_в_журнал_не_едет(repo):
+    body, verdict = cc.split_verdict(
+        "Починили гонку.\n\n> правило 148 — тот же класс.\n")
+    assert body == "Починили гонку."
+    assert "148" in verdict
+
+
+def test_фрагмент_из_одного_вердикта_считается_пустым(monkeypatch, repo):
+    """Вердикт — не запись журнала: строка «>» одна оставляет тело пустым."""
+    prepare(monkeypatch, repo, {"a.fixed.md": "> правило 148 — связано.\n"})
+    _, problems = cc.validate()
+    assert problems and "пуст" in problems[0]

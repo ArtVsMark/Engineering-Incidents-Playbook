@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -46,6 +47,74 @@ NAME_RE = re.compile(rf"^([a-z0-9][a-z0-9-]*)\.({'|'.join(SECTIONS)})\.md$")
 UNRELEASED = "## [Unreleased]"
 
 
+#: Строка вердикта. Начинается с «>», в журнал НЕ едет и живёт только во
+#: фрагменте: читателю выпуска она не адресована, а автору починки — да.
+VERDICT_PREFIX = ">"
+#: Ссылка на правило: номер рядом со словом «правил» либо путь в дерево.
+RULE_RE = re.compile(r"(?i)правил\w*\s+№?\s*\d{3}|rules/(?:ru|en)/\d{3}-")
+#: Заполненный отказ. Причина обязательна: «не правило» без неё — это пустота,
+#: которую зададут заново следующей починкой (правило 026).
+NOT_A_RULE_RE = re.compile(r"(?i)не\s+(?:станови\w+|стало|тянет|правило)[^.]*?потому что\s+\S+")
+VERDICT_HINT = ("> правило NNN — <как связано>   ·   "
+                "> правилом не становится, потому что <причина>")
+
+
+def split_verdict(text: str) -> tuple[str, str]:
+    """Делит фрагмент на тело журнала и вердикт о правиле."""
+    body, verdict = [], []
+    for line in text.splitlines():
+        (verdict if line.lstrip().startswith(VERDICT_PREFIX) else body).append(line)
+    return ("\n".join(body).strip(),
+            " ".join(l.lstrip().lstrip(VERDICT_PREFIX).strip() for l in verdict).strip())
+
+
+def verdict_problems(paths: list[Path]) -> list[str]:
+    """Починка обязана ответить, тянет ли она на правило.
+
+    ГДЕ ЗДЕСЬ МОМЕНТ. Фильтр на входе в каталог есть и работает машинно: запись
+    без границы «не работает» отвергает audit_catalogue.py, запись без
+    инцидента не принимает документ для участника. Но срабатывает он для того,
+    кто УЖЕ решил писать. Момента, в который это решают, не было — и замер по
+    корпусу показывает форму пропажи: записи появляются пачками там, где кто-то
+    целенаправленно садился их писать, а не по одной вслед за починками.
+
+    Момент выбран здесь потому, что фрагмент журнала пишут ровно тогда, когда
+    починка сделана и инцидент ещё цел: известны причина, цена и чем чинили.
+    Через сутки остаётся след поломки, а не она сама (правило 138).
+
+    СПРАШИВАЕТСЯ ТОЛЬКО У НОВЫХ ФРАГМЕНТОВ. Спросить со старых задним числом
+    значило бы завести два десятка отписок за присест — ровно то, чего не хочет
+    026: отказ без причины возвращается следующей ревизией.
+    """
+    out: list[str] = []
+    for path in paths:
+        m = NAME_RE.match(path.name)
+        if not m or m.group(2) != "fixed" or not path.exists():
+            continue
+        _, verdict = split_verdict(path.read_text(encoding="utf-8"))
+        if not verdict:
+            out.append(f"{path.name}: починка не ответила, тянет ли она на "
+                       f"правило. Строкой с «>»:\n        {VERDICT_HINT}")
+        elif not (RULE_RE.search(verdict) or NOT_A_RULE_RE.search(verdict)):
+            out.append(f"{path.name}: вердикт есть, но не разбирается — нужен "
+                       f"номер правила либо отказ С ПРИЧИНОЙ.\n        {VERDICT_HINT}")
+    return out
+
+
+def added_since(ref: str) -> tuple[list[Path], str | None]:
+    """Фрагменты, ДОБАВЛЕННЫЕ этим изменением. Спрашивать со всех нельзя."""
+    try:
+        done = subprocess.run(
+            ["git", "diff", "--name-only", "--diff-filter=A", f"{ref}...HEAD",
+             "--", FRAGMENTS.name],
+            cwd=ROOT, capture_output=True, text=True)
+    except FileNotFoundError:
+        return [], "нет команды git"
+    if done.returncode != 0:
+        return [], (done.stderr or done.stdout).strip()
+    return [ROOT / line for line in done.stdout.split() if line], None
+
+
 def fragments() -> list[Path]:
     return sorted(p for p in FRAGMENTS.glob("*.md") if p.name != "README.md")
 
@@ -61,7 +130,8 @@ def validate() -> tuple[dict[str, list[str]], list[str]]:
                 f"{path.name}: имя не по форме «<слаг>.<секция>.md», "
                 f"секции — {', '.join(SECTIONS)}")
             continue
-        text = path.read_text(encoding="utf-8").strip()
+        text, _ = split_verdict(path.read_text(encoding="utf-8"))
+        text = text.strip()
         if not text:
             problems.append(f"{path.name}: фрагмент пуст — запись, которой нет, "
                             "хуже отсутствующего файла: он выглядит сделанным")
@@ -91,6 +161,9 @@ def main() -> int:
     mode.add_argument("--check", action="store_true", help="только проверить")
     mode.add_argument("--preview", action="store_true", help="показать сборку")
     mode.add_argument("--collect", action="store_true", help="собрать в [Unreleased]")
+    ap.add_argument("--added-since", metavar="REF",
+                    help="спросить у ДОБАВЛЕННЫХ с этой точки починок, "
+                         "тянут ли они на правило")
     args = ap.parse_args()
 
     # ── исход 2 ────────────────────────────────────────────────────────────
@@ -105,11 +178,23 @@ def main() -> int:
 
     found, problems = validate()
 
+    if args.added_since:
+        paths, err = added_since(args.added_since)
+        if err:
+            print(f"проверка не отработала: список добавленных фрагментов не "
+                  f"получен — {err}", file=sys.stderr)
+            return 2
+        problems += verdict_problems(paths)
+
     # ── исход 1 ────────────────────────────────────────────────────────────
     if problems:
         print("фрагменты журнала не в порядке:", file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
+        print("\n  Вопрос «тянет ли эта поломка на правило» задаётся здесь "
+              "потому, что\n  здесь инцидент ещё цел: известны причина, цена и "
+              "чем чинили. Ответ\n  «нет» так же полезен, как «да», — но "
+              "только если он записан (026).", file=sys.stderr)
         return 1
 
     body = render(found)
