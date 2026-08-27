@@ -102,8 +102,13 @@ jobs:
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
-          open=$(gh issue list --state open --search "$TITLE in:title" \
-                   --json number --jq 'length')
+          # СПИСОК, А НЕ ПОИСК. `--search` ходит в поисковый индекс площадки,
+          # а он догоняет с задержкой в минуты. Замер: два прогона с разницей
+          # в три минуты оба не нашли только что заведённую задачу и завели по
+          # своей — #133 и #134, при обещанной ОДНОЙ (правило 142). Обычный
+          # список отдаёт актуальное состояние сразу, и отбор идёт здесь.
+          open=$(gh issue list --state open --limit 200 --json number,title \
+                   --jq '[.[] | select(.title == env.TITLE)] | length')
           if [ "$open" != "0" ]; then
             echo "задача уже открыта — второй раз не завожу"
             exit 0
