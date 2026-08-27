@@ -280,3 +280,123 @@ def test_сводка_всё_равно_записана_при_находке(m
     cli(monkeypatch)
     assert ab.main() == 1
     assert ab.EXPORT_MD.exists() and ab.EXPORT_JSON.exists()
+
+
+# ── чем держится, а не только действует ли ────────────────────────────────
+#
+# Сводка отвечала «правило у проекта действует» и молчала о том, ЧЕМ. Замер по
+# трём подключённым: семьдесят два правила объявлены действующими и не
+# обеспечены ничем, а у сорока из них сосед уже построил механизм и назвал его
+# адрес. Ответ существовал и был недоступен, пока не откроешь три файла в трёх
+# репозиториях.
+
+def held(repo: Path, where: str, **rules) -> str:
+    """Ответ потребителя с механизмом: значение — (статус, механизм, адрес)."""
+    write(repo / where, json.dumps({"rules": {
+        k: {"status": v[0], "mechanism": v[1], "where": v[2]}
+        for k, v in rules.items()}}, ensure_ascii=False))
+    return where
+
+
+def test_таблица_потребителей_называет_чем_держится(monkeypatch, repo):
+    prepare(monkeypatch, repo, [{
+        "repo": "o/a", "bindings": held(repo, ".rules/a.json",
+                                        **{"001": ("active", "gate", "s/g.py"),
+                                           "002": ("active", "none", "")})}])
+    cli(monkeypatch)
+
+    ab.main()
+    md = (repo / "export" / "where.md").read_text(encoding="utf-8")
+    строка = next(l for l in md.splitlines() if l.startswith("| `o/a`"))
+
+    assert "| 1 | 0 | 1 |" in строка
+
+
+def test_отсутствие_механизма_и_none_это_одно_состояние(monkeypatch, repo):
+    """`mechanism` не задан и `mechanism: none` — оба «не держится ничем»."""
+    write(repo / ".rules/a.json", json.dumps({"rules": {
+        "001": {"status": "active"},
+        "002": {"status": "active", "mechanism": "none"}}}))
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": ".rules/a.json"}])
+    cli(monkeypatch)
+
+    ab.main()
+    срез = json.loads((repo / "export" / "where.json").read_text(encoding="utf-8"))
+
+    assert срез["consumers"][0]["by_mechanism"] == {"none": 2}
+
+
+def test_чужой_механизм_виден_там_где_у_соседа_ничем(monkeypatch, repo):
+    prepare(monkeypatch, repo, [
+        {"repo": "o/a", "bindings": held(repo, ".rules/a.json",
+                                         **{"001": ("active", "gate", "s/g.py")})},
+        {"repo": "o/b", "bindings": held(repo, ".rules/b.json",
+                                         **{"001": ("active", "none", "")})}])
+    cli(monkeypatch)
+
+    ab.main()
+    md = (repo / "export" / "where.md").read_text(encoding="utf-8")
+
+    assert "## Чем держат другие" in md
+    assert "s/g.py" in md
+    строка = next(l for l in md.splitlines() if l.startswith("| 001 |"))
+    assert "`a` — гейт: s/g.py" in строка and "`b`" in строка
+
+
+def test_правило_без_механизма_ни_у_кого_в_раздел_не_идёт(monkeypatch, repo):
+    """Учиться не у кого — строки быть не должно, иначе раздел станет шумом."""
+    prepare(monkeypatch, repo, [
+        {"repo": "o/a", "bindings": held(repo, ".rules/a.json",
+                                         **{"001": ("active", "none", "")})},
+        {"repo": "o/b", "bindings": held(repo, ".rules/b.json",
+                                         **{"001": ("active", "none", "")})}])
+    cli(monkeypatch)
+
+    ab.main()
+    md = (repo / "export" / "where.md").read_text(encoding="utf-8")
+
+    assert "Правил, которые у одного держатся механизмом" in md
+
+
+def test_сколько_правил_держит_механизм_считается(monkeypatch, repo):
+    prepare(monkeypatch, repo, [{
+        "repo": "o/a", "bindings": held(repo, ".rules/a.json",
+                                        **{"001": ("active", "gate", "s/g.py"),
+                                           "002": ("active", "gate", "s/g.py")})},
+    ], rules=("001", "002"))
+    cli(monkeypatch)
+
+    ab.main()
+    md = (repo / "export" / "where.md").read_text(encoding="utf-8")
+
+    assert "## Сколько держит механизм" in md
+    assert "| `a` | `s/g.py` | 2 |" in md
+
+
+def test_держащий_без_названного_адреса_назван_числом(monkeypatch, repo):
+    """Доля без остатка выглядела бы как полнота — сколько таких, печатается."""
+    prepare(monkeypatch, repo, [{
+        "repo": "o/a", "bindings": held(repo, ".rules/a.json",
+                                        **{"001": ("active", "gate", "чтением при приёмке")})}])
+    cli(monkeypatch)
+
+    ab.main()
+    md = (repo / "export" / "where.md").read_text(encoding="utf-8")
+
+    assert "без названного адреса: 1 из 1" in md
+
+
+def test_смена_механизма_без_пересборки_это_находка(monkeypatch, repo, capsys):
+    """Статус тот же, механизм другой — сводка обязана это заметить (146)."""
+    путь = held(repo, ".rules/a.json", **{"001": ("active", "gate", "s/g.py")})
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}])
+    cli(monkeypatch)
+    ab.main()
+
+    write(repo / путь, json.dumps({"rules": {
+        "001": {"status": "active", "mechanism": "none", "where": ""}}}))
+    cli(monkeypatch, "--check")
+    код = ab.main()
+
+    assert код == 1
+    assert "ЧЕМ держит" in capsys.readouterr().err

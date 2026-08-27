@@ -34,6 +34,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -128,14 +129,26 @@ def collect(consumers: list[dict]) -> tuple[list[dict], list[str]]:
 
         rules = data.get("rules", {})
         by_status: dict[str, int] = {}
-        for rec in rules.values():
+        by_mechanism: dict[str, int] = {}
+        holds: dict[str, dict] = {}
+        for rid, rec in rules.items():
             st = rec.get("status", "?")
             by_status[st] = by_status.get(st, 0) + 1
+            if st != "active":
+                continue
+            # `mechanism` отсутствует и `mechanism: none` — одно и то же
+            # состояние: правило признано действующим и не держится ничем.
+            # Разводить их значило бы делать вид, что второе хуже первого.
+            mech = rec.get("mechanism") or "none"
+            by_mechanism[mech] = by_mechanism.get(mech, 0) + 1
+            holds[rid] = {"mechanism": mech, "where": rec.get("where") or ""}
         entry["state"] = "подключён"
         entry["read_at"] = today
         entry["answered"] = len(rules)
         entry["by_status"] = by_status
+        entry["by_mechanism"] = by_mechanism
         entry["rules"] = {rid: rec.get("status") for rid, rec in rules.items()}
+        entry["holds"] = holds
         slices.append(entry)
 
     return slices, problems
@@ -188,6 +201,139 @@ def stale(slices: list[dict]) -> list[str]:
     return out
 
 
+
+#: Как механизм называется по-человечески. `none` сюда не попадает: он не
+#: механизм, а его отсутствие, и в разделе «чем держат» ему нечего сказать.
+MECHANISM_RU = {"gate": "гейт", "process-step": "шаг процесса"}
+
+
+#: Что в поле `where` считается АДРЕСОМ механизма. Поле — свободная проза, и
+#: разбирать её целиком нельзя; путь к файлу — единственное, что в ней имеет
+#: одинаковый смысл у всех потребителей.
+ADDRESS_RE = re.compile(r"[\w./-]+\.(?:py|yml|yaml|md|toml|cfg|json)")
+
+#: Со скольких удержанных правил механизм попадает в раздел поимённо. Один —
+#: это ещё не нагрузка, а список из тридцати семи строк на потребителя никто
+#: не дочитает; сколько таких, говорится числом.
+LOAD_MIN = 2
+
+
+def _load_bearing(connected: list[dict]) -> list[str]:
+    """Сколько правил держит каждый механизм — и какой держит больше всех.
+
+    ЗАЧЕМ. «Чем держат другие» отвечает, кто решил задачу; этот раздел —
+    насколько дорого решение стоит перенимать. Замер: у витрины
+    `scripts/build_metrics.py` держит двадцать два правила, у каталога самый
+    нагруженный механизм — шесть. Один файл на двадцать два правила это и
+    готовый образец, и точка отказа: сводка называет обе стороны числом, а
+    выводы делает человек.
+
+    ГРАНИЦА. Считается ПУТЬ, найденный в свободном поле `where`, а не сам
+    механизм: поле — проза, и у половины записей пути в нём нет вовсе. Сколько
+    таких, печатается рядом — иначе доля выглядела бы как полнота (046).
+    """
+    lines = ["", "## Сколько держит механизм · How much each mechanism holds", ""]
+    rows: list[str] = []
+    for s in connected:
+        name = s["repo"].split("/")[-1]
+        holders = [h for h in (s.get("holds") or {}).values()
+                   if h.get("mechanism") != "none"]
+        counted: dict[str, int] = {}
+        named = 0
+        for h in holders:
+            found = set(ADDRESS_RE.findall(h.get("where") or ""))
+            if found:
+                named += 1
+            for a in found:
+                counted[a] = counted.get(a, 0) + 1
+        if not holders:
+            continue
+        top = sorted(((n, a) for a, n in counted.items() if n >= LOAD_MIN),
+                     key=lambda x: (-x[0], x[1]))
+        singles = sum(1 for n in counted.values() if n < LOAD_MIN)
+        for n, a in top:
+            rows.append(f"| `{name}` | `{a}` | {n} |")
+        rows.append(
+            f"| `{name}` | _остальные_ · _the rest_ | "
+            f"{singles} механизмов по одному правилу; без названного адреса: "
+            f"{len(holders) - named} из {len(holders)} |")
+    if not rows:
+        lines += ["Подключённых потребителей с построенными механизмами пока нет.",
+                  "", "No connected consumer has a mechanism in place yet."]
+        return lines
+    lines += [
+        "> Считается путь к файлу, найденный в поле `where` ответа потребителя. "
+        "Механизм, держащий много правил, — это и образец, и точка отказа.",
+        "",
+        "> Counted by the file path found in the consumer's `where` field. A "
+        "mechanism holding many rules is both a model to copy and a single "
+        "point of failure.",
+        "",
+        "| Проект · Project | Механизм · Mechanism | Держит правил · Rules held |",
+        "|---|---|---|",
+    ] + rows
+    return lines
+
+
+def _how_others_enforce(connected: list[dict]) -> list[str]:
+    """Правила, которые у одного держатся, а у другого — ничем.
+
+    ЗАЧЕМ ЭТОТ РАЗДЕЛ. Сводка отвечала «действует ли правило у проекта» и
+    молчала о том, ЧЕМ. Замер по трём подключённым: правил, объявленных
+    действующими и не обеспеченных ничем, — семьдесят два. При этом у сорока
+    из них кто-то из соседей уже построил механизм и назвал его адрес. Это
+    готовый ответ, который до сих пор нельзя было увидеть, не открыв три
+    файла в трёх репозиториях.
+
+    ГРАНИЦА. Раздел не утверждает, что чужой механизм подойдёт: стеки разные,
+    и «у соседа это гейт» не значит «у нас должен быть такой же». Он отвечает
+    ровно на один вопрос — кто уже сталкивался и чем закрыл.
+
+    Правила, которые не держатся НИ У КОГО, сюда не попадают намеренно: учиться
+    там не у кого, и их очередь — метрика `check_bindings.py`.
+    """
+    held: dict[str, list[tuple[str, str, str]]] = {}
+    unheld: dict[str, list[str]] = {}
+    for s in connected:
+        name = s["repo"].split("/")[-1]
+        for rid, h in (s.get("holds") or {}).items():
+            if h.get("mechanism") == "none":
+                unheld.setdefault(rid, []).append(name)
+            else:
+                held.setdefault(rid, []).append(
+                    (name, h.get("mechanism", ""), h.get("where", "")))
+    both = sorted(set(held) & set(unheld))
+    lines = ["", "## Чем держат другие · How others enforce it", ""]
+    if not both:
+        lines += [
+            "Правил, которые у одного держатся механизмом, а у другого не "
+            "держатся ничем, сейчас нет.",
+            "",
+            "No rule is currently held by a mechanism in one project and by "
+            "nothing in another.",
+        ]
+        return lines
+    lines += [
+        "> Слева — тот, у кого механизм есть, и его адрес. Справа — у кого это "
+        "правило признано действующим и не обеспечено ничем.",
+        "> Чужой механизм не обязан подойти: стеки разные. Раздел отвечает на "
+        "один вопрос — кто уже сталкивался и чем закрыл.",
+        "",
+        "> On the left, whoever holds the rule and where. On the right, whoever "
+        "calls it active but holds it by nothing.",
+        "",
+        "| № | Держит · Held by | Ничем · By nothing |",
+        "|---|---|---|",
+    ]
+    for rid in both:
+        by = "; ".join(
+            f"`{name}` — {MECHANISM_RU.get(mech, mech)}: {where}" if where
+            else f"`{name}` — {MECHANISM_RU.get(mech, mech)}"
+            for name, mech, where in held[rid])
+        lines.append(f"| {rid} | {by} | " + ", ".join(f"`{n}`" for n in unheld[rid]) + " |")
+    return lines
+
+
 def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
     """Таблица «где действует». Файл производный и руками не правится."""
     lines = [
@@ -203,14 +349,19 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
         "",
         "## Потребители · Consumers",
         "",
-        "| Проект · Project | Состояние · State | Ответов · Answers | Почему · Why |",
-        "|---|---|---|---|",
+        "| Проект · Project | Состояние · State | Ответов · Answers | "
+        "Гейтом · Gate | Шагом · Step | Ничем · Nothing | Почему · Why |",
+        "|---|---|---|---|---|---|---|",
     ]
     for s in slices:
         answered = s.get("answered")
+        m = s.get("by_mechanism") or {}
+        cells = ([str(m.get(k, 0)) for k in ("gate", "process-step", "none")]
+                 if s.get("rules") else ["—", "—", "—"])
         lines.append(
             f"| `{s['repo']}` | {s['state']} | "
-            f"{answered if answered is not None else '—'} | {s.get('why', '')} |")
+            f"{answered if answered is not None else '—'} | "
+            + " | ".join(cells) + f" | {s.get('why', '')} |")
 
     connected = [s for s in slices if s.get("rules")]
     if not connected:
@@ -225,6 +376,9 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
             "per-rule table, and that is a declared state rather than an empty file.",
         ]
         return "\n".join(lines) + "\n"
+
+    lines += _how_others_enforce(connected)
+    lines += _load_bearing(connected)
 
     head = " | ".join(f"`{s['repo'].split('/')[-1]}`" for s in connected)
     lines += ["", "## Правила · Rules", "",
@@ -291,6 +445,28 @@ def check_offline(consumers: list[dict], rule_ids: list[str]) -> int:
             more = "" if len(names) <= 5 else f" и ещё: {len(names) - 5}"
             print(f"сводка отстала от ответа {c['repo']} — расходится: "
                   f"{shown}{more}.\n  Пересоберите: "
+                  "python scripts/aggregate_bindings.py", file=sys.stderr)
+            return 1
+        # ЧЕМ ДЕРЖИТСЯ — ТОЖЕ ПРЕДМЕТ СВЕРКИ. Сравнивать один статус значило бы
+        # ловить «правило перестало действовать» и пропускать «правило перестало
+        # держаться гейтом»: второе — ровно та потеря, ради которой раздел «чем
+        # держат другие» и заведён, и уехала бы она молча (146).
+        want_h = {rid: {"mechanism": rec.get("mechanism") or "none",
+                        "where": rec.get("where") or ""}
+                  for rid, rec in data.get("rules", {}).items()
+                  if rec.get("status") == "active"}
+        have_h = next((s.get("holds") or {} for s in slices
+                       if s.get("repo") == c.get("repo")), {})
+        if want_h != have_h:
+            names = sorted(r for r in set(want_h) | set(have_h)
+                           if want_h.get(r) != have_h.get(r))
+            shown = ", ".join(
+                f"{r} ({(have_h.get(r) or {}).get('mechanism', '—')} → "
+                f"{(want_h.get(r) or {}).get('mechanism', '—')})"
+                for r in names[:5])
+            more = "" if len(names) <= 5 else f" и ещё: {len(names) - 5}"
+            print(f"сводка отстала от того, ЧЕМ держит {c['repo']}: {shown}"
+                  f"{more}.\n  Пересоберите: "
                   "python scripts/aggregate_bindings.py", file=sys.stderr)
             return 1
 

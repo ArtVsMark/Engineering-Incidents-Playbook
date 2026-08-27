@@ -13,6 +13,11 @@
         "active": 106,
         "rejected": 7
       },
+      "by_mechanism": {
+        "gate": 53,
+        "none": 11,
+        "process-step": 42
+      },
       "rules": {
         "001": "not-applicable",
         "002": "active",
@@ -161,6 +166,432 @@
         "146": "active",
         "147": "active",
         "148": "active"
+      },
+      "holds": {
+        "002": {
+          "mechanism": "gate",
+          "where": ".github/workflows/ci.yml — гейты на каждый PR"
+        },
+        "003": {
+          "mechanism": "gate",
+          "where": ".github/workflows/agent-pr.yml реагирует на префикс `agent/**`, и свод называет это переключателем первой строкой — как правило и требует"
+        },
+        "004": {
+          "mechanism": "gate",
+          "where": "scripts/check_bindings.py и scripts/aggregate_bindings.py собирают ВСЕ находки и не падают на первой; недоступный потребитель помечается состоянием и не роняет сборку"
+        },
+        "005": {
+          "mechanism": "none",
+          "where": "числа держатся договорённостью «только в таблицах», гейта нет"
+        },
+        "006": {
+          "mechanism": "process-step",
+          "where": "договорённость окна в своде: дальше срока — перезапуск с передачей по 138. Машинного счётчика возраста окна нет"
+        },
+        "008": {
+          "mechanism": "process-step",
+          "where": "витрины и записи пишутся без сворачиваемых блоков"
+        },
+        "009": {
+          "mechanism": "gate",
+          "where": "scripts/check_charter.py и scripts/check_showcase.py считают через множество, а не по вхождениям: гейт, названный в конвейере дважды, считается одним"
+        },
+        "010": {
+          "mechanism": "gate",
+          "where": "scripts/merge_ready.py — пустой список проверок отвергается как «не стартовало», а обязательная проверка спрашивается поимённо. До этого .github/workflows/automerge.yml проверял только отсутствие красных, и условие было истинно на пустом множестве"
+        },
+        "011": {
+          "mechanism": "gate",
+          "where": ".github/workflows/consumers-sync.yml ходит наружу по расписанию и на слияние, а не циклом опроса; обязательная проверка изменения наружу не ходит вовсе"
+        },
+        "012": {
+          "mechanism": "process-step",
+          "where": "окно не толкает в ветки, которые ведёт другое окно или человек. Машинного запрета нет — защита ветки покрывает только общую"
+        },
+        "013": {
+          "mechanism": "process-step",
+          "where": ".github/workflows/agent-pr.yml передаёт заголовок и тело файлами (`--body-file`), а не строкой в оболочке; то же в .github/workflows/automerge.yml"
+        },
+        "014": {
+          "mechanism": "process-step",
+          "where": "гейт проверяется МУТАЦИЕЙ — убирается поведение, имена остаются, — а не откатом набора. Исполняется при приёмке изменения, машинного нет"
+        },
+        "016": {
+          "mechanism": "gate",
+          "where": "scripts/aggregate_bindings.py и scripts/collect_proposals.py печатают «и ещё N» вместо тихого урезания списка находок"
+        },
+        "018": {
+          "mechanism": "gate",
+          "where": "tests/ проверяют узлы — функции скриптов на подделанном дереве; .github/workflows/ci.yml прогоняет цепочку целиком. Разные окружения, разные предметы"
+        },
+        "021": {
+          "mechanism": "process-step",
+          "where": "README · START · TOP-10 · HISTORY · CHANGELOG — по читателю"
+        },
+        "022": {
+          "mechanism": "gate",
+          "where": "scripts/check_charter.py — свод и CONTRIBUTING.md сверяются с шагами .github/workflows/ci.yml"
+        },
+        "023": {
+          "mechanism": "process-step",
+          "where": "README.md — витрина, подробности по ссылкам"
+        },
+        "024": {
+          "mechanism": "gate",
+          "where": "scripts/collect_changelog.py требует, чтобы «что сделали» приезжало отдельным фрагментом; «как работает» живёт в README и своде, «почему решили» — в HISTORY.md"
+        },
+        "025": {
+          "mechanism": "process-step",
+          "where": "номер задачи живёт в разделе «След» и в журнале; в прозе правила его нет. Проверяется чтением при приёмке"
+        },
+        "026": {
+          "mechanism": "process-step",
+          "where": "отвергнутые варианты записаны в export/README.md"
+        },
+        "027": {
+          "mechanism": "process-step",
+          "where": "пустой реестр потребителей объявлен в export/README.md"
+        },
+        "028": {
+          "mechanism": "process-step",
+          "where": "чек-лист перед PR в своде — галочками, а не прозой. Машинного нет: состояние изменения считает площадка"
+        },
+        "029": {
+          "mechanism": "gate",
+          "where": "scripts/check_charter.py сверяет свод с конвейером: свод держит триггеры и ссылки, детали живут в записях каталога"
+        },
+        "030": {
+          "mechanism": "gate",
+          "where": "scripts/collect_changelog.py --check"
+        },
+        "035": {
+          "mechanism": "none",
+          "where": "версия живёт только тегом, в файлы не попадает — гейта на это нет"
+        },
+        "039": {
+          "mechanism": "gate",
+          "where": "все скрипты проверок различают исходы кодом возврата"
+        },
+        "040": {
+          "mechanism": "process-step",
+          "where": "пропущенных тестов в наборе нет ни одного; появится — потребует причины. Гейта на это нет, и это осознанно: сегодня ему нечего было бы охранять"
+        },
+        "041": {
+          "mechanism": "gate",
+          "where": "scripts/check_charter.py печатает ДВА числа — подделкой в check_gates и набором в tests, — а не одно усреднённое «покрыто гейтов»"
+        },
+        "042": {
+          "mechanism": "process-step",
+          "where": "export/README.md § Отвергнутые варианты"
+        },
+        "043": {
+          "mechanism": "process-step",
+          "where": "пересмотр правила — новая запись, старая помечается"
+        },
+        "044": {
+          "mechanism": "process-step",
+          "where": "премиса находки проверяется прогоном до работы; сегодня это дало три отказа от записи подряд. Машинного нет — 146 говорит, почему его трудно построить"
+        },
+        "045": {
+          "mechanism": "gate",
+          "where": "исход 2 «проверка не отработала» есть у каждого скрипта каталога и печатается громко; тихого запасного пути нет ни у одного"
+        },
+        "046": {
+          "mechanism": "process-step",
+          "where": "пробелы названы в export/README.md и в описаниях PR"
+        },
+        "047": {
+          "mechanism": "process-step",
+          "where": "правка свода — повод перезапустить окно, а не разослать. Машинного нет: реестром окон каталог не управляет"
+        },
+        "049": {
+          "mechanism": "gate",
+          "where": "scripts/build_rules_index.py — области, даты и следы из файлов"
+        },
+        "051": {
+          "mechanism": "gate",
+          "where": "scripts/sync_labels.py предупреждает о неучтённой метке и НЕ удаляет её; значки выведены из-под гейта на ветку badges по той же причине"
+        },
+        "052": {
+          "mechanism": "none",
+          "where": "очередь на слияние есть, а правило не обеспечено: окно обновляло ВСЕ ветки после каждого слияния вместо головы очереди — квадрат холостой работы, измеренный за одно окно"
+        },
+        "053": {
+          "mechanism": "gate",
+          "where": ".github/workflows/main-red.yml заводит задачу, пока общая ветка красная, и свод ставит красное нулевым пунктом очереди работ"
+        },
+        "054": {
+          "mechanism": "process-step",
+          "where": "сбор и разбор разведены: consumers-sync собирает и печатает расхождение, задача-адресат разбирает. Один проход не делает обоего"
+        },
+        "055": {
+          "mechanism": "process-step",
+          "where": "собственное ожидание проверяется мутацией механизма, а не доверием к себе: сегодня так проверены четыре набора"
+        },
+        "056": {
+          "mechanism": "gate",
+          "where": "scripts/audit_catalogue.py требует у каждой записи границу «НЕ работает» — ту самую вторую половину, без которой описание неполно"
+        },
+        "057": {
+          "mechanism": "gate",
+          "where": "scripts/check_bindings.py требует поле mechanism, и значение `none` печатается метрикой поимённо: правило без механизма названо, а не забыто"
+        },
+        "062": {
+          "mechanism": "process-step",
+          "where": "карта направлений в своде принимает роль только со СВОИМ возражением; «хранитель заготовок» проходил приёмку именно по нему"
+        },
+        "063": {
+          "mechanism": "gate",
+          "where": ".github/workflows/automerge.yml включается по всем условиям сразу: не черновик, открыто, проверки не красные, ветка защищена"
+        },
+        "064": {
+          "mechanism": "gate",
+          "where": ".github/workflows/labels-sync.yml — объявленные метки применяются к репозиторию, неучтённые называются списком; scripts/pr_body.py — вторая половина правила, строка связи с задачей: конвейер собирает её в тело изменения, гейт отвергает изменение без неё и без заполненного освобождения. До #120 вторую половину не держало ничто, и ответ объявлял правило обеспеченным целиком"
+        },
+        "065": {
+          "mechanism": "process-step",
+          "where": "CONTRIBUTING.md, раздел «Путь новичка»: обе метки входа объявлены в .github/labels.yml, тело задачи ведётся на двух языках, и правило действует в момент навешивания метки. Двуязычие тела не проверяется ничем — метку вешает человек"
+        },
+        "067": {
+          "mechanism": "gate",
+          "where": "три исхода у каждого скрипта: код 2 «не отработала» отличается от кода 1 «есть находки», и причина печатается, а не гасится"
+        },
+        "068": {
+          "mechanism": "gate",
+          "where": "scripts/check_attribution.py --require-declared-author — автор коммита сверяется с разрешительным списком «[авторы]», а не с запретом на одно написание. До задачи #79 запрет ловил `Claude <noreply@anthropic.com>` и молчал на `claude[bot]`; изменение #78 уехало в общую ветку авторства бота"
+        },
+        "071": {
+          "mechanism": "process-step",
+          "where": "намеренный повтор подписывается комментарием с причиной — так помечено двойное построение тела коммита в .github/workflows/automerge.yml"
+        },
+        "072": {
+          "mechanism": "gate",
+          "where": "scripts/check_gates.py ловит причину подделанным предметом, tests/ ловят факт фикстурой; обе нужны и обе стоят"
+        },
+        "074": {
+          "mechanism": "gate",
+          "where": "scripts/version.py считает версию из истории и тегов и отказывается при отсутствии тега схемы (исход 2) — до того, как выпуск состоялся"
+        },
+        "075": {
+          "mechanism": "gate",
+          "where": "scripts/ghcli.py и tests/test_ghcli.py — механизм, не нашедший инструмента, отдаёт третий исход, а не зеленеет. У потребителя код 1 означает «очередь, всё в порядке», и скрипт без gh рапортовал успех, не работая вовсе"
+        },
+        "077": {
+          "mechanism": "none",
+          "where": "английское дерево сверяется по именам, разделам и следам, но не как перевод"
+        },
+        "079": {
+          "mechanism": "gate",
+          "where": "scripts/aggregate_bindings.py — возраст ответа считается от МОМЕНТА ЧТЕНИЯ, а срок «объявлен, но не подключился» — от даты объявления в .rules/consumers.json, поле since. Отсчёт от постановки в очередь и от завершения здесь разведены нарочно"
+        },
+        "080": {
+          "mechanism": "gate",
+          "where": "scripts/collect_proposals.py — опрос предложений потребителей и одна задача-адресат; --check держит вердикт каталога"
+        },
+        "082": {
+          "mechanism": "process-step",
+          "where": "карта направлений в CLAUDE.md; полнота проверена обходом артефактов, три направления закрыты гейтами"
+        },
+        "084": {
+          "mechanism": "gate",
+          "where": "consumers-sync и badges заведены отдельными работами и не роняют ci: отказ дополнения не задерживает обязательную проверку изменения"
+        },
+        "086": {
+          "mechanism": "process-step",
+          "where": "тяжесть находке ставит не нашедший: кандидаты в правила отвергались не тем окном, что их написало, а прогоном по соседям — метрика решала, а не автор"
+        },
+        "088": {
+          "mechanism": "process-step",
+          "where": "«критик гипотезы» назван в карте направлений НЕПОКРЫТЫМ прямым текстом — это исполнение правила, а не его нарушение"
+        },
+        "089": {
+          "mechanism": "process-step",
+          "where": "из оригинала в копию не ссылаемся"
+        },
+        "090": {
+          "mechanism": "gate",
+          "where": "scripts/ghcli.py — вызов gh живёт уровнем выше всех своих потребителей, а не копируется вбок. До этого копий было четыре, и все четыре разошлись в поведении при отсутствии самого gh; tests/test_ghcli.py спрашивает у каждого скрипта отдельно"
+        },
+        "091": {
+          "mechanism": "gate",
+          "where": "свод перечисляет источники работы по порядку, нулевым — красное на общей ветке; статусы живут только в трекере, и .github/workflows/main-red.yml заводит задачу туда же"
+        },
+        "093": {
+          "mechanism": "process-step",
+          "where": "второй уровень группировки областей не введён до третьего случая"
+        },
+        "096": {
+          "mechanism": "gate",
+          "where": ".rules разведён по жизненному циклу: bindings — ответ каталога, neighbours — вопрос о соседях, proposals — вердикт о приехавшем, consumers — реестр, showcase — набор вопросов. Общего файла нет намеренно"
+        },
+        "097": {
+          "mechanism": "gate",
+          "where": "tests/test_coverage_badge.py — пороги цвета проверяются с ОБЕИХ сторон границы, и ложный отказ ловится тем же прогоном, что и ложное «прошло»; tests/test_aggregate_bindings.py — отсутствие связи и нечитаемый ответ разведены нарочно, чтобы состояние не стало находкой"
+        },
+        "098": {
+          "mechanism": "process-step",
+          "where": "единица дробления — правило, и определяется она употреблением: правило, которое нельзя процитировать целиком, дробится, а второй инцидент к существующему не заводит новое"
+        },
+        "099": {
+          "mechanism": "gate",
+          "where": "словарь областей в scripts/build_rules_index.py закрытый: область, которой в нём нет, сборку не проходит, и спор решается пополнением словаря осознанно"
+        },
+        "100": {
+          "mechanism": "none",
+          "where": "у каждой работы стоит timeout-minutes, то есть дедлайн РАБОТЫ. Отдельного короткого дедлайна на СТАРТ нет ни у одной — зависнуть до первой строки нечему помешать"
+        },
+        "104": {
+          "mechanism": "gate",
+          "where": ".github/workflows/ci.yml — workflow_dispatch"
+        },
+        "105": {
+          "mechanism": "process-step",
+          "where": "внешний аудит делает владелец, а не то же окно: нарушения собственных правил каталога нашлись по его вопросу, а не по самопроверке, и цена этого записана в своде"
+        },
+        "106": {
+          "mechanism": "process-step",
+          "where": "витрина показывается после прогона: значки заведены только на те вопросы, на которые есть чем ответить, остальные названы пробелами"
+        },
+        "107": {
+          "mechanism": "gate",
+          "where": "scripts/check_test_deps.py — каждый импорт в tests/ объявлен в requirements-test.txt, а не просто установлен у автора. Имя модуля объявляется рядом с пакетом («pyyaml  # модуль: yaml»), а не выясняется у метаданных: первая версия гейта спрашивала установленное и упала в конвейере ровно той болезнью, которую ловит"
+        },
+        "108": {
+          "mechanism": "gate",
+          "where": "scripts/audit_catalogue.py — у растущей части HISTORY.md есть предел, выраженный числом, и вышедшее за окно гейт называет поимённо, старшими вперёд. Дословность переноса в архив машинно не проверяется, и это сказано в самом скрипте"
+        },
+        "109": {
+          "mechanism": "gate",
+          "where": "у каждой проверки каталога терминальный статус обязателен: 0, 1 или 2, и «не отработала» не растворяется в «есть находки»"
+        },
+        "111": {
+          "mechanism": "gate",
+          "where": "конвейер делает сам, а не советует: .github/workflows/agent-pr.yml открывает изменение, .github/workflows/automerge.yml включает слияние, .github/workflows/labels-sync.yml расставляет метки"
+        },
+        "113": {
+          "mechanism": "process-step",
+          "where": "export/README.md § Как схема меняется"
+        },
+        "114": {
+          "mechanism": "gate",
+          "where": "scripts/check_attribution.py — подрезка до объявленного начала"
+        },
+        "118": {
+          "mechanism": "gate",
+          "where": "scripts/build_rules_index.py — экспорт рядом с источником"
+        },
+        "119": {
+          "mechanism": "gate",
+          "where": "scripts/check_candidates.py исключает README.md из отбора кандидатов, scripts/check_links.py — свои производные; инструмент не обрабатывает собственный вывод"
+        },
+        "120": {
+          "mechanism": "process-step",
+          "where": "весь каталог; указатель собирается скриптом"
+        },
+        "121": {
+          "mechanism": "process-step",
+          "where": "закрытие задачи требует счётного критерия: «сделано» доказывается зелёным гейтом или названным числом, а не видом закрытого контейнера"
+        },
+        "122": {
+          "mechanism": "process-step",
+          "where": "export/rules.json отдаёт следы структурой рядом с текстом"
+        },
+        "123": {
+          "mechanism": "gate",
+          "where": ".github/workflows/ci.yml — коммиты ветки на pull_request; .github/workflows/attribution-history.yml — первопредки main на push; долг прошлой истории виден числом, а не подрезан"
+        },
+        "124": {
+          "mechanism": "process-step",
+          "where": "перезапуск прогона считается НАХОДКОЙ, а не починкой: сегодня зелёное со второго раза разбиралось как дефект, а не списывалось на площадку"
+        },
+        "125": {
+          "mechanism": "gate",
+          "where": "scripts/build_rules_index.py — область и даты из источников"
+        },
+        "126": {
+          "mechanism": "gate",
+          "where": "у каждой работы есть ручная кнопка workflow_dispatch — путь размораживания, не проходящий через замороженное действие"
+        },
+        "127": {
+          "mechanism": "none",
+          "where": "значок несёт подпись, а не значение: парсер числа не видит"
+        },
+        "128": {
+          "mechanism": "gate",
+          "where": "scripts/build_rules_index.py — check_vocabulary"
+        },
+        "129": {
+          "mechanism": "process-step",
+          "where": "export/rules.json, export/README.md, этот файл"
+        },
+        "130": {
+          "mechanism": "none",
+          "where": "правило доезжает до потребителя механизмом (collect_proposals, sync_inbox), но СПИСОК КАНДИДАТОВ из его бэклога вместе с ним не приходит — правило прибывает без предмета"
+        },
+        "131": {
+          "mechanism": "gate",
+          "where": ".github/workflows/agent-pr.yml — изменение открывает конвейер токеном владельца, окно только толкает ветку agent/**"
+        },
+        "132": {
+          "mechanism": "none",
+          "where": "одно изменение — одна тема; в своде не записано"
+        },
+        "133": {
+          "mechanism": "none",
+          "where": "при общем файле ветки ставятся стопкой; гейта нет"
+        },
+        "134": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md — свод проекта со ссылкой на каталог; окно перезапускается после наполнения, гейта на это нет"
+        },
+        "135": {
+          "mechanism": "process-step",
+          "where": "перед записью, несущей личность, окно делает пробную запись того же класса и смотрит подпись; гейта на это нет"
+        },
+        "136": {
+          "mechanism": "process-step",
+          "where": ".rules/bindings.json — вердикт о себе пишется после перебора предметов, и перебор называется в причине; гейта на полноту перебора нет"
+        },
+        "138": {
+          "mechanism": "process-step",
+          "where": "решение оседает задачей или комментарием в тот же заход; проверка полноты — ответ нового окна из репозитория, гейта на это нет"
+        },
+        "139": {
+          "mechanism": "process-step",
+          "where": "механизм не объявляется сделанным до прогона на живом изменении; гейта на это нет, держится порядком работы"
+        },
+        "140": {
+          "mechanism": "gate",
+          "where": "scripts/check_gates.py и tests/ — отвергаемый предмет получает каждый гейт конвейера, кроме самого check_gates; сколько и каким из двух механизмов, печатает scripts/check_charter.py, а не эта строка"
+        },
+        "141": {
+          "mechanism": "gate",
+          "where": "scripts/check_gates.py — набор «сборка указателя»: маркер и его расширение прогоняются как отдельный случай"
+        },
+        "142": {
+          "mechanism": "gate",
+          "where": ".github/workflows/consumers-sync.yml — шаг «у находки есть адресат» заводит задачу при отказе"
+        },
+        "144": {
+          "mechanism": "none",
+          "where": "разбор записей идёт по разметке — пустая строка и заголовок раздела, — то есть правило соблюдается, но не проверяется"
+        },
+        "145": {
+          "mechanism": "gate",
+          "where": "scripts/check_gates.py — каждый набор двусторонний, у каждого есть предмет, который гейт обязан пропустить, и предмет, который обязан отвергнуть"
+        },
+        "146": {
+          "mechanism": "gate",
+          "where": "scripts/aggregate_bindings.py — обязательная проверка сверяет сводку с ОТВЕТОМ на диске, а не только саму с собой; до #122 она подтверждала своё основание тем же зелёным, каким подтверждала себя. Остальное правило держится разбором при приёмке: замер живого предмета машинно не отличить от рассуждения"
+        },
+        "147": {
+          "mechanism": "none",
+          "where": "адресата у отменённой отмены пока нет: ветку с законченной работой мимо префикса не видит ни один прогон. Найдено обходом списка веток вручную"
+        },
+        "148": {
+          "mechanism": "process-step",
+          "where": ".github/workflows/automerge.yml ждёт появления коммита в общей ветке, а не поля merged записи изменения; разбор отказа начинается со сверки метки времени записи с проверками на голове"
+        }
       }
     },
     {
@@ -173,6 +604,10 @@
         "unreviewed": 30,
         "not-applicable": 45,
         "active": 59
+      },
+      "by_mechanism": {
+        "none": 50,
+        "gate": 9
       },
       "rules": {
         "001": "unreviewed",
@@ -309,6 +744,244 @@
         "132": "unreviewed",
         "133": "unreviewed",
         "134": "not-applicable"
+      },
+      "holds": {
+        "011": {
+          "mechanism": "none",
+          "where": "docs/agent/preflight.md"
+        },
+        "012": {
+          "mechanism": "none",
+          "where": "docs/agent/preflight.md"
+        },
+        "013": {
+          "mechanism": "none",
+          "where": "docs/agent/preflight.md"
+        },
+        "014": {
+          "mechanism": "none",
+          "where": "docs/agent/preflight.md"
+        },
+        "015": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "016": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "017": {
+          "mechanism": "none",
+          "where": "docs/agent/preflight.md"
+        },
+        "018": {
+          "mechanism": "none",
+          "where": "docs/agent/environments.md"
+        },
+        "019": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "020": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "027": {
+          "mechanism": "none",
+          "where": "docs/agent/claude-handoff.md"
+        },
+        "031": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "032": {
+          "mechanism": "none",
+          "where": "docs/agent/roles.md"
+        },
+        "033": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "034": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "036": {
+          "mechanism": "none",
+          "where": "docs/agent/environments.md"
+        },
+        "037": {
+          "mechanism": "none",
+          "where": "docs/agent/environments.md"
+        },
+        "038": {
+          "mechanism": "none",
+          "where": "docs/agent/environments.md"
+        },
+        "039": {
+          "mechanism": "none",
+          "where": "docs/dev/supply-chain.md"
+        },
+        "040": {
+          "mechanism": "gate",
+          "where": "scripts/skip_inventory.py"
+        },
+        "042": {
+          "mechanism": "none",
+          "where": "docs/dev/adr/README.md"
+        },
+        "043": {
+          "mechanism": "none",
+          "where": "docs/dev/adr/README.md"
+        },
+        "051": {
+          "mechanism": "gate",
+          "where": "scripts/check_work_overlap.py"
+        },
+        "054": {
+          "mechanism": "none",
+          "where": "docs/agent/course-walkthrough.md"
+        },
+        "055": {
+          "mechanism": "none",
+          "where": "docs/agent/course-walkthrough.md"
+        },
+        "057": {
+          "mechanism": "none",
+          "where": "docs/agent/preflight.md"
+        },
+        "058": {
+          "mechanism": "none",
+          "where": "docs/agent/preflight.md"
+        },
+        "059": {
+          "mechanism": "none",
+          "where": "docs/agent/preflight.md"
+        },
+        "060": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "061": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "062": {
+          "mechanism": "none",
+          "where": "docs/agent/roles.md"
+        },
+        "063": {
+          "mechanism": "none",
+          "where": "docs/agent/dispatcher.md"
+        },
+        "072": {
+          "mechanism": "gate",
+          "where": "scripts/check_test_isolation.py"
+        },
+        "073": {
+          "mechanism": "gate",
+          "where": "scripts/check_ruff_pin.py"
+        },
+        "074": {
+          "mechanism": "gate",
+          "where": "scripts/check_workflow_guardrails.py"
+        },
+        "075": {
+          "mechanism": "gate",
+          "where": "scripts/check_workflow_guardrails.py"
+        },
+        "076": {
+          "mechanism": "gate",
+          "where": "scripts/check_locale_guardrails.py"
+        },
+        "077": {
+          "mechanism": "gate",
+          "where": "scripts/check_locale_guardrails.py"
+        },
+        "082": {
+          "mechanism": "none",
+          "where": "docs/agent/roles.md"
+        },
+        "086": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "087": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "088": {
+          "mechanism": "none",
+          "where": "docs/agent/multiagent.md"
+        },
+        "089": {
+          "mechanism": "none",
+          "where": "docs/dev/glossary.md"
+        },
+        "092": {
+          "mechanism": "none",
+          "where": "docs/agent/claude-handoff.md"
+        },
+        "097": {
+          "mechanism": "none",
+          "where": "docs/dev/corpus.md"
+        },
+        "098": {
+          "mechanism": "none",
+          "where": "docs/dev/glossary.md"
+        },
+        "099": {
+          "mechanism": "none",
+          "where": "docs/dev/glossary.md"
+        },
+        "100": {
+          "mechanism": "none",
+          "where": "docs/use/configuration.md"
+        },
+        "101": {
+          "mechanism": "none",
+          "where": "docs/use/installation.md"
+        },
+        "102": {
+          "mechanism": "none",
+          "where": "docs/use/configuration.md"
+        },
+        "104": {
+          "mechanism": "gate",
+          "where": ".github/workflows/ci.yml"
+        },
+        "106": {
+          "mechanism": "none",
+          "where": "docs/dev/corpus.md"
+        },
+        "113": {
+          "mechanism": "none",
+          "where": "docs/dev/result-contract.md"
+        },
+        "115": {
+          "mechanism": "none",
+          "where": "docs/use/configuration.md"
+        },
+        "116": {
+          "mechanism": "none",
+          "where": "docs/archive/audit-2026-07-30-full-roles.md"
+        },
+        "117": {
+          "mechanism": "none",
+          "where": "docs/archive/audit-2026-07-30-full-roles.md"
+        },
+        "118": {
+          "mechanism": "none",
+          "where": "docs/use/grader-workflow.md"
+        },
+        "121": {
+          "mechanism": "none",
+          "where": "docs/agent/claude-handoff.md"
+        },
+        "122": {
+          "mechanism": "none",
+          "where": "docs/dev/api.md"
+        }
       }
     },
     {
@@ -321,6 +994,11 @@
         "active": 74,
         "not-applicable": 73,
         "rejected": 1
+      },
+      "by_mechanism": {
+        "none": 11,
+        "process-step": 43,
+        "gate": 20
       },
       "rules": {
         "001": "active",
@@ -471,6 +1149,304 @@
         "146": "active",
         "147": "active",
         "148": "active"
+      },
+      "holds": {
+        "001": {
+          "mechanism": "none",
+          "where": "scripts/build_metrics.py — все обращения к GitHub идут через _api() по REST"
+        },
+        "002": {
+          "mechanism": "process-step",
+          "where": "README.md § What holds the quality и .github/workflows/pr-check.yml — утверждения проверяемы, а обязательная проверка в защите main держит их машинно; scripts/check_author.py — соглашение об авторе коммита перестало держаться памятью окна: оно попадало в main пять раз, пока механизма не было"
+        },
+        "005": {
+          "mechanism": "gate",
+          "where": "scripts/build_metrics.py::patch_readme — числа только между маркерами m:ключ; scripts/build_metrics.py::render_featured — числа баннера тоже измерены, а не вписаны: они приходят из project_stats и попадают в подпись картинки той же сборкой; scripts/build_metrics.py::project_badges — версия, состояние CI, покрытие и версия пакета измеряются сборкой и рисуются ею же: чужих бейджей на витрине не осталось, а значит не осталось и второго источника тех же чисел"
+        },
+        "006": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md § Окно — срок жизни три–пять дней, дальше эстафета ссылками. Механизма нет и быть не может: возраст окна репозиторию не виден, перезапуск делает владелец"
+        },
+        "008": {
+          "mechanism": "process-step",
+          "where": "README.md — сворачиваемых блоков нет; остаток списка проектов назван строкой, а не спрятан"
+        },
+        "009": {
+          "mechanism": "process-step",
+          "where": "scripts/checks.py — свёртка записей по имени одна на весь репозиторий; сборка метрик и конвейер слияния зовут её, а не пишут своё"
+        },
+        "010": {
+          "mechanism": "gate",
+          "where": ".github/workflows/automerge.yml — автомерж не включается, пока в защите main нет обязательной проверки: без неё изменение «чисто» сразу и сливается на пустом списке"
+        },
+        "011": {
+          "mechanism": "none",
+          "where": ".github/workflows/metrics.yml — суточное расписание вместо цикла опроса API; .github/workflows/automerge.yml — подписка на события изменения вместо ежечасного обхода. Прежний ответ называл прогон слияния по расписанию, который и был тем самым ежечасным опросом; вместе с ним ушёл и предмет"
+        },
+        "014": {
+          "mechanism": "process-step",
+          "where": "HISTORY.md § Гейты, проверенные тем, что они обязаны отвергнуть — каждый гейт нарочно ломался обратно в свой исходный дефект при сохранённых именах, и самопроверка обязана была покраснеть. Меняется ровно одна переменная: поведение убрано, имена на месте. Механизм process-step, а не gate: мутации прогоняются рукой при заведении гейта, в конвейере их нет"
+        },
+        "016": {
+          "mechanism": "process-step",
+          "where": "scripts/build_metrics.py::render_projects — под таблицей строка о непоказанных проектах"
+        },
+        "021": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md § Язык артефактов делит по читателю: README.md посетителю профиля, .rules/README.md, .rules/roles.md, HISTORY.md и сам CLAUDE.md — владельцу и окну. Прежнее «делить нечего» считало три файла там, где их восемь"
+        },
+        "022": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md § Источники истины — таблица «тема → канонический документ», по одному месту на тему; README.md § По-русски — пересказ, а не вторая редакция"
+        },
+        "023": {
+          "mechanism": "process-step",
+          "where": "README.md — витрина держится в пределах страницы, подробности по ссылкам в проекты"
+        },
+        "025": {
+          "mechanism": "none",
+          "where": "README.md — ссылок на задачи в объясняющем тексте нет"
+        },
+        "027": {
+          "mechanism": "process-step",
+          "where": "README.md § Contributions welcome — пустой пул задач объявлен словами"
+        },
+        "032": {
+          "mechanism": "process-step",
+          "where": ".github/workflows/pr-check.yml — вывод о работоспособности делается прогоном вхолостую, а не чтением кода"
+        },
+        "038": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md § Окно — имя начинается с окружения, витрину ведут только облачные окна: [WEB]. Признак окружения лежит в реестре сессий, то есть вне репозитория, — сверять префикс отсюда нечем"
+        },
+        "039": {
+          "mechanism": "none",
+          "where": "scripts/build_metrics.py::main — «числа не изменились» отличается от отказа источника; scripts/build_metrics.py::_count — курсорная разбивка это третий исход, а не единица: посчитать нельзя, и сборка падает вместо правдоподобного числа; .github/workflows/rules-inbox.yml — очередь, чистота и неотработавший механизм разведены кодами; scripts/gh_outcome.py::classify — у обращения к площадке три исхода: ответил, не ответил (бюджет запросов, сеть, пятисотка), ответил отказом. Второй это предупреждение, третий красное, и неразобранный отказ тоже красное — молчаливый пропуск на незнакомом делает сломанный конвейер похожим на работающий; .github/workflows/automerge.yml — каждый шаг с `gh` разбирает исход этим разбором, а не считает любой отказ поломкой изменения"
+        },
+        "041": {
+          "mechanism": "gate",
+          "where": "scripts/build_metrics.py::main — метрика без данных не публикуется, сборка падает; на плитке подписано, какое покрытие показано"
+        },
+        "044": {
+          "mechanism": "gate",
+          "where": "scripts/check_bindings.py — премиса вердикта проверяется до того, как ему поверят: каждое «чем держится» и каждое «этого у нас нет» есть утверждение о текущем коде, и каждая ссылка в них сверяется с файлом и объявленным именем; отказ от чужих бейджей — та же премиса: утверждение, которое из окна не проверить, витрина на себя не берёт (прокси не пускает img.shields.io, и живой бейдж от опечатки в ссылке неотличим); scripts/build_metrics.py::verify_absence — премиса отказа по показателю проверяется до того, как её покажут: «релизов нет» у каталога правил оказалось неверным, релиз был помечен предварительным и не попадал в latest"
+        },
+        "045": {
+          "mechanism": "gate",
+          "where": "scripts/build_metrics.py::rules_export и .github/workflows/metrics.yml — отказ источника роняет сборку, отсутствие токена владельца тоже отказ, а не тихий переход на штатный"
+        },
+        "046": {
+          "mechanism": "process-step",
+          "where": "README.md — песочница названа частичной на Windows со ссылкой на таблицу асимметрии; пробелы конвейера названы в .rules/README.md; projects.json — у каждого проекта пробел по показателю назван поимённо и с причиной, а не оставлен пустым местом; scripts/build_metrics.py::check_badges держит это гейтом; scripts/build_metrics.py::verify_absence проверяет однозначное — выпуски, прогоны, ветку badges; пакет не проверяется, потому что имя пакета при отказе не объявлено, и пробел назван в докстроке"
+        },
+        "047": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md § Окно — прямой цитатой: сменились правила работы, окна перезапускаются. Этот файл читается один раз, при старте"
+        },
+        "049": {
+          "mechanism": "process-step",
+          "where": ".github/workflows/automerge.yml — что готово к слиянию, решает площадка по живому состоянию изменения и обязательным проверкам, а не отдельный реестр; scripts/build_metrics.py::stamp_assets — адрес картинки несёт отпечаток её содержимого. Прокси площадки кэширует по адресу, и без отпечатка страница показывала вчерашнюю картинку при верном репозитории: состояние выводилось не из живого артефакта, а из кэша"
+        },
+        "050": {
+          "mechanism": "gate",
+          "where": "scripts/build_metrics.py — FOCUS_LIMIT с пометкой «двигается только вниз», scripts/build_metrics.py::FEATURED_ACCENTS с той же пометкой и projects.json:featured_limit"
+        },
+        "051": {
+          "mechanism": "process-step",
+          "where": "scripts/check_labels.py::outcome — внешнему участнику предупреждение, владельцу отказ; до 27 августа это утверждение держалось ЧТЕНИЕМ кода: ветка жила в main рядом с обращением к площадке и не выполнялась ни разу. Теперь прогоняется самопроверкой по каждому исходу, включая регистр логина. Мягко к внешнему потому, что прав ставить метки в чужом репозитории у него нет, и отказ требовал бы невозможного; .github/workflows/automerge.yml — ненастроенная защита это предупреждение, а не красный прогон; исчерпанный бюджет запросов тоже: он состояние источника, а не поломка изменения, и красное на нём запирало изменение в `unstable`, откуда автомерж уже не включить (scripts/gh_outcome.py::SOURCE_SILENT)"
+        },
+        "056": {
+          "mechanism": "process-step",
+          "where": ".rules/README.md § Что означают статусы и чего не означают — статусы этого файла читает не только витрина: они и есть её ответ по контракту потребления каталога, и вторая половина у них теперь написана"
+        },
+        "057": {
+          "mechanism": "none",
+          "where": "scripts/build_metrics.py::check_focus_limit — «Current focus» назван единственным ручным блоком"
+        },
+        "062": {
+          "mechanism": "process-step",
+          "where": ".rules/roles.md § Кто за что — у каждой роли свой вопрос, свой артефакт и своё возражение; профили заведены профилями именно потому, что своего возражения у них нет"
+        },
+        "063": {
+          "mechanism": "gate",
+          "where": ".github/workflows/automerge.yml — автомерж включается по конъюнкции: не черновик И открыт И без метки hold И защита с обязательной проверкой есть; каждый пропуск назван причиной"
+        },
+        "064": {
+          "mechanism": "gate",
+          "where": "scripts/check_labels.py в pr-check.yml — PR без метки содержания не проходит; метки конвейера (hold) классификацией не считаются; scripts/check_labels.py::label_for_subject — метку содержания выводит таблица по типу коммита, а не догадка в шаге прогона; неразобранный тип даёт пустую метку и предупреждение, потому что неверная метка хуже отсутствующей. .github/workflows/open-pr.yml ставит hold сразу: стоп-кран принадлежит конвейеру, а не автору, и без него изменение, открытое пушем, поехало бы в main раньше срока"
+        },
+        "065": {
+          "mechanism": "process-step",
+          "where": "README.md § Contributions welcome — витрина двуязычна, и задачи по ссылке ведутся на двух языках"
+        },
+        "068": {
+          "mechanism": "gate",
+          "where": "scripts/check_labels.py::CONTENT — классификацией считается только перечисленное; запретительный «всё, кроме hold» пропускал семь меток из двенадцати; scripts/build_metrics.py::BADGE_KINDS — обязательные показатели проекта тоже список разрешённого: показатель вне его называется в отказе, а опечатка в required_badges не снимает требование тихо"
+        },
+        "073": {
+          "mechanism": "process-step",
+          "where": ".github/dependabot.yml — SHA-пины действий двигает он; версия Python задана в одном месте"
+        },
+        "074": {
+          "mechanism": "gate",
+          "where": "защита main: обязательная проверка PR check плюс запрет force-push и удаления — слияние необратимо, историю main не переписываем"
+        },
+        "075": {
+          "mechanism": "gate",
+          "where": "scripts/build_metrics.py::patch_readme — пропавший маркер и недопроставленный alt роняют сборку; scripts/build_metrics.py::unanswered — молчание источника роняет её же, и проверяются сырые значения: сторож, стоявший после форматирования, пропускал «0000+ tests»; scripts/check_roles.py::audit — строка покрытия, под которую не нашлось ни одного файла, роняет проверку: пласт назван, а предмета у него нет"
+        },
+        "080": {
+          "mechanism": "process-step",
+          "where": ".rules/proposals.json — инцидент уезжает в каталог ФАЙЛОМ, который каталог опрашивает сам, а не памятью окна: до 27 августа правило держалось шагом процесса, то есть ничем машинным, и цена этого измерена в каталоге — из 143 записей 129 ссылаются на грейдер, 11 на витрину, то есть большинство правил переносило руками то окно, которое случайно оказалось открыто. .rules/README.md § Канал с каталогом — обе половины названы; так уехало 127"
+        },
+        "082": {
+          "mechanism": "gate",
+          "where": "scripts/check_roles.py — таблица покрытия в .rules/roles.md сверяется с деревом в обе стороны: файл без строки и строка без файлов одинаково роняют проверку. Полнота проверяется обходом артефактов, а не чтением списка ролей: обход нашёл пять пластов сверх четырёх записанных по памяти"
+        },
+        "089": {
+          "mechanism": "process-step",
+          "where": "README.md — ссылки ведут только в источники, обратных из проектов сюда нет"
+        },
+        "090": {
+          "mechanism": "process-step",
+          "where": "scripts/build_metrics.py::rules_export — число правил берётся из экспорта каталога, а не из своей копии чужого определения; scripts/checks.py — свёртка по имени вынесена выше подсистем, хотя после ухода конвейера слияния потребитель у неё остался один; .github/workflows/rules-inbox.yml — синхронизация подключена действием каталога, а не своим скриптом: копия разъехалась бы с первой правкой на той стороне; scripts/check_labels.py::SUBJECT_LABEL — таблица «тип коммита — метка» лежит рядом с гейтом, который эти же метки проверяет, а не второй копией в .github/workflows/open-pr.yml; самопроверка сверяет вывод с CONTENT, чтобы прогон не ставил метку, которую гейт отвергает; .github/workflows/main-red.yml — дежурный по общей ветке подключён скриптом каталога на закреплённом SHA, а не скопирован: витрина вынесла механизм НАВЕРХ (playbook#139), вместо того чтобы завести второй такой же у себя"
+        },
+        "091": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md § Открытая работа — три источника по порядку, первый непустой и есть план; пустой трекер объявлен нормальным состоянием, иначе порядок ломается на первом шаге"
+        },
+        "097": {
+          "mechanism": "gate",
+          "where": "scripts/check_labels.py::selftest, scripts/check_bindings.py::selftest, scripts/check_roles.py::selftest, scripts/build_metrics.py::selftest — у каждого гейта прогоняются оба класса ошибок: предмет, который он обязан отвергнуть, и предмет, который обязан пропустить. Ложное «прошло» не приходит жаловаться никогда, ложный отказ в конвейере без человека — тоже"
+        },
+        "100": {
+          "mechanism": "process-step",
+          "where": ".github/workflows/*.yml — у всех четырёх прогонов timeout-minutes вместо шестичасового умолчания"
+        },
+        "104": {
+          "mechanism": "process-step",
+          "where": ".github/workflows/*.yml — workflow_dispatch у каждого прогона, включая open-pr.yml; числа прогонов здесь намеренно нет: оно устаревало бы от каждого нового файла"
+        },
+        "105": {
+          "mechanism": "none",
+          "where": ".rules/roles.md § Почему ревизор — роль, а не «повнимательнее» — второй проход своим же инструментом повторяет собственные слепые пятна, поэтому вопрос «сходится ли объявленное с фактическим» вынесен в отдельную роль. Живого второго участника у неё нет, часть работы переведена в гейты, остальное играет владелец"
+        },
+        "107": {
+          "mechanism": "none",
+          "where": "scripts/build_metrics.py::_get — заголовок авторизации не уходит на raw: чужой хост ведёт себя не как API"
+        },
+        "108": {
+          "mechanism": "gate",
+          "where": "scripts/build_metrics.py::check_focus_limit — потолок «Current focus» в пять строк"
+        },
+        "111": {
+          "mechanism": "none",
+          "where": ".github/workflows/automerge.yml — совет только там, где нужна настройка владельца (секрет, защита ветки, разрешение squash); остальное конвейер делает сам"
+        },
+        "118": {
+          "mechanism": "process-step",
+          "where": "projects.json — источник таблицы лежит рядом с производной разметкой README"
+        },
+        "119": {
+          "mechanism": "process-step",
+          "where": "scripts/build_metrics.py::sync_alt — подписи только что нарисованных картинок берутся из памяти, диск читается только для рукодельных SVG"
+        },
+        "123": {
+          "mechanism": "gate",
+          "where": "предметов три, перебраны все. Автор коммита — scripts/check_author.py: контейнерное умолчание облачного окна отвергается поимённо, и отказ печатает команду целиком. Трейлеры коммитов изменения — действие каталога шагом в .github/workflows/pr-check.yml, со своим списком имён в .github/authors.txt. Итоговая история — .github/workflows/attribution-history.yml: первопредки main с объявленного начала долга. Чего гейты НЕ держат: коммит вовсе без трейлеров считается числом, а не отвергается — это устройство гейта каталога, запрошено там. Оговорка по 143: на автора коммита в общей ветке ни один из трёх не влияет — его задаёт учётная запись, открывшая изменение; .github/workflows/open-pr.yml — изменение открывает токен владельца, а не окно: автором squash-коммита площадка ставит автора ИЗМЕНЕНИЯ, и соглашение держалось тем, что изменения открывал владелец. В окне, где на запись отвечает бот, оно перевернулось молча — коммит ca7dfcd в main подписан claude[bot], а владелец уехал в Co-authored-by мимо .github/authors.txt"
+        },
+        "125": {
+          "mechanism": "process-step",
+          "where": "scripts/build_metrics.py — генератор читает источники и ничего из собственного вывода; README и assets правит только сборка"
+        },
+        "126": {
+          "mechanism": "process-step",
+          "where": "метка hold останавливает автомерж, и снимается она не через слияние; .github/workflows/automerge.yml"
+        },
+        "127": {
+          "mechanism": "gate",
+          "where": "scripts/build_metrics.py::patch_readme — маркер, сборка и падение при пропаже маркера"
+        },
+        "128": {
+          "mechanism": "gate",
+          "where": "scripts/check_labels.py::derive_zones — зона, выведенная из диффа, требует своей метки: проверяется полнота, а не непустота; scripts/build_metrics.py::check_badges — обязательный показатель проверяется на ПОЛНОТУ ответа: у каждого проекта по каждому из четырёх есть бейдж или названная причина, а пустая причина ответом не считается"
+        },
+        "129": {
+          "mechanism": "process-step",
+          "where": "предметов у правила четыре, и перебраны все. Экспорт каталога читается scripts/build_metrics.py::rules_export; ответ по каждому правилу — .rules/bindings.json, и его живость держит гейт scripts/check_bindings.py; синхронизация подключена .github/workflows/rules-inbox.yml — действием каталога, а не копией скрипта; версия схемы лежит полем schema там же. ОБРАТНОЙ ССЫЛКИ НЕТ: правило, чей след ведёт на задачу этого репозитория, в самой задаче не отражается ничем. Пробел назван, механизма нет, mechanism поэтому process-step, а не gate; .github/workflows/main-red.yml — второй механизм каталога, подключённый по тому же контракту: тянет потребитель своим токеном и в свой трекер, каталог не рассылает ничего сам; .rules/proposals.json — обратная половина контракта: каталог ТЯНЕТ предложения обычным HTTPS, витрина кладёт файл у себя. Ни токена в чужой проект, ни клона, ни прав — та же форма, что и у прямой половины. Номера у предложения нет и быть не может: его присваивает каталог при приёме"
+        },
+        "131": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md § Критические запреты — из окна не сливают руками. .github/workflows/open-pr.yml — учётные данные на записи снова имеют предмет, и это исправление прежнего вердикта, а не добавление к нему: здесь было записано, что при squash подмена учётных данных предмета не имеет. Неверно. Автором squash площадка ставит автора ИЗМЕНЕНИЯ, то есть того, чьими учётными данными изменение открыто, — и коммит ca7dfcd приехал в main за подписью бота именно поэтому. Гейт по окружению по-прежнему не заводится: предмет держится тем, что изменение открывает прогон токеном владельца"
+        },
+        "132": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md § Критические запреты — не везти в одном PR несколько тем; .github/pull_request_template.md — тот же вопрос критику. Гейта нет намеренно: число затронутых зон сборности не доказывает, а ложный отказ на широкой теме дороже пропуска. Правило само требует предупреждения, а не отказа, — а предупреждать здесь некому"
+        },
+        "133": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md § Критические запреты — оговорка к запрету на несколько тем: пересечение файлов сильнее темы. У витрины общие файлы почти у каждой правки — HISTORY.md и .rules/bindings.json, — поэтому изменения идут по одному, и встречи на общем файле не случается"
+        },
+        "134": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md — сам факт его существования и есть механизм: свод лежит в репозитории и читается при старте каждого окна, вместе со ссылкой на каталог. До PR #22 его не было, и окно витрины стартовало вслепую — это инцидент самого правила"
+        },
+        "135": {
+          "mechanism": "process-step",
+          "where": ".rules/README.md § Из окна не пишут — личность этого окна установлена пробой того же класса, а не опросом токена, и результат годен только для него: следующее окно проверяет заново. scripts/check_author.py — то, что окно подписалось не тем именем, теперь выясняется записью и проверкой, а не памятью"
+        },
+        "136": {
+          "mechanism": "process-step",
+          "where": ".rules/bindings.json — вердикт пишется после перебора всех предметов правила, а не первого; инцидент правила — наш же вердикт по 004, отклонённый по сборке метрик при втором непросмотренном предмете. scripts/check_bindings.py проверяет, что перечисленное существует, но не то, что перечислено всё, — полноту перебора машиной не поймать, и это названо прямо"
+        },
+        "137": {
+          "mechanism": "gate",
+          "where": "scripts/build_metrics.py::unanswered — сторож стоит до форматирования и смотрит на измеренное; scripts/build_metrics.py::order_of — форматирование применяется к уже проверенному. Инцидент правила — эта самая сборка: «0000+ tests» проходило мимо сравнения с «0»"
+        },
+        "138": {
+          "mechanism": "process-step",
+          "where": "CLAUDE.md § Журнал изменений — журнал пополняется тем же заходом, что и правка, а не перед выпуском; решение оседает записью в HISTORY.md сразу"
+        },
+        "139": {
+          "mechanism": "process-step",
+          "where": ".rules/README.md § Конвейер — каждое звено названо вместе с изменением, на котором оно отработало: механизм считается подтверждённым прогоном, а не чтением"
+        },
+        "140": {
+          "mechanism": "gate",
+          "where": "scripts/check_bindings.py::selftest, scripts/check_roles.py::selftest, scripts/check_labels.py::selftest — включая вывод метки по заголовку, где ошибка ставит НЕВЕРНУЮ метку, то есть врёт о зоне работы, scripts/build_metrics.py::selftest, scripts/gh_outcome.py::selftest — через каждый гейт нарочно прогоняется то, что он обязан отвергнуть, и то, что обязан пропустить: набор из одних отказов не видит ложного отказа. Прогоны стоят шагами в .github/workflows/pr-check.yml, а не запускаются руками"
+        },
+        "141": {
+          "mechanism": "process-step",
+          "where": "предметы перебраны все четыре. scripts/build_metrics.py::patch_readme — маркер сверяется вместе с закрывающими знаками, поэтому m:rules не совпадает с m:required; scripts/build_metrics.py::sync_alt — имя картинки читается целиком до расширения; scripts/check_bindings.py::REFERENCE — путь берётся с ведущей точкой и до известного расширения, якорь сверяется словом целиком; scripts/check_roles.py::ROW — образец берётся внутри обратных кавычек. Гейта, который поймал бы будущее сравнение началом, нет: это свойство кода, а не вход проверки"
+        },
+        "142": {
+          "mechanism": "process-step",
+          "where": "предметов три, перебраны все. .github/workflows/metrics.yml — отказ приезжает изменением, то есть в трекер и в почту владельцу; .github/workflows/rules-inbox.yml — очередь нерассмотренных правил ведёт задачу, а не красноту на вкладке прогонов. Третий предмет закрыт: .github/workflows/main-red.yml — дежурный по общей ветке спрашивает вкладку прогонов раз в сутки и ведёт ОДНУ задачу, пока там есть красное. Адресат один на ВСЕ прогоны, а не по одному на каждый: пробел был назван у attribution-history, но предмет оказался крупнее — красное на общей ветке не принадлежит никому у любого прогона. Логика взята у каталога ссылкой на закреплённую версию — дежурный каталога, вынесенный туда этим же окном (playbook#139, playbook#141); своей копии здесь нет. Исключений у витрины НЕТ, и это решение: у каталога attribution-history исключён, потому что его красное означало бы непочинимый долг прошлого, а здесь долг объявлен заново ключом --since, и каждое новое красное на нём означает новый дефект"
+        },
+        "143": {
+          "mechanism": "process-step",
+          "where": ".rules/README.md § Из окна не пишут — автора коммита в общей ветке задаёт учётная запись, открывшая изменение, а не подписи коммитов ветки. Замер этого окна на изменениях #45 и #46: автором squash встал владелец, потому что изменения открыты его учётной записью. scripts/check_author.py держит ДРУГОЕ — подпись коммитов ветки, и на автора в общей ветке она не влияет; сказано прямо, чтобы гейт не читали шире, чем он есть"
+        },
+        "144": {
+          "mechanism": "none",
+          "where": "предмет есть: витрина машинно разбирает прозу, написанную людьми, в трёх местах — и ни в одном не режет её пунктуацией. scripts/check_bindings.py::audit берёт поля where и why ЦЕЛИКОМ и ищет ссылки по всему тексту: окна нет вовсе, то есть ошибка возможна только в сторону лишнего, а она приходит и жалуется. scripts/check_roles.py::patterns режет .rules/roles.md по строкам таблицы, scripts/build_metrics.py — по маркерам в README.md: обе границы структурные, ровно как требует правило. Точка в путях здесь встречается постоянно (.github/workflows/pr-check.yml, README.md), и разбор по предложениям резал бы именно эти ссылки — тот же класс, что в инциденте правила. Гейта нет: держать нечего, пока никто не сузил окно; если сузят, границей обязана быть разметка"
+        },
+        "145": {
+          "mechanism": "gate",
+          "where": "самопроверки в .github/workflows/pr-check.yml прогоняют каждый объявленный исход, а не только успешный. scripts/gh_outcome.py::selftest — все три (ответил · не ответил · ответил отказом), плюс ловушка порядка отдельной строкой. scripts/check_author.py::selftest — все три, включая «проверка не отработала»: он был объявлен в докстроке и НЕ прогонялся ни разу, набор проверял только offenders. Найдено замером при вынесении этого вердикта и закрыто тем же заходом — исход выполняется запуском самого скрипта, потому что живёт в main, а не в разбираемой функции. Шаги прогонов с разбором кода возврата (.github/workflows/automerge.yml, .github/workflows/open-pr.yml) прогнаны подставным gh по каждому исходу. ЛОВУШКА ИЗ ИНЦИДЕНТА ПРАВИЛА ЗДЕСЬ ЖИВАЯ: площадка зовёт шаг как bash -e, и set -uo pipefail этого -e не снимает — витрина словила её 27 августа кодом 2 на несуществующем файле; поэтому каждый вызов из шага прикрыт `|| verdict=…`. Пробел, названный при вынесении этого вердикта, закрыт тем же окном: scripts/check_labels.py::outcome вынесен из main отдельной функцией — ветка «внешнему участнику мягко, владельцу отказ» жила рядом с обращением к площадке, и достать её самопроверкой было нечем; теперь прогоняются все четыре исхода плюс вызов без номера изменения. scripts/build_metrics.py::selftest прогоняет исход «вызвано без клона грейдера» запуском самого скрипта"
+        },
+        "146": {
+          "mechanism": "process-step",
+          "where": "утверждение под гейтом проверяется замером, а не зеленью. Подтверждено на живом предмете дважды, и оба раза утверждение оказалось ЛОЖНЫМ при исправном механизме. Первое: .rules/bindings.json rules.131 утверждал, что при squash подмена учётных данных на записи предмета не имеет. Замер по пятнадцати первопредкам main: изменения, открытые владельцем, дают автором владельца, а открытое ботом (ca7dfcd) — бота. Решает учётная запись, ОТКРЫВШАЯ изменение; вердикт исправлен, механизм — .github/workflows/open-pr.yml. Второе: .github/workflows/automerge.yml утверждал со ссылкой на замер каталога, что включение автомержа отказывает изменению в чистом состоянии. На витрине не подтвердилось — замер на #68: состояние clean, автомерж включился. Утверждение заменено двумя замерами с их условиями, а не сведено к одному правдоподобному. Оба случая объединяет то, ради чего правило написано: гейты были зелёные и держали не то"
+        },
+        "147": {
+          "mechanism": "none",
+          "where": "предмет есть, и инцидент правила витрине НЕ грозит — по устройству, а не по везению. .github/workflows/open-pr.yml будится `branches-ignore: [main, badges, output]`, то есть на ЛЮБОЙ рабочей ветке: переключателя по имени здесь нет, и отмена всегда оставляет прогон с предупреждением — «токен не задан», «изменение уже открыто», «ветка не разошлась с main». Это ровно тот выбор, который каталог сделал иначе (префикс `agent/`), и его инцидент — правило, пролежавшее сутки на ветке `rule/…` без единого прогона — здесь невозможен. НАЗВАННЫЙ ПРОБЕЛ, ТОГО ЖЕ КЛАССА: .github/workflows/pr-check.yml будится только на `branches: [main]`. Изменение с другой общей веткой не даст ни одного прогона, и выглядеть будет непроверенным-но-здоровым — «не совпало» и «совпало, делать нечего» дадут один наблюдаемый исход. Сегодня безвредно: общая ветка одна. Адресат у такой отмены не заведён: .github/workflows/main-red.yml смотрит на красные прогоны, а не на отсутствующие, и НЕ ловит этот класс"
+        },
+        "148": {
+          "mechanism": "none",
+          "where": "предмет есть и он в конвейере. .github/workflows/automerge.yml решает по ЗАПИСИ изменения — `gh pr view --json isDraft,state,baseRefName,autoMergeRequest`, — а не по голове и общей ветке. То же у .github/workflows/open-pr.yml и .github/workflows/metrics.yml: обе спрашивают `gh pr list`, то есть ту же кэшированную проекцию. ОТСТАВАНИЕ ЗАМЕРЕНО ЗДЕСЬ, а не принято на веру: 27 августа сразу после слияния запись отдавала `mergeable_state: unknown` при уже слитом изменении. ЧЕМ ЭТО ГРОЗИТ ИМЕННО ТУТ: поле `armed` читается из записи, и устаревшее «автомерж уже включён» уводит шаг в пропуск — изменение не сольётся молча, без единого красного. Обратная сторона тоже возможна: `state` из записи может утверждать `OPEN` у закрытого. МЕХАНИЗМА НЕТ, И ЭТО НАЗВАНО: признак отставания у правила проверяемый — метка времени записи старше последней проверки на её голове, — но витрина его не спрашивает нигде. Лечится сменой головы, а не повтором проверки; у витрины смена головы это новый пуш, и он же лечит тупик `unstable` из #65"
+        }
       }
     },
     {
