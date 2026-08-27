@@ -23,7 +23,7 @@
       "role": "потребитель",
       "bindings": "https://raw.githubusercontent.com/ArtVsMark/ArtVsMark/main/.rules/bindings.json",
       "access": "public",
-      "proposals": null,
+      "proposals": "https://raw.githubusercontent.com/ArtVsMark/ArtVsMark/main/.rules/proposals.json",
       "since": "2026-08-22"
     },
     {
