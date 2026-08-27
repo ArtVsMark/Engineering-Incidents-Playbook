@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import re
 import sys
 import sysconfig
 from pathlib import Path
@@ -62,33 +63,34 @@ def imported(path: Path) -> set[str]:
     return out
 
 
-def distributions_for(name: str) -> set[str]:
-    """Дистрибутивы, которые ставят модуль с таким именем.
-
-    ИМЯ ПАКЕТА И ИМЯ МОДУЛЯ — РАЗНЫЕ ВЕЩИ, и это не редкость: `pyyaml` даёт
-    `yaml`, `pillow` даёт `PIL`. Таблица синонимов здесь была бы списком
-    запрещённого наоборот — она не знает о том, что появится завтра (068).
-    Метаданные знают точно, и спрашиваем мы их.
-    """
-    try:
-        from importlib.metadata import packages_distributions
-    except ImportError:  # pragma: no cover — Python старше 3.10
-        return set()
-    try:
-        found = packages_distributions().get(name, [])
-    except Exception:  # pragma: no cover — метаданные битые
-        return set()
-    return {d.lower().replace("-", "_") for d in found}
+#: Имя модуля, объявленное рядом с пакетом: «pyyaml  # модуль: yaml».
+#: Форма склоняется: «модуль», «модуля», «модули». Требовать одну — значит
+#: получить находку на ровном месте у того, кто написал по-русски правильно.
+MODULE_RE = re.compile(r"#\s*модул\w*\s*:\s*([\w., ]+)", re.IGNORECASE)
 
 
 def declared(root: Path) -> tuple[set[str], str | None]:
+    """Объявленные имена: и пакетов, и модулей, которые они дают.
+
+    ИМЯ ПАКЕТА И ИМЯ МОДУЛЯ — РАЗНЫЕ ВЕЩИ: `pyyaml` даёт `yaml`, `pillow` даёт
+    `PIL`. Первая версия этой проверки спрашивала метаданные УСТАНОВЛЕННОГО
+    пакета — и тем самым зависела от того, что уже установлено, то есть болела
+    ровно той болезнью, которую ловит. Замер: она прошла у автора и упала в
+    конвейере, где библиотеки на момент проверки ещё нет.
+
+    Поэтому имя модуля ОБЪЯВЛЯЕТСЯ рядом с пакетом, а не выясняется. Проверка
+    работает на голом дереве, без единой установки.
+    """
     path = root / REQS
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
     except OSError as e:
         return set(), f"{REQS} не прочитан — {e}"
-    names = set()
+    names: set[str] = set()
     for raw in lines:
+        m = MODULE_RE.search(raw)
+        if m:
+            names |= {n.strip().lower() for n in re.split(r"[,\s]+", m.group(1)) if n.strip()}
         line = raw.split("#")[0].strip()
         if not line or line.startswith("-"):
             continue
@@ -127,10 +129,7 @@ def main(argv: list[str] | None = None) -> int:
         for name in sorted(names):
             if name in known:
                 continue
-            if name.lower().replace("-", "_") in allowed:
-                continue
-            # Пакет мог быть объявлен под своим именем, а не именем модуля.
-            if distributions_for(name) & allowed:
+            if name.lower().replace("-", "_") in allowed or name.lower() in allowed:
                 continue
             problems.append(
                 f"{path.name}: импортирует «{name}», которого нет ни в "
