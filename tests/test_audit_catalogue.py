@@ -152,3 +152,45 @@ def test_ответ_без_причины_это_находка(repo):
         RU.format(f="**Переносится вне Claude Code.** частично\n\n"),
         EN.format(f=P_EN)))
     assert out and "без причины" in out[0]
+
+
+# ── предел, выраженный числом (правило 108) ───────────────────────────────
+#
+# Растущий документ без предела перестаёт отвечать на вопрос «что было
+# недавно» и не сообщает об этом. Гейт держит только СЧЁТ: дословность
+# переноса в архив машинно не проверить, и это сказано в самом скрипте.
+
+def turns(n: int) -> str:
+    return "\n".join(TURN.replace("номер присуждается здесь", f"поворот {i}")
+                      for i in range(n))
+
+
+def test_окно_не_переполнено_проходит(repo):
+    history(repo, turns(ac.HISTORY_WINDOW))
+    assert ac.check_history(repo) == []
+
+
+def test_переполненное_окно_это_находка(repo):
+    history(repo, turns(ac.HISTORY_WINDOW + 1))
+    out = ac.check_history(repo)
+    assert out and "окно" in out[0]
+
+
+def test_находка_называет_СТАРШИЕ_повороты_поимённо(repo):
+    """Не «слишком много», а что именно переносить — и с какого края."""
+    history(repo, turns(ac.HISTORY_WINDOW + 2))
+    out = [p for p in ac.check_history(repo) if "окно" in p]
+    assert out
+    assert "«поворот 0»" in out[0] and "«поворот 1»" in out[0]
+    assert f"«поворот {ac.HISTORY_WINDOW + 1}»" not in out[0]
+
+
+def test_находка_называет_куда_переносить(repo):
+    history(repo, turns(ac.HISTORY_WINDOW + 1))
+    out = [p for p in ac.check_history(repo) if "окно" in p]
+    assert out and ac.HISTORY_ARCHIVE in out[0]
+
+
+def test_предел_выражен_числом_а_не_наречием():
+    """Само требование 108: предел ЧИСЛОМ. «Много» проверить нельзя."""
+    assert isinstance(ac.HISTORY_WINDOW, int) and ac.HISTORY_WINDOW > 0
