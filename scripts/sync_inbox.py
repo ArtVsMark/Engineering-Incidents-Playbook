@@ -29,6 +29,8 @@ import json
 import os
 import subprocess
 import sys
+
+import ghcli
 import urllib.error
 import urllib.request
 
@@ -46,9 +48,9 @@ def fetch_rules(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None
         return None, f"{url} — {e}"
 
 
-def gh(*args: str) -> tuple[int, str]:
-    done = subprocess.run(["gh", *args], capture_output=True, text=True)
-    return done.returncode, (done.stdout or done.stderr).strip()
+#: Вызов gh живёт в одном месте на весь каталог: у четырёх копий
+#: разъехалось поведение при отсутствии самого gh (правила 090, 022).
+gh = ghcli.run
 
 
 def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str) -> str:
