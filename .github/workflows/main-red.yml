@@ -13,6 +13,12 @@
 #
 # ПОЧЕМУ ОДНА. Ежедневная копия завалила бы трекер и приучила листать его мимо —
 # то есть починила бы видимость способом, который её ломает (051).
+#
+# ЛОГИКА ЖИВЁТ СКРИПТОМ, А НЕ ВЫРАЖЕНИЕМ В ШАГЕ. Дежурный нужен каждому
+# потребителю с прогонами по расписанию, а не только каталогу (#139), и копия
+# вбок разъедется с первой правки (090). Заодно шаг нельзя прогнать тем, что он
+# обязан отвергнуть, а скрипт можно — и прогоняется (140, 145). Здесь остаётся
+# то, что принадлежит ЭТОМУ проекту: заголовок, метка, список исключений.
 name: main-red
 
 on:
@@ -39,63 +45,38 @@ jobs:
     timeout-minutes: 10
     env:
       GH_TOKEN: ${{ github.token }}
-      TITLE: "Общая ветка красная: работу не начинают, пока это не починено"
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      # Спрашивается ПОСЛЕДНИЙ завершённый прогон каждой работы на main.
-      # Незавершённые пропускаются: «ещё идёт» — не отказ, и краснеть на нём
-      # значило бы заводить задачу на состояние, которое пройдёт само.
-      #
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       # attribution-history исключён осознанно и по имени: его красное означало
       # бы долг прошлой истории. Сейчас он зелёный, потому что долг объявлен
       # ключом --since; если объявление снимут, вернуть его сюда — отдельное
       # решение, а не молчаливое умолчание (правило 026).
-      - name: какие работы красные на общей ветке
-        run: |
-          set -euo pipefail
-          red=$(gh run list --branch main --limit 40 \
-                  --json name,status,conclusion \
-                  --jq '[.[] | select(.status=="completed")]
-                        | group_by(.name) | map(.[0])
-                        | map(select(.conclusion!="success"))
-                        | map(select(.name!="attribution-history"))
-                        | map(.name) | join(", ")')
-          if [ -z "$red" ]; then
-            echo "общая ветка зелёная: красных работ нет"
-            echo "SKIP=1" >> "$GITHUB_ENV"
-          else
-            echo "красные работы: $red"
-            echo "RED=$red" >> "$GITHUB_ENV"
-          fi
-
-      - name: задача уже открыта
-        if: env.SKIP != '1'
-        run: |
-          set -euo pipefail
-          open=$(gh issue list --state open --search "$TITLE in:title" \
-                   --json number --jq 'length')
-          if [ "$open" != "0" ]; then
-            echo "задача уже открыта — второй раз не завожу"
-            echo "SKIP=1" >> "$GITHUB_ENV"
-          fi
-
-      # Текст лежит файлом, а не строкой внутри YAML: иначе между ним и
-      # площадкой встали бы две интерпретации подряд (правило 013).
       - name: у красноты есть адресат
-        if: env.SKIP != '1'
         env:
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          set -euo pipefail
-          {
-            cat .github/main-red-issue.md
-            echo
-            echo "Красные работы: $RED"
-            echo
-            echo "Прогон: $RUN"
-          } > "$RUNNER_TEMP/body.md"
-          gh issue create --title "$TITLE" --label "area/gates" \
-            --body-file "$RUNNER_TEMP/body.md"
+          set -uo pipefail
+          # Площадка зовёт шаг как `bash -eo pipefail {0}`, и `set -uo pipefail`
+          # этот `-e` НЕ снимает: без `|| rc=$?` оболочка умирает на ненулевом
+          # коде раньше разбора. Именно на этом файле правило 145 и написано —
+          # «объявлено два исхода, прогонов было ноль».
+          rc=0
+          python scripts/main_red.py \
+            --branch main \
+            --exclude attribution-history \
+            --title "Общая ветка красная: работу не начинают, пока это не починено" \
+            --label "area/gates" \
+            --body-file .github/main-red-issue.md \
+            --run-url "$RUN" \
+            --apply || rc=$?
+          # Красные работы — находка для человека, а не поломка дежурного.
+          # Красным здесь имеет смысл быть только третьему исходу (039).
+          if [ "$rc" -eq 2 ]; then exit 1; fi
+          exit 0
