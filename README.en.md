@@ -3,6 +3,10 @@
 [![Release](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Frelease.json&cacheSeconds=300)](https://github.com/ArtVsMark/claude-code-playbook/releases)
 [![Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](VERSIONING.md)
 [![Rules in the catalogue](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Frules-en.json)](rules/README.md)
+[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
+[![Tests](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Ftests.json)](tests/)
+[![Test modules](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Ftest-modules.json)](tests/)
+[![PR checks](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fmain%2F.github%2Fbadges%2Fgates.json)](.github/workflows/ci.yml)
 
 **A catalogue of <!--m:rules-->146<!--/m:rules--> rules for Claude Code and GitHub,
 where every one grew out of a real failure.** Agent sessions and the project rulebook (`CLAUDE.md`), the
@@ -10,6 +14,16 @@ GitHub delivery pipeline, parallel executors, audits. Every record comes with it
 history: what broke, how it surfaced, what it cost.
 
 > 🇷🇺 [Русская версия](README.md) · Unofficial, not affiliated with Anthropic.
+
+> **What the showcase does not answer, and why.** The question set is one and the
+> same across projects ([`.rules/showcase.json`](.rules/showcase.json)), and a gap
+> in it is named rather than omitted: there is no **PyPI** badge because the
+> catalogue is not a package and the subject does not exist; there is no **CI**
+> badge because the platform reports run state itself, and a second source of the
+> same thing drifts from the first silently
+> ([022](rules/en/022-one-canonical-document.md)). A missing badge and a frozen
+> badge look identical from the outside — hence the named gap
+> ([046](rules/en/046-name-the-gaps-do-not-level-them.md)).
 
 **Start here:** [ten rules to start with](TOP-10.md) ·
 [day-one order](START.md) ·
