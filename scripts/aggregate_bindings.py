@@ -355,6 +355,68 @@ def trail_counts(rules: list[dict]) -> dict[str, int]:
     return out
 
 
+def stale_answers(slices: list[dict], rule_ids: list[str]) -> list[str]:
+    """Ответы потребителей о правилах, которых в каталоге НЕТ.
+
+    ЭТО НАХОДКА, А НЕ ОЧЕРЕДЬ. Нерассмотренное правило — состояние: решение
+    ещё не принято, и оно примется. Ответ о несуществующем правиле не
+    рассосётся сам: он останется ровно таким, пока его кто-нибудь не удалит.
+
+    ЧЕМ ЭТО ОПАСНО ИМЕННО ЗДЕСЬ. Потребители ключуются по НОМЕРУ, а не по
+    слагу. Пока номер свободен, лишний ответ — мусор; как только номер займёт
+    новая запись, тот же ответ начнёт читаться как решение по ней, и не
+    покраснеет ничто: статус есть, механизм назван, гейт полноты зелен.
+    Каталог сообщит «потребитель держит правило NNN вот здесь» о записи,
+    которой тот не видел.
+
+    ПОЧЕМУ ЭТОГО НЕ БЫЛО. У СЕБЯ каталог такой ответ отвергает — это
+    `check_bindings.py`, «ответ есть, а правила такого в каталоге нет».
+    У потребителей тот же вопрос не задавался вовсе: число печаталось в
+    отчёте и ни к чему не вело. Замер: у витрины лежит ответ о правиле 143,
+    удалённом как дубль, и лежит он с самого удаления.
+
+    ГРАНИЦА. Отсюда нельзя починить: файл чужой. Поэтому находка живёт в
+    СЕТЕВОМ прогоне, у которого есть адресат, а на изменении печатается
+    предупреждением — красить чужую работу за чужой файл значит приучать к
+    красному (051).
+    """
+    known = set(rule_ids)
+    out: list[str] = []
+    for s in slices:
+        extra = sorted(set(s.get("rules") or {}) - known)
+        if extra:
+            out.append(f"{s['repo']}: отвечает о правилах, которых в каталоге "
+                       f"нет — {', '.join(extra)}. Номер не переиспользуется, "
+                       "но и ответ о снятом правиле не должен лежать: заняв "
+                       "номер, новая запись унаследует чужое решение молча")
+    return out
+
+
+def census(slices: list[dict], rule_ids: list[str]) -> list[str]:
+    """Сколько правил сейчас и сколько из них разобрано — по каждому.
+
+    Печатается КАЖДЫМ прогоном, а не только красным. Число, которое видно
+    лишь при поломке, отвечает на вопрос «что сломалось», но не на вопрос
+    «куда мы движемся»; второй здесь и есть предмет.
+    """
+    known = set(rule_ids)
+    out = [f"правил в каталоге: {len(known)}"]
+    for s in slices:
+        answers = s.get("rules")
+        if answers is None:
+            out.append(f"  {s['repo']}: {s.get('state')} — {s.get('why', '')}")
+            continue
+        by = s.get("by_status") or {}
+        mech = s.get("by_mechanism") or {}
+        out.append(
+            f"  {s['repo']}: разобрано {len(known & set(answers)) - by.get('unreviewed', 0)}"
+            f" из {len(known)} · не рассмотрено {by.get('unreviewed', 0)}"
+            f" · без ответа {len(known - set(answers))}"
+            f" · лишних {len(set(answers) - known)}"
+            f" · действует {by.get('active', 0)} (ничем {mech.get('none', 0)})")
+    return out
+
+
 def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
     """Таблица «где действует». Файл производный и руками не правится."""
     lines = [
@@ -525,6 +587,10 @@ def check_offline(consumers: list[dict], rule_ids: list[str]) -> int:
     # прогоне, где у него есть адресат.
     for w in unconnected(consumers):
         print(f"  · {w}")
+    for w in stale_answers(slices, rule_ids):
+        print(f"  · {w}")
+    for line in census(slices, rule_ids):
+        print(line)
     print(f"сводка согласована: потребителей {len(slices)}, из них подключено "
           f"{connected}; сеть не опрашивалась")
     return 0
@@ -570,6 +636,7 @@ def main() -> int:
     # Срок вышел — это отказ СЕТЕВОГО прогона: у него есть адресат, задача в
     # трекере. На изменении тот же список печатается без отказа (см. --check).
     problems += unconnected(consumers)
+    problems += stale_answers(slices, rule_ids)
 
     doc = {
         "schema": "1.0",
@@ -581,6 +648,9 @@ def main() -> int:
 
     EXPORT_JSON.write_text(text_json, encoding="utf-8")
     EXPORT_MD.write_text(text_md, encoding="utf-8")
+
+    for line in census(slices, rule_ids):
+        print(line)
 
     # ── исход 1: находки ───────────────────────────────────────────────────
     if problems:

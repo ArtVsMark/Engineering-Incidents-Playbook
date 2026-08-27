@@ -470,3 +470,84 @@ def test_механизмы_считаются_различными_адреса
                   if l.startswith("| `a`"))
 
     assert строка.split("|")[11].strip() == "1"
+
+
+# ── сколько правил и сколько разобрано: у находки есть адресат ────────────
+#
+# У СЕБЯ каталог ответ о несуществующем правиле отвергает — check_bindings,
+# «ответ есть, а правила такого в каталоге нет». У потребителей тот же вопрос
+# не задавался вовсе. Замер: у витрины лежит ответ о правиле 143, удалённом
+# как дубль, и лежал он там с самого удаления, невидимый.
+
+def test_ответ_о_несуществующем_правиле_это_находка():
+    срез = [{"repo": "o/a", "rules": {"001": "active", "143": "active"}}]
+
+    находки = ab.stale_answers(срез, ["001", "002"])
+
+    assert len(находки) == 1 and "143" in находки[0]
+
+
+def test_правило_без_ответа_находкой_не_считается():
+    """Очередь — не поломка: нерассмотренное решится, лишний ответ — нет."""
+    срез = [{"repo": "o/a", "rules": {"001": "active"}}]
+
+    assert ab.stale_answers(срез, ["001", "002"]) == []
+
+
+def test_неподключённый_в_находки_не_попадает():
+    """У него нет ответа вовсе — упрекать не в чем."""
+    assert ab.stale_answers([{"repo": "o/a", "state": "не подключён"}], ["001"]) == []
+
+
+def test_на_изменении_лишний_ответ_это_предупреждение_а_не_отказ(
+        monkeypatch, repo, capsys):
+    """Чужой файл отсюда не чинится — красить за него чужую работу нельзя."""
+    путь = answer(repo, ".rules/a.json", **{"001": "active", "143": "active"})
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}],
+            rules=("001", "002"))
+    cli(monkeypatch)
+    ab.main()
+
+    cli(monkeypatch, "--check")
+    код = ab.main()
+
+    assert код == 0
+    assert "которых в каталоге нет — 143" in capsys.readouterr().out
+
+
+def test_в_сетевом_прогоне_лишний_ответ_роняет(monkeypatch, repo, capsys):
+    """У сетевого прогона есть адресат — задача в трекере."""
+    путь = answer(repo, ".rules/a.json", **{"001": "active", "143": "active"})
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}],
+            rules=("001", "002"))
+    cli(monkeypatch)
+
+    код = ab.main()
+
+    assert код == 1
+    assert "которых в каталоге нет" in capsys.readouterr().err
+
+
+def test_перепись_печатается_и_на_зелёном(monkeypatch, repo, capsys):
+    """Число, видное только при поломке, не отвечает «куда мы движемся»."""
+    путь = answer(repo, ".rules/a.json", **{"001": "active", "002": "unreviewed"})
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}],
+            rules=("001", "002", "003"))
+    cli(monkeypatch)
+
+    код = ab.main()
+    вывод = capsys.readouterr().out
+
+    assert код == 0
+    assert "правил в каталоге: 3" in вывод
+    assert "разобрано 1 из 3 · не рассмотрено 1 · без ответа 1 · лишних 0" in вывод
+
+
+def test_перепись_называет_неподключённого_состоянием(monkeypatch, repo, capsys):
+    prepare(monkeypatch, repo, [{"repo": "o/тихий", "bindings": None}],
+            rules=("001",))
+    cli(monkeypatch)
+
+    ab.main()
+
+    assert "o/тихий: не подключён" in capsys.readouterr().out
