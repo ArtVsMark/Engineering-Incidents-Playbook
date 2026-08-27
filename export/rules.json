@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 145,
+  "count": 146,
   "rules": [
     {
       "id": "001",
@@ -3796,6 +3796,35 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "88"
+        }
+      ]
+    },
+    {
+      "id": "147",
+      "slug": "a-cancelling-switch-needs-an-addressee",
+      "title": {
+        "ru": "У переключателя, отменяющего операцию, должен быть адресат отмены",
+        "en": "A switch that cancels an operation needs an addressee for the cancellation"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "наблюдение"
+        ],
+        "en": [
+          "pipeline",
+          "observation"
+        ]
+      },
+      "added": "2026-08-27",
+      "files": {
+        "ru": "rules/ru/147-a-cancelling-switch-needs-an-addressee.md",
+        "en": "rules/en/147-a-cancelling-switch-needs-an-addressee.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "96"
         }
       ]
     }
