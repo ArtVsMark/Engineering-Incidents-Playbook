@@ -334,6 +334,27 @@ def _how_others_enforce(connected: list[dict]) -> list[str]:
     return lines
 
 
+def trail_counts(rules: list[dict]) -> dict[str, int]:
+    """Сколько следов каталога ведёт в каждый репозиторий.
+
+    След — раздел записи, называющий задачу или артефакт у потребителя. До сих
+    пор он был виден только внутри правила, и вопрос «сколько наших правил
+    выросло у грейдера» требовал ручного пересчёта ста сорока семи файлов.
+
+    Считается по ЭКСПОРТУ, а не разбором Markdown: разбор прозы дал бы вторую
+    интерпретацию той же территории. Репозиторий, у которого следов нет, здесь
+    отсутствует — ноль подставляет вызывающий, чтобы «нет следов» и «нет
+    потребителя» не слились.
+    """
+    out: dict[str, int] = {}
+    for r in rules:
+        for t in r.get("trails") or []:
+            repo = t.get("repo")
+            if repo:
+                out[repo] = out.get(repo, 0) + 1
+    return out
+
+
 def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
     """Таблица «где действует». Файл производный и руками не правится."""
     lines = [
@@ -349,17 +370,39 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
         "",
         "## Потребители · Consumers",
         "",
-        "| Проект · Project | Состояние · State | Ответов · Answers | "
-        "Гейтом · Gate | Шагом · Step | Ничем · Nothing | Почему · Why |",
-        "|---|---|---|---|---|---|---|",
+        "| Проект · Project | Состояние · State | Следов · Trails | "
+        "Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | "
+        "Действует · Active | Гейтом · Gate | Шагом · Step | Ничем · Nothing | "
+        "Механизмов · Mechanisms | Почему · Why |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
+    known = set(rule_ids)
     for s in slices:
         answered = s.get("answered")
         m = s.get("by_mechanism") or {}
-        cells = ([str(m.get(k, 0)) for k in ("gate", "process-step", "none")]
-                 if s.get("rules") else ["—", "—", "—"])
+        answers = s.get("rules") or {}
+        if s.get("rules") is None:
+            cells = ["—"] * 7
+        else:
+            # ЛИШНИЙ ОТВЕТ — ЭТО НАХОДКА, А НЕ ОКРУГЛЕНИЕ. Витрина отвечала за
+            # сто сорок восемь правил при ста сорока семи в экспорте: ответ
+            # остался от удалённой записи. Разница пряталась в одном числе
+            # «ответов», и увидеть её можно было только вычитанием в уме.
+            cells = [
+                str(len(known - set(answers))),
+                str(len(set(answers) - known)),
+                str((s.get("by_status") or {}).get("active", 0)),
+                *(str(m.get(k, 0)) for k in ("gate", "process-step", "none")),
+                str(len({a for h in (s.get("holds") or {}).values()
+                         if h.get("mechanism") != "none"
+                         for a in ADDRESS_RE.findall(h.get("where") or "")})),
+            ]
+        # ТОЛЬКО ИМЯ ПРОЕКТА. Владелец у всех строк один и тот же, и в таблице
+        # из двенадцати колонок он занимает место, не различая ни одной. Ниже,
+        # в таблице правил, имя и так короткое — две записи об одном предмете
+        # обязаны выглядеть одинаково (022).
         lines.append(
-            f"| `{s['repo']}` | {s['state']} | "
+            f"| `{s['repo'].split('/')[-1]}` | {s['state']} | {s.get('trails', 0)} | "
             f"{answered if answered is not None else '—'} | "
             + " | ".join(cells) + f" | {s.get('why', '')} |")
 
@@ -517,6 +560,12 @@ def main() -> int:
         return check_offline(consumers, rule_ids)
 
     slices, problems = collect(consumers)
+    try:
+        counts = trail_counts(json.loads(RULES.read_text(encoding="utf-8"))["rules"])
+    except (OSError, ValueError, KeyError):
+        counts = {}
+    for entry in slices:
+        entry["trails"] = counts.get(entry.get("repo"), 0)
     warnings = stale(slices)
     # Срок вышел — это отказ СЕТЕВОГО прогона: у него есть адресат, задача в
     # трекере. На изменении тот же список печатается без отказа (см. --check).
