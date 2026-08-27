@@ -40,7 +40,9 @@ import argparse
 import collections
 import json
 import os
+import shutil
 import sys
+import tempfile
 import urllib.error
 import urllib.request
 
@@ -141,9 +143,29 @@ def selftest() -> int:
     if "005" not in body or "rules/ru/005-x.md" not in body:
         broken.append("комментарий не называет правило или не ведёт в него")
 
-    probe = ghcli.run("--нет-такой-команды")
-    if not ghcli.failed(probe[0]):
-        broken.append("отказ gh не распознан как отказ")
+    # ОТСУТСТВИЕ `gh` И ОТКАЗ `gh` — РАЗНЫЕ ИСХОДЫ (039), и набор проверяет
+    # оба (140). Первая редакция звала `gh` с несуществующим флагом и ждала от
+    # failed() истины. На машине БЕЗ `gh` это проходило — вызов падал в 127; на
+    # машине прогона `gh` есть и на неизвестный флаг отвечает 1, то есть
+    # находкой, а не отказом механизма. Зелено у автора, красно в конвейере, и
+    # причина не в коде, а в том, ЧТО набор считал предметом.
+    with tempfile.TemporaryDirectory() as empty:
+        path = os.environ.get("PATH", "")
+        os.environ["PATH"] = empty
+        try:
+            if not ghcli.failed(ghcli.run("--version")[0]):
+                broken.append("отсутствия gh не видно: механизм не отработал, "
+                              "а исход неотличим от находки")
+        finally:
+            os.environ["PATH"] = path
+
+    # Обратная сторона: живая `gh`, ответившая отказом, — ЭТО находка, и
+    # выдавать её за «механизма нет» нельзя. Случай прогоняется только там, где
+    # `gh` есть; где её нет — говорится вслух, а не пропускается молча (039).
+    if shutil.which("gh") is None:
+        print("  · не прогнан: gh здесь нет — отказ живой gh не проверен")
+    elif ghcli.failed(ghcli.run("--нет-такого-флага")[0]):
+        broken.append("отказ живой gh принят за её отсутствие — исходы разные")
 
     if broken:
         print("\nсамопроверка провалена:", file=sys.stderr)
