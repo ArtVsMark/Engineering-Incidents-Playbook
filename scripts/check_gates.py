@@ -786,6 +786,237 @@ def suite_proposals() -> tuple[list[str], int]:
     return findings, 0
 
 
+# ── Четыре гейта, у которых предмета не было ───────────────────────────────
+#
+# `check_charter.py` печатал это числом: «подделкой проверено 6, только
+# запуском 5». Пятеро проверялись зелёным прогоном на самом репозитории, а он
+# подтверждает, что гейт запускается, и ничего больше — ровно то, о чём 140 и
+# 146. Отвергаемого предмета у них не было по механической причине: корень был
+# вшит в модуль константой. Теперь у всех четырёх есть ключ `--root`, и предмет
+# собирается здесь.
+#
+# Наборы двусторонние (правило 097): рядом с предметом, который гейт обязан
+# отвергнуть, стоит здоровый — иначе гейт, краснеющий всегда, прошёл бы набор.
+
+LINKS_GATE = ROOT / "scripts" / "check_links.py"
+CHANGELOG_GATE = ROOT / "scripts" / "collect_changelog.py"
+BINDINGS_GATE = ROOT / "scripts" / "check_bindings.py"
+AGGREGATE_GATE = ROOT / "scripts" / "aggregate_bindings.py"
+
+#: Здоровый журнал: раздел, в который собираются фрагменты.
+CHANGELOG_OK = "# Журнал\n\n## [Unreleased]\n"
+#: Здоровый экспорт: два правила, чтобы «ответа нет по одному» было отличимо
+#: от «ответа нет вовсе» — последнее третий исход, а не находка.
+EXPORT_OK = ('{"schema": "1.0", "rules": ['
+             '{"id": "001", "added": "2026-01-01"}, '
+             '{"id": "002", "added": "2026-01-02"}]}\n')
+
+
+def tree(root: Path, files: dict[str, str]) -> None:
+    """Пишет дерево из описания «путь → содержимое». Пустое дерево законно."""
+    root.mkdir(parents=True, exist_ok=True)
+    for rel, text in files.items():
+        path = root / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+
+
+def suite_tree(title_gate: Path, cases, flags: tuple[str, ...],
+               prepare=None) -> tuple[list[str], int]:
+    """Общий прогон для гейтов, чей предмет — дерево файлов под `--root`.
+
+    Каждый случай получает СВОЙ корень по той же причине, что и у гейта
+    полноты: иначе один отказ закрывал бы собой остальные.
+    """
+    if not title_gate.exists():
+        print(f"проверка не отработала: {title_gate.relative_to(ROOT)} не найден",
+              file=sys.stderr)
+        return [], 2
+
+    findings: list[str] = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for i, (name, files, want, why) in enumerate(cases):
+            root = Path(tmp) / f"case{i}"
+            tree(root, files)
+            if prepare:
+                err = prepare(name, root)
+                if err:
+                    print(f"проверка не отработала: подделка {name!r} не "
+                          f"собралась — {err}", file=sys.stderr)
+                    return [], 2
+            done = run(sys.executable, str(title_gate), *flags,
+                       "--root", str(root), cwd=ROOT)
+            got = done.returncode
+            mark = "ок" if got == want else "РАСХОЖДЕНИЕ"
+            print(f"  {mark}: {name} — ожидалось {want}, получено {got}")
+            if got != want:
+                findings.append(
+                    f"{name}: ожидалось {want}, получено {got}. {why}\n"
+                    f"        вывод гейта: "
+                    f"{(done.stdout or done.stderr).strip()[:160]}")
+    return findings, 0
+
+
+LINKS_CASES = [
+    ("ссылка ведёт в существующий файл",
+     {"a.md": "[сюда](b.md)\n", "b.md": "# Заголовок\n"}, 0,
+     "здоровое дерево обязано пройти — гейт, краснеющий всегда, бесполезен"),
+    ("ссылка в никуда",
+     {"a.md": "[туда](nope.md)\n", "b.md": "# Заголовок\n"}, 1,
+     "битая ссылка — предмет этого гейта, ради неё он и заведён"),
+    ("якоря в целевом документе нет",
+     {"a.md": "[к разделу](b.md#нет-такого)\n", "b.md": "# Заголовок\n"}, 1,
+     "существующий файл с несуществующим якорем ведёт читателя в пустоту"),
+    ("якорь есть",
+     {"a.md": "[к разделу](b.md#заголовок)\n", "b.md": "# Заголовок\n"}, 0,
+     "приведение заголовка к якорю обязано совпадать, иначе живые ссылки "
+     "получат ложный отказ"),
+    ("документов нет вовсе", {}, 2,
+     "пустой вход — третий исход: проверять было нечего (правило 075)"),
+    ("локальных ссылок нет ни одной",
+     {"a.md": "[наружу](https://example.invalid)\n"}, 2,
+     "документы есть, а предмета нет — вход подозрителен, и молчать нельзя"),
+]
+
+CHANGELOG_CASES = [
+    ("фрагмент по форме",
+     {"CHANGELOG.md": CHANGELOG_OK,
+      "changelog.d/slug.added.md": "Появился гейт ссылок.\n"}, 0,
+     "здоровый фрагмент обязан пройти"),
+    ("фрагмент пуст",
+     {"CHANGELOG.md": CHANGELOG_OK, "changelog.d/slug.added.md": "\n"}, 1,
+     "пустой файл выглядит сделанной работой — это и есть его цена"),
+    ("имя не по форме",
+     {"CHANGELOG.md": CHANGELOG_OK, "changelog.d/slug.md": "Текст.\n"}, 1,
+     "без секции в имени фрагмент не попадёт ни в один раздел сборки"),
+    ("секция не из набора",
+     {"CHANGELOG.md": CHANGELOG_OK, "changelog.d/slug.improved.md": "Текст.\n"},
+     1, "набор секций закрыт: новая секция молча исчезнет при сборке"),
+    ("ведущий дефис в тексте",
+     {"CHANGELOG.md": CHANGELOG_OK, "changelog.d/slug.fixed.md": "- Текст.\n"},
+     1, "сборка подставит свой дефис, и в журнале окажется два"),
+    ("нет каталога фрагментов", {"CHANGELOG.md": CHANGELOG_OK}, 2,
+     "нет предмета — третий исход, а не «всё хорошо»"),
+    ("нет журнала", {"changelog.d/slug.added.md": "Текст.\n"}, 2,
+     "собирать некуда — это тоже неотработавшая проверка, а не находка"),
+]
+
+#: Ответ, названный файл в котором существует: гейт сверяет декларацию с диском.
+BIND_OK = ('{"schema": "1.0", "rules": {'
+           '"001": {"status": "active", "mechanism": "gate", '
+           '"where": "scripts/gate.py — держит форму"}, '
+           '"002": {"status": "unreviewed"}}}\n')
+
+BINDINGS_CASES = [
+    ("ответ полон, названный файл на месте",
+     {".rules/bindings.json": BIND_OK, "export/rules.json": EXPORT_OK,
+      "scripts/gate.py": "# подделка\n"}, 0,
+     "здоровый ответ обязан пройти"),
+    ("по одному правилу ответа нет",
+     {".rules/bindings.json": '{"rules": {"001": {"status": "unreviewed"}}}\n',
+      "export/rules.json": EXPORT_OK}, 1,
+     "«не дошли руки» — это статус unreviewed, а не отсутствующая запись"),
+    ("ответ есть, а правила такого нет",
+     {".rules/bindings.json":
+      '{"rules": {"001": {"status": "unreviewed"}, '
+      '"002": {"status": "unreviewed"}, "003": {"status": "unreviewed"}}}\n',
+      "export/rules.json": EXPORT_OK}, 1,
+     "ответ по несуществующему правилу — след удалённой записи, его надо убрать"),
+    ("заявлен файл, которого нет",
+     {".rules/bindings.json": BIND_OK, "export/rules.json": EXPORT_OK}, 1,
+     "декларация разошлась с фактом — ровно то, ради чего ревизия и заведена"),
+    ("статус вне набора",
+     {".rules/bindings.json":
+      '{"rules": {"001": {"status": "ок"}, "002": {"status": "unreviewed"}}}\n',
+      "export/rules.json": EXPORT_OK}, 1,
+     "свободный статус не сводится в метрику и молча выпадает из счёта"),
+    ("действует, а где именно — не сказано",
+     {".rules/bindings.json":
+      '{"rules": {"001": {"status": "active", "mechanism": "gate"}, '
+      '"002": {"status": "unreviewed"}}}\n',
+      "export/rules.json": EXPORT_OK}, 1,
+     "«действует» без места — обещание, а не ответ (правило 002)"),
+    ("отклонено без причины",
+     {".rules/bindings.json":
+      '{"rules": {"001": {"status": "rejected"}, '
+      '"002": {"status": "unreviewed"}}}\n',
+      "export/rules.json": EXPORT_OK}, 1,
+     "решение без причины вернётся следующей ревизией (правило 026)"),
+    ("нет ответа вовсе", {"export/rules.json": EXPORT_OK}, 2,
+     "нечего сверять — третий исход"),
+    ("в ответе ноль записей",
+     {".rules/bindings.json": '{"rules": {}}\n',
+      "export/rules.json": EXPORT_OK}, 2,
+     "пустой ответ неотличим от полного по коду 1 — поэтому он третий исход"),
+]
+
+#: Реестр с одним потребителем, у которого связи нет: состояние, а не пробел.
+CONSUMERS_OK = ('{"schema": "1.0", "consumers": '
+                '[{"repo": "owner/one", "role": "подделка"}]}\n')
+
+AGGREGATE_CASES = [
+    ("сводка собрана и согласована",
+     {".rules/consumers.json": CONSUMERS_OK, "export/rules.json": EXPORT_OK}, 0,
+     "здоровая сводка обязана пройти"),
+    ("в реестре потребитель, которого нет в сводке",
+     {".rules/consumers.json": CONSUMERS_OK, "export/rules.json": EXPORT_OK}, 1,
+     "сводка отстала от реестра — она и заведена, чтобы этого не случалось"),
+    ("сводки нет вовсе",
+     {".rules/consumers.json": CONSUMERS_OK, "export/rules.json": EXPORT_OK}, 1,
+     "несобранная сводка — находка автора, а не неотработавшая проверка: "
+     "её чинят одной командой"),
+    ("нет реестра потребителей", {"export/rules.json": EXPORT_OK}, 2,
+     "нечитаемый вход — третий исход, а не «у всех всё хорошо» (правило 075)"),
+    ("реестр не называет ни одного потребителя",
+     {".rules/consumers.json": '{"schema": "1.0", "consumers": []}\n',
+      "export/rules.json": EXPORT_OK}, 2,
+     "пустой реестр — подозрительный вход, а не пустая таблица"),
+]
+
+
+#: Случаи, которым сводка нужна собранной. Остальные её не имеют по замыслу.
+PREBUILT = {"сводка собрана и согласована",
+            "в реестре потребитель, которого нет в сводке"}
+
+
+def prepare_aggregate(name: str, root: Path) -> str | None:
+    """Досборка для случаев сводки: её нельзя написать руками, только собрать.
+
+    Собирается ТОЛЬКО там, где сводка должна лежать. Случаи «сводки нет вовсе»
+    и оба третьих исхода шаг пропускают: у последних сборка сама вернула бы 2,
+    и подделка не собралась бы — то есть набор упал бы не на предмете.
+    """
+    if name not in PREBUILT:
+        return None
+    done = run(sys.executable, str(AGGREGATE_GATE), "--root", str(root), cwd=ROOT)
+    if done.returncode != 0:
+        return f"сборка сводки вернула {done.returncode}: {(done.stdout or done.stderr).strip()[:120]}"
+    if name == "в реестре потребитель, которого нет в сводке":
+        (root / ".rules" / "consumers.json").write_text(
+            '{"schema": "1.0", "consumers": ['
+            '{"repo": "owner/one", "role": "подделка"}, '
+            '{"repo": "owner/two", "role": "приехал позже"}]}\n',
+            encoding="utf-8")
+    return None
+
+
+def suite_links() -> tuple[list[str], int]:
+    return suite_tree(LINKS_GATE, LINKS_CASES, ())
+
+
+def suite_changelog() -> tuple[list[str], int]:
+    return suite_tree(CHANGELOG_GATE, CHANGELOG_CASES, ("--check",))
+
+
+def suite_bindings() -> tuple[list[str], int]:
+    return suite_tree(BINDINGS_GATE, BINDINGS_CASES, ())
+
+
+def suite_aggregate() -> tuple[list[str], int]:
+    return suite_tree(AGGREGATE_GATE, AGGREGATE_CASES, ("--check",),
+                      prepare=prepare_aggregate)
+
+
 def main() -> int:
     findings: list[str] = []
     ran = 0
@@ -804,7 +1035,15 @@ def main() -> int:
                                 ("предмет вопроса о соседях:",
                                  suite_near_subject, len(NEAR_SUBJECTS)),
                                 ("вердикт о правилах из проектов:",
-                                 suite_proposals, len(PROPOSAL_CASES))):
+                                 suite_proposals, len(PROPOSAL_CASES)),
+                                ("гейт ссылок:", suite_links,
+                                 len(LINKS_CASES)),
+                                ("фрагменты журнала:", suite_changelog,
+                                 len(CHANGELOG_CASES)),
+                                ("ответ каталога о себе:", suite_bindings,
+                                 len(BINDINGS_CASES)),
+                                ("сводка «где действует»:", suite_aggregate,
+                                 len(AGGREGATE_CASES))):
         print(title)
         got, broke = suite()
         if broke:

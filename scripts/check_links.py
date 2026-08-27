@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import re
 import sys
+import argparse
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -38,9 +39,17 @@ def anchors(path: Path) -> set[str]:
     return out
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    # Ключ «работай в другом корне» заведён не ради удобства: без него у гейта
+    # нет предмета, который он обязан отвергнуть, и проверить его можно только
+    # запуском на здоровом дереве — то есть никак (правила 140, 145).
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--root", type=Path, default=ROOT,
+                    help="корень дерева документов; по умолчанию сам репозиторий")
+    root = ap.parse_args(argv).root
+
     files = [
-        p for p in ROOT.rglob("*.md")
+        p for p in root.rglob("*.md")
         if not any(part in SKIP_DIRS for part in p.parts)
     ]
     if not files:
@@ -57,7 +66,7 @@ def main() -> int:
             checked += 1
             target, _, anchor = raw.partition("#")
             path = (f.parent / unquote(target)).resolve() if target else f
-            rel = f.relative_to(ROOT)
+            rel = f.relative_to(root)
             if not path.exists():
                 problems.append(f"{rel}: ссылка в никуда → {raw}")
                 continue
