@@ -130,8 +130,7 @@ def main() -> int:
         return 2
 
     code, found = gh("issue", "list", "--state", "open", "--limit", "100",
-                     "--search", "rules-inbox in:body", "--json", "number,body",
-                     "--jq", f'[.[] | select(.body | contains("{MARKER}"))][0].number // empty')
+                     "--json", "number,body", "--jq", f'[.[] | select(.body | contains("{MARKER}"))][0].number // empty')
     if code != 0:
         print(f"проверка не отработала: трекер не ответил — {found}", file=sys.stderr)
         return 2
