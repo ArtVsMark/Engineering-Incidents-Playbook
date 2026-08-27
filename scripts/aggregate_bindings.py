@@ -225,24 +225,10 @@ def check_offline(consumers: list[dict], rule_ids: list[str]) -> int:
 
 
 def main() -> int:
-    global ROOT, CONSUMERS, EXPORT_JSON, EXPORT_MD, RULES
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--check", action="store_true",
                     help="сверить собранное с тем, что лежит на диске")
-    ap.add_argument("--root", type=Path, default=ROOT,
-                    help="корень дерева; по умолчанию сам репозиторий")
     args = ap.parse_args()
-
-    # Ключ «работай в другом корне» заведён не ради удобства: без него у гейта
-    # нет отвергаемого предмета — проверить его можно только запуском на
-    # здоровом дереве, то есть подтвердить лишь то, что он запускается
-    # (правила 140, 145). Пути лежат в константах модуля, поэтому корень
-    # переприсваивает их здесь: иначе ключ будет принят и не исполнен.
-    ROOT = args.root
-    CONSUMERS = ROOT / ".rules" / "consumers.json"
-    EXPORT_JSON = ROOT / "export" / "where.json"
-    EXPORT_MD = ROOT / "export" / "where.md"
-    RULES = ROOT / "export" / "rules.json"
 
     # ── исход 2: проверка не отработала ────────────────────────────────────
     try:

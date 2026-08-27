@@ -20,7 +20,6 @@
 from __future__ import annotations
 
 import datetime as dt
-import argparse
 import json
 import re
 import sys
@@ -62,21 +61,6 @@ COUNT_RE = re.compile(r"\b(два|две|три|четыре|пять|шесть
 
 
 def main() -> int:
-    global ROOT, BINDINGS, EXPORT
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--root", type=Path, default=ROOT,
-                    help="корень дерева; по умолчанию сам репозиторий")
-    args = ap.parse_args()
-
-    # Ключ «работай в другом корне» заведён не ради удобства: без него у гейта
-    # нет отвергаемого предмета — проверить его можно только запуском на
-    # здоровом дереве, то есть подтвердить лишь то, что он запускается
-    # (правила 140, 145). Пути лежат в константах модуля, поэтому корень
-    # переприсваивает их здесь: иначе ключ будет принят и не исполнен.
-    ROOT = args.root
-    BINDINGS = ROOT / ".rules" / "bindings.json"
-    EXPORT = ROOT / "export" / "rules.json"
-
     # ── исход 2 ────────────────────────────────────────────────────────────
     for path in (BINDINGS, EXPORT):
         if not path.exists():

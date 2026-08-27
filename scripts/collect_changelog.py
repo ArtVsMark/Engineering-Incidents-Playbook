@@ -86,24 +86,12 @@ def render(found: dict[str, list[str]]) -> str:
 
 
 def main() -> int:
-    global ROOT, FRAGMENTS, CHANGELOG
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument("--check", action="store_true", help="только проверить")
     mode.add_argument("--preview", action="store_true", help="показать сборку")
     mode.add_argument("--collect", action="store_true", help="собрать в [Unreleased]")
-    ap.add_argument("--root", type=Path, default=ROOT,
-                    help="корень дерева; по умолчанию сам репозиторий")
     args = ap.parse_args()
-
-    # Ключ «работай в другом корне» заведён не ради удобства: без него у гейта
-    # нет отвергаемого предмета — проверить его можно только запуском на
-    # здоровом дереве, то есть подтвердить лишь то, что он запускается
-    # (правила 140, 145). Пути лежат в константах модуля, поэтому корень
-    # переприсваивает их здесь: иначе ключ будет принят и не исполнен.
-    ROOT = args.root
-    FRAGMENTS = ROOT / "changelog.d"
-    CHANGELOG = ROOT / "CHANGELOG.md"
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not FRAGMENTS.is_dir():
