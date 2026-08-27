@@ -133,18 +133,22 @@ def main(argv: list[str] | None = None) -> int:
     # Правило 140: гейт без отвергаемого предмета проверен только на запуск.
     # Это метрика, а не отказ: чинится она работой, а не правкой изменения,
     # и красное здесь приучало бы читать красное как фон (правило 051).
-    tested: set[str] = set()
+    # Отвергаемый предмет гейт получает ДВУМЯ разными механизмами, и метрика
+    # обязана видеть оба. Пока она смотрела в один check_gates.py, она называла
+    # непроверенными гейты, у которых уже лежал набор в tests/, — то есть врала
+    # ровно в ту сторону, в какую метрике врать нельзя (правила 022, 146).
+    by_harness: set[str] = set()
     if harness.exists():
         harness_text = harness.read_text(encoding="utf-8")
-        for gate in in_pipeline:
-            stem = Path(gate).stem
-            if stem in harness_text:
-                tested.add(gate)
-    untested = sorted(in_pipeline - tested)
+        by_harness = {g for g in in_pipeline if Path(g).stem in harness_text}
+    by_tests = {g for g in in_pipeline
+                if (root / "tests" / f"test_{Path(g).stem}.py").exists()}
+    untested = sorted(in_pipeline - by_harness - by_tests)
 
     print(f"свод и конвейер называют одно и то же: гейтов {len(in_pipeline)}, "
           f"расхождений нет")
-    print(f"  подделкой проверено {len(tested)}, "
+    print(f"  подделкой в check_gates: {len(by_harness)}, "
+          f"набором в tests: {len(by_tests)}, "
           f"только запуском {len(untested)}")
     if untested:
         print("  без отвергаемого предмета: "
