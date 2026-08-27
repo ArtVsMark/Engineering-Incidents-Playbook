@@ -125,14 +125,19 @@ def test_и_значок_и_причина_это_находка(repo, capsys):
     assert "ответ один" in capsys.readouterr().err
 
 
-def test_устаревший_счётный_значок_это_находка(repo, capsys):
+def test_свежесть_значка_здесь_не_судится(repo):
+    """Здоровый предмет у самой границы, и это осознанная граница.
+
+    Значки живут на ветке `badges`, в дереве общей ветки их нет. Гейт
+    свежести стоял здесь и краснел на верной работе — число сдвинулось,
+    изменение ни при чём. Такую проверку приучаются пропускать (051).
+    """
     prepare(repo, [{"id": "tests", "ask": "сколько тестов",
-                    "badge": ".github/badges/tests.json"}],
+                    "badge": ".github/badges/tests.json", "branch": "badges"}],
             readme="# П\n\n![t](tests.json)\n")
     synced(repo)
     write(repo / "tests" / "test_a.py", "def test_один():\n    pass\n")
-    assert run(repo) == 1
-    assert "устарел" in capsys.readouterr().err
+    assert run(repo) == 0
 
 
 # ── третий исход ───────────────────────────────────────────────────────────

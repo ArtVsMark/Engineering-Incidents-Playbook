@@ -64,9 +64,56 @@ def git(repo: Path, *args: str) -> str:
                           capture_output=True, text=True, check=True).stdout
 
 
-def agreed(authors: Path) -> set[str]:
-    lines = authors.read_text(encoding="utf-8").split("\n")
-    return {l.strip() for l in lines if l.strip() and not l.startswith("#")}
+#: Заголовок, после которого перечисляются АВТОРЫ, а не соавторы. До него —
+#: соавторы, как было: файл читается старыми потребителями без изменений.
+AUTHORS_HEAD = "[авторы"
+
+
+def agreed(authors: Path) -> tuple[set[str], set[str]]:
+    """Согласованные соавторы и согласованные авторы — двумя списками.
+
+    ПОЧЕМУ ДВА СПИСКА СВЕРЯЮТСЯ ПО-РАЗНОМУ. Соавтор — это ТЕКСТ, написанный
+    рукой в теле коммита, и там «один и тот же человек под двумя именами» и
+    есть та поломка, ради которой список заведён: сверка точная, имя и почта.
+    Автор — это ПОЛЕ, которое подставляет настройка машины, и площадка
+    опознаёт человека по почте: имя там местная переменная, разная на разных
+    машинах. Сверять автора по имени значит краснеть на смене настройки, а не
+    на смене человека, — ложный отказ (правило 097).
+
+    Замер, который это показал: за одни сутки в этом репозитории 18 коммитов
+    подписаны `ArtVsMark <arvs.markitanov@gmail.com>` и 21 —
+    `Artem Markitanov <86671904+ArtVsMark@users.noreply.github.com>`. Один
+    человек, одна почта в GitHub, два написания имени.
+
+    ПОЧЕМУ ВТОРОЙ СПИСОК РАЗРЕШИТЕЛЬНЫЙ. Проверка автора была запретительной:
+    «автором не должен стоять известный соавтор». Она ловит ровно одно
+    написание — `Claude <noreply@anthropic.com>` — и молчит на `claude[bot]`,
+    у которого другое имя и другая почта. Именно так и вышло: изменение #78
+    уехало в общую ветку автором `claude[bot]`, гейт не сказал ничего.
+
+    Это 068 на живом предмете: запрет по чужим именам отваливается целиком,
+    когда сторона переименовалась. Разрешительный список ломается в другую
+    сторону — новый человек получает отказ и приходит с этим, а не уезжает
+    молча в защищённую историю, где переписать уже нечем (правило 114).
+    """
+    co: set[str] = set()
+    people: set[str] = set()
+    target = co
+    for raw in authors.read_text(encoding="utf-8").split("\n"):
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.lower().startswith(AUTHORS_HEAD):
+            target = people
+            continue
+        target.add(line)
+    return co, {mail_of(l) for l in people if mail_of(l)}
+
+
+def mail_of(line: str) -> str:
+    """Почта из строки «Имя <почта>». Личность человека для площадки — она."""
+    m = re.search(r"<([^>]+)>", line)
+    return m.group(1).strip().lower() if m else ""
 
 
 def first_parents(repo: Path, ref: str, since: str | None, names: set[str]) -> int:
@@ -164,6 +211,11 @@ def main() -> int:
     # идёт через облачные окна, нужен отказ, а выразить его было нечем
     # (задача #80, найдено первым сторонним потребителем). Умолчание сохраняет
     # и поведение, и прежнее решение — включает его проект, а не инструмент.
+    ap.add_argument("--require-declared-author", action="store_true",
+                    help="автором каждого коммита обязан стоять человек из "
+                         "раздела «[авторы]» списка. Ключ отдельный и "
+                         "необязательный: у проекта такого раздела может не "
+                         "быть, и тогда требовать его нечем")
     ap.add_argument("--require-coauthor", action="store_true",
                     help="считать отказом коммит вовсе без атрибуции; по "
                          "умолчанию такие только считаются и печатаются числом")
@@ -179,9 +231,14 @@ def main() -> int:
 
     # ── исход 2: проверка не отработала ────────────────────────────────────
     try:
-        names = agreed(authors)
+        names, people = agreed(authors)
     except OSError as e:
         print(f"проверка не отработала: список имён не прочитан — {e}", file=sys.stderr)
+        return 2
+    if args.require_declared_author and not people:
+        print(f"проверка не отработала: запрошен разрешительный список авторов, "
+              f"а раздел «[авторы]» в {authors} пуст — требовать нечем",
+              file=sys.stderr)
         return 2
     if not names:
         print(f"проверка не отработала: {authors} пуст — "
@@ -254,6 +311,15 @@ def main() -> int:
                 f"СОАВТОР, а не автор\n"
                 f"        squash перенесёт эту подпись в общую ветку, и там "
                 f"её не переписать")
+        elif args.require_declared_author and mail_of(author) not in people:
+            # Разрешительный список, а не запретительный. Запрет ловил одно
+            # написание и молчал на `claude[bot]` — так #78 и уехало в общую
+            # ветку авторства бота (правило 068, задача #79).
+            findings.append(
+                f"{sha[:7]} {subject[:56]}\n"
+                f"        автор {author!r} не объявлен в разделе «[авторы]»\n"
+                f"        объявлены почты: "
+                f"{', '.join(sorted(people)) or '— никто'}")
 
         for name in coauthors:
             if name not in names:

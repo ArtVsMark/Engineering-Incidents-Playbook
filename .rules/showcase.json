@@ -24,7 +24,7 @@
       "id": "coverage",
       "ask": "какая доля кода покрыта тестами",
       "badge": ".github/badges/coverage.json",
-      "branch": "main"
+      "branch": "badges"
     },
     {
       "id": "pypi",
@@ -35,19 +35,20 @@
       "id": "tests",
       "ask": "сколько тестов в наборе",
       "badge": ".github/badges/tests.json",
-      "branch": "main"
+      "branch": "badges"
     },
     {
       "id": "test-modules",
       "ask": "сколько тестовых модулей",
       "badge": ".github/badges/test-modules.json",
-      "branch": "main"
+      "branch": "badges"
     },
     {
       "id": "pr-checks",
       "ask": "сколько проверок стоит на изменении",
       "badge": ".github/badges/gates.json",
-      "branch": "main"
+      "branch": "badges"
     }
-  ]
+  ],
+  "_ветка": "Все значки живут на отдельной ветке `badges` и в дереве общей ветки отсутствуют. Значок в `main` требует пересборки от КАЖДОГО изменения: конфликт на каждом слиянии и красное на общей ветке не потому, что что-то сломалось, а потому что число сдвинулось. Свежесть держит badges.yml на каждый толчок в main."
 }

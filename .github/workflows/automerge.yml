@@ -218,7 +218,36 @@ jobs:
           # включать нечего, и единственная честная альтернатива — слить, если
           # ни одна проверка не красная (правило 010: мимо гейтов не сливаем).
           merge_now() {
-            bad=$(gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs"                     --jq '[.check_runs[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled")] | length')
+            # РЕШЕНИЕ ПРИНИМАЕТ СКРИПТ, А НЕ УСЛОВИЕ В ОБОЛОЧКЕ. У условия здесь
+            # нет отвергаемого предмета: подсунуть ему подделанный список
+            # проверок нечем, и проверить его можно только живым слиянием, то
+            # есть никак (140, 145). Логика уехала в scripts/merge_ready.py,
+            # и у неё пятнадцать случаев с обеих сторон.
+            #
+            # Что она держит сверх прежнего: пустой список проверок больше не
+            # считается зеленью (правило 010), а обязательная проверка
+            # спрашивается ПОИМЁННО — «что-то зелёное» ею не является (068).
+            rc=0
+            gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" \
+              | python3 scripts/merge_ready.py --required catalogue || rc=$?
+            if [ "$rc" -eq 2 ]; then
+              echo "::warning::Изменение #$PR: состояние проверок не прочитано — не сливаю."
+              return 0
+            fi
+            if [ "$rc" -ne 0 ]; then
+              echo "::warning::Изменение #$PR: ждать нечего, но сливать нельзя — см. причину выше."
+              return 0
+            fi
+            # Обязательная проверка должна быть среди прошедших поимённо, а не
+            # «что-то зелёное». Иначе достаточно любой посторонней работы.
+            ok=$(gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" \
+                   --jq '[.check_runs[] | select(.name == "catalogue" and .conclusion == "success")] | length')
+            if [ "${ok:-0}" = "0" ]; then
+              echo "::warning::Изменение #$PR: обязательная проверка «catalogue» не зелена на этой голове — не сливаю."
+              return 0
+            fi
+            bad=$(gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" \
+                    --jq '[.check_runs[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled")] | length')
             if [ "${bad:-1}" != "0" ]; then
               echo "::warning::Изменение #$PR: ждать нечего, но есть незелёные проверки — не сливаю."
               return 0
