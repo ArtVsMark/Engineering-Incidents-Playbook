@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 146,
+  "count": 147,
   "rules": [
     {
       "id": "001",
@@ -3829,6 +3829,35 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "96"
+        }
+      ]
+    },
+    {
+      "id": "148",
+      "slug": "a-change-record-is-a-cache",
+      "title": {
+        "ru": "Запись изменения — кэш, а не состояние",
+        "en": "A change record is a cache, not the state"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "данные"
+        ],
+        "en": [
+          "pipeline",
+          "data"
+        ]
+      },
+      "added": "2026-08-27",
+      "files": {
+        "ru": "rules/ru/148-a-change-record-is-a-cache.md",
+        "en": "rules/en/148-a-change-record-is-a-cache.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "74"
         }
       ]
     }
