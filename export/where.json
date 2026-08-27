@@ -175,12 +175,11 @@
       "role": "потребитель",
       "state": "подключён",
       "read_at": "2026-08-27",
-      "answered": 144,
+      "answered": 146,
       "by_status": {
-        "active": 69,
+        "active": 72,
         "not-applicable": 73,
-        "rejected": 1,
-        "unreviewed": 1
+        "rejected": 1
       },
       "rules": {
         "001": "active",
@@ -326,7 +325,9 @@
         "141": "active",
         "142": "active",
         "143": "active",
-        "144": "unreviewed"
+        "144": "active",
+        "145": "active",
+        "146": "active"
       }
     },
     {
