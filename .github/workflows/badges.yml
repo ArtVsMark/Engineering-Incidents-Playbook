@@ -51,7 +51,7 @@ jobs:
           python-version: "3.12"
 
       - name: зависимости для замера покрытия
-        run: python -m pip install --quiet pytest coverage
+        run: python -m pip install --quiet -r requirements-test.txt
 
       # Третий исход здесь законен и ожидаем: пока тега схемы нет, значков
       # версии и выпуска не будет, и это не поломка — это «схема ещё не

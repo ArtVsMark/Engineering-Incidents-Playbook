@@ -336,6 +336,55 @@ rules do not fail the run; only the third outcome does.
 Файла `.rules/bindings.json` может ещё не быть — тогда нерассмотрено всё, и
 первая же задача-«входящие» об этом и скажет. Отдельного шага «подключение» нет.
 
+**Второй названный пробел: у приватного потребителя может не быть трекера.**
+Механизм «входящих» ведёт ОДНУ задачу — в этом вся его идемпотентность. Если
+задачи в репозитории отключены, вести нечего: механизм не сломан, ему негде
+работать. Замер: у одного из шести объявленных потребителей задачи выключены,
+и попытка завести первую вернула `410 Issues has been disabled`.
+
+Что это значит практически: входящая половина канала там не работает вовсе, а
+не работает наполовину. Обходной путь один и он ручной — инцидент приносится в
+каталог задачей у каталога. Автоматики под это нет и не предлагается: чинить
+чужие настройки репозитория механизм не должен.
+
+**A second named gap: a private consumer may have issues disabled.** The inbox
+mechanism maintains exactly one issue — that is its whole idempotency. With
+issues off there is nothing to maintain: the mechanism is not broken, it has
+nowhere to run. Measured: one of six declared consumers returns
+`410 Issues has been disabled`. There, the inbound half does not work at all
+rather than partially, and the workaround is manual by design.
+
+## Как отключиться · How to disconnect
+
+Выход описан наравне со входом, и это не вежливость. Без описанного выхода
+реестр копит объявленных и молчащих потребителей, а сводка «где действует»
+становится шире правды — то самое состояние, ради которого у неё появился срок.
+
+Три шага, в этом порядке:
+
+1. **убрать рабочий процесс** `.github/workflows/rules-inbox.yml` у себя —
+   задача-«входящие» перестанет обновляться;
+2. **закрыть задачу-«входящие»**, если она открыта, — иначе она останется
+   висеть с последним списком и будет врать;
+3. **сказать каталогу** — задачей или изменением в `.rules/consumers.json`.
+   Запись **удаляется целиком**, а не помечается: потребитель, оставленный в
+   реестре «на всякий случай», делает сводку шире правды ровно так же, как
+   никогда не подключившийся.
+
+`.rules/bindings.json` и `.rules/proposals.json` остаются вашими файлами: их
+можно удалить, а можно оставить — каталог их больше не читает.
+
+**Отключение — не ссора и не отказ от правил.** Оно означает одно: этот проект
+больше не отвечает публично. Правила, которые у вас действуют, действуют
+дальше; каталог просто перестаёт утверждать это за вас.
+
+The exit is documented alongside the entry, and not out of politeness: without
+one, the registry accumulates declared-but-silent consumers and the "where it
+applies" summary grows wider than the truth. Three steps: drop the workflow,
+close the inbox issue, tell the catalogue — the registry entry is **deleted**,
+not flagged. Your own answer files stay yours. Disconnecting is not a rejection
+of the rules: it only means this project no longer answers in public.
+
 ## Что каталог отдаёт помимо правил · What else the catalogue publishes
 
 Механизм, а не только текст: гейт, который стоит у нас, подключается
