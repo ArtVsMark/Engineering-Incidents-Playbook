@@ -150,6 +150,50 @@ def check_template(root: Path) -> list[str]:
     return problems
 
 
+#: Разделы поворотного момента в HISTORY.md. «Альтернативы» здесь не для
+#: полноты: решение без отвергнутой альтернативы — это не решение, а ход
+#: работы, и ему место в журнале (правило 026). «Во что превратилось»
+#: обязателен по той же мерке, что «След» у правила: без него поворот
+#: остаётся рассказом.
+TURN_RE = re.compile(r"(?m)^## Поворотный момент: (.+?)\s+·\s+(.+)$")
+TURN_PARTS = ("**Ситуация.**", "**Альтернативы.**", "**Решение.**",
+              "**Во что превратилось.**")
+#: Ссылка, которая разрешается: задача, правило или файл репозитория.
+TURN_LINK_RE = re.compile(r"\]\([^)\s]+\)|[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+#\d+")
+
+
+def check_history(root: Path) -> list[str]:
+    """Поворотные моменты в HISTORY.md: форма и разрешимая ссылка.
+
+    Документа может не быть — это не находка: критерий заведён здесь, а
+    потребитель заготовки волен вести историю иначе или не вести вовсе.
+    """
+    path = root / "HISTORY.md"
+    if not path.exists():
+        return []
+    text = path.read_text(encoding="utf-8")
+    # Форма в самом критерии — образец, а не запись. Его отрезаем по забору
+    # блока кода, иначе гейт краснел бы на собственном описании.
+    text = re.sub(r"(?s)```.*?```", "", text)
+    out: list[str] = []
+    marks = list(TURN_RE.finditer(text))
+    for i, m in enumerate(marks):
+        name = m.group(1)
+        body = text[m.end():marks[i + 1].start() if i + 1 < len(marks) else len(text)]
+        nxt = re.search(r"(?m)^## ", body)
+        if nxt:
+            body = body[:nxt.start()]
+        for part in TURN_PARTS:
+            if part not in body:
+                out.append(f"HISTORY.md, поворот «{name}»: нет раздела "
+                           f"«{part.strip('*').rstrip('.')}»")
+        tail = body.split(TURN_PARTS[-1], 1)
+        if len(tail) == 2 and not TURN_LINK_RE.search(tail[1]):
+            out.append(f"HISTORY.md, поворот «{name}»: «Во что превратилось» "
+                       "без разрешимой ссылки — поворот остался рассказом")
+    return out
+
+
 def collect(root: Path) -> tuple[dict[str, dict[str, Path]], str | None]:
     """Правила обоих деревьев по номерам. Вторым значением — причина отказа."""
     found: dict[str, dict[str, Path]] = {}
@@ -193,7 +237,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
-    problems: list[str] = []
+    problems: list[str] = check_history(root)
     warnings: list[str] = []
     problems += check_template(root)
 
