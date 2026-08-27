@@ -74,7 +74,9 @@ def test_список_имён_без_комментариев_и_пустых(r
 def test_раздел_авторов_читается_отдельно_от_соавторов(repo):
     path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
     co, people = ca.agreed(path)
-    assert co == {AGREED} and people == {OWNER}
+    # Соавтор — точной строкой, автор — почтой: списки сверяются по-разному,
+    # и это не небрежность. Соавтора пишут рукой, автора подставляет машина.
+    assert co == {AGREED} and people == {"owner@example.com"}
 
 
 def test_объявленный_автор_проходит(repo, capsys, monkeypatch):
@@ -99,6 +101,33 @@ def test_бот_автором_это_находка(repo, capsys, monkeypatch):
         "--authors", str(path), "--require-declared-author"])
     assert ca.main() == 1
     assert "не объявлен в разделе" in capsys.readouterr().err
+
+
+def test_то_же_лицо_под_другим_именем_проходит(repo, monkeypatch):
+    """Здоровый предмет у самой границы, и он же — замер этого репозитория:
+    за одни сутки один человек подписался двумя написаниями имени. Почта та
+    же. Краснеть на смене настройки машины значило бы ловить не то (097)."""
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    commit(repo, "второй", f"Co-Authored-By: {AGREED}",
+           author=("owner", "owner@example.com"))
+    path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path), "--require-declared-author"])
+    assert ca.main() == 0
+
+
+def test_почта_в_другом_регистре_отказом_не_считается(repo, monkeypatch):
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    commit(repo, "второй", f"Co-Authored-By: {AGREED}",
+           author=("Владелец", "Owner@Example.com"))
+    path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path), "--require-declared-author"])
+    assert ca.main() == 0
 
 
 def test_без_ключа_бот_автором_проходит_как_раньше(repo, monkeypatch):

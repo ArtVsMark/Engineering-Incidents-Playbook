@@ -72,6 +72,19 @@ AUTHORS_HEAD = "[авторы"
 def agreed(authors: Path) -> tuple[set[str], set[str]]:
     """Согласованные соавторы и согласованные авторы — двумя списками.
 
+    ПОЧЕМУ ДВА СПИСКА СВЕРЯЮТСЯ ПО-РАЗНОМУ. Соавтор — это ТЕКСТ, написанный
+    рукой в теле коммита, и там «один и тот же человек под двумя именами» и
+    есть та поломка, ради которой список заведён: сверка точная, имя и почта.
+    Автор — это ПОЛЕ, которое подставляет настройка машины, и площадка
+    опознаёт человека по почте: имя там местная переменная, разная на разных
+    машинах. Сверять автора по имени значит краснеть на смене настройки, а не
+    на смене человека, — ложный отказ (правило 097).
+
+    Замер, который это показал: за одни сутки в этом репозитории 18 коммитов
+    подписаны `ArtVsMark <arvs.markitanov@gmail.com>` и 21 —
+    `Artem Markitanov <86671904+ArtVsMark@users.noreply.github.com>`. Один
+    человек, одна почта в GitHub, два написания имени.
+
     ПОЧЕМУ ВТОРОЙ СПИСОК РАЗРЕШИТЕЛЬНЫЙ. Проверка автора была запретительной:
     «автором не должен стоять известный соавтор». Она ловит ровно одно
     написание — `Claude <noreply@anthropic.com>` — и молчит на `claude[bot]`,
@@ -94,7 +107,13 @@ def agreed(authors: Path) -> tuple[set[str], set[str]]:
             target = people
             continue
         target.add(line)
-    return co, people
+    return co, {mail_of(l) for l in people if mail_of(l)}
+
+
+def mail_of(line: str) -> str:
+    """Почта из строки «Имя <почта>». Личность человека для площадки — она."""
+    m = re.search(r"<([^>]+)>", line)
+    return m.group(1).strip().lower() if m else ""
 
 
 def first_parents(repo: Path, ref: str, since: str | None, names: set[str]) -> int:
@@ -292,14 +311,15 @@ def main() -> int:
                 f"СОАВТОР, а не автор\n"
                 f"        squash перенесёт эту подпись в общую ветку, и там "
                 f"её не переписать")
-        elif args.require_declared_author and author not in people:
+        elif args.require_declared_author and mail_of(author) not in people:
             # Разрешительный список, а не запретительный. Запрет ловил одно
             # написание и молчал на `claude[bot]` — так #78 и уехало в общую
             # ветку авторства бота (правило 068, задача #79).
             findings.append(
                 f"{sha[:7]} {subject[:56]}\n"
                 f"        автор {author!r} не объявлен в разделе «[авторы]»\n"
-                f"        объявлены: {', '.join(sorted(people)) or '— никто'}")
+                f"        объявлены почты: "
+                f"{', '.join(sorted(people)) or '— никто'}")
 
         for name in coauthors:
             if name not in names:
