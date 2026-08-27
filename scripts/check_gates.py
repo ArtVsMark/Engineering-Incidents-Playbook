@@ -611,6 +611,61 @@ def suite_near() -> tuple[list[str], int]:
     return findings, 0
 
 
+#: Новый вход гейта атрибуции (задача #80): «коммит вовсе без атрибуции» —
+#: находка или число. Пара двусторонняя по построению: умолчание ОБЯЗАНО
+#: сохранять прежнее решение (правило 041 — два честных числа), включённый
+#: ключ обязан отвергать. Односторонний набор здесь был бы бесполезен: он не
+#: отличил бы «ключ работает» от «гейт стал строже для всех».
+REQUIRE_CASES = [
+    ("без атрибуции, ключ выключен", [], 0,
+     "умолчание сохраняет решение 041: такие коммиты считаются и печатаются "
+     "числом, а не отвергаются — иначе ключ сменил бы поведение всем"),
+    ("без атрибуции, ключ включён", ["--require-coauthor"], 1,
+     "ровно то, ради чего вход заведён: потребителю, у которого весь поток "
+     "идёт через облачные окна, нужен отказ (#80)"),
+]
+
+
+def suite_require_coauthor() -> tuple[list[str], int]:
+    """Вход «требовать соавторство»: обе стороны на одном предмете."""
+    if not GATE.exists():
+        print(f"проверка не отработала: {GATE.relative_to(ROOT)} не найден",
+              file=sys.stderr)
+        return [], 2
+
+    findings: list[str] = []
+    with tempfile.TemporaryDirectory() as tmp:
+        repo = Path(tmp) / "bare"
+        repo.mkdir()
+        for cmd in (("git", "init", "-q", "-b", "main"),
+                    ("git", "config", "user.name", "Человек Подделкин"),
+                    ("git", "config", "user.email", "human@example.invalid")):
+            run(*cmd, cwd=repo)
+        (repo / "f.txt").write_text("x", encoding="utf-8")
+        run("git", "add", "-A", cwd=repo)
+        # Коммит БЕЗ единого трейлера — тот самый предмет.
+        run("git", "commit", "-q", "-m", "правка без атрибуции", cwd=repo)
+        base = run("git", "rev-list", "--max-parents=0", "HEAD",
+                   cwd=repo).stdout.strip()
+        (repo / "f.txt").write_text("y", encoding="utf-8")
+        run("git", "commit", "-qam", "вторая правка без атрибуции", cwd=repo)
+
+        for name, extra, want, why in REQUIRE_CASES:
+            done = run(sys.executable, str(GATE), "--repo", str(repo),
+                       "--authors", str(ROOT / ".github" / "authors.txt"),
+                       "--baseline", "", "--range", f"{base}..HEAD",
+                       *extra, cwd=ROOT)
+            got = done.returncode
+            mark = "ок" if got == want else "РАСХОЖДЕНИЕ"
+            print(f"  {mark}: {name} — ожидалось {want}, получено {got}")
+            if got != want:
+                findings.append(
+                    f"{name}: ожидалось {want}, получено {got}. {why}\n"
+                    f"        вывод гейта: "
+                    f"{(done.stdout or done.stderr).strip()[:160]}")
+    return findings, 0
+
+
 def main() -> int:
     findings: list[str] = []
     ran = 0
@@ -623,7 +678,9 @@ def main() -> int:
                                 ("свод против конвейера:", suite_charter,
                                  len(CHARTER_CASES)),
                                 ("вопрос о соседях:", suite_near,
-                                 len(NEAR_CASES))):
+                                 len(NEAR_CASES)),
+                                ("требование соавторства:",
+                                 suite_require_coauthor, len(REQUIRE_CASES))):
         print(title)
         got, broke = suite()
         if broke:
