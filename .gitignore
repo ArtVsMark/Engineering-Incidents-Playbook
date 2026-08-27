@@ -10,3 +10,9 @@ __pycache__/
 # бы на каждом слиянии (см. .github/workflows/badges.yml и VERSIONING.md).
 .github/badges/release.json
 .github/badges/version.json
+
+# Данные замера покрытия. Число из них ставит значок, сами они производные
+# и в дереве не хранятся (правило 125).
+.coverage
+coverage.xml
+.pytest_cache/
