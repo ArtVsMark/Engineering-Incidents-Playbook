@@ -53,7 +53,25 @@ def fetch_rules(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None
 gh = ghcli.run
 
 
-def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str) -> str:
+def stale_here(answered: dict, rules: list[dict]) -> list[str]:
+    """Ответы ЭТОГО проекта о правилах, которых в каталоге нет.
+
+    Половина вопроса, которой у потребителя не было. Каталог такой ответ у
+    себя отвергает гейтом, и с этого прогона видит его у потребителей — но
+    ПОЧИНИТЬ оттуда не может: файл чужой. Чинится здесь, и потому называется
+    здесь же.
+
+    Правило снимают, номер остаётся занятым навсегда — а ответ о снятом
+    правиле нет: пока номер свободен, это мусор, а как только номер займёт
+    новая запись, тот же ответ прочитается как решение по НЕЙ. Не покраснеет
+    ничто: статус есть, механизм назван, полнота ответа сойдётся.
+    """
+    return sorted(set(answered) - {r["id"] for r in rules})
+
+
+def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
+             stale: list[str] | None = None, total: int | None = None,
+             answered: int | None = None) -> str:
     lines = [
         MARKER,
         "",
@@ -66,6 +84,35 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str) -> str
         "отрицательных обязательна причина.",
         "",
     ]
+    # ПЕРЕПИСЬ ПЕЧАТАЕТСЯ ВСЕГДА, а не только когда есть очередь. Число,
+    # видное лишь при поломке, отвечает на вопрос «что сломалось» и не
+    # отвечает на вопрос «куда мы движемся»; второй здесь и есть предмет.
+    if total is not None:
+        разобрано = answered if answered is not None else 0
+        lines += [
+            f"**Правил в каталоге: {total}. Разобрано здесь: {разобрано}.** "
+            f"Ответа нет вовсе у {len(missing)}, записано `unreviewed` "
+            f"у {len(unreviewed)}.",
+            "",
+        ]
+
+    if stale:
+        # ЭТО НАХОДКА, А НЕ ОЧЕРЕДЬ, и потому стоит выше очереди: очередь
+        # рассосётся решением, лишний ответ не рассосётся никогда.
+        lines += [
+            "## Ответ о правиле, которого в каталоге нет",
+            "",
+            "Правило снято, а ответ о нём остался: " + ", ".join(
+                f"**{rid}**" for rid in stale) + ".",
+            "",
+            "Номера не переиспользуются, но ответ о снятом правиле лежать не "
+            "должен: как только номер займёт новая запись, этот ответ "
+            "прочитается как решение по НЕЙ — и не покраснеет ничто, потому "
+            "что статус есть и механизм назван. Запись удаляется из "
+            "`.rules/bindings.json` целиком.",
+            "",
+        ]
+
     if not missing and not unreviewed:
         lines += ["**Нерассмотренных нет.** Это состояние, а не пустая задача: "
                   "ответ есть по каждому правилу каталога."]
@@ -121,10 +168,14 @@ def main() -> int:
     unreviewed = [r for r in rules
                   if answered.get(r["id"], {}).get("status") == "unreviewed"]
 
-    body = body_for(missing, unreviewed, args.catalogue)
+    stale = stale_here(answered, rules)
+    решено = sum(1 for r in rules
+                 if answered.get(r["id"], {}).get("status") not in (None, "unreviewed"))
+    body = body_for(missing, unreviewed, args.catalogue, stale=stale,
+                    total=len(rules), answered=решено)
     if args.dry_run:
         print(body)
-        return 1 if (missing or unreviewed) else 0
+        return 1 if (missing or unreviewed or stale) else 0
 
     if not os.environ.get("GH_TOKEN"):
         print("проверка не отработала: GH_TOKEN не задан — обновлять задачу "
@@ -147,8 +198,10 @@ def main() -> int:
         print(f"проверка не отработала: задача не записана — {out}", file=sys.stderr)
         return 2
 
-    print(f"{where}; ответа нет у {len(missing)}, не рассмотрено {len(unreviewed)}")
-    return 1 if (missing or unreviewed) else 0
+    print(f"{where}; правил {len(rules)}, разобрано {решено}, ответа нет "
+          f"у {len(missing)}, не рассмотрено {len(unreviewed)}, "
+          f"лишних {len(stale)}")
+    return 1 if (missing or unreviewed or stale) else 0
 
 
 if __name__ == "__main__":
