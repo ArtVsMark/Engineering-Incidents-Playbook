@@ -251,7 +251,9 @@
       "status": "unreviewed"
     },
     "068": {
-      "status": "unreviewed"
+      "status": "active",
+      "mechanism": "gate",
+      "where": "scripts/check_attribution.py --require-declared-author — автор коммита сверяется с разрешительным списком «[авторы]», а не с запретом на одно написание. До задачи #79 запрет ловил `Claude <noreply@anthropic.com>` и молчал на `claude[bot]`; изменение #78 уехало в общую ветку авторства бота"
     },
     "069": {
       "status": "not-applicable",
