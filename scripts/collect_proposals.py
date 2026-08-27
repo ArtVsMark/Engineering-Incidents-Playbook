@@ -313,8 +313,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     code, found = gh("issue", "list", "--state", "open", "--limit", "100",
-                     "--search", "rules-upstream in:body", "--json",
-                     "number,body", "--jq",
+                     "--json", "number,body", "--jq",
                      f'[.[] | select(.body | contains("{MARKER}"))][0].number // empty')
     if code != 0:
         print(f"проверка не отработала: трекер не ответил — {found}",
