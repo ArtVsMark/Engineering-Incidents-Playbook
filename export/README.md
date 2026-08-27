@@ -168,6 +168,33 @@ both language trees, the neighbours answer and a resolvable trail live here.
 **The catalogue pulls; the consumer does not push.** A push upstream would need
 write rights into the catalogue. Plain HTTPS from a raw link needs none.
 
+## Набор вопросов витрины · The showcase question set
+
+Отдельно от экспорта каталог публикует
+[`.rules/showcase.json`](../.rules/showcase.json) — **набор вопросов, на которые
+витрина проекта отвечает живым числом**. Он один на все проекты не из
+единообразия: разные наборы не сравнить, и то, что проект перестал отвечать, не
+заметит никто ([022](../rules/ru/022-one-canonical-document.md)).
+
+У каждого вопроса ровно один ответ: либо `badge` — файл значка, вычисляемый
+сборкой и **названный в витрине**, либо `absent` с причиной. Пропуск не
+проходит: значка нет и значок застыл с витрины неотличимы, поэтому вопрос без
+предмета называется, а не опускается
+([046](../rules/ru/046-name-the-gaps-do-not-level-them.md),
+[075](../rules/ru/075-a-guard-that-finds-nothing-must-fail.md)).
+
+Держит это `scripts/check_showcase.py`. Потребитель волен взять набор целиком
+или ответить `absent` там, где предмета у него нет, — но **ответить обязан на
+каждый вопрос**, иначе сравнение теряет смысл.
+
+Alongside the export the catalogue publishes `.rules/showcase.json` — the set of
+questions a project's showcase answers with a live number. It is the same set
+across projects: differing sets cannot be compared, and nobody notices when a
+project stops answering. Each question takes exactly one answer — a `badge`
+computed by a build and named in the showcase, or `absent` with a reason. An
+omission does not pass: a missing badge and a frozen badge look identical from
+the outside.
+
 ## Как схема меняется · How the schema evolves
 
 Правила эволюции записаны здесь же, рядом со схемой — иначе их не прочитает тот,

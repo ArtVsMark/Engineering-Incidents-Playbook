@@ -133,6 +133,48 @@ def test_несобранной_сводки_достаточно_для_нах�
     assert "Соберите" in capsys.readouterr().err
 
 
+def test_ответ_потребителя_уехал_вперёд_сводки_это_находка(monkeypatch, repo, capsys):
+    """Расхождение, которое до #122 ловил только НОЧНОЙ прогон с сетью.
+
+    Изменение правит ответ и не пересобирает сводку; обязательная проверка
+    убеждалась, что сводка согласована сама с собой, и зеленела. Сети для
+    этого не нужно: местный ответ лежит на диске.
+    """
+    src = answer(repo, ".rules/bindings.json", **{"001": "active"})
+    prepare(monkeypatch, repo, [{"repo": "owner/one", "bindings": src}])
+    cli(monkeypatch)
+    assert ab.main() == 0
+    answer(repo, ".rules/bindings.json", **{"001": "rejected"})
+    cli(monkeypatch, "--check")
+    assert ab.main() == 1
+    err = capsys.readouterr().err
+    assert "отстала от ответа" in err and "001 (active → rejected)" in err
+
+
+def test_сводка_в_ногу_с_ответом_проходит(monkeypatch, repo):
+    """Здоровый предмет у самой границы: ответ менялся, сводку пересобрали."""
+    src = answer(repo, ".rules/bindings.json", **{"001": "active"})
+    prepare(monkeypatch, repo, [{"repo": "owner/one", "bindings": src}])
+    cli(monkeypatch)
+    assert ab.main() == 0
+    answer(repo, ".rules/bindings.json", **{"001": "rejected"})
+    cli(monkeypatch)
+    assert ab.main() == 0
+    cli(monkeypatch, "--check")
+    assert ab.main() == 0
+
+
+def test_местный_ответ_пропал_после_сборки_это_находка(monkeypatch, repo, capsys):
+    src = answer(repo, ".rules/bindings.json", **{"001": "active"})
+    prepare(monkeypatch, repo, [{"repo": "owner/one", "bindings": src}])
+    cli(monkeypatch)
+    assert ab.main() == 0
+    (repo / src).unlink()
+    cli(monkeypatch, "--check")
+    assert ab.main() == 1
+    assert "не читается" in capsys.readouterr().err
+
+
 # ── производная таблица ────────────────────────────────────────────────────
 
 def test_таблица_перечисляет_правила_поимённо(repo):
