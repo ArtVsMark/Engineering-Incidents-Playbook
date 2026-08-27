@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 143,
+  "count": 144,
   "rules": [
     {
       "id": "001",
@@ -3740,6 +3740,35 @@
         "en": "rules/en/144-context-window-for-prose-is-a-paragraph.md"
       },
       "trails": []
+    },
+    {
+      "id": "145",
+      "slug": "every-declared-outcome-is-run",
+      "title": {
+        "ru": "Механизм, объявивший несколько исходов, прогоняется по каждому",
+        "en": "A mechanism that declares several outcomes is run through each of them"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "прогоны"
+        ],
+        "en": [
+          "gates",
+          "runs"
+        ]
+      },
+      "added": "2026-08-26",
+      "files": {
+        "ru": "rules/ru/145-every-declared-outcome-is-run.md",
+        "en": "rules/en/145-every-declared-outcome-is-run.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "83"
+        }
+      ]
     }
   ]
 }
