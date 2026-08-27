@@ -25,7 +25,8 @@ def run(repo: Path, *args: str) -> None:
                    capture_output=True, text=True)
 
 
-def commit(repo: Path, subject: str, body: str = "") -> None:
+def commit(repo: Path, subject: str, body: str = "",
+           author: tuple[str, str] = ("Владелец", "owner@example.com")) -> None:
     write(repo / "f.txt", subject)
     run(repo, "add", "-A")
     message = f"{subject}\n\n{body}" if body else subject
@@ -33,8 +34,8 @@ def commit(repo: Path, subject: str, body: str = "") -> None:
                    check=True, capture_output=True, text=True,
                    env={"PATH": "/usr/bin:/bin:/usr/local/bin",
                         "HOME": str(repo),
-                        "GIT_AUTHOR_NAME": "Владелец",
-                        "GIT_AUTHOR_EMAIL": "owner@example.com",
+                        "GIT_AUTHOR_NAME": author[0],
+                        "GIT_AUTHOR_EMAIL": author[1],
                         "GIT_COMMITTER_NAME": "Владелец",
                         "GIT_COMMITTER_EMAIL": "owner@example.com"})
 
@@ -50,9 +51,78 @@ def authors_file(repo: Path, text: str = AGREED) -> Path:
     return write(repo / ".github" / "authors.txt", text + "\n")
 
 
+OWNER = "Владелец <owner@example.com>"
+BOT = ("claude[bot]", "209825114+claude[bot]@users.noreply.github.com")
+
+
 def test_список_имён_без_комментариев_и_пустых(repo):
     path = authors_file(repo, f"# комментарий\n\n{AGREED}\n")
-    assert ca.agreed(path) == {AGREED}
+    co, people = ca.agreed(path)
+    assert co == {AGREED} and people == set()
+
+
+# ── разрешительный список авторов ─────────────────────────────────────────
+#
+# Проверка автора была ЗАПРЕТИТЕЛЬНОЙ: «автором не должен стоять известный
+# соавтор». Она ловит ровно одно написание и молчит на `claude[bot]`, у
+# которого другое имя и другая почта. Так изменение #78 и уехало в общую ветку
+# авторства бота, а переписать там нечем (068, 114, задача #79).
+#
+# Ключ отдельный и по умолчанию выключен: у проекта раздела «[авторы]» может
+# не быть, и требовать его тогда — отказ на пустом месте.
+
+def test_раздел_авторов_читается_отдельно_от_соавторов(repo):
+    path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
+    co, people = ca.agreed(path)
+    assert co == {AGREED} and people == {OWNER}
+
+
+def test_объявленный_автор_проходит(repo, capsys, monkeypatch):
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    commit(repo, "второй", f"Co-Authored-By: {AGREED}")
+    path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path), "--require-declared-author"])
+    assert ca.main() == 0
+
+
+def test_бот_автором_это_находка(repo, capsys, monkeypatch):
+    """Тот самый случай: имя и почта другие, запрет молчал."""
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    commit(repo, "от бота", f"Co-Authored-By: {AGREED}", author=BOT)
+    path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path), "--require-declared-author"])
+    assert ca.main() == 1
+    assert "не объявлен в разделе" in capsys.readouterr().err
+
+
+def test_без_ключа_бот_автором_проходит_как_раньше(repo, monkeypatch):
+    """Здоровый предмет у границы: ключ не должен ломать старых потребителей."""
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    commit(repo, "от бота", f"Co-Authored-By: {AGREED}", author=BOT)
+    path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path)])
+    assert ca.main() == 0
+
+
+def test_ключ_без_раздела_авторов_это_третий_исход(repo, capsys, monkeypatch):
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    commit(repo, "второй", f"Co-Authored-By: {AGREED}")
+    path = authors_file(repo, AGREED)
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path), "--require-declared-author"])
+    assert ca.main() == 2
+    assert "требовать нечем" in capsys.readouterr().err
 
 
 def test_чистая_история_проходит(repo, capsys):

@@ -10,8 +10,8 @@
       "answered": 146,
       "by_status": {
         "not-applicable": 15,
-        "active": 50,
-        "unreviewed": 74,
+        "active": 51,
+        "unreviewed": 73,
         "rejected": 7
       },
       "rules": {
@@ -82,7 +82,7 @@
         "065": "active",
         "066": "not-applicable",
         "067": "unreviewed",
-        "068": "unreviewed",
+        "068": "active",
         "069": "not-applicable",
         "070": "unreviewed",
         "071": "unreviewed",
