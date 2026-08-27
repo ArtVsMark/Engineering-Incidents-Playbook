@@ -40,6 +40,15 @@ inputs:
       отсутствующего.
     required: false
     default: ""
+  require-declared-author:
+    description: >-
+      true — автором каждого коммита обязан стоять человек из раздела
+      «[авторы]» списка. Ключ отдельный и по умолчанию выключен: у проекта
+      такого раздела может не быть, и тогда требовать его нечем — это был бы
+      отказ на пустом месте. Проверка автора БЕЗ него остаётся запретительной
+      и ловит одно написание; чем это стоило, записано в задаче #79.
+    required: false
+    default: "false"
   require-coauthor:
     description: >-
       true — считать отказом коммит вовсе без атрибуции. По умолчанию такие
@@ -94,6 +103,9 @@ runs:
         set -euo pipefail
         args=(--repo "$GITHUB_WORKSPACE" --authors "${{ inputs.authors }}")
         args+=(--baseline "${{ inputs.baseline }}")
+        if [ "${{ inputs.require-declared-author }}" = "true" ]; then
+          args+=(--require-declared-author)
+        fi
         if [ "${{ inputs.require-coauthor }}" = "true" ]; then
           args+=(--require-coauthor)
         fi
