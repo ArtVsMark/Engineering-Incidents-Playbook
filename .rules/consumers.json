@@ -7,42 +7,49 @@
       "role": "каталог",
       "bindings": ".rules/bindings.json",
       "access": "public",
-      "proposals": null
+      "proposals": null,
+      "since": "2026-08-22"
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
       "role": "потребитель",
       "bindings": null,
       "access": "public",
-      "proposals": null
+      "proposals": null,
+      "since": "2026-08-22"
     },
     {
       "repo": "ArtVsMark/ArtVsMark",
       "role": "потребитель",
       "bindings": "https://raw.githubusercontent.com/ArtVsMark/ArtVsMark/main/.rules/bindings.json",
       "access": "public",
-      "proposals": null
+      "proposals": null,
+      "since": "2026-08-22"
     },
     {
       "repo": "ArtVsMark/claude-code-usage",
       "role": "потребитель",
       "bindings": null,
       "access": "public",
-      "proposals": null
+      "proposals": null,
+      "since": "2026-08-22"
     },
     {
       "repo": "ArtVsMark/claude-code-usage-dat",
       "role": "потребитель, приватный",
       "bindings": null,
       "access": "private",
-      "proposals": null
+      "proposals": null,
+      "since": "2026-08-22"
     },
     {
       "repo": "ArtVsMark/Glossary-Python",
       "role": "потребитель",
       "bindings": null,
       "access": "public",
-      "proposals": null
+      "proposals": null,
+      "since": "2026-08-22"
     }
-  ]
+  ],
+  "_since": "Дата, с которой репозиторий объявлен потребителем. От неё считается срок: объявленный и не подключившийся дольше срока перестаёт быть состоянием и становится находкой сетевого прогона, у которой есть адресат. Взята из истории этого файла, а не проставлена задним числом на глазок."
 }

@@ -270,6 +270,22 @@ quotation, never as a command.
 | `bindings` | адрес ответа: путь внутри каталога или обычная HTTPS-ссылка; `null` — не подключён · path or plain HTTPS link to the answer; `null` means not connected |
 | `access` | `public` · `private` — приватный не агрегируется и читается как «неизвестно» · a private one is not aggregated and reads as "unknown" |
 
+**У записи в реестре есть `since` — день, с которого репозиторий объявлен
+потребителем.** От него считается срок: объявленный и не подключившийся дольше
+срока перестаёт быть состоянием и становится находкой ночного прогона, у
+которой есть адресат — задача в трекере. Замер, из которого это выросло: канал
+построен с обеих сторон и долго не носил **ни одного** предложения, а «не
+подключён» печаталось спокойно и потому не читалось никем.
+
+На изменении тот же список только печатается: автор изменения чужой репозиторий
+подключить не может, и красить его работу за это значит приучать к красному.
+
+**A registry entry carries `since`** — the day the repository was declared a
+consumer. A declared consumer that never connects stops being a state after a
+deadline and becomes a finding of the nightly run, which files an issue. On a
+pull request the same list is only printed: its author cannot connect somebody
+else's repository.
+
 ## Как подключиться · How to connect
 
 Один рабочий процесс на стороне проекта; своего скрипта заводить не нужно.
