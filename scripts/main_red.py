@@ -44,19 +44,17 @@ import json
 import subprocess
 import sys
 
+import ghcli
+
 #: По этой строке задача находится снова. Заголовок для этого не годится: его
 #: правят руками, и тогда прогон заведёт вторую задачу вместо обновления.
 MARKER = "<!-- main-red: не удаляйте, по этой строке задача находится снова -->"
 
 
-def gh(*args: str) -> tuple[int, str]:
-    """Вызов `gh`. Возвращает код и вывод вместе с потоком ошибок."""
-    try:
-        done = subprocess.run(["gh", *args], capture_output=True, text=True)
-    except OSError as e:
-        return 2, f"gh не запустился: {e}"
-    return done.returncode, (done.stdout or done.stderr).strip()
-
+#: Вызов gh живёт в одном месте на весь каталог (правила 090, 022). Свой
+#: обработчик здесь возвращал код 2 — а он занят у самого gh, и
+#: «инструмента нет» становилось неотличимо от находки.
+gh = ghcli.run
 
 def red_names(runs: list[dict], excluded: frozenset[str]) -> list[str]:
     """Имена работ, у которых ПОСЛЕДНИЙ завершённый прогон не зелёный.

@@ -63,6 +63,8 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+import ghcli
+
 ROOT = Path(__file__).resolve().parent.parent
 
 CONSUMERS = ".rules/consumers.json"
@@ -271,9 +273,9 @@ def body_for(pending: list[dict], problems: list[str]) -> str:
     return "\n".join(out)
 
 
-def gh(*args: str) -> tuple[int, str]:
-    done = subprocess.run(("gh", *args), capture_output=True, text=True)
-    return done.returncode, (done.stdout or done.stderr).strip()
+#: Вызов gh живёт в одном месте на весь каталог: у четырёх копий
+#: разъехалось поведение при отсутствии самого gh (правила 090, 022).
+gh = ghcli.run
 
 
 def main(argv: list[str] | None = None) -> int:
