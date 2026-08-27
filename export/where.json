@@ -7,10 +7,10 @@
       "role": "каталог",
       "state": "подключён",
       "read_at": "2026-08-27",
-      "answered": 146,
+      "answered": 147,
       "by_status": {
         "not-applicable": 15,
-        "active": 50,
+        "active": 51,
         "unreviewed": 74,
         "rejected": 7
       },
@@ -160,7 +160,8 @@
         "144": "active",
         "145": "active",
         "146": "active",
-        "147": "active"
+        "147": "active",
+        "148": "active"
       }
     },
     {
@@ -174,12 +175,11 @@
       "role": "потребитель",
       "state": "подключён",
       "read_at": "2026-08-27",
-      "answered": 144,
+      "answered": 146,
       "by_status": {
-        "active": 69,
+        "active": 72,
         "not-applicable": 73,
-        "rejected": 1,
-        "unreviewed": 1
+        "rejected": 1
       },
       "rules": {
         "001": "active",
@@ -325,7 +325,9 @@
         "141": "active",
         "142": "active",
         "143": "active",
-        "144": "unreviewed"
+        "144": "active",
+        "145": "active",
+        "146": "active"
       }
     },
     {

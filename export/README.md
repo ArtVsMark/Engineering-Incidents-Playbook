@@ -20,7 +20,7 @@ edited by hand.
 
 ```jsonc
 {
-  "schema": "1.0",
+  "schema": "1.1",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
   "count": 130,                       // пример · example value
   "rules": [
@@ -33,7 +33,9 @@ edited by hand.
       "files": { "ru": "rules/ru/129-….md", "en": "rules/en/129-….md" },
       "trails": [                          // структурно, а не строкой · structured
         { "repo": "ArtVsMark/claude-code-playbook", "issue": "15" }
-      ]
+      ],
+      "portable": "partly"                 // ключа может НЕ БЫТЬ · key may be ABSENT
+                                           // да · нет · частично → yes · no · partly
     }
   ]
 }
@@ -49,6 +51,19 @@ anyone can subscribe, including a project the catalogue has nothing to do with.
 ```
 https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/main/export/rules.json
 ```
+
+**`portable` — необязательный ключ, и его отсутствие значит «не отвечали».**
+Не «не переносится» и не «неизвестно»: у большинства записей поля нет, потому
+что вопрос им не задавали, и задним числом он не проставляется. Отбирать по
+нему можно только те записи, где ключ есть; остальные — не «нет», а молчание.
+README каталога предупреждает «не копируйте целиком, половина заточена под
+агентские окна» — этот ключ делает предупреждение выбираемым по записям вместо
+общего на весь корпус.
+
+**`portable` is an optional key, and its absence means "we did not answer".**
+Not "not portable" and not "unknown": most records have no such field because
+the question was never put to them, and it is never filled in retroactively.
+Filter on it only among records that carry it; the rest are silence, not "no".
 
 **`trails` бывает пустым, и это значение, а не пробел.** У большинства правил
 след ведёт в файл или документ, а не в задачу. Пустой список означает «ссылок на
@@ -152,6 +167,33 @@ both language trees, the neighbours answer and a resolvable trail live here.
 
 **The catalogue pulls; the consumer does not push.** A push upstream would need
 write rights into the catalogue. Plain HTTPS from a raw link needs none.
+
+## Набор вопросов витрины · The showcase question set
+
+Отдельно от экспорта каталог публикует
+[`.rules/showcase.json`](../.rules/showcase.json) — **набор вопросов, на которые
+витрина проекта отвечает живым числом**. Он один на все проекты не из
+единообразия: разные наборы не сравнить, и то, что проект перестал отвечать, не
+заметит никто ([022](../rules/ru/022-one-canonical-document.md)).
+
+У каждого вопроса ровно один ответ: либо `badge` — файл значка, вычисляемый
+сборкой и **названный в витрине**, либо `absent` с причиной. Пропуск не
+проходит: значка нет и значок застыл с витрины неотличимы, поэтому вопрос без
+предмета называется, а не опускается
+([046](../rules/ru/046-name-the-gaps-do-not-level-them.md),
+[075](../rules/ru/075-a-guard-that-finds-nothing-must-fail.md)).
+
+Держит это `scripts/check_showcase.py`. Потребитель волен взять набор целиком
+или ответить `absent` там, где предмета у него нет, — но **ответить обязан на
+каждый вопрос**, иначе сравнение теряет смысл.
+
+Alongside the export the catalogue publishes `.rules/showcase.json` — the set of
+questions a project's showcase answers with a live number. It is the same set
+across projects: differing sets cannot be compared, and nobody notices when a
+project stops answering. Each question takes exactly one answer — a `badge`
+computed by a build and named in the showcase, or `absent` with a reason. An
+omission does not pass: a missing badge and a frozen badge look identical from
+the outside.
 
 ## Как схема меняется · How the schema evolves
 

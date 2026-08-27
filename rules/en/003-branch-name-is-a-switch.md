@@ -6,6 +6,8 @@
 first line of the project's rules — together with what happens under any other
 name.
 
+**Portable beyond Claude Code.** partly — the device of a name that switches behaviour carries over, but the incident and the remedy are tied to a pipeline that reads the branch prefix. Where nothing reads it, the rule guards nothing.
+
 ## The incident
 
 Of eight open pull requests, auto-merge was enabled on three. Five green pull

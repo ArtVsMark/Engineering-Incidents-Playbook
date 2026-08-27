@@ -47,7 +47,7 @@ OUT = RULES / "README.md"
 #: Машиночитаемый экспорт каталога: его тянет проект-потребитель обычным HTTP,
 #: без GitHub API и без клона. Формат и правила его эволюции — export/README.md.
 EXPORT = ROOT / "export" / "rules.json"
-EXPORT_SCHEMA = "1.0"
+EXPORT_SCHEMA = "1.1"
 CATALOGUE_URL = "https://github.com/ArtVsMark/claude-code-playbook"
 
 #: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
@@ -359,6 +359,35 @@ AREAS = {
 }
 
 
+#: Переносимость записи за пределы Claude Code. Поле НЕОБЯЗАТЕЛЬНОЕ и задним
+#: числом не проставляется: у README каталога есть общее предупреждение «не
+#: копируйте целиком, половина заточена под агентские окна», и это поле делает
+#: предупреждение выбираемым по записям, а не общим на всё (задача #63).
+#:
+#: Областью переносимость НЕ является и не станет: область говорит, О ЧЁМ
+#: запись, а не куда её можно унести. Смешать два измерения в одном словаре
+#: значит потерять оба — по 099 туда же приходят «интерфейс» и «интерфейсы».
+PORTABLE_RE = {
+    "ru": re.compile(r"^\*\*Переносится вне Claude Code\.\*\*\s*(.+?)\s*$", re.M),
+    "en": re.compile(r"^\*\*Portable beyond Claude Code\.\*\*\s*(.+?)\s*$", re.M),
+}
+#: Значения закрытым списком, по той же причине, что и у областей.
+PORTABLE_VALUES = {"да": "yes", "нет": "no", "частично": "partly"}
+PORTABLE_VALUES_EN = {"yes", "no", "partly"}
+
+
+def portable_of(path: Path, lang: str) -> str | None:
+    """Значение поля переносимости или None, если поля нет. Причину не берём:
+    её место в записи, а в экспорте потребителю нужен признак для отбора."""
+    m = PORTABLE_RE[lang].search(path.read_text(encoding="utf-8"))
+    if not m:
+        return None
+    head = m.group(1).split("—")[0].split("--")[0].strip().lower()
+    if lang == "ru":
+        return PORTABLE_VALUES.get(head)
+    return head if head in PORTABLE_VALUES_EN else None
+
+
 def title_of(path: Path) -> str:
     first = path.read_text(encoding="utf-8").split("\n", 1)[0]
     return first.lstrip("# ").strip()
@@ -589,6 +618,12 @@ def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]]
             "files": {"ru": f"rules/ru/{ru.name}", "en": f"rules/en/{en.name}"},
             "trails": trails.get(num, []),
         })
+        # Необязательное поле: отсутствует у записи — отсутствует и в экспорте.
+        # Ключ со значением null означал бы «ответили не знаю», а мы не
+        # отвечали вовсе (правило 128 про полноту поля, а не про его наличие).
+        portable = portable_of(ru, "ru")
+        if portable:
+            rules[-1]["portable"] = portable
     doc = {
         "schema": EXPORT_SCHEMA,
         "catalogue": CATALOGUE_URL,
