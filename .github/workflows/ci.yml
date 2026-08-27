@@ -171,6 +171,14 @@ jobs:
       - name: дежурный отличает красное от зелёного
         run: python scripts/main_red.py --selftest
 
+      # Правило 107: «у автора работает» означает «проверено на выборке
+      # автора». Новый набор импортировал yaml — у автора библиотека стояла,
+      # набор был зелёный, в конвейере её не было, и прогон упал на импорте.
+      # Здесь проверяется, что каждый импорт тестов объявлен, а не случайно
+      # установлен.
+      - name: тесты зависят только от объявленного
+        run: python scripts/check_test_deps.py
+
       # Правило 002 же: заготовка гейта обязана хотя бы запускаться.
       - name: заготовка preflight запускается
         run: python templates/preflight.py --list
@@ -186,7 +194,7 @@ jobs:
       # стандартной библиотекой, и тащить установку в начало значило бы
       # замедлить каждый из них ради последнего.
       - name: обвязка тестов
-        run: python -m pip install --quiet pytest coverage
+        run: python -m pip install --quiet -r requirements-test.txt
 
       - name: тесты проходят
         run: python -m coverage run -m pytest
