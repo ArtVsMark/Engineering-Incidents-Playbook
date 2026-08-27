@@ -94,6 +94,7 @@ python scripts/collect_proposals.py --check
 python scripts/check_gates.py
 python scripts/check_candidates.py
 python scripts/main_red.py --selftest
+python scripts/link_trails.py --selftest
 python scripts/check_showcase.py
 python scripts/check_test_deps.py
 python scripts/pr_body.py --check --body-file <файл с телом изменения>
