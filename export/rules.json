@@ -1,7 +1,7 @@
 {
   "schema": "1.0",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 144,
+  "count": 145,
   "rules": [
     {
       "id": "001",
@@ -3767,6 +3767,35 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "83"
+        }
+      ]
+    },
+    {
+      "id": "146",
+      "slug": "a-green-gate-does-not-verify-its-premise",
+      "title": {
+        "ru": "Зелёный гейт подтверждает себя, а не утверждение, вокруг которого построен",
+        "en": "A green gate confirms itself, not the claim it was built around"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "аудит"
+        ],
+        "en": [
+          "gates",
+          "audit"
+        ]
+      },
+      "added": "2026-08-27",
+      "files": {
+        "ru": "rules/ru/146-a-green-gate-does-not-verify-its-premise.md",
+        "en": "rules/en/146-a-green-gate-does-not-verify-its-premise.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "88"
         }
       ]
     }
