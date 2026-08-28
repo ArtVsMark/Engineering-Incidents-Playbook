@@ -34,8 +34,10 @@ edited by hand.
       "trails": [                          // структурно, а не строкой · structured
         { "repo": "ArtVsMark/claude-code-playbook", "issue": "15" }
       ],
-      "portable": "partly"                 // ключа может НЕ БЫТЬ · key may be ABSENT
+      "portable": "partly",                // ключа может НЕ БЫТЬ · key may be ABSENT
                                            // да · нет · частично → yes · no · partly
+      "superseded_by": "154"               // ключа может НЕ БЫТЬ · key may be ABSENT
+                                           // отсутствует = действует · absent = active
     }
   ],
   "candidates": [                          // ГИПОТЕЗЫ, А НЕ ПРАВИЛА · HYPOTHESES
@@ -55,6 +57,27 @@ edited by hand.
   ]
 }
 ```
+
+**`superseded_by` — пометка «заменено», а не «удалено» и не «неверно».**
+Запись остаётся на месте и остаётся читаемой: причина перехода живёт в ней, и
+это её главная работа — тот, кто пришёл по старой ссылке, должен увидеть, куда
+идти дальше, а не пустоту. Номер при этом не освобождается: номера не
+переиспользуются.
+
+Ключа нет — запись действует. `null` означал бы «отвечали и не знаем», а не
+отвечали вовсе. Ответ потребителя о заменённом правиле — **состояние, а не
+находка**: он отвечает о том, что было, и упрекать его не в чем.
+
+Цена, из-за которой поле появилось: [043](../rules/ru/043-decisions-are-superseded-not-edited.md)
+и [120](../rules/ru/120-how-to-run-a-rule-catalogue.md) требовали пометки оба,
+свод повторял это третьим местом, а пометки не существовало — и запись 143
+удалили, оставив пропуск в нумерации.
+
+**`superseded_by` marks a record as replaced — not deleted, not wrong.** The
+record stays and stays readable: the reason for the transition lives in it. The
+key is absent while the rule is active; `null` would mean "we answered and do
+not know", and we did not answer at all. A consumer's answer about a superseded
+rule is a **state, not a finding**.
 
 **Кандидат — не правило, и в данных это сказано трижды.** `kind:
 "hypothesis"`, отдельный массив, и **отсутствие поля `id`** — ни пустого, ни

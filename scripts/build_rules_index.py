@@ -380,6 +380,16 @@ PORTABLE_RE = {
     "ru": re.compile(r"^\*\*Переносится вне Claude Code\.\*\*\s*(.+?)\s*$", re.M),
     "en": re.compile(r"^\*\*Portable beyond Claude Code\.\*\*\s*(.+?)\s*$", re.M),
 }
+
+#: Пометка «заменено»: номер записи, которая пришла на смену. Правила 043 и 120
+#: требуют её обе — «пересмотр это новая запись, старая помечается заменённой»,
+#: — и свод повторяет это третьим местом. Пометки при этом НЕ СУЩЕСТВОВАЛО, и
+#: цена уже заплачена: запись 143 удалили, оставив пропуск в нумерации, вместо
+#: того чтобы пометить. Три документа требовали, ни один не удержал (154).
+SUPERSEDED_RE = {
+    "ru": re.compile(r"^\*\*Заменено\.\*\*\s*(\d{3})\s*$", re.M),
+    "en": re.compile(r"^\*\*Superseded by\.\*\*\s*(\d{3})\s*$", re.M),
+}
 #: Значения закрытым списком, по той же причине, что и у областей.
 PORTABLE_VALUES = {"да": "yes", "нет": "no", "частично": "partly"}
 PORTABLE_VALUES_EN = {"yes", "no", "partly"}
@@ -395,6 +405,17 @@ def portable_of(path: Path, lang: str) -> str | None:
     if lang == "ru":
         return PORTABLE_VALUES.get(head)
     return head if head in PORTABLE_VALUES_EN else None
+
+
+def superseded_of(path: Path, lang: str) -> str | None:
+    """Номер записи, заменившей эту, или None. Форма узкая и проверяется.
+
+    ЗАМЕНЕНО — НЕ УДАЛЕНО И НЕ «СТАЛО НЕВЕРНЫМ». Запись остаётся читаемой:
+    причина перехода живёт в ней, и это её главная работа. Тот, кто пришёл по
+    старой ссылке, должен увидеть, куда идти дальше, а не пустоту.
+    """
+    m = SUPERSEDED_RE[lang].search(path.read_text(encoding="utf-8"))
+    return m.group(1) if m else None
 
 
 def title_of(path: Path) -> str:
@@ -637,6 +658,11 @@ def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]]
         portable = portable_of(ru, "ru")
         if portable:
             rules[-1]["portable"] = portable
+        # Тот же принцип: ключа нет — запись действует. `null` означал бы
+        # «отвечали и не знаем», а мы не отвечали вовсе (128).
+        sup = superseded_of(ru, "ru")
+        if sup:
+            rules[-1]["superseded_by"] = sup
     doc = {
         "schema": EXPORT_SCHEMA,
         "catalogue": CATALOGUE_URL,
@@ -818,6 +844,62 @@ def trails_of(path: Path, lang: str, known: set[str]) -> tuple[list[dict[str, st
             seen.add(key)
             out.append({"repo": key[0], "issue": key[1]})
     return out, None
+
+
+def check_superseded(found: dict[str, dict[str, Path]]) -> list[str]:
+    """Пометка «заменено» разрешается, не зацикливается и стоит в обоих деревьях.
+
+    ЧТО ИМЕННО ЛОВИТСЯ И ПОЧЕМУ КАЖДОЕ:
+
+    · заменившей записи НЕТ — ссылка в пустоту хуже отсутствия пометки: по
+      старой ссылке читатель приходит и упирается;
+    · запись заменяет САМА СЕБЯ — опечатка, которая читается как «действует»;
+    · ЦИКЛ (A → B → A) — история перехода теряется целиком, а именно её 043 и
+      бережёт;
+    · пометка стоит НА ОДНОМ ЯЗЫКЕ — то же расхождение деревьев, ради которого
+      указатель сделан единым;
+    · заменившая запись сама заменена — цепочка законна, но читателю нужен
+      КОНЕЦ цепочки, и молча вести его по звеньям нельзя. Печатается как
+      предупреждение, а не отказ: цепочка не поломка (051).
+
+    ЧЕГО ЭТОТ ГЕЙТ НЕ ДЕЛАЕТ. Не требует пометки задним числом и не решает,
+    ЗАМЕНЯЕТ ли одна запись другую: это суждение автора. Он проверяет форму
+    уже принятого решения.
+    """
+    problems: list[str] = []
+    marks: dict[str, str] = {}
+    for num, slot in sorted(found.items()):
+        пара = {lang: superseded_of(slot[lang], lang) for lang in LANGS}
+        if пара["ru"] != пара["en"]:
+            problems.append(
+                f"{num}: пометка «заменено» разошлась между деревьями — "
+                f"ru {пара['ru'] or '—'}, en {пара['en'] or '—'}")
+            continue
+        if пара["ru"]:
+            marks[num] = пара["ru"]
+
+    for num, target in sorted(marks.items()):
+        if target == num:
+            problems.append(f"{num}: заменено само собой — это опечатка, а "
+                            "запись при этом читается как действующая")
+            continue
+        if target not in found:
+            problems.append(
+                f"{num}: заменено записью {target}, а такой в каталоге нет. "
+                "Ссылка в пустоту хуже отсутствия пометки: по старой ссылке "
+                "читатель приходит и упирается")
+            continue
+        # Цикл: идём по цепочке, пока не вернёмся в начало или не кончится.
+        видели, шаг = {num}, target
+        while шаг in marks:
+            if шаг in видели:
+                problems.append(
+                    f"{num}: цепочка замен зациклена на {шаг} — история "
+                    "перехода теряется целиком, а её и бережёт правило 043")
+                break
+            видели.add(шаг)
+            шаг = marks[шаг]
+    return problems
 
 
 def check_trails(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list], list[str]]:
@@ -1014,6 +1096,7 @@ def main() -> int:
     blockers += date_problems
     trails, trail_problems = check_trails(found)
     problems += trail_problems
+    problems += check_superseded(found)
     FILES.update(found)
     areas, area_problems = check_areas(found)
     problems += area_problems
