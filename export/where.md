@@ -12,9 +12,9 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 23 | 152 | 0 | 0 | 110 | 52 | 3 | 14 | 41 | 0 | 45 |  |
-| `Stepik-Python-Grader` | подключён | 67 | 152 | 0 | 0 | 106 | 62 | 0 | 0 | 38 | 6 | 71 |  |
-| `ArtVsMark` | подключён | 12 | 152 | 0 | 0 | 78 | 45 | 6 | 11 | 16 | 0 | 31 |  |
+| `claude-code-playbook` | подключён | 24 | 153 | 0 | 0 | 111 | 53 | 3 | 14 | 41 | 0 | 45 |  |
+| `Stepik-Python-Grader` | подключён | 67 | 152 | 1 | 0 | 106 | 62 | 0 | 0 | 38 | 6 | 71 |  |
+| `ArtVsMark` | подключён | 12 | 152 | 1 | 0 | 78 | 45 | 6 | 11 | 16 | 0 | 31 |  |
 | `claude-code-usage` | не подключён | 1 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 | `Glossary-Python` | не подключён | 0 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
@@ -90,12 +90,12 @@
 | `claude-code-playbook` | `scripts/aggregate_bindings.py` | 5 |
 | `claude-code-playbook` | `scripts/build_rules_index.py` | 5 |
 | `claude-code-playbook` | `scripts/check_charter.py` | 5 |
+| `claude-code-playbook` | `scripts/check_bindings.py` | 4 |
 | `claude-code-playbook` | `scripts/link_trails.py` | 4 |
 | `claude-code-playbook` | `scripts/main_red.py` | 4 |
 | `claude-code-playbook` | `scripts/refresh_derived.py` | 4 |
 | `claude-code-playbook` | `.rules/consumers.json` | 3 |
 | `claude-code-playbook` | `CONTRIBUTING.md` | 3 |
-| `claude-code-playbook` | `scripts/check_bindings.py` | 3 |
 | `claude-code-playbook` | `scripts/collect_proposals.py` | 3 |
 | `claude-code-playbook` | `.github/labels.yml` | 2 |
 | `claude-code-playbook` | `.github/workflows/consumers-sync.yml` | 2 |
@@ -112,7 +112,7 @@
 | `claude-code-playbook` | `scripts/ghcli.py` | 2 |
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 15 механизмов по одному правилу; без названного адреса: 0 из 69 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 15 механизмов по одному правилу; без названного адреса: 0 из 70 |
 | `Stepik-Python-Grader` | `scripts/gh_rest.py` | 6 |
 | `Stepik-Python-Grader` | `scripts/check_pr_ready.py` | 5 |
 | `Stepik-Python-Grader` | `.rules/bindings.json` | 3 |
@@ -318,3 +318,4 @@
 | 151 | действует | действует | действует |
 | 152 | действует | действует | действует |
 | 153 | действует | действует | действует |
+| 154 | действует | — | — |
