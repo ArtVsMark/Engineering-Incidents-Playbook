@@ -132,9 +132,32 @@ jobs:
             echo "Claude-Session: $RUN"
           } > "$RUNNER_TEMP/msg.txt"
           git commit -q -F "$RUNNER_TEMP/msg.txt"
-          git push -q --force \
-            "https://x-access-token:$MERGE_QUEUE_TOKEN@github.com/$REPO" \
-            "HEAD:refs/heads/$BRANCH"
+          # УЧЁТНЫЕ ДАННЫЕ В URL НЕ ПОБЕЖДАЮТ — ЗАМЕР, А НЕ ЧТЕНИЕ ДОКУМЕНТАЦИИ.
+          # `actions/checkout` прописывает в локальный конфиг заголовок
+          # `http.https://github.com/.extraheader` с токеном ПО УМОЛЧАНИЮ, и
+          # он идёт с каждым запросом к github.com — включая толчок по адресу
+          # с другими учётными данными. Заголовок перебивает URL.
+          #
+          # Первый живой запуск (прогон 82, 28 августа) сказал это прямо:
+          #   remote: Permission to … denied to github-actions[bot].
+          #   fatal: … The requested URL returned error: 403
+          # Толчок ушёл от имени бота при полностью верном URL. Самопроверка
+          # этого поймать не могла: она не ходит в сеть, а `--selftest` был
+          # зелёным ровно потому, что проверял границу набора производных, а
+          # не личность толкающего (правило 139 — механизм подтверждается
+          # прогоном, и утверждение может быть ложным при исправном гейте).
+          #
+          # `permissions: contents: read` при этом ОСТАЁТСЯ. Поднять до write
+          # значило бы разрешить толчок токеном по умолчанию — а такой толчок
+          # площадка намеренно не считает событием, и `agent-pr.yml` по нему
+          # не сработал бы. Изменение не открылось бы, а прогон позеленел.
+          git config --local --unset-all http.https://github.com/.extraheader
+          if ! git push -q --force \
+               "https://x-access-token:$MERGE_QUEUE_TOKEN@github.com/$REPO" \
+               "HEAD:refs/heads/$BRANCH"; then
+            echo "::error::Толчок в $BRANCH отвергнут. Проверьте MERGE_QUEUE_TOKEN: нужны права contents:write и pull-requests:write у ВЛАДЕЛЬЦА. Толчок токеном по умолчанию здесь не годится — по нему не сработает agent-pr.yml."
+            exit 1
+          fi
           echo "производные уехали в $BRANCH — изменение откроет agent-pr.yml"
 
       # Обратное направление контракта (правило 080). Каталог опрашивает
