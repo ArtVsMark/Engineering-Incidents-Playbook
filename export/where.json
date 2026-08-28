@@ -7,14 +7,14 @@
       "role": "каталог",
       "state": "подключён",
       "read_at": "2026-08-28",
-      "answered": 152,
+      "answered": 153,
       "by_status": {
         "not-applicable": 35,
-        "active": 110,
+        "active": 111,
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 52,
+        "gate": 53,
         "none": 41,
         "pipeline": 3,
         "document": 14
@@ -171,7 +171,8 @@
         "150": "active",
         "151": "active",
         "152": "active",
-        "153": "active"
+        "153": "active",
+        "154": "active"
       },
       "holds": {
         "002": {
@@ -613,9 +614,13 @@
         "153": {
           "mechanism": "document",
           "where": "export/README.md § контракт — чужие решения описаны ссылкой на репозиторий потребителя, а не пересказом их устройства; .rules/consumers.json — про потребителя хранится адрес и роль, но не объяснение, почему у него так. Держится чтением при приёмке: отличить ссылку от пересказа машинно нечем"
+        },
+        "154": {
+          "mechanism": "gate",
+          "where": "scripts/check_bindings.py — ответ `active` + `none` без поля `why` отвергается до слияния, симметрично тому, как `why` давно обязателен при `rejected` и `not-applicable`. Гейт держит форму: что причина есть. Того, что она не пересказ самого правила, он не держит — это чтение при приёмке, и граница названа в самой записи"
         }
       },
-      "trails": 23
+      "trails": 24
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",

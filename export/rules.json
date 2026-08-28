@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 152,
+  "count": 153,
   "rules": [
     {
       "id": "001",
@@ -4137,6 +4137,34 @@
       "trails": [],
       "origin": "ArtVsMark/ArtVsMark",
       "portable": "yes"
+    },
+    {
+      "id": "154",
+      "slug": "none-must-name-its-reason",
+      "title": {
+        "ru": "«Не держится ничем» обязано назвать причину, иначе это не состояние, а молчание",
+        "en": "\"Held by nothing\" must name its reason, or it is silence rather than a state"
+      },
+      "areas": {
+        "ru": [
+          "процесс"
+        ],
+        "en": [
+          "process"
+        ]
+      },
+      "added": "2026-08-28",
+      "files": {
+        "ru": "rules/ru/154-none-must-name-its-reason.md",
+        "en": "rules/en/154-none-must-name-its-reason.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "197"
+        }
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     }
   ],
   "candidates": [
