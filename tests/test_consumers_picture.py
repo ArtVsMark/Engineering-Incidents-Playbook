@@ -28,10 +28,24 @@ def срез(repo, consumers, rules=("001", "002")):
     return repo
 
 
-def подключён(name, gate=1, step=1, none=1, trails=0, answered=2):
+def подключён(name, trails=0, answered=2, **механизмы):
+    """Ответ подключённого потребителя. Механизмы — по именам, а не позиции.
+
+    Позиционные `gate, step, none` держались ровно до раскола «шага процесса»:
+    словарь вырос, а подпись помощника осталась трёхместной и молча решала за
+    случай, каких колонок в картинке нет.
+    """
+    # ИМЯ, КОТОРОГО НЕТ, — ОТКАЗ, А НЕ ТИХИЙ КЛЮЧ В СЛОВАРЕ. Замер: после
+    # перехода на `**механизмы` четыре случая продолжали звать `step=3`, ключ
+    # ложился в словарь, картинка рисовала единицу, а набор был зелёным ровно
+    # там, где обязан был краснеть.
+    чужие = set(механизмы) - set(cp.ALL_KEYS)
+    assert not чужие, f"механизма нет в словаре каталога: {sorted(чужие)}"
+    mech = {"gate": 1, "process-step": 1, "none": 1}
+    mech.update(механизмы)
     return {"repo": f"o/{name}", "state": "подключён", "trails": trails,
             "rules": {"001": "active"}, "answered": answered,
-            "by_mechanism": {"gate": gate, "process-step": step, "none": none}}
+            "by_mechanism": mech}
 
 
 def рисуй(repo, dark=False, lang="ru"):
@@ -44,13 +58,40 @@ def рисуй(repo, dark=False, lang="ru"):
 
 def test_подключённый_рисуется_тремя_плашками(repo):
     """Плашка отвечает на один вопрос и читается целиком."""
-    svg = рисуй(срез(repo, [подключён("a", gate=5, step=3, none=2)]))
+    svg = рисуй(срез(repo, [подключён("a", gate=5, none=2, **{"process-step": 3})]))
     t = cp.THEME[False]
 
     for key in ("gate", "process-step", "none"):
         assert cp.LANG["ru"][key] in svg
     for цвет in (t["gate"], t["process-step"], t["none"]):
         assert цвет in svg
+
+
+# ── сколько колонок: канон стоит всегда, устаревшее — пока им отвечают ─────
+#
+# Набор двусторонний (140). Ноль у канонического механизма — это ОТВЕТ
+# («гейтом не держим ни одного»), и колонка обязана стоять. Ноль у
+# устаревшего слова — это «им больше не отвечают», и колонка обязана уйти:
+# вписанная навсегда, она пережила бы последнего потребителя, и вычеркнуть
+# её было бы некому (049).
+
+def test_канонический_механизм_показан_даже_нулём(repo):
+    """Ноль у гейта — ответ, а пропуск колонки читается как «не спрашивали»."""
+    svg = рисуй(срез(repo, [подключён("a", gate=0, pipeline=0,
+                                      document=0, none=7,
+                                      **{"process-step": 0})]))
+
+    for key in cp.MECHANISM_ORDER:
+        assert cp.LANG["ru"][key] in svg
+
+
+def test_устаревшее_слово_показано_пока_им_отвечают(repo):
+    """Показано при ненулевом ответе — и убрано, когда потребитель перешёл."""
+    отвечают = рисуй(срез(repo, [подключён("a", **{"process-step": 4})]))
+    assert cp.LANG["ru"]["process-step"] in отвечают
+
+    перешли = рисуй(срез(repo, [подключён("a", **{"process-step": 0})]))
+    assert cp.LANG["ru"]["process-step"] not in перешли
 
 
 def test_неподключённый_получает_одну_плашку_none(repo):
@@ -78,14 +119,16 @@ def test_плашки_стоят_в_одних_колонках(repo):
     проекта трёхзначное, у другого однозначное — плашка «ничем» обязана
     начинаться на одном и том же x.
     """
-    svg = рисуй(срез(repo, [подключён("a", gate=5, step=3, none=2),
-                            подключён("b", gate=148, step=99, none=140)]))
+    данные = [подключён("a", gate=5, **{"process-step": 3}, none=2),
+              подключён("b", gate=148, **{"process-step": 99}, none=140)]
+    svg = рисуй(срез(repo, данные))
     xs = [(int(r.get("x")), int(r.get("y"))) for r in ET.fromstring(svg).iter()
           if r.tag.endswith("rect") and r.get("height") == str(cp.PILL_H)]
     первая = sorted(x for x, y in xs if y == min(y for _, y in xs))
     вторая = sorted(x for x, y in xs if y == max(y for _, y in xs))
 
-    assert len(первая) == 3 and первая == вторая
+    assert len(первая) == len(cp.shown(cp.rows({"consumers": данные})))
+    assert первая == вторая
 
 
 def test_ширина_колонки_берётся_по_самой_широкой_строке(repo):
@@ -122,7 +165,8 @@ def test_нечего_показать_рисуется_прочерком_а_н
 
 def test_измеренный_ноль_остаётся_нулём(repo):
     """Обратная сторона: у подключённого ноль — это ответ, а не пустота."""
-    svg = рисуй(срез(repo, [подключён("a", gate=0, step=0, none=0, answered=0,
+    svg = рисуй(срез(repo, [подключён("a", gate=0, none=0, answered=0,
+                             **{"process-step": 0},
                                       trails=0)]))
     ячейки = {int(e.get("x")): (e.text or "") for e in ET.fromstring(svg).iter()
               if e.tag.endswith("text") and e.get("font-size") == "22"}
@@ -157,7 +201,7 @@ def test_разметка_экранируется(repo):
 
 
 def test_числа_стоят_в_плашках(repo):
-    svg = рисуй(срез(repo, [подключён("a", gate=5, step=3, none=2)]))
+    svg = рисуй(срез(repo, [подключён("a", gate=5, none=2, **{"process-step": 3})]))
 
     assert ">5<" in svg and ">3<" in svg and ">2<" in svg
 
@@ -307,7 +351,7 @@ def test_подпись_для_чтения_с_экрана_на_языке_ви
 def test_подпись_плашек_стоит_по_центру_группы(repo):
     """Она называет три колонки сразу; у левого края читается как подпись
     только первой."""
-    svg = рисуй(срез(repo, [подключён("a", gate=5, step=3, none=2)]))
+    svg = рисуй(срез(repo, [подключён("a", gate=5, none=2, **{"process-step": 3})]))
     шапка = [e for e in ET.fromstring(svg).iter()
              if e.tag.endswith("text") and e.text == cp.LANG["ru"]["held"]][0]
     плашки = [(int(r.get("x")), int(r.get("width")))

@@ -298,6 +298,21 @@ def held(repo: Path, where: str, **rules) -> str:
     return where
 
 
+def cell(md: str, project: str, head: str) -> str:
+    """Клетка таблицы по ИМЕНИ колонки, а не по её номеру.
+
+    Номер держался ровно до первой новой колонки: раскол «шага процесса» на
+    конвейер и документ сдвинул три проверки разом, и ни одна из них не
+    сообщила, ЧТО именно она мерила. Имя переживает перестановку — и говорит
+    вслух, о какой колонке речь.
+    """
+    lines = md.splitlines()
+    header = next(l for l in lines if l.startswith("| Проект"))
+    names = [c.strip() for c in header.split("|")[1:-1]]
+    row = next(l for l in lines if l.startswith(f"| `{project}`"))
+    return [c.strip() for c in row.split("|")[1:-1]][names.index(head)]
+
+
 def test_таблица_потребителей_называет_чем_держится(monkeypatch, repo):
     prepare(monkeypatch, repo, [{
         "repo": "o/a", "bindings": held(repo, ".rules/a.json",
@@ -307,9 +322,11 @@ def test_таблица_потребителей_называет_чем_дер�
 
     ab.main()
     md = (repo / "export" / "where.md").read_text(encoding="utf-8")
-    строка = next(l for l in md.splitlines() if l.startswith("| `a`"))
 
-    assert "| 1 | 0 | 1 |" in строка
+    assert cell(md, "a", "Гейтом · Gate") == "1"
+    assert cell(md, "a", "Конвейером · Pipeline") == "0"
+    assert cell(md, "a", "Документом · Document") == "0"
+    assert cell(md, "a", "Ничем · Nothing") == "1"
 
 
 def test_отсутствие_механизма_и_none_это_одно_состояние(monkeypatch, repo):
@@ -465,11 +482,9 @@ def test_механизмы_считаются_различными_адреса
     cli(monkeypatch)
 
     ab.main()
-    строка = next(l for l in (repo / "export" / "where.md")
-                  .read_text(encoding="utf-8").splitlines()
-                  if l.startswith("| `a`"))
+    md = (repo / "export" / "where.md").read_text(encoding="utf-8")
 
-    assert строка.split("|")[11].strip() == "1"
+    assert cell(md, "a", "Механизмов · Mechanisms") == "1"
 
 
 # ── сколько правил и сколько разобрано: у находки есть адресат ────────────

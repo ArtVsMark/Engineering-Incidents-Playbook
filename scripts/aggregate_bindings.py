@@ -40,6 +40,11 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+# Словарь механизмов живёт в одном месте (правило 022). Импорт, а не копия:
+# копия расходится молча, и первым это увидит потребитель, а не гейт.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_bindings import MECHANISM_ORDER  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 CONSUMERS = ROOT / ".rules" / "consumers.json"
 EXPORT_JSON = ROOT / "export" / "where.json"
@@ -204,7 +209,24 @@ def stale(slices: list[dict]) -> list[str]:
 
 #: Как механизм называется по-человечески. `none` сюда не попадает: он не
 #: механизм, а его отсутствие, и в разделе «чем держат» ему нечего сказать.
-MECHANISM_RU = {"gate": "гейт", "process-step": "шаг процесса"}
+#: `process-step` попадает — его ещё отдают потребители, и назвать его в
+#: отчёте «шагом процесса» честнее, чем молча приравнять к одному из новых.
+MECHANISM_RU = {"gate": "гейт", "pipeline": "конвейер", "document": "документ",
+                "process-step": "шаг процесса"}
+
+#: Колонки «чем держится» и порядок показа. Канон один — `check_bindings.py`;
+#: здесь он импортируется, а не переписывается: две классификации одной
+#: территории расходятся молча (правило 022).
+MECHANISM_COLUMNS = MECHANISM_ORDER
+
+#: Заголовок колонки. Двуязычный, как и вся таблица.
+MECHANISM_HEAD = {
+    "gate": "Гейтом · Gate",
+    "pipeline": "Конвейером · Pipeline",
+    "document": "Документом · Document",
+    "none": "Ничем · Nothing",
+    "process-step": "Шагом · Step",
+}
 
 
 #: Что в поле `where` считается АДРЕСОМ механизма. Поле — свободная проза, и
@@ -432,11 +454,20 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
         "",
         "## Потребители · Consumers",
         "",
+    ]
+    # КОЛОНКИ СОБИРАЮТСЯ ИЗ ДАННЫХ, А НЕ ВПИСАНЫ РУКОЙ. Устаревшее слово
+    # показывается ровно пока им кто-то отвечает: вписанная колонка `Шагом`
+    # жила бы и после того, как последний потребитель перешёл, а вычеркнуть её
+    # было бы некому (правило 049 — вычисляемое состояние протухает молча).
+    seen = {k for s in slices for k, v in (s.get("by_mechanism") or {}).items() if v}
+    cols = list(MECHANISM_COLUMNS) + [
+        m for m in ("process-step",) if m in seen]
+    head = " | ".join(MECHANISM_HEAD[m] for m in cols)
+    lines += [
         "| Проект · Project | Состояние · State | Следов · Trails | "
         "Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | "
-        "Действует · Active | Гейтом · Gate | Шагом · Step | Ничем · Nothing | "
-        "Механизмов · Mechanisms | Почему · Why |",
-        "|---|---|---|---|---|---|---|---|---|---|---|---|",
+        f"Действует · Active | {head} | Механизмов · Mechanisms | Почему · Why |",
+        "|" + "---|" * (8 + len(cols)),
     ]
     known = set(rule_ids)
     for s in slices:
@@ -444,7 +475,7 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
         m = s.get("by_mechanism") or {}
         answers = s.get("rules") or {}
         if s.get("rules") is None:
-            cells = ["—"] * 7
+            cells = ["—"] * (4 + len(cols))
         else:
             # ЛИШНИЙ ОТВЕТ — ЭТО НАХОДКА, А НЕ ОКРУГЛЕНИЕ. Витрина отвечала за
             # сто сорок восемь правил при ста сорока семи в экспорте: ответ
@@ -454,7 +485,7 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
                 str(len(known - set(answers))),
                 str(len(set(answers) - known)),
                 str((s.get("by_status") or {}).get("active", 0)),
-                *(str(m.get(k, 0)) for k in ("gate", "process-step", "none")),
+                *(str(m.get(k, 0)) for k in cols),
                 str(len({a for h in (s.get("holds") or {}).values()
                          if h.get("mechanism") != "none"
                          for a in ADDRESS_RE.findall(h.get("where") or "")})),

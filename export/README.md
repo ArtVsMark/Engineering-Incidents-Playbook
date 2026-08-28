@@ -85,9 +85,33 @@ fails the build.
 | Поле · Field | Значения · Values | Обязательно · Required |
 |---|---|---|
 | `status` | `active` · `rejected` · `not-applicable` · `unreviewed` | всегда · always |
-| `mechanism` | `gate` · `process-step` · `none` | при `active` · when `active` |
+| `mechanism` | `gate` · `pipeline` · `document` · `none` (устар. · deprecated: `process-step`) | при `active` · when `active` |
 | `where` | путь к скрипту, шагу конвейера или разделу свода · path to a script, a pipeline step or a section of the rulebook | при `active` · when `active` |
 | `why` | причина решения · the reason for the decision | при `rejected` и `not-applicable` |
+
+**Чем эти четыре слова отличаются друг от друга.** Граница проходит по одному
+вопросу: **что случится, если правило нарушить.**
+
+| Значение · Value | Нарушение · A violation | Пример · Example |
+|---|---|---|
+| `gate` | отвергается до слияния · is rejected before merge | `scripts/check_links.py` в обязательной проверке |
+| `pipeline` | замечается прогоном, но слияние не держит · a run notices it, but does not block the merge | ночной `consumers-sync`, задача-адресат |
+| `document` | замечается человеком, если он читал · a human notices it, if they read the document | абзац в `CONTRIBUTING.md` |
+| `none` | не замечается ничем · nothing notices it | намерение без артефакта |
+
+`process-step` — прежнее слово, которым назывались сразу три последние строки.
+Оно принимается по-прежнему, но в отчётах каталога больше не сводится ни к
+одному из новых: подмена была бы догадкой за потребителя. Замер, ради которого
+слово раскололи: из 44 записей каталога со `process-step` три указывали на
+конвейер, четырнадцать — на документ, а двадцать семь не указывали ни на что,
+кроме прозы, — то есть означали `none`.
+
+`process-step` is the former single word for the last three rows above. It is
+still accepted, but the catalogue's reports no longer fold it into any of the
+new ones: that would be a guess on the consumer's behalf. The measurement that
+split it: of the catalogue's own 44 `process-step` entries, three pointed at a
+pipeline, fourteen at a document, and twenty-seven at nothing but prose — that
+is, they meant `none`.
 
 **Почему файл живёт у потребителя, а не здесь.** Там живёт механизм: одно
 правило в проекте с полным конвейером держится гейтом, в витрине — шагом
