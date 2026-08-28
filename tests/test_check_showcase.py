@@ -38,11 +38,6 @@ def run(root: Path) -> int:
     return cs.main(["--root", str(root)])
 
 
-def synced(root: Path) -> None:
-    """Приводит вычисляемые здесь значки к замеру, чтобы «устарел» не мешал."""
-    cs.build(root)
-
-
 # ── здоровые предметы ──────────────────────────────────────────────────────
 
 def test_живой_значок_названный_в_витрине_проходит(repo, capsys):
@@ -50,7 +45,6 @@ def test_живой_значок_названный_в_витрине_прохо
                     "badge": ".github/badges/coverage.json"}],
             readme="# П\n\n![c](.github/badges/coverage.json)\n",
             badges=[".github/badges/coverage.json"])
-    synced(repo)
     assert run(repo) == 0
     assert "живым числом" in capsys.readouterr().out
 
@@ -58,7 +52,6 @@ def test_живой_значок_названный_в_витрине_прохо
 def test_названный_пробел_проходит(repo, capsys):
     prepare(repo, [{"id": "pypi", "ask": "версия в PyPI",
                     "absent": "предмета нет: каталог не пакет и не публикуется"}])
-    synced(repo)
     assert run(repo) == 0
     assert "названо без предмета" in capsys.readouterr().out
 
@@ -68,7 +61,6 @@ def test_значок_с_отдельной_ветки_файла_в_дерев�
     prepare(repo, [{"id": "release", "ask": "выпуск",
                     "badge": ".github/badges/release.json", "branch": "badges"}],
             readme="# П\n\n![r](release.json)\n")
-    synced(repo)
     assert run(repo) == 0
 
 
@@ -77,7 +69,6 @@ def test_витрина_на_втором_языке_тоже_считается
                     "badge": ".github/badges/coverage.json"}],
             badges=[".github/badges/coverage.json"])
     write(repo / "README.en.md", "# P\n\n![c](coverage.json)\n")
-    synced(repo)
     assert run(repo) == 0
 
 
@@ -85,14 +76,12 @@ def test_витрина_на_втором_языке_тоже_считается
 
 def test_вопрос_без_ответа_это_находка(repo, capsys):
     prepare(repo, [{"id": "pypi", "ask": "версия в PyPI"}])
-    synced(repo)
     assert run(repo) == 1
     assert "ответа нет вовсе" in capsys.readouterr().err
 
 
 def test_причина_отсутствия_отпиской_не_считается(repo, capsys):
     prepare(repo, [{"id": "pypi", "ask": "версия в PyPI", "absent": "нет"}])
-    synced(repo)
     assert run(repo) == 1
     assert "слишком коротка" in capsys.readouterr().err
 
@@ -101,7 +90,6 @@ def test_объявленный_значок_без_файла_это_наход
     prepare(repo, [{"id": "coverage", "ask": "покрытие",
                     "badge": ".github/badges/coverage.json"}],
             readme="# П\n\n![c](coverage.json)\n")
-    synced(repo)
     assert run(repo) == 1
     assert "файла нет" in capsys.readouterr().err
 
@@ -110,7 +98,6 @@ def test_значок_не_показанный_в_витрине_это_нах�
     prepare(repo, [{"id": "coverage", "ask": "покрытие",
                     "badge": ".github/badges/coverage.json"}],
             badges=[".github/badges/coverage.json"])
-    synced(repo)
     assert run(repo) == 1
     assert "ответ в пустоту" in capsys.readouterr().err
 
@@ -120,7 +107,6 @@ def test_и_значок_и_причина_это_находка(repo, capsys):
                     "badge": ".github/badges/coverage.json",
                     "absent": "и то и другое сразу, чего быть не может"}],
             badges=[".github/badges/coverage.json"])
-    synced(repo)
     assert run(repo) == 1
     assert "ответ один" in capsys.readouterr().err
 
@@ -135,7 +121,6 @@ def test_свежесть_значка_здесь_не_судится(repo):
     prepare(repo, [{"id": "tests", "ask": "сколько тестов",
                     "badge": ".github/badges/tests.json", "branch": "badges"}],
             readme="# П\n\n![t](tests.json)\n")
-    synced(repo)
     write(repo / "tests" / "test_a.py", "def test_один():\n    pass\n")
     assert run(repo) == 0
 
@@ -160,12 +145,22 @@ def test_витрины_нет_это_третий_исход(repo, capsys):
     assert "витрины нет" in capsys.readouterr().err
 
 
-# ── счёт ───────────────────────────────────────────────────────────────────
+# ── чего этот гейт больше не делает ────────────────────────────────────────
 
-def test_счёт_берёт_тесты_модули_и_гейты(repo):
-    prepare(repo, [])
-    write(repo / "tests" / "test_a.py", "def test_один():\n    pass\n\ndef test_два():\n    pass\n")
-    write(repo / "tests" / "test_b.py", "def test_три():\n    pass\n")
-    write(repo / "tests" / "conftest.py", "def test_не_модуль():\n    pass\n")
-    got = cs.counted(repo)
-    assert got["tests"] == 3 and got["test-modules"] == 2 and got["gates"] == 1
+def test_сборки_значков_здесь_нет(repo):
+    """Гейт вычислял три значка сам; все три сняты с витрины вместе с ними.
+
+    Оставленная сборка производила бы значок, которого не показывает никто, —
+    ровно то, что этот гейт и запрещает. Случай стоит здесь, чтобы возврат
+    сборки без витрины не прошёл молча.
+    """
+    assert not hasattr(cs, "build")
+    assert not hasattr(cs, "counted")
+
+
+def test_ключа_build_у_команды_нет(repo, capsys):
+    """Прогон значков звал `--build`; ключ снят вместе с механикой."""
+    import pytest
+
+    with pytest.raises(SystemExit):
+        cs.main(["--root", str(repo), "--build"])
