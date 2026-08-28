@@ -83,6 +83,10 @@ jobs:
           python scripts/build_rules_index.py >/dev/null
           python -m coverage run -m pytest -q >/dev/null
           python scripts/coverage_badge.py
+          # Картинка витрины — тот же класс, что и значки: производная от
+          # уже собранного `export/where.json`, живёт на этой же ветке и
+          # обновляется тем же прогоном. Своих чисел не считает (022).
+          python scripts/consumers_picture.py
 
       # Ветка `badges` осиротевшая: истории кода в ней нет, только значки.
       # Так обновление значка не заводит коммит в общей ветке и не двигает
@@ -97,7 +101,7 @@ jobs:
           # Копируется ВСЁ, что собралось. Перечислять поимённо значило бы
           # завести второй список значков рядом с .rules/showcase.json —
           # две классификации одной территории расходятся молча (022).
-          cp .github/badges/*.json "$tmp/.github/badges/"
+          cp .github/badges/*.json .github/badges/*.svg "$tmp/.github/badges/"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -123,9 +127,9 @@ jobs:
           if [ "${PARTIAL:-0}" = "1" ]; then
             echo "сборка неполная — старые значки не трогаю"
           else
-            rm -f .github/badges/*.json
+            rm -f .github/badges/*.json .github/badges/*.svg
           fi
-          cp "$tmp/.github/badges/"*.json .github/badges/
+          cp "$tmp/.github/badges/"* .github/badges/
           # `-f` нужен: в общей ветке значки под .gitignore, и без него
           # добавление молча не произошло бы — а сторож ниже увидел бы
           # «значки не изменились» и вышел зелёным (правило 075).

@@ -92,3 +92,9 @@ Two separate indexes would not do this — each looks complete on its own.
 ## License
 
 [CC BY 4.0](LICENSE) — take it, change it, use it, keep the attribution.
+
+## How rules are enforced across consumers
+
+[![How rules are enforced across consumers](https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers.svg)](export/where.md)
+
+Drawn by a workflow from [`export/where.json`](export/where.json) — the projects' own answers, not our assessment of them. The bar shows a **share**: what holds a rule where it is called active. The numbers beside it are absolute, so the share does not pass for volume. The full report, including "who already solved what a neighbour holds by nothing", is in [`export/where.md`](export/where.md).
