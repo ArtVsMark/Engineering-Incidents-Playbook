@@ -1,11 +1,13 @@
 # Как внести вклад · Contributing
 
 Этот документ — для человека со стороны. Свод для агентского окна, работающего
-внутри репозитория, отдельный: [`CLAUDE.md`](CLAUDE.md). Разные читатели —
+внутри репозитория, отдельный: ядро [`AGENTS.md`](AGENTS.md) и надстройка
+[`CLAUDE.md`](CLAUDE.md) поверх него. Разные читатели —
 разные документы ([021](rules/ru/021-split-docs-by-reader.md)).
 
 This document is for a person from outside. The rulebook for an agent session
-working inside the repository is separate: [`CLAUDE.md`](CLAUDE.md).
+working inside the repository is separate: the core [`AGENTS.md`](AGENTS.md)
+and the [`CLAUDE.md`](CLAUDE.md) overlay on top of it.
 
 ## Что здесь принимают · What is accepted
 

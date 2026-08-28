@@ -88,20 +88,26 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     root: Path = args.root
 
+    # ЯДРО, А НЕ НАДСТРОЙКА. Таблица гейтов универсальна: она отвечает на
+    # вопрос «что меня остановит» любому агенту, а не окну Claude Code. После
+    # раскола свода (задача #198) она живёт в AGENTS.md, и сверяется с
+    # конвейером именно оттуда. CLAUDE.md проверяется на другое — что он
+    # СОШЛЁТСЯ на ядро, а не заведёт вторую таблицу (022).
+    core = root / "AGENTS.md"
     charter = root / "CLAUDE.md"
     onramp = root / "CONTRIBUTING.md"
     pipeline = root / ".github" / "workflows" / "ci.yml"
     harness = root / "scripts" / "check_gates.py"
 
     # ── исход 2 ────────────────────────────────────────────────────────────
-    for path in (charter, onramp, pipeline):
+    for path in (core, charter, onramp, pipeline):
         if not path.exists():
             print(f"проверка не отработала: нет {path.name} — "
                   "сверять не с чем", file=sys.stderr)
             return 2
 
     charter_text = charter.read_text(encoding="utf-8")
-    gates_section = section(charter_text, CHARTER_SECTION)
+    gates_section = section(core.read_text(encoding="utf-8"), CHARTER_SECTION)
     if gates_section is None:
         print(f"проверка не отработала: в своде нет раздела «{CHARTER_SECTION}» — "
               "таблицы гейтов, с которой сверяется конвейер", file=sys.stderr)
@@ -129,7 +135,22 @@ def main(argv: list[str] | None = None) -> int:
                 f"{name}: в {where} обещан {extra}, а в конвейере такого шага "
                 "нет. Обещание, которое никто не исполняет")
 
-    compare("свод", in_charter, "таблице CLAUDE.md")
+    # НАДСТРОЙКА ССЫЛАЕТСЯ НА ЯДРО И НЕ ЗАВОДИТ ВТОРОЙ ТАБЛИЦЫ. Ровно то, чем
+    # опасен раскол: два документа об одном разъезжаются молча (022). Первый
+    # признак расхождения — своя таблица гейтов в надстройке; она выглядит
+    # полезной и устаревает первой же правкой конвейера.
+    if "AGENTS.md" not in charter_text:
+        problems.append(
+            "надстройка: CLAUDE.md не ссылается на AGENTS.md. Читатель "
+            "надстройки обязан узнать, где ядро, из первых строк — иначе "
+            "он прочитает половину требований и решит, что это все")
+    if section(charter_text, CHARTER_SECTION) is not None:
+        problems.append(
+            f"надстройка: в CLAUDE.md заведён свой раздел «{CHARTER_SECTION}». "
+            "Таблица гейтов одна и живёт в ядре: вторая устареет первой же "
+            "правкой конвейера, и разойдутся они молча")
+
+    compare("ядро", in_charter, "таблице AGENTS.md")
     compare("документ для участника", in_onramp, "списке CONTRIBUTING.md")
 
     if problems:
