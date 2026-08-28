@@ -13,10 +13,9 @@
 | Проект · Project | Состояние · State | Следов · Trails | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Шагом · Step | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | `claude-code-playbook` | подключён | 23 | 152 | 0 | 0 | 110 | 54 | 44 | 12 | 37 |  |
-| `Stepik-Python-Grader` | подключён | 67 | 147 | 5 | 0 | 101 | 35 | 6 | 60 | 47 |  |
-| `ArtVsMark` | подключён | 12 | 148 | 5 | 1 | 74 | 23 | 41 | 10 | 27 |  |
+| `Stepik-Python-Grader` | подключён | 67 | 147 | 5 | 0 | 101 | 48 | 6 | 47 | 62 |  |
+| `ArtVsMark` | подключён | 12 | 150 | 2 | 0 | 76 | 23 | 43 | 10 | 27 |  |
 | `claude-code-usage` | не подключён | 1 | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
-| `claude-code-usage-dat` | неизвестно | 0 | — | — | — | — | — | — | — | — | ответ приватен и публично недоступен |
 | `Glossary-Python` | не подключён | 0 | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
 ## Чем держат другие · How others enforce it
@@ -32,15 +31,12 @@
 | 005 | `ArtVsMark` — гейт: scripts/build_metrics.py::patch_readme — числа только между маркерами m:ключ; scripts/build_metrics.py::render_featured — числа баннера тоже измерены, а не вписаны: они приходят из project_stats и попадают в подпись картинки той же сборкой; scripts/build_metrics.py::project_badges — версия, состояние CI, покрытие и версия пакета измеряются сборкой и рисуются ею же: чужих бейджей на витрине не осталось, а значит не осталось и второго источника тех же чисел | `claude-code-playbook` |
 | 006 | `claude-code-playbook` — шаг процесса: договорённость окна в своде: дальше срока — перезапуск с передачей по 138. Машинного счётчика возраста окна нет; `ArtVsMark` — шаг процесса: CLAUDE.md § Окно — срок жизни три–пять дней, дальше эстафета ссылками. Механизма нет и быть не может: возраст окна репозиторию не виден, перезапуск делает владелец | `Stepik-Python-Grader` |
 | 011 | `claude-code-playbook` — гейт: .github/workflows/consumers-sync.yml ходит наружу по расписанию и на слияние, а не циклом опроса; обязательная проверка изменения наружу не ходит вовсе | `Stepik-Python-Grader`, `ArtVsMark` |
-| 012 | `claude-code-playbook` — шаг процесса: окно не толкает в ветки, которые ведёт другое окно или человек. Машинного запрета нет — защита ветки покрывает только общую | `Stepik-Python-Grader` |
-| 013 | `claude-code-playbook` — шаг процесса: .github/workflows/agent-pr.yml передаёт заголовок и тело файлами (`--body-file`), а не строкой в оболочке; то же в .github/workflows/automerge.yml | `Stepik-Python-Grader` |
 | 014 | `claude-code-playbook` — шаг процесса: гейт проверяется МУТАЦИЕЙ — убирается поведение, имена остаются, — а не откатом набора. Исполняется при приёмке изменения, машинного нет; `ArtVsMark` — шаг процесса: HISTORY.md § Гейты, проверенные тем, что они обязаны отвергнуть — каждый гейт нарочно ломался обратно в свой исходный дефект при сохранённых именах, и самопроверка обязана была покраснеть. Меняется ровно одна переменная: поведение убрано, имена на месте. Механизм process-step, а не gate: мутации прогоняются рукой при заведении гейта, в конвейере их нет | `Stepik-Python-Grader` |
 | 016 | `claude-code-playbook` — гейт: scripts/aggregate_bindings.py и scripts/collect_proposals.py печатают «и ещё N» вместо тихого урезания списка находок; `ArtVsMark` — шаг процесса: scripts/build_metrics.py::render_projects — под таблицей строка о непоказанных проектах | `Stepik-Python-Grader` |
 | 018 | `claude-code-playbook` — гейт: tests/ проверяют узлы — функции скриптов на подделанном дереве; .github/workflows/ci.yml прогоняет цепочку целиком. Разные окружения, разные предметы | `Stepik-Python-Grader` |
-| 027 | `claude-code-playbook` — шаг процесса: пустой реестр потребителей объявлен в export/README.md; `ArtVsMark` — шаг процесса: README.md § Contributions welcome — пустой пул задач объявлен словами | `Stepik-Python-Grader` |
 | 032 | `ArtVsMark` — шаг процесса: .github/workflows/pr-check.yml — вывод о работоспособности делается прогоном вхолостую, а не чтением кода | `Stepik-Python-Grader` |
 | 038 | `ArtVsMark` — шаг процесса: CLAUDE.md § Окно — имя начинается с окружения, витрину ведут только облачные окна: [WEB]. Признак окружения лежит в реестре сессий, то есть вне репозитория, — сверять префикс отсюда нечем | `Stepik-Python-Grader` |
-| 039 | `claude-code-playbook` — гейт: все скрипты проверок различают исходы кодом возврата | `Stepik-Python-Grader`, `ArtVsMark` |
+| 039 | `claude-code-playbook` — гейт: все скрипты проверок различают исходы кодом возврата; `Stepik-Python-Grader` — гейт: scripts/check_three_outcomes.py — скрипт, ходящий в GitHub, обязан отличать отказ источника от результата (RateLimited → EXIT_WAIT, GitHubError → код 2); объявленный долг перечислен в KNOWN_DEBT с причиной | `ArtVsMark` |
 | 042 | `claude-code-playbook` — шаг процесса: export/README.md § Отвергнутые варианты | `Stepik-Python-Grader` |
 | 043 | `claude-code-playbook` — шаг процесса: пересмотр правила — новая запись, старая помечается | `Stepik-Python-Grader` |
 | 047 | `claude-code-playbook` — шаг процесса: правка свода — повод перезапустить окно, а не разослать. Машинного нет: реестром окон каталог не управляет; `ArtVsMark` — шаг процесса: CLAUDE.md § Окно — прямой цитатой: сменились правила работы, окна перезапускаются. Этот файл читается один раз, при старте | `Stepik-Python-Grader` |
@@ -53,7 +49,6 @@
 | 082 | `claude-code-playbook` — шаг процесса: карта направлений в CLAUDE.md; полнота проверена обходом артефактов, три направления закрыты гейтами; `ArtVsMark` — гейт: scripts/check_roles.py — таблица покрытия в .rules/roles.md сверяется с деревом в обе стороны: файл без строки и строка без файлов одинаково роняют проверку. Полнота проверяется обходом артефактов, а не чтением списка ролей: обход нашёл пять пластов сверх четырёх записанных по памяти | `Stepik-Python-Grader` |
 | 086 | `claude-code-playbook` — шаг процесса: тяжесть находке ставит не нашедший: кандидаты в правила отвергались не тем окном, что их написало, а прогоном по соседям — метрика решала, а не автор | `Stepik-Python-Grader` |
 | 088 | `claude-code-playbook` — шаг процесса: «критик гипотезы» назван в карте направлений НЕПОКРЫТЫМ прямым текстом — это исполнение правила, а не его нарушение | `Stepik-Python-Grader` |
-| 089 | `claude-code-playbook` — шаг процесса: из оригинала в копию не ссылаемся; `ArtVsMark` — шаг процесса: README.md — ссылки ведут только в источники, обратных из проектов сюда нет | `Stepik-Python-Grader` |
 | 097 | `claude-code-playbook` — гейт: tests/test_coverage_badge.py — пороги цвета проверяются с ОБЕИХ сторон границы, и ложный отказ ловится тем же прогоном, что и ложное «прошло»; tests/test_aggregate_bindings.py — отсутствие связи и нечитаемый ответ разведены нарочно, чтобы состояние не стало находкой; `ArtVsMark` — гейт: scripts/check_labels.py::selftest, scripts/check_bindings.py::selftest, scripts/check_roles.py::selftest, scripts/build_metrics.py::selftest — у каждого гейта прогоняются оба класса ошибок: предмет, который он обязан отвергнуть, и предмет, который обязан пропустить. Ложное «прошло» не приходит жаловаться никогда, ложный отказ в конвейере без человека — тоже | `Stepik-Python-Grader` |
 | 098 | `claude-code-playbook` — шаг процесса: единица дробления — правило, и определяется она употреблением: правило, которое нельзя процитировать целиком, дробится, а второй инцидент к существующему не заводит новое | `Stepik-Python-Grader` |
 | 099 | `claude-code-playbook` — гейт: словарь областей в scripts/build_rules_index.py закрытый: область, которой в нём нет, сборку не проходит, и спор решается пополнением словаря осознанно | `Stepik-Python-Grader` |
@@ -63,16 +58,12 @@
 | 107 | `claude-code-playbook` — гейт: scripts/check_test_deps.py — каждый импорт в tests/ объявлен в requirements-test.txt, а не просто установлен у автора. Имя модуля объявляется рядом с пакетом («pyyaml  # модуль: yaml»), а не выясняется у метаданных: первая версия гейта спрашивала установленное и упала в конвейере ровно той болезнью, которую ловит | `ArtVsMark` |
 | 111 | `claude-code-playbook` — гейт: конвейер делает сам, а не советует: .github/workflows/agent-pr.yml открывает изменение, .github/workflows/automerge.yml включает слияние, .github/workflows/labels-sync.yml расставляет метки | `Stepik-Python-Grader`, `ArtVsMark` |
 | 113 | `claude-code-playbook` — шаг процесса: export/README.md § Как схема меняется | `Stepik-Python-Grader` |
-| 118 | `claude-code-playbook` — гейт: scripts/build_rules_index.py — экспорт рядом с источником; `ArtVsMark` — шаг процесса: projects.json — источник таблицы лежит рядом с производной разметкой README | `Stepik-Python-Grader` |
-| 121 | `claude-code-playbook` — шаг процесса: закрытие задачи требует счётного критерия: «сделано» доказывается зелёным гейтом или названным числом, а не видом закрытого контейнера | `Stepik-Python-Grader` |
 | 122 | `claude-code-playbook` — шаг процесса: export/rules.json отдаёт следы структурой рядом с текстом | `Stepik-Python-Grader` |
 | 127 | `ArtVsMark` — гейт: scripts/build_metrics.py::patch_readme — маркер, сборка и падение при пропаже маркера | `claude-code-playbook` |
 | 132 | `Stepik-Python-Grader` — гейт: scripts/check_work_overlap.py показывает, кто ещё трогает те же файлы, а check_pr_ready.py требует объявить все задачи сборного изменения (Closes #N либо «Часть #N»); `ArtVsMark` — шаг процесса: CLAUDE.md § Критические запреты — не везти в одном PR несколько тем; .github/pull_request_template.md — тот же вопрос критику. Гейта нет намеренно: число затронутых зон сборности не доказывает, а ложный отказ на широкой теме дороже пропуска. Правило само требует предупреждения, а не отказа, — а предупреждать здесь некому | `claude-code-playbook` |
 | 133 | `Stepik-Python-Grader` — гейт: граница PR проверяется пересечением файлов: scripts/check_work_overlap.py считает его по git diff --name-only, а не по числу задач; `ArtVsMark` — шаг процесса: CLAUDE.md § Критические запреты — оговорка к запрету на несколько тем: пересечение файлов сильнее темы. У витрины общие файлы почти у каждой правки — HISTORY.md и .rules/bindings.json, — поэтому изменения идут по одному, и встречи на общем файле не случается | `claude-code-playbook` |
 | 137 | `ArtVsMark` — гейт: scripts/build_metrics.py::unanswered — сторож стоит до форматирования и смотрит на измеренное; scripts/build_metrics.py::order_of — форматирование применяется к уже проверенному. Инцидент правила — эта самая сборка: «0000+ tests» проходило мимо сравнения с «0» | `Stepik-Python-Grader` |
-| 140 | `claude-code-playbook` — гейт: scripts/check_gates.py и tests/ — отвергаемый предмет получает каждый гейт конвейера, кроме самого check_gates; сколько и каким из двух механизмов, печатает scripts/check_charter.py, а не эта строка; `ArtVsMark` — гейт: scripts/check_bindings.py::selftest, scripts/check_roles.py::selftest, scripts/check_labels.py::selftest — включая вывод метки по заголовку, где ошибка ставит НЕВЕРНУЮ метку, то есть врёт о зоне работы, scripts/build_metrics.py::selftest, scripts/gh_outcome.py::selftest — через каждый гейт нарочно прогоняется то, что он обязан отвергнуть, и то, что обязан пропустить: набор из одних отказов не видит ложного отказа. Прогоны стоят шагами в .github/workflows/pr-check.yml, а не запускаются руками | `Stepik-Python-Grader` |
 | 141 | `claude-code-playbook` — гейт: scripts/check_gates.py — набор «сборка указателя»: маркер и его расширение прогоняются как отдельный случай; `ArtVsMark` — шаг процесса: предметы перебраны все четыре. scripts/build_metrics.py::patch_readme — маркер сверяется вместе с закрывающими знаками, поэтому m:rules не совпадает с m:required; scripts/build_metrics.py::sync_alt — имя картинки читается целиком до расширения; scripts/check_bindings.py::REFERENCE — путь берётся с ведущей точкой и до известного расширения, якорь сверяется словом целиком; scripts/check_roles.py::ROW — образец берётся внутри обратных кавычек. Гейта, который поймал бы будущее сравнение началом, нет: это свойство кода, а не вход проверки | `Stepik-Python-Grader` |
-| 142 | `claude-code-playbook` — гейт: .github/workflows/consumers-sync.yml — шаг «у находки есть адресат» заводит задачу при отказе; `ArtVsMark` — шаг процесса: предметов три, перебраны все. .github/workflows/metrics.yml — отказ приезжает изменением, то есть в трекер и в почту владельцу; .github/workflows/rules-inbox.yml — очередь нерассмотренных правил ведёт задачу, а не красноту на вкладке прогонов. Третий предмет закрыт: .github/workflows/main-red.yml — дежурный по общей ветке спрашивает вкладку прогонов раз в сутки и ведёт ОДНУ задачу, пока там есть красное. Адресат один на ВСЕ прогоны, а не по одному на каждый: пробел был назван у attribution-history, но предмет оказался крупнее — красное на общей ветке не принадлежит никому у любого прогона. Логика взята у каталога ссылкой на закреплённую версию — дежурный каталога, вынесенный туда этим же окном (playbook#139, playbook#141); своей копии здесь нет. Исключений у витрины НЕТ, и это решение: у каталога attribution-history исключён, потому что его красное означало бы непочинимый долг прошлого, а здесь долг объявлен заново ключом --since, и каждое новое красное на нём означает новый дефект | `Stepik-Python-Grader` |
 | 144 | `Stepik-Python-Grader` — гейт: scripts/check_audit_registry.py — mention_verdict берёт окно контекста абзацем, а заголовок раздела перевешивает форму строки; закреплено тестами test_check_audit_registry.py | `claude-code-playbook`, `ArtVsMark` |
 | 145 | `claude-code-playbook` — гейт: scripts/check_gates.py — каждый набор двусторонний, у каждого есть предмет, который гейт обязан пропустить, и предмет, который обязан отвергнуть; `ArtVsMark` — гейт: самопроверки в .github/workflows/pr-check.yml прогоняют каждый объявленный исход, а не только успешный. scripts/gh_outcome.py::selftest — все три (ответил · не ответил · ответил отказом), плюс ловушка порядка отдельной строкой. scripts/check_author.py::selftest — все три, включая «проверка не отработала»: он был объявлен в докстроке и НЕ прогонялся ни разу, набор проверял только offenders. Найдено замером при вынесении этого вердикта и закрыто тем же заходом — исход выполняется запуском самого скрипта, потому что живёт в main, а не в разбираемой функции. Шаги прогонов с разбором кода возврата (.github/workflows/automerge.yml, .github/workflows/open-pr.yml) прогнаны подставным gh по каждому исходу. ЛОВУШКА ИЗ ИНЦИДЕНТА ПРАВИЛА ЗДЕСЬ ЖИВАЯ: площадка зовёт шаг как bash -e, и set -uo pipefail этого -e не снимает — витрина словила её 27 августа кодом 2 на несуществующем файле; поэтому каждый вызов из шага прикрыт `|| verdict=…`. Пробел, названный при вынесении этого вердикта, закрыт тем же окном: scripts/check_labels.py::outcome вынесен из main отдельной функцией — ветка «внешнему участнику мягко, владельцу отказ» жила рядом с обращением к площадке, и достать её самопроверкой было нечем; теперь прогоняются все четыре исхода плюс вызов без номера изменения. scripts/build_metrics.py::selftest прогоняет исход «вызвано без клона грейдера» запуском самого скрипта | `Stepik-Python-Grader` |
 | 146 | `claude-code-playbook` — гейт: scripts/aggregate_bindings.py — обязательная проверка сверяет сводку с ОТВЕТОМ на диске, а не только саму с собой; до #122 она подтверждала своё основание тем же зелёным, каким подтверждала себя. Остальное правило держится разбором при приёмке: замер живого предмета машинно не отличить от рассуждения; `ArtVsMark` — шаг процесса: утверждение под гейтом проверяется замером, а не зеленью. Подтверждено на живом предмете дважды, и оба раза утверждение оказалось ЛОЖНЫМ при исправном механизме. Первое: .rules/bindings.json rules.131 утверждал, что при squash подмена учётных данных на записи предмета не имеет. Замер по пятнадцати первопредкам main: изменения, открытые владельцем, дают автором владельца, а открытое ботом (ca7dfcd) — бота. Решает учётная запись, ОТКРЫВШАЯ изменение; вердикт исправлен, механизм — .github/workflows/open-pr.yml. Второе: .github/workflows/automerge.yml утверждал со ссылкой на замер каталога, что включение автомержа отказывает изменению в чистом состоянии. На витрине не подтвердилось — замер на #68: состояние clean, автомерж включился. Утверждение заменено двумя замерами с их условиями, а не сведено к одному правдоподобному. Оба случая объединяет то, ради чего правило написано: гейты были зелёные и держали не то | `Stepik-Python-Grader` |
@@ -112,44 +103,46 @@
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
 | `claude-code-playbook` | _остальные_ · _the rest_ | 13 механизмов по одному правилу; без названного адреса: 34 из 98 |
 | `Stepik-Python-Grader` | `scripts/check_pr_ready.py` | 5 |
+| `Stepik-Python-Grader` | `scripts/gh_rest.py` | 4 |
 | `Stepik-Python-Grader` | `scripts/check_work_overlap.py` | 3 |
-| `Stepik-Python-Grader` | `scripts/gh_rest.py` | 3 |
 | `Stepik-Python-Grader` | `src/stepik_grader/web/playground.py` | 3 |
+| `Stepik-Python-Grader` | `.claude/hooks/pre_tool_use.py` | 2 |
 | `Stepik-Python-Grader` | `.rules/bindings.json` | 2 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_locale_guardrails.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_rules_digest.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_workflow_guardrails.py` | 2 |
+| `Stepik-Python-Grader` | `scripts/nightly_checks.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/rerun_flaky_checks.py` | 2 |
 | `Stepik-Python-Grader` | `src/stepik_grader/core/runner.py` | 2 |
 | `Stepik-Python-Grader` | `src/stepik_grader/web/runs.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
-| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 32 механизмов по одному правилу; без названного адреса: 1 из 41 |
+| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 45 механизмов по одному правилу; без названного адреса: 1 из 54 |
 | `ArtVsMark` | `scripts/build_metrics.py` | 22 |
 | `ArtVsMark` | `CLAUDE.md` | 12 |
 | `ArtVsMark` | `README.md` | 10 |
-| `ArtVsMark` | `scripts/check_labels.py` | 8 |
-| `ArtVsMark` | `.github/workflows/automerge.yml` | 7 |
-| `ArtVsMark` | `.rules/README.md` | 7 |
-| `ArtVsMark` | `.github/workflows/open-pr.yml` | 6 |
-| `ArtVsMark` | `scripts/check_bindings.py` | 6 |
+| `ArtVsMark` | `scripts/check_labels.py` | 10 |
+| `ArtVsMark` | `.github/workflows/automerge.yml` | 8 |
+| `ArtVsMark` | `.github/workflows/open-pr.yml` | 8 |
+| `ArtVsMark` | `scripts/check_bindings.py` | 7 |
+| `ArtVsMark` | `scripts/check_roles.py` | 7 |
+| `ArtVsMark` | `.rules/README.md` | 6 |
+| `ArtVsMark` | `scripts/check_page.py` | 6 |
 | `ArtVsMark` | `.github/workflows/pr-check.yml` | 5 |
 | `ArtVsMark` | `scripts/check_author.py` | 5 |
-| `ArtVsMark` | `scripts/check_roles.py` | 5 |
+| `ArtVsMark` | `.github/workflows/main-red.yml` | 4 |
+| `ArtVsMark` | `.github/workflows/rules-inbox.yml` | 4 |
 | `ArtVsMark` | `.rules/bindings.json` | 4 |
 | `ArtVsMark` | `HISTORY.md` | 4 |
-| `ArtVsMark` | `.github/workflows/main-red.yml` | 3 |
-| `ArtVsMark` | `.github/workflows/rules-inbox.yml` | 3 |
+| `ArtVsMark` | `scripts/gh_outcome.py` | 4 |
+| `ArtVsMark` | `.github/workflows/metrics.yml` | 3 |
 | `ArtVsMark` | `.rules/roles.md` | 3 |
 | `ArtVsMark` | `projects.json` | 3 |
-| `ArtVsMark` | `scripts/check_page.py` | 3 |
-| `ArtVsMark` | `scripts/gh_outcome.py` | 3 |
-| `ArtVsMark` | `.github/workflows/metrics.yml` | 2 |
 | `ArtVsMark` | `.rules/proposals.json` | 2 |
 | `ArtVsMark` | `scripts/checks.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 5 механизмов по одному правилу; без названного адреса: 2 из 64 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 5 механизмов по одному правилу; без названного адреса: 2 из 66 |
 
 ## Правила · Rules
 
@@ -302,8 +295,8 @@
 | 146 | действует | действует | действует |
 | 147 | действует | действует | действует |
 | 148 | действует | действует | действует |
-| 149 | нет предмета | — | — |
-| 150 | действует | — | — |
-| 151 | действует | — | — |
+| 149 | нет предмета | — | действует |
+| 150 | действует | — | действует |
+| 151 | действует | — | действует |
 | 152 | действует | — | — |
 | 153 | действует | — | — |

@@ -35,14 +35,6 @@
       "since": "2026-08-22"
     },
     {
-      "repo": "ArtVsMark/claude-code-usage-dat",
-      "role": "потребитель, приватный",
-      "bindings": null,
-      "access": "private",
-      "proposals": null,
-      "since": "2026-08-22"
-    },
-    {
       "repo": "ArtVsMark/Glossary-Python",
       "role": "потребитель",
       "bindings": null,
