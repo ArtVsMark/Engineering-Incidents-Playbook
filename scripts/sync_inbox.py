@@ -182,21 +182,52 @@ def main() -> int:
               "нечем", file=sys.stderr)
         return 2
 
-    code, found = gh("issue", "list", "--state", "open", "--limit", "100",
-                     "--json", "number,body", "--jq", f'[.[] | select(.body | contains("{MARKER}"))][0].number // empty')
+    # Ищется среди ВСЕХ состояний, а не только открытых. Пока искали среди
+    # открытых, закрыть задачу было нельзя ни рукой, ни механизмом: следующий
+    # прогон не находил её и заводил вторую. Потребитель это и наблюдал —
+    # ArtVsMark/ArtVsMark#52 висел открытым с нулём нерассмотренных, потому что
+    # иначе он бы раздвоился.
+    code, found = gh("issue", "list", "--state", "all", "--limit", "100",
+                     "--json", "number,body,state",
+                     "--jq", f'[.[] | select(.body | contains("{MARKER}"))][0] | "\\(.number) \\(.state)"')
     if code != 0:
         print(f"проверка не отработала: трекер не ответил — {found}", file=sys.stderr)
         return 2
 
-    if found:
-        code, out = gh("issue", "edit", found, "--body", body)
-        where = f"задача #{found} обновлена"
-    else:
+    number, state = (found.split() + ["", ""])[:2]
+    pending = bool(missing or unreviewed or stale)
+
+    if number:
+        code, out = gh("issue", "edit", number, "--body", body)
+        where = f"задача #{number} обновлена"
+    elif pending:
         code, out = gh("issue", "create", "--title", args.title, "--body", body)
         where = f"задача заведена: {out}"
+    else:
+        # Завести задачу, чтобы тут же закрыть, — шум без адресата.
+        print("нерассмотренных нет, задачи-«входящих» тоже: заводить нечего")
+        return 0
     if code != 0:
         print(f"проверка не отработала: задача не записана — {out}", file=sys.stderr)
         return 2
+
+    # ОТКРЫТА ЛИ ЗАДАЧА — ЭТО УТВЕРЖДЕНИЕ, А НЕ ОФОРМЛЕНИЕ. Открытая задача
+    # говорит «здесь есть работа». При нуле нерассмотренных это неправда, и
+    # ежедневная неправда в трекере приучает листать его мимо — тем самым
+    # способом, каким ломается 091: трекер и есть первый источник работы.
+    #
+    # ПОЧЕМУ ЗАКРЫВАЕТ МЕХАНИЗМ, А НЕ ЧЕЛОВЕК. Пустота здесь — ФАКТ, который
+    # машина проверяет целиком: ответ есть по каждому правилу и лишних ответов
+    # нет. Это отличает «входящие» от дежурного по красной ветке: там закрытие
+    # говорит «я посмотрел», а такого механизм сказать не может (142).
+    want = "OPEN" if pending else "CLOSED"
+    if state and state.upper() != want:
+        code, out = gh("issue", "reopen" if pending else "close", number)
+        if code != 0:
+            print(f"проверка не отработала: состояние задачи #{number} не "
+                  f"изменено — {out}", file=sys.stderr)
+            return 2
+        where += ", открыта заново" if pending else ", закрыта: работы в ней нет"
 
     print(f"{where}; правил {len(rules)}, разобрано {решено}, ответа нет "
           f"у {len(missing)}, не рассмотрено {len(unreviewed)}, "
