@@ -86,8 +86,44 @@ fails the build.
 |---|---|---|
 | `status` | `active` · `rejected` · `not-applicable` · `unreviewed` | всегда · always |
 | `mechanism` | `gate` · `pipeline` · `document` · `none` (устар. · deprecated: `process-step`) | при `active` · when `active` |
-| `where` | путь к скрипту, шагу конвейера или разделу свода · path to a script, a pipeline step or a section of the rulebook | при `active` · when `active` |
+| `where` | **разрешимый адрес** механизма: путь к файлу, образец вида `.github/workflows/*.yml` или корневой документ по имени. Проза рядом — пожалуйста, вместо адреса — нет · a **resolvable address**: a file path, a pattern like `.github/workflows/*.yml`, or a root document by name. Prose alongside is fine, prose instead of an address is not | при `active` и механизме не `none` · when `active` and the mechanism is not `none` |
 | `why` | причина решения · the reason for the decision | при `rejected` и `not-applicable` |
+
+**Почему адрес обязателен.** «След» правила каталог требует разрешимым: задача
+`владелец/репозиторий#номер` либо названный потребитель, и проза следом не
+считается. У поля `where` такого требования не было — проверялось только, что
+оно непустое. Асимметрия стоила ровно того, чего от неё ждали: чтобы разделить
+44 ответа на конвейер, документ и ничто, пришлось разбирать прозу регулярным
+выражением, потому что адреса в ней могло и не быть.
+
+Ловит это не форму записи, а ложный механизм: гейт, чей адрес нельзя назвать,
+обычно и не гейт. Замер по собственному ответу каталога — семь таких, и все
+семь оказались утверждениями обо ВСЕХ скриптах сразу, которых не проверяет ни
+один гейт. Один из семи вскрыл живой пробел: правило 126 обещало ручную кнопку
+у каждой работы, а у `agent-pr.yml` её не было.
+
+У себя каталог отвергает такой ответ до слияния. **У потребителя — нет:** файл
+чужой, снять отсюда это красное нечем, и оно приучало бы читать красное как
+фон. Находка едет адресату — задачей в трекер каталога и разделом во входящих
+самого потребителя.
+
+**Why an address is required.** The catalogue requires a rule's trail to
+resolve — an issue `owner/repo#number` or a named consumer — and prose does not
+count. The `where` field carried no such requirement: only that it be
+non-empty. What that asymmetry cost is exactly what you would expect: splitting
+44 answers into pipeline, document and nothing meant parsing prose with a
+regex, because an address might simply not be there.
+
+What it catches is not record shape but a false mechanism: a gate whose address
+cannot be named usually is not a gate. Measured on the catalogue's own answer —
+seven of them, and all seven turned out to be claims about EVERY script at once,
+which no gate checks. One of the seven exposed a live gap: rule 126 promised a
+manual button on every workflow, and `agent-pr.yml` had none.
+
+At home the catalogue rejects such an answer before merge. **At a consumer it
+does not:** the file is theirs, this red cannot be cleared from here, and it
+would train people to read red as background. The finding goes to its
+addressee instead.
 
 **Чем эти четыре слова отличаются друг от друга.** Граница проходит по одному
 вопросу: **что случится, если правило нарушить.**
