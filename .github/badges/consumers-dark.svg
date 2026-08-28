@@ -1,11 +1,11 @@
-<svg width="1094" height="366" viewBox="0 0 1094 366" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Чем держится правило у потребителей">
-<rect x="0.5" y="0.5" width="1093" height="365" rx="16" fill="#0D1117" stroke="#30363D"/>
+<svg width="1087" height="366" viewBox="0 0 1087 366" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Чем держится правило у потребителей">
+<rect x="0.5" y="0.5" width="1086" height="365" rx="16" fill="#0D1117" stroke="#30363D"/>
 <rect x="36" y="28" width="46" height="4" rx="2" fill="#58A6FF"/>
 <text x="36" y="68" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="29" font-weight="800" letter-spacing="-0.6">Чем держится правило у потребителей</text>
 <text x="36" y="94" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="500">ответы самих проектов на каждое из 152 правил каталога — не наша оценка их</text>
 <text x="300" y="114" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.3">разобрано</text>
 <text x="434" y="114" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.3">связей</text>
-<text x="807" y="114" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">чем держится</text>
+<text x="803" y="114" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">чем держится</text>
 <text x="36" y="145" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="18" font-weight="800" letter-spacing="-0.4">claude-code-playbook</text>
 <text x="300" y="147" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">152</text>
 <text x="434" y="147" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">23</text>
@@ -23,13 +23,13 @@
 <rect x="847" y="172" width="78" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="860" y="188" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">ничем<tspan fill="#F85149" font-weight="700" dx="7">40</tspan></text>
 <rect x="935" y="172" width="116" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="948" y="188" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">шаг процесса<tspan fill="#A371F7" font-weight="700" dx="7">6</tspan></text>
 <text x="36" y="229" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="18" font-weight="800" letter-spacing="-0.4">ArtVsMark</text>
-<text x="300" y="231" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">150</text>
+<text x="300" y="231" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">152</text>
 <text x="434" y="231" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">12</text>
-<rect x="556" y="214" width="72" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="569" y="230" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">гейт<tspan fill="#58A6FF" font-weight="700" dx="7">23</tspan></text>
-<rect x="638" y="214" width="91" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="651" y="230" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">конвейер<tspan fill="#3FB950" font-weight="700" dx="7">0</tspan></text>
-<rect x="739" y="214" width="91" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="752" y="230" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">документ<tspan fill="#A371F7" font-weight="700" dx="7">0</tspan></text>
-<rect x="847" y="214" width="78" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="860" y="230" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">ничем<tspan fill="#F85149" font-weight="700" dx="7">10</tspan></text>
-<rect x="935" y="214" width="123" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="948" y="230" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">шаг процесса<tspan fill="#A371F7" font-weight="700" dx="7">43</tspan></text>
+<rect x="556" y="214" width="72" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="569" y="230" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">гейт<tspan fill="#58A6FF" font-weight="700" dx="7">43</tspan></text>
+<rect x="638" y="214" width="91" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="651" y="230" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">конвейер<tspan fill="#3FB950" font-weight="700" dx="7">6</tspan></text>
+<rect x="739" y="214" width="98" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="752" y="230" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">документ<tspan fill="#A371F7" font-weight="700" dx="7">13</tspan></text>
+<rect x="847" y="214" width="78" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="860" y="230" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">ничем<tspan fill="#F85149" font-weight="700" dx="7">16</tspan></text>
+<rect x="935" y="214" width="116" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="948" y="230" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">шаг процесса<tspan fill="#A371F7" font-weight="700" dx="7">0</tspan></text>
 <text x="36" y="271" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="18" font-weight="800" letter-spacing="-0.4">claude-code-usage</text>
 <text x="300" y="273" fill="#8B949E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">—</text>
 <text x="434" y="273" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">1</text>
