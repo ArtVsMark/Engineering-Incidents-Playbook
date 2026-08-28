@@ -52,17 +52,31 @@ FONT = "Inter,Segoe UI,Helvetica,Arial,sans-serif"
 #: Палитра площадки, тема к теме. Значения те же, что у витрины профиля.
 THEME = {
     False: {"card": "#FFFFFF", "stroke": "#D0D7DE", "name": "#1F2328",
-            "accent": "#0969DA", "label": "#636C76", "track": "#F6F8FA",
+            "accent": "#0969DA", "label": "#636C76", "pill": "#F6F8FA",
             "gate": "#0969DA", "process-step": "#8250DF", "none": "#CF222E",
-            "unknown": "#8C959F", "off": "#D0D7DE"},
+            "muted": "#8C959F"},
     True: {"card": "#0D1117", "stroke": "#30363D", "name": "#F0F6FC",
-           "accent": "#58A6FF", "label": "#7D8590", "track": "#161B22",
+           "accent": "#58A6FF", "label": "#7D8590", "pill": "#161B22",
            "gate": "#58A6FF", "process-step": "#A371F7", "none": "#F85149",
-           "unknown": "#8B949E", "off": "#30363D"},
+           "muted": "#8B949E"},
 }
 
-WIDTH, PAD, TOP, ROW = 1000, 36, 132, 34
-BAR, BAR_H, NAME_W = 520, 18, 250
+WIDTH, PAD, TOP = 1000, 36, 128
+#: Строка проекта: одна на всех, чтобы колонки читались сверху вниз.
+ROW, PILL_H = 42, 24
+
+#: Колонки. Фиксированные, а не по содержимому: сравнивать глазом можно
+#: только то, что стоит друг под другом. Ради этого же ширина каждой
+#: плашечной колонки берётся максимальной по всем строкам — иначе числа
+#: разной длины сдвигали бы соседнюю колонку у каждого проекта.
+COL_ANSWERED, COL_TRAILS, COL_PILLS, PILL_GAP = 300, 434, 556, 10
+
+#: Ширина плашки считается по числу знаков, а не измеряется: шрифта у нас
+#: нет, и измерить его нечем. Коэффициенты подобраны с запасом — текст,
+#: упёршийся в край, хуже лишних трёх точек воздуха.
+LABEL_K, VALUE_K = 6.4, 6.9
+
+WORDS = {"gate": "гейт", "process-step": "шаг процесса", "none": "ничем"}
 
 
 def rows(doc: dict) -> list[dict]:
@@ -78,6 +92,7 @@ def rows(doc: dict) -> list[dict]:
             "process-step": mech.get("process-step", 0),
             "none": mech.get("none", 0),
             "trails": c.get("trails", 0),
+            "answered": c.get("answered") or 0,
         })
     return out
 
@@ -93,16 +108,50 @@ def text(x, y, s, fill, size, weight=500, extra=""):
             f'font-size="{size}" font-weight="{weight}"{extra}>{esc(s)}</text>')
 
 
-def render(data: list[dict], total: int, dark: bool) -> str:
-    """Собирает SVG одной темы. Ширина полосы — доля правил, а не абсолют.
+def pill(x: int, y: int, label: str, value: str, ink: str, t: dict) -> tuple[str, int]:
+    """Одна плашка: подпись и значение в скруглённой оправе.
 
-    ДОЛЯ, А НЕ АБСОЛЮТ, потому что вопрос картинки — «чем держится», а не
-    «сколько правил». У проекта, ответившего на сто пятьдесят, и у проекта,
-    ответившего на девяносто, одинаково важно, какая часть не держится ничем.
-    Абсолютные числа стоят рядом, чтобы доля не выдавала себя за объём.
+    Форма взята у карточки витрины: высота 24, скругление до половины,
+    подложка и обводка темы, подпись приглушённая, значение цветное.
+    """
+    w = int(13 + len(label) * LABEL_K + 7 + len(value) * VALUE_K + 13)
+    out = (f'<rect x="{x}" y="{y}" width="{w}" height="{PILL_H}" '
+           f'rx="{PILL_H // 2}" fill="{t["pill"]}" stroke="{t["stroke"]}"/>'
+           f'<text x="{x + 13}" y="{y + 16}" fill="{t["label"]}" '
+           f'font-family="{FONT}" font-size="12" font-weight="600">{esc(label)}'
+           f'<tspan fill="{ink}" font-weight="700" dx="7">{esc(value)}</tspan></text>')
+    return out, w
+
+
+def widths(data: list[dict], t: dict) -> dict[str, int]:
+    """Ширина каждой плашечной колонки — максимум по всем строкам."""
+    out = {}
+    for key, word in WORDS.items():
+        out[key] = max(
+            [pill(0, 0, word, str(r[key]), t[key], t)[1]
+             for r in data if r["connected"]] or [0])
+    return out
+
+
+def render(data: list[dict], total: int, dark: bool) -> str:
+    """Собирает SVG одной темы: строка на проект, колонки друг под другом.
+
+    ПОЧЕМУ КОЛОНКАМИ, А НЕ БЛОКАМИ. Блок на проект читается по одному
+    проекту за раз, а вопрос картинки сравнительный: у кого чем держится и
+    насколько это отличается от соседа. Сравнивать глазом можно только то,
+    что стоит друг под другом, — поэтому колонки фиксированные, а ширина
+    плашечной колонки берётся максимальной по всем строкам: иначе число из
+    трёх знаков сдвигало бы соседнюю колонку у одного проекта и не сдвигало
+    у другого.
+
+    ПОЧЕМУ ПОЛОС БОЛЬШЕ НЕТ. Полоса показывала долю и молчала об объёме: у
+    проекта с сотней правил и у проекта с десятком она выглядела одинаково.
+    Плашка отвечает на один вопрос и читается целиком; доля, которую надо
+    мерить глазом, не читается никак.
     """
     t = THEME[dark]
-    height = TOP + ROW * len(data) + PAD - 6
+    w = widths(data, t)
+    height = TOP + ROW * len(data) + PAD - 8
     p = [
         f'<svg width="{WIDTH}" height="{height}" viewBox="0 0 {WIDTH} {height}" '
         f'xmlns="http://www.w3.org/2000/svg" role="img" '
@@ -112,54 +161,35 @@ def render(data: list[dict], total: int, dark: bool) -> str:
         f'<rect x="{PAD}" y="28" width="46" height="4" rx="2" fill="{t["accent"]}"/>',
         text(PAD, 68, "Чем держится правило у потребителей", t["name"], 29, 800,
              ' letter-spacing="-0.6"'),
-        text(PAD, 94, f"правил в каталоге: {total} · доля от признанных "
-                      f"действующими у каждого проекта", t["label"], 15, 500),
+        text(PAD, 94, f"ответы самих проектов на каждое из {total} правил "
+                      f"каталога — не наша оценка их", t["label"], 15, 500),
     ]
-    # Легенда — теми же цветами, что и полосы: подпись словом рядом со
-    # свидетельством, а не в отдельной таблице.
-    x = PAD
-    for key, word in (("gate", "гейт"), ("process-step", "шаг процесса"),
-                      ("none", "не держится ничем")):
-        p.append(f'<rect x="{x}" y="108" width="10" height="10" rx="2" '
-                 f'fill="{t[key]}"/>')
-        p.append(text(x + 16, 117, word, t["label"], 12.5, 600))
-        x += 26 + int(len(word) * 6.6)
+    # Шапка колонок: подпись стоит один раз сверху, а не повторяется в
+    # каждой строке — повтор съедает ту самую ширину, ради которой колонки.
+    for x, word in ((COL_ANSWERED, "разобрано"), (COL_TRAILS, "связей"),
+                    (COL_PILLS, "чем держится")):
+        p.append(text(x, TOP - 14, word, t["label"], 11.5, 600,
+                      ' letter-spacing="0.3"'))
 
     y = TOP
     for r in data:
-        p.append(text(PAD, y + 13, r["name"], t["name"], 15, 600))
-        bx = PAD + NAME_W
-        p.append(f'<rect x="{bx}" y="{y}" width="{BAR}" height="{BAR_H}" '
-                 f'rx="{BAR_H // 2}" fill="{t["track"]}"/>')
-        if not r["connected"]:
-            # Состояние, а не пустое место: обведённая дорожка со словом.
-            ink = t["unknown"] if r["state"] == "неизвестно" else t["off"]
-            p.append(f'<rect x="{bx}.5" y="{y}.5" width="{BAR - 1}" '
-                     f'height="{BAR_H - 1}" rx="{BAR_H // 2}" fill="none" '
-                     f'stroke="{ink}" stroke-dasharray="4 3"/>')
-            p.append(text(bx + 14, y + 13,
-                          f'{r["state"]} · следов {r["trails"]}', ink, 12.5, 600))
+        p.append(text(PAD, y + 17, r["name"], t["name"], 18, 800,
+                      ' letter-spacing="-0.4"'))
+        for x, value, live in ((COL_ANSWERED, r["answered"], r["connected"]),
+                               (COL_TRAILS, r["trails"], r["trails"] > 0)):
+            shown = str(value) if live else "—"
+            p.append(text(x, y + 19, shown,
+                          t["accent"] if live else t["muted"], 22, 800))
+        x = COL_PILLS
+        if r["connected"]:
+            for key in ("gate", "process-step", "none"):
+                markup, _ = pill(x, y + 2, WORDS[key], str(r[key]), t[key], t)
+                p.append(markup)
+                x += w[key] + PILL_GAP
         else:
-            held = r["gate"] + r["process-step"] + r["none"]
-            clip = f'clip{r["name"]}{"d" if dark else "l"}'.replace(".", "")
-            p.append(f'<clipPath id="{clip}"><rect x="{bx}" y="{y}" '
-                     f'width="{BAR}" height="{BAR_H}" rx="{BAR_H // 2}"/></clipPath>')
-            p.append(f'<g clip-path="url(#{clip})">')
-            left = bx
-            for key in ("gate", "process-step", "none"):
-                if not r[key]:
-                    continue
-                w = max(3, round(BAR * r[key] / held)) if held else 0
-                p.append(f'<rect x="{left}" y="{y}" width="{w}" '
-                         f'height="{BAR_H}" fill="{t[key]}"/>')
-                left += w
-            p.append("</g>")
-            nx = bx + BAR + 18
-            for key in ("gate", "process-step", "none"):
-                p.append(text(nx, y + 13, str(r[key]), t[key], 14, 700))
-                nx += 14 + len(str(r[key])) * 9
-                if key != "none":
-                    p.append(text(nx - 11, y + 13, "·", t["label"], 14, 500))
+            # Данных нет — одна плашка, и она называет состояние, а не пустоту.
+            markup, _ = pill(x, y + 2, r["state"], "none", t["muted"], t)
+            p.append(markup)
         y += ROW
     p.append("</svg>")
     return "\n".join(p) + "\n"

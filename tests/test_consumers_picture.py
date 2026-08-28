@@ -28,9 +28,9 @@ def срез(repo, consumers, rules=("001", "002")):
     return repo
 
 
-def подключён(name, gate=1, step=1, none=1, trails=0):
+def подключён(name, gate=1, step=1, none=1, trails=0, answered=2):
     return {"repo": f"o/{name}", "state": "подключён", "trails": trails,
-            "rules": {"001": "active"},
+            "rules": {"001": "active"}, "answered": answered,
             "by_mechanism": {"gate": gate, "process-step": step, "none": none}}
 
 
@@ -42,49 +42,102 @@ def рисуй(repo, dark=False):
 
 # ── что картинка обязана различать ─────────────────────────────────────────
 
-def test_подключённый_рисуется_тремя_долями(repo):
-    svg = рисуй(срез(repo, [подключён("a")]))
-    цвета = [r.get("fill") for r in ET.fromstring(svg).iter()
-             if r.tag.endswith("rect")]
-
-    assert cp.THEME[False]["gate"] in цвета
-    assert cp.THEME[False]["process-step"] in цвета
-    assert cp.THEME[False]["none"] in цвета
-
-
-def test_не_подключён_и_неизвестно_рисуются_по_разному(repo):
-    """Приватный ответ недоступен по причине; рисовать его как запущенность —
-    выдавать незнание за отказ (027)."""
-    svg = рисуй(срез(repo, [
-        {"repo": "o/тихий", "state": "не подключён", "trails": 0},
-        {"repo": "o/закрытый", "state": "неизвестно", "trails": 0}]))
-
+def test_подключённый_рисуется_тремя_плашками(repo):
+    """Плашка отвечает на один вопрос и читается целиком."""
+    svg = рисуй(срез(repo, [подключён("a", gate=5, step=3, none=2)]))
     t = cp.THEME[False]
-    assert t["off"] != t["unknown"]
-    assert t["off"] in svg and t["unknown"] in svg
-    assert "не подключён" in svg and "неизвестно" in svg
+
+    for слово in cp.WORDS.values():
+        assert слово in svg
+    for цвет in (t["gate"], t["process-step"], t["none"]):
+        assert цвет in svg
 
 
-def test_неподключённый_называет_свои_следы(repo):
-    """Вклад проекта виден, даже когда канала нет: следы считаются и у него."""
+def test_неподключённый_получает_одну_плашку_none(repo):
+    """Данных нет — плашка называет СОСТОЯНИЕ, а не пустоту."""
     svg = рисуй(срез(repo, [{"repo": "o/тихий", "state": "не подключён",
-                             "trails": 7}]))
+                             "trails": 0}]))
 
-    assert "следов 7" in svg
+    assert "none" in svg and "не подключён" in svg
+    for слово in cp.WORDS.values():
+        assert слово not in svg
 
 
-def test_доля_а_не_абсолют(repo):
-    """Вопрос картинки — ЧЕМ держится, а не сколько правил.
+def test_метрики_идут_до_плашек(repo):
+    """Сперва объём, потом чем он держится: полоса молчала об объёме."""
+    svg = рисуй(срез(repo, [подключён("a", answered=140, trails=9)]))
 
-    У двух проектов с разным объёмом одинаковая раскладка обязана дать
-    одинаковые полосы: иначе крупный выглядел бы хуже мелкого при той же доле.
+    assert svg.index("разобрано") < svg.index(cp.WORDS["gate"])
+    assert ">140<" in svg and ">9<" in svg
+
+
+def test_плашки_стоят_в_одних_колонках(repo):
+    """Сравнивать глазом можно только то, что стоит друг под другом.
+
+    Числа разной длины не должны сдвигать соседнюю колонку: у одного
+    проекта трёхзначное, у другого однозначное — плашка «ничем» обязана
+    начинаться на одном и том же x.
     """
-    один = рисуй(срез(repo, [подключён("a", gate=1, step=1, none=2)]))
-    два = рисуй(срез(repo, [подключён("a", gate=10, step=10, none=20)]))
-    ширины = lambda s: [r.get("width") for r in ET.fromstring(s).iter()
-                        if r.tag.endswith("rect")]
+    svg = рисуй(срез(repo, [подключён("a", gate=5, step=3, none=2),
+                            подключён("b", gate=148, step=99, none=140)]))
+    xs = [(int(r.get("x")), int(r.get("y"))) for r in ET.fromstring(svg).iter()
+          if r.tag.endswith("rect") and r.get("height") == str(cp.PILL_H)]
+    первая = sorted(x for x, y in xs if y == min(y for _, y in xs))
+    вторая = sorted(x for x, y in xs if y == max(y for _, y in xs))
 
-    assert ширины(один) == ширины(два)
+    assert len(первая) == 3 and первая == вторая
+
+
+def test_ширина_колонки_берётся_по_самой_широкой_строке(repo):
+    """Иначе колонка дышала бы от строки к строке."""
+    t = cp.THEME[False]
+    строки = cp.rows({"consumers": [подключён("a", gate=5),
+                                    подключён("b", gate=148)]})
+    w = cp.widths(строки, t)
+
+    assert w["gate"] == cp.pill(0, 0, cp.WORDS["gate"], "148", "#000", t)[1]
+
+
+def test_у_колонок_есть_подписи(repo):
+    """Подпись стоит один раз сверху, а не повторяется в каждой строке."""
+    svg = рисуй(срез(repo, [подключён("a"), подключён("b")]))
+
+    assert svg.count("разобрано") == 1 and svg.count("связей") == 1
+
+
+def test_нечего_показать_рисуется_прочерком_а_не_нулём(repo):
+    """Ноль — это измеренное значение, прочерк — его отсутствие (027).
+
+    Проверяется САМА ячейка, а не документ: тире есть и в подзаголовке, и
+    поиск по всему тексту проходил бы при любой поломке.
+    """
+    svg = рисуй(срез(repo, [{"repo": "o/тихий", "state": "не подключён",
+                             "trails": 0}]))
+    ячейки = {int(e.get("x")): (e.text or "") for e in ET.fromstring(svg).iter()
+              if e.tag.endswith("text") and e.get("font-size") == "22"}
+
+    assert ячейки[cp.COL_ANSWERED] == "—"
+    assert ячейки[cp.COL_TRAILS] == "—"
+
+
+def test_измеренный_ноль_остаётся_нулём(repo):
+    """Обратная сторона: у подключённого ноль — это ответ, а не пустота."""
+    svg = рисуй(срез(repo, [подключён("a", gate=0, step=0, none=0, answered=0,
+                                      trails=0)]))
+    ячейки = {int(e.get("x")): (e.text or "") for e in ET.fromstring(svg).iter()
+              if e.tag.endswith("text") and e.get("font-size") == "22"}
+
+    assert ячейки[cp.COL_ANSWERED] == "0"
+
+
+def test_ширина_плашки_растёт_с_текстом(repo):
+    """Шрифта у нас нет: ширина считается по знакам, и текст не должен
+    упираться в край."""
+    узкая, _ = cp.pill(0, 0, "гейт", "5", "#000", cp.THEME[False])
+    широкая, _ = cp.pill(0, 0, "шаг процесса", "148", "#000", cp.THEME[False])
+    ширина = lambda m: int(m.split('width="')[1].split('"')[0])
+
+    assert ширина(широкая) > ширина(узкая)
 
 
 def test_состав_берётся_из_среза_а_не_из_кода(repo):
@@ -103,8 +156,7 @@ def test_разметка_экранируется(repo):
     assert "a&amp;b&lt;c&gt;" in svg
 
 
-def test_числа_стоят_рядом_с_полосой(repo):
-    """Доля не должна выдавать себя за объём — абсолюты подписаны."""
+def test_числа_стоят_в_плашках(repo):
     svg = рисуй(срез(repo, [подключён("a", gate=5, step=3, none=2)]))
 
     assert ">5<" in svg and ">3<" in svg and ">2<" in svg
@@ -191,11 +243,11 @@ def test_шрифт_витрины(repo):
     assert cp.FONT.startswith("Inter") and f'font-family="{cp.FONT}"' in svg
 
 
-def test_у_каждой_темы_свои_области_отсечения(repo):
-    """Обе темы попадают в один документ витрины: одинаковые id столкнулись бы."""
+def test_в_документе_нет_общих_идентификаторов(repo):
+    """Обе темы попадают в один документ витрины: общий id столкнулся бы."""
     срез(repo, [подключён("a")])
 
-    ids = lambda s: {e.get("id") for e in ET.fromstring(s).iter()
-                     if e.tag.endswith("clipPath")}
+    ids = lambda s: {e.get("id") for e in ET.fromstring(s).iter() if e.get("id")}
 
-    assert ids(рисуй(repo, dark=False)).isdisjoint(ids(рисуй(repo, dark=True)))
+    assert ids(рисуй(repo, dark=False)) == set()
+    assert ids(рисуй(repo, dark=True)) == set()
