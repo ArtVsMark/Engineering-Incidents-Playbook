@@ -34,7 +34,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1233"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "002",
@@ -67,7 +68,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1329"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "003",
@@ -99,6 +101,7 @@
           "issue": "1302"
         }
       ],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
       "portable": "partly"
     },
     {
@@ -128,7 +131,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1313"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "005",
@@ -159,7 +163,8 @@
           "repo": "ArtVsMark/ArtVsMark",
           "issue": "8"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/ArtVsMark"
     },
     {
       "id": "006",
@@ -186,7 +191,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1283"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "007",
@@ -217,7 +223,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1321"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "008",
@@ -248,7 +255,8 @@
           "repo": "ArtVsMark/ArtVsMark",
           "issue": "10"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/ArtVsMark"
     },
     {
       "id": "009",
@@ -275,7 +283,8 @@
           "repo": "ArtVsMark/ArtVsMark",
           "issue": "7"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/ArtVsMark"
     },
     {
       "id": "010",
@@ -302,7 +311,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1232"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "011",
@@ -326,7 +336,8 @@
         "ru": "rules/ru/011-events-not-polling.md",
         "en": "rules/en/011-events-not-polling.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "012",
@@ -348,7 +359,8 @@
         "ru": "rules/ru/012-do-not-push-to-someone-elses-branch.md",
         "en": "rules/en/012-do-not-push-to-someone-elses-branch.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "013",
@@ -370,7 +382,8 @@
         "ru": "rules/ru/013-write-escapes-to-file-not-heredoc.md",
         "en": "rules/en/013-write-escapes-to-file-not-heredoc.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "014",
@@ -392,7 +405,8 @@
         "ru": "rules/ru/014-red-before-fix-needs-partial-revert.md",
         "en": "rules/en/014-red-before-fix-needs-partial-revert.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "015",
@@ -414,7 +428,8 @@
         "ru": "rules/ru/015-agents-return-data-host-writes-files.md",
         "en": "rules/en/015-agents-return-data-host-writes-files.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "016",
@@ -438,7 +453,8 @@
         "ru": "rules/ru/016-no-silent-truncation.md",
         "en": "rules/en/016-no-silent-truncation.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "017",
@@ -462,7 +478,8 @@
         "ru": "rules/ru/017-measure-quota-do-not-guess.md",
         "en": "rules/en/017-measure-quota-do-not-guess.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "018",
@@ -484,7 +501,8 @@
         "ru": "rules/ru/018-cloud-checks-nodes-local-checks-chain.md",
         "en": "rules/en/018-cloud-checks-nodes-local-checks-chain.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "019",
@@ -506,7 +524,8 @@
         "ru": "rules/ru/019-audit-from-surfaces-not-files.md",
         "en": "rules/en/019-audit-from-surfaces-not-files.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "020",
@@ -528,7 +547,8 @@
         "ru": "rules/ru/020-restart-only-the-delta.md",
         "en": "rules/en/020-restart-only-the-delta.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "021",
@@ -550,7 +570,8 @@
         "ru": "rules/ru/021-split-docs-by-reader.md",
         "en": "rules/en/021-split-docs-by-reader.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "022",
@@ -573,6 +594,7 @@
         "en": "rules/en/022-one-canonical-document.md"
       },
       "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
       "portable": "yes"
     },
     {
@@ -595,7 +617,8 @@
         "ru": "rules/ru/023-readme-is-a-storefront.md",
         "en": "rules/en/023-readme-is-a-storefront.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "024",
@@ -617,7 +640,8 @@
         "ru": "rules/ru/024-no-worklog-in-active-docs.md",
         "en": "rules/en/024-no-worklog-in-active-docs.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "025",
@@ -639,7 +663,8 @@
         "ru": "rules/ru/025-issue-links-by-zone.md",
         "en": "rules/en/025-issue-links-by-zone.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "026",
@@ -661,7 +686,8 @@
         "ru": "rules/ru/026-rejected-findings-must-be-recorded.md",
         "en": "rules/en/026-rejected-findings-must-be-recorded.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "027",
@@ -685,7 +711,8 @@
         "ru": "rules/ru/027-empty-state-is-a-state.md",
         "en": "rules/en/027-empty-state-is-a-state.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "028",
@@ -707,7 +734,8 @@
         "ru": "rules/ru/028-checklist-not-a-list-of-findings.md",
         "en": "rules/en/028-checklist-not-a-list-of-findings.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "029",
@@ -729,7 +757,8 @@
         "ru": "rules/ru/029-triggers-and-canon.md",
         "en": "rules/en/029-triggers-and-canon.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "030",
@@ -751,7 +780,8 @@
         "ru": "rules/ru/030-changelog-from-fragments.md",
         "en": "rules/en/030-changelog-from-fragments.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "031",
@@ -773,7 +803,8 @@
         "ru": "rules/ru/031-waves-not-salvos.md",
         "en": "rules/en/031-waves-not-salvos.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "032",
@@ -797,7 +828,8 @@
         "ru": "rules/ru/032-role-must-run-the-product.md",
         "en": "rules/en/032-role-must-run-the-product.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "033",
@@ -821,7 +853,8 @@
         "ru": "rules/ru/033-pace-from-limit-not-desire.md",
         "en": "rules/en/033-pace-from-limit-not-desire.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "034",
@@ -843,7 +876,8 @@
         "ru": "rules/ru/034-small-zone-per-executor.md",
         "en": "rules/en/034-small-zone-per-executor.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "035",
@@ -865,7 +899,8 @@
         "ru": "rules/ru/035-version-is-never-edited-by-hand.md",
         "en": "rules/en/035-version-is-never-edited-by-hand.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "036",
@@ -889,7 +924,8 @@
         "ru": "rules/ru/036-expensive-window-enters-twice-and-briefly.md",
         "en": "rules/en/036-expensive-window-enters-twice-and-briefly.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "037",
@@ -911,7 +947,8 @@
         "ru": "rules/ru/037-finding-status-depends-on-window.md",
         "en": "rules/en/037-finding-status-depends-on-window.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "038",
@@ -933,7 +970,8 @@
         "ru": "rules/ru/038-window-name-declares-its-environment.md",
         "en": "rules/en/038-window-name-declares-its-environment.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "039",
@@ -958,6 +996,7 @@
         "en": "rules/en/039-three-outcomes-not-two.md"
       },
       "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
       "portable": "yes"
     },
     {
@@ -980,7 +1019,8 @@
         "ru": "rules/ru/040-skip-without-reason-is-a-forgotten-test.md",
         "en": "rules/en/040-skip-without-reason-is-a-forgotten-test.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "041",
@@ -1002,7 +1042,8 @@
         "ru": "rules/ru/041-two-honest-numbers-beat-one-averaged.md",
         "en": "rules/en/041-two-honest-numbers-beat-one-averaged.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "042",
@@ -1024,7 +1065,8 @@
         "ru": "rules/ru/042-decision-records-its-alternatives.md",
         "en": "rules/en/042-decision-records-its-alternatives.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "043",
@@ -1046,7 +1088,8 @@
         "ru": "rules/ru/043-decisions-are-superseded-not-edited.md",
         "en": "rules/en/043-decisions-are-superseded-not-edited.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "044",
@@ -1068,7 +1111,8 @@
         "ru": "rules/ru/044-check-the-premise-before-fixing.md",
         "en": "rules/en/044-check-the-premise-before-fixing.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "045",
@@ -1090,7 +1134,8 @@
         "ru": "rules/ru/045-no-silent-fallback.md",
         "en": "rules/en/045-no-silent-fallback.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "046",
@@ -1114,7 +1159,8 @@
         "ru": "rules/ru/046-name-the-gaps-do-not-level-them.md",
         "en": "rules/en/046-name-the-gaps-do-not-level-them.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "047",
@@ -1141,7 +1187,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1283"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "048",
@@ -1170,7 +1217,8 @@
           "repo": "ArtVsMark/claude-code-usage",
           "issue": "13"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-usage"
     },
     {
       "id": "049",
@@ -1199,7 +1247,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "41"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "050",
@@ -1221,7 +1270,8 @@
         "ru": "rules/ru/050-limits-move-down-only.md",
         "en": "rules/en/050-limits-move-down-only.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "051",
@@ -1243,7 +1293,8 @@
         "ru": "rules/ru/051-warn-on-likely-block-on-certain.md",
         "en": "rules/en/051-warn-on-likely-block-on-certain.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "052",
@@ -1265,7 +1316,8 @@
         "ru": "rules/ru/052-only-the-head-of-the-queue-moves.md",
         "en": "rules/en/052-only-the-head-of-the-queue-moves.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "053",
@@ -1300,7 +1352,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1329"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "054",
@@ -1324,7 +1377,8 @@
         "ru": "rules/ru/054-collect-and-analyse-are-separate-passes.md",
         "en": "rules/en/054-collect-and-analyse-are-separate-passes.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "055",
@@ -1348,7 +1402,8 @@
         "ru": "rules/ru/055-your-own-expectations-are-a-hypothesis.md",
         "en": "rules/en/055-your-own-expectations-are-a-hypothesis.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "056",
@@ -1372,7 +1427,8 @@
         "ru": "rules/ru/056-a-signal-states-what-it-does-not-mean.md",
         "en": "rules/en/056-a-signal-states-what-it-does-not-mean.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "057",
@@ -1394,7 +1450,8 @@
         "ru": "rules/ru/057-unmechanizable-rules-are-named-explicitly.md",
         "en": "rules/en/057-unmechanizable-rules-are-named-explicitly.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "058",
@@ -1416,7 +1473,8 @@
         "ru": "rules/ru/058-when-the-quota-is-out-stop.md",
         "en": "rules/en/058-when-the-quota-is-out-stop.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "059",
@@ -1440,7 +1498,8 @@
         "ru": "rules/ru/059-map-the-detour-before-the-resource-runs-out.md",
         "en": "rules/en/059-map-the-detour-before-the-resource-runs-out.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "060",
@@ -1462,7 +1521,8 @@
         "ru": "rules/ru/060-debrief-every-wave-quality-first.md",
         "en": "rules/en/060-debrief-every-wave-quality-first.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "061",
@@ -1484,7 +1544,8 @@
         "ru": "rules/ru/061-environment-bans-belong-in-the-task.md",
         "en": "rules/en/061-environment-bans-belong-in-the-task.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "062",
@@ -1506,7 +1567,8 @@
         "ru": "rules/ru/062-a-role-must-be-able-to-object.md",
         "en": "rules/en/062-a-role-must-be-able-to-object.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "063",
@@ -1528,7 +1590,8 @@
         "ru": "rules/ru/063-automatic-intervention-needs-all-conditions.md",
         "en": "rules/en/063-automatic-intervention-needs-all-conditions.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "064",
@@ -1557,7 +1620,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1329"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "065",
@@ -1579,7 +1643,8 @@
         "ru": "rules/ru/065-the-onramp-must-speak-the-newcomers-language.md",
         "en": "rules/en/065-the-onramp-must-speak-the-newcomers-language.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "066",
@@ -1608,7 +1673,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1136"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "067",
@@ -1637,7 +1703,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "996"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "068",
@@ -1672,7 +1739,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "42"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "069",
@@ -1701,7 +1769,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "997"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "070",
@@ -1728,7 +1797,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "631"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "071",
@@ -1757,7 +1827,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "433"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "072",
@@ -1786,7 +1857,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "997"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "073",
@@ -1813,7 +1885,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "791"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "074",
@@ -1842,7 +1915,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "988"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "075",
@@ -1864,7 +1938,8 @@
         "ru": "rules/ru/075-a-guard-that-finds-nothing-must-fail.md",
         "en": "rules/en/075-a-guard-that-finds-nothing-must-fail.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "076",
@@ -1891,7 +1966,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1005"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "077",
@@ -1922,7 +1998,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "264"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "078",
@@ -1953,7 +2030,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "296"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "079",
@@ -1986,7 +2064,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "811"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "080",
@@ -2010,7 +2089,8 @@
         "ru": "rules/ru/080-every-new-rule-goes-into-the-catalogue.md",
         "en": "rules/en/080-every-new-rule-goes-into-the-catalogue.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "081",
@@ -2037,7 +2117,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "799"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "082",
@@ -2068,7 +2149,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1005"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "083",
@@ -2092,7 +2174,8 @@
         "ru": "rules/ru/083-generated-output-is-checked-by-properties.md",
         "en": "rules/en/083-generated-output-is-checked-by-properties.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "084",
@@ -2114,7 +2197,8 @@
         "ru": "rules/ru/084-best-effort-channels-never-block-the-main-path.md",
         "en": "rules/en/084-best-effort-channels-never-block-the-main-path.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "085",
@@ -2143,7 +2227,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "931"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "086",
@@ -2165,7 +2250,8 @@
         "ru": "rules/ru/086-the-finder-does-not-grade-the-finding.md",
         "en": "rules/en/086-the-finder-does-not-grade-the-finding.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "087",
@@ -2187,7 +2273,8 @@
         "ru": "rules/ru/087-a-second-pass-needs-a-novelty-rule.md",
         "en": "rules/en/087-a-second-pass-needs-a-novelty-rule.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "088",
@@ -2211,7 +2298,8 @@
         "ru": "rules/ru/088-the-critic-checks-the-method-not-the-subject.md",
         "en": "rules/en/088-the-critic-checks-the-method-not-the-subject.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "089",
@@ -2233,7 +2321,8 @@
         "ru": "rules/ru/089-never-link-from-the-original-to-its-copy.md",
         "en": "rules/en/089-never-link-from-the-original-to-its-copy.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "090",
@@ -2255,7 +2344,8 @@
         "ru": "rules/ru/090-shared-helpers-move-up-not-sideways.md",
         "en": "rules/en/090-shared-helpers-move-up-not-sideways.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "091",
@@ -2286,7 +2376,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "151"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "092",
@@ -2310,7 +2401,8 @@
         "ru": "rules/ru/092-findings-and-ordering-live-in-different-documents.md",
         "en": "rules/en/092-findings-and-ordering-live-in-different-documents.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "093",
@@ -2332,7 +2424,8 @@
         "ru": "rules/ru/093-seam-early-generalisation-late.md",
         "en": "rules/en/093-seam-early-generalisation-late.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "094",
@@ -2356,7 +2449,8 @@
         "ru": "rules/ru/094-a-compatibility-shim-makes-migration-permanent.md",
         "en": "rules/en/094-a-compatibility-shim-makes-migration-permanent.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "095",
@@ -2380,7 +2474,8 @@
         "ru": "rules/ru/095-the-default-is-chosen-for-the-user.md",
         "en": "rules/en/095-the-default-is-chosen-for-the-user.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "096",
@@ -2404,7 +2499,8 @@
         "ru": "rules/ru/096-storage-follows-lifecycle-not-convenience.md",
         "en": "rules/en/096-storage-follows-lifecycle-not-convenience.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "097",
@@ -2428,7 +2524,8 @@
         "ru": "rules/ru/097-a-checker-has-two-error-types.md",
         "en": "rules/en/097-a-checker-has-two-error-types.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "098",
@@ -2452,7 +2549,8 @@
         "ru": "rules/ru/098-the-unit-of-splitting-follows-usage.md",
         "en": "rules/en/098-the-unit-of-splitting-follows-usage.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "099",
@@ -2474,7 +2572,8 @@
         "ru": "rules/ru/099-classification-conflicts-resolve-by-consequence.md",
         "en": "rules/en/099-classification-conflicts-resolve-by-consequence.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "100",
@@ -2496,7 +2595,8 @@
         "ru": "rules/ru/100-two-deadlines-start-and-work.md",
         "en": "rules/en/100-two-deadlines-start-and-work.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "101",
@@ -2520,7 +2620,8 @@
         "ru": "rules/ru/101-retry-only-what-can-heal-itself.md",
         "en": "rules/en/101-retry-only-what-can-heal-itself.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "102",
@@ -2544,7 +2645,8 @@
         "ru": "rules/ru/102-leniency-is-enumerated-and-switchable.md",
         "en": "rules/en/102-leniency-is-enumerated-and-switchable.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "103",
@@ -2577,7 +2679,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "646"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "104",
@@ -2610,7 +2713,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "988"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "105",
@@ -2632,7 +2736,8 @@
         "ru": "rules/ru/105-an-outside-audit-needs-outside-eyes.md",
         "en": "rules/en/105-an-outside-audit-needs-outside-eyes.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "106",
@@ -2656,7 +2761,8 @@
         "ru": "rules/ru/106-publicity-multiplies-both-sides.md",
         "en": "rules/en/106-publicity-multiplies-both-sides.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "107",
@@ -2678,7 +2784,8 @@
         "ru": "rules/ru/107-it-works-for-the-author-means-tested-on-the-authors-sample.md",
         "en": "rules/en/107-it-works-for-the-author-means-tested-on-the-authors-sample.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "108",
@@ -2700,7 +2807,8 @@
         "ru": "rules/ru/108-a-living-document-keeps-a-fixed-window.md",
         "en": "rules/en/108-a-living-document-keeps-a-fixed-window.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "109",
@@ -2729,7 +2837,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "823"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "110",
@@ -2762,7 +2871,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1135"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "111",
@@ -2789,7 +2899,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1134"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "112",
@@ -2818,7 +2929,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "813"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "113",
@@ -2840,7 +2952,8 @@
         "ru": "rules/ru/113-a-contract-states-how-it-may-change.md",
         "en": "rules/en/113-a-contract-states-how-it-may-change.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "114",
@@ -2873,7 +2986,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "947"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "115",
@@ -2904,7 +3018,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "984"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "116",
@@ -2926,7 +3041,8 @@
         "ru": "rules/ru/116-the-collector-script-is-a-source-of-loss.md",
         "en": "rules/en/116-the-collector-script-is-a-source-of-loss.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "117",
@@ -2948,7 +3064,8 @@
         "ru": "rules/ru/117-numeric-limits-belong-in-the-task-spec.md",
         "en": "rules/en/117-numeric-limits-belong-in-the-task-spec.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "118",
@@ -2970,7 +3087,8 @@
         "ru": "rules/ru/118-keep-the-source-next-to-the-derived.md",
         "en": "rules/en/118-keep-the-source-next-to-the-derived.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "119",
@@ -2994,7 +3112,8 @@
         "ru": "rules/ru/119-tool-artefacts-stay-outside-the-input-mask.md",
         "en": "rules/en/119-tool-artefacts-stay-outside-the-input-mask.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "120",
@@ -3023,7 +3142,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1342"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "121",
@@ -3047,7 +3167,8 @@
         "ru": "rules/ru/121-closing-the-container-is-not-closing-the-work.md",
         "en": "rules/en/121-closing-the-container-is-not-closing-the-work.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "122",
@@ -3071,7 +3192,8 @@
         "ru": "rules/ru/122-ship-the-raw-value-next-to-the-formatted-one.md",
         "en": "rules/en/122-ship-the-raw-value-next-to-the-formatted-one.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "123",
@@ -3095,7 +3217,8 @@
         "ru": "rules/ru/123-attribution-is-verified-on-the-final-history.md",
         "en": "rules/en/123-attribution-is-verified-on-the-final-history.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "124",
@@ -3132,7 +3255,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1344"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "125",
@@ -3161,7 +3285,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "2"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "126",
@@ -3198,7 +3323,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1344"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "127",
@@ -3227,7 +3353,8 @@
           "repo": "ArtVsMark/ArtVsMark",
           "issue": "12"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/ArtVsMark"
     },
     {
       "id": "128",
@@ -3264,7 +3391,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1329"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "129",
@@ -3301,7 +3429,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1351"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "130",
@@ -3338,7 +3467,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "15"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "131",
@@ -3371,7 +3501,8 @@
           "repo": "ArtVsMark/ArtVsMark",
           "issue": "20"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "132",
@@ -3412,7 +3543,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1350"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/ArtVsMark"
     },
     {
       "id": "133",
@@ -3445,7 +3577,8 @@
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1350"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "134",
@@ -3478,7 +3611,8 @@
           "repo": "ArtVsMark/ArtVsMark",
           "issue": "21"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "135",
@@ -3511,7 +3645,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "36"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "136",
@@ -3540,7 +3675,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "39"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "137",
@@ -3569,7 +3705,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "40"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "138",
@@ -3598,7 +3735,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "35"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "139",
@@ -3631,7 +3769,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "54"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "140",
@@ -3664,7 +3803,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "72"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "141",
@@ -3693,7 +3833,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "69"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "142",
@@ -3722,7 +3863,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "77"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "144",
@@ -3746,7 +3888,8 @@
         "ru": "rules/ru/144-context-window-for-prose-is-a-paragraph.md",
         "en": "rules/en/144-context-window-for-prose-is-a-paragraph.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "145",
@@ -3775,7 +3918,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "83"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "146",
@@ -3804,7 +3948,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "88"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "147",
@@ -3833,7 +3978,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "96"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "148",
@@ -3862,7 +4008,8 @@
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "74"
         }
-      ]
+      ],
+      "origin": "ArtVsMark/claude-code-playbook"
     },
     {
       "id": "149",
@@ -3886,7 +4033,8 @@
         "ru": "rules/ru/149-the-suite-owns-its-temp.md",
         "en": "rules/en/149-the-suite-owns-its-temp.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "150",
@@ -3910,7 +4058,8 @@
         "ru": "rules/ru/150-a-test-asks-the-mechanism-not-its-condition.md",
         "en": "rules/en/150-a-test-asks-the-mechanism-not-its-condition.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "151",
@@ -3934,7 +4083,8 @@
         "ru": "rules/ru/151-the-trail-goes-where-the-fixer-can-reach.md",
         "en": "rules/en/151-the-trail-goes-where-the-fixer-can-reach.md"
       },
-      "trails": []
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader"
     },
     {
       "id": "152",
@@ -3959,6 +4109,7 @@
         "en": "rules/en/152-pinning-callee-without-caller.md"
       },
       "trails": [],
+      "origin": "ArtVsMark/ArtVsMark",
       "portable": "yes"
     },
     {
@@ -3984,6 +4135,7 @@
         "en": "rules/en/153-foreign-why-is-a-link-not-a-copy.md"
       },
       "trails": [],
+      "origin": "ArtVsMark/ArtVsMark",
       "portable": "yes"
     }
   ],
