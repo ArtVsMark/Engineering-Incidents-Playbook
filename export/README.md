@@ -20,7 +20,7 @@ edited by hand.
 
 ```jsonc
 {
-  "schema": "1.1",
+  "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
   "count": 130,                       // пример · example value
   "rules": [
@@ -37,9 +37,56 @@ edited by hand.
       "portable": "partly"                 // ключа может НЕ БЫТЬ · key may be ABSENT
                                            // да · нет · частично → yes · no · partly
     }
+  ],
+  "candidates": [                          // ГИПОТЕЗЫ, А НЕ ПРАВИЛА · HYPOTHESES
+    {
+      "kind": "hypothesis",                // помечено словом · labelled in the data
+      "slug": "textbook-rules-crowd-out-project-rules",
+      "lang": "ru",                        // кандидат одноязычен · single-language
+      "title": "…",
+      "area": "процесс",
+      "hypothesis": "…",                   // что предполагается · what is supposed
+      "source": "…",                       // где увидено · where it was observed
+      "confirmed_by": "…",                 // КАКОЙ инцидент это подтвердит
+      "applicability": "…",                // где НЕ работает · where it does NOT
+      "file": "candidates/….md"
+                                           // поля `id` НЕТ и не будет · no `id` key
+    }
   ]
 }
 ```
+
+**Кандидат — не правило, и в данных это сказано трижды.** `kind:
+"hypothesis"`, отдельный массив, и **отсутствие поля `id`** — ни пустого, ни
+`null`. Номер это место в корпусе, а корпус состоит из инцидентов; выдать
+номер заранее значит занять его под то, что может не подтвердиться никогда,
+при запрете переиспользовать номера.
+
+**Зачем их вообще отдавать.** Растут не только правила. Пока гипотеза лежит
+только у каталога, подтвердить её может только его инцидент. Раздел
+`confirmed_by` — готовый вопрос, на который у потребителя может быть ответ уже
+сегодня; как только гипотеза подтверждается где-то, рождается правило, и путь
+обратно уже построен — предложение потребителя по
+[080](../rules/ru/080-every-new-rule-goes-into-the-catalogue.md).
+
+**Чего с кандидатом делать нельзя.** Отвечать о нём в `bindings.json`: ключ там
+— номер, а номера у кандидата нет, и это не оплошность, а защита. Ссылаться на
+него как на основание. Присваивать ему номер у себя: номер присваивает каталог
+при приёме (правило 080), и независимый выбор двух проектов нечем починить.
+
+**A candidate is not a rule, and the data says so three times:** `kind:
+"hypothesis"`, a separate array, and **no `id` key** — not empty, not `null`. A
+number is a place in the corpus, and the corpus is made of incidents.
+
+**Why publish them at all.** Hypotheses grow too. While one lives only in the
+catalogue, only the catalogue's own incident can confirm it. The `confirmed_by`
+field is a ready-made question a consumer may already be able to answer; once
+confirmed anywhere, a rule is born, and the way back already exists.
+
+**What you must not do with a candidate.** Answer about it in `bindings.json`
+(the key there is a number, and a candidate has none — by design). Cite it as
+grounds. Assign it a number yourself: the catalogue assigns numbers on
+admission.
 
 **Как читать · How to fetch.** Обычным HTTP по «сырой» ссылке на ветку `main`:
 ни API площадки, ни клона, ни токена — подключиться может кто угодно, включая

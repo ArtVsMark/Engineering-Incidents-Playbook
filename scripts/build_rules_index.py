@@ -47,7 +47,9 @@ OUT = RULES / "README.md"
 #: Машиночитаемый экспорт каталога: его тянет проект-потребитель обычным HTTP,
 #: без GitHub API и без клона. Формат и правила его эволюции — export/README.md.
 EXPORT = ROOT / "export" / "rules.json"
-EXPORT_SCHEMA = "1.1"
+#: Версия контракта выгрузки. Поле `candidates` добавлено — по правилам
+#: эволюции (export/README.md) добавление поля это MINOR.
+EXPORT_SCHEMA = "1.2"
 CATALOGUE_URL = "https://github.com/ArtVsMark/claude-code-playbook"
 
 #: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
@@ -629,8 +631,68 @@ def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]]
         "catalogue": CATALOGUE_URL,
         "count": len(rules),
         "rules": rules,
+        "candidates": candidates_export(),
     }
     return json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
+
+
+def section_of(text: str, head: str) -> str:
+    """Тело раздела до следующего заголовка того же уровня."""
+    at = head_at(text, f"## {head}")
+    if at is None:
+        return ""
+    rest = text[at:]
+    nxt = rest.find("\n## ")
+    return (rest if nxt < 0 else rest[:nxt]).strip()
+
+
+def candidates_export() -> list[dict]:
+    """Гипотезы едут потребителям — без номера и помеченными гипотезами.
+
+    ЗАЧЕМ. Растут не только правила. Гипотеза лежала только у нас, и потому
+    подтвердить её мог только НАШ инцидент; у неё есть раздел «Чем
+    подтвердится» — готовый вопрос, на который у соседа может быть ответ уже
+    сегодня. Как только гипотеза подтверждается где-то, рождается правило: путь
+    обратно уже построен — предложение потребителя по правилу 080.
+
+    ЧЕМ ЭТО ОПАСНО И ЧТО ЗДЕСЬ СДЕЛАНО ПРОТИВ. Папка «почти правил» — готовый
+    обход требования инцидента, и обход происходит сползанием: сперва на
+    кандидата ссылается правило, потом свод, потом никто не помнит, что это
+    гипотеза (`check_candidates.py`). Публикация переносит этот риск К
+    ПОТРЕБИТЕЛЮ, где нашего гейта нет. Поэтому в выгрузке у кандидата **нет
+    поля `id`** — ни пустого, ни `null`: номер занимать нельзя, а пустой ключ
+    той же формы, что у правила, — приглашение его заполнить. Есть `kind:
+    "hypothesis"` и обязательное `confirmed_by`: гипотеза, не назвавшая своего
+    опровержения, не подтвердится и не отвергнется, а просто придаст уверенности
+    самим фактом существования.
+
+    ГРАНИЦА. Кандидат одноязычен, в отличие от правила: дерева `candidates/en`
+    нет, и требовать перевод гипотезы значило бы платить за то, что может не
+    подтвердиться никогда. Язык объявлен полем `lang`, а не подразумевается.
+
+    Пустой список — законное состояние: кандидатов может не быть (091).
+    """
+    folder = ROOT / "candidates"
+    if not folder.is_dir():
+        return []
+    out = []
+    for path in sorted(p for p in folder.glob("*.md") if p.name != "README.md"):
+        text = path.read_text(encoding="utf-8")
+        m = re.search(r"(?im)^\*\*Гипотеза\.\*\*\s+(.+?)(?=\n\n)", text, re.S)
+        area = re.search(r"(?im)^\*\*Область\.\*\*\s+(.+)$", text)
+        out.append({
+            "kind": "hypothesis",
+            "slug": path.stem,
+            "lang": "ru",
+            "title": title_of(path),
+            "area": area.group(1).strip() if area else "",
+            "hypothesis": " ".join(m.group(1).split()) if m else "",
+            "source": section_of(text, "Источник"),
+            "confirmed_by": section_of(text, "Чем подтвердится"),
+            "applicability": section_of(text, "Применимость"),
+            "file": str(path.relative_to(ROOT)),
+        })
+    return out
 
 
 def known_consumers() -> tuple[set[str], str | None]:
