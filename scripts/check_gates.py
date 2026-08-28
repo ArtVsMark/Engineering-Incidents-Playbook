@@ -506,7 +506,14 @@ def suite_charter() -> tuple[list[str], int]:
             elif spoil == "onramp-extra":
                 o = o.replace("python scripts/two.py\n",
                               "python scripts/two.py\npython scripts/three.py\n")
-            (root / "CLAUDE.md").write_text(c, encoding="utf-8")
+            # Таблица гейтов живёт в ЯДРЕ (задача #198), а надстройка обязана
+            # на него сослаться и своей таблицы не заводить. Подделка повторяет
+            # этот раскол: иначе набор проверял бы устройство, которого больше
+            # нет, и краснел бы на верной работе.
+            (root / "AGENTS.md").write_text(c, encoding="utf-8")
+            (root / "CLAUDE.md").write_text(
+                "# Надстройка\n\nЯдро — [AGENTS.md](AGENTS.md).\n",
+                encoding="utf-8")
             (root / "CONTRIBUTING.md").write_text(o, encoding="utf-8")
             (root / ".github" / "workflows" / "ci.yml").write_text(
                 pipeline, encoding="utf-8")
