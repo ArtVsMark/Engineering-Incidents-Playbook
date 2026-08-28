@@ -34,10 +34,10 @@ def подключён(name, gate=1, step=1, none=1, trails=0, answered=2):
             "by_mechanism": {"gate": gate, "process-step": step, "none": none}}
 
 
-def рисуй(repo, dark=False):
+def рисуй(repo, dark=False, lang="ru"):
     out = repo / "svg"
     assert cp.main(["--root", str(repo), "--out-dir", str(out)]) == 0
-    return (out / cp.NAMES[dark]).read_text(encoding="utf-8")
+    return (out / cp.NAMES[(lang, dark)]).read_text(encoding="utf-8")
 
 
 # ── что картинка обязана различать ─────────────────────────────────────────
@@ -47,8 +47,8 @@ def test_подключённый_рисуется_тремя_плашками(r
     svg = рисуй(срез(repo, [подключён("a", gate=5, step=3, none=2)]))
     t = cp.THEME[False]
 
-    for слово in cp.WORDS.values():
-        assert слово in svg
+    for key in ("gate", "process-step", "none"):
+        assert cp.LANG["ru"][key] in svg
     for цвет in (t["gate"], t["process-step"], t["none"]):
         assert цвет in svg
 
@@ -59,15 +59,15 @@ def test_неподключённый_получает_одну_плашку_non
                              "trails": 0}]))
 
     assert "none" in svg and "не подключён" in svg
-    for слово in cp.WORDS.values():
-        assert слово not in svg
+    for key in ("gate", "process-step", "none"):
+        assert cp.LANG["ru"][key] not in svg
 
 
 def test_метрики_идут_до_плашек(repo):
     """Сперва объём, потом чем он держится: полоса молчала об объёме."""
     svg = рисуй(срез(repo, [подключён("a", answered=140, trails=9)]))
 
-    assert svg.index("разобрано") < svg.index(cp.WORDS["gate"])
+    assert svg.index("разобрано") < svg.index(cp.LANG["ru"]["gate"])
     assert ">140<" in svg and ">9<" in svg
 
 
@@ -93,9 +93,9 @@ def test_ширина_колонки_берётся_по_самой_широко
     t = cp.THEME[False]
     строки = cp.rows({"consumers": [подключён("a", gate=5),
                                     подключён("b", gate=148)]})
-    w = cp.widths(строки, t)
+    w = cp.widths(строки, t, cp.LANG["ru"])
 
-    assert w["gate"] == cp.pill(0, 0, cp.WORDS["gate"], "148", "#000", t)[1]
+    assert w["gate"] == cp.pill(0, 0, cp.LANG["ru"]["gate"], "148", "#000", t)[1]
 
 
 def test_у_колонок_есть_подписи(repo):
@@ -251,3 +251,70 @@ def test_в_документе_нет_общих_идентификаторов(
 
     assert ids(рисуй(repo, dark=False)) == set()
     assert ids(рисуй(repo, dark=True)) == set()
+
+
+# ── две витрины, два языка ─────────────────────────────────────────────────
+#
+# Каталог двуязычен, и картинка — часть витрины, а не приложение к ней.
+# Английская версия написана СВОИМИ словами: «held by nothing» это не
+# «ничем», и подставлять одно вместо другого значило бы делать вид, что
+# языки совпадают по длине — а по ней считается ширина плашки.
+
+def test_рисуются_четыре_файла_язык_на_тему(repo):
+    out = repo / "svg"
+    срез(repo, [подключён("a")])
+
+    assert cp.main(["--root", str(repo), "--out-dir", str(out)]) == 0
+    assert {p.name for p in out.glob("*.svg")} == set(cp.NAMES.values())
+
+
+def test_в_английской_витрине_нет_кириллицы(repo):
+    import re
+
+    svg = рисуй(срез(repo, [подключён("a"),
+                            {"repo": "o/b", "state": "не подключён",
+                             "trails": 0}]), lang="en")
+
+    assert not re.search(r"[а-яА-ЯёЁ]", svg)
+
+
+def test_состояние_переводится_а_не_переносится(repo):
+    """Сводка одна и по-русски; на английской витрине состояние — своё слово."""
+    срез(repo, [{"repo": "o/тихий", "state": "не подключён", "trails": 0}])
+
+    assert "not connected" in рисуй(repo, lang="en")
+    assert "не подключён" in рисуй(repo, lang="ru")
+
+
+def test_незнакомое_состояние_остаётся_как_есть(repo):
+    """Догадка хуже непереведённого: неизвестное слово не подменяется."""
+    svg = рисуй(срез(repo, [{"repo": "o/x", "state": "что-то новое",
+                             "trails": 0}]), lang="en")
+
+    assert "что-то новое" in svg
+
+
+def test_подпись_для_чтения_с_экрана_на_языке_витрины(repo):
+    import re
+
+    брать = lambda s: re.search(r'aria-label="([^"]+)"', s).group(1)
+    срез(repo, [подключён("a")])
+
+    assert брать(рисуй(repo, lang="en")) == cp.LANG["en"]["title"]
+    assert брать(рисуй(repo, lang="ru")) == cp.LANG["ru"]["title"]
+
+
+def test_подпись_плашек_стоит_по_центру_группы(repo):
+    """Она называет три колонки сразу; у левого края читается как подпись
+    только первой."""
+    svg = рисуй(срез(repo, [подключён("a", gate=5, step=3, none=2)]))
+    шапка = [e for e in ET.fromstring(svg).iter()
+             if e.tag.endswith("text") and e.text == cp.LANG["ru"]["held"]][0]
+    плашки = [(int(r.get("x")), int(r.get("width")))
+              for r in ET.fromstring(svg).iter()
+              if r.tag.endswith("rect") and r.get("height") == str(cp.PILL_H)]
+    слева = min(x for x, _ in плашки)
+    справа = max(x + w for x, w in плашки)
+
+    assert шапка.get("text-anchor") == "middle"
+    assert abs(int(шапка.get("x")) - (слева + справа) // 2) <= 6

@@ -45,7 +45,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = "export/where.json"
 OUT_DIR = ".github/badges"
-NAMES = {False: "consumers-light.svg", True: "consumers-dark.svg"}
+#: Четыре файла: язык × тема. Английская витрина — не перевод подписей на
+#: лету, а свой набор слов: «held by nothing» это не «ничем», и подставлять
+#: одно вместо другого значило бы делать вид, что языки совпадают по длине.
+NAMES = {("ru", False): "consumers-light.svg", ("ru", True): "consumers-dark.svg",
+         ("en", False): "consumers-en-light.svg", ("en", True): "consumers-en-dark.svg"}
 
 FONT = "Inter,Segoe UI,Helvetica,Arial,sans-serif"
 
@@ -76,7 +80,30 @@ COL_ANSWERED, COL_TRAILS, COL_PILLS, PILL_GAP = 300, 434, 556, 10
 #: упёршийся в край, хуже лишних трёх точек воздуха.
 LABEL_K, VALUE_K = 6.4, 6.9
 
-WORDS = {"gate": "гейт", "process-step": "шаг процесса", "none": "ничем"}
+#: Слова каждой витрины. Состояния приходят из сводки по-русски — она
+#: собирается один раз и для обоих языков; сюда они переводятся при
+#: рисовании, а не хранятся дважды (022).
+LANG = {
+    "ru": {
+        "title": "Чем держится правило у потребителей",
+        "sub": "ответы самих проектов на каждое из {total} правил каталога — "
+               "не наша оценка их",
+        "answered": "разобрано", "trails": "связей", "held": "чем держится",
+        "gate": "гейт", "process-step": "шаг процесса", "none": "ничем",
+        "off": "не подключён", "unknown": "неизвестно", "empty": "none",
+    },
+    "en": {
+        "title": "How rules are enforced across consumers",
+        "sub": "each project's own answer on all {total} catalogue rules — "
+               "not our assessment of them",
+        "answered": "answered", "trails": "trails", "held": "held by",
+        "gate": "gate", "process-step": "process step", "none": "nothing",
+        "off": "not connected", "unknown": "unknown", "empty": "none",
+    },
+}
+#: Состояние сводки — по-русски; на английской витрине оно называется своим
+#: словом, а незнакомое остаётся как есть, а не подменяется догадкой.
+STATE = {"не подключён": "off", "неизвестно": "unknown"}
 
 
 def rows(doc: dict) -> list[dict]:
@@ -123,17 +150,17 @@ def pill(x: int, y: int, label: str, value: str, ink: str, t: dict) -> tuple[str
     return out, w
 
 
-def widths(data: list[dict], t: dict) -> dict[str, int]:
+def widths(data: list[dict], t: dict, w: dict) -> dict[str, int]:
     """Ширина каждой плашечной колонки — максимум по всем строкам."""
     out = {}
-    for key, word in WORDS.items():
+    for key in ("gate", "process-step", "none"):
         out[key] = max(
-            [pill(0, 0, word, str(r[key]), t[key], t)[1]
+            [pill(0, 0, w[key], str(r[key]), t[key], t)[1]
              for r in data if r["connected"]] or [0])
     return out
 
 
-def render(data: list[dict], total: int, dark: bool) -> str:
+def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
     """Собирает SVG одной темы: строка на проект, колонки друг под другом.
 
     ПОЧЕМУ КОЛОНКАМИ, А НЕ БЛОКАМИ. Блок на проект читается по одному
@@ -150,26 +177,32 @@ def render(data: list[dict], total: int, dark: bool) -> str:
     мерить глазом, не читается никак.
     """
     t = THEME[dark]
-    w = widths(data, t)
+    w = LANG[lang]
+    cols = widths(data, t, w)
     height = TOP + ROW * len(data) + PAD - 8
     p = [
         f'<svg width="{WIDTH}" height="{height}" viewBox="0 0 {WIDTH} {height}" '
+        # Подпись для чтения с экрана — на языке витрины: она и есть то,
+        # что услышит читатель вместо картинки.
         f'xmlns="http://www.w3.org/2000/svg" role="img" '
-        f'aria-label="Чем держится правило у потребителей каталога">',
+        f'aria-label="{esc(w["title"])}">',
         f'<rect x="0.5" y="0.5" width="{WIDTH - 1}" height="{height - 1}" '
         f'rx="16" fill="{t["card"]}" stroke="{t["stroke"]}"/>',
         f'<rect x="{PAD}" y="28" width="46" height="4" rx="2" fill="{t["accent"]}"/>',
-        text(PAD, 68, "Чем держится правило у потребителей", t["name"], 29, 800,
-             ' letter-spacing="-0.6"'),
-        text(PAD, 94, f"ответы самих проектов на каждое из {total} правил "
-                      f"каталога — не наша оценка их", t["label"], 15, 500),
+        text(PAD, 68, w["title"], t["name"], 29, 800, ' letter-spacing="-0.6"'),
+        text(PAD, 94, w["sub"].format(total=total), t["label"], 15, 500),
     ]
     # Шапка колонок: подпись стоит один раз сверху, а не повторяется в
     # каждой строке — повтор съедает ту самую ширину, ради которой колонки.
-    for x, word in ((COL_ANSWERED, "разобрано"), (COL_TRAILS, "связей"),
-                    (COL_PILLS, "чем держится")):
+    for x, word in ((COL_ANSWERED, w["answered"]), (COL_TRAILS, w["trails"])):
         p.append(text(x, TOP - 14, word, t["label"], 11.5, 600,
                       ' letter-spacing="0.3"'))
+    # Подпись плашек — ПО СЕРЕДИНЕ группы, а не над её левым краем: она
+    # называет три колонки сразу, и у левого края читается как подпись
+    # только первой.
+    span = sum(cols.values()) + PILL_GAP * 2
+    p.append(text(COL_PILLS + span // 2, TOP - 14, w["held"], t["label"], 11.5,
+                  600, ' letter-spacing="0.3" text-anchor="middle"'))
 
     y = TOP
     for r in data:
@@ -183,12 +216,13 @@ def render(data: list[dict], total: int, dark: bool) -> str:
         x = COL_PILLS
         if r["connected"]:
             for key in ("gate", "process-step", "none"):
-                markup, _ = pill(x, y + 2, WORDS[key], str(r[key]), t[key], t)
+                markup, _ = pill(x, y + 2, w[key], str(r[key]), t[key], t)
                 p.append(markup)
-                x += w[key] + PILL_GAP
+                x += cols[key] + PILL_GAP
         else:
             # Данных нет — одна плашка, и она называет состояние, а не пустоту.
-            markup, _ = pill(x, y + 2, r["state"], "none", t["muted"], t)
+            state = w.get(STATE.get(r["state"], ""), r["state"])
+            markup, _ = pill(x, y + 2, state, w["empty"], t["muted"], t)
             p.append(markup)
         y += ROW
     p.append("</svg>")
@@ -222,11 +256,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    for dark, name in NAMES.items():
-        (out_dir / name).write_text(render(data, total, dark), encoding="utf-8")
+    for (lang, dark), name in NAMES.items():
+        (out_dir / name).write_text(render(data, total, dark, lang),
+                                    encoding="utf-8")
     live = sum(1 for r in data if r["connected"])
     print(f"нарисовано: потребителей {len(data)}, подключено {live}, "
-          f"правил {total}; тем {len(NAMES)}")
+          f"правил {total}; файлов {len(NAMES)} (язык × тема)")
     return 0
 
 

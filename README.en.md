@@ -96,9 +96,9 @@ Two separate indexes would not do this — each looks complete on its own.
 ## How rules are enforced across consumers
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-light.svg">
-  <img src="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-dark.svg" alt="How rules are enforced across consumers" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-en-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-en-light.svg">
+  <img src="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-en-dark.svg" alt="How rules are enforced across consumers" width="100%">
 </picture>
 
 Drawn by a workflow from [`export/where.json`](export/where.json) — the projects' own answers, not our assessment of them. The bar shows a **share**: what holds a rule where it is called active. The numbers beside it are absolute, so the share does not pass for volume. The full report, including "who already solved what a neighbour holds by nothing", is in [`export/where.md`](export/where.md).
