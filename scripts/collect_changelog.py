@@ -144,6 +144,37 @@ def validate() -> tuple[dict[str, list[str]], list[str]]:
     return found, problems
 
 
+def existing(text: str) -> dict[str, list[str]]:
+    """Записи, УЖЕ лежащие в [Unreleased], разложенные по секциям.
+
+    ПОЧЕМУ ЭТО ПОНАДОБИЛОСЬ. Сборка вставляла свежий блок сразу после
+    заголовка `[Unreleased]`, а прежнее содержимое оставляла ниже. Пока
+    раздел собирали ровно один раз перед выпуском, это работало. Замер на
+    подготовке 1.1.0: раздел собрали, потом слили ещё три изменения и
+    собрали снова — и в теле выпуска встали ДВА «Добавлено» и ДВА
+    «Изменено». Читателю это выглядит как две разные группы, хотя группа
+    одна; а разделить их обратно нечем — порядок внутри уже перемешан.
+
+    Разбор идёт по строкам, а не выражением через весь текст: заголовок
+    секции и запись различаются началом строки, и этого достаточно.
+    """
+    by_title = {TITLES[s]: s for s in SECTIONS}
+    found: dict[str, list[str]] = {s: [] for s in SECTIONS}
+    head, _, tail = text.partition(UNRELEASED)
+    if not tail:
+        return found
+    section = None
+    for line in tail.splitlines():
+        if line.startswith("## ["):        # начался следующий выпуск
+            break
+        if line.startswith("### "):
+            section = by_title.get(line[4:].strip())
+            continue
+        if section and line.startswith("- "):
+            found[section].append(line[2:].strip())
+    return found
+
+
 def render(found: dict[str, list[str]]) -> str:
     out = []
     for section in SECTIONS:
@@ -213,12 +244,19 @@ def main() -> int:
         if not body:
             print("фрагментов нет — собирать нечего")
             return 0
+        # СЛИЯНИЕ, А НЕ ВСТАВКА СВЕРХУ. Раздел могли собрать раньше — тогда
+        # в нём уже есть записи, и новый блок обязан войти в те же секции, а
+        # не встать вторым комплектом заголовков рядом.
+        was = existing(text)
+        merged = {s: sorted(set(was[s]) | set(found[s])) for s in SECTIONS}
         head, _, tail = text.partition(UNRELEASED)
-        CHANGELOG.write_text(f"{head}{UNRELEASED}\n\n{body}{tail.lstrip()}",
+        rest = tail[tail.index("## ["):] if "## [" in tail else ""
+        CHANGELOG.write_text(f"{head}{UNRELEASED}\n\n{render(merged)}\n{rest}",
                              encoding="utf-8")
         for path in fragments():
             path.unlink()
-        print(f"собрано записей: {total}, фрагменты удалены")
+        print(f"собрано записей: {total}, в разделе стало "
+              f"{sum(len(v) for v in merged.values())}; фрагменты удалены")
         return 0
 
     # ── исход 0 ────────────────────────────────────────────────────────────
