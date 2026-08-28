@@ -49,7 +49,7 @@
     {
       "id": "consumers",
       "ask": "чем держится правило у потребителей каталога",
-      "badge": ".github/badges/consumers.svg",
+      "badge": ".github/badges/consumers-dark.svg",
       "branch": "badges"
     }
   ],

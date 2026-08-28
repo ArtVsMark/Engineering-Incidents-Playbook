@@ -10,6 +10,16 @@
 «почему» рядом с ней (правило 153). Здесь рисуется SVG: он текстовый, диф
 читается глазами, и проверить его можно тем же прогоном, что и всё остальное.
 
+СТИЛЬ ВЗЯТ У ВИТРИНЫ ПРОФИЛЯ, А НЕ ПРИДУМАН. Карточка со скруглением 16 и
+обводкой, шрифт Inter, палитра площадки и две темы — то же, чем нарисованы
+её баннер и плитки (`ArtVsMark/ArtVsMark`, `scripts/build_metrics.py`).
+Картинка появляется рядом с ними, и своя палитра сделала бы её чужой.
+
+ЧТО ЗДЕСЬ КОПИЯ, А ЧТО ССЫЛКА. Скопированы ЗНАЧЕНИЯ — цвета, размеры,
+скругления: они и есть стиль, и без них картинка не нарисуется. Обоснование,
+почему витрина выбрала именно их, не копируется: оно принадлежит ей и
+устаревает от правки на той стороне (правило 153).
+
 ИСТОЧНИК ОДИН И УЖЕ СОБРАН — `export/where.json`. Считать те же числа заново
 значило бы завести вторую классификацию одной территории, и разошлись бы они
 молча (правило 022). Отсюда же берётся состав: появление строки в
@@ -21,7 +31,7 @@
 недоступен по объявленной причине, и рисовать его как запущенность значит
 выдавать незнание за отказ (правило 027).
 
-Запуск:  python scripts/consumers_picture.py [--out ФАЙЛ] [--root КОРЕНЬ]
+Запуск:  python scripts/consumers_picture.py [--out-dir КАТАЛОГ] [--root КОРЕНЬ]
 Коды:    0 нарисовано · 2 рисовать нечем
 """
 
@@ -34,20 +44,25 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = "export/where.json"
-OUT = ".github/badges/consumers.svg"
+OUT_DIR = ".github/badges"
+NAMES = {False: "consumers-light.svg", True: "consumers-dark.svg"}
 
-#: Цвета механизмов. Взяты из палитры меток зон, чтобы витрина и трекер
-#: говорили об одном одинаково.
-INK = {
-    "gate": "#1d76db",          # держит машина
-    "process-step": "#7057ff",  # держит договорённость
-    "none": "#d73a4a",          # не держит ничто
+FONT = "Inter,Segoe UI,Helvetica,Arial,sans-serif"
+
+#: Палитра площадки, тема к теме. Значения те же, что у витрины профиля.
+THEME = {
+    False: {"card": "#FFFFFF", "stroke": "#D0D7DE", "name": "#1F2328",
+            "accent": "#0969DA", "label": "#636C76", "track": "#F6F8FA",
+            "gate": "#0969DA", "process-step": "#8250DF", "none": "#CF222E",
+            "unknown": "#8C959F", "off": "#D0D7DE"},
+    True: {"card": "#0D1117", "stroke": "#30363D", "name": "#F0F6FC",
+           "accent": "#58A6FF", "label": "#7D8590", "track": "#161B22",
+           "gate": "#58A6FF", "process-step": "#A371F7", "none": "#F85149",
+           "unknown": "#8B949E", "off": "#30363D"},
 }
-STATE_INK = {"не подключён": "#d0d7de", "неизвестно": "#8c959f"}
-BG, FG, MUTED, GRID = "#ffffff", "#1f2328", "#656d76", "#d8dee4"
-FONT = "-apple-system,Segoe UI,Helvetica,Arial,sans-serif"
 
-ROW, PAD, BAR, LABEL_W, TOP = 26, 16, 320, 210, 64
+WIDTH, PAD, TOP, ROW = 1000, 36, 132, 34
+BAR, BAR_H, NAME_W = 520, 18, 250
 
 
 def rows(doc: dict) -> list[dict]:
@@ -73,70 +88,90 @@ def esc(text: str) -> str:
                 .replace('"', "&quot;").replace("'", "&apos;"))
 
 
-def render(data: list[dict], total: int) -> str:
-    """Собирает SVG. Ширина полосы — доля правил, а не абсолют.
+def text(x, y, s, fill, size, weight=500, extra=""):
+    return (f'<text x="{x}" y="{y}" fill="{fill}" font-family="{FONT}" '
+            f'font-size="{size}" font-weight="{weight}"{extra}>{esc(s)}</text>')
+
+
+def render(data: list[dict], total: int, dark: bool) -> str:
+    """Собирает SVG одной темы. Ширина полосы — доля правил, а не абсолют.
 
     ДОЛЯ, А НЕ АБСОЛЮТ, потому что вопрос картинки — «чем держится», а не
     «сколько правил». У проекта, ответившего на сто пятьдесят, и у проекта,
     ответившего на девяносто, одинаково важно, какая часть не держится ничем.
-    Абсолютные числа стоят рядом текстом, чтобы доля не выдавала себя за объём.
+    Абсолютные числа стоят рядом, чтобы доля не выдавала себя за объём.
     """
-    height = TOP + ROW * len(data) + PAD
-    width = PAD * 2 + LABEL_W + BAR + 120
-    parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" '
-        f'height="{height}" viewBox="0 0 {width} {height}" role="img" '
+    t = THEME[dark]
+    height = TOP + ROW * len(data) + PAD - 6
+    p = [
+        f'<svg width="{WIDTH}" height="{height}" viewBox="0 0 {WIDTH} {height}" '
+        f'xmlns="http://www.w3.org/2000/svg" role="img" '
         f'aria-label="Чем держится правило у потребителей каталога">',
-        f'<rect width="{width}" height="{height}" fill="{BG}"/>',
-        # БЕЗ БЛОКА <style>, И ЭТО НЕ ВКУС. Картинку показывает витрина, а
-        # разметку на пути к читателю чистит площадка; шрифт, заданный
-        # атрибутом, переживёт эту чистку, а заданный правилом — не обязан.
-        f'<text x="{PAD}" y="26" fill="{FG}" font-family="{FONT}" '
-        f'font-size="15" font-weight="600">Чем держится правило '
-        f'у потребителей</text>',
-        f'<text x="{PAD}" y="44" fill="{MUTED}" font-family="{FONT}" '
-        f'font-size="11">правил в каталоге: {total} · синее — гейт, '
-        f'фиолетовое — шаг процесса, красное — не держится ничем</text>',
+        f'<rect x="0.5" y="0.5" width="{WIDTH - 1}" height="{height - 1}" '
+        f'rx="16" fill="{t["card"]}" stroke="{t["stroke"]}"/>',
+        f'<rect x="{PAD}" y="28" width="46" height="4" rx="2" fill="{t["accent"]}"/>',
+        text(PAD, 68, "Чем держится правило у потребителей", t["name"], 29, 800,
+             ' letter-spacing="-0.6"'),
+        text(PAD, 94, f"правил в каталоге: {total} · доля от признанных "
+                      f"действующими у каждого проекта", t["label"], 15, 500),
     ]
+    # Легенда — теми же цветами, что и полосы: подпись словом рядом со
+    # свидетельством, а не в отдельной таблице.
+    x = PAD
+    for key, word in (("gate", "гейт"), ("process-step", "шаг процесса"),
+                      ("none", "не держится ничем")):
+        p.append(f'<rect x="{x}" y="108" width="10" height="10" rx="2" '
+                 f'fill="{t[key]}"/>')
+        p.append(text(x + 16, 117, word, t["label"], 12.5, 600))
+        x += 26 + int(len(word) * 6.6)
+
     y = TOP
     for r in data:
-        parts.append(f'<text x="{PAD}" y="{y + 14}" fill="{FG}" '
-                     f'font-family="{FONT}" font-size="13">{esc(r["name"])}</text>')
-        x = PAD + LABEL_W
+        p.append(text(PAD, y + 13, r["name"], t["name"], 15, 600))
+        bx = PAD + NAME_W
+        p.append(f'<rect x="{bx}" y="{y}" width="{BAR}" height="{BAR_H}" '
+                 f'rx="{BAR_H // 2}" fill="{t["track"]}"/>')
         if not r["connected"]:
-            # Состояние, а не пустое место: незакрашенная полоса с подписью.
-            ink = STATE_INK.get(r["state"], GRID)
-            parts.append(f'<rect x="{x}" y="{y + 2}" width="{BAR}" height="14" '
-                         f'rx="3" fill="{ink}" fill-opacity="0.35"/>')
-            parts.append(f'<text x="{x + 8}" y="{y + 13}" fill="{MUTED}" '
-                         f'font-family="{FONT}" font-size="11">'
-                         f'{esc(r["state"])} · следов {r["trails"]}</text>')
+            # Состояние, а не пустое место: обведённая дорожка со словом.
+            ink = t["unknown"] if r["state"] == "неизвестно" else t["off"]
+            p.append(f'<rect x="{bx}.5" y="{y}.5" width="{BAR - 1}" '
+                     f'height="{BAR_H - 1}" rx="{BAR_H // 2}" fill="none" '
+                     f'stroke="{ink}" stroke-dasharray="4 3"/>')
+            p.append(text(bx + 14, y + 13,
+                          f'{r["state"]} · следов {r["trails"]}', ink, 12.5, 600))
         else:
             held = r["gate"] + r["process-step"] + r["none"]
-            left = x
+            clip = f'clip{r["name"]}{"d" if dark else "l"}'.replace(".", "")
+            p.append(f'<clipPath id="{clip}"><rect x="{bx}" y="{y}" '
+                     f'width="{BAR}" height="{BAR_H}" rx="{BAR_H // 2}"/></clipPath>')
+            p.append(f'<g clip-path="url(#{clip})">')
+            left = bx
             for key in ("gate", "process-step", "none"):
                 if not r[key]:
                     continue
-                w = max(2, round(BAR * r[key] / held)) if held else 0
-                parts.append(f'<rect x="{left}" y="{y + 2}" width="{w}" '
-                             f'height="14" fill="{INK[key]}"/>')
+                w = max(3, round(BAR * r[key] / held)) if held else 0
+                p.append(f'<rect x="{left}" y="{y}" width="{w}" '
+                         f'height="{BAR_H}" fill="{t[key]}"/>')
                 left += w
-            parts.append(
-                f'<text x="{x + BAR + 10}" y="{y + 13}" fill="{MUTED}" '
-                f'font-family="{FONT}" font-size="11">'
-                f'{r["gate"]} · {r["process-step"]} · {r["none"]}</text>')
+            p.append("</g>")
+            nx = bx + BAR + 18
+            for key in ("gate", "process-step", "none"):
+                p.append(text(nx, y + 13, str(r[key]), t[key], 14, 700))
+                nx += 14 + len(str(r[key])) * 9
+                if key != "none":
+                    p.append(text(nx - 11, y + 13, "·", t["label"], 14, 500))
         y += ROW
-    parts.append("</svg>")
-    return "\n".join(parts) + "\n"
+    p.append("</svg>")
+    return "\n".join(p) + "\n"
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=ROOT)
-    ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--out-dir", type=Path, default=None)
     args = ap.parse_args(argv)
     root: Path = args.root
-    out = args.out or (root / OUT)
+    out_dir = args.out_dir or (root / OUT_DIR)
 
     # ── исход 2: рисовать нечем ────────────────────────────────────────────
     try:
@@ -156,11 +191,12 @@ def main(argv: list[str] | None = None) -> int:
         print(f"рисовать нечем: экспорт правил не прочитан — {e}", file=sys.stderr)
         return 2
 
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(render(data, total), encoding="utf-8")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for dark, name in NAMES.items():
+        (out_dir / name).write_text(render(data, total, dark), encoding="utf-8")
     live = sum(1 for r in data if r["connected"])
     print(f"нарисовано: потребителей {len(data)}, подключено {live}, "
-          f"правил {total} → {out.relative_to(root) if out.is_relative_to(root) else out}")
+          f"правил {total}; тем {len(NAMES)}")
     return 0
 
 
