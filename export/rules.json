@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 150,
+  "count": 152,
   "rules": [
     {
       "id": "001",
@@ -3935,6 +3935,56 @@
         "en": "rules/en/151-the-trail-goes-where-the-fixer-can-reach.md"
       },
       "trails": []
+    },
+    {
+      "id": "152",
+      "slug": "pinning-callee-without-caller",
+      "title": {
+        "ru": "Закрепление вызываемого без закрепления вызывающего не защищает ни от чего",
+        "en": "Pinning the callee without pinning the caller protects nothing"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "безопасность"
+        ],
+        "en": [
+          "pipeline",
+          "security"
+        ]
+      },
+      "added": "2026-08-28",
+      "files": {
+        "ru": "rules/ru/152-pinning-callee-without-caller.md",
+        "en": "rules/en/152-pinning-callee-without-caller.md"
+      },
+      "trails": [],
+      "portable": "yes"
+    },
+    {
+      "id": "153",
+      "slug": "foreign-why-is-a-link-not-a-copy",
+      "title": {
+        "ru": "Чужое «почему» — это ссылка, а не копия",
+        "en": "Someone else's \"why\" is a link, not a copy"
+      },
+      "areas": {
+        "ru": [
+          "документация",
+          "код"
+        ],
+        "en": [
+          "documentation",
+          "code"
+        ]
+      },
+      "added": "2026-08-28",
+      "files": {
+        "ru": "rules/ru/153-foreign-why-is-a-link-not-a-copy.md",
+        "en": "rules/en/153-foreign-why-is-a-link-not-a-copy.md"
+      },
+      "trails": [],
+      "portable": "yes"
     }
   ]
 }
