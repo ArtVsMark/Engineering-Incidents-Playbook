@@ -1,0 +1,59 @@
+<svg width="1000" height="332" viewBox="0 0 1000 332" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Чем держится правило у потребителей каталога">
+<rect x="0.5" y="0.5" width="999" height="331" rx="16" fill="#0D1117" stroke="#30363D"/>
+<rect x="36" y="28" width="46" height="4" rx="2" fill="#58A6FF"/>
+<text x="36" y="68" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="29" font-weight="800" letter-spacing="-0.6">Чем держится правило у потребителей</text>
+<text x="36" y="94" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="500">правил в каталоге: 152 · доля от признанных действующими у каждого проекта</text>
+<rect x="36" y="108" width="10" height="10" rx="2" fill="#58A6FF"/>
+<text x="52" y="117" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600">гейт</text>
+<rect x="88" y="108" width="10" height="10" rx="2" fill="#A371F7"/>
+<text x="104" y="117" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600">шаг процесса</text>
+<rect x="193" y="108" width="10" height="10" rx="2" fill="#F85149"/>
+<text x="209" y="117" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600">не держится ничем</text>
+<text x="36" y="145" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="600">claude-code-playbook</text>
+<rect x="286" y="132" width="520" height="18" rx="9" fill="#161B22"/>
+<clipPath id="clipclaude-code-playbookd"><rect x="286" y="132" width="520" height="18" rx="9"/></clipPath>
+<g clip-path="url(#clipclaude-code-playbookd)">
+<rect x="286" y="132" width="255" height="18" fill="#58A6FF"/>
+<rect x="541" y="132" width="208" height="18" fill="#A371F7"/>
+<rect x="749" y="132" width="57" height="18" fill="#F85149"/>
+</g>
+<text x="824" y="145" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">54</text>
+<text x="845" y="145" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="500">·</text>
+<text x="856" y="145" fill="#A371F7" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">44</text>
+<text x="877" y="145" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="500">·</text>
+<text x="888" y="145" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">12</text>
+<text x="36" y="179" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="600">Stepik-Python-Grader</text>
+<rect x="286" y="166" width="520" height="18" rx="9" fill="#161B22"/>
+<clipPath id="clipStepik-Python-Graderd"><rect x="286" y="166" width="520" height="18" rx="9"/></clipPath>
+<g clip-path="url(#clipStepik-Python-Graderd)">
+<rect x="286" y="166" width="247" height="18" fill="#58A6FF"/>
+<rect x="533" y="166" width="31" height="18" fill="#A371F7"/>
+<rect x="564" y="166" width="242" height="18" fill="#F85149"/>
+</g>
+<text x="824" y="179" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">48</text>
+<text x="845" y="179" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="500">·</text>
+<text x="856" y="179" fill="#A371F7" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">6</text>
+<text x="868" y="179" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="500">·</text>
+<text x="879" y="179" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">47</text>
+<text x="36" y="213" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="600">ArtVsMark</text>
+<rect x="286" y="200" width="520" height="18" rx="9" fill="#161B22"/>
+<clipPath id="clipArtVsMarkd"><rect x="286" y="200" width="520" height="18" rx="9"/></clipPath>
+<g clip-path="url(#clipArtVsMarkd)">
+<rect x="286" y="200" width="157" height="18" fill="#58A6FF"/>
+<rect x="443" y="200" width="294" height="18" fill="#A371F7"/>
+<rect x="737" y="200" width="68" height="18" fill="#F85149"/>
+</g>
+<text x="824" y="213" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">23</text>
+<text x="845" y="213" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="500">·</text>
+<text x="856" y="213" fill="#A371F7" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">43</text>
+<text x="877" y="213" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="500">·</text>
+<text x="888" y="213" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="700">10</text>
+<text x="36" y="247" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="600">claude-code-usage</text>
+<rect x="286" y="234" width="520" height="18" rx="9" fill="#161B22"/>
+<rect x="286.5" y="234.5" width="519" height="17" rx="9" fill="none" stroke="#30363D" stroke-dasharray="4 3"/>
+<text x="300" y="247" fill="#30363D" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600">не подключён · следов 1</text>
+<text x="36" y="281" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="600">Glossary-Python</text>
+<rect x="286" y="268" width="520" height="18" rx="9" fill="#161B22"/>
+<rect x="286.5" y="268.5" width="519" height="17" rx="9" fill="none" stroke="#30363D" stroke-dasharray="4 3"/>
+<text x="300" y="281" fill="#30363D" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600">не подключён · следов 0</text>
+</svg>
