@@ -515,19 +515,6 @@ def test_на_изменении_лишний_ответ_это_предупре
     assert "которых в каталоге нет — 143" in capsys.readouterr().out
 
 
-def test_в_сетевом_прогоне_лишний_ответ_роняет(monkeypatch, repo, capsys):
-    """У сетевого прогона есть адресат — задача в трекере."""
-    путь = answer(repo, ".rules/a.json", **{"001": "active", "143": "active"})
-    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}],
-            rules=("001", "002"))
-    cli(monkeypatch)
-
-    код = ab.main()
-
-    assert код == 1
-    assert "которых в каталоге нет" in capsys.readouterr().err
-
-
 def test_перепись_печатается_и_на_зелёном(monkeypatch, repo, capsys):
     """Число, видное только при поломке, не отвечает «куда мы движемся»."""
     путь = answer(repo, ".rules/a.json", **{"001": "active", "002": "unreviewed"})
@@ -551,3 +538,65 @@ def test_перепись_называет_неподключённого_сос
     ab.main()
 
     assert "o/тихий: не подключён" in capsys.readouterr().out
+
+
+# ── чинит не тот, кто нашёл ───────────────────────────────────────────────
+#
+# Первый же прогон с проверкой лишнего ответа покрасил общую ветку из-за
+# записи 143 в ответе витрины. По 053 красное на общей ветке останавливает
+# всю остальную работу — то есть каталог встал из-за строки в ЧУЖОМ файле,
+# и снять это красное он не мог ничем, кроме исключения потребителя из
+# реестра. Находки делятся по тому, чьей правкой снимаются.
+
+def test_чужая_находка_прогон_не_роняет(monkeypatch, repo, capsys):
+    """Лишний ответ правится у потребителя — отсюда недостижимо."""
+    путь = answer(repo, ".rules/a.json", **{"001": "active", "143": "active"})
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}],
+            rules=("001", "002"))
+    cli(monkeypatch)
+
+    код = ab.main()
+
+    assert код == 0
+
+
+def test_чужая_находка_названа_вслух(monkeypatch, repo, capsys):
+    """Не краснеть — не значит молчать: иначе это было бы 075."""
+    путь = answer(repo, ".rules/a.json", **{"001": "active", "143": "active"})
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}],
+            rules=("001", "002"))
+    cli(monkeypatch)
+
+    ab.main()
+    вывод = capsys.readouterr().out
+
+    assert "находки в чужих репозиториях" in вывод
+    assert "143" in вывод
+
+
+def test_своя_находка_прогон_роняет(monkeypatch, repo, capsys):
+    """Нечитаемый ответ по объявленному адресу правится ЗДЕСЬ — в реестре."""
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": ".rules/нет.json"}],
+            rules=("001",))
+    cli(monkeypatch)
+
+    код = ab.main()
+
+    assert код == 1
+    assert "чей ответ не читается" in capsys.readouterr().err
+
+
+def test_обе_находки_разом_роняет_только_своя(monkeypatch, repo, capsys):
+    """Своя и чужая рядом: код берётся у своей, чужая всё равно названа."""
+    путь = answer(repo, ".rules/a.json", **{"001": "active", "143": "active"})
+    prepare(monkeypatch, repo, [
+        {"repo": "o/a", "bindings": путь},
+        {"repo": "o/b", "bindings": ".rules/нет.json"}], rules=("001", "002"))
+    cli(monkeypatch)
+
+    код = ab.main()
+    поток = capsys.readouterr()
+
+    assert код == 1
+    assert "находки в чужих репозиториях" in поток.out
+    assert "o/b" in поток.err
