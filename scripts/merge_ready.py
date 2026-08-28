@@ -21,6 +21,9 @@
 
 Запуск:  gh api …/check-runs | python scripts/merge_ready.py --required catalogue
 Коды:    0 сливать можно · 1 сливать нельзя · 2 проверка не отработала
+
+Реализует правила каталога:
+  010 — пустой список проверок трактуется как «не стартовало», а не «всё хорошо».
 """
 
 from __future__ import annotations

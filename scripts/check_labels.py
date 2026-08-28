@@ -31,6 +31,9 @@
   python scripts/check_labels.py --paths-from <файл>       # какие зоны нужны
   python scripts/check_labels.py --paths-from <файл> --have "area/rules,…"
 Коды: 0 чисто · 1 есть находки · 2 проверка не отработала
+
+Реализует правила каталога:
+  064 — зона изменения выводится из тронутых путей и сверяется с тем, что на нём стоит.
 """
 
 from __future__ import annotations

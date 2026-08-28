@@ -116,7 +116,8 @@ def test_заявленный_файл_обязан_существовать(mon
 
 
 def test_живой_заявленный_файл_находкой_не_считается(monkeypatch, repo):
-    write(repo / "scripts" / "живой.py", "# он есть\n")
+    write(repo / "scripts" / "живой.py",
+          '"""Сторож.\n\nРеализует правила каталога:\n  001 — держит вот это.\n"""\n')
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "gate",
                                "where": "scripts/живой.py"}}},
@@ -220,9 +221,64 @@ def test_ничем_с_причиной_проходит(monkeypatch, repo):
 
 def test_у_обеспеченного_правила_причины_не_требуют(monkeypatch, repo):
     """154 спрашивает только у `none`: у механизма причина — его адрес."""
-    write(repo / "scripts" / "живой.py", "# он есть\n")
+    write(repo / "scripts" / "живой.py",
+          '"""Сторож.\n\nРеализует правила каталога:\n  001 — держит вот это.\n"""\n')
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "gate",
                                "where": "scripts/живой.py"}}},
+            export_of("001"))
+    assert cb.main() == 0
+
+
+# ── механизм называет свои правила (задача #202) ──────────────────────────
+#
+# Две декларации одной территории существовали и не сверялись: 27 скриптов
+# называли правила в докстроке, 23 были названы правилами. Замер 28 августа:
+# 32 «скрипт без блока вовсе» и 25 «блок есть, правила в нём нет».
+# Связь односторонняя — обратную требовать нельзя, см. комментарий в гейте.
+
+def гейт(repo, текст: str):
+    write(repo / "scripts" / "страж.py", текст)
+
+
+def test_механизм_без_блока_правил_это_находка(monkeypatch, repo, capsys):
+    гейт(repo, '"""Просто сторож."""\n')
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": "scripts/страж.py"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "не объявляет своих правил" in capsys.readouterr().err
+
+
+def test_блок_есть_а_правила_в_нём_нет_это_находка(monkeypatch, repo, capsys):
+    гейт(repo, '"""Сторож.\n\nРеализует правила каталога:\n'
+               '  002 — что-то другое.\n"""\n')
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": "scripts/страж.py"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    err = capsys.readouterr().err
+    assert "его не называет" in err and "002" in err
+
+
+def test_обе_стороны_сошлись_проходит(monkeypatch, repo):
+    гейт(repo, '"""Сторож.\n\nРеализует правила каталога:\n'
+               '  001 — держит вот это.\n"""\n')
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": "scripts/страж.py"}}},
+            export_of("001"))
+    assert cb.main() == 0
+
+
+def test_у_ничем_блока_не_спрашивают(monkeypatch, repo):
+    """`none` механизма не имеет, и спрашивать у него нечего."""
+    гейт(repo, '"""Просто сторож."""\n')
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "none",
+                               "where": "scripts/страж.py",
+                               "why": "не дошли руки: предмет счётный"}}},
             export_of("001"))
     assert cb.main() == 0

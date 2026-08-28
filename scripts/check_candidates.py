@@ -27,6 +27,9 @@
 
 Запуск:  python scripts/check_candidates.py [--root <корень>]
 Коды:    0 чисто · 1 есть находки · 2 проверка не отработала
+
+Реализует правила каталога:
+  119 — candidates/README.md кандидатом не считается: свой артефакт держат вне маски входа.
 """
 
 from __future__ import annotations
