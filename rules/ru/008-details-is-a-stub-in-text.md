@@ -43,4 +43,4 @@ test execution» и таблица внутри. Тот же диагноз, т�
 
 ## След
 
-ArtVsMark/ArtVsMark#9, #10
+ArtVsMark/ArtVsMark#9, ArtVsMark/ArtVsMark#10

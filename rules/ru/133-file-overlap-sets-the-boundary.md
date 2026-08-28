@@ -89,10 +89,11 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader#1345 (пять задач, один свод), #1350 (гейт
-полноты связей); замер: 14 из 16 последних слияний — ровно одна задача.
-Смежное: [132](132-one-change-carries-one-topic.md) — критерий, который
-проверяется раньше, [098](098-the-unit-of-splitting-follows-usage.md),
+ArtVsMark/Stepik-Python-Grader#1345 (пять задач, один свод),
+ArtVsMark/Stepik-Python-Grader#1350 (гейт полноты связей); замер: 14 из 16
+последних слияний — ровно одна задача. Смежное:
+[132](132-one-change-carries-one-topic.md) — критерий, который проверяется
+раньше, [098](098-the-unit-of-splitting-follows-usage.md),
 [004](004-conflict-is-normal-not-outage.md),
 [010](010-empty-checklist-is-not-green.md),
 [030](030-changelog-from-fragments.md) — как перестают конфликтовать записи

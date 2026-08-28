@@ -74,5 +74,6 @@ from, and nobody can explain why.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `docs/use/configuration.md` § why the search is
-bounded, § the settings root; #993, #984. Related:
+bounded, § the settings root; ArtVsMark/Stepik-Python-Grader#993,
+ArtVsMark/Stepik-Python-Grader#984. Related:
 [100](100-two-deadlines-start-and-work.md).

@@ -66,7 +66,8 @@ absent where a human does.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § labels when raising an issue;
-#1329. Related: [053](053-queue-order-is-a-rule-not-arrival.md),
+ArtVsMark/Stepik-Python-Grader#1329. Related:
+[053](053-queue-order-is-a-rule-not-arrival.md),
 [002](002-rule-without-mechanism.md),
-[128](128-a-required-field-is-checked-for-completeness.md) — the same field, checked
-for completeness.
+[128](128-a-required-field-is-checked-for-completeness.md) — the same field,
+checked for completeness.

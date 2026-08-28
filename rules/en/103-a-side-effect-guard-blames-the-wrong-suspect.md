@@ -70,5 +70,6 @@ construction — there the difference really does belong to the subject.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `tests/conftest.py` (`_no_writes_outside_tmp`),
-#818 (a deleted user database), #646. Related:
+ArtVsMark/Stepik-Python-Grader#818 (a deleted user database),
+ArtVsMark/Stepik-Python-Grader#646. Related:
 [072](072-guard-the-cause-and-the-effect.md).

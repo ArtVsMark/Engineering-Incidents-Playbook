@@ -60,4 +60,4 @@ sources — there a path is exactly what helps.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `scripts/check_locale_guardrails.py` (the items
-on outward links and the package name), #1005.
+on outward links and the package name), ArtVsMark/Stepik-Python-Grader#1005.

@@ -69,5 +69,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/dev/supply-chain.md` § Три исхода, а не два.
-Смежное: [010](010-empty-checklist-is-not-green.md) — пустой список проверок.
+ArtVsMark/Stepik-Python-Grader — `docs/dev/supply-chain.md` § Три исхода, а не
+два. Смежное: [010](010-empty-checklist-is-not-green.md) — пустой список
+проверок.

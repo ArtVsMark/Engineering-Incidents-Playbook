@@ -84,5 +84,6 @@ ArtVsMark/ArtVsMark#12; пересборка витрины — коммит `a5
 [005](005-hand-written-numbers-rot.md) — запрет, границу которого эта запись
 уточняет; [075](075-a-guard-that-finds-nothing-must-fail.md) — почему третье
 условие обязательно; [008](008-details-is-a-stub-in-text.md) — читатель, который
-видит текст, но не картинку; [002](002-rule-without-mechanism.md) — без гейта это
-обещание; [023](023-readme-is-a-storefront.md) — витрина, где это применяется.
+видит текст, но не картинку; [002](002-rule-without-mechanism.md) — без гейта
+это обещание; [023](023-readme-is-a-storefront.md) — витрина, где это
+применяется.

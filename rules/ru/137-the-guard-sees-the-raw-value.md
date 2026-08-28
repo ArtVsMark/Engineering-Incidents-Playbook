@@ -85,5 +85,5 @@ ArtVsMark/claude-code-playbook#40 — разбор и прогон; сборка
 Смежное: [075](075-a-guard-that-finds-nothing-must-fail.md) — гейт, не нашедший
 предмета, обязан упасть: здесь он предмета и не находит;
 [122](122-ship-the-raw-value-next-to-the-formatted-one.md) — рядом с
-отформатированным отдают сырое;
-[039](039-three-outcomes-not-two.md) — «источник не ответил» это третий исход.
+отформатированным отдают сырое; [039](039-three-outcomes-not-two.md) — «источник
+не ответил» это третий исход.

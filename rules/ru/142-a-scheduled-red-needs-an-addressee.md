@@ -85,9 +85,10 @@ diff печатается, команда починки названа в те�
 ArtVsMark/claude-code-playbook#77 — четыре дня ежедневного красного и разбор;
 `.github/workflows/consumers-sync.yml` — шаг «у находки есть адресат».
 
-Смежное: [075](075-a-guard-that-finds-nothing-must-fail.md) — «не смогли прочитать» не
-должно быть неотличимо от «всё хорошо»;
+Смежное: [075](075-a-guard-that-finds-nothing-must-fail.md) — «не смогли
+прочитать» не должно быть неотличимо от «всё хорошо»;
 [051](051-warn-on-likely-block-on-certain.md) — почему шум ломает видимость
 надёжнее молчания; [104](104-event-driven-automation-needs-a-manual-button.md) —
-у события всегда есть ручная кнопка; [049](049-derive-state-from-live-artifacts.md)
-— вычисляемое состояние, которое и протухло.
+у события всегда есть ручная кнопка;
+[049](049-derive-state-from-live-artifacts.md) — вычисляемое состояние, которое
+и протухло.

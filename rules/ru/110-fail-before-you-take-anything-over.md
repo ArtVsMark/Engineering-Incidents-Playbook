@@ -65,6 +65,8 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `core/tracer.py` (#806), `launcher.py` (#1135).
-Смежное: [067](067-cleanup-must-not-swallow-the-failure.md),
+ArtVsMark/Stepik-Python-Grader — `core/tracer.py`
+(ArtVsMark/Stepik-Python-Grader#806), `launcher.py`
+(ArtVsMark/Stepik-Python-Grader#1135). Смежное:
+[067](067-cleanup-must-not-swallow-the-failure.md),
 [056](056-a-signal-states-what-it-does-not-mean.md).

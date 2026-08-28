@@ -65,5 +65,6 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Формат коммитов (авторство при
-squash-мерже). Смежное: [074](074-one-shot-irreversible-steps-get-their-own-guard.md),
+squash-мерже). Смежное:
+[074](074-one-shot-irreversible-steps-get-their-own-guard.md),
 [002](002-rule-without-mechanism.md).

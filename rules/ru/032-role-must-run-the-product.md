@@ -57,4 +57,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/roles.md` § Роль не заканчивается чтением кода
+ArtVsMark/Stepik-Python-Grader — `docs/agent/roles.md` § Роль не заканчивается
+чтением кода

@@ -59,6 +59,7 @@ completed or did not.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/launcher.py`, #823. Related:
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/launcher.py`,
+ArtVsMark/Stepik-Python-Grader#823. Related:
 [078](078-cancelled-is-not-an-error.md),
 [100](100-two-deadlines-start-and-work.md).

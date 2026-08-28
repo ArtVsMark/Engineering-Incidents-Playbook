@@ -252,7 +252,8 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `docs/agent/roles.md` § Матрица подключения
-ролей; #1007 (33 находки браузерного прогона), #1005 (12 находок по локалям).
-Смежное: [062](062-a-role-must-be-able-to-object.md) — обратная сторона,
+ролей; ArtVsMark/Stepik-Python-Grader#1007 (33 находки браузерного прогона),
+ArtVsMark/Stepik-Python-Grader#1005 (12 находок по локалям). Смежное:
+[062](062-a-role-must-be-able-to-object.md) — обратная сторона,
 [019](019-audit-from-surfaces-not-files.md) — тот же приём для аудита,
 [032](032-role-must-run-the-product.md).

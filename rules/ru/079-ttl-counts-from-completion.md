@@ -60,4 +60,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/runs.py`, #408, #811.
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/runs.py`,
+ArtVsMark/Stepik-Python-Grader#408, ArtVsMark/Stepik-Python-Grader#811.

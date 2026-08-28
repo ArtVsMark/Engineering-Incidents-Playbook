@@ -59,5 +59,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/atomic_io.py`, #996.
-Смежное: [045](045-no-silent-fallback.md).
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/atomic_io.py`,
+ArtVsMark/Stepik-Python-Grader#996. Смежное: [045](045-no-silent-fallback.md).

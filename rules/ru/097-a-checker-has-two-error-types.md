@@ -63,5 +63,5 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `docs/dev/corpus.md` § Зачем он, если есть
-тесты (мутации `vertical_tab`, `float_noise`, `crlf_newlines`).
-Смежное: [055](055-your-own-expectations-are-a-hypothesis.md).
+тесты (мутации `vertical_tab`, `float_noise`, `crlf_newlines`). Смежное:
+[055](055-your-own-expectations-are-a-hypothesis.md).

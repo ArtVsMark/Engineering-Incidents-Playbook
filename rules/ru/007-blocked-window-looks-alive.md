@@ -52,4 +52,4 @@ Approve or deny mcp__github__create_pull_request
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader#1323, #1321
+ArtVsMark/Stepik-Python-Grader#1323, ArtVsMark/Stepik-Python-Grader#1321

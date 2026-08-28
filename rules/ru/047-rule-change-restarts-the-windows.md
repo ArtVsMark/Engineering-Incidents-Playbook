@@ -58,6 +58,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader#1283. Смежное:
-[006](006-window-lifetime.md) — тот же эффект по причине возраста,
-[002](002-rule-without-mechanism.md) — правило без механизма.
+ArtVsMark/Stepik-Python-Grader#1283. Смежное: [006](006-window-lifetime.md) —
+тот же эффект по причине возраста, [002](002-rule-without-mechanism.md) —
+правило без механизма.

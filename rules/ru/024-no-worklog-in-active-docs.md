@@ -47,4 +47,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Чего в активном документе быть не должно
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Чего в активном документе
+быть не должно

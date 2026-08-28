@@ -50,4 +50,4 @@ people start routing around it.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader#1296, #1329
+ArtVsMark/Stepik-Python-Grader#1296, ArtVsMark/Stepik-Python-Grader#1329

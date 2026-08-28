@@ -66,7 +66,8 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader#1325, #1326, #1329.
-Смежное: [052](052-only-the-head-of-the-queue-moves.md),
+ArtVsMark/Stepik-Python-Grader#1325, ArtVsMark/Stepik-Python-Grader#1326,
+ArtVsMark/Stepik-Python-Grader#1329. Смежное:
+[052](052-only-the-head-of-the-queue-moves.md),
 [004](004-conflict-is-normal-not-outage.md),
 [002](002-rule-without-mechanism.md).

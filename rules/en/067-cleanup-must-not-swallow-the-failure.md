@@ -62,5 +62,5 @@ nobody knows where they came from.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/atomic_io.py`, #996.
-Related: [045](045-no-silent-fallback.md).
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/atomic_io.py`,
+ArtVsMark/Stepik-Python-Grader#996. Related: [045](045-no-silent-fallback.md).

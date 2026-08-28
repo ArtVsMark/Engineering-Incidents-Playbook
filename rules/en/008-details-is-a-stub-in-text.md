@@ -47,4 +47,4 @@ only, no contents. If it still reads as coherent text, keep it.
 
 ## Trace
 
-ArtVsMark/ArtVsMark#9, #10
+ArtVsMark/ArtVsMark#9, ArtVsMark/ArtVsMark#10

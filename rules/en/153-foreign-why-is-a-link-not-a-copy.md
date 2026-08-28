@@ -78,8 +78,8 @@ catalogue's badge lives was replaced with a link to the catalogue.
 Related: [022](022-one-canonical-document.md) — duplicated description always
 diverges; here the second editor is out of reach, so collapsing to one document
 is impossible and a link is what remains.
-[118](118-keep-the-source-next-to-the-derived.md) — source next to derived: for a foreign
-rationale we hold no source at all.
+[118](118-keep-the-source-next-to-the-derived.md) — source next to derived: for
+a foreign rationale we hold no source at all.
 [049](049-derive-state-from-live-artifacts.md) — derive state from live
 artifacts: a copied foreign rationale is exactly a hand-kept registry of someone
 else's state — except state is derivable and a rationale is derivable from

@@ -59,6 +59,7 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/playground.py`, #799.
-Смежное: [068](068-allowlist-not-denylist.md),
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/playground.py`,
+ArtVsMark/Stepik-Python-Grader#799. Смежное:
+[068](068-allowlist-not-denylist.md),
 [070](070-a-heuristic-guard-fails-open-with-a-written-risk.md).

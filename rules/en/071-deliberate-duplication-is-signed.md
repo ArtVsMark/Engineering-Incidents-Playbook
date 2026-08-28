@@ -63,6 +63,6 @@ to be restored.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/auth_adapter.py` (#433),
-`src/stepik_grader/launcher.py`. Related:
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/auth_adapter.py`
+(ArtVsMark/Stepik-Python-Grader#433), `src/stepik_grader/launcher.py`. Related:
 [042](042-decision-records-its-alternatives.md).

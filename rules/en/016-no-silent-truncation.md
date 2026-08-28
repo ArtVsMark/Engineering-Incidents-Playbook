@@ -43,4 +43,5 @@ boundary helps.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § never truncate silently
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § never truncate
+silently

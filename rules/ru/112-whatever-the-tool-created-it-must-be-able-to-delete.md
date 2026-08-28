@@ -59,6 +59,7 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `cli/__init__.py` (`--purge-history`), #813.
-Смежное: [095](095-the-default-is-chosen-for-the-user.md),
+ArtVsMark/Stepik-Python-Grader — `cli/__init__.py` (`--purge-history`),
+ArtVsMark/Stepik-Python-Grader#813. Смежное:
+[095](095-the-default-is-chosen-for-the-user.md),
 [096](096-storage-follows-lifecycle-not-convenience.md).

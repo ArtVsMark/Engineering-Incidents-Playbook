@@ -45,4 +45,4 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader#1320, #1302
+ArtVsMark/Stepik-Python-Grader#1320, ArtVsMark/Stepik-Python-Grader#1302

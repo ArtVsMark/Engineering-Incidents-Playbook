@@ -64,6 +64,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Прогонным агентам —
-запреты окружения прямо в промпте. Смежное:
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Прогонным агентам
+— запреты окружения прямо в промпте. Смежное:
 [034](034-small-zone-per-executor.md).

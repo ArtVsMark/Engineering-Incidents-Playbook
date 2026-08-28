@@ -64,7 +64,7 @@ have to try".
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/use/configuration.md` § what is forgiven /
-§ what is not, comparison modes. Related:
+ArtVsMark/Stepik-Python-Grader — `docs/use/configuration.md` § what is forgiven
+/ § what is not, comparison modes. Related:
 [097](097-a-checker-has-two-error-types.md),
 [068](068-allowlist-not-denylist.md).

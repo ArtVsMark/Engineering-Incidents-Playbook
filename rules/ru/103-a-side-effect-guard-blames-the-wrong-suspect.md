@@ -71,5 +71,6 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `tests/conftest.py` (`_no_writes_outside_tmp`),
-#818 (удалённая база пользователя), #646.
-Смежное: [072](072-guard-the-cause-and-the-effect.md).
+ArtVsMark/Stepik-Python-Grader#818 (удалённая база пользователя),
+ArtVsMark/Stepik-Python-Grader#646. Смежное:
+[072](072-guard-the-cause-and-the-effect.md).

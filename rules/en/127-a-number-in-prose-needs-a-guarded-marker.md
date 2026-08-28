@@ -88,7 +88,7 @@ it is decoration.
 ArtVsMark/ArtVsMark#12; the storefront rebuild — commit `a572a04`. See also:
 [005](005-hand-written-numbers-rot.md) — the ban whose boundary this record
 refines; [075](075-a-guard-that-finds-nothing-must-fail.md) — why the third
-condition is mandatory; [008](008-details-is-a-stub-in-text.md) — the reader that
-sees text but not the picture; [002](002-rule-without-mechanism.md) — without a
-gate this is a promise; [023](023-readme-is-a-storefront.md) — the storefront
-where it is applied.
+condition is mandatory; [008](008-details-is-a-stub-in-text.md) — the reader
+that sees text but not the picture; [002](002-rule-without-mechanism.md) —
+without a gate this is a promise; [023](023-readme-is-a-storefront.md) — the
+storefront where it is applied.

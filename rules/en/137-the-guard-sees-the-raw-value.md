@@ -88,6 +88,5 @@ of the profile showcase, ArtVsMark/ArtVsMark.
 See also: [075](075-a-guard-that-finds-nothing-must-fail.md) — a gate that finds
 no subject must fail: here it is the subject it fails to find;
 [122](122-ship-the-raw-value-next-to-the-formatted-one.md) — ship the raw value
-next to the formatted one;
-[039](039-three-outcomes-not-two.md) — "the source did not answer" is a third
-outcome.
+next to the formatted one; [039](039-three-outcomes-not-two.md) — "the source
+did not answer" is a third outcome.

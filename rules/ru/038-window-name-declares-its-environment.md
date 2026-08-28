@@ -112,6 +112,7 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Два окна,
-`docs/agent/environments.md` § Как делить работу между окнами.
-Смежные правила: [002](002-rule-without-mechanism.md) — правило без механизма,
-[018](018-cloud-checks-nodes-local-checks-chain.md) — окружения проверяют разное.
+`docs/agent/environments.md` § Как делить работу между окнами. Смежные правила:
+[002](002-rule-without-mechanism.md) — правило без механизма,
+[018](018-cloud-checks-nodes-local-checks-chain.md) — окружения проверяют
+разное.

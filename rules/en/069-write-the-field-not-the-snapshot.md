@@ -60,4 +60,5 @@ reproducible step by step.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/settings_adapter.py`,
-#997. Related: [066](066-lock-the-companion-not-the-target.md).
+ArtVsMark/Stepik-Python-Grader#997. Related:
+[066](066-lock-the-companion-not-the-target.md).

@@ -90,10 +90,11 @@ is small and splitting costs nothing.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader#1345 (five tasks, one charter), #1350 (the
-completeness gate); measurement: 14 of the last 16 merges carried exactly one
-task. See also: [132](132-one-change-carries-one-topic.md) — the criterion
-checked first, [098](098-the-unit-of-splitting-follows-usage.md),
+ArtVsMark/Stepik-Python-Grader#1345 (five tasks, one charter),
+ArtVsMark/Stepik-Python-Grader#1350 (the completeness gate); measurement: 14 of
+the last 16 merges carried exactly one task. See also:
+[132](132-one-change-carries-one-topic.md) — the criterion checked first,
+[098](098-the-unit-of-splitting-follows-usage.md),
 [004](004-conflict-is-normal-not-outage.md),
 [010](010-empty-checklist-is-not-green.md),
 [030](030-changelog-from-fragments.md).

@@ -59,5 +59,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `scripts/check_locale_guardrails.py`, #821, #264.
-Смежное: [065](065-the-onramp-must-speak-the-newcomers-language.md).
+ArtVsMark/Stepik-Python-Grader — `scripts/check_locale_guardrails.py`,
+ArtVsMark/Stepik-Python-Grader#821, ArtVsMark/Stepik-Python-Grader#264. Смежное:
+[065](065-the-onramp-must-speak-the-newcomers-language.md).

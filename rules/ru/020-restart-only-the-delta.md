@@ -43,4 +43,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Рестарт только дельты
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Рестарт только
+дельты

@@ -56,5 +56,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/atomic_io.py` (`LOCK_SUFFIX`),
-#1136.
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/atomic_io.py`
+(`LOCK_SUFFIX`), ArtVsMark/Stepik-Python-Grader#1136.

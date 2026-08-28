@@ -85,5 +85,5 @@ ArtVsMark/claude-code-playbook#39 — разбор и прогон; вердик
 Смежное: [044](044-check-the-premise-before-fixing.md) — то же для находки, а не
 для вердикта: премиса проверяется первым действием;
 [129](129-a-catalogue-needs-a-consumption-contract.md) — контракт, в котором это
-поле живёт; [026](026-rejected-findings-must-be-recorded.md) — отказ это решение,
-и оно записывается с причиной.
+поле живёт; [026](026-rejected-findings-must-be-recorded.md) — отказ это
+решение, и оно записывается с причиной.
