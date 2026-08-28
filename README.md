@@ -95,6 +95,10 @@
 
 ## Чем держится правило у потребителей
 
-[![Чем держится правило у потребителей](https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers.svg)](export/where.md)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-light.svg">
+  <img src="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-dark.svg" alt="Чем держится правило у потребителей каталога" width="100%">
+</picture>
 
 Собирается прогоном из [`export/where.json`](export/where.json) — ответов самих проектов, а не нашей оценки их. Полоса показывает **долю**: чем правило держится там, где признано действующим. Числа рядом — абсолютные, чтобы доля не выдавала себя за объём. Подробно, включая «кто уже решил то, что у соседа не держится ничем», — [`export/where.md`](export/where.md).
