@@ -43,7 +43,7 @@ from pathlib import Path
 # Словарь механизмов живёт в одном месте (правило 022). Импорт, а не копия:
 # копия расходится молча, и первым это увидит потребитель, а не гейт.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_bindings import MECHANISM_ORDER  # noqa: E402
+from check_bindings import MECHANISM_ORDER, addressed  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 CONSUMERS = ROOT / ".rules" / "consumers.json"
@@ -423,6 +423,33 @@ def stale_answers(slices: list[dict], rule_ids: list[str]) -> list[str]:
                        f"нет — {', '.join(extra)}. Номер не переиспользуется, "
                        "но и ответ о снятом правиле не должен лежать: заняв "
                        "номер, новая запись унаследует чужое решение молча")
+        out += unaddressed(s)
+    return out
+
+
+def unaddressed(s: dict) -> list[str]:
+    """Механизмы потребителя, у которых назван не адрес, а рассказ.
+
+    ТО ЖЕ ТРЕБОВАНИЕ, ЧТО У СЕБЯ. `check_bindings.py` отвергает свой ответ, в
+    котором «держится гейтом» сказано без адреса: механизм, который нельзя
+    открыть, проверить нечем. У потребителей тот же вопрос не задавался — и
+    ровно поэтому раздел «чем держат другие» иногда предлагал соседу вместо
+    решения пересказ.
+
+    ГРАНИЦА — ТА ЖЕ, ЧТО У ЛИШНЕГО ОТВЕТА. Отсюда не чинится: файл чужой.
+    Поэтому находка едет адресату, а прогон от неё не краснеет (051, 053).
+    Существование файла здесь не проверяется вовсе: чужого дерева у нас нет,
+    и утверждать о нём мы можем только то, что видно в ответе.
+    """
+    out: list[str] = []
+    bad = sorted(rid for rid, h in (s.get("holds") or {}).items()
+                 if h.get("mechanism") not in (None, "", "none")
+                 and not addressed(h.get("where") or ""))
+    if bad:
+        shown = ", ".join(bad[:8]) + (f" и ещё {len(bad) - 8}" if len(bad) > 8 else "")
+        out.append(f"{s['repo']}: механизм назван, а адреса нет — {shown}. "
+                   "Открыть такой механизм нечем, и соседу он достаётся "
+                   "пересказом вместо решения")
     return out
 
 

@@ -34,9 +34,10 @@ def export_of(*ids):
 
 
 def test_полный_ответ_проходит(monkeypatch, repo):
+    write(repo / "CLAUDE.md", "# свод\n")
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "gate",
-                               "where": "везде"}}},
+                               "where": "CLAUDE.md — раздел про гейты"}}},
             export_of("001"))
     assert cb.main() == 0
 
@@ -126,8 +127,63 @@ def test_живой_заявленный_файл_находкой_не_счит
 def test_число_словом_только_предупреждает(monkeypatch, repo):
     # Правило 051: «три гейта» устареет, но отказ здесь был бы ложным —
     # живая проза даёт достаточно законных сочетаний со словом-числом.
+    write(repo / "CLAUDE.md", "# свод\n")
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "gate",
-                               "where": "везде", "why": "держат три гейта"}}},
+                               "where": "CLAUDE.md",
+                               "why": "держат три гейта"}}},
+            export_of("001"))
+    assert cb.main() == 0
+
+
+# ── адрес механизма: рассказ вместо адреса — находка ──────────────────────
+#
+# «След» правила гейт требует РАЗРЕШИМЫМ (audit_catalogue), а `where` до сих
+# пор проверялся только на непустоту. Набор двусторонний (140): у каждого
+# исхода есть предмет, который обязан его дать, — иначе гейт, отвергающий
+# всё подряд, выглядел бы так же зелено, как верный.
+
+def test_механизм_без_адреса_это_находка(monkeypatch, repo, capsys):
+    """Гейт, чей адрес нельзя назвать, обычно и не гейт."""
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": "все скрипты различают исходы кодом"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "адреса нет" in capsys.readouterr().err
+
+
+def test_образец_файлов_это_адрес(monkeypatch, repo):
+    """Набор файлов — такой же адрес, как один файл.
+
+    Требовать перечислить их поимённо значило бы требовать список, который
+    устареет с первым новым прогоном.
+    """
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "document",
+                               "where": ".github/workflows/*.yml — у всех есть "
+                                        "ручная кнопка"}}},
+            export_of("001"))
+    assert cb.main() == 0
+
+
+def test_корневой_документ_по_имени_это_адрес(monkeypatch, repo):
+    """`CONTRIBUTING` без расширения называют в прозе, и это адрес."""
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "document",
+                               "where": "CONTRIBUTING — раздел про ревью"}}},
+            export_of("001"))
+    assert cb.main() == 0
+
+
+def test_у_отсутствия_механизма_адреса_не_требуют(monkeypatch, repo):
+    """`none` — это «не держится ничем». Адрес тут нечему называть.
+
+    Требовать его значило бы толкать к выдумыванию: ответ «ничем» честнее
+    придуманного пути, и наказывать за честность гейт не должен.
+    """
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "none",
+                               "where": "намерение, за которым пока ничего"}}},
             export_of("001"))
     assert cb.main() == 0

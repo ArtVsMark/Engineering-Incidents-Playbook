@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 23 | 152 | 0 | 0 | 110 | 54 | 3 | 14 | 39 | 0 | 37 |  |
+| `claude-code-playbook` | подключён | 23 | 152 | 0 | 0 | 110 | 52 | 3 | 14 | 41 | 0 | 44 |  |
 | `Stepik-Python-Grader` | подключён | 67 | 152 | 0 | 0 | 106 | 60 | 0 | 0 | 40 | 6 | 70 |  |
 | `ArtVsMark` | подключён | 12 | 150 | 2 | 0 | 76 | 23 | 0 | 0 | 10 | 43 | 27 |  |
 | `claude-code-usage` | не подключён | 1 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
@@ -39,7 +39,7 @@
 | 025 | `ArtVsMark` — гейт: scripts/check_page.py::NUMBERED_TRACKER — ссылка на НОМЕРНУЮ задачу или изменение в тексте витрины отвергается: номер ничего не говорит постороннему читателю и устаревает вместе с задачей. Адрес трекера целиком законен и проверяется отдельным случаем набора — запрещён номер, а не адрес. README.md — номерных ссылок нет | `claude-code-playbook` |
 | 032 | `ArtVsMark` — шаг процесса: .github/workflows/pr-check.yml — вывод о работоспособности делается прогоном вхолостую, а не чтением кода | `Stepik-Python-Grader` |
 | 038 | `ArtVsMark` — шаг процесса: CLAUDE.md § Окно — имя начинается с окружения, витрину ведут только облачные окна: [WEB]. Признак окружения лежит в реестре сессий, то есть вне репозитория, — сверять префикс отсюда нечем | `Stepik-Python-Grader` |
-| 039 | `claude-code-playbook` — гейт: все скрипты проверок различают исходы кодом возврата; `Stepik-Python-Grader` — гейт: scripts/check_three_outcomes.py — скрипт, ходящий в GitHub, обязан отличать отказ источника от результата (RateLimited → EXIT_WAIT, GitHubError → код 2); объявленный долг перечислен в KNOWN_DEBT с причиной | `ArtVsMark` |
+| 039 | `claude-code-playbook` — гейт: scripts/check_gates.py прогоняет объявленные исходы по подделке — шесть гейтов, у каждого предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке; `Stepik-Python-Grader` — гейт: scripts/check_three_outcomes.py — скрипт, ходящий в GitHub, обязан отличать отказ источника от результата (RateLimited → EXIT_WAIT, GitHubError → код 2); объявленный долг перечислен в KNOWN_DEBT с причиной | `ArtVsMark` |
 | 040 | `Stepik-Python-Grader` — гейт: scripts/skip_inventory.py | `claude-code-playbook` |
 | 042 | `claude-code-playbook` — документ: export/README.md § Отвергнутые варианты | `Stepik-Python-Grader` |
 | 044 | `ArtVsMark` — гейт: scripts/check_bindings.py — премиса вердикта проверяется до того, как ему поверят: каждое «чем держится» и каждое «этого у нас нет» есть утверждение о текущем коде, и каждая ссылка в них сверяется с файлом и объявленным именем; отказ от чужих бейджей — та же премиса: утверждение, которое из окна не проверить, витрина на себя не берёт (прокси не пускает img.shields.io, и живой бейдж от опечатки в ссылке неотличим); scripts/build_metrics.py::verify_absence — премиса отказа по показателю проверяется до того, как её покажут: «релизов нет» у каталога правил оказалось неверным, релиз был помечен предварительным и не попадал в latest | `claude-code-playbook` |
@@ -58,6 +58,7 @@
 | 120 | `Stepik-Python-Grader` — гейт: указатель правил и дайджест генерируются (scripts/generate_rules_index.py, scripts/generate_rules_digest.py), а scripts/check_rules_digest.py не даёт им разойтись с ответом проекта | `claude-code-playbook` |
 | 121 | `Stepik-Python-Grader` — гейт: scripts/check_container_closure.py — ночной обход сверяет состояние эпика со счётчиком незакрытых дочерних задач: закрытый контейнер с открытой работой становится находкой с адресатом | `claude-code-playbook` |
 | 124 | `Stepik-Python-Grader` — гейт: scripts/rerun_flaky_checks.py: список разрешённых к автоперезапуску закрыт, попытка ровно одна, а зелёное со второго раза записывается находкой в docs/agent/flaky-runs.md | `claude-code-playbook` |
+| 126 | `Stepik-Python-Grader` — гейт: красная main замораживает очередь мержа, и выход из заморозки — метка blocker на чинящем PR, то есть путь мимо замороженного действия; вычисляет scripts/gh_rest.py queue; `ArtVsMark` — шаг процесса: метка hold останавливает автомерж, и снимается она не через слияние; .github/workflows/automerge.yml | `claude-code-playbook` |
 | 127 | `ArtVsMark` — гейт: scripts/build_metrics.py::patch_readme — маркер, сборка и падение при пропаже маркера | `claude-code-playbook` |
 | 132 | `Stepik-Python-Grader` — гейт: scripts/check_work_overlap.py показывает, кто ещё трогает те же файлы, а check_pr_ready.py требует объявить все задачи сборного изменения (Closes #N либо «Часть #N»); `ArtVsMark` — шаг процесса: CLAUDE.md § Критические запреты — не везти в одном PR несколько тем; .github/pull_request_template.md — тот же вопрос критику. Гейта нет намеренно: число затронутых зон сборности не доказывает, а ложный отказ на широкой теме дороже пропуска. Правило само требует предупреждения, а не отказа, — а предупреждать здесь некому | `claude-code-playbook` |
 | 133 | `Stepik-Python-Grader` — гейт: граница PR проверяется пересечением файлов: scripts/check_work_overlap.py считает его по git diff --name-only, а не по числу задач; `ArtVsMark` — шаг процесса: CLAUDE.md § Критические запреты — оговорка к запрету на несколько тем: пересечение файлов сильнее темы. У витрины общие файлы почти у каждой правки — HISTORY.md и .rules/bindings.json, — поэтому изменения идут по одному, и встречи на общем файле не случается | `claude-code-playbook` |
@@ -78,31 +79,36 @@
 
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
+| `claude-code-playbook` | `scripts/check_gates.py` | 9 |
 | `claude-code-playbook` | `export/README.md` | 7 |
 | `claude-code-playbook` | `.github/workflows/automerge.yml` | 6 |
 | `claude-code-playbook` | `.github/workflows/ci.yml` | 5 |
+| `claude-code-playbook` | `scripts/aggregate_bindings.py` | 5 |
 | `claude-code-playbook` | `scripts/build_rules_index.py` | 5 |
 | `claude-code-playbook` | `scripts/check_charter.py` | 5 |
-| `claude-code-playbook` | `scripts/check_gates.py` | 5 |
 | `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 4 |
-| `claude-code-playbook` | `scripts/aggregate_bindings.py` | 4 |
+| `claude-code-playbook` | `scripts/link_trails.py` | 4 |
+| `claude-code-playbook` | `scripts/main_red.py` | 4 |
+| `claude-code-playbook` | `scripts/refresh_derived.py` | 4 |
+| `claude-code-playbook` | `.rules/consumers.json` | 3 |
 | `claude-code-playbook` | `CONTRIBUTING.md` | 3 |
+| `claude-code-playbook` | `scripts/check_bindings.py` | 3 |
+| `claude-code-playbook` | `scripts/collect_proposals.py` | 3 |
 | `claude-code-playbook` | `.github/workflows/consumers-sync.yml` | 2 |
 | `claude-code-playbook` | `.github/workflows/labels-sync.yml` | 2 |
 | `claude-code-playbook` | `.github/workflows/main-red.yml` | 2 |
-| `claude-code-playbook` | `.rules/consumers.json` | 2 |
+| `claude-code-playbook` | `.rules/bindings.json` | 2 |
 | `claude-code-playbook` | `CLAUDE.md` | 2 |
 | `claude-code-playbook` | `HISTORY.md` | 2 |
 | `claude-code-playbook` | `README.md` | 2 |
 | `claude-code-playbook` | `export/rules.json` | 2 |
 | `claude-code-playbook` | `scripts/audit_catalogue.py` | 2 |
 | `claude-code-playbook` | `scripts/check_attribution.py` | 2 |
-| `claude-code-playbook` | `scripts/check_bindings.py` | 2 |
+| `claude-code-playbook` | `scripts/check_showcase.py` | 2 |
 | `claude-code-playbook` | `scripts/collect_changelog.py` | 2 |
-| `claude-code-playbook` | `scripts/collect_proposals.py` | 2 |
 | `claude-code-playbook` | `scripts/ghcli.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 13 механизмов по одному правилу; без названного адреса: 7 из 71 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 15 механизмов по одному правилу; без названного адреса: 0 из 69 |
 | `Stepik-Python-Grader` | `scripts/gh_rest.py` | 6 |
 | `Stepik-Python-Grader` | `scripts/check_pr_ready.py` | 5 |
 | `Stepik-Python-Grader` | `.rules/bindings.json` | 3 |
