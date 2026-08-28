@@ -82,6 +82,28 @@ jobs:
           gh pr view "$PR" --json body --jq .body > "$RUNNER_TEMP/pr-body.md"
           python scripts/pr_body.py --check --body-file "$RUNNER_TEMP/pr-body.md"
 
+      # Правило 064 объявляло себя обеспеченным гейтом, а держало ДРУГУЮ свою
+      # половину: `labels-sync.yml` применяет НАБОР меток к репозиторию, а
+      # `pr_body.py` проверяет связь с задачей. Того, что изменение несёт зону,
+      # не проверял никто, и замер это показал: у последних десяти изменений
+      # метки не было НИ У ОДНОГО. Нашёл владелец глазами, а не механизм.
+      #
+      # Зона ВЫВОДИТСЯ из тронутых путей, а не требуется от человека: инцидент
+      # самого 064 — «машина метила исправнее человека». Ставит её `agent-pr`,
+      # здесь только сверка.
+      - name: зона изменения проставлена
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          git diff --name-only "$BASE...HEAD" > "$RUNNER_TEMP/paths.txt"
+          have=$(gh pr view "$PR" --json labels --jq '[.labels[].name] | join(",")')
+          python scripts/check_labels.py \
+            --paths-from "$RUNNER_TEMP/paths.txt" --have "$have"
+
       # Правило 030: запись приезжает вместе с изменением, отдельным файлом.
       # Проверяется форма фрагментов — пустой файл выглядит сделанной работой.
       - name: фрагменты журнала изменений в порядке
