@@ -9,7 +9,7 @@ the change edits the step too, and the pinned script gets rewritten along with
 the call. On `pull_request_target` and `workflow_run` the reasoning inverts: the
 workflow file comes from the shared branch, and pinning the callee is mandatory.
 
-**Portable outside Claude Code.** yes — the subject belongs to the CI platform,
+**Portable beyond Claude Code.** yes — the subject belongs to the CI platform,
 not to agent sessions: the same distinction between events holds for anyone.
 
 ## The incident

@@ -8,7 +8,7 @@ code edits it too. A foreign rationale goes stale the moment the other side
 changes, and turns into confident falsehood that nothing checks: gates catch a
 source failing, never a stale explanation sitting beside it.
 
-**Portable outside Claude Code.** yes — the subject exists for anyone who reads
+**Portable beyond Claude Code.** yes — the subject exists for anyone who reads
 a neighbouring project and explains, at home, why it is built that way.
 
 ## The incident
@@ -80,3 +80,7 @@ diverges; here the second editor is out of reach, so collapsing to one document
 is impossible and a link is what remains.
 [118](118-keep-the-source-next-to-the-derived.md) — source next to derived: for a foreign
 rationale we hold no source at all.
+[049](049-derive-state-from-live-artifacts.md) — derive state from live
+artifacts: a copied foreign rationale is exactly a hand-kept registry of someone
+else's state — except state is derivable and a rationale is derivable from
+nothing, which is why no gate ever catches it.
