@@ -235,3 +235,61 @@ def test_фрагмент_из_одного_вердикта_считается_
     prepare(monkeypatch, repo, {"a.fixed.md": "> правило 148 — связано.\n"})
     _, problems = cc.validate()
     assert problems and "пуст" in problems[0]
+
+
+# ── сборка в уже собранный раздел ──────────────────────────────────────────
+#
+# Сборка вставляла свежий блок сразу после заголовка `[Unreleased]`, а прежнее
+# содержимое оставляла ниже. Пока раздел собирали ровно один раз перед
+# выпуском, это работало. Замер на подготовке 1.1.0: собрали, слили ещё три
+# изменения, собрали снова — и в теле выпуска встали ДВА «Добавлено» и ДВА
+# «Изменено». Разделить их обратно нечем: порядок внутри уже перемешан.
+
+СОБРАННЫЙ = ("# Журнал\n\n## [Unreleased]\n\n### Добавлено · Added\n\n"
+             "- первое\n\n## [0.1.0]\n\n- старое\n")
+
+
+def test_повторная_сборка_не_задваивает_заголовки(monkeypatch, repo):
+    cli(monkeypatch, repo, {"second.added.md": "второе\n"}, СОБРАННЫЙ, "--collect")
+
+    assert cc.main() == 0
+    свежий = (repo / "CHANGELOG.md").read_text(encoding="utf-8")
+    unreleased = свежий.split("## [0.1.0]")[0]
+    assert unreleased.count("### Добавлено · Added") == 1
+
+
+def test_повторная_сборка_сохраняет_прежние_записи(monkeypatch, repo):
+    cli(monkeypatch, repo, {"second.added.md": "второе\n"}, СОБРАННЫЙ, "--collect")
+
+    assert cc.main() == 0
+    свежий = (repo / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert "- первое" in свежий and "- второе" in свежий
+
+
+def test_повторная_сборка_не_трогает_прежние_выпуски(monkeypatch, repo):
+    cli(monkeypatch, repo, {"second.added.md": "второе\n"}, СОБРАННЫЙ, "--collect")
+
+    assert cc.main() == 0
+    свежий = (repo / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert "## [0.1.0]" in свежий and "- старое" in свежий
+
+
+def test_новая_секция_встаёт_рядом_а_не_вместо(monkeypatch, repo):
+    cli(monkeypatch, repo,
+        {"mended.fixed.md": "починка\n\n> правило 030 — сюда и относится\n"},
+        СОБРАННЫЙ, "--collect")
+
+    assert cc.main() == 0
+    unreleased = (repo / "CHANGELOG.md").read_text(
+        encoding="utf-8").split("## [0.1.0]")[0]
+    assert "### Добавлено · Added" in unreleased
+    assert "### Починено · Fixed" in unreleased
+    assert "- первое" in unreleased and "- починка" in unreleased
+
+
+def test_разбор_читает_только_свой_раздел():
+    """Записи следующего выпуска не должны втянуться в [Unreleased]."""
+    было = cc.existing(СОБРАННЫЙ)
+
+    assert было["added"] == ["первое"]
+    assert "старое" not in sum(было.values(), [])
