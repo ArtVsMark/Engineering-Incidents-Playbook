@@ -53,19 +53,36 @@ NAMES = {("ru", False): "consumers-light.svg", ("ru", True): "consumers-dark.svg
 
 FONT = "Inter,Segoe UI,Helvetica,Arial,sans-serif"
 
+# Словарь механизмов — один на весь проект (правило 022). Импорт, а не копия:
+# копия молча отстанет, и первым это увидит читатель картинки.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_bindings import MECHANISM_ORDER  # noqa: E402
+
+#: Устаревшие слова, которые ещё отдают потребители. Показываются, пока ими
+#: отвечают: подмена устаревшего слова одним из новых была бы догадкой за
+#: потребителя, а картинка обещает его собственный ответ.
+LEGACY_KEYS = ("process-step",)
+ALL_KEYS = tuple(MECHANISM_ORDER) + LEGACY_KEYS
+
 #: Палитра площадки, тема к теме. Значения те же, что у витрины профиля.
 THEME = {
     False: {"card": "#FFFFFF", "stroke": "#D0D7DE", "name": "#1F2328",
             "accent": "#0969DA", "label": "#636C76", "pill": "#F6F8FA",
-            "gate": "#0969DA", "process-step": "#8250DF", "none": "#CF222E",
+            "gate": "#0969DA", "pipeline": "#1A7F37", "document": "#8250DF",
+            "process-step": "#8250DF", "none": "#CF222E",
             "muted": "#8C959F"},
     True: {"card": "#0D1117", "stroke": "#30363D", "name": "#F0F6FC",
            "accent": "#58A6FF", "label": "#7D8590", "pill": "#161B22",
-           "gate": "#58A6FF", "process-step": "#A371F7", "none": "#F85149",
+           "gate": "#58A6FF", "pipeline": "#3FB950", "document": "#A371F7",
+           "process-step": "#A371F7", "none": "#F85149",
            "muted": "#8B949E"},
 }
 
-WIDTH, PAD, TOP = 1000, 36, 128
+#: Ширина — не константа, а следствие: колонок «чем держится» столько,
+#: сколькими механизмами отвечают потребители, и вписанное число обрезало бы
+#: последнюю плашку молча. MIN_WIDTH держит нижнюю границу, чтобы картинка с
+#: одним механизмом не съёживалась в полоску.
+MIN_WIDTH, PAD, TOP = 1000, 36, 128
 #: Строка проекта: одна на всех, чтобы колонки читались сверху вниз.
 ROW, PILL_H = 42, 24
 
@@ -89,7 +106,8 @@ LANG = {
         "sub": "ответы самих проектов на каждое из {total} правил каталога — "
                "не наша оценка их",
         "answered": "разобрано", "trails": "связей", "held": "чем держится",
-        "gate": "гейт", "process-step": "шаг процесса", "none": "ничем",
+        "gate": "гейт", "pipeline": "конвейер", "document": "документ",
+        "process-step": "шаг процесса", "none": "ничем",
         "off": "не подключён", "unknown": "неизвестно", "empty": "none",
     },
     "en": {
@@ -97,7 +115,8 @@ LANG = {
         "sub": "each project's own answer on all {total} catalogue rules — "
                "not our assessment of them",
         "answered": "answered", "trails": "trails", "held": "held by",
-        "gate": "gate", "process-step": "process step", "none": "nothing",
+        "gate": "gate", "pipeline": "pipeline", "document": "document",
+        "process-step": "process step", "none": "nothing",
         "off": "not connected", "unknown": "unknown", "empty": "none",
     },
 }
@@ -115,9 +134,7 @@ def rows(doc: dict) -> list[dict]:
             "name": (c.get("repo") or "?").split("/")[-1],
             "state": c.get("state", ""),
             "connected": bool(c.get("rules")),
-            "gate": mech.get("gate", 0),
-            "process-step": mech.get("process-step", 0),
-            "none": mech.get("none", 0),
+            **{k: mech.get(k, 0) for k in ALL_KEYS},
             "trails": c.get("trails", 0),
             "answered": c.get("answered") or 0,
         })
@@ -150,10 +167,23 @@ def pill(x: int, y: int, label: str, value: str, ink: str, t: dict) -> tuple[str
     return out, w
 
 
-def widths(data: list[dict], t: dict, w: dict) -> dict[str, int]:
+def shown(data: list[dict]) -> list[str]:
+    """Какие механизмы вообще показывать.
+
+    Канонические — всегда: ноль у гейта это ответ, а не пустая клетка.
+    Устаревшее слово — только пока им отвечают: вписанная навсегда колонка
+    пережила бы последнего потребителя, и вычеркнуть её было бы некому
+    (правило 049).
+    """
+    used = {k for r in data if r["connected"] for k in ALL_KEYS if r.get(k)}
+    return list(MECHANISM_ORDER) + [k for k in LEGACY_KEYS if k in used]
+
+
+def widths(data: list[dict], t: dict, w: dict,
+           keys: list[str] | None = None) -> dict[str, int]:
     """Ширина каждой плашечной колонки — максимум по всем строкам."""
     out = {}
-    for key in ("gate", "process-step", "none"):
+    for key in keys if keys is not None else shown(data):
         out[key] = max(
             [pill(0, 0, w[key], str(r[key]), t[key], t)[1]
              for r in data if r["connected"]] or [0])
@@ -171,6 +201,11 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
     трёх знаков сдвигало бы соседнюю колонку у одного проекта и не сдвигало
     у другого.
 
+    СКОЛЬКО КОЛОНОК — РЕШАЮТ ДАННЫЕ. Канонические механизмы стоят всегда,
+    даже нулём: ноль у гейта — это ответ, а пропущенная колонка читается как
+    «такого вопроса не задавали». Устаревшее слово держится ровно пока им
+    отвечают.
+
     ПОЧЕМУ ПОЛОС БОЛЬШЕ НЕТ. Полоса показывала долю и молчала об объёме: у
     проекта с сотней правил и у проекта с десятком она выглядела одинаково.
     Плашка отвечает на один вопрос и читается целиком; доля, которую надо
@@ -178,15 +213,18 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
     """
     t = THEME[dark]
     w = LANG[lang]
-    cols = widths(data, t, w)
+    keys = shown(data)
+    cols = widths(data, t, w, keys)
+    span = sum(cols.values()) + PILL_GAP * (len(keys) - 1)
+    width = max(MIN_WIDTH, COL_PILLS + span + PAD)
     height = TOP + ROW * len(data) + PAD - 8
     p = [
-        f'<svg width="{WIDTH}" height="{height}" viewBox="0 0 {WIDTH} {height}" '
+        f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" '
         # Подпись для чтения с экрана — на языке витрины: она и есть то,
         # что услышит читатель вместо картинки.
         f'xmlns="http://www.w3.org/2000/svg" role="img" '
         f'aria-label="{esc(w["title"])}">',
-        f'<rect x="0.5" y="0.5" width="{WIDTH - 1}" height="{height - 1}" '
+        f'<rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" '
         f'rx="16" fill="{t["card"]}" stroke="{t["stroke"]}"/>',
         f'<rect x="{PAD}" y="28" width="46" height="4" rx="2" fill="{t["accent"]}"/>',
         text(PAD, 68, w["title"], t["name"], 29, 800, ' letter-spacing="-0.6"'),
@@ -200,7 +238,6 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
     # Подпись плашек — ПО СЕРЕДИНЕ группы, а не над её левым краем: она
     # называет три колонки сразу, и у левого края читается как подпись
     # только первой.
-    span = sum(cols.values()) + PILL_GAP * 2
     p.append(text(COL_PILLS + span // 2, TOP - 14, w["held"], t["label"], 11.5,
                   600, ' letter-spacing="0.3" text-anchor="middle"'))
 
@@ -210,12 +247,12 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
                       ' letter-spacing="-0.4"'))
         for x, value, live in ((COL_ANSWERED, r["answered"], r["connected"]),
                                (COL_TRAILS, r["trails"], r["trails"] > 0)):
-            shown = str(value) if live else "—"
-            p.append(text(x, y + 19, shown,
+            cell = str(value) if live else "—"
+            p.append(text(x, y + 19, cell,
                           t["accent"] if live else t["muted"], 22, 800))
         x = COL_PILLS
         if r["connected"]:
-            for key in ("gate", "process-step", "none"):
+            for key in keys:
                 markup, _ = pill(x, y + 2, w[key], str(r[key]), t[key], t)
                 p.append(markup)
                 x += cols[key] + PILL_GAP

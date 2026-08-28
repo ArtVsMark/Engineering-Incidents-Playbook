@@ -1,5 +1,5 @@
 {
-  "schema": "1.0",
+  "schema": "1.1",
   "project": "ArtVsMark/claude-code-playbook",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
   "rules": {
@@ -29,7 +29,7 @@
     },
     "006": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "договорённость окна в своде: дальше срока — перезапуск с передачей по 138. Машинного счётчика возраста окна нет"
     },
     "007": {
@@ -38,7 +38,7 @@
     },
     "008": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "витрины и записи пишутся без сворачиваемых блоков"
     },
     "009": {
@@ -58,17 +58,17 @@
     },
     "012": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "окно не толкает в ветки, которые ведёт другое окно или человек. Машинного запрета нет — защита ветки покрывает только общую"
     },
     "013": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "pipeline",
       "where": ".github/workflows/agent-pr.yml передаёт заголовок и тело файлами (`--body-file`), а не строкой в оболочке; то же в .github/workflows/automerge.yml"
     },
     "014": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "гейт проверяется МУТАЦИЕЙ — убирается поведение, имена остаются, — а не откатом набора. Исполняется при приёмке изменения, машинного нет"
     },
     "015": {
@@ -99,7 +99,7 @@
     },
     "021": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "README · START · TOP-10 · HISTORY · CHANGELOG — по читателю"
     },
     "022": {
@@ -109,7 +109,7 @@
     },
     "023": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "README.md — витрина, подробности по ссылкам"
     },
     "024": {
@@ -119,22 +119,22 @@
     },
     "025": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "номер задачи живёт в разделе «След» и в журнале; в прозе правила его нет. Проверяется чтением при приёмке"
     },
     "026": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "отвергнутые варианты записаны в export/README.md"
     },
     "027": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "пустой реестр потребителей объявлен в export/README.md"
     },
     "028": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "чек-лист перед PR в своде — галочками, а не прозой. Машинного нет: состояние изменения считает площадка"
     },
     "029": {
@@ -187,7 +187,7 @@
     },
     "040": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "пропущенных тестов в наборе нет ни одного; появится — потребует причины. Гейта на это нет, и это осознанно: сегодня ему нечего было бы охранять"
     },
     "041": {
@@ -197,17 +197,17 @@
     },
     "042": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "export/README.md § Отвергнутые варианты"
     },
     "043": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "пересмотр правила — новая запись, старая помечается"
     },
     "044": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "премиса находки проверяется прогоном до работы; сегодня это дало три отказа от записи подряд. Машинного нет — 146 говорит, почему его трудно построить"
     },
     "045": {
@@ -217,12 +217,12 @@
     },
     "046": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "пробелы названы в export/README.md и в описаниях PR"
     },
     "047": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "правка свода — повод перезапустить окно, а не разослать. Машинного нет: реестром окон каталог не управляет"
     },
     "048": {
@@ -255,12 +255,12 @@
     },
     "054": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "сбор и разбор разведены: consumers-sync собирает и печатает расхождение, задача-адресат разбирает. Один проход не делает обоего"
     },
     "055": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "собственное ожидание проверяется мутацией механизма, а не доверием к себе: сегодня так проверены четыре набора"
     },
     "056": {
@@ -291,7 +291,7 @@
     },
     "062": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "карта направлений в своде принимает роль только со СВОИМ возражением; «хранитель заготовок» проходил приёмку именно по нему"
     },
     "063": {
@@ -306,7 +306,7 @@
     },
     "065": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "CONTRIBUTING.md, раздел «Путь новичка»: обе метки входа объявлены в .github/labels.yml, тело задачи ведётся на двух языках, и правило действует в момент навешивания метки. Двуязычие тела не проверяется ничем — метку вешает человек"
     },
     "066": {
@@ -333,7 +333,7 @@
     },
     "071": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "pipeline",
       "where": "намеренный повтор подписывается комментарием с причиной — так помечено двойное построение тела коммита в .github/workflows/automerge.yml"
     },
     "072": {
@@ -384,7 +384,7 @@
     },
     "082": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "карта направлений в CLAUDE.md; полнота проверена обходом артефактов, три направления закрыты гейтами"
     },
     "083": {
@@ -402,7 +402,7 @@
     },
     "086": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "тяжесть находке ставит не нашедший: кандидаты в правила отвергались не тем окном, что их написало, а прогоном по соседям — метрика решала, а не автор"
     },
     "087": {
@@ -411,12 +411,12 @@
     },
     "088": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "«критик гипотезы» назван в карте направлений НЕПОКРЫТЫМ прямым текстом — это исполнение правила, а не его нарушение"
     },
     "089": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "из оригинала в копию не ссылаемся"
     },
     "090": {
@@ -435,7 +435,7 @@
     },
     "093": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "второй уровень группировки областей не введён до третьего случая"
     },
     "094": {
@@ -458,7 +458,7 @@
     },
     "098": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "единица дробления — правило, и определяется она употреблением: правило, которое нельзя процитировать целиком, дробится, а второй инцидент к существующему не заводит новое"
     },
     "099": {
@@ -490,12 +490,12 @@
     },
     "105": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "внешний аудит делает владелец, а не то же окно: нарушения собственных правил каталога нашлись по его вопросу, а не по самопроверке, и цена этого записана в своде"
     },
     "106": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "витрина показывается после прогона: значки заведены только на те вопросы, на которые есть чем ответить, остальные названы пробелами"
     },
     "107": {
@@ -528,7 +528,7 @@
     },
     "113": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "export/README.md § Как схема меняется"
     },
     "114": {
@@ -560,17 +560,17 @@
     },
     "120": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "весь каталог; указатель собирается скриптом"
     },
     "121": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "закрытие задачи требует счётного критерия: «сделано» доказывается зелёным гейтом или названным числом, а не видом закрытого контейнера"
     },
     "122": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "export/rules.json отдаёт следы структурой рядом с текстом"
     },
     "123": {
@@ -580,7 +580,7 @@
     },
     "124": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "перезапуск прогона считается НАХОДКОЙ, а не починкой: сегодня зелёное со второго раза разбиралось как дефект, а не списывалось на площадку"
     },
     "125": {
@@ -605,7 +605,7 @@
     },
     "129": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "export/rules.json, export/README.md, этот файл"
     },
     "130": {
@@ -630,17 +630,17 @@
     },
     "134": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "CLAUDE.md — свод проекта со ссылкой на каталог; окно перезапускается после наполнения, гейта на это нет"
     },
     "135": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "перед записью, несущей личность, окно делает пробную запись того же класса и смотрит подпись; гейта на это нет"
     },
     "136": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": ".rules/bindings.json — вердикт о себе пишется после перебора предметов, и перебор называется в причине; гейта на полноту перебора нет"
     },
     "137": {
@@ -649,12 +649,12 @@
     },
     "138": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "решение оседает задачей или комментарием в тот же заход; проверка полноты — ответ нового окна из репозитория, гейта на это нет"
     },
     "139": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "none",
       "where": "механизм не объявляется сделанным до прогона на живом изменении; гейта на это нет, держится порядком работы"
     },
     "140": {
@@ -695,7 +695,7 @@
     },
     "148": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "pipeline",
       "where": ".github/workflows/automerge.yml ждёт появления коммита в общей ветке, а не поля merged записи изменения; разбор отказа начинается со сверки метки времени записи с проверками на голове"
     },
     "149": {
@@ -709,7 +709,7 @@
     },
     "151": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "прогон гейтов идёт локально теми же командами, что и в конвейере (CONTRIBUTING.md § Прежде чем открывать PR), и каждый печатает находки в вывод — читателю не нужны права на артефакты",
       "why": "у каталога нет матрицы и артефактов прогона: след и так весь в выводе команды, гейту нечего проверять"
     },
@@ -720,7 +720,7 @@
     },
     "153": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "export/README.md § контракт — чужие решения описаны ссылкой на репозиторий потребителя, а не пересказом их устройства; .rules/consumers.json — про потребителя хранится адрес и роль, но не объяснение, почему у него так. Держится чтением при приёмке: отличить ссылку от пересказа машинно нечем"
     }
   }

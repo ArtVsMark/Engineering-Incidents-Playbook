@@ -1,5 +1,5 @@
 {
-  "schema": "1.0",
+  "schema": "1.1",
   "project": "<владелец>/<репозиторий>",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
   "rules": {
@@ -10,8 +10,13 @@
     },
     "021": {
       "status": "active",
-      "mechanism": "process-step",
+      "mechanism": "document",
       "where": "CONTRIBUTING.md — ревью документации"
+    },
+    "030": {
+      "status": "active",
+      "mechanism": "pipeline",
+      "where": ".github/workflows/nightly.yml — прогон замечает, слияние не держит"
     },
     "038": {
       "status": "active",
