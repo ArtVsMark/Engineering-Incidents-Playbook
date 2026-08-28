@@ -156,3 +156,64 @@ def test_нет_дерева_правил_это_третий_исход(repo, c
     (repo / "candidates").mkdir(parents=True, exist_ok=True)
     assert run(repo) == 2
     assert "не отработала" in capsys.readouterr().err
+
+
+# ── выгрузка гипотез: помечена, без номера, с «чем подтвердится» ───────────
+#
+# Гипотеза едет потребителям, чтобы её мог подтвердить ЧУЖОЙ инцидент. Вместе с
+# ней уезжает и риск, ради которого написан этот гейт: у соседа нашей проверки
+# нет, и там кандидат легче всего тихо станет правилом. Набор двусторонний
+# (140) и стережёт именно то, что этому мешает.
+
+def test_кандидат_в_выгрузке_помечен_гипотезой(repo, monkeypatch):
+    import build_rules_index as bri
+    prepare(repo, {"model-per-task.md": GOOD})
+    monkeypatch.setattr(bri, "ROOT", repo)
+
+    вышло = bri.candidates_export()
+
+    assert len(вышло) == 1
+    assert вышло[0]["kind"] == "hypothesis"
+    assert вышло[0]["slug"] == "model-per-task"
+
+
+def test_у_кандидата_в_выгрузке_нет_поля_номера(repo, monkeypatch):
+    """Ни пустого, ни null.
+
+    Пустой ключ той же формы, что у правила, есть приглашение его заполнить, а
+    номер занимать нельзя: корпус состоит из инцидентов, и переиспользовать
+    номера запрещено. Проверяется ОТСУТСТВИЕ ключа, а не его значение.
+    """
+    import build_rules_index as bri
+    prepare(repo, {"model-per-task.md": GOOD})
+    monkeypatch.setattr(bri, "ROOT", repo)
+
+    запись = bri.candidates_export()[0]
+
+    assert "id" not in запись
+    assert not any(k for k in запись if "id" == k.lower() or k.endswith("_id"))
+
+
+def test_чем_подтвердится_едет_вместе_с_гипотезой(repo, monkeypatch):
+    """Без этого раздела гипотеза не подтвердится и не отвергнется.
+
+    Она просто придаст уверенности самим фактом существования — и тем скорее,
+    чем дальше от места, где её записали.
+    """
+    import build_rules_index as bri
+    prepare(repo, {"model-per-task.md": GOOD})
+    monkeypatch.setattr(bri, "ROOT", repo)
+
+    запись = bri.candidates_export()[0]
+
+    assert "кончится бюджет окна" in запись["confirmed_by"]
+    assert "**Не работает**" in запись["applicability"]
+
+
+def test_пустая_папка_даёт_пустой_список_а_не_отказ(repo, monkeypatch):
+    """Кандидатов может не быть — это объявленное состояние (091)."""
+    import build_rules_index as bri
+    prepare(repo, {})
+    monkeypatch.setattr(bri, "ROOT", repo)
+
+    assert bri.candidates_export() == []

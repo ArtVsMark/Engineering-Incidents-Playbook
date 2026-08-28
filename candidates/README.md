@@ -23,7 +23,30 @@ hypotheses** until an incident happens.
 | статус утверждения | факт | гипотеза, помечена словом |
 | номер | из общей нумерации | **нет**, только слаг |
 | в указателе `rules/README.md` | да | **нет** |
-| в `export/rules.json` | да | **нет** |
+| в `export/rules.json` | да, с номером | **да, без номера** — поле `candidates`, `kind: "hypothesis"` |
+
+**Гипотезами делятся, а не прячут их.** Раньше кандидат в выгрузку не
+попадал — решение было записано в этой самой таблице. Оно изменено, и вот
+почему: пока гипотеза лежит только здесь, подтвердить её может только НАШ
+инцидент. У неё есть раздел «Чем подтвердится» — готовый вопрос, на который у
+соседа может быть ответ уже сегодня. Как только гипотеза подтверждается
+где-то, рождается правило, и путь обратно уже построен: предложение
+потребителя по [080](../rules/ru/080-every-new-rule-goes-into-the-catalogue.md).
+
+Риск при этом переезжает к потребителю, где нашего гейта нет, и против него
+сделано ровно две вещи. У кандидата в выгрузке **нет поля `id`** — ни пустого,
+ни `null`: пустой ключ той же формы, что у правила, есть приглашение его
+заполнить. И `confirmed_by` обязателен: гипотеза, не назвавшая своего
+опровержения, не подтвердится и не отвергнется, а просто придаст уверенности
+самим фактом существования.
+
+**Sharing hypotheses beats hiding them.** Candidates used to stay out of the
+export — the decision was recorded in the table above. It has changed: while a
+hypothesis lives only here, only OUR incident can confirm it, and its "what
+would confirm it" section is a ready question a neighbour may already be able
+to answer. Once confirmed somewhere, a rule is born, and the way back already
+exists — a consumer proposal under
+[080](../rules/en/080-every-new-rule-goes-into-the-catalogue.md).
 
 **Номера у кандидата нет намеренно.** Номер — это место в корпусе, а корпус
 состоит из инцидентов. Выдать номер заранее значит занять его под то, что может
