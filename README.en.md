@@ -4,9 +4,6 @@
 [![Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](VERSIONING.md)
 [![Rules in the catalogue](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Frules-en.json)](rules/README.md)
 [![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
-[![Tests](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Ftests.json)](tests/)
-[![Test modules](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Ftest-modules.json)](tests/)
-[![PR checks](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fgates.json)](.github/workflows/ci.yml)
 
 **A catalogue of <!--m:rules-->152<!--/m:rules--> rules for Claude Code and GitHub,
 where every one grew out of a real failure.** Agent sessions and the project rulebook (`CLAUDE.md`), the

@@ -17,7 +17,14 @@
 Он проверяет, что на каждый объявленный вопрос ЕСТЬ ответ и что живой ответ
 назван в витрине — значок, который никто не показывает, отвечает в пустоту.
 
-Запуск:  python scripts/check_showcase.py [--build] [--root <корень>]
+ЗДЕСЬ БОЛЬШЕ НИЧЕГО НЕ СОБИРАЕТСЯ. Гейт вычислял три значка сам: тесты,
+тестовые модули и число проверок. Все три сняты с витрины — они отвечают на
+вопрос СОПРОВОЖДАЮЩЕГО, а не посетителя, и снаружи их не читал никто: витрина
+профиля берёт у каждого проекта version, ci, coverage и package, и этих трёх
+в её списке нет. Оставить сборку без витрины было бы значком, который отвечает
+в пустоту, — то самое, что этот гейт и запрещает.
+
+Запуск:  python scripts/check_showcase.py [--root <корень>]
 Коды:    0 чисто · 1 есть находки · 2 проверка не отработала
 """
 
@@ -25,7 +32,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -33,53 +39,8 @@ ROOT = Path(__file__).resolve().parent.parent
 SET = ROOT / ".rules" / "showcase.json"
 SHOWCASES = ("README.md", "README.en.md")
 
-#: Значки, которые вычисляются здесь. Остальные считает тот, кто их придумал:
-#: покрытие — coverage_badge.py, число правил — сборка указателя.
-TEST_RE = re.compile(r"(?m)^\s*def (test_\w+)")
-GATE_RE = re.compile(r"scripts/(\w+)\.py")
-COLOR = "1d76db"
-
-
-def counted(root: Path) -> dict[str, int]:
-    """Числа, которые витрина обещает: тесты, тестовые модули, гейты."""
-    tests = sorted((root / "tests").glob("test_*.py"))
-    total = sum(len(TEST_RE.findall(p.read_text(encoding="utf-8"))) for p in tests)
-    ci = root / ".github" / "workflows" / "ci.yml"
-    gates = len(set(GATE_RE.findall(ci.read_text(encoding="utf-8")))) if ci.exists() else 0
-    return {"tests": total, "test-modules": len(tests), "gates": gates}
-
-
-def render(label: str, value: int) -> str:
-    return ('{\n  "schemaVersion": 1,\n'
-            f'  "label": "{label}",\n'
-            f'  "message": "{value}",\n'
-            f'  "color": "{COLOR}"\n' + "}\n")
-
-
-LABELS = {"tests": "tests", "test-modules": "test modules", "gates": "pr checks"}
-BADGE_OF = {"tests": ".github/badges/tests.json",
-            "test-modules": ".github/badges/test-modules.json",
-            "gates": ".github/badges/gates.json"}
-
-
-def build(root: Path) -> list[str]:
-    """Пересобирает вычисляемые здесь значки. Возвращает список изменённых."""
-    changed = []
-    for key, value in counted(root).items():
-        path = root / BADGE_OF[key]
-        want = render(LABELS[key], value)
-        have = path.read_text(encoding="utf-8") if path.exists() else ""
-        if have != want:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(want, encoding="utf-8")
-            changed.append(f"{key}: {value}")
-    return changed
-
-
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--build", action="store_true",
-                    help="пересобрать вычисляемые здесь значки")
     ap.add_argument("--root", type=Path, default=ROOT,
                     help="корень дерева; по умолчанию сам репозиторий")
     args = ap.parse_args(argv)
@@ -98,12 +59,6 @@ def main(argv: list[str] | None = None) -> int:
         print("проверка не отработала: набор не называет ни одного вопроса — "
               "витрина без вопросов не витрина", file=sys.stderr)
         return 2
-
-    if args.build:
-        changed = build(root)
-        print("значки пересобраны: " + (", ".join(changed) if changed
-                                        else "изменений нет"))
-        return 0
 
     shown = "\n".join((root / name).read_text(encoding="utf-8")
                       for name in SHOWCASES if (root / name).exists())
