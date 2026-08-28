@@ -389,7 +389,8 @@ def trail_counts(rules: list[dict]) -> dict[str, int]:
     return out
 
 
-def stale_answers(slices: list[dict], rule_ids: list[str]) -> list[str]:
+def stale_answers(slices: list[dict], rule_ids: list[str],
+                  superseded: dict[str, str] | None = None) -> list[str]:
     """Ответы потребителей о правилах, которых в каталоге НЕТ.
 
     ЭТО НАХОДКА, А НЕ ОЧЕРЕДЬ. Нерассмотренное правило — состояние: решение
@@ -415,6 +416,7 @@ def stale_answers(slices: list[dict], rule_ids: list[str]) -> list[str]:
     красному (051).
     """
     known = set(rule_ids)
+    superseded = superseded or {}
     out: list[str] = []
     for s in slices:
         extra = sorted(set(s.get("rules") or {}) - known)
@@ -424,7 +426,44 @@ def stale_answers(slices: list[dict], rule_ids: list[str]) -> list[str]:
                        "но и ответ о снятом правиле не должен лежать: заняв "
                        "номер, новая запись унаследует чужое решение молча")
         out += unaddressed(s)
+        out += answers_superseded(s, superseded)
     return out
+
+
+def superseded_map() -> dict[str, str]:
+    """Заменённые правила из выгрузки: номер → номер смены. Пусто — законно.
+
+    Читается из `export/rules.json`, а не выводится заново разбором записей:
+    вторая интерпретация той же территории разошлась бы молча (022).
+    """
+    try:
+        doc = json.loads(RULES.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return {r["id"]: r["superseded_by"] for r in doc.get("rules", [])
+            if r.get("superseded_by")}
+
+
+def answers_superseded(s: dict, superseded: dict[str, str]) -> list[str]:
+    """Потребитель отвечает о ЗАМЕНЁННОМ правиле. Состояние, а не находка.
+
+    Заменённая запись остаётся в выгрузке и остаётся действующей — значит в
+    «лишние» такой ответ не попадёт и не должен: потребитель отвечает о том,
+    что было, и упрекать его не в чем. Но и молчать нельзя: он не знает, что
+    появилась смена, а узнать может только отсюда.
+
+    ГРАНИЦА. Это НЕ упрёк и не очередь каталога: переносить ответ или нет,
+    решает потребитель. Печатается рядом с чужими находками по той же причине —
+    отсюда не чинится (051, 053).
+    """
+    answers = s.get("rules") or {}
+    было = sorted(rid for rid in answers if rid in superseded)
+    if not было:
+        return []
+    пары = ", ".join(f"{rid} → {superseded[rid]}" for rid in было)
+    return [f"{s['repo']}: отвечает о заменённых правилах — {пары}. Это "
+            "состояние, а не находка: ответ верен для того, что было. "
+            "Перенести его или нет, решает потребитель"]
 
 
 def unaddressed(s: dict) -> list[str]:
@@ -657,7 +696,7 @@ def check_offline(consumers: list[dict], rule_ids: list[str]) -> int:
     # прогоне, где у него есть адресат.
     for w in unconnected(consumers):
         print(f"  · {w}")
-    for w in stale_answers(slices, rule_ids):
+    for w in stale_answers(slices, rule_ids, superseded_map()):
         print(f"  · {w}")
     for line in census(slices, rule_ids):
         print(line)
@@ -729,7 +768,7 @@ def main() -> int:
     # потребителя, где её и правят. Четыре адресата вместо одного красного,
     # которое не гаснет.
     problems += unconnected(consumers)
-    elsewhere = stale_answers(slices, rule_ids)
+    elsewhere = stale_answers(slices, rule_ids, superseded_map())
 
     doc = {
         "schema": "1.0",
