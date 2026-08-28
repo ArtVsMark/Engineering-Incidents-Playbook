@@ -1,11 +1,11 @@
-<svg width="1100" height="366" viewBox="0 0 1100 366" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="How rules are enforced across consumers">
-<rect x="0.5" y="0.5" width="1099" height="365" rx="16" fill="#FFFFFF" stroke="#D0D7DE"/>
+<svg width="1107" height="366" viewBox="0 0 1107 366" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="How rules are enforced across consumers">
+<rect x="0.5" y="0.5" width="1106" height="365" rx="16" fill="#FFFFFF" stroke="#D0D7DE"/>
 <rect x="36" y="28" width="46" height="4" rx="2" fill="#0969DA"/>
 <text x="36" y="68" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="29" font-weight="800" letter-spacing="-0.6">How rules are enforced across consumers</text>
 <text x="36" y="94" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="500">each project&apos;s own answer on all 153 catalogue rules — not our assessment of them</text>
 <text x="300" y="114" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.3">answered</text>
 <text x="434" y="114" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.3">trails</text>
-<text x="810" y="114" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">held by</text>
+<text x="813" y="114" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">held by</text>
 <text x="36" y="145" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="18" font-weight="800" letter-spacing="-0.4">claude-code-playbook</text>
 <text x="300" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">153</text>
 <text x="434" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">24</text>
@@ -17,11 +17,11 @@
 <text x="36" y="187" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="18" font-weight="800" letter-spacing="-0.4">Stepik-Python-Grader</text>
 <text x="300" y="189" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">152</text>
 <text x="434" y="189" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">67</text>
-<rect x="556" y="172" width="72" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="569" y="188" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">gate<tspan fill="#0969DA" font-weight="700" dx="7">62</tspan></text>
+<rect x="556" y="172" width="72" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="569" y="188" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">gate<tspan fill="#0969DA" font-weight="700" dx="7">96</tspan></text>
 <rect x="638" y="172" width="91" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="651" y="188" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">pipeline<tspan fill="#1A7F37" font-weight="700" dx="7">0</tspan></text>
 <rect x="739" y="172" width="91" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="752" y="188" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">document<tspan fill="#8250DF" font-weight="700" dx="7">0</tspan></text>
-<rect x="847" y="172" width="91" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="860" y="188" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">nothing<tspan fill="#CF222E" font-weight="700" dx="7">38</tspan></text>
-<rect x="948" y="172" width="116" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="961" y="188" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">process step<tspan fill="#8250DF" font-weight="700" dx="7">6</tspan></text>
+<rect x="847" y="172" width="84" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="860" y="188" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">nothing<tspan fill="#CF222E" font-weight="700" dx="7">1</tspan></text>
+<rect x="948" y="172" width="123" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="961" y="188" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">process step<tspan fill="#8250DF" font-weight="700" dx="7">52</tspan></text>
 <text x="36" y="229" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="18" font-weight="800" letter-spacing="-0.4">ArtVsMark</text>
 <text x="300" y="231" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">153</text>
 <text x="434" y="231" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">12</text>
