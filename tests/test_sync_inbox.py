@@ -1,129 +1,123 @@
-"""Входящие потребителя: перепись, находка и очередь — разные вещи.
+"""Задача-«входящие»: открыта ровно тогда, когда в ней есть работа.
 
-Прогон живёт у ПОТРЕБИТЕЛЯ и ведёт одну задачу в его трекере. До этого он
-перечислял только очередь: правила без ответа и записанные `unreviewed`. Двух
-вопросов он не задавал вовсе.
+Открытая задача — это УТВЕРЖДЕНИЕ «здесь есть работа», а не оформление. При нуле
+нерассмотренных оно ложно, и ежедневная неправда в трекере приучает листать его
+мимо — тем самым способом, каким ломается 091: трекер и есть первый источник
+работы, и единственный, в который окно смотрит обязательно.
 
-**Сколько правил сейчас и сколько разобрано** — число печаталось лишь при
-находке, то есть отвечало на «что сломалось» и не отвечало на «куда мы
-движемся».
+До этой правки закрыть задачу было НЕЛЬЗЯ: поиск шёл среди открытых, и следующий
+прогон её не находил, а заводил вторую. Потребитель это и наблюдал —
+`ArtVsMark/ArtVsMark#52` висел открытым с нулём нерассмотренных именно потому,
+что иначе раздвоился бы. Поэтому пара «закрывается пустой» / «находится закрытой
+и не дублируется» стоит здесь вместе: порознь каждая из них проходила бы и на
+сломанном механизме.
 
-**Ответ о правиле, которого в каталоге нет.** У себя каталог такой ответ
-отвергает гейтом; у потребителя тот же вопрос не задавался. Замер: у витрины
-лежит ответ о правиле 143, снятом как дубль, и лежит с самого снятия. Чинится
-это только здесь — файл принадлежит проекту, — потому и называется здесь.
+Граница, которую эти случаи держат: закрывает МЕХАНИЗМ, потому что пустота —
+проверяемый факт. Там, где закрытие означало бы «я посмотрел», решает человек
+(142), и такого случая здесь нет намеренно.
 
-Набор двусторонний (140): очередь находкой становиться не должна, а находка
-обязана переживать зелёный.
-
-Сеть не трогается: `gh` не зовётся ни одним случаем, всё идёт через --dry-run.
+Сеть не трогается: экспорт и `gh` подменяются.
 """
 
 from __future__ import annotations
 
-import json
-
 import sync_inbox as si
-from conftest import write
 
 
-def rule(rid: str, title: str = "правило") -> dict:
-    return {"id": rid, "slug": "s", "title": {"ru": title, "en": title}}
+def arm(monkeypatch, rules, answered, issue=None):
+    """Подменяет экспорт, ответ проекта и `gh`; возвращает журнал вызовов."""
+    calls: list[tuple] = []
+
+    def fake_gh(*args):
+        calls.append(args)
+        if args[:2] == ("issue", "list"):
+            return 0, (f"{issue[0]} {issue[1]}" if issue else "")
+        if args[:2] == ("issue", "create"):
+            return 0, "https://example/issues/99"
+        return 0, ""
+
+    monkeypatch.setattr(si, "fetch_rules", lambda c, r: (rules, None))
+    monkeypatch.setattr(si, "gh", fake_gh)
+    monkeypatch.setenv("GH_TOKEN", "x")
+    import json, pathlib, tempfile
+    path = pathlib.Path(tempfile.mkdtemp()) / "bindings.json"
+    path.write_text(json.dumps({"rules": answered}), encoding="utf-8")
+    monkeypatch.setattr("sys.argv", ["sync_inbox.py", "--bindings", str(path)])
+    return calls
 
 
-RULES = [rule("001"), rule("002"), rule("003")]
+def verbs(calls):
+    return [c[1] for c in calls if c[0] == "issue"]
 
 
-# ── находка: ответ о снятом правиле ───────────────────────────────────────
-
-def test_ответ_о_снятом_правиле_это_находка():
-    assert si.stale_here({"001": {}, "143": {}}, RULES) == ["143"]
-
-
-def test_очередь_находкой_не_становится():
-    """«Не дошли руки» решится решением; лишний ответ не решится никогда."""
-    assert si.stale_here({"001": {}}, RULES) == []
+RULES = [{"id": "001", "title": {"ru": "первое"}},
+         {"id": "002", "title": {"ru": "второе"}}]
+ANSWERED_ALL = {"001": {"status": "active"}, "002": {"status": "active"}}
 
 
-def test_пустой_ответ_это_не_находка():
-    """Проект ещё не подключён — упрекать не в чем."""
-    assert si.stale_here({}, RULES) == []
-
-
-def test_находка_названа_в_теле_и_сказано_что_делать():
-    тело = si.body_for([], [], "o/к", stale=["143"], total=3, answered=3)
-
-    assert "которого в каталоге нет" in тело
-    assert "**143**" in тело
-    assert "удаляется из `.rules/bindings.json`" in тело
-
-
-def test_находка_переживает_зелёную_очередь():
-    """Очередь пуста, а лишний ответ есть — тело обязано об этом сказать."""
-    тело = si.body_for([], [], "o/к", stale=["143"], total=3, answered=3)
-
-    assert "Нерассмотренных нет" in тело and "**143**" in тело
-
-
-# ── перепись ──────────────────────────────────────────────────────────────
-
-def test_перепись_есть_и_на_зелёном():
-    тело = si.body_for([], [], "o/к", stale=[], total=3, answered=3)
-
-    assert "Правил в каталоге: 3. Разобрано здесь: 3." in тело
-
-
-def test_перепись_различает_нет_ответа_и_не_рассмотрено():
-    тело = si.body_for([rule("002")], [rule("003")], "o/к", stale=[],
-                       total=3, answered=1)
-
-    assert "Ответа нет вовсе у 1, записано `unreviewed` у 1" in тело
-
-
-def test_без_переписи_тело_не_ломается():
-    """Старый вызов без новых полей обязан остаться рабочим."""
-    тело = si.body_for([rule("002")], [], "o/к")
-
-    assert "Ответа нет вовсе" in тело and "Правил в каталоге" not in тело
-
-
-# ── исходы ────────────────────────────────────────────────────────────────
-
-def _подготовить(monkeypatch, repo, answers: dict, rules=RULES):
-    """Экспорт подменяется на входе, а не скачивается: сеть тесту не нужна."""
-    bindings = write(repo / "bindings.json", json.dumps({"rules": answers}))
-    monkeypatch.setattr(si, "fetch_rules", lambda *a: (rules, None))
-    monkeypatch.setattr(si, "gh", lambda *a: (_ for _ in ()).throw(
-        AssertionError("сеть не должна опрашиваться")))
-    return bindings
-
-
-def test_лишний_ответ_роняет_прогон(monkeypatch, repo, capsys):
-    bindings = _подготовить(
-        monkeypatch, repo, {r["id"]: {"status": "active"} for r in RULES}
-        | {"143": {"status": "active"}})
-    monkeypatch.setattr("sys.argv", [
-        "sync_inbox.py", "--dry-run", "--bindings", str(bindings)])
-
-    код = si.main()
-
-    assert код == 1
-    assert "**143**" in capsys.readouterr().out
-
-
-def test_всё_разобрано_и_лишнего_нет_это_ноль(monkeypatch, repo):
-    bindings = _подготовить(
-        monkeypatch, repo, {r["id"]: {"status": "active"} for r in RULES})
-    monkeypatch.setattr("sys.argv", [
-        "sync_inbox.py", "--dry-run", "--bindings", str(bindings)])
-
+def test_pustaya_zadacha_zakryvaetsya(monkeypatch, capsys):
+    calls = arm(monkeypatch, RULES, ANSWERED_ALL, issue=("52", "OPEN"))
     assert si.main() == 0
+    assert "close" in verbs(calls)
+    assert "закрыта" in capsys.readouterr().out
 
 
-def test_неразобранный_ответ_это_не_третий_исход(monkeypatch, repo):
-    """Очередь — единица, а не двойка: механизм отработал и нашёл предмет."""
-    bindings = _подготовить(monkeypatch, repo, {"001": {"status": "unreviewed"}})
-    monkeypatch.setattr("sys.argv", [
-        "sync_inbox.py", "--dry-run", "--bindings", str(bindings)])
+def test_zakrytaya_zadacha_nahoditsya_i_ne_dublitsya(monkeypatch, capsys):
+    """Вторая половина пары: поиск идёт среди ВСЕХ состояний."""
+    calls = arm(monkeypatch, RULES, ANSWERED_ALL, issue=("52", "CLOSED"))
+    assert si.main() == 0
+    assert "create" not in verbs(calls)
+    assert "close" not in verbs(calls)      # уже закрыта — трогать нечего
+    listing = next(c for c in calls if c[:2] == ("issue", "list"))
+    assert "all" in listing
 
+
+def test_poyavilos_nerassmotrennoe_zadacha_otkryvaetsya_zanovo(monkeypatch, capsys):
+    calls = arm(monkeypatch, RULES, {"001": {"status": "active"}}, issue=("52", "CLOSED"))
     assert si.main() == 1
+    assert "reopen" in verbs(calls)
+    assert "открыта заново" in capsys.readouterr().out
+
+
+def test_otkrytaya_s_rabotoy_ostayotsya_otkrytoy(monkeypatch, capsys):
+    """Ложное срабатывание здесь дороже пропуска: закрыть задачу с работой —
+    значит спрятать её от того, кто обязан её увидеть."""
+    calls = arm(monkeypatch, RULES, {"001": {"status": "unreviewed"}, "002": {"status": "active"}},
+                issue=("52", "OPEN"))
+    assert si.main() == 1
+    assert "close" not in verbs(calls)
+    assert "reopen" not in verbs(calls)
+
+
+def test_zadachi_net_i_rabotu_net_ne_zavodim(monkeypatch, capsys):
+    """Завести задачу, чтобы тут же закрыть, — шум без адресата."""
+    calls = arm(monkeypatch, RULES, ANSWERED_ALL, issue=None)
+    assert si.main() == 0
+    assert "create" not in verbs(calls)
+    assert "заводить нечего" in capsys.readouterr().out
+
+
+def test_zadachi_net_a_rabota_est_zavodim(monkeypatch, capsys):
+    calls = arm(monkeypatch, RULES, {}, issue=None)
+    assert si.main() == 1
+    assert "create" in verbs(calls)
+
+
+def test_lishniy_otvet_tozhe_derzhit_zadachu_otkrytoy(monkeypatch, capsys):
+    """Ответ по правилу, которого в каталоге нет, — работа, а не фон."""
+    answered = dict(ANSWERED_ALL, **{"143": {"status": "active"}})
+    calls = arm(monkeypatch, RULES, answered, issue=("52", "CLOSED"))
+    assert si.main() == 1
+    assert "reopen" in verbs(calls)
+
+
+def test_treker_ne_otvetil_eto_tretiy_ishod(monkeypatch, capsys):
+    monkeypatch.setattr(si, "fetch_rules", lambda c, r: (RULES, None))
+    monkeypatch.setattr(si, "gh", lambda *a: (1, "HTTP 403"))
+    monkeypatch.setenv("GH_TOKEN", "x")
+    import json, pathlib, tempfile
+    path = pathlib.Path(tempfile.mkdtemp()) / "b.json"
+    path.write_text(json.dumps({"rules": ANSWERED_ALL}), encoding="utf-8")
+    monkeypatch.setattr("sys.argv", ["sync_inbox.py", "--bindings", str(path)])
+    assert si.main() == 2
+    assert "не отработала" in capsys.readouterr().err
