@@ -86,11 +86,11 @@ somebody…".
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader#1347; related #1326 (the freeze as such — works as
-designed), #1344. Related rules:
-[104](104-event-driven-automation-needs-a-manual-button.md) — the manual button,
-whose absence makes the trap unsolvable;
-[109](109-every-exit-from-a-transient-state-must-be-terminal.md) — there the dead
-end comes from a bare exit, here from the shape of the condition;
+ArtVsMark/Stepik-Python-Grader#1347; related ArtVsMark/Stepik-Python-Grader#1326
+(the freeze as such — works as designed), ArtVsMark/Stepik-Python-Grader#1344.
+Related rules: [104](104-event-driven-automation-needs-a-manual-button.md) — the
+manual button, whose absence makes the trap unsolvable;
+[109](109-every-exit-from-a-transient-state-must-be-terminal.md) — there the
+dead end comes from a bare exit, here from the shape of the condition;
 [124](124-rerun-the-minimum-and-record-the-flake.md) — the re-run as diagnosis;
 [052](052-only-the-head-of-the-queue-moves.md) — how the queue moves.

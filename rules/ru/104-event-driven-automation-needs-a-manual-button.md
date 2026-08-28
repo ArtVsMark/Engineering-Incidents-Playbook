@@ -60,8 +60,10 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `.github/workflows/ci.yml` (#1095: четыре из
-девяти; #988: `ready_for_review` вне умолчания). Смежное:
+ArtVsMark/Stepik-Python-Grader — `.github/workflows/ci.yml`
+(ArtVsMark/Stepik-Python-Grader#1095: четыре из девяти;
+ArtVsMark/Stepik-Python-Grader#988: `ready_for_review` вне умолчания). Смежное:
 [010](010-empty-checklist-is-not-green.md),
 [075](075-a-guard-that-finds-nothing-must-fail.md),
-[126](126-a-freeze-needs-a-thaw-path.md) — блокировка, которую эта кнопка размыкает.
+[126](126-a-freeze-needs-a-thaw-path.md) — блокировка, которую эта кнопка
+размыкает.

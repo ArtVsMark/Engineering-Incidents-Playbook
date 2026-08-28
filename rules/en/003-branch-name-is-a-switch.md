@@ -49,4 +49,4 @@ dependency on a name produces failures you cannot search for.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader#1320, #1302
+ArtVsMark/Stepik-Python-Grader#1320, ArtVsMark/Stepik-Python-Grader#1302

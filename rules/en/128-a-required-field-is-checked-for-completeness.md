@@ -99,14 +99,15 @@ entry, however much the change carries.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader#1350 (the link-completeness gate), precedent —
-PR #1345 (five issues in the changelog entries, one link line in the body);
-#1329 — the link-mandatory gate, which lets this through by design. See also:
-[064](064-labels-are-machine-input-not-decoration.md) — the field's mandatoriness,
-which this record extends to completeness;
-[049](049-derive-state-from-live-artifacts.md) — where the expectation comes from;
-[039](039-three-outcomes-not-two.md) — there the third outcome is "did not run",
-here it is "filled in part";
+ArtVsMark/Stepik-Python-Grader#1350 (the link-completeness gate), precedent — PR
+ArtVsMark/Stepik-Python-Grader#1345 (five issues in the changelog entries, one
+link line in the body); ArtVsMark/Stepik-Python-Grader#1329 — the link-mandatory
+gate, which lets this through by design. See also:
+[064](064-labels-are-machine-input-not-decoration.md) — the field's
+mandatoriness, which this record extends to completeness;
+[049](049-derive-state-from-live-artifacts.md) — where the expectation comes
+from; [039](039-three-outcomes-not-two.md) — there the third outcome is "did not
+run", here it is "filled in part";
 [116](116-the-collector-script-is-a-source-of-loss.md) — reconciling counts as a
 mandatory step; [046](046-name-the-gaps-do-not-level-them.md) — a gap is named
 rather than levelled.

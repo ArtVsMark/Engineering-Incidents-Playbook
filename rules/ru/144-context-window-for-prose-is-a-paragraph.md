@@ -85,10 +85,10 @@ SEC-2-02 (монтируется весь venv вопреки SECURITY.md) и SE
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `scripts/check_audit_registry.py`,
-функция `mention_verdict()`: окно берётся абзацем, заголовок раздела перевешивает
-форму строки, отсутствие разделителя даёт начало текста, а не смещение.
+ArtVsMark/Stepik-Python-Grader — `scripts/check_audit_registry.py`, функция
+`mention_verdict()`: окно берётся абзацем, заголовок раздела перевешивает форму
+строки, отсутствие разделителя даёт начало текста, а не смещение.
 
 Смежное: [141](141-a-marker-is-matched-whole-not-by-prefix.md) — маркер
-сверяется целиком, а не началом; [097](097-a-checker-has-two-error-types.md) —
-у проверяющего две ошибки, и они разной цены.
+сверяется целиком, а не началом; [097](097-a-checker-has-two-error-types.md) — у
+проверяющего две ошибки, и они разной цены.

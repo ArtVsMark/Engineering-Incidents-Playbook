@@ -86,7 +86,7 @@ ArtVsMark/Stepik-Python-Grader — `tests/test_preflight_basetemp.py`,
 `test_default_choice_passes_its_own_check`: утверждение спрашивает
 `basetemp_problem()`, а не сравнивает длину с `_MAX_BASETEMP_LEN`.
 
-Смежное: [075](075-a-guard-that-finds-nothing-must-fail.md) — проверка,
-которая ничего не находит, обязана краснеть;
+Смежное: [075](075-a-guard-that-finds-nothing-must-fail.md) — проверка, которая
+ничего не находит, обязана краснеть;
 [140](140-a-gate-is-tested-by-what-it-must-reject.md) — гейт проверяется тем,
 что обязан отвергнуть.

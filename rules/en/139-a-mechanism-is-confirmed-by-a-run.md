@@ -75,13 +75,13 @@ detail than it was ever run, and not one run is named.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#34 — the auto-merge build and three breakages in a
-row; ArtVsMark/claude-code-playbook#54 — the fourth, the state race.
+ArtVsMark/claude-code-playbook#34 — the auto-merge build and three breakages in
+a row; ArtVsMark/claude-code-playbook#54 — the fourth, the state race.
 
-See also: [039](039-three-outcomes-not-two.md) — the third outcome, which reading
-never finds; [002](002-rule-without-mechanism.md) — a requirement without a
-mechanism;
+See also: [039](039-three-outcomes-not-two.md) — the third outcome, which
+reading never finds; [002](002-rule-without-mechanism.md) — a requirement
+without a mechanism;
 [107](107-it-works-for-the-author-means-tested-on-the-authors-sample.md) — "it
-works for the author" means tested on the author's sample, and here the same goes
-for a streak; [140](140-a-gate-is-tested-by-what-it-must-reject.md) — a gate is
-tested by what it must reject.
+works for the author" means tested on the author's sample, and here the same
+goes for a streak; [140](140-a-gate-is-tested-by-what-it-must-reject.md) — a
+gate is tested by what it must reject.

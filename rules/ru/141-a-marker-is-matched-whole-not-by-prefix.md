@@ -82,11 +82,12 @@ missing = [h for h in SHAPE[lang]
 
 ## След
 
-ArtVsMark/claude-code-playbook#69 — обе поломки и прогон, показавший
-`['999', '1']` вместо `['1']`.
+ArtVsMark/claude-code-playbook#69 — обе поломки и прогон, показавший `['999',
+'1']` вместо `['1']`.
 
-Смежное: [097](097-a-checker-has-two-error-types.md) — две ошибки проверяющего
-и почему невидима именно эта; [140](140-a-gate-is-tested-by-what-it-must-reject.md)
-— утверждение о проверке подтверждается отвергнутым предметом;
+Смежное: [097](097-a-checker-has-two-error-types.md) — две ошибки проверяющего и
+почему невидима именно эта;
+[140](140-a-gate-is-tested-by-what-it-must-reject.md) — утверждение о проверке
+подтверждается отвергнутым предметом;
 [103](103-a-side-effect-guard-blames-the-wrong-suspect.md) — исключения задаются
 формой имени, и форма тоже бывает шире задуманного.

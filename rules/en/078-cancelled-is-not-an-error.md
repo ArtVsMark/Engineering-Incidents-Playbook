@@ -61,4 +61,5 @@ only complicates things.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/runs.py` (`_STATUSES`),
-#262, #296. Related: [056](056-a-signal-states-what-it-does-not-mean.md).
+ArtVsMark/Stepik-Python-Grader#262, ArtVsMark/Stepik-Python-Grader#296. Related:
+[056](056-a-signal-states-what-it-does-not-mean.md).

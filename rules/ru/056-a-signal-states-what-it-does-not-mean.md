@@ -58,5 +58,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § Что означает `SANDBOX_VIOLATION`
-(и чего не означает).
+ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § Что означает
+`SANDBOX_VIOLATION` (и чего не означает).

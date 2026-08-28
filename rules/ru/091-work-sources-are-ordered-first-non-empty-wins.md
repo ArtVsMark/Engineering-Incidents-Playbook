@@ -61,6 +61,7 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Открытая работа (числились
-открытыми закрытые #97/#151; в эстафете — семь закрытых). Смежное:
-[049](049-derive-state-from-live-artifacts.md),
+открытыми закрытые
+ArtVsMark/Stepik-Python-Grader#97/ArtVsMark/Stepik-Python-Grader#151; в эстафете
+— семь закрытых). Смежное: [049](049-derive-state-from-live-artifacts.md),
 [027](027-empty-state-is-a-state.md).

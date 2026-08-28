@@ -61,7 +61,8 @@ closed.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § open work (closed #97/#151 listed
-as open; seven closed tasks in the handover). Related:
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § open work (closed
+ArtVsMark/Stepik-Python-Grader#97/ArtVsMark/Stepik-Python-Grader#151 listed as
+open; seven closed tasks in the handover). Related:
 [049](049-derive-state-from-live-artifacts.md),
 [027](027-empty-state-is-a-state.md).

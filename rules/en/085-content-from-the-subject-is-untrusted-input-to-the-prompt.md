@@ -73,6 +73,7 @@ of reproducing verbatim.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § AI hints (prompt injection),
-`core/ai_grounding.py`, #931 (consent is checked against the recipient).
-Related: [070](070-a-heuristic-guard-fails-open-with-a-written-risk.md),
+`core/ai_grounding.py`, ArtVsMark/Stepik-Python-Grader#931 (consent is checked
+against the recipient). Related:
+[070](070-a-heuristic-guard-fails-open-with-a-written-risk.md),
 [046](046-name-the-gaps-do-not-level-them.md).

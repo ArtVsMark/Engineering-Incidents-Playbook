@@ -68,5 +68,5 @@ predictable change, or an abstraction with a single implementation.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — ADR-0001 (the seam in advance), ADR-0006 (a
-protocol, not a hierarchy), ADR-0010 (generalisation refused until a third case).
-Related: [042](042-decision-records-its-alternatives.md).
+protocol, not a hierarchy), ADR-0010 (generalisation refused until a third
+case). Related: [042](042-decision-records-its-alternatives.md).

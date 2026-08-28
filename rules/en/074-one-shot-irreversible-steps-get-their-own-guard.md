@@ -61,4 +61,5 @@ describing invariants.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `scripts/check_workflow_guardrails.py`, #988.
+ArtVsMark/Stepik-Python-Grader — `scripts/check_workflow_guardrails.py`,
+ArtVsMark/Stepik-Python-Grader#988.

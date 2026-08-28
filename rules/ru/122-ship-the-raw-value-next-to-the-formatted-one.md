@@ -64,6 +64,6 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `docs/dev/api.md` (метрики режима сравнения:
-строки для таблицы и `*_s` числами для диаграммы).
-Смежное: [113](113-a-contract-states-how-it-may-change.md),
+строки для таблицы и `*_s` числами для диаграммы). Смежное:
+[113](113-a-contract-states-how-it-may-change.md),
 [118](118-keep-the-source-next-to-the-derived.md).

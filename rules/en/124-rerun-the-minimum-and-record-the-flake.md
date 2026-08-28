@@ -83,7 +83,8 @@ answer, and nobody remembers what exactly fails.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader#1171, #924, #1344; rule
+ArtVsMark/Stepik-Python-Grader#1171, ArtVsMark/Stepik-Python-Grader#924,
+ArtVsMark/Stepik-Python-Grader#1344; rule
 [103](103-a-side-effect-guard-blames-the-wrong-suspect.md) — 14 false
 accusations. Related: [009](009-count-unique-not-total.md) — count unique names;
 [052](052-only-the-head-of-the-queue-moves.md) — check against the current

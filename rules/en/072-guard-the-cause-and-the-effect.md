@@ -65,4 +65,5 @@ machine.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `scripts/check_test_isolation.py`,
-`tests/conftest.py` (`_no_writes_outside_tmp`), #997.
+`tests/conftest.py` (`_no_writes_outside_tmp`),
+ArtVsMark/Stepik-Python-Grader#997.

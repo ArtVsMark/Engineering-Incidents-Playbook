@@ -58,4 +58,4 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `scripts/check_locale_guardrails.py` (пункты о
-ссылках наружу и имени пакета), #1005.
+ссылках наружу и имени пакета), ArtVsMark/Stepik-Python-Grader#1005.

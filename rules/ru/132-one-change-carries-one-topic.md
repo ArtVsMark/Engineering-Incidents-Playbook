@@ -91,9 +91,9 @@
 ## След
 
 ArtVsMark/ArtVsMark#19 — сборное изменение на четыре темы и его последствия;
-#20 и #21 — то же, разделённое после замечания;
-ArtVsMark/Stepik-Python-Grader#1350 — инцидент, из которого выросло 128.
-Смежное: [128](128-a-required-field-is-checked-for-completeness.md) —
+ArtVsMark/ArtVsMark#20 и ArtVsMark/ArtVsMark#21 — то же, разделённое после
+замечания; ArtVsMark/Stepik-Python-Grader#1350 — инцидент, из которого выросло
+128. Смежное: [128](128-a-required-field-is-checked-for-completeness.md) —
 необходимое условие, [133](133-file-overlap-sets-the-boundary.md) — граница,
 которая сильнее темы, [098](098-the-unit-of-splitting-follows-usage.md) — та же
 мысль о единице для данных.

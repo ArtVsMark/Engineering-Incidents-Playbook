@@ -60,5 +60,6 @@ the command in it is available to the tool itself.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/launcher.py`, #1134.
-Related: [076](076-messages-point-at-what-the-user-actually-has.md).
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/launcher.py`,
+ArtVsMark/Stepik-Python-Grader#1134. Related:
+[076](076-messages-point-at-what-the-user-actually-has.md).

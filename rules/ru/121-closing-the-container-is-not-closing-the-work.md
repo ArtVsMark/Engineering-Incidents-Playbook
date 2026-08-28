@@ -61,7 +61,7 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `docs/agent/claude-handoff.md` § Работы вне
-трекера (аудит 2026-07-30: десять живых дефектов после архивации).
-Смежное: [028](028-checklist-not-a-list-of-findings.md),
+трекера (аудит 2026-07-30: десять живых дефектов после архивации). Смежное:
+[028](028-checklist-not-a-list-of-findings.md),
 [108](108-a-living-document-keeps-a-fixed-window.md),
 [116](116-the-collector-script-is-a-source-of-loss.md).

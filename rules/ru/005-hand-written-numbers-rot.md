@@ -60,5 +60,5 @@ PR #1293: 32 записи, 16 уникальных имён, дубли: coverag
 
 ## След
 
-ArtVsMark/ArtVsMark#7, #8. Условия, при которых число всё же может стоять в
-тексте, — [127](127-a-number-in-prose-needs-a-guarded-marker.md).
+ArtVsMark/ArtVsMark#7, ArtVsMark/ArtVsMark#8. Условия, при которых число всё же
+может стоять в тексте, — [127](127-a-number-in-prose-needs-a-guarded-marker.md).

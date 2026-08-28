@@ -114,13 +114,14 @@
 
 ## След
 
-Постановка механизма — ArtVsMark/claude-code-playbook#14, эта запись — #15;
-роль потребителя в первом проекте — ArtVsMark/Stepik-Python-Grader#1351. Правила
-126 и 128 — те самые, что доехали до одного проекта из пяти. Смежное:
-[120](120-how-to-run-a-rule-catalogue.md) — ведение каталога, которое эта запись
-продолжает на потребление и уточняет: «нет следа» больше не значит «не
-действует»; [130](130-a-rule-arrives-with-candidates-from-the-backlog.md) — что
-именно доставляется вместе с правилом;
+Постановка механизма — ArtVsMark/claude-code-playbook#14, эта запись —
+ArtVsMark/claude-code-playbook#15; роль потребителя в первом проекте —
+ArtVsMark/Stepik-Python-Grader#1351. Правила 126 и 128 — те самые, что доехали
+до одного проекта из пяти. Смежное: [120](120-how-to-run-a-rule-catalogue.md) —
+ведение каталога, которое эта запись продолжает на потребление и уточняет: «нет
+следа» больше не значит «не действует»;
+[130](130-a-rule-arrives-with-candidates-from-the-backlog.md) — что именно
+доставляется вместе с правилом;
 [080](080-every-new-rule-goes-into-the-catalogue.md) — обратный поток;
 [049](049-derive-state-from-live-artifacts.md) — почему связи вычисляются;
 [113](113-a-contract-states-how-it-may-change.md).

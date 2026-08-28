@@ -60,5 +60,5 @@ reproduced scenarios.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `docs/agent/environments.md` § the status of a
-finding depends on the environment, § closing an issue requires proof in the same
-environment.
+finding depends on the environment, § closing an issue requires proof in the
+same environment.

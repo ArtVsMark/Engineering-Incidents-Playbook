@@ -64,7 +64,8 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Метки при заведении issue;
-#1329. Смежное: [053](053-queue-order-is-a-rule-not-arrival.md),
+ArtVsMark/Stepik-Python-Grader#1329. Смежное:
+[053](053-queue-order-is-a-rule-not-arrival.md),
 [002](002-rule-without-mechanism.md),
-[128](128-a-required-field-is-checked-for-completeness.md) — то же поле, проверенное
-на полноту.
+[128](128-a-required-field-is-checked-for-completeness.md) — то же поле,
+проверенное на полноту.

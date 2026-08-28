@@ -44,4 +44,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Аудит планируется от поверхностей
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Аудит планируется
+от поверхностей

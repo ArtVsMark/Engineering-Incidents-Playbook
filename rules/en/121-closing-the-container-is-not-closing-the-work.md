@@ -61,8 +61,8 @@ countable subject is needed first.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/claude-handoff.md` § work outside the
-tracker (the 2026-07-30 audit: ten live defects after archiving). Related:
+ArtVsMark/Stepik-Python-Grader — `docs/agent/claude-handoff.md` § work outside
+the tracker (the 2026-07-30 audit: ten live defects after archiving). Related:
 [028](028-checklist-not-a-list-of-findings.md),
 [108](108-a-living-document-keeps-a-fixed-window.md),
 [116](116-the-collector-script-is-a-source-of-loss.md).

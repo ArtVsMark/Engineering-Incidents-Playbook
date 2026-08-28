@@ -67,7 +67,7 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Обновление CHANGELOG (три
-последних MINOR, гейт `check_docs_guardrails.py`), § Открытая работа
-(жизненный цикл аудита; очередь чистится удалением). Смежное:
+последних MINOR, гейт `check_docs_guardrails.py`), § Открытая работа (жизненный
+цикл аудита; очередь чистится удалением). Смежное:
 [024](024-no-worklog-in-active-docs.md), [050](050-limits-move-down-only.md),
 [027](027-empty-state-is-a-state.md).

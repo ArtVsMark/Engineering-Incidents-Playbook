@@ -87,15 +87,14 @@
 
 ArtVsMark/claude-code-playbook — свод появился в тот же вечер, до него окно
 нарушило семь правил каталога; ArtVsMark/ArtVsMark — свода нет,
-[#20](https://github.com/ArtVsMark/ArtVsMark/issues/20) и
-[#21](https://github.com/ArtVsMark/ArtVsMark/issues/21) — обе поломки описаны
-существующими правилами; ArtVsMark/Stepik-Python-Grader — свод есть, каталог в
-нём не упомянут.
+[ArtVsMark/ArtVsMark#20](https://github.com/ArtVsMark/ArtVsMark/issues/20) и
+[ArtVsMark/ArtVsMark#21](https://github.com/ArtVsMark/ArtVsMark/issues/21) — обе
+поломки описаны существующими правилами; ArtVsMark/Stepik-Python-Grader — свод
+есть, каталог в нём не упомянут.
 
 Смежное: [047](047-rule-change-restarts-the-windows.md) — перезапуск при смене
-правил, здесь же случай, когда правил ещё нет;
-[006](006-window-lifetime.md) — эстафета ссылками;
-[029](029-triggers-and-canon.md) — чем свод отличается от пересказа;
-[120](120-how-to-run-a-rule-catalogue.md) — проект связан с каталогом одной
-ссылкой; [129](129-a-catalogue-needs-a-consumption-contract.md) — доставка
+правил, здесь же случай, когда правил ещё нет; [006](006-window-lifetime.md) —
+эстафета ссылками; [029](029-triggers-and-canon.md) — чем свод отличается от
+пересказа; [120](120-how-to-run-a-rule-catalogue.md) — проект связан с каталогом
+одной ссылкой; [129](129-a-catalogue-needs-a-consumption-contract.md) — доставка
 правила до проекта, здесь — доставка из проекта до окна.

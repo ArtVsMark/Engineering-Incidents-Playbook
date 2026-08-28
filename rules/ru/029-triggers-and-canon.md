@@ -53,4 +53,5 @@ onboarding, README.
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md`, врезки «этот блок — только триггер»
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md`, врезки «этот блок — только
+триггер»

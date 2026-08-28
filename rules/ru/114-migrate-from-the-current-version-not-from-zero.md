@@ -69,5 +69,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `core/history.py` (#990, #947).
+ArtVsMark/Stepik-Python-Grader — `core/history.py`
+(ArtVsMark/Stepik-Python-Grader#990, ArtVsMark/Stepik-Python-Grader#947).
 Смежное: [094](094-a-compatibility-shim-makes-migration-permanent.md).

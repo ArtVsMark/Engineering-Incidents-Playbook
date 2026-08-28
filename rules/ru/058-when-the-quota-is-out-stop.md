@@ -59,5 +59,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § Исчерпав квоту,
-§ `used` считает попытки. Смежное: [017](017-measure-quota-do-not-guess.md).
+ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § Исчерпав квоту, §
+`used` считает попытки. Смежное: [017](017-measure-quota-do-not-guess.md).

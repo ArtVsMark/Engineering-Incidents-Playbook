@@ -61,5 +61,6 @@ locale sees a foreign language.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `scripts/check_locale_guardrails.py`, #821,
-#264. Related: [065](065-the-onramp-must-speak-the-newcomers-language.md).
+ArtVsMark/Stepik-Python-Grader — `scripts/check_locale_guardrails.py`,
+ArtVsMark/Stepik-Python-Grader#821, ArtVsMark/Stepik-Python-Grader#264. Related:
+[065](065-the-onramp-must-speak-the-newcomers-language.md).

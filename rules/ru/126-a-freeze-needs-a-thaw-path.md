@@ -80,8 +80,9 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader#1347; смежное #1326 (заморозка как таковая —
-работает как задумано), #1344. Смежные правила:
+ArtVsMark/Stepik-Python-Grader#1347; смежное ArtVsMark/Stepik-Python-Grader#1326
+(заморозка как таковая — работает как задумано),
+ArtVsMark/Stepik-Python-Grader#1344. Смежные правила:
 [104](104-event-driven-automation-needs-a-manual-button.md) — ручная кнопка, её
 отсутствие делает ловушку неразрешимой;
 [109](109-every-exit-from-a-transient-state-must-be-terminal.md) — там тупик от
