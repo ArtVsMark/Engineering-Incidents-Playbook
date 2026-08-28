@@ -53,4 +53,4 @@ them and the list is closed: enabling auto-merge
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader#1265, #1233
+ArtVsMark/Stepik-Python-Grader#1265, ArtVsMark/Stepik-Python-Grader#1233

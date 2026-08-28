@@ -60,6 +60,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/archive/audit-2026-07-30-full-roles.md`
-§ Ещё два урока (192 вердикта против 174 находок). Смежное:
+ArtVsMark/Stepik-Python-Grader — `docs/archive/audit-2026-07-30-full-roles.md` §
+Ещё два урока (192 вердикта против 174 находок). Смежное:
 [016](016-no-silent-truncation.md), [009](009-count-unique-not-total.md).

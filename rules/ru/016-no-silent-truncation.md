@@ -41,4 +41,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Обрезать текст молча нельзя
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Обрезать текст
+молча нельзя

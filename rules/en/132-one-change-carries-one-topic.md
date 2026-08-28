@@ -91,8 +91,8 @@ its own "why".
 ## Trace
 
 ArtVsMark/ArtVsMark#19 — a combined change across four topics and its
-consequences; #20 and #21 — the same work after being split;
-ArtVsMark/Stepik-Python-Grader#1350 — the incident behind 128. See also:
-[128](128-a-required-field-is-checked-for-completeness.md) — the necessary
-condition, [133](133-file-overlap-sets-the-boundary.md) — the boundary that
-outranks the topic, [098](098-the-unit-of-splitting-follows-usage.md).
+consequences; ArtVsMark/ArtVsMark#20 and ArtVsMark/ArtVsMark#21 — the same work
+after being split; ArtVsMark/Stepik-Python-Grader#1350 — the incident behind
+128. See also: [128](128-a-required-field-is-checked-for-completeness.md) — the
+necessary condition, [133](133-file-overlap-sets-the-boundary.md) — the boundary
+that outranks the topic, [098](098-the-unit-of-splitting-follows-usage.md).

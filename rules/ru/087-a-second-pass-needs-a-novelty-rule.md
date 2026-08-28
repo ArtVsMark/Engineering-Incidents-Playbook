@@ -60,5 +60,5 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Дополнительно для
-аудитов (правило новизны). Смежное:
-[020](020-restart-only-the-delta.md), [026](026-rejected-findings-must-be-recorded.md).
+аудитов (правило новизны). Смежное: [020](020-restart-only-the-delta.md),
+[026](026-rejected-findings-must-be-recorded.md).

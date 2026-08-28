@@ -50,6 +50,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § Соглашения.
-Смежное: [024](024-no-worklog-in-active-docs.md),
-[030](030-changelog-from-fragments.md) — что правится, а что дописывается.
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § Соглашения. Смежное:
+[024](024-no-worklog-in-active-docs.md), [030](030-changelog-from-fragments.md)
+— что правится, а что дописывается.

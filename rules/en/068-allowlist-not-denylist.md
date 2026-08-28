@@ -122,7 +122,8 @@ searching for it returns a single occurrence, in a comment.
 
 ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/statement_adapter.py`
 (`_IMAGE_TYPES`), `web/commands.py`. The second incident —
-ArtVsMark/Stepik-Python-Grader#1346, predecessor #1280. The third —
+ArtVsMark/Stepik-Python-Grader#1346, predecessor
+ArtVsMark/Stepik-Python-Grader#1280. The third —
 ArtVsMark/claude-code-playbook#42; ArtVsMark/ArtVsMark — the change
 classification gate. See also:
 [075](075-a-guard-that-finds-nothing-must-fail.md),

@@ -62,5 +62,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — ADR-0002 (история opt-in в CLI, default-on в web).
-Смежное: [045](045-no-silent-fallback.md).
+ArtVsMark/Stepik-Python-Grader — ADR-0002 (история opt-in в CLI, default-on в
+web). Смежное: [045](045-no-silent-fallback.md).

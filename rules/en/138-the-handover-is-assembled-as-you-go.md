@@ -103,9 +103,9 @@ ArtVsMark/claude-code-playbook#35 — the candidate, filed by a session belongin
 to another project; ArtVsMark/Stepik-Python-Grader — the starting-message
 template and the rulebook section about two sessions.
 
-See also: [006](006-window-lifetime.md) — the session's lifespan and the shape of
-a handover, here the moment it is assembled;
-[121](121-closing-the-container-is-not-closing-the-work.md) — work does not close
-with the container; [047](047-rule-change-restarts-the-windows.md) — the second
-reason to restart; [029](029-triggers-and-canon.md) — why a retelling is worse
-than a link.
+See also: [006](006-window-lifetime.md) — the session's lifespan and the shape
+of a handover, here the moment it is assembled;
+[121](121-closing-the-container-is-not-closing-the-work.md) — work does not
+close with the container; [047](047-rule-change-restarts-the-windows.md) — the
+second reason to restart; [029](029-triggers-and-canon.md) — why a retelling is
+worse than a link.

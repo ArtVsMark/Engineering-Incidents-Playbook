@@ -56,4 +56,4 @@ requires machinery outside the repository.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader#1323, #1321
+ArtVsMark/Stepik-Python-Grader#1323, ArtVsMark/Stepik-Python-Grader#1321

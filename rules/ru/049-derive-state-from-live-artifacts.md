@@ -97,10 +97,9 @@ API.
 ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Две линии работ (§ Почему
 без файла-реестра); `CLAUDE.md` § Очередь мержа («вычисляется, а не хранится»).
 
-Второй инцидент — ArtVsMark/claude-code-playbook#41; ArtVsMark/ArtVsMark —
-ответ по правилам каталога, вердикты с протухшими ссылками. Гейт на утверждающую
+Второй инцидент — ArtVsMark/claude-code-playbook#41; ArtVsMark/ArtVsMark — ответ
+по правилам каталога, вердикты с протухшими ссылками. Гейт на утверждающую
 половину в самом каталоге уже стоит: `scripts/check_bindings.py` сверяет
 заявленное в ответе с тем, что есть на диске. Смежное:
-[002](002-rule-without-mechanism.md),
-[005](005-hand-written-numbers-rot.md) — то же для чисел;
-[129](129-a-catalogue-needs-a-consumption-contract.md).
+[002](002-rule-without-mechanism.md), [005](005-hand-written-numbers-rot.md) —
+то же для чисел; [129](129-a-catalogue-needs-a-consumption-contract.md).

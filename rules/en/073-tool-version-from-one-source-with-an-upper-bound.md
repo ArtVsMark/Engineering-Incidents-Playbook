@@ -62,5 +62,6 @@ build result.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `scripts/check_ruff_pin.py`, #791.
-Related: [035](035-version-is-never-edited-by-hand.md).
+ArtVsMark/Stepik-Python-Grader — `scripts/check_ruff_pin.py`,
+ArtVsMark/Stepik-Python-Grader#791. Related:
+[035](035-version-is-never-edited-by-hand.md).

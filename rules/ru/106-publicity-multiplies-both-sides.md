@@ -61,5 +61,5 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `HISTORY.md` § Как это началось,
-`docs/dev/corpus.md` (ложный «принято» как худший дефект).
-Смежное: [036](036-expensive-window-enters-twice-and-briefly.md).
+`docs/dev/corpus.md` (ложный «принято» как худший дефект). Смежное:
+[036](036-expensive-window-enters-twice-and-briefly.md).

@@ -116,8 +116,8 @@ ArtVsMark/claude-code-playbook#54 — замер, показавший расх�
 `scripts/check_gates.py` и `tests/`: каждый набор двусторонний, и сколько гейтов
 покрыто каким из двух механизмов, печатает `scripts/check_charter.py`.
 
-Смежное: [097](097-a-checker-has-two-error-types.md) — у проверяющего две ошибки,
-и вторая невидима; [075](075-a-guard-that-finds-nothing-must-fail.md) — сторож,
-не нашедший предмета, обязан упасть;
+Смежное: [097](097-a-checker-has-two-error-types.md) — у проверяющего две
+ошибки, и вторая невидима; [075](075-a-guard-that-finds-nothing-must-fail.md) —
+сторож, не нашедший предмета, обязан упасть;
 [139](139-a-mechanism-is-confirmed-by-a-run.md) — механизм подтверждается
 прогоном; [002](002-rule-without-mechanism.md) — требование без механизма.

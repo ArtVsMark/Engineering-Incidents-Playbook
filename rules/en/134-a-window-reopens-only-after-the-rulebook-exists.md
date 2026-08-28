@@ -86,10 +86,11 @@ project where the catalogue is not mentioned in a single line.
 
 ArtVsMark/claude-code-playbook — the charter appeared the same evening, before
 it the window broke seven of the catalogue's rules; ArtVsMark/ArtVsMark — no
-charter, [#20](https://github.com/ArtVsMark/ArtVsMark/issues/20) and
-[#21](https://github.com/ArtVsMark/ArtVsMark/issues/21), both breakages
-described by existing rules; ArtVsMark/Stepik-Python-Grader — a charter exists,
-the catalogue is not mentioned in it.
+charter,
+[ArtVsMark/ArtVsMark#20](https://github.com/ArtVsMark/ArtVsMark/issues/20) and
+[ArtVsMark/ArtVsMark#21](https://github.com/ArtVsMark/ArtVsMark/issues/21), both
+breakages described by existing rules; ArtVsMark/Stepik-Python-Grader — a
+charter exists, the catalogue is not mentioned in it.
 
 See also: [047](047-rule-change-restarts-the-windows.md) — a restart when the
 rules change, here the case where there are no rules yet;

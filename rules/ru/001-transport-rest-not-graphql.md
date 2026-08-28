@@ -48,4 +48,4 @@ Projects V2, Discussions, минимизация комментария.
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader#1265, #1233
+ArtVsMark/Stepik-Python-Grader#1265, ArtVsMark/Stepik-Python-Grader#1233

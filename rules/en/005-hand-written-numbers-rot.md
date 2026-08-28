@@ -64,5 +64,6 @@ back.
 
 ## Trace
 
-ArtVsMark/ArtVsMark#7, #8. The conditions under which a number may sit in text
-after all — [127](127-a-number-in-prose-needs-a-guarded-marker.md).
+ArtVsMark/ArtVsMark#7, ArtVsMark/ArtVsMark#8. The conditions under which a
+number may sit in text after all —
+[127](127-a-number-in-prose-needs-a-guarded-marker.md).

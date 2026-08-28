@@ -57,5 +57,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Покрытие: почему бейджа два.
-Смежное: [005](005-hand-written-numbers-rot.md) — число, вписанное руками.
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Покрытие: почему бейджа
+два. Смежное: [005](005-hand-written-numbers-rot.md) — число, вписанное руками.

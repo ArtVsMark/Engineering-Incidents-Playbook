@@ -71,5 +71,6 @@
 ## След
 
 ArtVsMark/Stepik-Python-Grader — `docs/use/configuration.md` § Почему поиск
-ограничен, § Корень настроек; #993, #984.
-Смежное: [100](100-two-deadlines-start-and-work.md).
+ограничен, § Корень настроек; ArtVsMark/Stepik-Python-Grader#993,
+ArtVsMark/Stepik-Python-Grader#984. Смежное:
+[100](100-two-deadlines-start-and-work.md).

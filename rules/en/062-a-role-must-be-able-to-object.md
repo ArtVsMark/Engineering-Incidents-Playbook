@@ -75,6 +75,6 @@ to assign than to certify.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/roles.md` § the admission test for a
-role. Related: [042](042-decision-records-its-alternatives.md) — a rejection is
-recorded too.
+ArtVsMark/Stepik-Python-Grader — `docs/agent/roles.md` § the admission test for
+a role. Related: [042](042-decision-records-its-alternatives.md) — a rejection
+is recorded too.

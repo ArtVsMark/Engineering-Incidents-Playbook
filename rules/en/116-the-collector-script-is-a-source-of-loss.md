@@ -63,6 +63,6 @@ equality but "in = out + dropped, and the dropped are named".
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/archive/audit-2026-07-30-full-roles.md`
-§ two more lessons (192 verdicts against 174 findings). Related:
+ArtVsMark/Stepik-Python-Grader — `docs/archive/audit-2026-07-30-full-roles.md` §
+two more lessons (192 verdicts against 174 findings). Related:
 [016](016-no-silent-truncation.md), [009](009-count-unique-not-total.md).

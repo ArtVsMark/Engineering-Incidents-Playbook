@@ -61,6 +61,6 @@ it.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/http_guards.py`, #631.
-Related: [045](045-no-silent-fallback.md) — the opposite case,
-[046](046-name-the-gaps-do-not-level-them.md).
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/http_guards.py`,
+ArtVsMark/Stepik-Python-Grader#631. Related: [045](045-no-silent-fallback.md) —
+the opposite case, [046](046-name-the-gaps-do-not-level-them.md).

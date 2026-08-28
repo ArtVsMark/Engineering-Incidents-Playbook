@@ -58,5 +58,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/settings_adapter.py`, #997.
-Смежное: [066](066-lock-the-companion-not-the-target.md).
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/settings_adapter.py`,
+ArtVsMark/Stepik-Python-Grader#997. Смежное:
+[066](066-lock-the-companion-not-the-target.md).

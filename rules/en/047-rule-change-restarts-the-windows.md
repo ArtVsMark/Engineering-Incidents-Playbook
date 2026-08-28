@@ -62,6 +62,6 @@ and the boundary falls exactly on their creation dates.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader#1283. Related:
-[006](006-window-lifetime.md) — the same effect caused by age;
-[002](002-rule-without-mechanism.md) — a rule without a mechanism.
+ArtVsMark/Stepik-Python-Grader#1283. Related: [006](006-window-lifetime.md) —
+the same effect caused by age; [002](002-rule-without-mechanism.md) — a rule
+without a mechanism.

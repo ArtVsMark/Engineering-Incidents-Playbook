@@ -67,4 +67,5 @@
 
 ArtVsMark/Stepik-Python-Grader — `docs/archive/audit-2026-07-30-full-roles.md`
 (таблица «что сработало»), `docs/agent/multiagent.md`. Смежное:
-[034](034-small-zone-per-executor.md), [061](061-environment-bans-belong-in-the-task.md).
+[034](034-small-zone-per-executor.md),
+[061](061-environment-bans-belong-in-the-task.md).

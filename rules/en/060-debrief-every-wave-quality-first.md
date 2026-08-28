@@ -57,6 +57,6 @@ it does not) — there the mechanical axis suffices.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § debrief after EVERY
-wave. Related: [031](031-waves-not-salvos.md),
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § debrief after
+EVERY wave. Related: [031](031-waves-not-salvos.md),
 [020](020-restart-only-the-delta.md).

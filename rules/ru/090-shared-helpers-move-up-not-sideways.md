@@ -58,6 +58,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Архитектурные инварианты (леф-модули),
-ADR-0011, тест графа импортов. Смежное:
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Архитектурные инварианты
+(леф-модули), ADR-0011, тест графа импортов. Смежное:
 [071](071-deliberate-duplication-is-signed.md).

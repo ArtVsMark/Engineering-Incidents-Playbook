@@ -77,9 +77,9 @@ reproduce it", even though the report exists.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `scripts/report_failed_tests.py` and the
-`report-failures` job in `.github/workflows/ci.yml`: the matrix junit reports are
-parsed and the summary lives as one updated comment on the change itself.
+`report-failures` job in `.github/workflows/ci.yml`: the matrix junit reports
+are parsed and the summary lives as one updated comment on the change itself.
 
-Related: [142](142-a-scheduled-red-needs-an-addressee.md) — a scheduled red needs
-an addressee; [139](139-a-mechanism-is-confirmed-by-a-run.md) — a mechanism is
-confirmed by a run.
+Related: [142](142-a-scheduled-red-needs-an-addressee.md) — a scheduled red
+needs an addressee; [139](139-a-mechanism-is-confirmed-by-a-run.md) — a
+mechanism is confirmed by a run.

@@ -84,7 +84,8 @@ and the tracker says nothing about it.
 ## Trace
 
 ArtVsMark/claude-code-playbook#77 — four days of daily red and the post-mortem;
-`.github/workflows/consumers-sync.yml` — the step "the finding has an addressee".
+`.github/workflows/consumers-sync.yml` — the step "the finding has an
+addressee".
 
 Related: [075](075-a-guard-that-finds-nothing-must-fail.md) — "could not read"
 must not be indistinguishable from "all is well";

@@ -68,6 +68,7 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/dispatcher.md` § Три состояния окна,
-§ Признаки бесхозности — список, а не «на глаз». Смежное:
-[007](007-blocked-window-looks-alive.md), [012](012-do-not-push-to-someone-elses-branch.md).
+ArtVsMark/Stepik-Python-Grader — `docs/agent/dispatcher.md` § Три состояния
+окна, § Признаки бесхозности — список, а не «на глаз». Смежное:
+[007](007-blocked-window-looks-alive.md),
+[012](012-do-not-push-to-someone-elses-branch.md).

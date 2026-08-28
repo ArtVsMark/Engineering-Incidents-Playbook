@@ -59,4 +59,5 @@
 
 ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Ссылки на issue (бюджеты
 `_DESIGN_TAIL_BUDGET` / `_AGENT_TAIL_BUDGET`), § Line-budget и link-check.
-Смежное: [002](002-rule-without-mechanism.md), [023](023-readme-is-a-storefront.md).
+Смежное: [002](002-rule-without-mechanism.md),
+[023](023-readme-is-a-storefront.md).

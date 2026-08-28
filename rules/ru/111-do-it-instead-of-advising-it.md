@@ -60,5 +60,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/launcher.py`, #1134.
-Смежное: [076](076-messages-point-at-what-the-user-actually-has.md).
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/launcher.py`,
+ArtVsMark/Stepik-Python-Grader#1134. Смежное:
+[076](076-messages-point-at-what-the-user-actually-has.md).

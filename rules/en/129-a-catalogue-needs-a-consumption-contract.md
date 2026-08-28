@@ -117,12 +117,13 @@ and nobody can say whether it was rejected there or simply never seen.
 ## Trace
 
 The mechanism is specified in ArtVsMark/claude-code-playbook#14, this record is
-#15; the consumer role in the first project — ArtVsMark/Stepik-Python-Grader#1351.
-Rules 126 and 128 are the ones that reached one project out of five. See also:
-[120](120-how-to-run-a-rule-catalogue.md) — the authoring order this record
-continues into consumption, refining it: "no trail" no longer means "not in
-force"; [130](130-a-rule-arrives-with-candidates-from-the-backlog.md) — what
-exactly is delivered along with a rule;
+ArtVsMark/claude-code-playbook#15; the consumer role in the first project —
+ArtVsMark/Stepik-Python-Grader#1351. Rules 126 and 128 are the ones that reached
+one project out of five. See also: [120](120-how-to-run-a-rule-catalogue.md) —
+the authoring order this record continues into consumption, refining it: "no
+trail" no longer means "not in force";
+[130](130-a-rule-arrives-with-candidates-from-the-backlog.md) — what exactly is
+delivered along with a rule;
 [080](080-every-new-rule-goes-into-the-catalogue.md) — the reverse flow;
 [049](049-derive-state-from-live-artifacts.md) — why the links are computed;
 [113](113-a-contract-states-how-it-may-change.md).

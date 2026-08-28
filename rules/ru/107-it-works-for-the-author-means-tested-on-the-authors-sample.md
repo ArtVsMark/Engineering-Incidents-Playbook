@@ -57,6 +57,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `HISTORY.md` § Как это началось.
-Смежное: [046](046-name-the-gaps-do-not-level-them.md),
+ArtVsMark/Stepik-Python-Grader — `HISTORY.md` § Как это началось. Смежное:
+[046](046-name-the-gaps-do-not-level-them.md),
 [055](055-your-own-expectations-are-a-hypothesis.md).

@@ -59,8 +59,9 @@ a rerun.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `.github/workflows/ci.yml` (#1095: four of nine;
-#988: `ready_for_review` outside the default). Related:
-[010](010-empty-checklist-is-not-green.md),
+ArtVsMark/Stepik-Python-Grader — `.github/workflows/ci.yml`
+(ArtVsMark/Stepik-Python-Grader#1095: four of nine;
+ArtVsMark/Stepik-Python-Grader#988: `ready_for_review` outside the default).
+Related: [010](010-empty-checklist-is-not-green.md),
 [075](075-a-guard-that-finds-nothing-must-fail.md),
 [126](126-a-freeze-needs-a-thaw-path.md) — the block this button opens.

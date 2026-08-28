@@ -65,7 +65,7 @@ they go.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader —
-`docs/archive/audit-2026-07-30-full-roles.md` (the "what worked" table),
-`docs/agent/multiagent.md`. Related: [034](034-small-zone-per-executor.md),
+ArtVsMark/Stepik-Python-Grader — `docs/archive/audit-2026-07-30-full-roles.md`
+(the "what worked" table), `docs/agent/multiagent.md`. Related:
+[034](034-small-zone-per-executor.md),
 [061](061-environment-bans-belong-in-the-task.md).

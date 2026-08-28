@@ -59,6 +59,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/http_guards.py`, #631.
-Смежное: [045](045-no-silent-fallback.md) — обратный случай,
-[046](046-name-the-gaps-do-not-level-them.md).
+ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/http_guards.py`,
+ArtVsMark/Stepik-Python-Grader#631. Смежное: [045](045-no-silent-fallback.md) —
+обратный случай, [046](046-name-the-gaps-do-not-level-them.md).

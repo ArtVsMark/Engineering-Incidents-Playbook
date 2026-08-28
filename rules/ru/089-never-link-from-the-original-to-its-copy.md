@@ -62,6 +62,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Архитектурные инварианты
-(истина глоссария), `docs/dev/glossary.md` § Источники истины.
-Смежное: [022](022-one-canonical-document.md).
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Архитектурные инварианты (истина
+глоссария), `docs/dev/glossary.md` § Источники истины. Смежное:
+[022](022-one-canonical-document.md).
