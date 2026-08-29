@@ -6,7 +6,7 @@
       "repo": "ArtVsMark/claude-code-playbook",
       "role": "каталог",
       "state": "подключён",
-      "read_at": "2026-08-28",
+      "read_at": "2026-08-29",
       "answered": 153,
       "by_status": {
         "not-applicable": 35,
@@ -626,16 +626,15 @@
       "repo": "ArtVsMark/Stepik-Python-Grader",
       "role": "потребитель",
       "state": "подключён",
-      "read_at": "2026-08-28",
+      "read_at": "2026-08-29",
       "answered": 152,
       "by_status": {
         "active": 149,
         "not-applicable": 3
       },
       "by_mechanism": {
-        "gate": 96,
-        "process-step": 52,
-        "none": 1
+        "gate": 97,
+        "process-step": 52
       },
       "rules": {
         "001": "active",
@@ -1229,8 +1228,8 @@
           "where": "флаг --clear-cache чистит оба кэша, заведённых продуктом (issue #816); tests/test_cli.py держит охват"
         },
         "113": {
-          "mechanism": "none",
-          "where": "docs/dev/result-contract.md"
+          "mechanism": "gate",
+          "where": "scripts/check_contract_evolution.py"
         },
         "114": {
           "mechanism": "gate",
@@ -1395,7 +1394,7 @@
       "repo": "ArtVsMark/ArtVsMark",
       "role": "потребитель",
       "state": "подключён",
-      "read_at": "2026-08-28",
+      "read_at": "2026-08-29",
       "answered": 153,
       "by_status": {
         "active": 79,
