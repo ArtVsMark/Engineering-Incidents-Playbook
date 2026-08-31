@@ -706,3 +706,33 @@ def test_sled_i_proishozhdenie_schitayutsya_otdelno():
 
     assert ab.origin_counts(rules) == {"o/a": 1}
     assert ab.trail_counts(rules) == {"o/b": 1, "o/c": 1}
+
+
+# ── версия ответа сверяется с издателем (157) ──────────────────────────────
+
+def срез(repo: str, schema: str) -> dict:
+    return {"repo": repo, "schema": schema, "rules": {"001": "active"}}
+
+
+def test_otstavshaya_shema_eto_nahodka():
+    """52 ответа грейдера из 153 стояли расколотым словом, и его гейт был
+    зелёным: он сравнивал свою версию со своей же константой."""
+    assert ab.schema_lag([срез("o/a", "1.0")], "1.1") == [
+        "o/a: ответ по схеме 1.0, у контракта 1.1 — записи остаются валидными, "
+        "означая уже другое"]
+
+
+def test_tekushchaya_shema_molchit():
+    assert ab.schema_lag([срез("o/a", "1.1")], "1.1") == []
+
+
+def test_otvet_bez_versii_eto_nahodka():
+    """Не назвав версию, потребитель не заметит подъёма никогда."""
+    out = ab.schema_lag([срез("o/a", "")], "1.1")
+    assert len(out) == 1 and "не называет версию" in out[0]
+
+
+def test_nepodklyuchyonnyy_ne_schitaetsya():
+    """У проекта без ответа версии нет и быть не может: это состояние, а не
+    отставание (027)."""
+    assert ab.schema_lag([{"repo": "o/тихий", "state": "не подключён"}], "1.1") == []
