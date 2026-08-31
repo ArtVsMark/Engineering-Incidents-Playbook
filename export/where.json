@@ -14,8 +14,8 @@
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 53,
-        "none": 41,
+        "gate": 55,
+        "none": 39,
         "pipeline": 3,
         "document": 14
       },
@@ -444,8 +444,8 @@
           "where": "словарь областей в scripts/build_rules_index.py закрытый: область, которой в нём нет, сборку не проходит, и спор решается пополнением словаря осознанно"
         },
         "100": {
-          "mechanism": "none",
-          "where": "у каждой работы стоит timeout-minutes, то есть дедлайн РАБОТЫ. Отдельного короткого дедлайна на СТАРТ нет ни у одной — зависнуть до первой строки нечему помешать"
+          "mechanism": "gate",
+          "where": "scripts/check_workflows.py — предел времени обязателен у каждой работы конвейера. ГРАНИЦА: дедлайна на СТАРТ площадка не даёт, timeout-minutes идёт с момента, когда работа получила машину, — вторая половина правила на этой поверхности не обеспечена"
         },
         "104": {
           "mechanism": "gate",
@@ -516,8 +516,8 @@
           "where": "scripts/build_rules_index.py — область и даты из источников"
         },
         "126": {
-          "mechanism": "none",
-          "where": ".github/workflows/*.yml — ручная кнопка workflow_dispatch есть у всех девяти работ. Гейта под это НЕТ, и цена уже измерена: .github/workflows/agent-pr.yml прожил без кнопки до тех пор, пока разрешимость `where` не потребовала назвать адрес механизма, которого не было"
+          "mechanism": "gate",
+          "where": "scripts/check_workflows.py — ручная кнопка обязательна у каждого файла прогона. Список исключений разрешительный и сейчас пуст: запретительный завтра пропустил бы новый файл (068)"
         },
         "127": {
           "mechanism": "none",
@@ -627,13 +627,13 @@
       "role": "потребитель",
       "state": "подключён",
       "read_at": "2026-08-31",
-      "answered": 152,
+      "answered": 153,
       "by_status": {
-        "active": 149,
+        "active": 150,
         "not-applicable": 3
       },
       "by_mechanism": {
-        "gate": 97,
+        "gate": 98,
         "process-step": 52
       },
       "rules": {
@@ -788,7 +788,8 @@
         "150": "active",
         "151": "active",
         "152": "active",
-        "153": "active"
+        "153": "active",
+        "154": "active"
       },
       "holds": {
         "001": {
@@ -1386,6 +1387,10 @@
         "153": {
           "mechanism": "gate",
           "where": "docs/agent/rules/DIGEST.md собирается из каталога генератором (scripts/generate_rules_digest.py), а не переписывается руками: чужой текст здесь производное с живым исходником, и расхождение ловит check_rules_digest.py"
+        },
+        "154": {
+          "mechanism": "gate",
+          "where": "scripts/check_rule_bindings.py — храповик UNHELD_BUDGET = 0: запись active + mechanism: none сюда не мержится вовсе, поэтому состояние, у которого 154 требует причину, здесь недостижимо, а не молчаливо; у отрицательных статусов (rejected, not-applicable) тот же гейт отказывает при пустом why"
         }
       },
       "trails": 67

@@ -134,6 +134,7 @@ python scripts/link_trails.py --selftest
 python scripts/refresh_derived.py --selftest
 python scripts/check_showcase.py
 python scripts/check_test_deps.py
+python scripts/check_workflows.py
 python scripts/check_labels.py --paths-from <файл со списком путей> --have <метки>
 python scripts/pr_body.py --check --body-file <файл с телом изменения>
 ```

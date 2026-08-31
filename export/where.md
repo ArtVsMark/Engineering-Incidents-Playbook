@@ -12,8 +12,8 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 24 | 153 | 0 | 0 | 111 | 53 | 3 | 14 | 41 | 0 | 47 |  |
-| `Stepik-Python-Grader` | подключён | 67 | 152 | 1 | 0 | 149 | 97 | 0 | 0 | 0 | 52 | 108 |  |
+| `claude-code-playbook` | подключён | 24 | 153 | 0 | 0 | 111 | 55 | 3 | 14 | 39 | 0 | 48 |  |
+| `Stepik-Python-Grader` | подключён | 67 | 153 | 0 | 0 | 150 | 98 | 0 | 0 | 0 | 52 | 108 |  |
 | `ArtVsMark` | подключён | 12 | 153 | 0 | 0 | 79 | 46 | 6 | 11 | 16 | 0 | 32 |  |
 | `claude-code-usage` | не подключён | 1 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 | `Glossary-Python` | не подключён | 0 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
@@ -54,7 +54,6 @@
 | 089 | `Stepik-Python-Grader` — гейт: scripts/check_showcase_links.py — данные карточек, локали и разметка веб-слоя не содержат ссылки на внешнюю витрину; объяснения в комментариях и docstring разрешены; `ArtVsMark` — документ: README.md — ссылки ведут только в источники, обратных из проектов сюда нет | `claude-code-playbook` |
 | 093 | `Stepik-Python-Grader` — шаг процесса: ADR-0006: протокол Runner введён швом до server mode — минимальная обратимая точка расширения вместо обобщения по первому случаю | `claude-code-playbook` |
 | 098 | `Stepik-Python-Grader` — шаг процесса: docs/dev/glossary.md § Одна концепция — одна карточка: парные протоколы намеренно остаются бандлами, а поиск чинится keywords, а не разбиением | `claude-code-playbook` |
-| 100 | `Stepik-Python-Grader` — гейт: scripts/check_step_deadlines.py — у шага, который ходит в сеть (установка, скачивание артефакта, клон), свой timeout-minutes: общий предел job'а старт не покрывает, и зависшая установка съедала бы его целиком; `ArtVsMark` — гейт: .github/workflows/*.yml — у всех четырёх прогонов timeout-minutes вместо шестичасового умолчания; scripts/check_mechanisms.py::audit_runners — таймаут спрашивается у КАЖДОЙ работы, разбором YAML, а не грепом: `timeout-minutes` встречается и у шага, и грепом одно от другого не отличить. Утверждение «у всех четырёх» устарело в тот же месяц — прогонов стало восемь, и именно поэтому перебор здесь дешевле счёта | `claude-code-playbook` |
 | 105 | `Stepik-Python-Grader` — гейт: .github/workflows/claude-code-review.yml — ревью ведёт отдельный прогон, не то окно, что писало код; claude-review в списке обязательных проверок защиты main | `claude-code-playbook`, `ArtVsMark` |
 | 106 | `Stepik-Python-Grader` — шаг процесса: HISTORY.md: решение владельца — не показывать широко, пока не пройден настоящий курс и вердикты не сошлись с платформой; протокол прогона — docs/agent/course-walkthrough.md | `claude-code-playbook` |
 | 111 | `claude-code-playbook` — гейт: конвейер делает сам, а не советует: .github/workflows/agent-pr.yml открывает изменение, .github/workflows/automerge.yml включает слияние, .github/workflows/labels-sync.yml расставляет метки; `Stepik-Python-Grader` — шаг процесса: CLAUDE.md § Гейты: может сделать сам — делает, а не советует; прецедент — gh_rest.py edit-pr вместо совета проставить Closes руками | `ArtVsMark` |
@@ -64,7 +63,6 @@
 | 121 | `Stepik-Python-Grader` — гейт: scripts/check_container_closure.py — ночной обход сверяет состояние эпика со счётчиком незакрытых дочерних задач: закрытый контейнер с открытой работой становится находкой с адресатом | `claude-code-playbook` |
 | 124 | `Stepik-Python-Grader` — гейт: scripts/rerun_flaky_checks.py: список разрешённых к автоперезапуску закрыт, попытка ровно одна, а зелёное со второго раза записывается находкой в docs/agent/flaky-runs.md | `claude-code-playbook` |
 | 125 | `claude-code-playbook` — гейт: scripts/build_rules_index.py — область и даты из источников; `Stepik-Python-Grader` — гейт: scripts/check_generated_sources.py — у производного файла назван живой исходник; DIGEST.md и указатель правил пересобираются генератором, а не правятся | `ArtVsMark` |
-| 126 | `Stepik-Python-Grader` — гейт: красная main замораживает очередь мержа, и выход из заморозки — метка blocker на чинящем PR, то есть путь мимо замороженного действия; вычисляет scripts/gh_rest.py queue; `ArtVsMark` — конвейер: метка hold останавливает автомерж, и снимается она не через слияние; .github/workflows/automerge.yml; .github/workflows/release-hold.yml после снятия метки САМ вооружает автомерж методом squash. Снятая метка ничего не двигает: площадка не будит прогоны событиями от GITHUB_TOKEN, и automerge на такое снятие не просыпается. Замер 28 августа на #87: release-hold отработал дважды с исходом success, метка исчезла, а последний прогон automerge остался тем, что бежал ДО снятия — механизм сработал наполовину и отчитался успехом (правило 146); вооружает автомерж он ТОКЕНОМ ВЛАДЕЛЬЦА, а не штатным: замер 28 августа на #89 дал дословно «GraphQL: Resource not accessible by integration (mergePullRequest)». Второе следствие важнее первого — события от GITHUB_TOKEN площадка прогонами не считает, и даже успешное снятие метки штатным токеном никого не будит | `claude-code-playbook` |
 | 127 | `Stepik-Python-Grader` — гейт: scripts/check_docs_guardrails.py — число в прозе живёт только внутри генерируемого блока с маркером; вписанное руками отклоняется; `ArtVsMark` — гейт: scripts/build_metrics.py::patch_readme — маркер, сборка и падение при пропаже маркера | `claude-code-playbook` |
 | 130 | `Stepik-Python-Grader` — гейт: scripts/link_rules_to_issues.py — новое правило приходит вместе со списком кандидатов из нашего трекера | `claude-code-playbook` |
 | 132 | `Stepik-Python-Grader` — гейт: scripts/check_work_overlap.py показывает, кто ещё трогает те же файлы, а check_pr_ready.py требует объявить все задачи сборного изменения (Closes #N либо «Часть #N»); `ArtVsMark` — документ: CLAUDE.md § Критические запреты — не везти в одном PR несколько тем; .github/pull_request_template.md — тот же вопрос критику. Гейта нет намеренно: число затронутых зон сборности не доказывает, а ложный отказ на широкой теме дороже пропуска. Правило само требует предупреждения, а не отказа, — а предупреждать здесь некому | `claude-code-playbook` |
@@ -114,11 +112,12 @@
 | `claude-code-playbook` | `scripts/audit_catalogue.py` | 2 |
 | `claude-code-playbook` | `scripts/check_attribution.py` | 2 |
 | `claude-code-playbook` | `scripts/check_showcase.py` | 2 |
+| `claude-code-playbook` | `scripts/check_workflows.py` | 2 |
 | `claude-code-playbook` | `scripts/collect_changelog.py` | 2 |
 | `claude-code-playbook` | `scripts/ghcli.py` | 2 |
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 18 механизмов по одному правилу; без названного адреса: 0 из 70 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 18 механизмов по одному правилу; без названного адреса: 0 из 72 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 28 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |
@@ -127,7 +126,7 @@
 | `Stepik-Python-Grader` | `scripts/check_docs_guardrails.py` | 6 |
 | `Stepik-Python-Grader` | `scripts/check_pr_ready.py` | 6 |
 | `Stepik-Python-Grader` | `docs/agent/preflight.md` | 5 |
-| `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 4 |
+| `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 5 |
 | `Stepik-Python-Grader` | `.rules/bindings.json` | 3 |
 | `Stepik-Python-Grader` | `CHANGELOG.md` | 3 |
 | `Stepik-Python-Grader` | `docs/agent/claude-handoff.md` | 3 |
@@ -160,7 +159,7 @@
 | `Stepik-Python-Grader` | `tests/conftest.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
-| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 67 механизмов по одному правилу; без названного адреса: 5 из 149 |
+| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 67 механизмов по одному правилу; без названного адреса: 5 из 150 |
 | `ArtVsMark` | `scripts/build_metrics.py` | 22 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 17 |
 | `ArtVsMark` | `CLAUDE.md` | 11 |
@@ -343,4 +342,4 @@
 | 151 | действует | действует | действует |
 | 152 | действует | действует | действует |
 | 153 | действует | действует | действует |
-| 154 | действует | — | действует |
+| 154 | действует | действует | действует |
