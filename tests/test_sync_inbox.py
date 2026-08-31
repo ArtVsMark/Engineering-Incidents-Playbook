@@ -121,3 +121,68 @@ def test_treker_ne_otvetil_eto_tretiy_ishod(monkeypatch, capsys):
     monkeypatch.setattr("sys.argv", ["sync_inbox.py", "--bindings", str(path)])
     assert si.main() == 2
     assert "не отработала" in capsys.readouterr().err
+
+
+# ── «у соседей это уже решено» (доставка сводки во входящие) ────────────────
+
+def сосед(repo: str, rid: str, mechanism: str = "gate", where: str = "s/g.py") -> dict:
+    return {"repo": repo, "holds": {rid: {"mechanism": mechanism, "where": where}}}
+
+
+НИЧЕМ = {"001": {"status": "active", "mechanism": "none", "why": "не дошли руки"}}
+
+
+def test_sosedskiy_mehanizm_popadaet_s_adresom():
+    out = si.solved_next_door(НИЧЕМ, [сосед("o/grader", "001")], "o/me")
+
+    assert out == [{"rule": "001",
+                    "held": [{"repo": "o/grader", "mechanism": "gate",
+                              "where": "s/g.py"}]}]
+
+
+def test_svoy_mehanizm_sosedskim_ne_schitaetsya():
+    """Проект не должен видеть собственный ответ как чужой совет."""
+    assert si.solved_next_door(НИЧЕМ, [сосед("o/me", "001")], "o/me") == []
+
+
+def test_pravilo_derzhitsya_zdes_v_razdel_ne_idyot():
+    свой = {"001": {"status": "active", "mechanism": "gate", "where": "s/x.py"}}
+
+    assert si.solved_next_door(свой, [сосед("o/grader", "001")], "o/me") == []
+
+
+def test_sosed_bez_adresa_ne_pomogaet():
+    """ГРАНИЦА, ТА ЖЕ ЧТО У ПОЛЯ `where`: пересказ механизма помогает не больше,
+    чем его отсутствие — открыть его нечем."""
+    без = [{"repo": "o/grader", "holds": {"001": {"mechanism": "gate", "where": ""}}}]
+
+    assert si.solved_next_door(НИЧЕМ, без, "o/me") == []
+
+
+def test_sosed_u_kotorogo_tozhe_nichem_ne_schitaetsya():
+    оба = [{"repo": "o/grader",
+            "holds": {"001": {"mechanism": "none", "where": "нигде"}}}]
+
+    assert si.solved_next_door(НИЧЕМ, оба, "o/me") == []
+
+
+def test_nedeystvuyushchee_pravilo_v_razdel_ne_idyot():
+    """`rejected` здесь — решение, а не пробел: советовать по нему нечего."""
+    отклонено = {"001": {"status": "rejected", "why": "нет предмета"}}
+
+    assert si.solved_next_door(отклонено, [сосед("o/grader", "001")], "o/me") == []
+
+
+def test_razdel_pechataetsya_v_tele_zadachi():
+    body = si.body_for([], [], "o/cat", solved=[
+        {"rule": "001", "held": [{"repo": "o/grader", "mechanism": "gate",
+                                  "where": "s/g.py — что делает"}]}])
+
+    assert "У соседей это уже решено" in body
+    assert "s/g.py" in body and "grader" in body
+
+
+def test_pustoy_razdel_ne_pechataetsya():
+    """Заголовок без строк читается как «мы посмотрели и там пусто», а посмотреть
+    могли и не суметь: пустое состояние объявляется, когда оно измерено (027)."""
+    assert "У соседей" not in si.body_for([], [], "o/cat", solved=[])
