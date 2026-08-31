@@ -206,3 +206,78 @@ def test_пустой_диапазон_это_третий_исход(repo, caps
     # подтвердил историю, которую не смотрел.
     assert ca.first_parents(repo, "main", head, {AGREED}) == 2
     assert "подтверждать нечего" in capsys.readouterr().err
+
+
+# ── трейлер в хвостовом блоке, а не в прозе (156) ──────────────────────────
+
+СООБЩЕНИЕ = """Заголовок изменения
+
+Абзац объясняет, почему площадка дописывает
+Co-authored-by: github-actions[bot] в уплотнённый коммит. #83 сделал автором.
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+Claude-Session: https://example/session
+"""
+
+
+def test_proza_ne_treyler():
+    """Инцидент ArtVsMark/ArtVsMark#95: середина фразы после переноса строки
+    оказалась первой в ней, и гейт назвал её соавтором. Изменение чинило
+    красную общую ветку — отказ задержал починку самого этого гейта."""
+    assert ca.COAUTHOR.findall(ca.tail(СООБЩЕНИЕ)) == ["Claude <noreply@anthropic.com>"]
+
+
+def test_nastoyashchiy_treyler_chitaetsya():
+    """Обратная сторона: хвост обязан читаться, иначе гейт перестанет держать
+    атрибуцию вовсе."""
+    assert "Claude-Session" in ca.tail(СООБЩЕНИЕ)
+
+
+def test_hvost_s_prozoy_blokom_ne_schitaetsya():
+    """Один прозаический хвост делает абзац прозой ЦЕЛИКОМ: иначе разбор снова
+    начнёт угадывать, где кончается объяснение."""
+    смешанный = ("Заголовок\n\nCo-Authored-By: Claude <noreply@anthropic.com>\n"
+                 "и вот почему так вышло\n")
+    assert ca.tail(смешанный) == ""
+
+
+def test_soobshchenie_bez_hvosta_daet_pustotu():
+    assert ca.tail("Просто заголовок\n") == ""
+
+
+def test_odin_abzac_iz_treylerov_eto_hvost():
+    """Сообщение без тела: заголовок и сразу трейлеры — законная форма."""
+    assert "Claude" in ca.tail("Заголовок\n\nCo-Authored-By: Claude <x@y>\n")
+
+
+def test_proza_v_tele_ne_otvergaet_izmenenie(repo, monkeypatch):
+    """ГЕЙТ, А НЕ РЕГУЛЯРКА (150): случай спрашивает решение гейта на живом
+    коммите, чьё тело объясняет атрибуцию словами. Именно так и вышло 30
+    августа: изменение витрины #95 чинило красную общую ветку, а этот гейт
+    отверг его, приняв середину фразы за соавтора."""
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    commit(repo, "объясняет атрибуцию",
+           "Абзац про то, почему площадка дописывает\n"
+           "Co-authored-by: github-actions[bot] в уплотнённый коммит.\n\n"
+           f"Co-Authored-By: {AGREED}")
+    path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path), "--require-declared-author"])
+
+    assert ca.main() == 0
+
+
+def test_chuzhoy_soavtor_v_hvoste_po_prezhnemu_nahodka(repo, monkeypatch):
+    """Обратная сторона той же починки: настоящий несогласованный соавтор в
+    хвостовом блоке обязан отвергаться, иначе гейт перестал держать атрибуцию."""
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    commit(repo, "с чужим соавтором", "Co-Authored-By: Кто-то <nobody@example.com>")
+    path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path), "--require-declared-author"])
+
+    assert ca.main() == 1
