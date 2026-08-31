@@ -5,7 +5,7 @@
 [![Rules in the catalogue](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Frules-en.json)](rules/README.md)
 [![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
 
-**A catalogue of <!--m:rules-->160<!--/m:rules--> rules for Claude Code and GitHub,
+**A catalogue of <!--m:rules-->161<!--/m:rules--> rules for Claude Code and GitHub,
 where every one grew out of a real failure.** Agent sessions and the project rulebook (`CLAUDE.md`), the
 GitHub delivery pipeline, parallel executors, audits. Every record comes with its
 history: what broke, how it surfaced, what it cost.

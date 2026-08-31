@@ -320,3 +320,82 @@ def test_ne_deystvuyushchee_pravilo_ne_schitaetsya():
     rules = {"001": {"status": "rejected", "why": "требует суждения: нет"}}
 
     assert cb.why_split(rules) == ({}, 0)
+
+
+# ── очередь «ничем» называет, что уже решено у соседа (правило 162) ─────────
+#
+# Случаи спрашивают ГЕЙТ через main() и читают его вывод: свёртка сама по себе
+# ответила бы согласием с собой, а предмет здесь — попадает ли ответ соседа в
+# метрику, рядом с которой выбирают работу (правило 150).
+
+СОСЕДИ = {
+    "consumers": [
+        {"repo": "мой/каталог", "holds": {}},
+        {"repo": "чужой/грейдер", "holds": {
+            "001": {"mechanism": "gate", "where": "scripts/check_docs.py"},
+        }},
+    ]
+}
+
+
+def с_соседями(monkeypatch, repo: Path, ответ: dict, соседи=СОСЕДИ) -> None:
+    prepare(monkeypatch, repo, ответ, export_of(*ответ["rules"]))
+    if соседи is not None:
+        write(repo / "export" / "where.json", json.dumps(соседи))
+
+
+def ничем(why: str = "требует суждения: пока так") -> dict:
+    return {"project": "мой/каталог",
+            "rules": {"001": {"status": "active", "mechanism": "none",
+                              "where": "договорённостью, гейта нет",
+                              "why": why}}}
+
+
+def test_reshennoe_u_sosseda_nazvano_v_metrike(monkeypatch, repo, capsys):
+    """Ровно инцидент 162: ответ соседа лежал в собранной сводке и молчал."""
+    с_соседями(monkeypatch, repo, ничем())
+
+    assert cb.main() == 0
+    out = capsys.readouterr().out
+    assert "решено у соседа 1" in out and "грейдер" in out and "001" in out
+
+
+def test_u_sosseda_tozhe_nichem_eto_otvet(monkeypatch, repo, capsys):
+    """«Ни одного» печатается: пустая строка неотличима от несчитанного (027)."""
+    с_соседями(monkeypatch, repo, ничем(),
+               соседи={"consumers": [{"repo": "чужой/грейдер", "holds": {
+                   "001": {"mechanism": "none", "where": ""}}}]})
+
+    assert cb.main() == 0
+    assert "ни одного" in capsys.readouterr().out
+
+
+def test_otvet_soseda_bez_adresa_ne_schitaetsya_reshennym(monkeypatch, repo, capsys):
+    """Пересказ помогает не больше, чем молчание: адрес обязателен."""
+    с_соседями(monkeypatch, repo, ничем(),
+               соседи={"consumers": [{"repo": "чужой/грейдер", "holds": {
+                   "001": {"mechanism": "gate", "where": "   "}}}]})
+
+    assert cb.main() == 0
+    assert "ни одного" in capsys.readouterr().out
+
+
+def test_pravilo_s_mehanizmom_v_ocheredi_ne_stoit(monkeypatch, repo, capsys):
+    """Очередь — это «ничем»; закрытое гейтом сюда попадать не должно, иначе
+    метрика зовёт переделывать сделанное."""
+    write(repo / "CLAUDE.md", "# свод\n")
+    с_соседями(monkeypatch, repo,
+               {"project": "мой/каталог",
+                "rules": {"001": {"status": "active", "mechanism": "gate",
+                                  "where": "CLAUDE.md — раздел про гейты"}}})
+
+    assert cb.main() == 0
+    assert "ни одного" in capsys.readouterr().out
+
+
+def test_bez_svodki_metrika_govorit_chto_ne_schitalas(monkeypatch, repo, capsys):
+    """Молчание вместо числа читалось бы как «у соседей ничего нет» (046)."""
+    с_соседями(monkeypatch, repo, ничем(), соседи=None)
+
+    assert cb.main() == 0
+    assert "не считалось" in capsys.readouterr().out

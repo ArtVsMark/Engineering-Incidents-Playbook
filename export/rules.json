@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 160,
+  "count": 161,
   "rules": [
     {
       "id": "001",
@@ -4369,6 +4369,35 @@
       "files": {
         "ru": "rules/ru/161-history-keeps-turning-points.md",
         "en": "rules/en/161-history-keeps-turning-points.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "148"
+        }
+      ],
+      "origin": "ArtVsMark/claude-code-playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "162",
+      "slug": "a-gap-asks-the-neighbours-first",
+      "title": {
+        "ru": "Правило, не обеспеченное ничем, сначала спрашивает соседей",
+        "en": "A rule held by nothing asks the neighbours first"
+      },
+      "areas": {
+        "ru": [
+          "процесс"
+        ],
+        "en": [
+          "process"
+        ]
+      },
+      "added": "2026-08-31",
+      "files": {
+        "ru": "rules/ru/162-a-gap-asks-the-neighbours-first.md",
+        "en": "rules/en/162-a-gap-asks-the-neighbours-first.md"
       },
       "trails": [
         {
