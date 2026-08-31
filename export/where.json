@@ -8,14 +8,14 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-08-31",
-      "answered": 159,
+      "answered": 160,
       "by_status": {
         "not-applicable": 35,
-        "active": 117,
+        "active": 118,
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 68,
+        "gate": 69,
         "none": 32,
         "pipeline": 3,
         "document": 14
@@ -179,7 +179,8 @@
         "157": "active",
         "158": "active",
         "159": "active",
-        "160": "active"
+        "160": "active",
+        "161": "active"
       },
       "holds": {
         "002": {
@@ -649,10 +650,14 @@
         "160": {
           "mechanism": "gate",
           "where": "scripts/check_showcase.py — badges_in_tree(): артефакт витрины, вернувшийся в дерево общей ветки, отвергается. .gitignore накрывает .github/badges/*.json и *.svg, но при слиянии его не спрашивают — сторож стоит именно поэтому. Свежесть держит .github/workflows/badges.yml на каждый толчок в main"
+        },
+        "161": {
+          "mechanism": "gate",
+          "where": "scripts/audit_catalogue.py — у каждого поворотного момента в HISTORY.md проверены четыре части и РАЗРЕШИМАЯ ссылка в «Во что превратилось»; там же держится окно живого документа и переезд вышедшего за него в архив. ГРАНИЦА: что решение поворотное, а не ход работы, гейт не судит — критерий записан в самом HISTORY.md и проверяется чтением при приёмке"
         }
       },
-      "trails": 26,
-      "born": 20
+      "trails": 27,
+      "born": 21
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",

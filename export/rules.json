@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 159,
+  "count": 160,
   "rules": [
     {
       "id": "001",
@@ -4345,6 +4345,35 @@
         {
           "repo": "ArtVsMark/claude-code-playbook",
           "issue": "144"
+        }
+      ],
+      "origin": "ArtVsMark/claude-code-playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "161",
+      "slug": "history-keeps-turning-points",
+      "title": {
+        "ru": "История проекта ведётся поворотами, а не ходом работ",
+        "en": "A project's history keeps turning points, not the course of work"
+      },
+      "areas": {
+        "ru": [
+          "документация"
+        ],
+        "en": [
+          "documentation"
+        ]
+      },
+      "added": "2026-08-31",
+      "files": {
+        "ru": "rules/ru/161-history-keeps-turning-points.md",
+        "en": "rules/en/161-history-keeps-turning-points.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "148"
         }
       ],
       "origin": "ArtVsMark/claude-code-playbook",
