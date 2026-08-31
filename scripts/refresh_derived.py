@@ -281,14 +281,15 @@ def selftest() -> int:
         bad.append(f"пропавший сборщик обязан дать 2, дал {rc} {problems}")
 
     # Новый файл внутри набора считается изменением, а не пропускается: свежая
-    # картинка в непустом репозитории приезжает именно так.
+    # сводка в непустом репозитории приезжает именно так. Раньше предметом
+    # этого случая была картинка витрины — она ушла из набора вместе с уходом
+    # из дерева общей ветки (правило 160), и случай переехал на сводку.
     d = repo("from pathlib import Path\n"
-             "Path('.github/badges/consumers-dark.svg')"
-             ".write_text('новая\\n', encoding='utf-8')\n")
-    (d / ".github/badges/consumers-dark.svg").unlink()
-    run(["git", "commit", "-qam", "картинки не было"], d)
+             "Path('export/where.md').write_text('новая\\n', encoding='utf-8')\n")
+    (d / "export/where.md").unlink()
+    run(["git", "commit", "-qam", "сводки не было"], d)
     rc, names, _ = refresh(d)
-    if rc != 1 or names != [".github/badges/consumers-dark.svg"]:
+    if rc != 1 or names != ["export/where.md"]:
         bad.append(f"новое производное обязано дать 1 и его имя, дало {rc} {names}")
 
     # ГРЯЗНОЕ ДЕРЕВО ЧЕЛОВЕКА — НЕ НАХОДКА СБОРЩИКА. Ровно на этом первая
