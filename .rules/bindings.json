@@ -10,7 +10,7 @@
     "002": {
       "status": "active",
       "mechanism": "gate",
-      "where": ".github/workflows/ci.yml — гейты на каждый PR"
+      "where": ".github/workflows/ci.yml — гейты на каждый PR; scripts/preflight.py — чек-лист свода переписан в команду, а шаги она читает из того же конвейера"
     },
     "003": {
       "status": "active",

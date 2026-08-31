@@ -102,9 +102,19 @@ fails the index build, and that is the mechanism keeping the trees together.
 
 ## Прежде чем открывать PR · Before opening a PR
 
-Гейты запускаются локально теми же командами, что и в конвейере. Канонический
-список — шаги в [`.github/workflows/ci.yml`](.github/workflows/ci.yml); ниже
-он повторён для удобства, и если два списка разошлись, прав файл конвейера:
+Одной командой — она читает шаги из конвейера и запускает те, у которых есть
+предмет без изменения; чего запустить нельзя, называет:
+
+```
+python scripts/preflight.py
+```
+
+**By one command.** It reads the steps from the pipeline, runs those that have
+a subject outside a pull request, and names the ones it cannot run.
+
+Поштучно — теми же командами, что и в конвейере. Канонический список — шаги в
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml); ниже он повторён для
+удобства, и если два списка разошлись, прав файл конвейера:
 
 ```
 python scripts/build_rules_index.py --check
