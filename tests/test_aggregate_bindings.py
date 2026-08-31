@@ -464,13 +464,15 @@ def test_без_ответа_и_лишний_ответ_разные_числа(
     cli(monkeypatch)
 
     ab.main()
-    строка = next(l for l in (repo / "export" / "where.md")
-                  .read_text(encoding="utf-8").splitlines()
-                  if l.startswith("| `a`"))
-    _, _, _, следы, ответов, без_ответа, лишних, действует, *_ = строка.split("|")
+    # ПО ИМЕНИ КОЛОНКИ, А НЕ ПО ПОЗИЦИИ. Позиционный разбор стоял здесь и
+    # сломался ровно так, как обещал соседний помощник: вставка колонки
+    # «Родил» сдвинула четыре числа разом, и случай сообщил не о ней.
+    md = (repo / "export" / "where.md").read_text(encoding="utf-8")
 
-    assert без_ответа.strip() == "1" and лишних.strip() == "1"
-    assert ответов.strip() == "2" and действует.strip() == "2"
+    assert cell(md, "a", "Без ответа · Unanswered") == "1"
+    assert cell(md, "a", "Лишних · Stale") == "1"
+    assert cell(md, "a", "Ответов · Answers") == "2"
+    assert cell(md, "a", "Действует · Active") == "2"
 
 
 def test_механизмы_считаются_различными_адресами(monkeypatch, repo):
@@ -676,3 +678,31 @@ def test_о_незаменённом_правиле_не_говорят():
     срез = {"repo": "o/a", "rules": {"002": "active"}}
 
     assert ab.answers_superseded(срез, {"001": "154"}) == []
+
+
+# ── третье число: происхождение записей (задача #192) ──────────────────────
+
+def test_rodil_schitaetsya_po_polyu_origin():
+    """Метрика — выборка по хранимому полю, а не догадка по следам."""
+    rules = [{"id": "001", "origin": "o/a"},
+             {"id": "002", "origin": "o/a"},
+             {"id": "003", "origin": "o/b"}]
+
+    assert ab.origin_counts(rules) == {"o/a": 2, "o/b": 1}
+
+
+def test_zapis_bez_proishozhdeniya_ne_lomaet_schyot():
+    """Поле может отсутствовать у записи, приехавшей до его заведения:
+    пропуск — это ноль вклада, а не ошибка разбора."""
+    assert ab.origin_counts([{"id": "001"}, {"id": "002", "origin": "o/a"}]) == {"o/a": 1}
+
+
+def test_sled_i_proishozhdenie_schitayutsya_otdelno():
+    """След ведёт туда, где поломка ВИДНА, а происхождение — где случилась.
+    Слить их значило бы выдать догадку за выборку: у части записей следов
+    нет вовсе, а у части их несколько и родителя по ним не выбрать."""
+    rules = [{"id": "001", "origin": "o/a",
+              "trails": [{"repo": "o/b"}, {"repo": "o/c"}]}]
+
+    assert ab.origin_counts(rules) == {"o/a": 1}
+    assert ab.trail_counts(rules) == {"o/b": 1, "o/c": 1}

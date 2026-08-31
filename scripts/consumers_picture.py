@@ -90,7 +90,11 @@ ROW, PILL_H = 42, 24
 #: только то, что стоит друг под другом. Ради этого же ширина каждой
 #: плашечной колонки берётся максимальной по всем строкам — иначе числа
 #: разной длины сдвигали бы соседнюю колонку у каждого проекта.
-COL_ANSWERED, COL_TRAILS, COL_PILLS, PILL_GAP = 300, 434, 556, 10
+# Третья колонка — «родил»: сколько правил каталога РОДИЛОСЬ у проекта.
+# Первые две про то, как проект каталог потребляет; эта — про то, чем он
+# его наполнил, и стоит она перед плашками, потому что отвечает на вопрос
+# о проекте, а не о механизмах (задача #192).
+COL_ANSWERED, COL_TRAILS, COL_BORN, COL_PILLS, PILL_GAP = 300, 434, 556, 678, 10
 
 #: Ширина плашки считается по числу знаков, а не измеряется: шрифта у нас
 #: нет, и измерить его нечем. Коэффициенты подобраны с запасом — текст,
@@ -105,7 +109,8 @@ LANG = {
         "title": "Чем держится правило у потребителей",
         "sub": "ответы самих проектов на каждое из {total} правил каталога — "
                "не наша оценка их",
-        "answered": "разобрано", "trails": "связей", "held": "чем держится",
+        "answered": "разобрано", "trails": "связей", "born": "родил",
+        "held": "чем держится",
         "gate": "гейт", "pipeline": "конвейер", "document": "документ",
         "process-step": "шаг процесса", "none": "ничем",
         "off": "не подключён", "unknown": "неизвестно", "empty": "none",
@@ -114,7 +119,8 @@ LANG = {
         "title": "How rules are enforced across consumers",
         "sub": "each project's own answer on all {total} catalogue rules — "
                "not our assessment of them",
-        "answered": "answered", "trails": "trails", "held": "held by",
+        "answered": "answered", "trails": "trails", "born": "born",
+        "held": "held by",
         "gate": "gate", "pipeline": "pipeline", "document": "document",
         "process-step": "process step", "none": "nothing",
         "off": "not connected", "unknown": "unknown", "empty": "none",
@@ -136,6 +142,7 @@ def rows(doc: dict) -> list[dict]:
             "connected": bool(c.get("rules")),
             **{k: mech.get(k, 0) for k in ALL_KEYS},
             "trails": c.get("trails", 0),
+            "born": c.get("born", 0),
             "answered": c.get("answered") or 0,
         })
     return out
@@ -232,7 +239,8 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
     ]
     # Шапка колонок: подпись стоит один раз сверху, а не повторяется в
     # каждой строке — повтор съедает ту самую ширину, ради которой колонки.
-    for x, word in ((COL_ANSWERED, w["answered"]), (COL_TRAILS, w["trails"])):
+    for x, word in ((COL_ANSWERED, w["answered"]), (COL_TRAILS, w["trails"]),
+                    (COL_BORN, w["born"])):
         p.append(text(x, TOP - 14, word, t["label"], 11.5, 600,
                       ' letter-spacing="0.3"'))
     # Подпись плашек — ПО СЕРЕДИНЕ группы, а не над её левым краем: она
@@ -245,8 +253,12 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
     for r in data:
         p.append(text(PAD, y + 17, r["name"], t["name"], 18, 800,
                       ' letter-spacing="-0.4"'))
+        # «Родил» показывается и у НЕподключённого проекта: происхождение
+        # записи не зависит от того, ответил ли проект каталогу, и прочерк
+        # здесь означал бы «не знаем», хотя знаем (правило 027).
         for x, value, live in ((COL_ANSWERED, r["answered"], r["connected"]),
-                               (COL_TRAILS, r["trails"], r["trails"] > 0)):
+                               (COL_TRAILS, r["trails"], r["trails"] > 0),
+                               (COL_BORN, r["born"], r["born"] > 0)):
             cell = str(value) if live else "—"
             p.append(text(x, y + 19, cell,
                           t["accent"] if live else t["muted"], 22, 800))

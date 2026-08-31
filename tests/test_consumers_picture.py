@@ -28,7 +28,7 @@ def срез(repo, consumers, rules=("001", "002")):
     return repo
 
 
-def подключён(name, trails=0, answered=2, **механизмы):
+def подключён(name, trails=0, born=0, answered=2, **механизмы):
     """Ответ подключённого потребителя. Механизмы — по именам, а не позиции.
 
     Позиционные `gate, step, none` держались ровно до раскола «шага процесса»:
@@ -44,6 +44,7 @@ def подключён(name, trails=0, answered=2, **механизмы):
     mech = {"gate": 1, "process-step": 1, "none": 1}
     mech.update(механизмы)
     return {"repo": f"o/{name}", "state": "подключён", "trails": trails,
+            "born": born,
             "rules": {"001": "active"}, "answered": answered,
             "by_mechanism": mech}
 
@@ -362,3 +363,45 @@ def test_подпись_плашек_стоит_по_центру_группы(r
 
     assert шапка.get("text-anchor") == "middle"
     assert abs(int(шапка.get("x")) - (слева + справа) // 2) <= 6
+
+
+# ── третье число: сколько правил родилось у проекта (задача #192) ──────────
+
+def ячейки_чисел(svg):
+    return {int(e.get("x")): (e.text or "") for e in ET.fromstring(svg).iter()
+            if e.tag.endswith("text") and e.get("font-size") == "22"}
+
+
+def test_rodil_stoit_v_svoey_kolonke(repo):
+    """Три числа отвечают на разные вопросы, и путать их колонками нельзя:
+    два первых про то, как проект каталог ПОТРЕБЛЯЕТ, третье — чем наполнил."""
+    svg = рисуй(срез(repo, [подключён("a", answered=140, trails=9, born=41)]))
+    ячейки = ячейки_чисел(svg)
+
+    assert ячейки[cp.COL_ANSWERED] == "140"
+    assert ячейки[cp.COL_TRAILS] == "9"
+    assert ячейки[cp.COL_BORN] == "41"
+
+
+def test_rodil_vidno_i_u_nepodklyuchyonnogo(repo):
+    """Происхождение записи не зависит от того, ответил ли проект каталогу:
+    оно считается по НАШЕМУ корпусу. Прочерк здесь означал бы «не знаем»
+    про то, что знаем точно."""
+    svg = рисуй(срез(repo, [{"repo": "o/тихий", "state": "не подключён",
+                             "trails": 0, "born": 3}]))
+    ячейки = ячейки_чисел(svg)
+
+    assert ячейки[cp.COL_ANSWERED] == "—"
+    assert ячейки[cp.COL_BORN] == "3"
+
+
+def test_kolonka_rodil_ne_naezzhaet_na_plashki(repo):
+    """Колонка вставлена ПЕРЕД плашками, и место ей отведено, а не отнято у
+    соседа: иначе первая плашка легла бы поверх числа."""
+    svg = рисуй(срез(repo, [подключён("a", born=127)]))
+    p = ET.fromstring(svg)
+    плашки = [float(e.get("x")) for e in p.iter()
+              if e.tag.endswith("rect") and e.get("rx") == "12"]
+
+    assert плашки, "плашек не нашлось — случай проверяет не то"
+    assert min(плашки) >= cp.COL_BORN + 40
