@@ -7,14 +7,14 @@
       "role": "каталог",
       "state": "подключён",
       "read_at": "2026-08-31",
-      "answered": 153,
+      "answered": 154,
       "by_status": {
         "not-applicable": 35,
-        "active": 111,
+        "active": 112,
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 55,
+        "gate": 56,
         "none": 39,
         "pipeline": 3,
         "document": 14
@@ -172,7 +172,8 @@
         "151": "active",
         "152": "active",
         "153": "active",
-        "154": "active"
+        "154": "active",
+        "155": "active"
       },
       "holds": {
         "002": {
@@ -618,9 +619,13 @@
         "154": {
           "mechanism": "gate",
           "where": "scripts/check_bindings.py — ответ `active` + `none` без поля `why` отвергается до слияния, симметрично тому, как `why` давно обязателен при `rejected` и `not-applicable`. Гейт держит форму: что причина есть. Того, что она не пересказ самого правила, он не держит — это чтение при приёмке, и граница названа в самой записи"
+        },
+        "155": {
+          "mechanism": "gate",
+          "where": "scripts/check_templates.py — таблица в templates/README.md обязана назвать каждую заготовку и ответить, чем она применяется у самого каталога: адресом артефакта либо «нет: причина». ГРАНИЦА: что применение совпадает ПО СУЩЕСТВУ, гейт не судит — это приёмка"
         }
       },
-      "trails": 24
+      "trails": 25
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",

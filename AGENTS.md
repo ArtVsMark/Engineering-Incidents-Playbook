@@ -57,6 +57,7 @@
 | `python scripts/check_test_deps.py` | каждый импорт тестов объявлен, а не случайно установлен у автора |
 | `python scripts/check_labels.py` | зона изменения выведена из тронутых путей и стоит на нём |
 | `python scripts/check_workflows.py` | у каждого прогона ручная кнопка, у каждой работы предел времени |
+| `python scripts/check_templates.py` | каждая заготовка сказала, чем она применяется у самого каталога |
 | `python scripts/check_gates.py` | гейты отвергают то, что обязаны, **и пропускают то, что обязаны** |
 | `python scripts/main_red.py --selftest` | дежурный по общей ветке: свёртка по имени, исключения, три исхода |
 | `python scripts/link_trails.py --selftest` | обратная ссылка: свои следы против чужих, идемпотентность, три исхода |
