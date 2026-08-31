@@ -39,7 +39,7 @@ line". A wrap inside a worked paragraph puts any word first without the
 author's intent, and the longer the paragraph the likelier it is. A tail block
 is immune: its boundary is a blank line, not the column width.
 
-## Practical boundaries
+## In practice
 
 - trailers come from the last paragraph, and only if **all** of its non-empty
   lines have the `Key: value` shape;

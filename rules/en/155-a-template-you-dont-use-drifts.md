@@ -48,7 +48,7 @@ The asymmetry of cost follows. Drifted practice at home costs one red run.
 A drifted template costs somebody else's time in somebody else's repository,
 where nobody will compare it against the original.
 
-## Practical boundaries
+## In practice
 
 - the template is used at home **the same way** it is offered: not "we do the
   same by hand", but the same executable step;

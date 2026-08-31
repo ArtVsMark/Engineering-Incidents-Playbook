@@ -57,7 +57,7 @@ rather than render an empty cell
 ([075](075-a-guard-that-finds-nothing-must-fail.md)): as long as an empty value
 is acceptable, it will return at the next change of format.
 
-## Practical boundaries
+## In practice
 
 - data is stored in the file it describes, not in a summary about it;
 - the generator reads sources and takes **nothing** from its own output,

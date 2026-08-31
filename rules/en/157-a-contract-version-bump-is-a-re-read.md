@@ -50,7 +50,7 @@ The asymmetry is in who **sees** the drift. The consumer sees a valid file. The
 publisher sees a column of zeros and reads it as "that is how they work".
 Neither side sees the cause until somebody asks out loud.
 
-## Practical boundaries
+## In practice
 
 - the contract version is taken **from the publisher**, never from your own
   constant;
