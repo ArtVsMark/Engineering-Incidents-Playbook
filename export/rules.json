@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 156,
+  "count": 158,
   "rules": [
     {
       "id": "001",
@@ -4257,6 +4257,68 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
+      "portable": "yes"
+    },
+    {
+      "id": "158",
+      "slug": "the-third-outcome-names-its-subject",
+      "title": {
+        "ru": "Третий исход называет предмет отказа, а не только его причину",
+        "en": "The third outcome names its subject, not just its cause"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "надёжность"
+        ],
+        "en": [
+          "gates",
+          "reliability"
+        ]
+      },
+      "added": "2026-08-31",
+      "files": {
+        "ru": "rules/ru/158-the-third-outcome-names-its-subject.md",
+        "en": "rules/en/158-the-third-outcome-names-its-subject.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "95"
+        }
+      ],
+      "origin": "ArtVsMark/ArtVsMark",
+      "portable": "yes"
+    },
+    {
+      "id": "159",
+      "slug": "a-set-verdict-comes-after-the-last-case",
+      "title": {
+        "ru": "Вердикт набора выносится после последнего случая, а не посреди перебора",
+        "en": "A set's verdict comes after the last case, not in the middle of the walk"
+      },
+      "areas": {
+        "ru": [
+          "тесты",
+          "гейты"
+        ],
+        "en": [
+          "tests",
+          "gates"
+        ]
+      },
+      "added": "2026-08-31",
+      "files": {
+        "ru": "rules/ru/159-a-set-verdict-comes-after-the-last-case.md",
+        "en": "rules/en/159-a-set-verdict-comes-after-the-last-case.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "95"
+        }
+      ],
+      "origin": "ArtVsMark/ArtVsMark",
       "portable": "yes"
     }
   ],
