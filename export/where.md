@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 24 | 153 | 0 | 0 | 111 | 53 | 3 | 14 | 41 | 0 | 46 |  |
+| `claude-code-playbook` | подключён | 24 | 153 | 0 | 0 | 111 | 53 | 3 | 14 | 41 | 0 | 47 |  |
 | `Stepik-Python-Grader` | подключён | 67 | 152 | 1 | 0 | 149 | 97 | 0 | 0 | 0 | 52 | 108 |  |
 | `ArtVsMark` | подключён | 12 | 153 | 0 | 0 | 79 | 46 | 6 | 11 | 16 | 0 | 32 |  |
 | `claude-code-usage` | не подключён | 1 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
@@ -118,7 +118,7 @@
 | `claude-code-playbook` | `scripts/ghcli.py` | 2 |
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 17 механизмов по одному правилу; без названного адреса: 0 из 70 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 18 механизмов по одному правилу; без названного адреса: 0 из 70 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 28 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |
@@ -170,11 +170,11 @@
 | `ArtVsMark` | `scripts/check_roles.py` | 8 |
 | `ArtVsMark` | `.github/workflows/open-pr.yml` | 7 |
 | `ArtVsMark` | `scripts/check_page.py` | 7 |
+| `ArtVsMark` | `.github/workflows/metrics.yml` | 6 |
 | `ArtVsMark` | `.github/workflows/pr-check.yml` | 6 |
 | `ArtVsMark` | `.rules/README.md` | 6 |
 | `ArtVsMark` | `scripts/check_bindings.py` | 6 |
 | `ArtVsMark` | `scripts/gh_outcome.py` | 6 |
-| `ArtVsMark` | `.github/workflows/metrics.yml` | 5 |
 | `ArtVsMark` | `.github/workflows/rules-inbox.yml` | 5 |
 | `ArtVsMark` | `scripts/check_author.py` | 5 |
 | `ArtVsMark` | `.github/workflows/main-red.yml` | 4 |
