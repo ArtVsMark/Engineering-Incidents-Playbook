@@ -600,6 +600,14 @@ CHARTER_CASES = [
     ("гейт обещан участнику, но не стоит в конвейере", "onramp-extra", 1,
      "обещание, которое никто не исполняет: новичок прогонит и решит, "
      "что защищён"),
+    ("у гейта нет отвергаемого предмета", "no-subject", 1,
+     "зелёный прогон на хорошем входе подтверждает, что скрипт запускается, "
+     "и ничего больше (140, 146). До 31 августа это была метрика: числа "
+     "печатались и ни к чему не вели"),
+    ("набор есть, а отказа в нём нет", "positive-only", 1,
+     "ровно та ошибка, что допущена дважды за смену 31 августа: случай звал "
+     "внутреннюю функцию, а не main(), и мутация «главный ход её не зовёт» "
+     "набор переживала (150)"),
 ]
 
 
@@ -642,6 +650,21 @@ def suite_charter() -> tuple[list[str], int]:
             (root / "CONTRIBUTING.md").write_text(o, encoding="utf-8")
             (root / ".github" / "workflows" / "ci.yml").write_text(
                 pipeline, encoding="utf-8")
+
+            # ОТРИЦАТЕЛЬНЫЙ ПРЕДМЕТ У КАЖДОГО ГЕЙТА ПОДДЕЛКИ. С 31 августа его
+            # требует сам check_charter: набор обязан спрашивать решение гейта
+            # и получать ОТКАЗ. Законная подделка обязана это иметь, иначе
+            # базовый случай покраснеет на верной работе (051) — что и вышло
+            # при первом прогоне.
+            tests = root / "tests"
+            tests.mkdir(exist_ok=True)
+            отказ = "def test_x():\n    assert one.main([]) == 1\n"
+            чисто = "def test_x():\n    assert one.main([]) == 0\n"
+            (tests / "test_one.py").write_text(
+                чисто if spoil == "positive-only" else отказ, encoding="utf-8")
+            if spoil != "no-subject":
+                (tests / "test_two.py").write_text(
+                    отказ.replace("one.", "two."), encoding="utf-8")
 
             done = run(sys.executable, str(CHARTER_GATE), "--root", str(root),
                        cwd=ROOT)

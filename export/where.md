@@ -81,12 +81,12 @@
 |---|---|---|
 | `claude-code-playbook` | `scripts/check_gates.py` | 11 |
 | `claude-code-playbook` | `.github/workflows/automerge.yml` | 7 |
+| `claude-code-playbook` | `.github/workflows/ci.yml` | 7 |
 | `claude-code-playbook` | `export/README.md` | 7 |
 | `claude-code-playbook` | `scripts/build_rules_index.py` | 7 |
-| `claude-code-playbook` | `.github/workflows/ci.yml` | 6 |
 | `claude-code-playbook` | `scripts/aggregate_bindings.py` | 6 |
+| `claude-code-playbook` | `scripts/check_charter.py` | 6 |
 | `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 5 |
-| `claude-code-playbook` | `scripts/check_charter.py` | 5 |
 | `claude-code-playbook` | `scripts/check_bindings.py` | 4 |
 | `claude-code-playbook` | `scripts/check_prose.py` | 4 |
 | `claude-code-playbook` | `scripts/check_showcase.py` | 4 |
