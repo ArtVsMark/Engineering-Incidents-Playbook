@@ -152,6 +152,7 @@ def collect(consumers: list[dict]) -> tuple[list[dict], list[str]]:
             mech = rec.get("mechanism") or "none"
             by_mechanism[mech] = by_mechanism.get(mech, 0) + 1
             holds[rid] = {"mechanism": mech, "where": rec.get("where") or ""}
+        entry["schema"] = data.get("schema") or ""
         entry["state"] = "подключён"
         # ЭТО ПОЛЕ МЕНЯЕТСЯ КАЖДЫМ ПРОГОНОМ САМО ПО СЕБЕ — см. VOLATILE ниже.
         entry["read_at"] = today
@@ -413,6 +414,38 @@ def trail_counts(rules: list[dict]) -> dict[str, int]:
             repo = t.get("repo")
             if repo:
                 out[repo] = out.get(repo, 0) + 1
+    return out
+
+
+def schema_lag(slices: list[dict], own: str) -> list[str]:
+    """Потребители, чей ответ отвечает по версии старше нашей.
+
+    ПОЧЕМУ ЭТО НАДО ГОВОРИТЬ ВСЛУХ. Совместимость по формату маскирует
+    расхождение по смыслу: расколотое слово продолжает читаться, просто теперь
+    оно означает «мы не ответили». Издатель при этом видит колонку нулей и
+    читает её как «у него так устроено», а потребитель видит свой файл
+    валидным. Ни одна сторона не видит причины, пока кто-то не спросит вслух —
+    именно так это и вскрылось у грейдера, вопросом владельца (правило 157).
+
+    Замер, ради которого правило приехало: 52 ответа из 153 стояли словом
+    `process-step`, расколотым в версии 1.1, и гейт потребителя был зелёным —
+    он сравнивал свою версию со своей же константой.
+
+    ГРАНИЦА. Отсюда не чинится: файл чужой. Поэтому находка живёт рядом с
+    лишними ответами, в разделе «правится не здесь», и прогон от неё не
+    краснеет.
+    """
+    out: list[str] = []
+    for s in slices:
+        if not s.get("rules"):
+            continue
+        theirs = s.get("schema") or ""
+        if not theirs:
+            out.append(f"{s['repo']}: ответ не называет версию схемы — "
+                       "подъём контракта у нас он не заметит")
+        elif theirs != own:
+            out.append(f"{s['repo']}: ответ по схеме {theirs}, у контракта {own} — "
+                       "записи остаются валидными, означая уже другое")
     return out
 
 
@@ -803,6 +836,30 @@ def main() -> int:
     # которое не гаснет.
     problems += unconnected(consumers)
     elsewhere = stale_answers(slices, rule_ids, superseded_map())
+    # ВЕРСИЯ БЕРЁТСЯ У ИЗДАТЕЛЯ, А НЕ ИЗ КОНСТАНТЫ. Каталог — такой же
+    # потребитель (129), и его собственный ответ по определению стоит на
+    # текущей версии; сравнивать с числом в коде значило бы повторить ту самую
+    # ошибку, из-за которой правило и приехало (157).
+    own_schema = ""
+    try:
+        own_schema = json.loads((ROOT / ".rules" / "bindings.json")
+                                .read_text(encoding="utf-8")).get("schema") or ""
+    except (OSError, ValueError):
+        pass
+    if own_schema:
+        elsewhere += schema_lag(slices, own_schema)
+        # Заготовка ответа раздаётся потребителям как образец. Отстав, она
+        # рассылает устаревшую версию всем, кто подключается сегодня (155).
+        try:
+            tpl = json.loads((ROOT / "templates" / "bindings.json")
+                             .read_text(encoding="utf-8")).get("schema") or ""
+        except (OSError, ValueError):
+            tpl = ""
+        if tpl and tpl != own_schema:
+            problems.append(
+                f"templates/bindings.json: заготовка ответа объявляет схему "
+                f"{tpl}, а ответ каталога — {own_schema}. Образец, который "
+                "раздают, отстал от того, что применяется дома (155, 157)")
 
     doc = {
         "schema": "1.0",

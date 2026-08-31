@@ -5,13 +5,15 @@
     {
       "repo": "ArtVsMark/claude-code-playbook",
       "role": "каталог",
+      "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-08-31",
-      "answered": 155,
+      "answered": 156,
       "by_status": {
         "not-applicable": 35,
         "active": 113,
-        "rejected": 7
+        "rejected": 7,
+        "unreviewed": 1
       },
       "by_mechanism": {
         "gate": 66,
@@ -174,7 +176,8 @@
         "153": "active",
         "154": "active",
         "155": "active",
-        "156": "active"
+        "156": "active",
+        "157": "unreviewed"
       },
       "holds": {
         "002": {
@@ -636,6 +639,7 @@
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
       "role": "потребитель",
+      "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-08-31",
       "answered": 153,
@@ -1412,6 +1416,7 @@
     {
       "repo": "ArtVsMark/ArtVsMark",
       "role": "потребитель",
+      "schema": "1.0",
       "state": "подключён",
       "read_at": "2026-08-31",
       "answered": 153,
