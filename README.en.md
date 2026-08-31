@@ -97,7 +97,7 @@ Two separate indexes would not do this — each looks complete on its own.
   <img src="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-en-dark.svg" alt="How rules are enforced across consumers" width="100%">
 </picture>
 
-Drawn by a workflow from [`export/where.json`](export/where.json) — the projects' own answers, not our assessment of them. One row per project, columns aligned: the eye can only compare what sits in the same place. Each pill names **how many rules** that mechanism holds — a share you have to measure by eye reads as nothing at all. The full report, including "who already solved what a neighbour holds by nothing", is in [`export/where.md`](export/where.md).
+Drawn by a workflow from [`export/where.json`](export/where.json) — the projects' own answers, not our assessment of them. One row per project, columns aligned: the eye can only compare what sits in the same place. Each pill names **how many rules** that mechanism holds — a share you have to measure by eye reads as nothing at all. The third number, “born”, answers a different question: not how the project consumes the catalogue, but how many rules **originated** there. The catalogue is shared, but it does not grow evenly. The full report, including "who already solved what a neighbour holds by nothing", is in [`export/where.md`](export/where.md).
 
 ## License
 

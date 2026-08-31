@@ -373,6 +373,28 @@ def _how_others_enforce(connected: list[dict]) -> list[str]:
     return lines
 
 
+def origin_counts(rules: list[dict]) -> dict[str, int]:
+    """Сколько правил каталога РОДИЛОСЬ у каждого репозитория.
+
+    Это третье число рядом с «разобрано» и «связей», и оно отвечает на другой
+    вопрос: те два про то, как проект каталог ПОТРЕБЛЯЕТ, это — про то, чем он
+    его наполнил. Каталог общий, но растёт неравномерно, и кто именно его
+    наполняет, не было видно нигде (задача #192).
+
+    СЧИТАЕТСЯ ПО ПОЛЮ `origin`, А НЕ ПО СЛЕДАМ. След ведёт туда, где поломка
+    ВИДНА, а не туда, где она случилась; у части записей следов на задачи нет
+    вовсе, а у некоторых их несколько и родителя по ним не выбрать. Замер на
+    момент заведения поля: следы были у 64 записей из 152 — метрика по ним
+    оказалась бы догадкой, выданной за выборку.
+    """
+    out: dict[str, int] = {}
+    for r in rules:
+        repo = r.get("origin")
+        if repo:
+            out[repo] = out.get(repo, 0) + 1
+    return out
+
+
 def trail_counts(rules: list[dict]) -> dict[str, int]:
     """Сколько следов каталога ведёт в каждый репозиторий.
 
@@ -548,9 +570,10 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
     head = " | ".join(MECHANISM_HEAD[m] for m in cols)
     lines += [
         "| Проект · Project | Состояние · State | Следов · Trails | "
+        "Родил · Born | "
         "Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | "
         f"Действует · Active | {head} | Механизмов · Mechanisms | Почему · Why |",
-        "|" + "---|" * (8 + len(cols)),
+        "|" + "---|" * (9 + len(cols)),
     ]
     known = set(rule_ids)
     for s in slices:
@@ -579,6 +602,7 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
         # обязаны выглядеть одинаково (022).
         lines.append(
             f"| `{s['repo'].split('/')[-1]}` | {s['state']} | {s.get('trails', 0)} | "
+            f"{s.get('born', 0)} | "
             f"{answered if answered is not None else '—'} | "
             + " | ".join(cells) + f" | {s.get('why', '')} |")
 
@@ -744,8 +768,13 @@ def main() -> int:
         counts = trail_counts(json.loads(RULES.read_text(encoding="utf-8"))["rules"])
     except (OSError, ValueError, KeyError):
         counts = {}
+    try:
+        born = origin_counts(json.loads(RULES.read_text(encoding="utf-8"))["rules"])
+    except (OSError, ValueError, KeyError):
+        born = {}
     for entry in slices:
         entry["trails"] = counts.get(entry.get("repo"), 0)
+        entry["born"] = born.get(entry.get("repo"), 0)
     warnings = stale(slices)
     # ЧИНИТ НЕ ТОТ, КТО НАШЁЛ. Находки делятся по тому, чьей правкой они
     # снимаются, а не по тому, насколько они серьёзны.
