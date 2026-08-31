@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 25 | 19 | 154 | 0 | 0 | 112 | 56 | 3 | 14 | 39 | 0 | 50 |  |
+| `claude-code-playbook` | подключён | 25 | 19 | 154 | 0 | 0 | 112 | 59 | 3 | 14 | 36 | 0 | 52 |  |
 | `Stepik-Python-Grader` | подключён | 67 | 127 | 153 | 1 | 0 | 150 | 98 | 0 | 0 | 0 | 52 | 108 |  |
 | `ArtVsMark` | подключён | 12 | 7 | 153 | 1 | 0 | 79 | 46 | 6 | 11 | 16 | 0 | 32 |  |
 | `claude-code-usage` | не подключён | 1 | 1 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
@@ -29,7 +29,6 @@
 |---|---|---|
 | 005 | `Stepik-Python-Grader` — гейт: scripts/check_docs_guardrails.py — числа тестов, покрытия и глоссария живут бейджами, а не текстом; CLAUDE.md § Метрики: «числом здесь не фиксируется»; `ArtVsMark` — гейт: scripts/build_metrics.py::patch_readme — числа только между маркерами m:ключ; scripts/build_metrics.py::render_featured — числа баннера тоже измерены, а не вписаны: они приходят из project_stats и попадают в подпись картинки той же сборкой; scripts/build_metrics.py::project_badges — версия, состояние CI, покрытие и версия пакета измеряются сборкой и рисуются ею же: чужих бейджей на витрине не осталось, а значит не осталось и второго источника тех же чисел; подпись «data as of» под плитками пишется сборкой, а не рукой: scripts/build_metrics.py::render_projects. Это день, когда числа последний раз ИЗМЕНИЛИСЬ, и .github/workflows/metrics.yml исключает саму подпись из сравнения — иначе прогон открывал бы изменение ежедневно, и «числа изменились» перестало бы что-либо значить | `claude-code-playbook` |
 | 006 | `Stepik-Python-Grader` — шаг процесса: CLAUDE.md § Два окна: «Окно живёт 3–5 дней, дальше перезапуск — обязательно»; замер 764 против 81 прочитанного токена на токен выхода и шаблон эстафеты — docs/agent/environments.md | `claude-code-playbook`, `ArtVsMark` |
-| 008 | `ArtVsMark` — гейт: scripts/check_page.py::audit_page — сворачиваемый блок на витрине отвергается дословным вхождением тега: он либо есть, либо нет, гадать не о чем. До 27 августа запрет держался абзацем в CLAUDE.md, хотя раздел под ним четыре обзора подряд назвали «обещанием без продолжения». README.md — блоков нет | `claude-code-playbook` |
 | 009 | `claude-code-playbook` — гейт: scripts/check_charter.py и scripts/check_showcase.py считают через множество, а не по вхождениям: гейт, названный в конвейере дважды, считается одним; `Stepik-Python-Grader` — гейт: scripts/version.py считает PATCH по номерам PR и уникализирует их множеством (issue #1042), сверяет scripts/check_version_consistency.py | `ArtVsMark` |
 | 012 | `Stepik-Python-Grader` — гейт: .claude/hooks/pre_tool_use.py — пуш в ветку, отличную от текущей, отвергается до вызова git; CI такое поймать не может, он видит артефакт, а не действие | `claude-code-playbook` |
 | 014 | `Stepik-Python-Grader` — шаг процесса: CONTRIBUTING.md § Когда дефект считается исправленным: краснота доказывается полу-откатом — новые имена оставить, убрать только поведение; откат всего src/ даёт ImportError; `ArtVsMark` — гейт: HISTORY.md § Гейты, проверенные тем, что они обязаны отвергнуть — каждый гейт нарочно ломался обратно в свой исходный дефект при сохранённых именах, и самопроверка обязана была покраснеть. Меняется ровно одна переменная: поведение убрано, имена на месте. ПОДНЯТО ДО ГЕЙТА 28 августа: scripts/check_mechanisms.py::audit_voice требует отрицательный набор у КАЖДОГО скрипта, способного отвергнуть, а ::audit_harness — чтобы .github/workflows/pr-check.yml этот набор ЗВАЛ. Раньше здесь стояло «мутации прогоняются рукой при заведении гейта, в конвейере их нет» — и цена этого измерена в тот же день: scripts/checks.py получил самопроверку и в прогон вписан не был, что заметилось глазами. Мутация по-прежнему рукой: подменить поведение при сохранённых именах машина не умеет, и это остаток правила, а не всё оно | `claude-code-playbook` |
@@ -37,10 +36,8 @@
 | 021 | `Stepik-Python-Grader` — гейт: docs/ разложена по направлениям use/dev/agent/archive, полноту индексов и разбиение проверяет scripts/check_docs_guardrails.py; две документные роли разделены по аудитории — docs/agent/roles.md; `ArtVsMark` — гейт: CLAUDE.md § Язык артефактов делит по читателю: README.md посетителю профиля, .rules/README.md, .rules/roles.md, HISTORY.md и сам CLAUDE.md — владельцу и окну. Прежнее «делить нечего» считало три файла там, где их восемь; scripts/check_page.py::audit_service и ::audit_page — язык проверяется долей кириллицы, порог 50% и он не выдуман: замер 27 августа дал 6% у витрины и 70–94% у служебных файлов, то есть нарушение даёт значение у другого края, а не рядом с порогом. Отдельно проверяется наличие русского раздела: без него страница перестаёт быть двуязычной, а это обещание свода | `claude-code-playbook` |
 | 025 | `Stepik-Python-Grader` — гейт: scripts/check_docs_guardrails.py — issue-tail policy: номер задачи допустим в журнале и запрещён в объясняющих документах; `ArtVsMark` — гейт: scripts/check_page.py::NUMBERED_TRACKER — ссылка на НОМЕРНУЮ задачу или изменение в тексте витрины отвергается: номер ничего не говорит постороннему читателю и устаревает вместе с задачей. Адрес трекера целиком законен и проверяется отдельным случаем набора — запрещён номер, а не адрес. README.md — номерных ссылок нет | `claude-code-playbook` |
 | 028 | `Stepik-Python-Grader` — гейт: scripts/check_issue_checklists.py — комплексный issue от трёх находок ведёт чек-лист с исходом каждой | `claude-code-playbook` |
-| 035 | `Stepik-Python-Grader` — гейт: версия динамическая из git-тегов (setuptools-scm), дрейф ловит scripts/check_version_consistency.py | `claude-code-playbook` |
 | 038 | `Stepik-Python-Grader` — шаг процесса: CLAUDE.md § Два окна: имя окна начинается с окружения ([WEB]/[LOCAL]/[CLI]), метка ставится при открытии; канон — docs/agent/environments.md | `ArtVsMark` |
 | 040 | `Stepik-Python-Grader` — гейт: scripts/skip_inventory.py | `claude-code-playbook` |
-| 043 | `Stepik-Python-Grader` — гейт: scripts/check_adr_records.py | `claude-code-playbook` |
 | 044 | `Stepik-Python-Grader` — шаг процесса: docs/agent/roles.md: оценка 🔍 Аудитора едет как заявка и проходит через ⚖️ Верификатора с установкой «опровергай по умолчанию» — по находке не работают, пока её премиса не проверена; `ArtVsMark` — гейт: scripts/check_bindings.py — премиса вердикта проверяется до того, как ему поверят: каждое «чем держится» и каждое «этого у нас нет» есть утверждение о текущем коде, и каждая ссылка в них сверяется с файлом и объявленным именем; отказ от чужих бейджей — та же премиса: утверждение, которое из окна не проверить, витрина на себя не берёт (прокси не пускает img.shields.io, и живой бейдж от опечатки в ссылке неотличим); scripts/build_metrics.py::verify_absence — премиса отказа по показателю проверяется до того, как её покажут: «релизов нет» у каталога правил оказалось неверным, релиз был помечен предварительным и не попадал в latest | `claude-code-playbook` |
 | 047 | `Stepik-Python-Grader` — шаг процесса: CLAUDE.md § Гейты: смена правил транспорта требует перезапуска активных окон — настройки читаются при старте сессии; `ArtVsMark` — документ: CLAUDE.md § Окно — прямой цитатой: сменились правила работы, окна перезапускаются. Этот файл читается один раз, при старте | `claude-code-playbook` |
 | 052 | `Stepik-Python-Grader` — гейт: scripts/move_merge_queue.py обновляет только голову очереди — из main остальные не двигаются (CLAUDE.md § Гейты: N против N(N−1)/2) | `claude-code-playbook` |
@@ -87,13 +84,13 @@
 
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
-| `claude-code-playbook` | `scripts/check_gates.py` | 9 |
+| `claude-code-playbook` | `scripts/check_gates.py` | 10 |
 | `claude-code-playbook` | `export/README.md` | 7 |
 | `claude-code-playbook` | `.github/workflows/automerge.yml` | 6 |
+| `claude-code-playbook` | `scripts/build_rules_index.py` | 6 |
 | `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 5 |
 | `claude-code-playbook` | `.github/workflows/ci.yml` | 5 |
 | `claude-code-playbook` | `scripts/aggregate_bindings.py` | 5 |
-| `claude-code-playbook` | `scripts/build_rules_index.py` | 5 |
 | `claude-code-playbook` | `scripts/check_charter.py` | 5 |
 | `claude-code-playbook` | `scripts/check_bindings.py` | 4 |
 | `claude-code-playbook` | `scripts/link_trails.py` | 4 |
@@ -111,13 +108,15 @@
 | `claude-code-playbook` | `export/rules.json` | 2 |
 | `claude-code-playbook` | `scripts/audit_catalogue.py` | 2 |
 | `claude-code-playbook` | `scripts/check_attribution.py` | 2 |
+| `claude-code-playbook` | `scripts/check_prose.py` | 2 |
 | `claude-code-playbook` | `scripts/check_showcase.py` | 2 |
 | `claude-code-playbook` | `scripts/check_workflows.py` | 2 |
 | `claude-code-playbook` | `scripts/collect_changelog.py` | 2 |
 | `claude-code-playbook` | `scripts/ghcli.py` | 2 |
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
+| `claude-code-playbook` | `scripts/version.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 20 механизмов по одному правилу; без названного адреса: 0 из 73 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 20 механизмов по одному правилу; без названного адреса: 0 из 76 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 28 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |
