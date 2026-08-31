@@ -48,6 +48,55 @@ def fetch_rules(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None
         return None, f"{url} — {e}"
 
 
+def fetch_where(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None]:
+    """Сводка «чем держат другие» — чтобы соседский механизм доехал сюда.
+
+    Раздел «Чем держат другие» существует в сводке каталога с самого её
+    появления, и отвечает он ровно на нужный вопрос: кто уже сталкивался и чем
+    закрыл. Но лежит он в ЧУЖОМ репозитории, файлом в двести строк, и приходят
+    в него те, кто УЖЕ выбрал, чем держать правило. Знание собрано и никому не
+    доставлено — та же поломка, что у красного без адресата (правило 142).
+
+    ТРЕТИЙ ИСХОД НАЗЫВАЕТ ПРЕДМЕТ (158): адрес возвращается вместе с ошибкой,
+    иначе на два источника выйдет одно неразличимое «не ответил».
+    """
+    url = f"https://raw.githubusercontent.com/{catalogue}/{ref}/export/where.json"
+    try:
+        with urllib.request.urlopen(url, timeout=30) as resp:
+            return json.loads(resp.read().decode("utf-8")).get("consumers", []), None
+    except (urllib.error.URLError, OSError, ValueError) as e:
+        return None, f"{url} — {e}"
+
+
+def solved_next_door(answered: dict, consumers: list[dict], me: str) -> list[dict]:
+    """Правила, что у меня не держатся ничем, а у соседа держатся — с адресом.
+
+    ГРАНИЦА. Чужой механизм не обязан подойти: стеки разные, и правило,
+    закрытое у соседа гейтом, здесь может быть неприменимо вовсе. Раздел
+    отвечает не «сделай так», а «вот кто уже сталкивался»; решение остаётся за
+    тем, кто правит свой ответ.
+
+    Берутся только записи с РАЗРЕШИМЫМ адресом: пересказ соседа помогает не
+    больше, чем его отсутствие, и это та же граница, что у поля `where`.
+    """
+    свои = {rid for rid, rec in answered.items()
+            if rec.get("status") == "active"
+            and (rec.get("mechanism") or "none") == "none"}
+    out: list[dict] = []
+    for rid in sorted(свои):
+        для_него = []
+        for c in consumers:
+            if c.get("repo") == me:
+                continue
+            held = (c.get("holds") or {}).get(rid) or {}
+            mech, where = held.get("mechanism"), (held.get("where") or "").strip()
+            if mech and mech != "none" and where:
+                для_него.append({"repo": c["repo"], "mechanism": mech, "where": where})
+        if для_него:
+            out.append({"rule": rid, "held": для_него})
+    return out
+
+
 #: Вызов gh живёт в одном месте на весь каталог: у четырёх копий
 #: разъехалось поведение при отсутствии самого gh (правила 090, 022).
 gh = ghcli.run
@@ -71,7 +120,8 @@ def stale_here(answered: dict, rules: list[dict]) -> list[str]:
 
 def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
              stale: list[str] | None = None, total: int | None = None,
-             answered: int | None = None) -> str:
+             answered: int | None = None,
+             solved: list[dict] | None = None) -> str:
     lines = [
         MARKER,
         "",
@@ -95,6 +145,27 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
             f"у {len(unreviewed)}.",
             "",
         ]
+
+    if solved:
+        lines += [
+            "## У соседей это уже решено",
+            "",
+            "Правила, которые здесь признаны действующими и **не держатся "
+            "ничем**, а у соседнего проекта держатся — с адресом механизма.",
+            "",
+            "Чужой механизм не обязан подойти: стеки разные, и правило, "
+            "закрытое у соседа гейтом, здесь может быть неприменимо вовсе. "
+            "Раздел отвечает не «сделай так», а «вот кто уже сталкивался».",
+            "",
+            "| № | Кто держит | Чем и где |",
+            "|---|---|---|",
+        ]
+        for item in solved:
+            for h in item["held"]:
+                где = h["where"].split(";")[0].strip()
+                lines.append(f"| {item['rule']} | `{h['repo'].split('/')[-1]}` | "
+                             f"{h['mechanism']}: {где} |")
+        lines.append("")
 
     if stale:
         # ЭТО НАХОДКА, А НЕ ОЧЕРЕДЬ, и потому стоит выше очереди: очередь
@@ -136,6 +207,12 @@ def main() -> int:
     ap.add_argument("--catalogue", default="ArtVsMark/claude-code-playbook")
     ap.add_argument("--ref", default="main")
     ap.add_argument("--bindings", default=".rules/bindings.json")
+    # КТО Я — чтобы не показывать проекту его собственный механизм как
+    # соседский. Умолчание берётся из окружения площадки: там это уже есть, и
+    # требовать его руками значило бы завести второй источник того же факта.
+    ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", ""),
+                    help="владелец/репозиторий этого проекта; по умолчанию из "
+                         "GITHUB_REPOSITORY")
     ap.add_argument("--title", default="Правила каталога: входящие")
     ap.add_argument("--dry-run", action="store_true",
                     help="показать тело задачи и не трогать трекер")
@@ -169,10 +246,19 @@ def main() -> int:
                   if answered.get(r["id"], {}).get("status") == "unreviewed"]
 
     stale = stale_here(answered, rules)
+    # СОСЕДСКИЙ МЕХАНИЗМ — ДОПОЛНЕНИЕ, И ОНО НЕ РОНЯЕТ ОСНОВНУЮ РАБОТУ (084).
+    # Сводка лежит в чужом репозитории; её недоступность делает раздел пустым,
+    # а не задачу — неоткрытой. Отказ называет адрес (158) и печатается, чтобы
+    # молчание не выдавалось за «у соседей ничего нет» (046).
+    neighbours, err = fetch_where(args.catalogue, args.ref)
+    if err:
+        print(f"сводка соседей не прочитана — {err}; раздел пропущен",
+              file=sys.stderr)
+    solved = solved_next_door(answered, neighbours or [], args.repo)
     решено = sum(1 for r in rules
                  if answered.get(r["id"], {}).get("status") not in (None, "unreviewed"))
     body = body_for(missing, unreviewed, args.catalogue, stale=stale,
-                    total=len(rules), answered=решено)
+                    total=len(rules), answered=решено, solved=solved)
     if args.dry_run:
         print(body)
         return 1 if (missing or unreviewed or stale) else 0
