@@ -460,7 +460,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ArtVsMark/claude-code-playbook@<!--m:ref-->v1.0.0<!--/m:ref-->
+      - uses: ArtVsMark/claude-code-playbook@<!--m:ref-->v1.1.0<!--/m:ref-->
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -550,7 +550,7 @@ of the rules: it only means this project no longer answers in public.
 ```yaml
 - uses: actions/checkout@v4
   with: { fetch-depth: 0 }        # гейту нужна история
-- uses: ArtVsMark/claude-code-playbook/.github/actions/attribution@<!--m:ref-->v1.0.0<!--/m:ref-->
+- uses: ArtVsMark/claude-code-playbook/.github/actions/attribution@<!--m:ref-->v1.1.0<!--/m:ref-->
   with:
     authors: .github/authors.txt  # СВОЙ список согласованных имён
     baseline: ""                  # свой коммит, с которого спрашивать

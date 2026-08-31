@@ -5,7 +5,7 @@
 [![Правил в каталоге](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Frules-ru.json)](rules/README.md)
 [![Покрытие](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
 
-**Каталог из <!--m:rules-->161<!--/m:rules--> правил для Claude Code и GitHub,
+**Каталог из <!--m:rules-->162<!--/m:rules--> правил для Claude Code и GitHub,
 где каждое выросло из реальной поломки.** Работа с агентскими окнами и сводом проекта (`CLAUDE.md`),
 конвейер GitHub, параллельные исполнители, аудит. Каждая запись — с историей:
 что сломалось, как обнаружили, чем обошлось.
@@ -35,8 +35,14 @@
 
 ## Как пользоваться
 
+**Подключаете проект** — [`CONNECT.md`](CONNECT.md): одна команда собирает
+ответ по каждому правилу, канал обратно и ежедневный прогон «входящих».
+Каталог отдаёт наружу механизмы, а не только текст, и подключаются командой,
+а не копированием.
+
 **Начинаете новый проект** — пройдите [`START.md`](START.md): порядок первого
-дня и что можно отложить. Заготовки лежат в [`templates/`](templates/).
+дня и что можно отложить. Заготовки лежат в [`templates/`](templates/) — они
+для того, кому инструменты недоступны.
 
 **Ищете решение конкретной боли** — смотрите [`rules/`](rules/README.md): один файл на
 правило, вход по номеру или [по областям](rules/README.md#по-областям).
