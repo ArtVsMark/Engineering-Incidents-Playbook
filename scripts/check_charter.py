@@ -64,6 +64,30 @@ NOT_A_GATE = {
 }
 
 CALL_RE = re.compile(r"python\s+((?:scripts|templates)/[a-z_0-9]+\.py)")
+
+#: Гейт, у которого отвергаемого предмета быть не может, — с причиной у каждой
+#: строки. Список РАЗРЕШИТЕЛЬНЫЙ: запретительный завтра пропустит новый гейт,
+#: заведённый без набора (правило 068). Пустой список — законное состояние.
+NO_NEGATIVE_SUBJECT: dict[str, str] = {}
+
+#: Случай, спрашивающий решение гейта и ожидающий ОТКАЗ. Проверяется именно он,
+#: а не наличие файла набора: 31 августа два набора были написаны так, что
+#: звали внутреннюю функцию, а не main(), и мутация «главный ход её не зовёт»
+#: их пережила. Файл существовал, предмет не проверялся (правило 150).
+REJECT_RE = re.compile(r"main\([^\n]*==\s*1|return \w+\.main\(")
+
+
+def rejects_in_tests(root: Path, stem: str) -> bool:
+    """У гейта есть случай, где он отвечает отказом на подделанном предмете."""
+    path = root / "tests" / f"test_{stem}.py"
+    if not path.exists():
+        return False
+    text = path.read_text(encoding="utf-8")
+    if not REJECT_RE.search(text):
+        return False
+    # Обёртка `def run(...): return X.main(...)` считается только вместе с
+    # ожиданием отказа где-то в наборе: сама по себе она ничего не спрашивает.
+    return "== 1" in text
 #: Раздел свода, в котором гейты перечислены. Заголовок сверяется целой
 #: строкой: «## 🛡 Гейты» — префикс никого не задевает, но приём тот же, что
 #: спас разбор следа (правило 141).
@@ -178,18 +202,46 @@ def main(argv: list[str] | None = None) -> int:
     if harness.exists():
         harness_text = harness.read_text(encoding="utf-8")
         by_harness = {g for g in in_pipeline if Path(g).stem in harness_text}
-    by_tests = {g for g in in_pipeline
-                if (root / "tests" / f"test_{Path(g).stem}.py").exists()}
-    untested = sorted(in_pipeline - by_harness - by_tests)
+    # ТРЕТЬЯ ФОРМА ПРЕДМЕТА — СОБСТВЕННАЯ САМОПРОВЕРКА. Скрипт, который сам
+    # прогоняет свои подделки и отвечает по ним, отрицательный предмет имеет:
+    # он в нём же и лежит. Условие двойное, как у витрины (её ::audit_harness):
+    # самопроверка должна СУЩЕСТВОВАТЬ и её должен ЗВАТЬ конвейер — иначе она
+    # написана и не запускается, а это ровно то, чем 040 и стоило.
+    # ФАЙЛА ГЕЙТА МОЖЕТ НЕ БЫТЬ. Свод называет команду, а лежит ли скрипт —
+    # вопрос другого гейта; читать его без проверки значит падать трассировкой
+    # вместо ответа. Так и вышло на первом же прогоне подделок: гейт «не
+    # отработал», а код вернул единицу — то есть третий исход слился со вторым
+    # ровно там, где этот скрипт его и стережёт (039).
+    pipeline_text = pipeline.read_text(encoding="utf-8")
+    by_selftest = set()
+    for g in in_pipeline:
+        script = root / g
+        if not script.exists():
+            continue
+        if ("def selftest" in script.read_text(encoding="utf-8")
+                and f"{g} --selftest" in pipeline_text):
+            by_selftest.add(g)
+    by_tests = {g for g in in_pipeline if rejects_in_tests(root, Path(g).stem)}
+    untested = sorted(in_pipeline - by_harness - by_tests - by_selftest
+                      - set(NO_NEGATIVE_SUBJECT))
 
     print(f"свод и конвейер называют одно и то же: гейтов {len(in_pipeline)}, "
           f"расхождений нет")
     print(f"  подделкой в check_gates: {len(by_harness)}, "
           f"набором в tests: {len(by_tests)}, "
-          f"только запуском {len(untested)}")
+          f"самопроверкой: {len(by_selftest)}, "
+          f"освобождено с причиной {len(NO_NEGATIVE_SUBJECT)}")
     if untested:
-        print("  без отвергаемого предмета: "
-              + ", ".join(Path(g).stem for g in untested))
+        print("у гейта нет отвергаемого предмета:", file=sys.stderr)
+        for g in untested:
+            print(f"  • {g}: ни подделки в check_gates.py, ни случая в "
+                  f"tests/test_{Path(g).stem}.py, где гейт отвечает ОТКАЗОМ. "
+                  "Зелёный прогон на хорошем входе подтверждает, что скрипт "
+                  "запускается, и ничего больше (140, 146)", file=sys.stderr)
+        print("\n  Случай обязан спрашивать решение гейта, а не повторять его "
+              "условие\n  (150): `assert main([...]) == 1` на подделанном "
+              "предмете.", file=sys.stderr)
+        return 1
     return 0
 
 
