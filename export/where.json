@@ -277,7 +277,7 @@
         },
         "039": {
           "mechanism": "gate",
-          "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке — шесть гейтов, у каждого предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
+          "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке: у каждого проверяемого им гейта есть предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
         },
         "040": {
           "mechanism": "none",
@@ -301,7 +301,7 @@
         },
         "045": {
           "mechanism": "gate",
-          "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке — шесть гейтов, у каждого предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
+          "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке: у каждого проверяемого им гейта есть предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
         },
         "046": {
           "mechanism": "document",
@@ -361,7 +361,7 @@
         },
         "067": {
           "mechanism": "gate",
-          "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке — шесть гейтов, у каждого предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
+          "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке: у каждого проверяемого им гейта есть предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
         },
         "068": {
           "mechanism": "gate",
@@ -397,7 +397,7 @@
         },
         "082": {
           "mechanism": "document",
-          "where": "карта направлений в AGENTS.md; полнота проверена обходом артефактов, три направления закрыты гейтами"
+          "where": "карта направлений в AGENTS.md; полнота проверена обходом артефактов, часть направлений закрыта гейтами, непокрытые названы непокрытыми"
         },
         "084": {
           "mechanism": "none",
@@ -429,7 +429,7 @@
         },
         "096": {
           "mechanism": "gate",
-          "where": ".rules разведён по жизненному циклу, и у каждого файла свой сторож: .rules/bindings.json — scripts/check_bindings.py, .rules/neighbours.json — scripts/check_duplicates.py, .rules/proposals.json — scripts/collect_proposals.py, .rules/consumers.json — scripts/aggregate_bindings.py, .rules/showcase.json — scripts/check_showcase.py. Общего файла нет намеренно: слить их значило бы оставить пять вопросов одному сторожу"
+          "where": ".rules разведён по жизненному циклу, и у каждого файла свой сторож: .rules/bindings.json — scripts/check_bindings.py, .rules/neighbours.json — scripts/check_duplicates.py, .rules/proposals.json — scripts/collect_proposals.py, .rules/consumers.json — scripts/aggregate_bindings.py, .rules/showcase.json — scripts/check_showcase.py. Общего файла нет намеренно: слить их значило бы оставить все эти вопросы одному сторожу"
         },
         "097": {
           "mechanism": "gate",
@@ -469,7 +469,7 @@
         },
         "109": {
           "mechanism": "gate",
-          "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке — шесть гейтов, у каждого предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
+          "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке: у каждого проверяемого им гейта есть предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
         },
         "111": {
           "mechanism": "gate",

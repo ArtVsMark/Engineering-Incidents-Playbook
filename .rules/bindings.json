@@ -192,7 +192,7 @@
     "039": {
       "status": "active",
       "mechanism": "gate",
-      "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке — шесть гейтов, у каждого предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
+      "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке: у каждого проверяемого им гейта есть предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
     },
     "040": {
       "status": "active",
@@ -225,7 +225,7 @@
     "045": {
       "status": "active",
       "mechanism": "gate",
-      "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке — шесть гейтов, у каждого предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
+      "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке: у каждого проверяемого им гейта есть предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
     },
     "046": {
       "status": "active",
@@ -333,7 +333,7 @@
     "067": {
       "status": "active",
       "mechanism": "gate",
-      "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке — шесть гейтов, у каждого предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
+      "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке: у каждого проверяемого им гейта есть предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
     },
     "068": {
       "status": "active",
@@ -403,7 +403,7 @@
     "082": {
       "status": "active",
       "mechanism": "document",
-      "where": "карта направлений в AGENTS.md; полнота проверена обходом артефактов, три направления закрыты гейтами"
+      "where": "карта направлений в AGENTS.md; полнота проверена обходом артефактов, часть направлений закрыта гейтами, непокрытые названы непокрытыми"
     },
     "083": {
       "status": "not-applicable",
@@ -472,7 +472,7 @@
     "096": {
       "status": "active",
       "mechanism": "gate",
-      "where": ".rules разведён по жизненному циклу, и у каждого файла свой сторож: .rules/bindings.json — scripts/check_bindings.py, .rules/neighbours.json — scripts/check_duplicates.py, .rules/proposals.json — scripts/collect_proposals.py, .rules/consumers.json — scripts/aggregate_bindings.py, .rules/showcase.json — scripts/check_showcase.py. Общего файла нет намеренно: слить их значило бы оставить пять вопросов одному сторожу"
+      "where": ".rules разведён по жизненному циклу, и у каждого файла свой сторож: .rules/bindings.json — scripts/check_bindings.py, .rules/neighbours.json — scripts/check_duplicates.py, .rules/proposals.json — scripts/collect_proposals.py, .rules/consumers.json — scripts/aggregate_bindings.py, .rules/showcase.json — scripts/check_showcase.py. Общего файла нет намеренно: слить их значило бы оставить все эти вопросы одному сторожу"
     },
     "097": {
       "status": "active",
@@ -537,7 +537,7 @@
     "109": {
       "status": "active",
       "mechanism": "gate",
-      "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке — шесть гейтов, у каждого предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
+      "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке: у каждого проверяемого им гейта есть предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
     },
     "110": {
       "status": "not-applicable",
@@ -754,7 +754,7 @@
       "status": "active",
       "mechanism": "none",
       "where": "предмет есть: .github/workflows/ci.yml и остальные прогоны каталога будятся на pull_request, то есть файл прогона берётся из изменения — закреплять свои скрипты бессмысленно, и ни один шаг этого не делает. Сторонние действия закреплены иначе и правилом не затронуты. Гейта нет: чтобы отличить свой вызов от чужого действия и сверить с событием прогона, нужен разбор YAML, которого здесь пока нет",
-      "why": "не дошли руки: будильник прогонов счётен по блокам on: в конвейере; очередь не дошла"
+      "why": "не дошли руки: отличить свой закреплённый вызов от стороннего действия и сверить его с событием прогона можно разбором YAML; очередь не дошла"
     },
     "153": {
       "status": "active",
