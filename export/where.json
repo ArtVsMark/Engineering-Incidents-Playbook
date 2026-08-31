@@ -661,10 +661,10 @@
         "not-applicable": 3
       },
       "by_mechanism": {
-        "gate": 62,
-        "pipeline": 24,
-        "document": 62,
-        "none": 2
+        "gate": 63,
+        "pipeline": 27,
+        "document": 59,
+        "none": 1
       },
       "rules": {
         "001": "active",
@@ -912,7 +912,7 @@
         },
         "024": {
           "mechanism": "document",
-          "where": "CLAUDE.md § Обновление CHANGELOG.md / HISTORY.md: журнал работ живёт в HISTORY.md и docs/archive/, действующие документы описывают настоящее; docs/agent/claude-handoff.md § чего там не бывает"
+          "where": "CLAUDE.md § Обновление CHANGELOG.md / HISTORY.md — журнал работ живёт в HISTORY.md и docs/archive/, действующие документы описывают настоящее; CLAUDE.md § Открытая работа — «Чего там не бывает» про очередь работ"
         },
         "025": {
           "mechanism": "gate",
@@ -975,8 +975,8 @@
           "where": "scripts/check_three_outcomes.py — скрипт, ходящий в GitHub, обязан отличать отказ источника от результата (RateLimited → EXIT_WAIT, GitHubError → код 2); объявленный долг перечислен в KNOWN_DEBT с причиной"
         },
         "040": {
-          "mechanism": "none",
-          "where": "scripts/skip_inventory.py собирает пропуски статически, но его не запускает ни прогон, ни pre-commit, ни preflight, и требования «у пропуска есть причина» нет ни в одном действующем документе — нарушение не заметит никто (issue #1400)"
+          "mechanism": "gate",
+          "where": ".github/workflows/ci.yml (job docs-guardrails) и .pre-commit-config.yaml зовут scripts/skip_inventory.py --summary: пропуск без названной причины даёт ненулевой выход. Скрипт был написан гейтом и полтора месяца не запускался ничем (#1400)"
         },
         "041": {
           "mechanism": "document",
@@ -1015,8 +1015,8 @@
           "where": "храповики BUDGET в scripts/check_declared_outcomes.py и UNHELD_BUDGET в scripts/check_rule_bindings.py: число опускается починкой, тест сверяет его с реальностью"
         },
         "051": {
-          "mechanism": "document",
-          "where": "CLAUDE.md § Метки при заведении issue — «Границу PR задаёт пересечение файлов»; scripts/check_work_overlap.py показывает пересечение, но его не зовёт ни прогон, ни pre-commit, ни preflight"
+          "mechanism": "pipeline",
+          "where": "scripts/preflight.py — неблокирующий шаг «кто ещё трогает те же файлы» зовёт scripts/check_work_overlap.py: пересечение считается по git diff --name-only и показывается само. Блокировать нельзя — пересечение штатно, а не нарушение (docs/agent/preflight.md)"
         },
         "052": {
           "mechanism": "pipeline",
@@ -1335,12 +1335,12 @@
           "where": "CLAUDE.md § Формат коммитов: PR, открытый ботом, пересоздаётся, а не мержится — squash записал бы бота автором в main; отказывает scripts/check_pr_ready.py при запуске окном"
         },
         "132": {
-          "mechanism": "document",
-          "where": "CONTRIBUTING.md § Границу PR задаёт пересечение файлов: сборный PR законен, незаявленный — нет; scripts/check_work_overlap.py запускается руками"
+          "mechanism": "pipeline",
+          "where": "scripts/check_work_overlap.py показывает пересечение неблокирующим шагом scripts/preflight.py, а CLAUDE.md § Метки при заведении issue требует объявить все задачи сборного изменения (Closes #N либо «Часть #N»)"
         },
         "133": {
-          "mechanism": "document",
-          "where": "CLAUDE.md § Метки при заведении issue: граница PR считается по git diff --name-only, а не по числу задач; scripts/check_work_overlap.py запускается руками"
+          "mechanism": "pipeline",
+          "where": "граница PR считается пересечением файлов, а не числом задач: scripts/check_work_overlap.py зовётся неблокирующим шагом scripts/preflight.py"
         },
         "134": {
           "mechanism": "gate",

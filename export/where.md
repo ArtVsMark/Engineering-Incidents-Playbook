@@ -13,7 +13,7 @@
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `claude-code-playbook` | подключён | 25 | 19 | 158 | 0 | 0 | 116 | 67 | 3 | 14 | 32 | 55 |  |
-| `Stepik-Python-Grader` | подключён | 68 | 128 | 153 | 5 | 0 | 150 | 62 | 24 | 62 | 2 | 112 |  |
+| `Stepik-Python-Grader` | подключён | 68 | 128 | 153 | 5 | 0 | 150 | 63 | 27 | 59 | 1 | 114 |  |
 | `ArtVsMark` | подключён | 15 | 10 | 153 | 5 | 0 | 79 | 46 | 6 | 11 | 16 | 32 |  |
 | `claude-code-usage` | не подключён | 1 | 1 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
@@ -36,6 +36,7 @@
 | 021 | `Stepik-Python-Grader` — гейт: docs/ разложена по направлениям use/dev/agent/archive, полноту индексов и разбиение проверяет scripts/check_docs_guardrails.py; две документные роли разделены по аудитории — docs/agent/roles.md; `ArtVsMark` — гейт: CLAUDE.md § Язык артефактов делит по читателю: README.md посетителю профиля, .rules/README.md, .rules/roles.md, HISTORY.md и сам CLAUDE.md — владельцу и окну. Прежнее «делить нечего» считало три файла там, где их восемь; scripts/check_page.py::audit_service и ::audit_page — язык проверяется долей кириллицы, порог 50% и он не выдуман: замер 27 августа дал 6% у витрины и 70–94% у служебных файлов, то есть нарушение даёт значение у другого края, а не рядом с порогом. Отдельно проверяется наличие русского раздела: без него страница перестаёт быть двуязычной, а это обещание свода | `claude-code-playbook` |
 | 028 | `Stepik-Python-Grader` — конвейер: scripts/check_issue_checklists.py — комплексный issue от трёх находок ведёт чек-лист с исходом каждой | `claude-code-playbook` |
 | 038 | `Stepik-Python-Grader` — документ: CLAUDE.md § Два окна: имя окна начинается с окружения ([WEB]/[LOCAL]/[CLI]), метка ставится при открытии; канон — docs/agent/environments.md | `ArtVsMark` |
+| 040 | `Stepik-Python-Grader` — гейт: .github/workflows/ci.yml (job docs-guardrails) и .pre-commit-config.yaml зовут scripts/skip_inventory.py --summary: пропуск без названной причины даёт ненулевой выход. Скрипт был написан гейтом и полтора месяца не запускался ничем (#1400) | `claude-code-playbook` |
 | 044 | `Stepik-Python-Grader` — документ: docs/agent/roles.md: оценка 🔍 Аудитора едет как заявка и проходит через ⚖️ Верификатора с установкой «опровергай по умолчанию» — по находке не работают, пока её премиса не проверена; `ArtVsMark` — гейт: scripts/check_bindings.py — премиса вердикта проверяется до того, как ему поверят: каждое «чем держится» и каждое «этого у нас нет» есть утверждение о текущем коде, и каждая ссылка в них сверяется с файлом и объявленным именем; отказ от чужих бейджей — та же премиса: утверждение, которое из окна не проверить, витрина на себя не берёт (прокси не пускает img.shields.io, и живой бейдж от опечатки в ссылке неотличим); scripts/build_metrics.py::verify_absence — премиса отказа по показателю проверяется до того, как её покажут: «релизов нет» у каталога правил оказалось неверным, релиз был помечен предварительным и не попадал в latest | `claude-code-playbook` |
 | 047 | `Stepik-Python-Grader` — документ: CLAUDE.md § Гейты: смена правил транспорта требует перезапуска активных окон — настройки читаются при старте сессии; `ArtVsMark` — документ: CLAUDE.md § Окно — прямой цитатой: сменились правила работы, окна перезапускаются. Этот файл читается один раз, при старте | `claude-code-playbook` |
 | 052 | `Stepik-Python-Grader` — конвейер: scripts/move_merge_queue.py обновляет только голову очереди — из main остальные не двигаются (CLAUDE.md § Гейты: N против N(N−1)/2) | `claude-code-playbook` |
@@ -57,8 +58,8 @@
 | 124 | `Stepik-Python-Grader` — конвейер: scripts/rerun_flaky_checks.py: список разрешённых к автоперезапуску закрыт, попытка ровно одна, а зелёное со второго раза записывается находкой в docs/agent/flaky-runs.md | `claude-code-playbook` |
 | 125 | `claude-code-playbook` — гейт: scripts/build_rules_index.py — область и даты из источников; `Stepik-Python-Grader` — гейт: scripts/check_generated_sources.py — у производного файла назван живой исходник; DIGEST.md и указатель правил пересобираются генератором, а не правятся | `ArtVsMark` |
 | 130 | `Stepik-Python-Grader` — конвейер: scripts/link_rules_to_issues.py — новое правило приходит вместе со списком кандидатов из нашего трекера | `claude-code-playbook` |
-| 132 | `Stepik-Python-Grader` — документ: CONTRIBUTING.md § Границу PR задаёт пересечение файлов: сборный PR законен, незаявленный — нет; scripts/check_work_overlap.py запускается руками; `ArtVsMark` — документ: CLAUDE.md § Критические запреты — не везти в одном PR несколько тем; .github/pull_request_template.md — тот же вопрос критику. Гейта нет намеренно: число затронутых зон сборности не доказывает, а ложный отказ на широкой теме дороже пропуска. Правило само требует предупреждения, а не отказа, — а предупреждать здесь некому | `claude-code-playbook` |
-| 133 | `Stepik-Python-Grader` — документ: CLAUDE.md § Метки при заведении issue: граница PR считается по git diff --name-only, а не по числу задач; scripts/check_work_overlap.py запускается руками; `ArtVsMark` — документ: CLAUDE.md § Критические запреты — оговорка к запрету на несколько тем: пересечение файлов сильнее темы. У витрины общие файлы почти у каждой правки — HISTORY.md и .rules/bindings.json, — поэтому изменения идут по одному, и встречи на общем файле не случается | `claude-code-playbook` |
+| 132 | `Stepik-Python-Grader` — конвейер: scripts/check_work_overlap.py показывает пересечение неблокирующим шагом scripts/preflight.py, а CLAUDE.md § Метки при заведении issue требует объявить все задачи сборного изменения (Closes #N либо «Часть #N»); `ArtVsMark` — документ: CLAUDE.md § Критические запреты — не везти в одном PR несколько тем; .github/pull_request_template.md — тот же вопрос критику. Гейта нет намеренно: число затронутых зон сборности не доказывает, а ложный отказ на широкой теме дороже пропуска. Правило само требует предупреждения, а не отказа, — а предупреждать здесь некому | `claude-code-playbook` |
+| 133 | `Stepik-Python-Grader` — конвейер: граница PR считается пересечением файлов, а не числом задач: scripts/check_work_overlap.py зовётся неблокирующим шагом scripts/preflight.py; `ArtVsMark` — документ: CLAUDE.md § Критические запреты — оговорка к запрету на несколько тем: пересечение файлов сильнее темы. У витрины общие файлы почти у каждой правки — HISTORY.md и .rules/bindings.json, — поэтому изменения идут по одному, и встречи на общем файле не случается | `claude-code-playbook` |
 | 135 | `Stepik-Python-Grader` — документ: CLAUDE.md § Формат коммитов: автор PR — человек, соавторство — место вклада Claude; scripts/check_pr_ready.py и scripts/check_attribution.py --check-branch запускаются окном, а не прогоном; `ArtVsMark` — гейт: .rules/README.md § Из окна не пишут — личность этого окна установлена пробой того же класса, а не опросом токена, и результат годен только для него: следующее окно проверяет заново. scripts/check_author.py — то, что окно подписалось не тем именем, теперь выясняется записью и проверкой, а не памятью | `claude-code-playbook` |
 | 136 | `claude-code-playbook` — документ: .rules/bindings.json — вердикт о себе пишется после перебора предметов, и перебор называется в причине; гейта на полноту перебора нет; `Stepik-Python-Grader` — гейт: ответ по внешнему правилу пишется в .rules/bindings.json одним заходом: сначала перечисляются все свои предметы правила, потом вердикт; сверяется на ревью PR — гейта на полноту перечисления нет | `ArtVsMark` |
 | 138 | `Stepik-Python-Grader` — документ: docs/agent/environments.md — решение оседает задачей или комментарием сразу, эстафета передаётся ссылками; шаблон стартового сообщения окна там же; `ArtVsMark` — гейт: CLAUDE.md § Журнал изменений — журнал пополняется тем же заходом, что и правка, а не перед выпуском; решение оседает записью в HISTORY.md сразу; scripts/check_journal.py держит это гейтом: изменение, правящее scripts/ или .github/workflows/, обязано нести строку в HISTORY.md. Замер, из-за которого гейт завёлся, а не опасение: по 71 первопредку общей ветки 30 изменений правили поведение, и 3 приехали без записи — одно из них настоящее решение на 48 строк в прогоне очереди правил (#53), где отложенная запись означает, что следующее окно разбирает тот же вопрос заново. У отказа есть НАЗВАННЫЙ выход: строка «Журнал: не требуется — причина» в сообщении коммита снимает требование и остаётся в истории. Без выхода гейт обходили бы пустой записью, а пустая запись хуже отсутствующей — она выглядит как память. Содержание записи гейт не судит: отличить решение от опечатки машина не может, и обе стороны границы названы | `claude-code-playbook` |
@@ -111,26 +112,27 @@
 | `claude-code-playbook` | `scripts/version.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
 | `claude-code-playbook` | _остальные_ · _the rest_ | 23 механизмов по одному правилу; без названного адреса: 0 из 84 |
-| `Stepik-Python-Grader` | `CLAUDE.md` | 37 |
+| `Stepik-Python-Grader` | `CLAUDE.md` | 36 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |
 | `Stepik-Python-Grader` | `scripts/gh_rest.py` | 7 |
+| `Stepik-Python-Grader` | `docs/agent/preflight.md` | 6 |
 | `Stepik-Python-Grader` | `docs/agent/roles.md` | 6 |
 | `Stepik-Python-Grader` | `scripts/check_docs_guardrails.py` | 6 |
 | `Stepik-Python-Grader` | `scripts/check_pr_ready.py` | 6 |
-| `Stepik-Python-Grader` | `docs/agent/preflight.md` | 5 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 5 |
-| `Stepik-Python-Grader` | `docs/agent/claude-handoff.md` | 4 |
+| `Stepik-Python-Grader` | `scripts/preflight.py` | 4 |
+| `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 3 |
 | `Stepik-Python-Grader` | `.rules/bindings.json` | 3 |
 | `Stepik-Python-Grader` | `CHANGELOG.md` | 3 |
-| `Stepik-Python-Grader` | `CONTRIBUTING.md` | 3 |
+| `Stepik-Python-Grader` | `docs/agent/claude-handoff.md` | 3 |
 | `Stepik-Python-Grader` | `docs/agent/course-walkthrough.md` | 3 |
 | `Stepik-Python-Grader` | `scripts/check_work_overlap.py` | 3 |
 | `Stepik-Python-Grader` | `scripts/check_workflow_guardrails.py` | 3 |
 | `Stepik-Python-Grader` | `scripts/rerun_flaky_checks.py` | 3 |
 | `Stepik-Python-Grader` | `src/stepik_grader/web/playground.py` | 3 |
 | `Stepik-Python-Grader` | `.claude/hooks/pre_tool_use.py` | 2 |
-| `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 2 |
+| `Stepik-Python-Grader` | `CONTRIBUTING.md` | 2 |
 | `Stepik-Python-Grader` | `HISTORY.md` | 2 |
 | `Stepik-Python-Grader` | `docs/dev/corpus.md` | 2 |
 | `Stepik-Python-Grader` | `docs/dev/glossary.md` | 2 |
@@ -152,7 +154,7 @@
 | `Stepik-Python-Grader` | `tests/conftest.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
-| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 71 механизмов по одному правилу; без названного адреса: 0 из 148 |
+| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 72 механизмов по одному правилу; без названного адреса: 0 из 149 |
 | `ArtVsMark` | `scripts/build_metrics.py` | 22 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 19 |
 | `ArtVsMark` | `CLAUDE.md` | 11 |
