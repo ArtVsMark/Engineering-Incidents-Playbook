@@ -3,6 +3,8 @@
 
 Реализует правила каталога:
   123 — атрибуция проверяется в конечной истории, а не в коммите ветки;
+  156 — трейлер читается из хвостового блока: прозаическое упоминание
+        директивой не считается, иначе отказ бьёт по подробным сообщениям;
         трейлеры сверяются со списком согласованных имён;
   039 — у проверки три исхода, а не два;
   114 — миграция идёт от текущей версии, а не от нуля: требование действует
@@ -58,6 +60,30 @@ BASELINE = "d1297ff"
 
 COAUTHOR = re.compile(r"^Co-Authored-By:\s*(.+?)\s*$", re.M | re.I)
 SESSION = re.compile(r"^Claude-Session:\s*(.+?)\s*$", re.M | re.I)
+#: Строка хвостового блока: `Ключ: значение`, и ключ без пробелов.
+TRAILER_LINE = re.compile(r"^[A-Za-z][A-Za-z0-9-]*:\s")
+
+
+def tail(body: str) -> str:
+    """Хвостовой блок сообщения: последний абзац из строк «Ключ: значение».
+
+    ПОЧЕМУ НЕ «ЛЮБАЯ СТРОКА». Раньше трейлеры искались по всему телу с `re.M`,
+    и признаком служило начало строки. Перенос строки в проработанном абзаце
+    ставит первым любое слово без умысла автора: 30 августа этот гейт отверг
+    изменение витрины ArtVsMark/ArtVsMark#95, назвав соавтором середину фразы
+    «…Co-authored-by github-actions[bot] в уплотнённый коммит…». Изменение
+    чинило красную общую ветку — отказ задержал починку того самого гейта,
+    который его вынес (правило 156).
+
+    ГРАНИЦА. Абзац считается хвостовым, только если ВСЕ его непустые строки —
+    пары «ключ: значение». Один прозаический хвост делает блок прозой целиком:
+    иначе разбор снова начнёт угадывать, где кончается объяснение.
+    """
+    blocks = [b for b in body.replace("\r\n", "\n").split("\n\n") if b.strip()]
+    if not blocks:
+        return ""
+    last = [ln for ln in blocks[-1].splitlines() if ln.strip()]
+    return "\n".join(last) if all(TRAILER_LINE.match(ln) for ln in last) else ""
 
 
 def git(repo: Path, *args: str) -> str:
@@ -158,7 +184,7 @@ def first_parents(repo: Path, ref: str, since: str | None, names: set[str]) -> i
         # кто открыл изменение (правило 131), и чинить это здесь нечем.
         sha, subject, body = (rec.split("\x00") + ["", ""])[:3]
         sha, subject = sha.strip(), subject.strip()
-        coauthors = [m.strip() for m in COAUTHOR.findall(body)]
+        coauthors = [m.strip() for m in COAUTHOR.findall(tail(body))]
         if not coauthors:
             missing.append(f"{sha[:7]} {subject[:64]}")
             continue
@@ -297,8 +323,8 @@ def main() -> int:
     for rec in records:
         sha, author, subject, body = (rec.split("\x00") + ["", "", ""])[:4]
         sha, author, subject = sha.strip(), author.strip(), subject.strip()
-        coauthors = [m.strip() for m in COAUTHOR.findall(body)]
-        session = SESSION.search(body)
+        coauthors = [m.strip() for m in COAUTHOR.findall(tail(body))]
+        session = SESSION.search(tail(body))
 
         # Подпись агента принадлежит трейлеру, а не полю автора. Авторство в
         # общей ветке этим НЕ чинится — его задаёт тот, кто открыл изменение
