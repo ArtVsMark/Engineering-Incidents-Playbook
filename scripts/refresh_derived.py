@@ -67,10 +67,11 @@ BUILDERS = (
 DERIVED = (
     "export/where.md",
     "export/where.json",
-    ".github/badges/consumers-light.svg",
-    ".github/badges/consumers-dark.svg",
-    ".github/badges/consumers-en-light.svg",
-    ".github/badges/consumers-en-dark.svg",
+    # КАРТИНОК ЗДЕСЬ БОЛЬШЕ НЕТ, и это решение, а не пропуск (правило 160).
+    # Витрина читает их с ветки `badges`; копия в дереве пересобиралась этим
+    # же прогоном и давала коммит в общую ветку на каждое обновление ответа
+    # потребителя — четыре за одну смену, при том что читают другую копию.
+    # Рисует их badges.yml на каждый толчок в main и кладёт на свою ветку.
 )
 
 
