@@ -17,6 +17,10 @@ on:
         description: "Версия вида vX.Y.0 — только граница MINOR"
         required: true
         type: string
+      summary:
+        description: "Ключевое: что принёс выпуск, одной фразой без ссылок"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -95,24 +99,33 @@ jobs:
       # Пример подключения в контракте — единственное место в прозе, где номер
       # виден потребителю, и переписывать его руками значит завести второй
       # источник истины.
-      - name: закрепить пример контракта на новом теге
+      #
+      # ЗДЕСЬ ЖЕ ДОПИСЫВАЕТСЯ СТРОКА ЭВОЛЮЦИИ МЕТРИК. Раньше её дописывали
+      # договорённостью, и после v0.1.0 два выпуска ушли без строки — таблица
+      # перестала быть рядом и стала одиночным снимком. Числа считает сборка
+      # по рабочему дереву, то есть по тому самому, на которое встанет тег;
+      # человек вводит только «Ключевое», которого машина не знает.
+      - name: строка эволюции метрик и закреплённый пример
         env:
           GH_TOKEN: ${{ github.token }}
           WANT: ${{ inputs.version }}
+          KEY: ${{ inputs.summary }}
         run: |
           set -euo pipefail
           git tag -a "$WANT" -m "$WANT"
           python scripts/version.py --pin
-          if git diff --quiet -- export/README.md; then
-            echo "пример уже закреплён на $WANT"
+          python scripts/history_metrics.py --add "$WANT" --key "$KEY"
+          if git diff --quiet; then
+            echo "и строка, и пример уже на месте"
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git commit -am "chore(release): pin examples [skip ci]"
+            git commit -am "chore(release): строка эволюции метрик и пример на $WANT [skip ci]"
             git push origin HEAD:main
-            # Тег переставляется на коммит с закреплённым примером: иначе
-            # потребитель, закрепившийся на теге, увидел бы в примере
-            # ПРЕДЫДУЩУЮ версию.
+            # Тег переставляется на коммит со строкой и закреплённым примером:
+            # иначе потребитель, закрепившийся на теге, увидел бы в примере
+            # ПРЕДЫДУЩУЮ версию, а гейт эволюции не нашёл бы строки в дереве,
+            # по которому сам же её и сверяет.
             git tag -f -a "$WANT" -m "$WANT"
           fi
 

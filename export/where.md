@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 27 | 21 | 160 | 0 | 0 | 118 | 69 | 3 | 14 | 32 | 56 |  |
+| `claude-code-playbook` | подключён | 27 | 21 | 160 | 0 | 0 | 118 | 70 | 3 | 14 | 31 | 58 |  |
 | `Stepik-Python-Grader` | подключён | 68 | 128 | 153 | 7 | 0 | 150 | 63 | 27 | 59 | 1 | 114 |  |
 | `ArtVsMark` | подключён | 15 | 10 | 159 | 1 | 0 | 79 | 46 | 6 | 11 | 16 | 32 |  |
 | `claude-code-usage` | не подключён | 1 | 1 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
@@ -27,7 +27,6 @@
 
 | № | Держит · Held by | Ничем · By nothing |
 |---|---|---|
-| 005 | `Stepik-Python-Grader` — гейт: scripts/check_docs_guardrails.py — числа тестов, покрытия и глоссария живут бейджами, а не текстом; CLAUDE.md § Метрики: «числом здесь не фиксируется»; `ArtVsMark` — гейт: scripts/build_metrics.py::patch_readme — числа только между маркерами m:ключ; scripts/build_metrics.py::render_featured — числа баннера тоже измерены, а не вписаны: они приходят из project_stats и попадают в подпись картинки той же сборкой; scripts/build_metrics.py::project_badges — версия, состояние CI, покрытие и версия пакета измеряются сборкой и рисуются ею же: чужих бейджей на витрине не осталось, а значит не осталось и второго источника тех же чисел; подпись «data as of» под плитками пишется сборкой, а не рукой: scripts/build_metrics.py::render_projects. Это день, когда числа последний раз ИЗМЕНИЛИСЬ, и .github/workflows/metrics.yml исключает саму подпись из сравнения — иначе прогон открывал бы изменение ежедневно, и «числа изменились» перестало бы что-либо значить | `claude-code-playbook` |
 | 006 | `Stepik-Python-Grader` — документ: CLAUDE.md § Два окна: «Окно живёт 3–5 дней, дальше перезапуск — обязательно»; замер 764 против 81 прочитанного токена на токен выхода и шаблон эстафеты — docs/agent/environments.md | `claude-code-playbook`, `ArtVsMark` |
 | 009 | `claude-code-playbook` — гейт: scripts/check_charter.py и scripts/check_showcase.py считают через множество, а не по вхождениям: гейт, названный в конвейере дважды, считается одним; `Stepik-Python-Grader` — гейт: scripts/version.py считает PATCH по номерам PR и уникализирует их множеством (issue #1042), сверяет scripts/check_version_consistency.py | `ArtVsMark` |
 | 012 | `Stepik-Python-Grader` — гейт: .claude/hooks/pre_tool_use.py — пуш в ветку, отличную от текущей, отвергается до вызова git; CI такое поймать не может, он видит артефакт, а не действие | `claude-code-playbook` |
@@ -80,10 +79,10 @@
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
 | `claude-code-playbook` | `scripts/check_gates.py` | 11 |
+| `claude-code-playbook` | `scripts/build_rules_index.py` | 8 |
 | `claude-code-playbook` | `.github/workflows/automerge.yml` | 7 |
 | `claude-code-playbook` | `.github/workflows/ci.yml` | 7 |
 | `claude-code-playbook` | `export/README.md` | 7 |
-| `claude-code-playbook` | `scripts/build_rules_index.py` | 7 |
 | `claude-code-playbook` | `scripts/aggregate_bindings.py` | 6 |
 | `claude-code-playbook` | `scripts/check_charter.py` | 6 |
 | `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 5 |
@@ -111,7 +110,7 @@
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `scripts/version.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 24 механизмов по одному правилу; без названного адреса: 0 из 86 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 26 механизмов по одному правилу; без названного адреса: 0 из 87 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 36 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |
