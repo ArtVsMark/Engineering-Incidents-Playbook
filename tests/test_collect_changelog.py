@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 import collect_changelog as cc
@@ -95,8 +96,29 @@ def test_пустая_сборка_это_пустая_строка(monkeypatch,
 # Разбор фрагментов проверен выше; здесь — что скрипт делает с разобранным:
 # три исхода (039), сборка в [Unreleased] и удаление собранных фрагментов (030).
 
+def git(repo: Path, *args: str) -> None:
+    subprocess.run(["git", "-C", str(repo), *args], check=True,
+                   capture_output=True, text=True)
+
+
+def выпуск(repo: Path, *теги: str) -> None:
+    """Подделка — НАСТОЯЩИЙ репозиторий с настоящими тегами.
+
+    Проверка «у каждого выпуска свой раздел» ходит в git, и подмена её входа
+    проверяла бы разбор заголовков, а не гейт (правило 150).
+    """
+    git(repo, "init", "-q", "-b", "main")
+    git(repo, "config", "user.name", "Владелец")
+    git(repo, "config", "user.email", "owner@example.com")
+    write(repo / "f.txt", "подделка")
+    git(repo, "add", "-A")
+    git(repo, "-c", "commit.gpgsign=false", "commit", "-q", "-m", "подделка")
+    for тег in теги:
+        git(repo, "tag", тег)
+
+
 def cli(monkeypatch, repo: Path, files: dict[str, str], changelog: str | None,
-        *argv: str) -> None:
+        *argv: str, теги: tuple[str, ...] = ("0.1.0",)) -> None:
     prepare(monkeypatch, repo, files)
     monkeypatch.setattr(cc, "ROOT", repo)
     path = repo / "CHANGELOG.md"
@@ -104,6 +126,7 @@ def cli(monkeypatch, repo: Path, files: dict[str, str], changelog: str | None,
         write(path, changelog)
     monkeypatch.setattr(cc, "CHANGELOG", path)
     monkeypatch.setattr("sys.argv", ["collect_changelog.py", *argv])
+    выпуск(repo, *теги)
 
 
 HEADER = "# Журнал\n\n## [Unreleased]\n\n## [0.1.0]\n\n- старое\n"
@@ -293,3 +316,81 @@ def test_разбор_читает_только_свой_раздел():
 
     assert было["added"] == ["первое"]
     assert "старое" not in sum(было.values(), [])
+
+
+# ── у каждого выпуска свой раздел ──────────────────────────────────────────
+#
+# v1.1.0 вышел 28 августа, а раздела [1.1.0] в журнале не появилось: 42 записи
+# выпуска остались в [Unreleased], где их читают как ещё не вышедшие. Нашлось
+# это через два выпуска и не проверкой, а взглядом человека.
+
+ВЫШЕДШИЙ = ("# Журнал\n\n## [Unreleased]\n\n### Добавлено · Added\n\n"
+            "- свежее\n\n## [0.1.0] — 2026-08-21\n\n- старое\n")
+
+
+def test_teg_bez_razdela_eto_nahodka(monkeypatch, repo, capsys):
+    """Ровно инцидент: тег есть, раздела нет, записи лежат в [Unreleased]."""
+    cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--check", теги=("0.1.0", "v1.1.0"))
+
+    assert cc.main() == 1
+    assert "1.1.0" in capsys.readouterr().err
+
+
+def test_u_kazhdogo_tega_est_razdel_eto_chisto(monkeypatch, repo):
+    cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--check")
+
+    assert cc.main() == 0
+
+
+def test_zakrytie_zavodit_razdel_i_pustoy_unreleased(monkeypatch, repo):
+    cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--close", "v1.1.0", "--date",
+        "2026-08-28", теги=("0.1.0", "v1.1.0"))
+
+    assert cc.main() == 0
+    свежий = (repo / "CHANGELOG.md").read_text(encoding="utf-8")
+    # Записи переехали под номер выпуска ДОСЛОВНО, а [Unreleased] заведён снова.
+    assert "## [1.1.0] — 2026-08-28" in свежий and "- свежее" in свежий
+    assert свежий.index("## [Unreleased]") < свежий.index("## [1.1.0]")
+    новый = свежий.split("## [Unreleased]")[1].split("## [")[0]
+    assert "- " not in новый and новый.strip()
+
+
+def test_posle_zakrytiya_proverka_chista(monkeypatch, repo):
+    """Пара «закрыть» и «сверить» обязана сходиться: иначе выпуск оставлял бы
+    после себя красное на общей ветке."""
+    cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--close", "v1.1.0",
+        теги=("0.1.0", "v1.1.0"))
+    assert cc.main() == 0
+
+    monkeypatch.setattr("sys.argv", ["collect_changelog.py", "--check"])
+    assert cc.main() == 0
+
+
+def test_zakrytie_pustogo_razdela_eto_otkaz(monkeypatch, repo, capsys):
+    """Выпуск без записей читается как «ничего не изменилось» — хуже, чем
+    отсутствие выпуска (075)."""
+    cli(monkeypatch, repo, {}, HEADER, "--close", "v1.1.0",
+        теги=("0.1.0", "v1.1.0"))
+
+    assert cc.main() == 1
+    assert "пуст" in capsys.readouterr().err
+
+
+def test_vtoroy_raz_odin_vypusk_ne_zakryvaetsya(monkeypatch, repo, capsys):
+    """Номера не переиспользуются: второй раздел с тем же номером — не выпуск,
+    а потерянная половина записей."""
+    cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--close", "0.1.0")
+
+    assert cc.main() == 1
+    assert "уже есть" in capsys.readouterr().err
+
+
+def test_bez_tegov_eto_tretiy_ishod(monkeypatch, repo, capsys):
+    """Мелкий клон тегов не приносит: зелёное здесь означало бы «выпусков не
+    было», а это ровно то молчание, из-за которого 1.1.0 и потерялся (039)."""
+    cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--check")
+    subprocess.run(["git", "-C", str(repo), "tag", "-d", "0.1.0"],
+                   check=True, capture_output=True)
+
+    assert cc.main() == 2
+    assert "не отработала" in capsys.readouterr().err

@@ -7,29 +7,45 @@
   022 — «что изменилось» и «как мы сюда пришли» — разные документы:
         CHANGELOG.md отвечает на первый вопрос, HISTORY.md на второй;
   075 — не нашёл предмета проверки — падает, а не зеленеет;
-  024 — журнал работ не ведётся внутри действующего документа: запись приезжает фрагментом.
+  024 — журнал работ не ведётся внутри действующего документа: запись приезжает фрагментом;
+  002 — «не забыть закрыть раздел при выпуске» механизмом не является: v1.1.0
+        вышел, а раздела [1.1.0] в журнале не появилось, и 42 записи выпуска
+        полгода лежали в [Unreleased], где их читают как ещё не вышедшие.
 
 Фрагмент:  changelog.d/<слаг>.<секция>.md
 Секции:    added · changed · fixed · removed · internal
 Внутри:    одна строка текста, без ведущего «-» и без имени секции.
 
+РАЗДЕЛ ВЫПУСКА ЗАКРЫВАЕТ САМ ВЫПУСК. `--close vX.Y.0` переименовывает
+[Unreleased] в раздел выпуска и заводит пустой [Unreleased] заново; зовёт его
+.github/workflows/release.yml перед постановкой тега. Проверка спрашивает
+обратное: у каждого тега выпуска обязан быть свой раздел.
+
 Исходы:
   0 — чисто;
-  1 — есть находки (плохое имя, пустой фрагмент, нужна запись, а её нет);
-  2 — проверка не отработала (нет каталога фрагментов, нет CHANGELOG.md).
+  1 — есть находки (плохое имя, пустой фрагмент, нужна запись, а её нет;
+      у тега выпуска нет раздела);
+  2 — проверка не отработала (нет каталога фрагментов, нет CHANGELOG.md,
+      не читаются теги выпусков).
 
 Запуск:  python scripts/collect_changelog.py --check     # проверить
          python scripts/collect_changelog.py --preview   # показать сборку
          python scripts/collect_changelog.py --collect   # собрать в [Unreleased]
+         python scripts/collect_changelog.py --close v1.2.0   # закрыть раздел
 """
 
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+# Что считается тегом выпуска, решает одно место на весь каталог: у второго
+# выражения разъехались бы границы, а разъехавшись — молча (правила 090, 022).
+import history_metrics
 
 ROOT = Path(__file__).resolve().parent.parent
 FRAGMENTS = ROOT / "changelog.d"
@@ -46,6 +62,13 @@ TITLES = {
 }
 NAME_RE = re.compile(rf"^([a-z0-9][a-z0-9-]*)\.({'|'.join(SECTIONS)})\.md$")
 UNRELEASED = "## [Unreleased]"
+#: Заголовок вышедшего раздела: «## [1.1.0] — 2026-08-28».
+RELEASE_RE = re.compile(r"^## \[(\d+\.\d+\.\d+)\]", re.M)
+#: Пустой раздел говорит, что он пуст (правило 027): голый заголовок читается
+#: как «журнал сломался». Строка не начинается с «-» и потому записью не
+#: считается, а первая же сборка её заменяет.
+EMPTY_NOTE = ("Пока пусто: записи приезжают фрагментами и собираются "
+              "перед выпуском.")
 
 
 #: Строка вердикта. Начинается с «>», в журнал НЕ едет и живёт только во
@@ -187,12 +210,60 @@ def render(found: dict[str, list[str]]) -> str:
     return "\n".join(out).rstrip() + "\n" if out else ""
 
 
+def missing_releases() -> tuple[list[str], str | None]:
+    """Теги выпусков, у которых нет своего раздела в журнале.
+
+    ПОЧЕМУ ЭТО СПРАШИВАЕТСЯ ЗДЕСЬ. Раздел закрывает выпуск, но заметить
+    незакрытый может только тот, кто читает журнал целиком, — а его читают
+    сверху и до первого знакомого заголовка. Замер: `v1.1.0` вышел 28 августа,
+    и 42 его записи остались в [Unreleased]; нашлось это через два выпуска и
+    не проверкой.
+    """
+    found, err = history_metrics.tags(ROOT)
+    if err:
+        return [], err
+    have = set(RELEASE_RE.findall(CHANGELOG.read_text(encoding="utf-8")))
+    return [t for t in found
+            if history_metrics.release(t) not in have], None
+
+
+def close(tag: str, date: str) -> int:
+    """Переименовывает [Unreleased] в раздел выпуска и заводит пустой заново."""
+    text = CHANGELOG.read_text(encoding="utf-8")
+    if UNRELEASED not in text:
+        print(f"закрывать нечего: в {CHANGELOG.name} нет раздела {UNRELEASED!r}",
+              file=sys.stderr)
+        return 2
+    num = history_metrics.release(tag)
+    if f"## [{num}]" in text:
+        print(f"раздел [{num}] уже есть — номера не переиспользуются",
+              file=sys.stderr)
+        return 1
+    head, _, tail = text.partition(UNRELEASED)
+    cut = tail.index("## [") if "## [" in tail else len(tail)
+    body, rest = tail[:cut], tail[cut:]
+    if not body.strip():
+        print("раздел [Unreleased] пуст: выпуск без записей читается как "
+              "«ничего не изменилось» — хуже, чем отсутствие выпуска (075)",
+              file=sys.stderr)
+        return 1
+    CHANGELOG.write_text(
+        f"{head}{UNRELEASED}\n\n{EMPTY_NOTE}\n\n## [{num}] — {date}{body}{rest}",
+        encoding="utf-8")
+    print(f"раздел [{num}] закрыт датой {date}; [Unreleased] заведён пустым")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument("--check", action="store_true", help="только проверить")
     mode.add_argument("--preview", action="store_true", help="показать сборку")
     mode.add_argument("--collect", action="store_true", help="собрать в [Unreleased]")
+    mode.add_argument("--close", metavar="ТЕГ",
+                      help="закрыть [Unreleased] разделом выпуска")
+    ap.add_argument("--date", default=dt.date.today().isoformat(),
+                    help="дата выпуска для --close; по умолчанию сегодня")
     ap.add_argument("--added-since", metavar="REF",
                     help="спросить у ДОБАВЛЕННЫХ с этой точки починок, "
                          "тянут ли они на правило")
@@ -208,6 +279,9 @@ def main() -> int:
               "собирать некуда", file=sys.stderr)
         return 2
 
+    if args.close:
+        return close(args.close, args.date)
+
     found, problems = validate()
 
     if args.added_since:
@@ -218,15 +292,33 @@ def main() -> int:
             return 2
         problems += verdict_problems(paths)
 
+    # У КАЖДОГО ТЕГА ВЫПУСКА — СВОЙ РАЗДЕЛ. Спрашивается всегда, кроме сборки
+    # и показа: те правят или печатают [Unreleased] и о вышедшем не говорят.
+    if not (args.collect or args.preview):
+        missing, err = missing_releases()
+        if err:
+            print(f"проверка не отработала: теги выпусков не читаются — {err}",
+                  file=sys.stderr)
+            return 2
+        for tag in missing:
+            problems.append(
+                f"выпуск {tag} состоялся, а раздела [{history_metrics.release(tag)}] "
+                "в журнале нет. Его записи остались в [Unreleased], где их "
+                "читают как ещё не вышедшие — закройте: "
+                f"python scripts/collect_changelog.py --close {tag}")
+
     # ── исход 1 ────────────────────────────────────────────────────────────
     if problems:
         print("фрагменты журнала не в порядке:", file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
-        print("\n  Вопрос «тянет ли эта поломка на правило» задаётся здесь "
-              "потому, что\n  здесь инцидент ещё цел: известны причина, цена и "
-              "чем чинили. Ответ\n  «нет» так же полезен, как «да», — но "
-              "только если он записан (026).", file=sys.stderr)
+        # Пояснение печатается только к своей находке: приложенное к чужой,
+        # оно отправляет чинить не то (правило 158).
+        if any("тянет ли она на правило" in p for p in problems):
+            print("\n  Вопрос «тянет ли эта поломка на правило» задаётся здесь "
+                  "потому, что\n  здесь инцидент ещё цел: известны причина, цена и "
+                  "чем чинили. Ответ\n  «нет» так же полезен, как «да», — но "
+                  "только если он записан (026).", file=sys.stderr)
         return 1
 
     body = render(found)
