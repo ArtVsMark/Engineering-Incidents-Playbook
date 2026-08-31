@@ -12,9 +12,9 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 24 | 153 | 0 | 0 | 111 | 55 | 3 | 14 | 39 | 0 | 48 |  |
-| `Stepik-Python-Grader` | подключён | 67 | 153 | 0 | 0 | 150 | 98 | 0 | 0 | 0 | 52 | 108 |  |
-| `ArtVsMark` | подключён | 12 | 153 | 0 | 0 | 79 | 46 | 6 | 11 | 16 | 0 | 32 |  |
+| `claude-code-playbook` | подключён | 25 | 154 | 0 | 0 | 112 | 56 | 3 | 14 | 39 | 0 | 50 |  |
+| `Stepik-Python-Grader` | подключён | 67 | 153 | 1 | 0 | 150 | 98 | 0 | 0 | 0 | 52 | 108 |  |
+| `ArtVsMark` | подключён | 12 | 153 | 1 | 0 | 79 | 46 | 6 | 11 | 16 | 0 | 32 |  |
 | `claude-code-usage` | не подключён | 1 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 | `Glossary-Python` | не подключён | 0 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
@@ -117,7 +117,7 @@
 | `claude-code-playbook` | `scripts/ghcli.py` | 2 |
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 18 механизмов по одному правилу; без названного адреса: 0 из 72 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 20 механизмов по одному правилу; без названного адреса: 0 из 73 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 28 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |
@@ -343,3 +343,4 @@
 | 152 | действует | действует | действует |
 | 153 | действует | действует | действует |
 | 154 | действует | действует | действует |
+| 155 | действует | — | — |

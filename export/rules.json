@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 153,
+  "count": 154,
   "rules": [
     {
       "id": "001",
@@ -4165,6 +4165,37 @@
         }
       ],
       "origin": "ArtVsMark/claude-code-playbook"
+    },
+    {
+      "id": "155",
+      "slug": "a-template-you-dont-use-drifts",
+      "title": {
+        "ru": "Заготовка, которой не пользуешься сам, расходится с практикой молча",
+        "en": "A template you do not use yourself drifts from practice in silence"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "документация"
+        ],
+        "en": [
+          "process",
+          "documentation"
+        ]
+      },
+      "added": "2026-08-31",
+      "files": {
+        "ru": "rules/ru/155-a-template-you-dont-use-drifts.md",
+        "en": "rules/en/155-a-template-you-dont-use-drifts.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "213"
+        }
+      ],
+      "origin": "ArtVsMark/claude-code-playbook",
+      "portable": "yes"
     }
   ],
   "candidates": [

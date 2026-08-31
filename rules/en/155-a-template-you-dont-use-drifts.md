@@ -10,7 +10,7 @@ different question.
 **Portable beyond Claude Code.** yes — the subject is what a project publishes
 for others, and it has nothing to do with agent sessions.
 
-## Incident
+## The incident
 
 The catalogue hands out `templates/preflight.py`. Its first line promises "one
 run instead of a checklist in the documentation", and its header names the rule
@@ -56,7 +56,7 @@ where nobody will compare it against the original.
   differ" is indistinguishable from "we forgot";
 - "the template starts" is not a check of use and does not stand in for one.
 
-## Applicability
+## Where it applies
 
 **Works** wherever a project publishes templates, boilerplate or config samples
 — and especially where a template names the rule it implements: such a template
@@ -70,7 +70,7 @@ invented subject is worse than a missing one — it looks like experience.
 **Sign of violation:** the project's own documentation contains exactly what its
 template offers to replace.
 
-## Trail
+## Trace
 
 ArtVsMark/claude-code-playbook#213
 
