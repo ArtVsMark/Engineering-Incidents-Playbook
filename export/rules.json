@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 154,
+  "count": 155,
   "rules": [
     {
       "id": "001",
@@ -4195,6 +4195,37 @@
         }
       ],
       "origin": "ArtVsMark/claude-code-playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "156",
+      "slug": "trailers-live-in-the-tail-not-in-the-prose",
+      "title": {
+        "ru": "Трейлер живёт в хвостовом блоке, а не в любой строке сообщения",
+        "en": "A trailer lives in the tail block, not in any line of the message"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "конвейер"
+        ],
+        "en": [
+          "process",
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-31",
+      "files": {
+        "ru": "rules/ru/156-trailers-live-in-the-tail-not-in-the-prose.md",
+        "en": "rules/en/156-trailers-live-in-the-tail-not-in-the-prose.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "95"
+        }
+      ],
+      "origin": "ArtVsMark/ArtVsMark",
       "portable": "yes"
     }
   ],
