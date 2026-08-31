@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 25 | 19 | 154 | 0 | 0 | 112 | 63 | 3 | 14 | 32 | 0 | 53 |  |
+| `claude-code-playbook` | подключён | 25 | 19 | 154 | 0 | 0 | 112 | 65 | 3 | 14 | 30 | 0 | 53 |  |
 | `Stepik-Python-Grader` | подключён | 67 | 127 | 153 | 1 | 0 | 150 | 98 | 0 | 0 | 0 | 52 | 108 |  |
 | `ArtVsMark` | подключён | 12 | 7 | 153 | 1 | 0 | 79 | 46 | 6 | 11 | 16 | 0 | 32 |  |
 | `claude-code-usage` | не подключён | 1 | 1 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
@@ -44,7 +44,6 @@
 | 055 | `Stepik-Python-Grader` — шаг процесса: docs/agent/course-walkthrough.md § Внешний судья вердикта: свои ожидания в каталоге мутаций не доказывают ничего, сверка идёт со Stepik; каталог мутаций — docs/dev/corpus.md | `claude-code-playbook` |
 | 062 | `Stepik-Python-Grader` — шаг процесса: docs/agent/roles.md § критерий приёмки новой роли: свой вопрос, свой артефакт, своё возражение конкретной роли — иначе это раздел документации; `ArtVsMark` — гейт: .rules/roles.md § Кто за что — у каждой роли свой вопрос, свой артефакт и своё возражение; профили заведены профилями именно потому, что своего возражения у них нет; scripts/check_roles.py держит это гейтом: у файла есть ведущий, а у строки — артефакт, и обе стороны проверяются перебором | `claude-code-playbook` |
 | 077 | `Stepik-Python-Grader` — гейт: scripts/check_locale_guardrails.py | `claude-code-playbook` |
-| 084 | `Stepik-Python-Grader` — шаг процесса: CLAUDE.md § Архитектурные инварианты, п. 3: rich опционален, весь вывод через _console с graceful fallback; AI-подсказка отказывает молча и не задерживает проверку | `claude-code-playbook` |
 | 086 | `Stepik-Python-Grader` — шаг процесса: CLAUDE.md § Режим ответов (🔍 не ставит окончательную тяжесть — его оценка заявка; ⚖️ доказывает) и docs/agent/multiagent.md § адверсариальный верификатор со шкалой на примерах | `claude-code-playbook` |
 | 088 | `Stepik-Python-Grader` — шаг процесса: docs/agent/roles.md § Роль 27 — Критик метода: вход — след фазы, вопрос о методе, а не о продукте | `claude-code-playbook` |
 | 093 | `Stepik-Python-Grader` — шаг процесса: ADR-0006: протокол Runner введён швом до server mode — минимальная обратимая точка расширения вместо обобщения по первому случаю | `claude-code-playbook` |
@@ -69,7 +68,6 @@
 | 146 | `claude-code-playbook` — гейт: scripts/aggregate_bindings.py — обязательная проверка сверяет сводку с ОТВЕТОМ на диске, а не только саму с собой; до #122 она подтверждала своё основание тем же зелёным, каким подтверждала себя. Остальное правило держится разбором при приёмке: замер живого предмета машинно не отличить от рассуждения; `Stepik-Python-Grader` — шаг процесса: docs/agent/preflight.md § Что гейты не ловят: зелёный гейт подтверждает себя, утверждение проверяется замером на живом предмете, замер пишется рядом с механизмом | `ArtVsMark` |
 | 147 | `Stepik-Python-Grader` — гейт: scripts/check_orphan_branches.py | `claude-code-playbook`, `ArtVsMark` |
 | 148 | `claude-code-playbook` — конвейер: .github/workflows/automerge.yml ждёт появления коммита в общей ветке, а не поля merged записи изменения; разбор отказа начинается со сверки метки времени записи с проверками на голове; `Stepik-Python-Grader` — гейт: scripts/check_pr_ready.py читает проверки по sha головы PR, а не по полю записи, и отдельно смотрит прогон main: пустой список проверок трактуется как «CI не стартовал», а не «зелено» | `ArtVsMark` |
-| 152 | `Stepik-Python-Grader` — гейт: scripts/check_workflow_guardrails.py; `ArtVsMark` — документ: правило родилось ЗДЕСЬ и уехало в каталог обратным каналом — .rules/proposals.json, слаг pinning-callee-without-caller. Инцидент: .github/workflows/automerge.yml брал scripts/gh_outcome.py с общей ветки ради того, чтобы не выполнять при личном токене владельца код из изменения. Защита нулевая — на событии pull_request площадка берёт из изменения САМ ФАЙЛ ПРОГОНА, и переписать шаг целиком дешевле, чем править вызываемое. Плюс цена: на изменении, которое скрипт вводит, на main его ещё нет, и шаг упал с кодом 2 на несуществующем файле. Закрепление снято, причина записана комментарием у шага, чтобы следующее окно не вернуло «безопасность» обратно. ГРАНИЦА: на pull_request_target и workflow_run рассуждение переворачивается — там файл прогона берётся с общей ветки, и закреплять вызываемое обязательно; ОБРАТНАЯ СТОРОНА ТОГО ЖЕ, замерена 28 августа: правка вызываемого (scripts/checks.py вынесен выше гейтов) оборвала точечную выборку у .github/workflows/release-hold.yml. Закреплять callee не надо было — надо было посмотреть на caller, и теперь за этим следит scripts/check_mechanisms.py::audit_sparse | `claude-code-playbook` |
 | 153 | `claude-code-playbook` — документ: export/README.md § контракт — чужие решения описаны ссылкой на репозиторий потребителя, а не пересказом их устройства; .rules/consumers.json — про потребителя хранится адрес и роль, но не объяснение, почему у него так. Держится чтением при приёмке: отличить ссылку от пересказа машинно нечем; `Stepik-Python-Grader` — гейт: docs/agent/rules/DIGEST.md собирается из каталога генератором (scripts/generate_rules_digest.py), а не переписывается руками: чужой текст здесь производное с живым исходником, и расхождение ловит check_rules_digest.py | `ArtVsMark` |
 
 ## Сколько держит механизм · How much each mechanism holds
@@ -81,15 +79,16 @@
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
 | `claude-code-playbook` | `scripts/check_gates.py` | 11 |
+| `claude-code-playbook` | `.github/workflows/automerge.yml` | 7 |
 | `claude-code-playbook` | `export/README.md` | 7 |
 | `claude-code-playbook` | `scripts/build_rules_index.py` | 7 |
-| `claude-code-playbook` | `.github/workflows/automerge.yml` | 6 |
+| `claude-code-playbook` | `.github/workflows/ci.yml` | 6 |
 | `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 5 |
-| `claude-code-playbook` | `.github/workflows/ci.yml` | 5 |
 | `claude-code-playbook` | `scripts/aggregate_bindings.py` | 5 |
 | `claude-code-playbook` | `scripts/check_charter.py` | 5 |
 | `claude-code-playbook` | `scripts/check_bindings.py` | 4 |
 | `claude-code-playbook` | `scripts/check_prose.py` | 4 |
+| `claude-code-playbook` | `scripts/check_workflows.py` | 4 |
 | `claude-code-playbook` | `scripts/link_trails.py` | 4 |
 | `claude-code-playbook` | `scripts/main_red.py` | 4 |
 | `claude-code-playbook` | `scripts/refresh_derived.py` | 4 |
@@ -106,13 +105,12 @@
 | `claude-code-playbook` | `export/rules.json` | 2 |
 | `claude-code-playbook` | `scripts/audit_catalogue.py` | 2 |
 | `claude-code-playbook` | `scripts/check_attribution.py` | 2 |
-| `claude-code-playbook` | `scripts/check_workflows.py` | 2 |
 | `claude-code-playbook` | `scripts/collect_changelog.py` | 2 |
 | `claude-code-playbook` | `scripts/ghcli.py` | 2 |
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `scripts/version.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 21 механизмов по одному правилу; без названного адреса: 0 из 80 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 21 механизмов по одному правилу; без названного адреса: 0 из 82 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 28 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |

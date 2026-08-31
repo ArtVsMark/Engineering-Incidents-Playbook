@@ -101,3 +101,61 @@ def test_nahodka_nazyvaet_fayl_i_rabotu(tmp_path, capsys):
     assert cw.main(["--root", str(tmp_path)]) == 1
     err = capsys.readouterr().err
     assert "ci.yml" in err and "catalogue" in err
+
+
+# ── необязательный канал не держит слияние (084) ───────────────────────────
+
+def test_neobyazatelnyy_progon_na_izmenenii_nahodka(tmp_path):
+    """Значок, отказавший на изменении, задерживает слияние — при том что его
+    отсутствие штатный исход, а не ошибка."""
+    workflow(tmp_path, "badges.yml",
+             "on:\n  pull_request:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n")
+    assert cw.main(["--root", str(tmp_path)]) == 1
+
+
+def test_obyazatelnye_proverki_na_izmenenii_zakonny(tmp_path):
+    """`ci.yml` за тем и заведён: он и есть основная работа."""
+    workflow(tmp_path, "ci.yml",
+             "on:\n  pull_request:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n")
+    assert cw.main(["--root", str(tmp_path)]) == 0
+
+
+def test_neobyazatelnyy_na_raspisanii_zakonen(tmp_path):
+    """Ночной прогон слияние не трогает — предмета правила здесь нет."""
+    workflow(tmp_path, "badges.yml",
+             "on:\n  schedule:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n")
+    assert cw.main(["--root", str(tmp_path)]) == 0
+
+
+def test_sobytiya_chitayutsya_i_spiskom():
+    assert cw.events("on: [push, pull_request]\n") == {"push", "pull_request"}
+
+
+# ── закрепление вызываемого (152) ──────────────────────────────────────────
+
+def test_opasnoe_sobytie_bez_zakrepleniya_nahodka(tmp_path):
+    """На `pull_request_target` файл прогона берётся с общей ветки, и код
+    исполняется при её правах: здесь закреплять обязательно."""
+    workflow(tmp_path, "risky.yml",
+             "on:\n  pull_request_target:\n  workflow_dispatch:\n"
+             "jobs:\n  a:\n    timeout-minutes: 5\n")
+    assert cw.main(["--root", str(tmp_path)]) == 1
+
+
+def test_opasnoe_sobytie_s_zakrepleniem_chisto(tmp_path):
+    workflow(tmp_path, "risky.yml",
+             "on:\n  pull_request_target:\n  workflow_dispatch:\n"
+             "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
+             "      - uses: actions/checkout@v4\n        with:\n          ref: main\n")
+    assert cw.main(["--root", str(tmp_path)]) == 0
+
+
+def test_na_pull_request_zakreplenie_ne_trebuetsya(tmp_path):
+    """ГРАНИЦА, И ОНА ЕСТЬ ИНЦИДЕНТ ПРАВИЛА: на `pull_request` сам файл прогона
+    берётся ИЗ ИЗМЕНЕНИЯ. Правящий изменение переписывает шаг и зовёт что
+    угодно — закреплённый скрипт просто перестаёт вызываться. Требовать
+    закрепление здесь значит требовать защиту с нулевой ценностью."""
+    workflow(tmp_path, "ci.yml",
+             "on:\n  pull_request:\n  workflow_dispatch:\n"
+             "jobs:\n  a:\n    timeout-minutes: 5\n")
+    assert cw.main(["--root", str(tmp_path)]) == 0
