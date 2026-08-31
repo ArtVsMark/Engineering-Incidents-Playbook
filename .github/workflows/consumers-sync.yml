@@ -113,7 +113,7 @@ jobs:
           git config user.name "Artem Markitanov"
           git config user.email "arvs.markitanov@gmail.com"
           git checkout -qB "$BRANCH"
-          git add -- export/where.md export/where.json .github/badges
+          git add -- export/where.md export/where.json
           git --no-pager diff --cached --stat
           # Тело коммита становится телом изменения. Строка освобождения нужна
           # потому, что задачи у этой работы нет и быть не должно: она и есть

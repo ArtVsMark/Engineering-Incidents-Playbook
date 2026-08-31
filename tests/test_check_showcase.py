@@ -164,3 +164,71 @@ def test_ключа_build_у_команды_нет(repo, capsys):
 
     with pytest.raises(SystemExit):
         cs.main(["--root", str(repo), "--build"])
+
+
+# ── артефакт витрины не возвращается в дерево (160) ─────────────────────────
+
+def test_vernuvshiysya_znachok_nahodka(tmp_path):
+    """Игнор не спрашивают при слиянии: `git checkout --theirs` вернул сюда
+    четыре значка разом, и заметить это было нечем."""
+    import subprocess
+    badge = tmp_path / ".github" / "badges" / "consumers-light.svg"
+    badge.parent.mkdir(parents=True)
+    badge.write_text("<svg/>", encoding="utf-8")
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "add", "-f", "-A"], cwd=tmp_path, check=True)
+
+    assert cs.badges_in_tree(tmp_path) == [".github/badges/consumers-light.svg"]
+
+
+def test_nrisovannyy_no_neotslezhivaemyy_ne_nahodka(tmp_path):
+    """ГРАНИЦА: прогон рисует их локально и обязан — он кладёт их на свою
+    ветку. Находка — только то, что попало в дерево."""
+    import subprocess
+    badge = tmp_path / ".github" / "badges" / "consumers-light.svg"
+    badge.parent.mkdir(parents=True)
+    badge.write_text("<svg/>", encoding="utf-8")
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+
+    assert cs.badges_in_tree(tmp_path) == []
+
+
+def test_ne_repozitoriy_ne_lomaet_proverku(tmp_path):
+    """Без git смотреть нечего, и это не отказ витрины: у неё свой предмет."""
+    assert cs.badges_in_tree(tmp_path) == []
+
+
+def test_gate_otvergaet_vernuvshiysya_artefakt(repo):
+    """ГЕЙТ, А НЕ ФУНКЦИЯ (150). Первая версия этих случаев спрашивала
+    `badges_in_tree` напрямую, и мутация «главный ход её не зовёт» их пережила —
+    та же ошибка, что была допущена сегодня же в наборе атрибуции.
+    """
+    import subprocess
+    prepare(repo, [{"id": "q", "absent": "предмета нет: проверять нечего"}])
+    write(repo / ".github" / "badges" / "consumers-light.svg", "<svg/>")
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    subprocess.run(["git", "add", "-f", "-A"], cwd=repo, check=True)
+
+    assert run(repo) == 1
+
+
+def test_gate_nazyvaet_vernuvshiysya_fayl(repo, capsys):
+    import subprocess
+    prepare(repo, [{"id": "q", "absent": "предмета нет: проверять нечего"}])
+    write(repo / ".github" / "badges" / "consumers-dark.svg", "<svg/>")
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    subprocess.run(["git", "add", "-f", "-A"], cwd=repo, check=True)
+    run(repo)
+
+    assert "consumers-dark.svg" in capsys.readouterr().err
+
+
+def test_chistoe_derevo_gate_propuskaet(repo):
+    """Обратная сторона: витрина без значков в дереве — штатное состояние, и
+    краснеть на нём значило бы требовать того, чего быть не должно."""
+    import subprocess
+    prepare(repo, [{"id": "q", "absent": "предмета нет: проверять нечего"}])
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+
+    assert run(repo) == 0

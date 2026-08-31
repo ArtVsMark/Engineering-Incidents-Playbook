@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 158,
+  "count": 159,
   "rules": [
     {
       "id": "001",
@@ -4319,6 +4319,35 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
+      "portable": "yes"
+    },
+    {
+      "id": "160",
+      "slug": "derived-artifacts-live-off-the-branch",
+      "title": {
+        "ru": "Производное, обновляемое чаще изменений, живёт вне общей ветки",
+        "en": "A derived artefact rebuilt more often than changes lives off the main branch"
+      },
+      "areas": {
+        "ru": [
+          "конвейер"
+        ],
+        "en": [
+          "pipeline"
+        ]
+      },
+      "added": "2026-08-31",
+      "files": {
+        "ru": "rules/ru/160-derived-artifacts-live-off-the-branch.md",
+        "en": "rules/en/160-derived-artifacts-live-off-the-branch.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "144"
+        }
+      ],
+      "origin": "ArtVsMark/claude-code-playbook",
       "portable": "yes"
     }
   ],

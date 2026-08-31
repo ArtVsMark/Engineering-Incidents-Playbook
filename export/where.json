@@ -8,14 +8,14 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-08-31",
-      "answered": 158,
+      "answered": 159,
       "by_status": {
         "not-applicable": 35,
-        "active": 116,
+        "active": 117,
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 67,
+        "gate": 68,
         "none": 32,
         "pipeline": 3,
         "document": 14
@@ -178,7 +178,8 @@
         "156": "active",
         "157": "active",
         "158": "active",
-        "159": "active"
+        "159": "active",
+        "160": "active"
       },
       "holds": {
         "002": {
@@ -644,10 +645,14 @@
         "159": {
           "mechanism": "none",
           "where": "предмет есть и правило соблюдается: у scripts/check_gates.py, scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py вердикт по накопителю стоит после последнего случая — проверено обходом всех четырёх"
+        },
+        "160": {
+          "mechanism": "gate",
+          "where": "scripts/check_showcase.py — badges_in_tree(): артефакт витрины, вернувшийся в дерево общей ветки, отвергается. .gitignore накрывает .github/badges/*.json и *.svg, но при слиянии его не спрашивают — сторож стоит именно поэтому. Свежесть держит .github/workflows/badges.yml на каждый толчок в main"
         }
       },
-      "trails": 25,
-      "born": 19
+      "trails": 26,
+      "born": 20
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
