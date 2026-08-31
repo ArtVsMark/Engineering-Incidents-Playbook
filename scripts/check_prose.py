@@ -24,6 +24,8 @@
 Реализует правила каталога:
   008 — сворачиваемых блоков нет там, где страницу читают машинально;
   035 — версия не вписывается в файлы: источник один, и это тег;
+  025 — номер задачи живёт в инциденте и следе, а не в объяснении;
+  089 — запись не ссылается в производное: копия отстаёт всегда;
   051 — запрещается достоверное: тег в манифесте — факт, число в прозе — нет;
   039 — три исхода: чисто · есть находки · проверка не отработала;
   075 — ноль просмотренных файлов это отказ, а не чистый прогон.
@@ -56,6 +58,22 @@ PLACEHOLDERS = {"0.0.0"}
 DETAILS_RE = re.compile(r"(?<!`)<details\b", re.I)
 FENCE_RE = re.compile(r"^\s*```")
 
+#: Разделы ОБЪЯСНЕНИЯ, где номер задачи мешает: он датирует, а не поясняет.
+#: Список запретительный, и это выбор против 068: в «Инциденте» номер законен —
+#: там он и есть датировка, — а ошибиться в другую сторону значит краснеть на
+#: верной записи, чему цена выше (051). Новый раздел объяснения гейт пропустит;
+#: пропущенный номер стоит правки строки, ложный отказ — доверия к гейту.
+EXPLAINING = ("Почему", "Why", "Применимость", "Where it applies",
+              "Практические границы", "Practical boundaries")
+#: Номер задачи: `#123` и `владелец/репо#123`. Не путать с якорем и решёткой
+#: заголовка — отсюда требование цифр и границы слова.
+ISSUE_RE = re.compile(r"(?<![\w/])#\d{1,5}\b")
+
+#: Производные каталога: их собирает сборка, и они отстают всегда. Ссылка
+#: отсюда уводит читателя в прошлое из того самого места, где лежит настоящее.
+DERIVED = ("rules/README.md", "export/", ".github/badges/")
+LINK_RE = re.compile(r"\]\(([^)]+)\)")
+
 
 def tracked(root: Path) -> list[Path]:
     """Отслеживаемые файлы. Непрослеживаемый мусор проверять незачем."""
@@ -82,6 +100,45 @@ def details_lines(text: str) -> list[int]:
         if not fenced and DETAILS_RE.search(line):
             found.append(n)
     return found
+
+
+def sections_of(text: str) -> list[tuple[str, int, str]]:
+    """Разделы файла: имя, номер первой строки, тело. Начало — до первого `##`."""
+    out: list[tuple[str, int, list[str]]] = [("начало", 1, [])]
+    for n, line in enumerate(text.splitlines(), 1):
+        if line.startswith("## "):
+            out.append((line[3:].strip(), n, []))
+        else:
+            out[-1][2].append(line)
+    return [(name, n, "\n".join(body)) for name, n, body in out]
+
+
+def issue_numbers(text: str) -> list[tuple[str, str]]:
+    """Номера задач в разделах объяснения: раздел и сам номер.
+
+    В «Инциденте» номер — датировка, и она там на месте. В «Почему» он мешает:
+    читатель уходит смотреть задачу вместо того, чтобы прочитать механизм
+    поломки, а задача расскажет ему то же самое, только длиннее и позже (025).
+    """
+    found: list[tuple[str, str]] = []
+    for name, _, body in sections_of(text):
+        if name not in EXPLAINING:
+            continue
+        fenced = False
+        for line in body.splitlines():
+            if FENCE_RE.match(line):
+                fenced = not fenced
+                continue
+            if fenced:
+                continue
+            found += [(name, m.group(0)) for m in ISSUE_RE.finditer(line)]
+    return found
+
+
+def links_to_derived(text: str) -> list[str]:
+    """Ссылки записи в производные каталога — указатель, выгрузку, значки."""
+    return [t for t in LINK_RE.findall(text)
+            if any(d in t for d in DERIVED)]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -114,6 +171,22 @@ def main(argv: list[str] | None = None) -> int:
                 "текстовой выгрузке он схлопывается в строку `summary`, и "
                 "раздел читается как оборванный — раскройте или не пишите (008)")
 
+    # Записи каталога — оригинал; указатель и выгрузка — его копии.
+    for path in sorted(p for p in prose if p.parent.name in ("ru", "en")
+                       and p.parent.parent.name == "rules"):
+        text = path.read_text(encoding="utf-8")
+        rel = path.relative_to(root)
+        for section, num in issue_numbers(text):
+            problems.append(
+                f"{rel}: номер задачи {num} в разделе «{section}». Номер "
+                "датирует, а не объясняет: в инциденте и следе он на месте, "
+                "в объяснении уводит читателя от механизма поломки (025)")
+        for target in links_to_derived(text):
+            problems.append(
+                f"{rel}: ссылка в производное «{target}». Копия отстаёт всегда, "
+                "и ссылка отсюда отправляет читателя в прошлое из того места, "
+                "где лежит настоящее (089)")
+
     for name, pattern in MANIFESTS.items():
         path = root / name
         if not path.exists():
@@ -131,8 +204,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
-    print(f"текст в порядке: просмотрено {len(prose)} документов, "
-          "сворачиваемых блоков нет, версия в манифестах не вписана")
+    print(f"текст в порядке: просмотрено {len(prose)} документов — "
+          "сворачиваемых блоков нет, номера задач стоят в инциденте и следе, "
+          "ссылок в производные нет, версия в манифестах не вписана")
     return 0
 
 

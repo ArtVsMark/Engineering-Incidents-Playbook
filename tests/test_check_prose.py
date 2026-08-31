@@ -110,3 +110,72 @@ def test_ne_repozitoriy_eto_dva(tmp_path):
     """Список файлов берётся у git: без него смотреть нечего."""
     (tmp_path / "a.md").write_text("<details>\n", encoding="utf-8")
     assert cp.main(["--root", str(tmp_path)]) == 2
+
+
+# ── номер задачи в объяснении (025) ────────────────────────────────────────
+
+def запись(тело: str) -> str:
+    return "# Заголовок\n\n**Область.** процесс\n\n" + тело
+
+
+def test_nomer_v_pochemu_nahodka(tmp_path):
+    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
+        "## Почему\n\nМеханизм описан в #123, читайте там.\n")})
+    assert cp.main(["--root", str(root)]) == 1
+
+
+def test_nomer_v_intsidente_ne_narushenie(tmp_path):
+    """В инциденте номер — это датировка, и она там на месте."""
+    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
+        "## Инцидент\n\nPR #1294: 16 записей, дублей нет.\n")})
+    assert cp.main(["--root", str(root)]) == 0
+
+
+def test_nomer_v_sledе_ne_narushenie(tmp_path):
+    """След обязан быть разрешимым, то есть как раз номером задачи."""
+    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
+        "## След\n\nArtVsMark/claude-code-playbook#213\n")})
+    assert cp.main(["--root", str(root)]) == 0
+
+
+def test_nomer_v_bloke_koda_ne_narushenie(tmp_path):
+    """Пример чек-листа цитирует строку с номером — это показ, а не ссылка."""
+    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
+        "## Почему\n\n```\n- [x] Находка A — исправлено в #123\n```\n")})
+    assert cp.main(["--root", str(root)]) == 0
+
+
+def test_reshyotka_zagolovka_ne_schitaetsya_nomerom():
+    """`#123` — номер, `## Почему` — заголовок: путать их значит краснеть на
+    каждой второй записи."""
+    assert cp.issue_numbers("## Почему\n\nпросто текст\n") == []
+
+
+# ── ссылка из оригинала в копию (089) ──────────────────────────────────────
+
+def test_ssylka_v_ukazatel_nahodka(tmp_path):
+    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
+        "## Почему\n\nСписок — в [указателе](../README.md), см. rules/README.md.\n"
+        "Точнее: [тут](../../rules/README.md).\n")})
+    assert cp.main(["--root", str(root)]) == 1
+
+
+def test_ssylka_v_vygruzku_nahodka(tmp_path):
+    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
+        "## Почему\n\nДанные лежат в [выгрузке](../../export/rules.json).\n")})
+    assert cp.main(["--root", str(root)]) == 1
+
+
+def test_ssylka_na_sosednyuyu_zapis_ne_narushenie(tmp_path):
+    """Запись на запись — связь оригиналов, и она обязательна: правило без
+    соседей обычно либо дубль, либо слишком общее."""
+    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
+        "## Почему\n\nСмежное: [022](022-one-canonical-document.md).\n")})
+    assert cp.main(["--root", str(root)]) == 0
+
+
+def test_dokument_vne_zapisey_ne_proveryaetsya_na_ssylki(tmp_path):
+    """ГРАНИЦА: свод ссылается на указатель законно — он не оригинал для него,
+    а читатель свода ищет вход в каталог именно там."""
+    root = repo_with(tmp_path, {"AGENTS.md": "Указатель — [rules/README.md](rules/README.md).\n"})
+    assert cp.main(["--root", str(root)]) == 0
