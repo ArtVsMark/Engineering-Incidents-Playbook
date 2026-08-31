@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 161,
+  "count": 162,
   "rules": [
     {
       "id": "001",
@@ -4398,6 +4398,37 @@
       "files": {
         "ru": "rules/ru/162-a-gap-asks-the-neighbours-first.md",
         "en": "rules/en/162-a-gap-asks-the-neighbours-first.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/claude-code-playbook",
+          "issue": "148"
+        }
+      ],
+      "origin": "ArtVsMark/claude-code-playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "163",
+      "slug": "a-shipped-tool-is-named-at-the-entrance",
+      "title": {
+        "ru": "Инструмент, отданный наружу, назван на входе, а не в журнале",
+        "en": "A tool you ship is named at the entrance, not in the changelog"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "документация"
+        ],
+        "en": [
+          "contracts",
+          "documentation"
+        ]
+      },
+      "added": "2026-08-31",
+      "files": {
+        "ru": "rules/ru/163-a-shipped-tool-is-named-at-the-entrance.md",
+        "en": "rules/en/163-a-shipped-tool-is-named-at-the-entrance.md"
       },
       "trails": [
         {
