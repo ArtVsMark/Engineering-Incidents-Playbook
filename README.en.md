@@ -101,4 +101,10 @@ Drawn by a workflow from [`export/where.json`](export/where.json) — the projec
 
 ## License
 
-[CC BY 4.0](LICENSE) — take it, change it, use it, keep the attribution.
+Records, showcase and document templates — [CC BY 4.0](LICENSE): take it,
+change it, use it, keep the attribution. Scripts, workflows and executable
+templates — [MIT](LICENSE-CODE): Creative Commons itself advises against its
+licences for software, and the templates here are meant to be run.
+
+Consumers' data is quoted with the project named and never relicensed; the
+terms are in the [consumption contract](export/README.md).

@@ -325,6 +325,31 @@ computed by a build and named in the showcase, or `absent` with a reason. An
 omission does not pass: a missing badge and a frozen badge look identical from
 the outside.
 
+## На каких условиях · The terms
+
+Отдавая ответ по адресу из реестра, потребитель **разрешает каталогу
+публиковать его содержимое** в производных: сводке `export/where.md`, картинке
+витрины и задачах-адресатах. Публикуется дословно и **всегда с именем проекта**
+— поля `where` цитируются целыми абзацами, потому что их ценность в адресе
+механизма, а не в пересказе.
+
+Каталог чужой текст **не перелицензирует**: он его цитирует с указанием
+источника. Записи самого каталога — под [CC BY 4.0](../LICENSE), его скрипты и
+исполняемые заготовки — под [MIT](../LICENSE-CODE).
+
+Если публикация неприемлема, поле `bindings` (или `proposals`) в реестре
+оставляют пустым: это объявленное состояние «не подключён», а не пробел
+([027](../rules/ru/027-empty-state-is-a-state.md)).
+
+By publishing an answer at the address in the registry, a consumer **permits
+the catalogue to publish its contents** in derived artefacts: the
+`export/where.md` summary, the showcase picture and the addressee issues.
+Quoting is verbatim and **always names the project**. The catalogue does not
+relicense anybody's text — it quotes it with attribution. The catalogue's own
+records are under CC BY 4.0, its scripts and executable templates under MIT.
+Leave `bindings` (or `proposals`) empty in the registry if that is not
+acceptable: "not connected" is a declared state, not a gap.
+
 ## Как схема меняется · How the schema evolves
 
 Правила эволюции записаны здесь же, рядом со схемой — иначе их не прочитает тот,

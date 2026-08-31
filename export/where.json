@@ -484,7 +484,7 @@
         },
         "113": {
           "mechanism": "document",
-          "where": "export/README.md § Как схема меняется"
+          "where": "export/README.md § «Как схема меняется» — правила эволюции лежат рядом со схемой; § «На каких условиях» — что каталог делает с присланным и под какой лицензией публикует. Второе добавлено 31 августа: контракт год описывал формат и молчал об условиях, при том что поля потребителей цитируются в сводке дословно"
         },
         "114": {
           "mechanism": "gate",
@@ -1437,11 +1437,12 @@
       "schema": "1.0",
       "state": "подключён",
       "read_at": "2026-08-31",
-      "answered": 153,
+      "answered": 159,
       "by_status": {
         "active": 79,
         "not-applicable": 73,
-        "rejected": 1
+        "rejected": 1,
+        "unreviewed": 6
       },
       "by_mechanism": {
         "gate": 46,
@@ -1602,7 +1603,13 @@
         "151": "active",
         "152": "active",
         "153": "active",
-        "154": "active"
+        "154": "active",
+        "155": "unreviewed",
+        "156": "unreviewed",
+        "157": "unreviewed",
+        "158": "unreviewed",
+        "159": "unreviewed",
+        "160": "unreviewed"
       },
       "holds": {
         "001": {
