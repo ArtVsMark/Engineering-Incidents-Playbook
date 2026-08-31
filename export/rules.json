@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
-  "count": 155,
+  "count": 156,
   "rules": [
     {
       "id": "001",
@@ -4226,6 +4226,37 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
+      "portable": "yes"
+    },
+    {
+      "id": "157",
+      "slug": "a-contract-version-bump-is-a-re-read",
+      "title": {
+        "ru": "Смена версии чужого контракта — повод перечитать ответы, а не только формат",
+        "en": "A contract version bump is a re-read of your answers, not just of the format"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "данные"
+        ],
+        "en": [
+          "contracts",
+          "data"
+        ]
+      },
+      "added": "2026-08-31",
+      "files": {
+        "ru": "rules/ru/157-a-contract-version-bump-is-a-re-read.md",
+        "en": "rules/en/157-a-contract-version-bump-is-a-re-read.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1400"
+        }
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
       "portable": "yes"
     }
   ],

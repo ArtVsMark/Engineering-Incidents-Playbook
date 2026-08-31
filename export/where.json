@@ -11,12 +11,11 @@
       "answered": 156,
       "by_status": {
         "not-applicable": 35,
-        "active": 113,
-        "rejected": 7,
-        "unreviewed": 1
+        "active": 114,
+        "rejected": 7
       },
       "by_mechanism": {
-        "gate": 66,
+        "gate": 67,
         "none": 30,
         "pipeline": 3,
         "document": 14
@@ -177,7 +176,7 @@
         "154": "active",
         "155": "active",
         "156": "active",
-        "157": "unreviewed"
+        "157": "active"
       },
       "holds": {
         "002": {
@@ -631,6 +630,10 @@
         "156": {
           "mechanism": "gate",
           "where": "scripts/check_attribution.py — трейлеры читаются функцией tail(): последний абзац принимается, только если ВСЕ его непустые строки имеют форму «Ключ: значение». Отвергаемый предмет прогоняется живым коммитом в tests/test_check_attribution.py, где тело объясняет атрибуцию словами"
+        },
+        "157": {
+          "mechanism": "gate",
+          "where": "scripts/aggregate_bindings.py — schema_lag(): версия ответа каждого потребителя сверяется с версией ОТВЕТА КАТАЛОГА, а не с константой в коде; отставание печатается разделом «правится не здесь». Там же сверяется templates/bindings.json: заготовка, отстав, рассылает устаревшую версию всем, кто подключается"
         }
       },
       "trails": 25,
@@ -1410,8 +1413,8 @@
           "where": "scripts/check_rule_bindings.py — храповик UNHELD_BUDGET = 0: запись active + mechanism: none сюда не мержится вовсе, поэтому состояние, у которого 154 требует причину, здесь недостижимо, а не молчаливо; у отрицательных статусов (rejected, not-applicable) тот же гейт отказывает при пустом why"
         }
       },
-      "trails": 67,
-      "born": 127
+      "trails": 68,
+      "born": 128
     },
     {
       "repo": "ArtVsMark/ArtVsMark",
