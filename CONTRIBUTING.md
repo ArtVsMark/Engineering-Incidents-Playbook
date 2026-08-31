@@ -178,5 +178,12 @@ rule applies when the label is **attached**, not when the issue is created.
 
 ## Лицензия · License
 
-[CC BY 4.0](LICENSE). Внося вклад, вы соглашаетесь, что он распространяется на
-тех же условиях.
+[CC BY 4.0](LICENSE) — записи, витрина и заготовки-документы.
+[MIT](LICENSE-CODE) — скрипты, прогоны и исполняемые заготовки. Внося вклад, вы
+соглашаетесь, что он распространяется на условиях той половины, к которой
+относится: правило — CC BY, скрипт — MIT.
+
+[CC BY 4.0](LICENSE) for the records, the showcase and the document templates;
+[MIT](LICENSE-CODE) for scripts, workflows and executable templates. By
+contributing you agree your contribution goes out under whichever of the two
+covers it.

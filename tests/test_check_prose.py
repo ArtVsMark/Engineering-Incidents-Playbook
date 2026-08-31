@@ -179,3 +179,36 @@ def test_dokument_vne_zapisey_ne_proveryaetsya_na_ssylki(tmp_path):
     а читатель свода ищет вход в каталог именно там."""
     root = repo_with(tmp_path, {"AGENTS.md": "Указатель — [rules/README.md](rules/README.md).\n"})
     assert cp.main(["--root", str(root)]) == 0
+
+
+# ── две лицензии, и обе названы витриной ───────────────────────────────────
+
+ВИТРИНА = "# Проект\n\nЗаписи — CC BY 4.0 (LICENSE), скрипты — MIT (LICENSE-CODE).\n"
+
+
+def test_obe_litsenzii_na_meste_chisto(tmp_path):
+    root = repo_with(tmp_path, {"README.md": ВИТРИНА,
+                                "LICENSE": "CC BY\n", "LICENSE-CODE": "MIT\n"})
+    assert cp.main(["--root", str(root)]) == 0
+
+
+def test_propavshaya_litsenziya_koda_nahodka(tmp_path):
+    root = repo_with(tmp_path, {"README.md": ВИТРИНА, "LICENSE": "CC BY\n"})
+    assert cp.main(["--root", str(root)]) == 1
+
+
+def test_litsenziya_o_kotoroy_vitrina_molchit_nahodka(tmp_path, capsys):
+    """Площадка показывает одну лицензию — ту, что в LICENSE. Вторая существует
+    ровно настолько, насколько на неё ссылается витрина."""
+    root = repo_with(tmp_path, {"README.md": "# Проект\n\nЛицензия: LICENSE.\n",
+                                "LICENSE": "CC BY\n", "LICENSE-CODE": "MIT\n"})
+    assert cp.main(["--root", str(root)]) == 1
+    assert "LICENSE-CODE" in capsys.readouterr().err
+
+
+def test_angliyskaya_vitrina_tozhe_schitaetsya(tmp_path):
+    """Назвать лицензию можно в любой из двух витрин: читатель приходит в свою."""
+    root = repo_with(tmp_path, {"README.md": "# Проект\n",
+                                "README.en.md": ВИТРИНА,
+                                "LICENSE": "CC BY\n", "LICENSE-CODE": "MIT\n"})
+    assert cp.main(["--root", str(root)]) == 0

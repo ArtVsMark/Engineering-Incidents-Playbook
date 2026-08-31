@@ -8,3 +8,17 @@ commercially, under the following terms: you must give appropriate credit,
 provide a link to the license, and indicate if changes were made.
 
 Full text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+SCOPE. This licence covers the prose of the catalogue: rule records in
+`rules/**`, the showcase, the charter, the contributor guide, and the document
+templates in `templates/*.md`.
+
+The executable part — `scripts/**`, `tests/**`, `.github/workflows/**` and the
+executable templates — is under the MIT licence, see LICENSE-CODE. Creative
+Commons does not recommend its licences for software, and the templates here
+are meant to be taken and run.
+
+DATA FROM CONSUMERS. The catalogue quotes consumers' answers verbatim in its
+summary and pictures, always naming the project it came from. The terms on
+which a consumer publishes that answer are stated in the consumption contract,
+`export/README.md`.
