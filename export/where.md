@@ -12,9 +12,9 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 27 | 21 | 160 | 0 | 0 | 118 | 70 | 3 | 14 | 31 | 58 |  |
-| `Stepik-Python-Grader` | подключён | 68 | 128 | 153 | 7 | 0 | 150 | 63 | 27 | 59 | 1 | 114 |  |
-| `ArtVsMark` | подключён | 15 | 10 | 159 | 1 | 0 | 79 | 46 | 6 | 11 | 16 | 32 |  |
+| `claude-code-playbook` | подключён | 28 | 22 | 161 | 0 | 0 | 119 | 71 | 3 | 14 | 31 | 59 |  |
+| `Stepik-Python-Grader` | подключён | 68 | 128 | 153 | 8 | 0 | 150 | 63 | 27 | 59 | 1 | 114 |  |
+| `ArtVsMark` | подключён | 15 | 10 | 159 | 2 | 0 | 79 | 46 | 6 | 11 | 16 | 32 |  |
 | `claude-code-usage` | не подключён | 1 | 1 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
@@ -86,7 +86,7 @@
 | `claude-code-playbook` | `scripts/aggregate_bindings.py` | 6 |
 | `claude-code-playbook` | `scripts/check_charter.py` | 6 |
 | `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 5 |
-| `claude-code-playbook` | `scripts/check_bindings.py` | 4 |
+| `claude-code-playbook` | `scripts/check_bindings.py` | 5 |
 | `claude-code-playbook` | `scripts/check_prose.py` | 4 |
 | `claude-code-playbook` | `scripts/check_showcase.py` | 4 |
 | `claude-code-playbook` | `scripts/check_workflows.py` | 4 |
@@ -110,7 +110,7 @@
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `scripts/version.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 26 механизмов по одному правилу; без названного адреса: 0 из 87 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 27 механизмов по одному правилу; без названного адреса: 0 из 88 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 36 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |
@@ -346,3 +346,4 @@
 | 159 | действует | — | не рассмотрено |
 | 160 | действует | — | не рассмотрено |
 | 161 | действует | — | — |
+| 162 | действует | — | — |
