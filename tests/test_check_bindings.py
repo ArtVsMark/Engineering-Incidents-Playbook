@@ -282,3 +282,41 @@ def test_у_ничем_блока_не_спрашивают(monkeypatch, repo):
                                "why": "не дошли руки: предмет счётный"}}},
             export_of("001"))
     assert cb.main() == 0
+
+
+# ── разбивка «ничем» по причине (154 + решение владельца 31 августа) ────────
+
+def правило(why: str) -> dict:
+    return {"status": "active", "mechanism": "none", "where": "нигде", "why": why}
+
+
+def test_prichiny_razobrany_po_klassam():
+    rules = {"001": правило("требует суждения: из диффа не следует"),
+             "002": правило("требует суждения: оценивает читатель"),
+             "003": правило("не дошли руки: очередь не дошла")}
+
+    counts, other = cb.why_split(rules)
+
+    assert counts == {"суждением": 2, "очередь": 1} and other == 0
+
+
+def test_neznakomaya_prichina_pechataetsya_prochim():
+    """Список классов разрешительный: непопавшее считается «прочим» и остаётся
+    числом, а не растворяется в соседних (068)."""
+    counts, other = cb.why_split({"001": правило("проверка дороже нарушения")})
+
+    assert counts == {} and other == 1
+
+
+def test_pravilo_s_mehanizmom_v_razbivku_ne_popadaet():
+    rules = {"001": {"status": "active", "mechanism": "gate", "where": "s/g.py"}}
+
+    assert cb.why_split(rules) == ({}, 0)
+
+
+def test_ne_deystvuyushchee_pravilo_ne_schitaetsya():
+    """`rejected` и `not-applicable` тоже несут `why`, но это другая причина —
+    почему правила здесь нет, а не почему оно не держится."""
+    rules = {"001": {"status": "rejected", "why": "требует суждения: нет"}}
+
+    assert cb.why_split(rules) == ({}, 0)
