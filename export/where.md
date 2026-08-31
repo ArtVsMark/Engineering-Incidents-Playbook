@@ -161,7 +161,7 @@
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 67 механизмов по одному правилу; без названного адреса: 5 из 150 |
 | `ArtVsMark` | `scripts/build_metrics.py` | 22 |
-| `ArtVsMark` | `scripts/check_mechanisms.py` | 17 |
+| `ArtVsMark` | `scripts/check_mechanisms.py` | 19 |
 | `ArtVsMark` | `CLAUDE.md` | 11 |
 | `ArtVsMark` | `scripts/check_labels.py` | 11 |
 | `ArtVsMark` | `.github/workflows/automerge.yml` | 10 |
