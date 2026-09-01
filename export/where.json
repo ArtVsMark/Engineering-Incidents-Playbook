@@ -7,7 +7,7 @@
       "role": "каталог",
       "schema": "1.1",
       "state": "подключён",
-      "read_at": "2026-08-31",
+      "read_at": "2026-09-01",
       "answered": 162,
       "by_status": {
         "not-applicable": 35,
@@ -674,7 +674,7 @@
       "role": "потребитель",
       "schema": "1.1",
       "state": "подключён",
-      "read_at": "2026-08-31",
+      "read_at": "2026-09-01",
       "answered": 153,
       "by_status": {
         "active": 150,
@@ -1451,13 +1451,13 @@
       "role": "потребитель",
       "schema": "1.0",
       "state": "подключён",
-      "read_at": "2026-08-31",
-      "answered": 159,
+      "read_at": "2026-09-01",
+      "answered": 162,
       "by_status": {
         "active": 79,
         "not-applicable": 73,
         "rejected": 1,
-        "unreviewed": 6
+        "unreviewed": 9
       },
       "by_mechanism": {
         "gate": 46,
@@ -1624,7 +1624,10 @@
         "157": "unreviewed",
         "158": "unreviewed",
         "159": "unreviewed",
-        "160": "unreviewed"
+        "160": "unreviewed",
+        "161": "unreviewed",
+        "162": "unreviewed",
+        "163": "unreviewed"
       },
       "holds": {
         "001": {
