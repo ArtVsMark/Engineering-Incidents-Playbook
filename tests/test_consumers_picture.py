@@ -408,51 +408,74 @@ def test_kolonka_rodil_ne_naezzhaet_na_plashki(repo):
     assert min(плашки) >= cp.COL_BORN + 40
 
 
-# ── имя проекта не наезжает на колонку (правило 005 на поверхности) ───────
+# ── длинное имя переносится, а не растягивает картинку ───────────────────
 #
-# Первая колонка стояла вписанным числом 300 и протухла в тот день, когда
-# репозиторий переименовали: `Engineering-Incidents-Playbook` на 18px жирным
-# шире просвета, и имя наехало на «разобрано». Нашёл это владелец глазами.
+# Первая редакция починки двигала колонку по самому длинному имени — картинка
+# становилась шире, а значит мельче: витрина показывает её по ширине места.
+# Владелец увидел это сразу. Ширина теперь не зависит от имён вовсе.
 
 def первая_колонка(svg: str) -> int:
-    """Где начинается колонка «разобрано» — по подписи над ней."""
     m = re.search(r'<text x="(\d+)" y="\d+"[^>]*font-size="11\.5"', svg)
     assert m, "подписи колонок не нашлись"
     return int(m.group(1))
 
 
-def конец_имени(name: str) -> float:
-    return cp.PAD + len(name) * cp.NAME_K
+def имена(svg: str) -> list[str]:
+    return re.findall(r'<text x="36" y="\d+"[^>]*font-size="18"[^>]*>([^<]+)<', svg)
 
 
-def test_длинное_имя_раздвигает_колонки(repo):
-    """Ровно инцидент: имя длиннее просвета сдвигает первую колонку вправо."""
-    длинное = "Engineering-Incidents-Playbook"
-    срез(repo, [подключён(длинное)])
-
-    x = первая_колонка(рисуй(repo))
-
-    assert x > конец_имени(длинное), "имя наезжает на колонку"
-    assert x > cp.COL_MIN, "колонка не сдвинулась вовсе"
-
-
-def test_korotkie_imena_ostavlyayut_kolonku_na_meste(repo):
-    """Предмет у границы: прежняя ширина — нижняя граница, а не начальная.
-
-    Иначе картинка с короткими именами перестала бы совпадать с прошлыми
-    снимками, и сравнивать её было бы не с чем."""
-    срез(repo, [подключён("a"), подключён("b")])
-
-    assert первая_колонка(рисуй(repo)) == cp.COL_MIN
-
-
-def test_kolonki_dvigayutsya_vmeste(repo):
-    """Сдвигается не одна колонка, а весь ряд: числа обязаны стоять друг под
-    другом, иначе сравнивать их глазом нельзя."""
+def test_dlinnoe_imya_perenositsya_na_vtoruyu_stroku(repo):
+    """Ровно инцидент: `Engineering-Incidents-Playbook` не влезал в просвет."""
     срез(repo, [подключён("Engineering-Incidents-Playbook")])
-    svg = рисуй(repo)
-    xs = [int(x) for x in re.findall(r'<text x="(\d+)" y="\d+"[^>]*font-size="11\.5"', svg)]
 
-    assert len(xs) >= 3
-    assert xs[1] - xs[0] == cp.COL_D_TRAILS
-    assert xs[2] - xs[0] == cp.COL_D_BORN
+    куски = имена(рисуй(repo))
+
+    assert len(куски) == 2
+    assert "".join(куски) == "Engineering-Incidents-Playbook"
+
+
+def test_kolonka_ne_dvigaetsya_ot_dliny_imeni(repo):
+    """Предмет правила: ширина картинки не зависит от имён."""
+    короткие = первая_колонка(рисуй(срез(repo, [подключён("a")])))
+    длинные = первая_колонка(рисуй(срез(repo, [подключён("a" * 40)])))
+
+    assert короткие == длинные == cp.COL_MIN
+
+
+def test_razryv_ishchetsya_po_defisu(repo):
+    """Перенос посреди слова читается хуже: разрыв ищется по дефису."""
+    assert cp.wrap_name("Engineering-Incidents-Playbook")[0].endswith("-")
+
+
+def test_bez_defisa_ryvyom_po_mestu(repo):
+    """Имя без разрывов рвётся жёстко: это лучше, чем выехать за колонку."""
+    куски = cp.wrap_name("a" * 30)
+
+    assert len(куски) == 2 and len(куски[0]) == cp.NAME_LINE
+
+
+def test_ne_vlezshiy_hvost_obryvaetsya_mnogotochiem(repo):
+    """Третьей строки нет, и обрыв НАЗВАН, а не сделан молча (158)."""
+    куски = cp.wrap_name("a" * 80)
+
+    assert len(куски) == 2 and куски[1].endswith("…")
+
+
+def test_perenos_ne_shiryaet_kartinku_a_udlinyaet(repo):
+    """Ширина — не рычаг: она у витрины дороже высоты, потому что от неё
+    зависит масштаб всего текста."""
+    узкое = рисуй(срез(repo, [подключён("a")]))
+    широкое = рисуй(срез(repo, [подключён("a" * 40)]))
+    ш = lambda s: int(re.search(r'<svg width="(\d+)"', s).group(1))
+    в = lambda s: int(re.search(r'height="(\d+)"', s).group(1))
+
+    assert ш(узкое) == ш(широкое)
+    assert в(широкое) > в(узкое)
+
+
+def test_korotkie_imena_vysotu_ne_menyayut(repo):
+    """Растёт она только когда перенос действительно случился."""
+    svg = рисуй(срез(repo, [подключён("a"), подключён("b")]))
+    высота = int(re.search(r'height="(\d+)"', svg).group(1))
+
+    assert высота == cp.TOP + cp.ROW * 2 + cp.PAD - 8
