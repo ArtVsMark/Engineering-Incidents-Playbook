@@ -15,9 +15,9 @@
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 73,
-        "none": 30,
-        "pipeline": 3,
+        "gate": 75,
+        "none": 27,
+        "pipeline": 4,
         "document": 14
       },
       "rules": {
@@ -290,8 +290,8 @@
           "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке: у каждого проверяемого им гейта есть предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке"
         },
         "040": {
-          "mechanism": "none",
-          "where": "пропущенных тестов в наборе нет ни одного; появится — потребует причины. Гейта на это нет, и это осознанно: сегодня ему нечего было бы охранять"
+          "mechanism": "gate",
+          "where": "scripts/check_skips.py — шаг .github/workflows/ci.yml: пропуск без непустой причины (reason= у метки либо строка доводом вызова) даёт отказ. Пропусков сегодня ноль, и это состояние, а не пустота: предмет проверки — набор тестов, а он не пуст. ГРАНИЦА: «временно» и «потом» причиной считаются — гейт держит форму, содержание судит приёмка"
         },
         "041": {
           "mechanism": "gate",
@@ -394,8 +394,8 @@
           "where": "scripts/ghcli.py и tests/test_ghcli.py — механизм, не нашедший инструмента, отдаёт третий исход, а не зеленеет. У потребителя код 1 означает «очередь, всё в порядке», и скрипт без gh рапортовал успех, не работая вовсе"
         },
         "077": {
-          "mechanism": "none",
-          "where": "английское дерево сверяется по именам, разделам и следам, но не как перевод"
+          "mechanism": "gate",
+          "where": "scripts/check_locale.py — запись, положенная в rules/en/ по-русски, ловится языком: доля кириллицы в английском дереве не выше 15%, в русском не ниже 50%. Пороги замерены на корпусе из 162 пар (en от 0.000 до 0.022, ru от 0.814 до 0.946) — нарушение даёт значение у другого края, а не рядом с порогом. Структурный паритет держит scripts/build_rules_index.py, и он этого случая не видит: разделы на месте, имена совпадают. ГРАНИЦА: качество перевода гейт не судит — подстрочник и калька остаются предметом чтения на обоих языках, и это граница самого правила"
         },
         "079": {
           "mechanism": "gate",
@@ -554,8 +554,8 @@
           "where": "одно изменение — одна тема; в своде не записано"
         },
         "133": {
-          "mechanism": "none",
-          "where": "при общем файле ветки ставятся стопкой; гейта нет"
+          "mechanism": "pipeline",
+          "where": "scripts/check_overlap.py — шаг «кто ещё правит те же файлы» в .github/workflows/agent-pr.yml: пересечение файлов ветки с чужими ОТКРЫТЫМИ изменениями печатается и пишется в сводку работы, где его видит толкнувший. Не отказ: пересечение бывает законным — производные трогает почти каждая правка, и красное на законном приучало бы пропускать красное (051). Живость берётся у площадки, а не из формы истории: слияние идёт squash, и git branch --no-merged считает живыми все 23 ветки из двух. ГРАНИЦА: шаг стоит на стороне площадки, потому что в агентском окне gh нет — там проверка отвечает третьим исходом"
         },
         "134": {
           "mechanism": "document",
@@ -675,16 +675,15 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-09-02",
-      "answered": 153,
+      "answered": 162,
       "by_status": {
-        "active": 150,
+        "active": 159,
         "not-applicable": 3
       },
       "by_mechanism": {
-        "gate": 63,
-        "pipeline": 27,
-        "document": 59,
-        "none": 1
+        "gate": 65,
+        "pipeline": 30,
+        "document": 64
       },
       "rules": {
         "001": "active",
@@ -839,7 +838,16 @@
         "151": "active",
         "152": "active",
         "153": "active",
-        "154": "active"
+        "154": "active",
+        "155": "active",
+        "156": "active",
+        "157": "active",
+        "158": "active",
+        "159": "active",
+        "160": "active",
+        "161": "active",
+        "162": "active",
+        "163": "active"
       },
       "holds": {
         "001": {
@@ -1115,8 +1123,8 @@
           "where": "scripts/check_glossary_examples.py — храповик с числом (BUDGET), опускается починкой, а не правкой числа; tests/test_check_glossary_examples.py не даёт бюджету молча вырасти"
         },
         "071": {
-          "mechanism": "none",
-          "where": "дубликат находки в документе аудита помечается явно и закрывается тем же PR, что и оригинал (RUN-5-03 — дубликат RUN-4-03); ревизия реестра идёт глазами, механизма нет (issue #1400)"
+          "mechanism": "document",
+          "where": "намеренный дубль подписывается комментарием с причиной: src/stepik_grader/launcher.py — имя дублирует downloader.CONFIG_FILE намеренно (issue #823), scripts/preflight.py::_trailer_block повторяет разбор из scripts/check_attribution.py, чтобы предпушевой гейт не импортировал соседние. Приём подсказан ответом соседа по своду (правило 162)"
         },
         "072": {
           "mechanism": "gate",
@@ -1441,6 +1449,42 @@
         "154": {
           "mechanism": "gate",
           "where": "scripts/check_rule_bindings.py — храповик UNHELD_BUDGET = 0: запись active + mechanism: none сюда не мержится вовсе, поэтому состояние, у которого 154 требует причину, здесь недостижимо, а не молчаливо; у отрицательных статусов (rejected, not-applicable) тот же гейт отказывает при пустом why"
+        },
+        "155": {
+          "mechanism": "gate",
+          "where": "tests/test_shipped_examples.py — secrets.json.example и stepik_config.json.example проверяются НАБОРОМ ключей, который читает реальный код (core/stepik_client.py, downloader_config.normalize_config_paths), а не фактом своего существования"
+        },
+        "156": {
+          "mechanism": "gate",
+          "where": "scripts/check_attribution.py::trailer_block и scripts/preflight.py::_trailer_block читают трейлер только из хвостового блока — последнего абзаца целиком из строк «Ключ: значение»; закреплено tests/test_check_attribution.py"
+        },
+        "157": {
+          "mechanism": "pipeline",
+          "where": "scripts/check_rule_bindings.py::contract_drift сверяет нашу schema с той, что публикует каталог (templates/bindings.json); ходит ночным обходом .github/workflows/tracker-guardrails.yml — прогон замечает, слияние не держит"
+        },
+        "158": {
+          "mechanism": "document",
+          "where": "docs/agent/preflight.md § Что гейты не ловят: scripts/check_three_outcomes.py требует наличия третьего исхода, но не адреса отказа; признак «в сообщении есть адрес» от «есть любая подстановка» машинно не отличить"
+        },
+        "159": {
+          "mechanism": "document",
+          "where": "docs/agent/preflight.md § Что гейты не ловят: ранний return посреди перебора ловится грепом и почти всегда законен — отличает их только то, копится ли что-то в список, который читают позже"
+        },
+        "160": {
+          "mechanism": "pipeline",
+          "where": ".github/workflows/ci.yml — бейджи собираются в .github/badges/ и публикуются ОТДЕЛЬНОЙ веткой badges, а не в main (issue #1235): производное обновляется чаще изменений и в общей ветке давало бы конфликт на каждое слияние"
+        },
+        "161": {
+          "mechanism": "document",
+          "where": "docs/dev/adr/README.md — поворот с отвергнутой альтернативой пишется записью ADR, и полноту такой записи держит гейт scripts/check_adr_records.py; HISTORY.md по CLAUDE.md § Обновление CHANGELOG.md / HISTORY.md ведётся релизными сводками. Механизма, требующего завести ADR на состоявшийся поворот, нет"
+        },
+        "162": {
+          "mechanism": "pipeline",
+          "where": "scripts/check_rule_bindings.py::neighbour_holds печатает, чем правило без механизма держится у соседей по своду — собирает из export/where.json каталога, а не походом по чужим репозиториям; ходит ночным обходом"
+        },
+        "163": {
+          "mechanism": "document",
+          "where": "docs/use/installation.md и README.md — вход описан командами (pip install -e, stepik-grader, stepik-grader-gui), список команд один и живёт в CLAUDE.md § Команды; копирование образцов названо там же"
         }
       },
       "trails": 68,
