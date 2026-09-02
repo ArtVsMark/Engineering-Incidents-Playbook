@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 29 | 23 | 162 | 0 | 0 | 120 | 82 | 5 | 23 | 10 | 0 | 77 |  |
 | `Stepik-Python-Grader` | подключён | 68 | 128 | 162 | 0 | 0 | 159 | 65 | 31 | 63 | 0 | 0 | 127 |  |
-| `ArtVsMark` | подключён | 15 | 10 | 162 | 0 | 0 | 79 | 46 | 6 | 11 | 16 | 0 | 32 |  |
+| `ArtVsMark` | подключён | 15 | 10 | 162 | 0 | 0 | 80 | 47 | 6 | 11 | 16 | 0 | 32 |  |
 | `claude-code-usage` | подключён | 1 | 1 | 162 | 0 | 0 | 43 | 30 | 0 | 7 | 1 | 5 | 27 |  |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
@@ -144,7 +144,7 @@
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 82 механизмов по одному правилу; без названного адреса: 0 из 159 |
-| `ArtVsMark` | `scripts/build_metrics.py` | 22 |
+| `ArtVsMark` | `scripts/build_metrics.py` | 23 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 19 |
 | `ArtVsMark` | `CLAUDE.md` | 11 |
 | `ArtVsMark` | `scripts/check_labels.py` | 11 |
@@ -152,9 +152,9 @@
 | `ArtVsMark` | `README.md` | 10 |
 | `ArtVsMark` | `scripts/check_roles.py` | 8 |
 | `ArtVsMark` | `.github/workflows/open-pr.yml` | 7 |
+| `ArtVsMark` | `.github/workflows/pr-check.yml` | 7 |
 | `ArtVsMark` | `scripts/check_page.py` | 7 |
 | `ArtVsMark` | `.github/workflows/metrics.yml` | 6 |
-| `ArtVsMark` | `.github/workflows/pr-check.yml` | 6 |
 | `ArtVsMark` | `.rules/README.md` | 6 |
 | `ArtVsMark` | `scripts/check_bindings.py` | 6 |
 | `ArtVsMark` | `scripts/gh_outcome.py` | 6 |
@@ -164,13 +164,13 @@
 | `ArtVsMark` | `.github/workflows/release-hold.yml` | 4 |
 | `ArtVsMark` | `HISTORY.md` | 4 |
 | `ArtVsMark` | `scripts/checks.py` | 4 |
+| `ArtVsMark` | `.rules/bindings.json` | 3 |
 | `ArtVsMark` | `.rules/proposals.json` | 3 |
 | `ArtVsMark` | `.rules/roles.md` | 3 |
-| `ArtVsMark` | `.rules/bindings.json` | 2 |
 | `ArtVsMark` | `pr-check.yml` | 2 |
 | `ArtVsMark` | `projects.json` | 2 |
 | `ArtVsMark` | `scripts/hold.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 6 механизмов по одному правилу; без названного адреса: 1 из 63 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 6 механизмов по одному правилу; без названного адреса: 0 из 64 |
 | `claude-code-usage` | `CLAUDE.md` | 7 |
 | `claude-code-usage` | `scripts/changelog.py` | 7 |
 | `claude-code-usage` | `scripts/pr_check.py` | 7 |
@@ -347,7 +347,7 @@
 | 154 | действует | действует | действует | действует |
 | 155 | действует | действует | не рассмотрено | нет предмета |
 | 156 | действует | действует | не рассмотрено | нет предмета |
-| 157 | действует | действует | не рассмотрено | не рассмотрено |
+| 157 | действует | действует | действует | не рассмотрено |
 | 158 | действует | действует | не рассмотрено | действует |
 | 159 | действует | действует | не рассмотрено | действует |
 | 160 | действует | действует | не рассмотрено | отклонено |
