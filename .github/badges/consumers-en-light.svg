@@ -11,10 +11,10 @@
 <text x="300" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">162</text>
 <text x="434" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">29</text>
 <text x="556" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">23</text>
-<rect x="678" y="130" width="72" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="691" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">gate<tspan fill="#0969DA" font-weight="700" dx="7">72</tspan></text>
+<rect x="678" y="130" width="72" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="691" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">gate<tspan fill="#0969DA" font-weight="700" dx="7">73</tspan></text>
 <rect x="760" y="130" width="91" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="773" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">pipeline<tspan fill="#1A7F37" font-weight="700" dx="7">3</tspan></text>
 <rect x="868" y="130" width="98" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="881" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">document<tspan fill="#8250DF" font-weight="700" dx="7">14</tspan></text>
-<rect x="976" y="130" width="91" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="989" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">nothing<tspan fill="#CF222E" font-weight="700" dx="7">31</tspan></text>
+<rect x="976" y="130" width="91" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="989" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12" font-weight="600">nothing<tspan fill="#CF222E" font-weight="700" dx="7">30</tspan></text>
 <text x="36" y="187" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="18" font-weight="800" letter-spacing="-0.4">Stepik-Python-Grader</text>
 <text x="300" y="189" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">153</text>
 <text x="434" y="189" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="800">68</text>
