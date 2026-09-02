@@ -73,7 +73,12 @@ def test_zakrytaya_zadacha_nahoditsya_i_ne_dublitsya(monkeypatch, capsys):
     assert si.main() == 0
     assert "create" not in verbs(calls)
     assert "close" not in verbs(calls)      # уже закрыта — трогать нечего
-    listing = next(c for c in calls if c[:2] == ("issue", "list"))
+    # Списков задач теперь два: свои открытые — для подсказок, и поиск самой
+    # задачи-«входящих». Берётся ВТОРОЙ по признаку, а не по порядку: порядок
+    # вызовов — не предмет случая, и привязка к нему ломает его на первой же
+    # вставке (141).
+    listing = next(c for c in calls
+                   if c[:2] == ("issue", "list") and "--jq" in c)
     assert "all" in listing
 
 
@@ -211,3 +216,79 @@ def test_pustaya_stroka_tozhe_otsutstvie():
 
 def test_nayidennaya_zadacha_razbiraetsya():
     assert si.found_issue("52 OPEN") == ("52", "OPEN")
+
+
+# ── правило приходит с кандидатами из бэклога получателя (130) ────────────
+#
+# Доставить правило мало: без предмета в своём проекте оно остаётся
+# абстракцией, которую откладывают — «понятно, но не про нас». Список
+# кандидатов превращает его в вопрос о конкретной задаче.
+
+def правило(rid, title, areas=("гейты",)):
+    return {"id": rid, "title": {"ru": title, "en": title},
+            "areas": {"ru": list(areas), "en": list(areas)}}
+
+
+def задача(number, title):
+    return {"number": number, "title": title}
+
+
+def test_dve_obshchie_slova_svyazyvayut():
+    out = si.candidates_here(
+        [правило("001", "Пропущенный тест называет причину")],
+        [задача(7, "Пропущенный тест в наборе загрузчика — причину не помню")])
+
+    assert out and out[0]["issues"][0]["number"] == 7
+
+
+def test_odno_redkoe_slovo_svyazyvaet():
+    """Одно совпадение — совпадение, а не связь, если слово не редкое."""
+    out = si.candidates_here(
+        [правило("001", "Атрибуция коммитов сверяется со списком")],
+        [задача(9, "Атрибуция уехала в объединяющем коммите")])
+
+    assert out
+
+
+def test_odno_chastoe_slovo_ne_svyazyvaet():
+    """Ложная подсказка стоит взгляда, но связывать всё со всем нельзя."""
+    out = si.candidates_here(
+        [правило("001", "Пропущенный тест называет причину")],
+        [задача(9, "Причину падения не нашли")])
+
+    assert not out
+
+
+def test_obshchie_slova_kataloga_v_schyot_ne_idut():
+    """«Правило», «механизм», «проект» стоят и там и там — связывают всё."""
+    out = si.candidates_here(
+        [правило("001", "Правило без механизма это обещание")],
+        [задача(9, "Правило проекта: механизм не описан")])
+
+    assert not out
+
+
+def test_bolshe_dvuh_zadach_ne_pokazyvaetsya():
+    """Список — подсказка, а не отчёт: длинный никто не читает (016)."""
+    out = si.candidates_here(
+        [правило("001", "Пропущенный тест называет причину")],
+        [задача(n, "Пропущенный тест в наборе") for n in (1, 2, 3, 4)])
+
+    assert out and len(out[0]["issues"]) == 2
+
+
+def test_bez_zadach_razdela_prosto_net():
+    """Трекер не ответил — правило всё равно доезжает: 130 говорит «приходит
+    вместе с», а не «не приходит без» (084)."""
+    assert si.candidates_here([правило("001", "Пропущенный тест")], []) == []
+
+
+def test_razdel_nazyvaet_svoyu_granicu():
+    """Граница живёт в самом разделе, а не только в скрипте: читает его
+    человек, и вердиктом он этот список считать не должен."""
+    body = si.body_for([], [], "o/r", candidates=[{
+        "rule": правило("001", "Пропущенный тест называет причину"),
+        "issues": [{"number": 7, "title": "Пропущенный тест", "words": ["тест"]}]}])
+
+    assert "подсказка, а не вердикт" in body
+    assert "#7" in body

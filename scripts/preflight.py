@@ -43,6 +43,7 @@ import argparse
 import re
 import subprocess
 import sys
+import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -71,8 +72,12 @@ EVENT_VARS = ("$BASE", "$HEAD_SHA", "$PR", "$RUNNER_TEMP", "$GH_TOKEN")
 #:
 #: Запускается ТОТ ЖЕ скрипт тем же ключом; подменяется только источник текста.
 #: Второй проверки здесь нет и быть не должно (правило 022).
-STAND_IN = {"изменение связано с задачей или освобождено с причиной":
-            ("scripts/pr_body.py", "тело первого коммита ветки")}
+STAND_IN = {
+    "изменение связано с задачей или освобождено с причиной":
+        ("body", "тело первого коммита ветки"),
+    "запись журнала едет вместе с изменением":
+        ("journal", "изменённые пути и тело первого коммита"),
+}
 
 
 def branch_body(root: Path, base: str = "origin/main") -> tuple[str, str]:
@@ -189,6 +194,44 @@ def run_step(step: Step, root: Path) -> tuple[int, str]:
     return done.returncode, f"{tail.strip()}\n  ({spent:.1f} с)".strip()
 
 
+def branch_paths(root: Path, base: str = "origin/main") -> tuple[list[str], str]:
+    """Пути, которые изменение тронет, — тот же вопрос, что задаёт прогон."""
+    done = subprocess.run(["git", "-C", str(root), "diff", "--name-only",
+                           f"{base}...HEAD"], capture_output=True, text=True)
+    if done.returncode != 0:
+        return [], f"не спросить изменённые пути: {done.stderr.strip()}"
+    return [s for s in done.stdout.splitlines() if s.strip()], ""
+
+
+def stand_in_call(kind: str, root: Path) -> tuple[list[str], str, str]:
+    """Чем подменяется вход шага: команда, что подать на stdin, ошибка.
+
+    Подменяется ТОЛЬКО источник текста. Скрипт и его ключи те же, что в
+    конвейере: вторая проверка над той же территорией разошлась бы с первой
+    (022), а «почти та же» проверка — худший из возможных ответов.
+    """
+    текст, ошибка = branch_body(root)
+    if ошибка:
+        return [], "", ошибка
+    if kind == "body":
+        return ["scripts/pr_body.py", "--check", "--body-file", "-"], текст, ""
+    if kind == "journal":
+        пути, ошибка = branch_paths(root)
+        if ошибка:
+            return [], "", ошибка
+        # Пути и тело идут файлами, как и на изменении: у шага два входа, и
+        # подавать один из них иначе значит проверять не тот путь кода.
+        сумка = tempfile.mkdtemp()
+        путь_путей = Path(сумка) / "paths.txt"
+        путь_тела = Path(сумка) / "body.md"
+        путь_путей.write_text("\n".join(пути) + "\n", encoding="utf-8")
+        путь_тела.write_text(текст, encoding="utf-8")
+        return (["scripts/collect_changelog.py", "--require-entry",
+                 "--paths-from", str(путь_путей),
+                 "--body-file", str(путь_тела)], "", "")
+    return [], "", f"замены «{kind}» нет"
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--root", type=Path, default=ROOT,
@@ -257,15 +300,15 @@ def main(argv: list[str] | None = None) -> int:
         if замена is None:
             остались.append(step)
             continue
-        скрипт, откуда = замена
-        текст, ошибка = branch_body(root)
+        kind, откуда = замена
+        argv_, stdin_, ошибка = stand_in_call(kind, root)
         if ошибка:
             остались.append(step)
             print(f"~ {step.name}: замена не сработала — {ошибка}")
             continue
-        done = subprocess.run(  # noqa: S603 — скрипт назван в таблице замен
-            [sys.executable, скрипт, "--check", "--body-file", "-"],
-            cwd=root, input=текст, capture_output=True, text=True)
+        done = subprocess.run(  # noqa: S603 — команда собрана таблицей замен
+            [sys.executable, *argv_],
+            cwd=root, input=stdin_, capture_output=True, text=True)
         подменено.append(step.name)
         mark = {0: "✓"}.get(done.returncode, "✗")
         print(f"{mark} {step.name}  ({откуда})")
