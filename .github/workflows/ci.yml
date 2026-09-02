@@ -129,6 +129,32 @@ jobs:
           BASE: ${{ github.event.pull_request.base.sha }}
         run: python scripts/collect_changelog.py --check --added-since "$BASE"
 
+      # Правило 138: решение оседает артефактом ТЕМ ЖЕ заходом, а не перед
+      # выпуском. Отложенная запись означает, что следующее окно разбирает тот
+      # же вопрос заново.
+      #
+      # ЗАМЕР, А НЕ ОПАСЕНИЕ: из 34 изменений общей ветки, тронувших поведение,
+      # запись несут 34 — ноль нарушений. Гейт не чинит поломку, он снимает
+      # правило с дисциплины (002): дисциплина, о которой известно, что она
+      # стопроцентна, ломается ровно один раз и незаметно.
+      #
+      # У ОТКАЗА ЕСТЬ НАЗВАННЫЙ ВЫХОД — строка «Журнал: не требуется — причина»
+      # в теле изменения. Без выхода гейт обходили бы пустым фрагментом, а
+      # пустой фрагмент хуже отсутствующего: он выглядит памятью (126).
+      - name: запись журнала едет вместе с изменением
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          git diff --name-only "$BASE...HEAD" > "$RUNNER_TEMP/paths.txt"
+          gh pr view "$PR" --json body --jq .body > "$RUNNER_TEMP/body.md"
+          python scripts/collect_changelog.py --require-entry \
+            --paths-from "$RUNNER_TEMP/paths.txt" \
+            --body-file "$RUNNER_TEMP/body.md"
+
       # Правила 129 и 128: каталог — такой же потребитель, и отвечает за КАЖДОЕ
       # правило, а не за те, до которых дошли руки. Здесь же печатается метрика
       # из 120: сколько правил не обеспечено ничем.

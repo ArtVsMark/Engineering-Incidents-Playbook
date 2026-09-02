@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 29 | 23 | 162 | 0 | 0 | 120 | 80 | 4 | 23 | 13 | 0 | 74 |  |
+| `Engineering-Incidents-Playbook` | подключён | 29 | 23 | 162 | 0 | 0 | 120 | 81 | 4 | 23 | 12 | 0 | 74 |  |
 | `Stepik-Python-Grader` | подключён | 68 | 128 | 162 | 0 | 0 | 159 | 65 | 31 | 63 | 0 | 0 | 127 |  |
 | `ArtVsMark` | подключён | 15 | 10 | 162 | 0 | 0 | 79 | 46 | 6 | 11 | 16 | 0 | 32 |  |
 | `claude-code-usage` | подключён | 1 | 1 | 162 | 0 | 0 | 43 | 30 | 0 | 7 | 1 | 5 | 27 |  |
@@ -43,7 +43,6 @@
 | 132 | `Stepik-Python-Grader` — конвейер: scripts/check_work_overlap.py показывает пересечение неблокирующим шагом scripts/preflight.py, а CLAUDE.md § Метки при заведении issue требует объявить все задачи сборного изменения (Closes #N либо «Часть #N»); `ArtVsMark` — документ: CLAUDE.md § Критические запреты — не везти в одном PR несколько тем; .github/pull_request_template.md — тот же вопрос критику. Гейта нет намеренно: число затронутых зон сборности не доказывает, а ложный отказ на широкой теме дороже пропуска. Правило само требует предупреждения, а не отказа, — а предупреждать здесь некому | `Engineering-Incidents-Playbook` |
 | 135 | `Stepik-Python-Grader` — документ: CLAUDE.md § Формат коммитов: автор PR — человек, соавторство — место вклада Claude; scripts/check_pr_ready.py и scripts/check_attribution.py --check-branch запускаются окном, а не прогоном; `ArtVsMark` — гейт: .rules/README.md § Из окна не пишут — личность этого окна установлена пробой того же класса, а не опросом токена, и результат годен только для него: следующее окно проверяет заново. scripts/check_author.py — то, что окно подписалось не тем именем, теперь выясняется записью и проверкой, а не памятью | `Engineering-Incidents-Playbook` |
 | 136 | `Engineering-Incidents-Playbook` — документ: .rules/bindings.json — вердикт о себе пишется после перебора предметов, и перебор называется в причине; гейта на полноту перебора нет; `Stepik-Python-Grader` — гейт: ответ по внешнему правилу пишется в .rules/bindings.json одним заходом: сначала перечисляются все свои предметы правила, потом вердикт; сверяется на ревью PR — гейта на полноту перечисления нет | `ArtVsMark` |
-| 138 | `Stepik-Python-Grader` — документ: docs/agent/environments.md — решение оседает задачей или комментарием сразу, эстафета передаётся ссылками; шаблон стартового сообщения окна там же; `ArtVsMark` — гейт: CLAUDE.md § Журнал изменений — журнал пополняется тем же заходом, что и правка, а не перед выпуском; решение оседает записью в HISTORY.md сразу; scripts/check_journal.py держит это гейтом: изменение, правящее scripts/ или .github/workflows/, обязано нести строку в HISTORY.md. Замер, из-за которого гейт завёлся, а не опасение: по 71 первопредку общей ветки 30 изменений правили поведение, и 3 приехали без записи — одно из них настоящее решение на 48 строк в прогоне очереди правил (#53), где отложенная запись означает, что следующее окно разбирает тот же вопрос заново. У отказа есть НАЗВАННЫЙ выход: строка «Журнал: не требуется — причина» в сообщении коммита снимает требование и остаётся в истории. Без выхода гейт обходили бы пустой записью, а пустая запись хуже отсутствующей — она выглядит как память. Содержание записи гейт не судит: отличить решение от опечатки машина не может, и обе стороны границы названы | `Engineering-Incidents-Playbook` |
 | 139 | `Stepik-Python-Grader` — документ: CONTRIBUTING.md § Когда дефект считается исправленным и чек-лист CLAUDE.md: дефект закрыт прогоном той поверхности, где найден, — браузер браузером, CLI командой; `ArtVsMark` — документ: .rules/README.md § Конвейер — каждое звено названо вместе с изменением, на котором оно отработало: механизм считается подтверждённым прогоном, а не чтением; `claude-code-usage` — шаг процесса: Оплачено четырьмя случаями за серию: mergeable_state «behind» без защиты ветки не появляется; в эталон попадал джоб самой очереди; очередь не просыпалась на последней позеленевшей проверке; отменённый прогон шёл впереди успешного. Ни один не был виден по зелёному набору тестов. | `Engineering-Incidents-Playbook` |
 | 141 | `Engineering-Incidents-Playbook` — гейт: scripts/check_gates.py — набор «сборка указателя»: маркер и его расширение прогоняются как отдельный случай; `Stepik-Python-Grader` — гейт: scripts/check_marker_matching.py — константа-маркер не подставляется в startswith/removeprefix; префикс от маркера отличается именем, и это названо в самих константах; `claude-code-usage` — гейт: scripts/preflight.py — _НАБОР_ССЫЛКОЙ ищет ссылку, а не подстроку адреса; scripts/pr_check.py — _PR_EVENT не принимает pull_request_target за pull_request. Первое оплачено инцидентом: гейт остался зелёным, когда адрес ссылки подменили, а подпись оставили. | `ArtVsMark` |
 | 144 | `Stepik-Python-Grader` — конвейер: scripts/check_audit_registry.py — mention_verdict берёт окно контекста абзацем, а заголовок раздела перевешивает форму строки; закреплено тестами test_check_audit_registry.py | `Engineering-Incidents-Playbook`, `ArtVsMark` |
@@ -64,8 +63,8 @@
 |---|---|---|
 | `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 11 |
 | `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 11 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 9 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/automerge.yml` | 8 |
-| `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 8 |
 | `Engineering-Incidents-Playbook` | `export/README.md` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 7 |
@@ -87,6 +86,7 @@
 | `Engineering-Incidents-Playbook` | `HISTORY.md` | 3 |
 | `Engineering-Incidents-Playbook` | `README.md` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_attribution.py` | 3 |
+| `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/history_metrics.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/version.py` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/consumers-sync.yml` | 2 |
@@ -94,12 +94,11 @@
 | `Engineering-Incidents-Playbook` | `.rules/bindings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `export/rules.json` | 2 |
 | `Engineering-Incidents-Playbook` | `rules/README.md` | 2 |
-| `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/ghcli.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/merge_ready.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 37 механизмов по одному правилу; без названного адреса: 0 из 107 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 37 механизмов по одному правилу; без названного адреса: 0 из 108 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 38 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/preflight.md` | 8 |
