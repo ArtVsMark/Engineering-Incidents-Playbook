@@ -229,11 +229,22 @@ def test_neizvestnoe_osnovanie_eto_oshibka(tmp_path):
     assert "не спросить коммиты" in ошибка
 
 
-def test_zamena_nazyvaet_sushchestvuyushchiy_skript():
-    """Декларация сверяется с фактом: путь в таблице замен должен быть."""
+def test_zamena_sobiraet_komandu_a_ne_vydumyvaet(tmp_path):
+    """Декларация сверяется с фактом: каждый вид замены умеет собраться, и
+    скрипт, который она зовёт, существует."""
     корень = Path(preflight.__file__).resolve().parent.parent
-    for имя, (скрипт, _) in preflight.STAND_IN.items():
-        assert (корень / скрипт).exists(), f"{имя}: нет {скрипт}"
+    for имя, (вид, _) in preflight.STAND_IN.items():
+        argv, _, ошибка = preflight.stand_in_call(вид, корень)
+        assert not ошибка or "коммит" in ошибка, f"{имя}: {ошибка}"
+        if argv:
+            assert (корень / argv[0]).exists(), f"{имя}: нет {argv[0]}"
+
+
+def test_neizvestnyy_vid_zameny_eto_oshibka(tmp_path):
+    """«Замены нет» и «замена не собралась» — разные ответы (039)."""
+    _, _, ошибка = preflight.stand_in_call("такого-вида-нет", tmp_path)
+
+    assert ошибка
 
 
 def test_zamena_stoit_na_shage_zhivogo_konveyera():
