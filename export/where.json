@@ -2000,34 +2000,37 @@
       "schema": "1.0",
       "state": "подключён",
       "read_at": "2026-09-02",
-      "answered": 152,
+      "answered": 162,
       "by_status": {
-        "unreviewed": 143,
-        "active": 9
+        "active": 43,
+        "unreviewed": 113,
+        "rejected": 2,
+        "not-applicable": 4
       },
       "by_mechanism": {
-        "gate": 7,
-        "none": 1,
-        "document": 1
+        "gate": 30,
+        "document": 7,
+        "process-step": 5,
+        "none": 1
       },
       "rules": {
-        "001": "unreviewed",
-        "002": "unreviewed",
-        "003": "unreviewed",
-        "004": "unreviewed",
-        "005": "unreviewed",
-        "006": "unreviewed",
+        "001": "active",
+        "002": "active",
+        "003": "active",
+        "004": "active",
+        "005": "active",
+        "006": "active",
         "007": "unreviewed",
         "008": "unreviewed",
         "009": "active",
         "010": "unreviewed",
-        "011": "unreviewed",
+        "011": "active",
         "012": "unreviewed",
         "013": "unreviewed",
         "014": "unreviewed",
         "015": "unreviewed",
-        "016": "unreviewed",
-        "017": "unreviewed",
+        "016": "active",
+        "017": "active",
         "018": "unreviewed",
         "019": "unreviewed",
         "020": "unreviewed",
@@ -2037,35 +2040,35 @@
         "024": "unreviewed",
         "025": "unreviewed",
         "026": "unreviewed",
-        "027": "unreviewed",
+        "027": "active",
         "028": "unreviewed",
         "029": "unreviewed",
-        "030": "unreviewed",
+        "030": "active",
         "031": "unreviewed",
         "032": "unreviewed",
         "033": "unreviewed",
         "034": "unreviewed",
-        "035": "unreviewed",
+        "035": "rejected",
         "036": "unreviewed",
-        "037": "unreviewed",
+        "037": "active",
         "038": "unreviewed",
-        "039": "unreviewed",
+        "039": "active",
         "040": "unreviewed",
         "041": "unreviewed",
-        "042": "unreviewed",
+        "042": "active",
         "043": "unreviewed",
         "044": "unreviewed",
-        "045": "unreviewed",
+        "045": "active",
         "046": "active",
         "047": "unreviewed",
         "048": "active",
-        "049": "unreviewed",
+        "049": "active",
         "050": "unreviewed",
         "051": "active",
         "052": "unreviewed",
         "053": "unreviewed",
         "054": "unreviewed",
-        "055": "unreviewed",
+        "055": "active",
         "056": "unreviewed",
         "057": "unreviewed",
         "058": "unreviewed",
@@ -2074,23 +2077,23 @@
         "061": "unreviewed",
         "062": "unreviewed",
         "063": "unreviewed",
-        "064": "unreviewed",
+        "064": "active",
         "065": "unreviewed",
         "066": "unreviewed",
         "067": "unreviewed",
-        "068": "unreviewed",
+        "068": "active",
         "069": "unreviewed",
         "070": "unreviewed",
         "071": "unreviewed",
         "072": "unreviewed",
         "073": "unreviewed",
-        "074": "unreviewed",
+        "074": "active",
         "075": "active",
         "076": "unreviewed",
         "077": "active",
-        "078": "unreviewed",
+        "078": "active",
         "079": "unreviewed",
-        "080": "unreviewed",
+        "080": "active",
         "081": "unreviewed",
         "082": "unreviewed",
         "083": "unreviewed",
@@ -2114,7 +2117,7 @@
         "101": "unreviewed",
         "102": "unreviewed",
         "103": "unreviewed",
-        "104": "unreviewed",
+        "104": "active",
         "105": "unreviewed",
         "106": "unreviewed",
         "107": "unreviewed",
@@ -2138,68 +2141,214 @@
         "125": "unreviewed",
         "126": "unreviewed",
         "127": "unreviewed",
-        "128": "unreviewed",
+        "128": "active",
         "129": "unreviewed",
         "130": "unreviewed",
-        "131": "unreviewed",
+        "131": "not-applicable",
         "132": "unreviewed",
         "133": "unreviewed",
-        "134": "unreviewed",
+        "134": "active",
         "135": "unreviewed",
         "136": "unreviewed",
         "137": "unreviewed",
         "138": "unreviewed",
-        "139": "unreviewed",
-        "140": "unreviewed",
-        "141": "unreviewed",
+        "139": "active",
+        "140": "active",
+        "141": "active",
         "142": "unreviewed",
         "144": "unreviewed",
-        "145": "unreviewed",
-        "146": "unreviewed",
+        "145": "active",
+        "146": "active",
         "147": "unreviewed",
         "148": "unreviewed",
         "149": "unreviewed",
-        "150": "unreviewed",
+        "150": "active",
         "151": "unreviewed",
         "152": "unreviewed",
-        "153": "unreviewed"
+        "153": "unreviewed",
+        "154": "active",
+        "155": "not-applicable",
+        "156": "not-applicable",
+        "157": "unreviewed",
+        "158": "active",
+        "159": "active",
+        "160": "rejected",
+        "161": "unreviewed",
+        "162": "unreviewed",
+        "163": "not-applicable"
       },
       "holds": {
+        "001": {
+          "mechanism": "gate",
+          "where": "CLAUDE.md § «Работа с GitHub» и scripts/gh_rest.py — единственный транспорт, REST. Следствие названо вслух: авто-мержа площадки нет и не будет, он включается только GraphQL-мутацией enablePullRequestAutoMerge, поэтому очередь мержит сама."
+        },
+        "002": {
+          "mechanism": "document",
+          "where": "CLAUDE.md — каждое правило называет гейт, который его держит: scripts/check_pr_metadata.py, scripts/pr_check.py, scripts/shell_ascii.py, scripts/changelog.py. Правило без механизма записано как таковое, а не выдано за гарантию."
+        },
+        "003": {
+          "mechanism": "gate",
+          "where": "scripts/check_pr_metadata.py — branch_problems: у своих ветка обязана начинаться с agent/. Умолчание окна другое и возвращается при перезапуске: за серию имя пришлось поправлять трижды, поэтому держит гейт."
+        },
+        "004": {
+          "mechanism": "gate",
+          "where": "scripts/pr_ready.py — вердикт CONFLICT выносится РАНЬШЕ проверок, потому что на конфликтном PR их не создаётся вовсе; scripts/merge_queue.py метит needs-rebase и идёт дальше, а не встаёт."
+        },
+        "005": {
+          "mechanism": "gate",
+          "where": "scripts/preflight.py — check_showcase сверяет значок версии с деревом и краснеет, называя обе цифры. Сработал на собственной правке при переезде версии в pyproject и при подъёме до 0.1.0."
+        },
+        "006": {
+          "mechanism": "document",
+          "where": "CLAUDE.md § «Окно живёт 3–5 дней»; эстафета передаётся ссылками на issue, а не пересказом."
+        },
         "009": {
           "mechanism": "gate",
           "where": "scripts/pr_ready.py — latest_by_name: check-runs считаются по уникальным именам, второй комплект после обновления ветки не удваивает счёт и не воскрешает вчерашнее красное. Плюс scripts/check_showcase (preflight): вопросы набора витрины считаются по уникальным id. Правило уже стоило проекту неверного вывода — CLAUDE.md, § «Как читать результат проверок»: «32 проверки» вместо шестнадцати продержались сутки."
         },
+        "011": {
+          "mechanism": "gate",
+          "where": ".github/workflows/merge-queue.yml — очередь просыпается от завершения каждого workflow, ходящего по pull_request, а расписание оставлено дополнением. Замер: cron 13,43 дал 10 срабатываний вместо 72 за 36 часов (#43)."
+        },
+        "016": {
+          "mechanism": "gate",
+          "where": "scripts/preflight.py печатает охват («просмотрено N, пропущено двоичных M»); src/claude_code_usage/transcripts.py — Coverage со строками, нечитаемыми и незнакомыми полями. Без этих чисел слепота источника неотличима от чистого результата."
+        },
+        "017": {
+          "mechanism": "document",
+          "where": "docs/spec.md и CLAUDE.md § «Правила измерения» — остаток измеряется, а не запрашивается; пока шкала не откалибрована, инструмент говорит «остаток неизвестен», а не рисует проценты."
+        },
         "022": {
           "mechanism": "gate",
-          "where": "scripts/check_pr_metadata.py — состав зон и типов читается из таблиц docs/labels.md, второго списка меток в коде нет; документ, из которого таблицы не вычитываются, роняет гейт. Плюс .rules/showcase.json — ответ на вопрос ci: своего значка состояния прогонов нет, его отдаёт сама площадка, и второй источник того же разошёлся бы с первым молча."
+          "where": "scripts/check_pr_metadata.py читает номенклатуру меток из docs/labels.md, второго списка в коде нет; scripts/pr_check.py читает состав обязательных прогонов из дерева PR, а не из константы."
+        },
+        "027": {
+          "mechanism": "gate",
+          "where": "scripts/changelog.py — «складывать нечего» отказ, а не пустой раздел; .rules/showcase.json называет девять пробелов поимённо с причинами."
+        },
+        "030": {
+          "mechanism": "gate",
+          "where": "scripts/changelog.py — фрагменты changelog.d/, гейт не пропускает PR с типом bug или enhancement без записи; --fold складывает их в CHANGELOG.md при подготовке версии."
+        },
+        "037": {
+          "mechanism": "process-step",
+          "where": "Применяется и в зеркальном виде, которого в самом правиле нет: зелёное на подделке — тоже гипотеза. Разбор в .rules/proposals.json, предложение mirror-of-037; инцидент — подделка gh в каталоге отдавала пустую строку там, где площадка отдаёт «null null», и четыре теста две недели были зелёными на неработающем механизме."
+        },
+        "039": {
+          "mechanism": "gate",
+          "where": "scripts/preflight.py, scripts/changelog.py, scripts/release.py — EXIT_FAILED отделён от EXIT_BROKEN: «проверка нашла проблему» и «проверку не удалось прогнать» это разные исходы."
+        },
+        "042": {
+          "mechanism": "document",
+          "where": "docs/release.md называет отвергнутый hatch-vcs и его цену; #49 записал оба устройства расхода фрагментов и почему выбрано складывание до тега."
+        },
+        "045": {
+          "mechanism": "gate",
+          "where": "src/claude_code_usage/whitelist.py — незнакомое поле внутри usage поднимает UnknownUsageFieldError и замер не пишется: тихая усечённая сумма отравила бы шкалу навсегда, потому что хранилище append-only."
         },
         "046": {
           "mechanism": "gate",
-          "where": "scripts/preflight.py — check_showcase: у каждого вопроса набора либо значок, либо absent с причиной; пропуск и причина короче внятной — отказ. Сами пробелы названы на витрине: README.md и README.en.md, врезка «На что витрина не отвечает и почему»."
+          "where": ".rules/showcase.json — девять пробелов из десяти вопросов названы с причинами; scripts/preflight.py check_showcase не даёт объявить пробел без причины или значок без предмета."
         },
         "048": {
           "mechanism": "none",
           "where": "docs/spec.md — § «Погрешность»; находка и разбор в #13; источники входа решены в #19. Механизма нет: полнота входа сейчас держится намерением, а не проверкой — очередь на гейт."
         },
+        "049": {
+          "mechanism": "gate",
+          "where": "scripts/pr_check.py спрашивает прогоны на голове PR у площадки, а состав обязательного читает из дерева этого же PR; scripts/merge_queue.py — состояние общей ветки из прогонов ci, а не из записи, которую ведут руками."
+        },
         "051": {
           "mechanism": "gate",
-          "where": "tests/test_showcase.py — test_замечание_не_меняет_код_возврата и test_контракт_отказ_а_не_замечание: паритет витрин остаётся замечанием (вычисляется по косвенным признакам и на законном тексте ошибается), контракт витрины отказывает (вопрос либо имеет ровно один ответ, либо нет). Сдвинуть границу молча нельзя — краснеет тест."
+          "where": "scripts/check_pr_metadata.py — из форка и на черновике предупреждение, на готовом PR отказ; scripts/changelog.py — язык на PR замечанием, при складывании в свод отказом."
+        },
+        "055": {
+          "mechanism": "gate",
+          "where": "Оплачено инцидентом #46: эталон имён джобов брался с общей ветки и ломал любой PR, который состав проверок МЕНЯЕТ — вердикт «джобы не созданы» становился вечным. Эталон убран, scripts/pr_check.py спрашивает площадку про прогоны на голове."
+        },
+        "064": {
+          "mechanism": "gate",
+          "where": "scripts/merge_queue.py и scripts/pr_ready.py — hold, merge-when-green и needs-rebase это вход механизма: по ним выносится вердикт и ставятся сами метки. docs/labels.md — номенклатура."
+        },
+        "068": {
+          "mechanism": "gate",
+          "where": "src/claude_code_usage/whitelist.py — белый список полей замера, а не чёрный: чёрный не переживёт добавления нового поля в реестр, а секрет утекает через незнакомое поле, а не через известное."
+        },
+        "074": {
+          "mechanism": "gate",
+          "where": ".github/workflows/release.yml — порядок шагов не произволен: тег из main, preflight, сборка, сверка версии и содержимого колеса, заметки — всё до публикации, потому что она необратима. Приёмка после, она отвечает на другой вопрос."
         },
         "075": {
           "mechanism": "gate",
-          "where": "scripts/preflight.py — check_showcase: отсутствие набора, витрины или объявленного значка — находка, а не тихое «чисто»; значок, для которого правила вывода в гейте нет, тоже находка — сверять его не с чем. Рядом scan_for_secrets печатает охват, чтобы «чисто» нельзя было спутать с «ничего не просмотрели»."
+          "where": "scripts/shell_ascii.py — «workflow не найдено, гейт остался без предмета»; scripts/pr_check.py — «в дереве нет ни одного workflow по pull_request»; scripts/changelog.py — «складывать нечего»; scripts/release.py — «колеса нет»."
         },
         "077": {
           "mechanism": "gate",
           "where": "scripts/preflight.py — compare_showcases: отдельная проверка свойств текста (кириллица в английской витрине) плюс сверка структуры заголовков. Замечанием, а не отказом: расхождение витрин — состояние документации."
         },
+        "078": {
+          "mechanism": "gate",
+          "where": "scripts/pr_check.py — meaningful(): отменённый прогон не несёт вердикта и уступает любому значащему, но зелёным не считается. Оплачено вживую: площадка отдала отменённый прогон впереди успешного, и обязательная проверка покраснела на собственном PR."
+        },
+        "080": {
+          "mechanism": "process-step",
+          "where": ".rules/proposals.json — шесть предложений, каждое с инцидентом и следом. CLAUDE.md § «Новое правило — в общий каталог» требует записи тем же заходом, а не «потом»."
+        },
         "096": {
           "mechanism": "document",
-          "where": ".rules/showcase.json — поля «_» и «_ветка»: набор вопросов живёт данными, а не константами в гейте (набор общий и приходит от каталога, гейт свой), а значок лежит в main, а не на отдельной ветке, потому что меняется только тогда, когда версию правит человек. Механизм — записанное решение: раскладку гейт не проверяет."
+          "where": "docs/spec.md § «Почему git, а не база и не сервер»: облачное окно эфемерно, локальная база бессмысленна; хранилище распределённое и версионированное, сервер добавил бы точку отказа и согласие на сбор чужих данных."
         },
         "097": {
           "mechanism": "gate",
-          "where": "tests/test_showcase.py — на находки check_showcase заведены обе стороны: test_упоминание_набора_не_считается_ссылкой (ложное «прошло») и test_ссылка_сноской_считается_ссылкой (ложное «не прошло»). Первое ложное «прошло» нашлось именно так: проверка искала в витрине строку пути и не замечала подмены адреса у ссылки — путь оставался в её подписи."
+          "where": "У каждого гейта тесты на обе ошибки: подделанное дерево находится и верное не заворачивается. tests/test_pr_check.py, tests/test_shell_ascii.py, tests/test_changelog.py, tests/test_pr_metadata.py."
+        },
+        "104": {
+          "mechanism": "gate",
+          "where": "workflow_dispatch есть у merge-queue.yml, release.yml (с сухим прогоном), rules-inbox.yml. Кнопка пригодилась дважды: очередь пришлось двигать руками, пока она не просыпалась вовремя."
+        },
+        "128": {
+          "mechanism": "gate",
+          "where": "src/claude_code_usage/whitelist.py — недостающие поля usage перечисляются поимённо и роняют замер: «замер из неполной суммы занизит расход, а дописать его потом не выйдет»."
+        },
+        "134": {
+          "mechanism": "document",
+          "where": "CLAUDE.md целиком и есть контекст проекта; эстафета передаётся ссылками на issue, а не пересказом — «иначе проблема переезжает вместе с ней»."
+        },
+        "139": {
+          "mechanism": "process-step",
+          "where": "Оплачено четырьмя случаями за серию: mergeable_state «behind» без защиты ветки не появляется; в эталон попадал джоб самой очереди; очередь не просыпалась на последней позеленевшей проверке; отменённый прогон шёл впереди успешного. Ни один не был виден по зелёному набору тестов."
+        },
+        "140": {
+          "mechanism": "process-step",
+          "where": "Каждый гейт проверяется мутациями на копии дерева, и список пойманных идёт в тело PR. За серию: 12 мутаций у shell_ascii, 9 у pr_check, 6 у changelog, 7 у whitelist. Две ушли с первого захода и дали недостающие тесты."
+        },
+        "141": {
+          "mechanism": "gate",
+          "where": "scripts/preflight.py — _НАБОР_ССЫЛКОЙ ищет ссылку, а не подстроку адреса; scripts/pr_check.py — _PR_EVENT не принимает pull_request_target за pull_request. Первое оплачено инцидентом: гейт остался зелёным, когда адрес ссылки подменили, а подпись оставили."
+        },
+        "145": {
+          "mechanism": "gate",
+          "where": "Тесты перечисляют исходы механизма поимённо: у pr_check — нет прогона, идёт, красный, отменённый, все отменены, лишний; у changelog — нет записи, чужой язык, второе складывание, пустой каталог."
+        },
+        "146": {
+          "mechanism": "process-step",
+          "where": "Мутационные прогоны: гейт признаётся работающим, только если краснеет на подделке. Две мутации за серию прошли зелёными и показали, что тестов не хватает — «пустая строка обрывает блок run» и «нечисловое значение складывается»."
+        },
+        "150": {
+          "mechanism": "gate",
+          "where": "Тесты зовут сам гейт и сверяют вердикт: pr_check.verdict, changelog.main, release.check_wheel, check_pr_metadata.metadata_problems. Условие правила в утверждении не пересказывается."
+        },
+        "154": {
+          "mechanism": "document",
+          "where": "Единственная запись с mechanism=none — правило 048 — называет причину: «полнота входа сейчас держится намерением, а не проверкой — очередь на гейт»."
+        },
+        "158": {
+          "mechanism": "gate",
+          "where": "Третий исход называет предмет: scripts/shell_ascii.py печатает путь каталога, в котором не нашлось workflow; scripts/release.py — путь колеса; scripts/changelog.py — имя файла фрагмента; scripts/gh_rest.py — метод и путь запроса."
+        },
+        "159": {
+          "mechanism": "gate",
+          "where": "Гейты копят находки в список и читают его после последнего случая: preflight собирает по всем проверкам, shell_ascii — по всем файлам, changelog — по всем фрагментам, release — по всему колесу. Раннего выхода нет ни в одном."
         }
       },
       "trails": 1,
