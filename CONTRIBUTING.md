@@ -1,5 +1,7 @@
 # Как внести вклад · Contributing
 
+> **Читатель:** участник — как внести правку сюда и что здесь примут.
+
 Этот документ — для человека со стороны. Свод для агентского окна, работающего
 внутри репозитория, отдельный: ядро [`AGENTS.md`](AGENTS.md) и надстройка
 [`CLAUDE.md`](CLAUDE.md) поверх него. Разные читатели —
@@ -137,6 +139,7 @@ python scripts/check_test_deps.py
 python scripts/check_workflows.py
 python scripts/check_templates.py
 python scripts/check_connect.py
+python scripts/check_readers.py
 python scripts/check_prose.py
 python scripts/history_metrics.py --check
 python scripts/check_labels.py --paths-from <файл со списком путей> --have <метки>

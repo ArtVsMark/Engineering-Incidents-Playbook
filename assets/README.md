@@ -1,5 +1,7 @@
 # Витринные артефакты · Showcase assets
 
+> **Читатель:** участник — как собираются витринные картинки.
+
 ## `social-preview.html` → `social-preview.png`
 
 Превью для соцсетей: 1280×640, грузится руками в Settings → General → Social

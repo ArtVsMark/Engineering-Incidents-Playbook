@@ -1,5 +1,7 @@
 # Engineering Incidents Playbook
 
+> **Читатель:** посетитель — что это такое и стоит ли брать.
+
 [![Релиз](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Frelease.json&cacheSeconds=300)](https://github.com/ArtVsMark/claude-code-playbook/releases)
 [![Версия](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](VERSIONING.md)
 [![Правил в каталоге](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Frules-ru.json)](rules/README.md)
