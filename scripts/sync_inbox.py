@@ -16,6 +16,9 @@
      за прогон (правило 104: у события есть ручная кнопка, но не свалка).
 
 Реализует правила каталога:
+  130 — правило приходит к получателю ВМЕСТЕ с кандидатами из его
+        бэклога: без предмета в своём проекте оно остаётся
+        абстракцией, которую откладывают;
   129 — контракт потребления и обратная связь;
   128 — ответ нужен по КАЖДОМУ правилу, а не по тем, до которых дошли руки;
   027 — «нерассмотренных нет» это состояние, и оно печатается;
@@ -32,6 +35,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import os
 import subprocess
 import sys
@@ -108,6 +112,68 @@ def solved_next_door(answered: dict, consumers: list[dict], me: str) -> list[dic
 gh = ghcli.run
 
 
+#: Слово короче этого в счёт не идёт: в русском тексте это почти всегда
+#: служебное, и совпадение по нему связывает что угодно с чем угодно.
+WORD_MIN = 5
+#: Слово, которое связывает само по себе. Порог выше обычного: одно совпадение
+#: — это совпадение, а не связь, если только слово не редкое.
+WORD_ALONE = 9
+#: Общие слова каталога: они стоят в половине правил и в половине задач, и
+#: связывают всё со всем. Список РАЗРЕШИТЕЛЬНЫМ быть не может — перечислить
+#: значимые слова заранее нельзя, — поэтому он именно запретительный и короткий,
+#: а каждое слово в нём стоит по измеренной причине: встречается и там и там.
+NOISE = {"правило", "правила", "правил", "механизм", "механизма", "проекта",
+         "проект", "каталог", "каталога", "изменение", "изменения", "должен",
+         "должна", "должно", "который", "которая", "которое"}
+WORD_RE = re.compile(r"[\w-]+", re.UNICODE)
+
+
+def значимые(text: str) -> set[str]:
+    """Слова, по которым имеет смысл связывать. Регистр и знаки убраны."""
+    return {w for w in (m.group(0).lower() for m in WORD_RE.finditer(text))
+            if len(w) >= WORD_MIN and w not in NOISE}
+
+
+def candidates_here(unreviewed: list[dict], issues: list[dict]) -> list[dict]:
+    """Задачи ЭТОГО проекта, на которые правило, возможно, отвечает.
+
+    ЗАЧЕМ ЭТО ВООБЩЕ. Доставить правило мало (130). Правило без предмета в
+    своём проекте остаётся абстракцией, которую откладывают: «понятно, но не
+    про нас». Список кандидатов из СВОЕГО бэклога превращает его в вопрос о
+    конкретной задаче, а на такой вопрос отвечают.
+
+    ГРАНИЦА, И ОНА НАЗВАНА В САМОМ РАЗДЕЛЕ: совпадение по словам — ПОДСКАЗКА,
+    а не вердикт. Ни принять правило, ни отклонить его этот список не может;
+    он говорит «посмотрите сюда», и смотрит человек. Порог поэтому мягкий:
+    ложная подсказка стоит одного взгляда, а пропущенная — правила, которое
+    отложили как абстрактное.
+    """
+    out: list[dict] = []
+    словари = [(i, значимые(i.get("title") or "")) for i in issues]
+    for rule in unreviewed:
+        свои = значимые(" ".join(filter(None, [
+            (rule.get("title") or {}).get("ru") if isinstance(rule.get("title"), dict)
+            else rule.get("title"),
+            " ".join((rule.get("areas") or {}).get("ru") or []
+                     if isinstance(rule.get("areas"), dict)
+                     else rule.get("areas") or []),
+        ])))
+        if not свои:
+            continue
+        похожие = []
+        for issue, слова in словари:
+            общие = свои & слова
+            if len(общие) >= 2 or any(len(w) >= WORD_ALONE for w in общие):
+                похожие.append((len(общие), issue, sorted(общие)))
+        if not похожие:
+            continue
+        похожие.sort(key=lambda p: (-p[0], p[1].get("number", 0)))
+        out.append({"rule": rule, "issues": [
+            {"number": i.get("number"), "title": i.get("title"), "words": w}
+            for _, i, w in похожие[:2]]})
+    return out
+
+
 def stale_here(answered: dict, rules: list[dict]) -> list[str]:
     """Ответы ЭТОГО проекта о правилах, которых в каталоге нет.
 
@@ -127,7 +193,8 @@ def stale_here(answered: dict, rules: list[dict]) -> list[str]:
 def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
              stale: list[str] | None = None, total: int | None = None,
              answered: int | None = None,
-             solved: list[dict] | None = None) -> str:
+             solved: list[dict] | None = None,
+             candidates: list[dict] | None = None) -> str:
     lines = [
         MARKER,
         "",
@@ -171,6 +238,32 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
                 где = h["where"].split(";")[0].strip()
                 lines.append(f"| {item['rule']} | `{h['repo'].split('/')[-1]}` | "
                              f"{h['mechanism']}: {где} |")
+        lines.append("")
+
+    if candidates:
+        lines += [
+            "## Возможно, про это ваши задачи",
+            "",
+            "Правила, ещё не разобранные здесь, рядом с **открытыми задачами "
+            "этого проекта**, чьи заголовки говорят о том же. Доставить правило "
+            "мало: без предмета в своём проекте оно остаётся абстракцией, "
+            "которую откладывают.",
+            "",
+            "**Совпадение по словам — подсказка, а не вердикт.** Ни принять "
+            "правило, ни отклонить его этот список не может; он говорит "
+            "«посмотрите сюда», и смотрит человек.",
+            "",
+            "| Правило | Ваша задача | Общие слова |",
+            "|---|---|---|",
+        ]
+        for item in candidates:
+            rid = item["rule"].get("id") or "?"
+            имя = item["rule"].get("title")
+            имя = имя.get("ru") if isinstance(имя, dict) else имя
+            for i in item["issues"]:
+                lines.append(
+                    f"| {rid} — {имя} | #{i['number']} {i['title']} | "
+                    + ", ".join(i["words"]) + " |")
         lines.append("")
 
     if stale:
@@ -287,10 +380,28 @@ def main() -> int:
         print(f"сводка соседей не прочитана — {err}; раздел пропущен",
               file=sys.stderr)
     solved = solved_next_door(answered, neighbours or [], args.repo)
+    # ЗАДАЧИ СПРАШИВАЮТСЯ ОДИН РАЗ И БЕЗ ОТКАЗА. Трекер может не ответить —
+    # тогда раздела просто нет: правило 130 говорит «приходит вместе с», а не
+    # «не приходит без». Ронять доставку правил из-за подсказки значило бы
+    # менять предмет на украшение (084).
+    свои_задачи: list[dict] = []
+    code_i, out_i = gh("issue", "list", "--state", "open", "--limit", "100",
+                       "--json", "number,title")
+    if code_i == 0:
+        try:
+            свои_задачи = [i for i in json.loads(out_i)
+                           if MARKER not in (i.get("title") or "")]
+        except ValueError:
+            свои_задачи = []
+    else:
+        print("задачи проекта не спрошены — раздела кандидатов не будет",
+              file=sys.stderr)
+    candidates = candidates_here(unreviewed, свои_задачи)
     решено = sum(1 for r in rules
                  if answered.get(r["id"], {}).get("status") not in (None, "unreviewed"))
     body = body_for(missing, unreviewed, args.catalogue, stale=stale,
-                    total=len(rules), answered=решено, solved=solved)
+                    total=len(rules), answered=решено, solved=solved,
+                    candidates=candidates)
     if args.dry_run:
         print(body)
         return 1 if (missing or unreviewed or stale) else 0
