@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 29 | 23 | 162 | 0 | 0 | 120 | 78 | 4 | 17 | 21 | 72 |  |
+| `claude-code-playbook` | подключён | 29 | 23 | 162 | 0 | 0 | 120 | 78 | 4 | 17 | 21 | 73 |  |
 | `Stepik-Python-Grader` | подключён | 68 | 128 | 162 | 0 | 0 | 159 | 65 | 31 | 63 | 0 | 127 |  |
 | `ArtVsMark` | подключён | 15 | 10 | 162 | 0 | 0 | 79 | 46 | 6 | 11 | 16 | 32 |  |
 | `claude-code-usage` | подключён | 1 | 1 | 152 | 10 | 0 | 9 | 7 | 0 | 1 | 1 | 9 |  |
@@ -72,8 +72,8 @@
 |---|---|---|
 | `claude-code-playbook` | `scripts/check_gates.py` | 11 |
 | `claude-code-playbook` | `scripts/build_rules_index.py` | 10 |
+| `claude-code-playbook` | `.github/workflows/automerge.yml` | 8 |
 | `claude-code-playbook` | `.github/workflows/ci.yml` | 8 |
-| `claude-code-playbook` | `.github/workflows/automerge.yml` | 7 |
 | `claude-code-playbook` | `export/README.md` | 7 |
 | `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 6 |
 | `claude-code-playbook` | `scripts/aggregate_bindings.py` | 6 |
@@ -86,6 +86,7 @@
 | `claude-code-playbook` | `scripts/link_trails.py` | 4 |
 | `claude-code-playbook` | `scripts/main_red.py` | 4 |
 | `claude-code-playbook` | `scripts/refresh_derived.py` | 4 |
+| `claude-code-playbook` | `.github/labels.yml` | 3 |
 | `claude-code-playbook` | `.rules/consumers.json` | 3 |
 | `claude-code-playbook` | `CLAUDE.md` | 3 |
 | `claude-code-playbook` | `HISTORY.md` | 3 |
@@ -95,7 +96,6 @@
 | `claude-code-playbook` | `scripts/collect_proposals.py` | 3 |
 | `claude-code-playbook` | `scripts/history_metrics.py` | 3 |
 | `claude-code-playbook` | `scripts/version.py` | 3 |
-| `claude-code-playbook` | `.github/labels.yml` | 2 |
 | `claude-code-playbook` | `.github/workflows/consumers-sync.yml` | 2 |
 | `claude-code-playbook` | `.github/workflows/main-red.yml` | 2 |
 | `claude-code-playbook` | `.rules/bindings.json` | 2 |
@@ -104,6 +104,7 @@
 | `claude-code-playbook` | `rules/README.md` | 2 |
 | `claude-code-playbook` | `scripts/collect_changelog.py` | 2 |
 | `claude-code-playbook` | `scripts/ghcli.py` | 2 |
+| `claude-code-playbook` | `scripts/merge_ready.py` | 2 |
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
 | `claude-code-playbook` | _остальные_ · _the rest_ | 36 механизмов по одному правилу; без названного адреса: 0 из 99 |
