@@ -22,7 +22,9 @@ edited by hand.
 
 ```jsonc
 {
-  "schema": "1.2",
+  "schema": "1.2",                    // версия ФОРМАТА выгрузки, не выпуска
+                                      // каталога · the EXPORT FORMAT version,
+                                      // not the catalogue release
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
   "count": 130,                       // пример · example value
   "rules": [

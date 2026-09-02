@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "count": 162,
+  "count": 163,
   "rules": [
     {
       "id": "001",
@@ -4429,6 +4429,37 @@
       "files": {
         "ru": "rules/ru/163-a-shipped-tool-is-named-at-the-entrance.md",
         "en": "rules/en/163-a-shipped-tool-is-named-at-the-entrance.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "148"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "164",
+      "slug": "a-version-says-what-it-versions",
+      "title": {
+        "ru": "Номер версии говорит, чего он версия",
+        "en": "A version number says what it versions"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "документация"
+        ],
+        "en": [
+          "contracts",
+          "documentation"
+        ]
+      },
+      "added": "2026-09-02",
+      "files": {
+        "ru": "rules/ru/164-a-version-says-what-it-versions.md",
+        "en": "rules/en/164-a-version-says-what-it-versions.md"
       },
       "trails": [
         {
