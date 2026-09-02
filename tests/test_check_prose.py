@@ -212,3 +212,42 @@ def test_angliyskaya_vitrina_tozhe_schitaetsya(tmp_path):
                                 "README.en.md": ВИТРИНА,
                                 "LICENSE": "CC BY\n", "LICENSE-CODE": "MIT\n"})
     assert cp.main(["--root", str(root)]) == 0
+
+
+# ── номер формата назван там, где объясняют номера ────────────────────────
+#
+# У каталога одна версия — тег; всё остальное, что выглядит версией,
+# версионирует ФОРМАТ. Замер: вопрос владельца «почему 1.2, если версия 1.1»,
+# а следом чужой файл, где номер схемы ВЫГРУЗКИ уехал в поле схемы ОТВЕТА.
+
+def дерево(tmp_path, файл: str, схема: str, versioning: str) -> Path:
+    return repo_with(tmp_path, {файл: '{\n  "schema": "%s"\n}\n' % схема,
+                                "VERSIONING.md": versioning})
+
+
+def test_nazvannaya_shema_prohodit(tmp_path):
+    root = дерево(tmp_path, "a.json", "1.2", "# Версии\n\n`schema` в a.json — формат.\n")
+
+    assert not cp.schema_unnamed(root)
+
+
+def test_neназванная_shema_eto_nahodka(tmp_path):
+    root = дерево(tmp_path, "a.json", "1.2", "# Версии\n\nтолько про тег.\n")
+
+    out = cp.schema_unnamed(root)
+    assert out and "a.json" in out[0]
+
+
+def test_zagotovka_v_schyot_ne_idyot(tmp_path):
+    """Заготовка — образец для ЧУЖОГО проекта: её схема описана в контракте,
+    и требовать её здесь значит требовать от каталога отвечать за чужой файл."""
+    root = дерево(tmp_path, "templates/bindings.json", "1.1", "# Версии\n\nпро тег.\n")
+
+    assert not cp.schema_unnamed(root)
+
+
+def test_bez_politiki_versiy_predmeta_net(tmp_path):
+    """Проверка ходит и по подделанным деревьям: документ принадлежит каталогу."""
+    root = repo_with(tmp_path, {"a.json": '{"schema": "1.0"}'})
+
+    assert not cp.schema_unnamed(root)

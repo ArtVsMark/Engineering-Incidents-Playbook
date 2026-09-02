@@ -736,3 +736,41 @@ def test_nepodklyuchyonnyy_ne_schitaetsya():
     """У проекта без ответа версии нет и быть не может: это состояние, а не
     отставание (027)."""
     assert ab.schema_lag([{"repo": "o/тихий", "state": "не подключён"}], "1.1") == []
+
+
+# ── версии формата: находка называется на КАЖДОМ изменении ────────────────
+#
+# Раньше расхождение версий считалось только сетевым прогоном и потому
+# появлялось раз в сутки на вкладке, куда не ходят (142). Замер, которым это
+# вскрылось: у одного потребителя ответ объявлял версию ВЫШЕ нашей — в его
+# файл попал номер схемы ВЫГРУЗКИ вместо номера схемы ОТВЕТА.
+
+def срез(repo, schema, rules=None):
+    return {"repo": repo, "schema": schema, "rules": rules or {"001": "active"}}
+
+
+def test_otvet_vyshe_nashego_eto_nahodka():
+    чужие, _ = ab.schema_findings([срез("o/них", "9.9")])
+
+    assert чужие and "9.9" in чужие[0]
+
+
+def test_otvet_nizhe_nashego_eto_nahodka():
+    чужие, _ = ab.schema_findings([срез("o/них", "0.1")])
+
+    assert чужие and "0.1" in чужие[0]
+
+
+def test_otvet_bez_versii_eto_nahodka():
+    """«Версии нет» и «версия совпала» — разные ответы: подъём контракта
+    такой потребитель не заметит."""
+    чужие, _ = ab.schema_findings([срез("o/них", "")])
+
+    assert чужие and "не называет версию" in чужие[0]
+
+
+def test_nepodklyuchivshiysya_v_schyot_ne_idyot():
+    """Предмет у границы: у кого ответа нет, у того и версии быть не может."""
+    чужие, _ = ab.schema_findings([{"repo": "o/них", "schema": "", "rules": {}}])
+
+    assert not чужие
