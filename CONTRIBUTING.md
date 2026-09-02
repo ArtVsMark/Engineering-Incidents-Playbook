@@ -102,6 +102,27 @@ missing one, because it looks like grounds.
 **Both language versions at once.** Not out of tidiness: a record in one language
 fails the index build, and that is the mechanism keeping the trees together.
 
+## Когда дефект считается исправленным · When a defect counts as fixed
+
+**Красноту доказывают полу-откатом, а не откатом всего**
+([014](rules/ru/014-red-before-fix-needs-partial-revert.md)). Убрать надо
+**поведение**, оставив имена: функцию, ключ, поле, файл. Откат целиком даёт
+`ImportError` или падение разбора — и набор краснеет не потому, что дефект
+вернулся, а потому что сломан импорт. Такое красное не доказывает ничего.
+
+Меняется **ровно одна переменная**: поведение убрано, имена на месте. Если
+после этого набор не покраснел — он не проверяет то, ради чего написан
+([146](rules/ru/146-a-green-gate-does-not-verify-its-premise.md)).
+
+Годная мутация ломает **предмет** правила, а не его границу: подмена порога
+проверяет арифметику сравнения, а подмена значения — решение. Отличить одно от
+другого может только понимающий предмет, и это граница: гейт здесь не судья,
+судит приёмка.
+
+**A defect counts as fixed** only when the suite has been made red by a
+*partial* revert: remove the behaviour, keep the names. A full revert breaks
+the import and the red proves nothing.
+
 ## Прежде чем открывать PR · Before opening a PR
 
 Одной командой — она читает шаги из конвейера и запускает те, у которых есть
