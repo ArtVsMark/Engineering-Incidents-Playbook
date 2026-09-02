@@ -88,11 +88,12 @@ jobs:
         run: |
           set -euo pipefail
           gh pr view "$PR" \
-            --json number,title,isDraft,state,baseRefName,headRefName,baseRefOid,headRefOid,autoMergeRequest \
+            --json number,title,isDraft,state,baseRefName,headRefName,baseRefOid,headRefOid,autoMergeRequest,labels \
             --jq '"number=\(.number)", "title=\(.title)", "draft=\(.isDraft)",
                   "state=\(.state)", "base=\(.baseRefName)", "head=\(.headRefName)",
                   "base_sha=\(.baseRefOid)", "head_sha=\(.headRefOid)",
-                  "armed=\(.autoMergeRequest != null)"' >> "$GITHUB_OUTPUT"
+                  "armed=\(.autoMergeRequest != null)",
+                  "labels=\([.labels[].name] | join(\",\"))"' >> "$GITHUB_OUTPUT"
 
       # Черновик — это «ещё не беру». Пропуск, а не отказ: красное на штатном
       # состоянии приучает читать красное как фон (правило 051). Уже включённый
@@ -106,6 +107,60 @@ jobs:
         run: |
           echo "изменение ${{ steps.pr.outputs.number }}: черновик, закрыто или автомерж уже включён"
           echo "SKIP=1" >> "$GITHUB_ENV"
+
+      # Правило 053: красная общая ветка ЗАМОРАЖИВАЕТ очередь. Это условие
+      # ВХОДА, а не одна из сортировок, и потому стоит здесь — до всего, что
+      # смотрит на проверки самого изменения.
+      #
+      # ИНЦИДЕНТ. 2 сентября 2026 общая ветка покраснела в 08:55, и за
+      # следующие полчаса в неё уехали два изменения — оба с полностью
+      # зелёными проверками, снятыми на сломанном основании. Ответ каталога по
+      # 053 называл механизмом main-red.yml, а тот только заводит задачу и
+      # никого не останавливает: заявленный гейт держал не то утверждение,
+      # ради которого построен (146).
+      #
+      # ЧТО РАЗМОРАЖИВАЕТ — метка `blocker` на самом изменении. Вычислять «а
+      # это ли починка» механизм не может, и 053 говорит об этом прямо:
+      # признак ставит человек, иначе очередь врёт сортировкой.
+      #
+      # ПОЧЕМУ ПРОПУСК, А НЕ КРАСНОЕ. Заморозка — штатное состояние конвейера,
+      # а не поломка изменения; краснеть на ней значит приучать читать красное
+      # как фон (051). Изменение просто не двигается, и в отчёте прогона
+      # сказано, чем именно ветка красна.
+      - name: красная общая ветка замораживает очередь
+        if: env.SKIP != '1'
+        env:
+          GH_TOKEN: ${{ env.MERGE_QUEUE_TOKEN }}
+          BASE: ${{ steps.pr.outputs.base }}
+          LABELS: ${{ steps.pr.outputs.labels }}
+          PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -uo pipefail
+          skip() { echo "SKIP=1" >> "$GITHUB_ENV"; exit 0; }
+
+          rc=0
+          gh run list --branch "$BASE" --limit 40 \
+            --json name,status,conclusion,createdAt > base-runs.json || rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "::warning::прогоны ветки $BASE не спрошены — очередь не двигаю."
+            skip
+          fi
+
+          # Решение принимает скрипт, а не условие в оболочке: у условия нет
+          # отвергаемого предмета (140, 145). Список красных работ считает
+          # свёртка дежурного — по ПОСЛЕДНЕМУ прогону каждой работы (009).
+          rc=0
+          python3 scripts/merge_ready.py --freeze-only \
+            --base-runs base-runs.json --labels "$LABELS" </dev/null || rc=$?
+          rm -f base-runs.json
+          if [ "$rc" -eq 2 ]; then
+            echo "::warning::Изменение #$PR: состояние общей ветки не прочитано — не двигаю."
+            skip
+          fi
+          if [ "$rc" -ne 0 ]; then
+            echo "::warning::Изменение #$PR: очередь заморожена — см. причину выше."
+            skip
+          fi
 
       # Правило 010: пустой чек-лист — не зелёный. Без обязательной проверки
       # изменение становится «чистым» сразу, и автомерж сливает НЕ ДОЖИДАЯСЬ
