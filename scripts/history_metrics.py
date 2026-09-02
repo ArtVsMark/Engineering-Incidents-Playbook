@@ -35,6 +35,9 @@
         тега, а не с памятью автора;
   161 — единица истории это выпуск: у каждого тега свой раздел, а незакрытый
         выпуск переименовывает в номер и дату сам выпуск, а не рука;
+  106 — вопрос витрины «сколько тестов и тестовых модулей» адресован
+        сопровождающему, и ответ ему живёт здесь колонкой снимка, а не
+        значком: значок с этим числом дёргался бы от каждого изменения;
   002 — «не забыть дописать строку» механизмом не является, и это измерено
         двумя пропущенными выпусками;
   049 — состояние выводится из живого артефакта: числа считает сборка по тегу,
@@ -172,8 +175,24 @@ def files_in_tree(root: Path) -> tuple[dict[str, str] | None, str | None]:
     return out, None
 
 
+#: Тестовый модуль и тест. Считаются по дереву тега, как и всё остальное здесь:
+#: прогон `pytest -q` дал бы число ТЕКУЩЕГО дерева, а строка выпуска — снимок.
+#: Разбор регулярным выражением, а не `ast`: файл дерева тега может быть написан
+#: на синтаксисе, который этот интерпретатор не разберёт, и снимок прошлого
+#: выпуска упал бы на будущем Python (правило 051).
+TEST_MODULE_RE = re.compile(r"^tests/test_[\w.]+\.py$")
+TEST_DEF_RE = re.compile(r"(?m)^\s*(?:async\s+)?def\s+test_\w*\s*\(")
+
+
 def snapshot(files: dict[str, str]) -> dict[str, str]:
-    """Четыре числа выпуска по дереву. Значения — уже ячейками таблицы."""
+    """Шесть чисел выпуска по дереву. Значения — уже ячейками таблицы.
+
+    Тесты и тестовые модули отвечают на вопрос СОПРОВОЖДАЮЩЕГО, и живут они
+    здесь, а не значком: значок с этим числом дёргался бы от каждого изменения
+    и шумел там, куда смотрят один раз. Адрес назван в `.rules/showcase.json`
+    полем `where` — витрина отвечает на вопрос сопровождающего источником, а не
+    «значка нет» (правило 049).
+    """
     rules = [n for n in files if RULE_PATH_RE.match(n)]
 
     areas: set[str] = set()
@@ -206,8 +225,12 @@ def snapshot(files: dict[str, str]) -> dict[str, str]:
             none = sum(1 for a in active if a["mechanism"] == "none")
             nothing = f"{none} из {len(active)}"
 
+    modules = [n for n in files if TEST_MODULE_RE.match(n)]
+    tests = sum(len(TEST_DEF_RE.findall(files[n])) for n in modules)
+
     return {"правил": str(len(rules)), "областей": str(len(areas)),
-            "ссылок": str(links), "ничем": nothing}
+            "ссылок": str(links), "тестов": str(tests),
+            "модулей": str(len(modules)), "ничем": nothing}
 
 
 def table(text: str) -> tuple[list[str] | None, int | None]:
@@ -408,12 +431,60 @@ def add(root: Path, tag: str, key: str, at_tag: bool) -> int:
     return 0
 
 
+def recount(root: Path) -> int:
+    """Пересчитать числа всех строк по их тегам, сохранив «Ключевое».
+
+    ЗАЧЕМ ОТДЕЛЬНЫЙ КЛЮЧ. Состав колонок меняется: их стало шесть вместо
+    четырёх. Дописать новые ячейки в прошлые строки рукой нельзя — это ровно
+    то число в прозе, ради запрета которого весь этот скрипт и написан (005).
+    Пересчёт делает та же сборка, что и ставит строку при выпуске.
+
+    Ключ применяют РЕДКО — при смене состава колонок. В обычной жизни строку
+    ставит выпуск, и трогать прошлые незачем: снимок не устаревает.
+    """
+    path = root / HISTORY
+    if not path.exists():
+        print(f"пересчитывать нечего: нет {path}", file=sys.stderr)
+        return 2
+    text = path.read_text(encoding="utf-8")
+    rows, _ = table(text)
+    if not rows:
+        print(f"пересчитывать нечего: в {HISTORY} нет строк выпусков под "
+              f"«{SECTION}»", file=sys.stderr)
+        return 2
+
+    known = {release(tag): tag for tag in tags(root)[0]}
+    changed = 0
+    for row in rows:
+        got = cells(row)
+        tag = known.get(release(got[0]))
+        if tag is None:
+            print(f"пересчитывать нечего: строка {got[0]} — тега такого нет",
+                  file=sys.stderr)
+            return 2
+        files, err = files_at_tag(root, tag)
+        if err:
+            print(f"пересчёт не отработал: {err}", file=sys.stderr)
+            return 2
+        fresh = "| " + " | ".join([got[0], *snapshot(files).values(),
+                                   got[-1]]) + " |"
+        if fresh != row:
+            text = text.replace(row, fresh, 1)
+            changed += 1
+    path.write_text(text, encoding="utf-8")
+    print(f"пересчитано строк: {changed} из {len(rows)}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--root", type=Path, default=ROOT,
                         help="корень каталога; по умолчанию сам этот репозиторий")
     parser.add_argument("--check", action="store_true",
                         help="сверить строки выпусков с тегами")
+    parser.add_argument("--recount", action="store_true",
+                        help="пересчитать числа всех строк по их тегам: нужен "
+                             "при смене состава колонок, «Ключевое» сохраняется")
     parser.add_argument("--add", metavar="ТЕГ",
                         help="дописать строку выпуска, посчитав числа")
     parser.add_argument("--key", default="",
@@ -423,6 +494,8 @@ def main(argv: list[str] | None = None) -> int:
                              "досыпают строки выпускам, которые уже состоялись")
     args = parser.parse_args(argv)
 
+    if args.recount:
+        return recount(args.root)
     if args.add:
         return add(args.root, args.add, args.key, args.at_tag)
     if args.check:
