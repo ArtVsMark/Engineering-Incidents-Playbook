@@ -13,7 +13,7 @@
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `claude-code-playbook` | подключён | 29 | 23 | 162 | 0 | 0 | 120 | 77 | 4 | 17 | 22 | 70 |  |
-| `Stepik-Python-Grader` | подключён | 68 | 128 | 162 | 0 | 0 | 159 | 65 | 30 | 64 | 0 | 126 |  |
+| `Stepik-Python-Grader` | подключён | 68 | 128 | 162 | 0 | 0 | 159 | 65 | 31 | 63 | 0 | 127 |  |
 | `ArtVsMark` | подключён | 15 | 10 | 162 | 0 | 0 | 79 | 46 | 6 | 11 | 16 | 32 |  |
 | `claude-code-usage` | не подключён | 1 | 1 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
@@ -89,7 +89,6 @@
 | `claude-code-playbook` | `scripts/refresh_derived.py` | 4 |
 | `claude-code-playbook` | `.rules/consumers.json` | 3 |
 | `claude-code-playbook` | `CLAUDE.md` | 3 |
-| `claude-code-playbook` | `HISTORY.md` | 3 |
 | `claude-code-playbook` | `README.md` | 3 |
 | `claude-code-playbook` | `scripts/audit_catalogue.py` | 3 |
 | `claude-code-playbook` | `scripts/check_attribution.py` | 3 |
@@ -99,13 +98,15 @@
 | `claude-code-playbook` | `.github/workflows/consumers-sync.yml` | 2 |
 | `claude-code-playbook` | `.github/workflows/main-red.yml` | 2 |
 | `claude-code-playbook` | `.rules/bindings.json` | 2 |
+| `claude-code-playbook` | `HISTORY.md` | 2 |
 | `claude-code-playbook` | `export/rules.json` | 2 |
 | `claude-code-playbook` | `rules/README.md` | 2 |
 | `claude-code-playbook` | `scripts/collect_changelog.py` | 2 |
 | `claude-code-playbook` | `scripts/ghcli.py` | 2 |
+| `claude-code-playbook` | `scripts/history_metrics.py` | 2 |
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 36 механизмов по одному правилу; без названного адреса: 0 из 98 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 35 механизмов по одному правилу; без названного адреса: 0 из 98 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 38 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/preflight.md` | 8 |
@@ -129,6 +130,8 @@
 | `Stepik-Python-Grader` | `scripts/rerun_flaky_checks.py` | 3 |
 | `Stepik-Python-Grader` | `src/stepik_grader/web/playground.py` | 3 |
 | `Stepik-Python-Grader` | `.claude/hooks/pre_tool_use.py` | 2 |
+| `Stepik-Python-Grader` | `.github/workflows/tracker-guardrails.yml` | 2 |
+| `Stepik-Python-Grader` | `.rules/proposals.json` | 2 |
 | `Stepik-Python-Grader` | `CONTRIBUTING.md` | 2 |
 | `Stepik-Python-Grader` | `docs/dev/corpus.md` | 2 |
 | `Stepik-Python-Grader` | `docs/dev/glossary.md` | 2 |
@@ -149,7 +152,7 @@
 | `Stepik-Python-Grader` | `tests/conftest.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
-| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 83 механизмов по одному правилу; без названного адреса: 0 из 159 |
+| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 82 механизмов по одному правилу; без названного адреса: 0 из 159 |
 | `ArtVsMark` | `scripts/build_metrics.py` | 22 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 19 |
 | `ArtVsMark` | `CLAUDE.md` | 11 |

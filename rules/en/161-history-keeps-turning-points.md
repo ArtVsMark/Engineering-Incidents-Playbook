@@ -21,7 +21,17 @@ and the author decided anew on every pass — silently and differently each time
 
 The second case arrived from outside and confirmed the device: the grader keeps
 its history as eleven releases, and its opening line promises not a list but
-"why the decisions were made the way they were". Neighbouring documents there
+"why the decisions were made the way they were".
+
+**The third case is this same rule being executed, and it is about taking a
+device by halves.** From the neighbour we took the conclusion "history is
+decisions" and invented our own form for it: a separate "## Turning point"
+genre standing beside the row of releases. A week later the price was measured:
+three releases, one release section, and the decisions of the other two lying
+as separate entries tied to no release at all. The owner put it plainly: "this
+is prose, not a history". A device is carried over whole or not at all — half a
+device gives you your own genre with someone else's justification
+([162](162-a-gap-asks-the-neighbours-first.md)). Neighbouring documents there
 are separated explicitly — the changelog answers "what changed", an archive
 holds old entries, the version policy is a third file. Two histories took shape
 independently and arrived at the same place.
@@ -44,8 +54,14 @@ turn without it stays a story, and a story cannot be checked.
 
 ## In practice
 
-- four parts: what started it · what else was considered and why rejected ·
-  what was chosen · what it became (as a link);
+- **the unit of history is a release**, not a stand-alone turning-point entry:
+  the turn is told inside the release that carried it, otherwise releases and
+  turns live as two rows and drift apart;
+- four parts: context · what shipped (as links to artefacts) · decisions,
+  including the rejected alternative · outcome;
+- an unclosed release sits under its own heading and gets its number and date
+  from the release itself, never by hand: renaming by hand is the same
+  "don't forget" agreement on which the metrics row broke;
 - an ordinary addition, a fixed link, a rebuild of derived files is **not** a
   turn — that is a changelog fragment;
 - a living document has a limit expressed as a number: what falls outside the

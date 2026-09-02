@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""У каждого выпуска есть строка в «Эволюции метрик», и её числа сверены с тегом.
+"""У каждого выпуска есть раздел в истории и строка метрик, сверенная с тегом.
 
 Таблица в `HISTORY.md` держалась договорённостью «дописать строку при выпуске».
 Договорённость сломалась молча: после `v0.1.0` вышли `v1.0.0` и `v1.1.0`, и ни
@@ -9,6 +9,8 @@
 
 ЧТО ПРОВЕРЯЕТСЯ.
 
+  • у каждого тега выпуска есть свой РАЗДЕЛ в истории: единица истории —
+    выпуск, и раздел, которого нет, оставляет решения выпуска нерассказанными;
   • у каждого тега выпуска есть своя строка, а у каждой строки — свой тег;
   • числа в строке равны СНИМКУ, вычисленному по дереву самого тега: правил,
     областей, локальных ссылок, «не обеспечено ничем» из действующих ответов;
@@ -31,6 +33,8 @@
 Реализует правила каталога:
   005 — число, вписанное руками, протухает: снимок выпуска сверяется с деревом
         тега, а не с памятью автора;
+  161 — единица истории это выпуск: у каждого тега свой раздел, а незакрытый
+        выпуск переименовывает в номер и дату сам выпуск, а не рука;
   002 — «не забыть дописать строку» механизмом не является, и это измерено
         двумя пропущенными выпусками;
   049 — состояние выводится из живого артефакта: числа считает сборка по тегу,
@@ -48,6 +52,7 @@
 Запуск:
   python scripts/history_metrics.py --check
   python scripts/history_metrics.py --add v1.2.0 --key "что принёс выпуск"
+  # тот же вызов переименовывает «## Не выпущено · X» в «## v1.2.0 · дата · X»
   python scripts/history_metrics.py --add v1.0.0 --key "..." --at-tag
 
 Исходы:
@@ -74,6 +79,16 @@ ROOT = Path(__file__).resolve().parent.parent
 
 HISTORY = "HISTORY.md"
 SECTION = "## Эволюция метрик каталога"
+#: Заголовок раздела выпуска: «## v1.1.0 · 28 августа 2026 · чем он был».
+#: Единица истории — выпуск (правило 161), и раздел, которого нет, оставляет
+#: решения выпуска нерассказанными. Форму раздела держит audit_catalogue.py;
+#: здесь спрашивается только его НАЛИЧИЕ у каждого тега — теги, их даты и
+#: деревья уже живут тут, и второй сборщик того же разошёлся бы с первым (022).
+RELEASE_HEAD_RE = re.compile(r"(?m)^## (v?\d+\.\d+\.\d+)\s+·\s+")
+#: Незакрытый выпуск. Имя и дату ему ставит `--add`, а не рука: иначе
+#: переименование стало бы новой договорённостью — той самой, на которой
+#: сломалась строка метрик.
+OPEN_HEAD_RE = re.compile(r"(?m)^## Не выпущено\s+·\s+(.+)$")
 
 #: Тег выпуска. Схема — VERSIONING.md: тег ставится только на границе MINOR.
 #: Первый тег каталога поставлен без «v», и это факт истории, а не ошибка:
@@ -220,6 +235,42 @@ def table(text: str) -> tuple[list[str] | None, int | None]:
     return (rows, after) if after is not None else (None, None)
 
 
+#: Месяцы родительным падежом: заголовок читается «28 августа 2026», а не
+#: «2026-08-28». Формат взят у уже написанных разделов, а не выдуман.
+MONTHS = ("января", "февраля", "марта", "апреля", "мая", "июня", "июля",
+          "августа", "сентября", "октября", "ноября", "декабря")
+
+
+def tag_date(root: Path, tag: str) -> tuple[str, str]:
+    """Дата тега словами. Ошибка возвращается строкой, а не трассировкой."""
+    done = subprocess.run(["git", "-C", str(root), "log", "-1", "--format=%cs",
+                           tag], capture_output=True, text=True)
+    if done.returncode != 0 or not done.stdout.strip():
+        return "", f"у тега {tag} не спросить дату: {done.stderr.strip()}"
+    year, month, day = done.stdout.strip().split("-")
+    return f"{int(day)} {MONTHS[int(month) - 1]} {year}", ""
+
+
+def close_section(text: str, tag: str, date: str) -> tuple[str, str]:
+    """«## Не выпущено · X» → «## <тег> · <дата> · X».
+
+    Переименование делает выпуск, а не рука. Иначе у раздела появилась бы
+    ровно та договорённость «не забыть дописать», на которой сломалась строка
+    метрик, — и сломалась бы вторично, тем же способом.
+    """
+    if RELEASE_HEAD_RE.search(text) and any(
+            release(m.group(1)) == release(tag)
+            for m in RELEASE_HEAD_RE.finditer(text)):
+        return text, ""                 # раздел уже под своим номером
+    m = OPEN_HEAD_RE.search(text)
+    if not m:
+        return text, (f"раздела о выпуске в {HISTORY} нет: ни «## {tag} · …», "
+                      "ни «## Не выпущено · …». Строка метрик встанет, а "
+                      "решения выпуска останутся нерассказанными")
+    return (text[:m.start()] + f"## {tag} · {date} · {m.group(1)}"
+            + text[m.end():]), ""
+
+
 def cells(row: str) -> list[str]:
     return [c.strip() for c in row.strip().strip("|").split("|")]
 
@@ -243,9 +294,16 @@ def check(root: Path) -> int:
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     problems: list[str] = []
+    text = path.read_text(encoding="utf-8")
+    sections = {release(m.group(1)) for m in RELEASE_HEAD_RE.finditer(text)}
     written = {release(cells(r)[0]): r for r in rows}
     for tag in found:
         num = release(tag)
+        if num not in sections:
+            problems.append(
+                f"выпуск {tag} состоялся, а раздела о нём в {HISTORY} нет. "
+                "Единица истории — выпуск: без раздела его решения остаются "
+                "нерассказанными, и рядом с рядом тегов стоит пустое место")
         if num not in written:
             problems.append(
                 f"выпуск {tag} состоялся, а строки о нём в «{SECTION}» нет. "
@@ -287,8 +345,8 @@ def check(root: Path) -> int:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
-    print(f"эволюция метрик в порядке: выпусков {len(found)}, "
-          "у каждого строка, и числа сходятся с деревом тега")
+    print(f"история сошлась с выпусками: их {len(found)}, у каждого свой раздел "
+          "и строка метрик, и числа сходятся с деревом тега")
     return 0
 
 
@@ -332,11 +390,21 @@ def add(root: Path, tag: str, key: str, at_tag: bool) -> int:
         return 2
     snap = snapshot(files)
 
+    date, err = tag_date(root, tag)
+    if err:
+        print(f"дописать нечего: {err}", file=sys.stderr)
+        return 2
+
     row = "| " + " | ".join([tag, *snap.values(), key.strip()]) + " |"
     lines = text.splitlines()
     lines.insert(after + 1, row)
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    closed, err = close_section("\n".join(lines) + "\n", tag, date)
+    if err:
+        print(err, file=sys.stderr)
+        return 1
+    path.write_text(closed, encoding="utf-8")
     print(f"дописано: {row}")
+    print(f"раздел выпуска закрыт заголовком «## {tag} · {date} · …»")
     return 0
 
 
