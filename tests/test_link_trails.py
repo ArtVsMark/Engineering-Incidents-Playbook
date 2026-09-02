@@ -67,7 +67,7 @@ def test_sledov_net_vovse():
 
 
 def test_kommentariy_neset_marker_i_ssylku():
-    body = lt.comment_for([rule("005")], "ArtVsMark/claude-code-playbook")
+    body = lt.comment_for([rule("005")], "ArtVsMark/Engineering-Incidents-Playbook")
     assert lt.MARKER in body
     assert "rules/ru/005-slug.md" in body
     assert "правило 005" in body

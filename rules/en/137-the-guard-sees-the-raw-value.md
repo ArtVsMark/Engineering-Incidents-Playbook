@@ -82,7 +82,7 @@ others are already display strings.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#40 — the analysis and the run; the metrics build
+ArtVsMark/Engineering-Incidents-Playbook#40 — the analysis and the run; the metrics build
 of the profile showcase, ArtVsMark/ArtVsMark.
 
 See also: [075](075-a-guard-that-finds-nothing-must-fail.md) — a gate that finds

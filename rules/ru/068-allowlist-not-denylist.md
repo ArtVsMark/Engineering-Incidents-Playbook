@@ -115,7 +115,7 @@
 ArtVsMark/Stepik-Python-Grader — `src/stepik_grader/web/statement_adapter.py`
 (`_IMAGE_TYPES`), `web/commands.py`. Второй инцидент —
 ArtVsMark/Stepik-Python-Grader#1346, предшественник
-ArtVsMark/Stepik-Python-Grader#1280. Третий — ArtVsMark/claude-code-playbook#42;
+ArtVsMark/Stepik-Python-Grader#1280. Третий — ArtVsMark/Engineering-Incidents-Playbook#42;
 ArtVsMark/ArtVsMark — гейт классификации изменений. Смежное:
 [075](075-a-guard-that-finds-nothing-must-fail.md),
 [002](002-rule-without-mechanism.md),

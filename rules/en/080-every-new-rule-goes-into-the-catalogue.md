@@ -70,7 +70,7 @@ can say where it came from.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook — this catalogue.
+ArtVsMark/Engineering-Incidents-Playbook — this catalogue.
 
 Related: [042](042-decision-records-its-alternatives.md) — decisions;
 [043](043-decisions-are-superseded-not-edited.md) — revision;

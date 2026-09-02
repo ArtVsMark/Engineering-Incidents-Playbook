@@ -64,7 +64,7 @@ EXPORT = ROOT / "export" / "rules.json"
 #: Версия контракта выгрузки. Поле `candidates` добавлено — по правилам
 #: эволюции (export/README.md) добавление поля это MINOR.
 EXPORT_SCHEMA = "1.2"
-CATALOGUE_URL = "https://github.com/ArtVsMark/claude-code-playbook"
+CATALOGUE_URL = "https://github.com/ArtVsMark/Engineering-Incidents-Playbook"
 
 #: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
 #: у них разная. Файлы производные и руками не правятся, как и указатель.

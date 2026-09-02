@@ -81,7 +81,7 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#148
+ArtVsMark/Engineering-Incidents-Playbook#148
 
 Смежное: [002](002-rule-without-mechanism.md) — правило без механизма остаётся
 обещанием; 162 отвечает на следующий вопрос — где взять механизм дешевле

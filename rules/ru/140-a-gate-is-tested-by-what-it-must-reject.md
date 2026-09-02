@@ -110,8 +110,8 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#54 — замер, показавший расхождение свода с гейтом
-атрибуции. ArtVsMark/claude-code-playbook#72 — второй инцидент: набор из одних
+ArtVsMark/Engineering-Incidents-Playbook#54 — замер, показавший расхождение свода с гейтом
+атрибуции. ArtVsMark/Engineering-Incidents-Playbook#72 — второй инцидент: набор из одних
 отказов пропустил ложный отказ на восемнадцати живых ссылках. Механизм —
 `scripts/check_gates.py` и `tests/`: каждый набор двусторонний, и сколько гейтов
 покрыто каким из двух механизмов, печатает `scripts/check_charter.py`.

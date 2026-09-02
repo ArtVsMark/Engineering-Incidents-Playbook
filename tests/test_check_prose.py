@@ -134,7 +134,7 @@ def test_nomer_v_intsidente_ne_narushenie(tmp_path):
 def test_nomer_v_sledе_ne_narushenie(tmp_path):
     """След обязан быть разрешимым, то есть как раз номером задачи."""
     root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
-        "## След\n\nArtVsMark/claude-code-playbook#213\n")})
+        "## След\n\nArtVsMark/Engineering-Incidents-Playbook#213\n")})
     assert cp.main(["--root", str(root)]) == 0
 
 

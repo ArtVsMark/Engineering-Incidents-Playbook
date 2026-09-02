@@ -77,7 +77,7 @@ of the rule itself.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#197 — the issue about marking a record superseded,
+ArtVsMark/Engineering-Incidents-Playbook#197 — the issue about marking a record superseded,
 which shows the same mechanism: three documents demanded the mark, the mark did
 not exist, and record 143 was deleted. The measurement across 41 records and the
 analysis of the three cases live in the catalogue's `.rules/bindings.json` and in

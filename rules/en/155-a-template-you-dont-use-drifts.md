@@ -72,7 +72,7 @@ template offers to replace.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#213
+ArtVsMark/Engineering-Incidents-Playbook#213
 
 Related: [153](153-foreign-why-is-a-link-not-a-copy.md) — the same adjacency
 with the sign reversed: it forbids copying somebody else's rationale in, this

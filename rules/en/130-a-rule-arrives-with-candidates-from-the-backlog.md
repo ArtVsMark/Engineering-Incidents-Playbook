@@ -76,9 +76,9 @@ and three similar ones turn out to have been open the whole time.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#16; the mechanism is specified in
-ArtVsMark/claude-code-playbook#14, the contract in
-ArtVsMark/claude-code-playbook#15. Rule 124 (three trails, connected by hand)
+ArtVsMark/Engineering-Incidents-Playbook#16; the mechanism is specified in
+ArtVsMark/Engineering-Incidents-Playbook#14, the contract in
+ArtVsMark/Engineering-Incidents-Playbook#15. Rule 124 (three trails, connected by hand)
 and rule 128. See also: [129](129-a-catalogue-needs-a-consumption-contract.md) —
 the delivery contract; this record says **what exactly** is delivered along with
 a rule; [019](019-audit-from-surfaces-not-files.md) — entering from surfaces;

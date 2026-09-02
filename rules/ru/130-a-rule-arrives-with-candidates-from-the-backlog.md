@@ -73,8 +73,8 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#16; постановка механизма —
-ArtVsMark/claude-code-playbook#14, контракт — ArtVsMark/claude-code-playbook#15.
+ArtVsMark/Engineering-Incidents-Playbook#16; постановка механизма —
+ArtVsMark/Engineering-Incidents-Playbook#14, контракт — ArtVsMark/Engineering-Incidents-Playbook#15.
 Правило 124 (три следа, связанные вручную) и правило 128. Смежное:
 [129](129-a-catalogue-needs-a-consumption-contract.md) — контракт доставки, эта
 запись говорит, **что именно** доставляется вместе с правилом;

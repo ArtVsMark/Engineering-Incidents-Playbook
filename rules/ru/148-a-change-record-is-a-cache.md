@@ -89,4 +89,4 @@ Required status check "PR check" is expected.
 
 ## След
 
-ArtVsMark/claude-code-playbook#74
+ArtVsMark/Engineering-Incidents-Playbook#74

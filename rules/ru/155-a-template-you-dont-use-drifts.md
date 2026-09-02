@@ -70,7 +70,7 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#213
+ArtVsMark/Engineering-Incidents-Playbook#213
 
 Смежное: [153](153-foreign-why-is-a-link-not-a-copy.md) — то же соседство с
 обратным знаком: там запрещено копировать к себе чужое обоснование, здесь

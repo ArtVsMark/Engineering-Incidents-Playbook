@@ -84,7 +84,7 @@ project where the catalogue is not mentioned in a single line.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook — the charter appeared the same evening, before
+ArtVsMark/Engineering-Incidents-Playbook — the charter appeared the same evening, before
 it the window broke seven of the catalogue's rules; ArtVsMark/ArtVsMark — no
 charter,
 [ArtVsMark/ArtVsMark#20](https://github.com/ArtVsMark/ArtVsMark/issues/20) and

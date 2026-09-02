@@ -114,8 +114,8 @@
 
 ## След
 
-Постановка механизма — ArtVsMark/claude-code-playbook#14, эта запись —
-ArtVsMark/claude-code-playbook#15; роль потребителя в первом проекте —
+Постановка механизма — ArtVsMark/Engineering-Incidents-Playbook#14, эта запись —
+ArtVsMark/Engineering-Incidents-Playbook#15; роль потребителя в первом проекте —
 ArtVsMark/Stepik-Python-Grader#1351. Правила 126 и 128 — те самые, что доехали
 до одного проекта из пяти. Смежное: [120](120-how-to-run-a-rule-catalogue.md) —
 ведение каталога, которое эта запись продолжает на потребление и уточняет: «нет

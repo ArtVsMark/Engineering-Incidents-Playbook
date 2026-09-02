@@ -82,7 +82,7 @@ missing = [h for h in SHAPE[lang]
 
 ## След
 
-ArtVsMark/claude-code-playbook#69 — обе поломки и прогон, показавший `['999',
+ArtVsMark/Engineering-Incidents-Playbook#69 — обе поломки и прогон, показавший `['999',
 '1']` вместо `['1']`.
 
 Смежное: [097](097-a-checker-has-two-error-types.md) — две ошибки проверяющего и
