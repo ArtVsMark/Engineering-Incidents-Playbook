@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 29 | 23 | 162 | 0 | 0 | 120 | 79 | 4 | 22 | 15 | 73 |  |
+| `claude-code-playbook` | подключён | 29 | 23 | 162 | 0 | 0 | 120 | 80 | 4 | 23 | 13 | 73 |  |
 | `Stepik-Python-Grader` | подключён | 68 | 128 | 162 | 0 | 0 | 159 | 65 | 31 | 63 | 0 | 127 |  |
 | `ArtVsMark` | подключён | 15 | 10 | 162 | 0 | 0 | 79 | 46 | 6 | 11 | 16 | 32 |  |
 | `claude-code-usage` | подключён | 1 | 1 | 152 | 10 | 0 | 9 | 7 | 0 | 1 | 1 | 9 |  |
@@ -37,9 +37,7 @@
 | 111 | `claude-code-playbook` — гейт: конвейер делает сам, а не советует: .github/workflows/agent-pr.yml открывает изменение, .github/workflows/automerge.yml включает слияние, .github/workflows/labels-sync.yml расставляет метки; `Stepik-Python-Grader` — документ: CLAUDE.md § Гейты: может сделать сам — делает, а не советует; прецедент — gh_rest.py edit-pr вместо совета проставить Closes руками | `ArtVsMark` |
 | 118 | `claude-code-playbook` — гейт: scripts/build_rules_index.py — экспорт рядом с источником; `Stepik-Python-Grader` — гейт: scripts/check_generated_sources.py — файл с шапкой «СГЕНЕРИРОВАНО» называет генератор, и тот существует | `ArtVsMark` |
 | 119 | `claude-code-playbook` — гейт: scripts/check_candidates.py исключает README.md из отбора кандидатов, scripts/check_links.py — свои производные; инструмент не обрабатывает собственный вывод; `Stepik-Python-Grader` — гейт: src/stepik_grader/core/test_loader.py — обход берёт только .py и не заходит в скрытые каталоги (_is_hidden_or_service_dir), поэтому .grader_cache/ и .grader_stats.jsonl под него не попадают; шаблон task*.py — приоритет с откатом (_solution_files_in возвращает by_pattern or files), а не жёсткий фильтр; закреплено tests/test_loader.py | `ArtVsMark` |
-| 120 | `Stepik-Python-Grader` — гейт: указатель правил и дайджест генерируются (scripts/generate_rules_index.py, scripts/generate_rules_digest.py), а scripts/check_rules_digest.py не даёт им разойтись с ответом проекта | `claude-code-playbook` |
 | 121 | `Stepik-Python-Grader` — конвейер: scripts/check_container_closure.py — ночной обход сверяет состояние эпика со счётчиком незакрытых дочерних задач: закрытый контейнер с открытой работой становится находкой с адресатом | `claude-code-playbook` |
-| 124 | `Stepik-Python-Grader` — конвейер: scripts/rerun_flaky_checks.py: список разрешённых к автоперезапуску закрыт, попытка ровно одна, а зелёное со второго раза записывается находкой в docs/agent/flaky-runs.md | `claude-code-playbook` |
 | 125 | `claude-code-playbook` — гейт: scripts/build_rules_index.py — область и даты из источников; `Stepik-Python-Grader` — гейт: scripts/check_generated_sources.py — у производного файла назван живой исходник; DIGEST.md и указатель правил пересобираются генератором, а не правятся | `ArtVsMark` |
 | 130 | `Stepik-Python-Grader` — конвейер: scripts/link_rules_to_issues.py — новое правило приходит вместе со списком кандидатов из нашего трекера | `claude-code-playbook` |
 | 132 | `Stepik-Python-Grader` — конвейер: scripts/check_work_overlap.py показывает пересечение неблокирующим шагом scripts/preflight.py, а CLAUDE.md § Метки при заведении issue требует объявить все задачи сборного изменения (Closes #N либо «Часть #N»); `ArtVsMark` — документ: CLAUDE.md § Критические запреты — не везти в одном PR несколько тем; .github/pull_request_template.md — тот же вопрос критику. Гейта нет намеренно: число затронутых зон сборности не доказывает, а ложный отказ на широкой теме дороже пропуска. Правило само требует предупреждения, а не отказа, — а предупреждать здесь некому | `claude-code-playbook` |
@@ -64,22 +62,23 @@
 
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
+| `claude-code-playbook` | `scripts/build_rules_index.py` | 11 |
 | `claude-code-playbook` | `scripts/check_gates.py` | 11 |
-| `claude-code-playbook` | `scripts/build_rules_index.py` | 10 |
 | `claude-code-playbook` | `.github/workflows/automerge.yml` | 8 |
 | `claude-code-playbook` | `.github/workflows/ci.yml` | 8 |
 | `claude-code-playbook` | `export/README.md` | 7 |
+| `claude-code-playbook` | `scripts/aggregate_bindings.py` | 7 |
+| `claude-code-playbook` | `scripts/check_bindings.py` | 7 |
 | `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 6 |
+| `claude-code-playbook` | `AGENTS.md` | 6 |
 | `claude-code-playbook` | `CONTRIBUTING.md` | 6 |
-| `claude-code-playbook` | `scripts/aggregate_bindings.py` | 6 |
-| `claude-code-playbook` | `scripts/check_bindings.py` | 6 |
 | `claude-code-playbook` | `scripts/check_charter.py` | 6 |
-| `claude-code-playbook` | `AGENTS.md` | 5 |
 | `claude-code-playbook` | `scripts/check_showcase.py` | 5 |
+| `claude-code-playbook` | `scripts/link_trails.py` | 5 |
+| `claude-code-playbook` | `scripts/audit_catalogue.py` | 4 |
 | `claude-code-playbook` | `scripts/check_prose.py` | 4 |
 | `claude-code-playbook` | `scripts/check_workflows.py` | 4 |
 | `claude-code-playbook` | `scripts/collect_proposals.py` | 4 |
-| `claude-code-playbook` | `scripts/link_trails.py` | 4 |
 | `claude-code-playbook` | `scripts/main_red.py` | 4 |
 | `claude-code-playbook` | `scripts/refresh_derived.py` | 4 |
 | `claude-code-playbook` | `.github/labels.yml` | 3 |
@@ -87,7 +86,6 @@
 | `claude-code-playbook` | `CLAUDE.md` | 3 |
 | `claude-code-playbook` | `HISTORY.md` | 3 |
 | `claude-code-playbook` | `README.md` | 3 |
-| `claude-code-playbook` | `scripts/audit_catalogue.py` | 3 |
 | `claude-code-playbook` | `scripts/check_attribution.py` | 3 |
 | `claude-code-playbook` | `scripts/history_metrics.py` | 3 |
 | `claude-code-playbook` | `scripts/version.py` | 3 |
@@ -101,7 +99,7 @@
 | `claude-code-playbook` | `scripts/merge_ready.py` | 2 |
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 36 механизмов по одному правилу; без названного адреса: 0 из 105 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 36 механизмов по одному правилу; без названного адреса: 0 из 107 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 38 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/preflight.md` | 8 |
