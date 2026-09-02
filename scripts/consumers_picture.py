@@ -105,10 +105,10 @@ ROW, PILL_H = 42, 24
 #: выглядит как раньше, и сравнивать её с прошлыми снимками можно.
 COL_MIN, COL_GAP = 300, 40
 #: Смещения остальных колонок от первой — они сохранены как были.
-COL_D_TRAILS, COL_D_BORN, COL_D_PILLS, PILL_GAP = 134, 256, 378, 10
+COL_D_TRAILS, COL_D_BORN, COL_D_PILLS, PILL_GAP = 118, 226, 340, 10
 #: Ширина знака имени: 18px, жирное начертание. Тот же приём и та же оговорка,
 #: что у плашек — шрифта нет, измерить нечем, коэффициент с запасом.
-NAME_K = 10.8
+NAME_K = 12.0
 
 
 #: Сколько знаков имени помещается в одну строку до первой колонки.
@@ -164,7 +164,16 @@ COL_ANSWERED, COL_TRAILS, COL_BORN, COL_PILLS = columns([])
 #: Ширина плашки считается по числу знаков, а не измеряется: шрифта у нас
 #: нет, и измерить его нечем. Коэффициенты подобраны с запасом — текст,
 #: упёршийся в край, хуже лишних трёх точек воздуха.
-LABEL_K, VALUE_K = 6.4, 6.9
+LABEL_K, VALUE_K = 6.9, 7.5
+
+#: РАЗМЕРЫ СОБРАНЫ ЗДЕСЬ, А НЕ РАССЫПАНЫ ПО РАЗМЕТКЕ. Витрина показывает
+#: картинку по ширине места, и читается она тем крупнее, чем БОЛЬШЕ отношение
+#: кегля к ширине холста. Замер, из-за которого это и понадобилось: холст
+#: 1216 точек, имя 18 — на странице профиля это около тринадцати, и владелец
+#: сказал «мелко». Поднято на восьмую часть, а ширина удержана сжатием
+#: числовых колонок: расти вширь значило бы съесть прибавку обратно.
+SIZE = {"title": 31, "sub": 16, "column": 12.5, "name": 20, "number": 24,
+        "pill": 13}
 
 #: Слова каждой витрины. Состояния приходят из сводки по-русски — она
 #: собирается один раз и для обоих языков; сюда они переводятся при
@@ -234,7 +243,7 @@ def pill(x: int, y: int, label: str, value: str, ink: str, t: dict) -> tuple[str
     out = (f'<rect x="{x}" y="{y}" width="{w}" height="{PILL_H}" '
            f'rx="{PILL_H // 2}" fill="{t["pill"]}" stroke="{t["stroke"]}"/>'
            f'<text x="{x + 13}" y="{y + 16}" fill="{t["label"]}" '
-           f'font-family="{FONT}" font-size="12" font-weight="600">{esc(label)}'
+           f'font-family="{FONT}" font-size="{SIZE["pill"]}" font-weight="600">{esc(label)}'
            f'<tspan fill="{ink}" font-weight="700" dx="7">{esc(value)}</tspan></text>')
     return out, w
 
@@ -303,20 +312,20 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
         f'<rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" '
         f'rx="16" fill="{t["card"]}" stroke="{t["stroke"]}"/>',
         f'<rect x="{PAD}" y="28" width="46" height="4" rx="2" fill="{t["accent"]}"/>',
-        text(PAD, 68, w["title"], t["name"], 29, 800, ' letter-spacing="-0.6"'),
-        text(PAD, 94, w["sub"].format(total=total), t["label"], 15, 500),
+        text(PAD, 68, w["title"], t["name"], SIZE["title"], 800, ' letter-spacing="-0.6"'),
+        text(PAD, 94, w["sub"].format(total=total), t["label"], SIZE["sub"], 500),
     ]
     # Шапка колонок: подпись стоит один раз сверху, а не повторяется в
     # каждой строке — повтор съедает ту самую ширину, ради которой колонки.
     for x, word in ((COL_ANSWERED, w["answered"]), (COL_TRAILS, w["trails"]),
                     (COL_BORN, w["born"])):
-        p.append(text(x, TOP - 14, word, t["label"], 11.5, 600,
+        p.append(text(x, TOP - 14, word, t["label"], SIZE["column"], 600,
                       ' letter-spacing="0.3"'))
     # Подпись плашек — ПО СЕРЕДИНЕ группы, а не над её левым краем: она
     # называет три колонки сразу, и у левого края читается как подпись
     # только первой.
-    p.append(text(COL_PILLS + span // 2, TOP - 14, w["held"], t["label"], 11.5,
-                  600, ' letter-spacing="0.3" text-anchor="middle"'))
+    p.append(text(COL_PILLS + span // 2, TOP - 14, w["held"], t["label"],
+                  SIZE["column"], 600, ' letter-spacing="0.3" text-anchor="middle"'))
 
     y = TOP
     for r in data:
@@ -325,7 +334,7 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
         # вокруг того же места, чтобы ряд не «поехал» относительно чисел.
         база = y + 17 if len(куски) == 1 else y + 8
         for n, кусок in enumerate(куски):
-            p.append(text(PAD, база + n * 19, кусок, t["name"], 18, 800,
+            p.append(text(PAD, база + n * 19, кусок, t["name"], SIZE["name"], 800,
                           ' letter-spacing="-0.4"'))
         # «Родил» показывается и у НЕподключённого проекта: происхождение
         # записи не зависит от того, ответил ли проект каталогу, и прочерк
@@ -335,7 +344,7 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
                                (COL_BORN, r["born"], r["born"] > 0)):
             cell = str(value) if live else "—"
             p.append(text(x, y + 19, cell,
-                          t["accent"] if live else t["muted"], 22, 800))
+                          t["accent"] if live else t["muted"], SIZE["number"], 800))
         x = COL_PILLS
         if r["connected"]:
             for key in keys:

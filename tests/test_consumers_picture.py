@@ -159,7 +159,7 @@ def test_нечего_показать_рисуется_прочерком_а_н
     svg = рисуй(срез(repo, [{"repo": "o/тихий", "state": "не подключён",
                              "trails": 0}]))
     ячейки = {int(e.get("x")): (e.text or "") for e in ET.fromstring(svg).iter()
-              if e.tag.endswith("text") and e.get("font-size") == "22"}
+              if e.tag.endswith("text") and e.get("font-size") == str(cp.SIZE["number"])}
 
     assert ячейки[cp.COL_ANSWERED] == "—"
     assert ячейки[cp.COL_TRAILS] == "—"
@@ -171,7 +171,7 @@ def test_измеренный_ноль_остаётся_нулём(repo):
                              **{"process-step": 0},
                                       trails=0)]))
     ячейки = {int(e.get("x")): (e.text or "") for e in ET.fromstring(svg).iter()
-              if e.tag.endswith("text") and e.get("font-size") == "22"}
+              if e.tag.endswith("text") and e.get("font-size") == str(cp.SIZE["number"])}
 
     assert ячейки[cp.COL_ANSWERED] == "0"
 
@@ -370,7 +370,7 @@ def test_подпись_плашек_стоит_по_центру_группы(r
 
 def ячейки_чисел(svg):
     return {int(e.get("x")): (e.text or "") for e in ET.fromstring(svg).iter()
-            if e.tag.endswith("text") and e.get("font-size") == "22"}
+            if e.tag.endswith("text") and e.get("font-size") == str(cp.SIZE["number"])}
 
 
 def test_rodil_stoit_v_svoey_kolonke(repo):
@@ -415,13 +415,16 @@ def test_kolonka_rodil_ne_naezzhaet_na_plashki(repo):
 # Владелец увидел это сразу. Ширина теперь не зависит от имён вовсе.
 
 def первая_колонка(svg: str) -> int:
-    m = re.search(r'<text x="(\d+)" y="\d+"[^>]*font-size="11\.5"', svg)
+    # Кегль берётся у скрипта, а не вписан сюда: вписанное здесь число
+    # протухает при первой же правке размеров — ровно то, о чём 005.
+    m = re.search(rf'<text x="(\d+)" y="\d+"[^>]*font-size="{cp.SIZE["column"]}"', svg)
     assert m, "подписи колонок не нашлись"
     return int(m.group(1))
 
 
 def имена(svg: str) -> list[str]:
-    return re.findall(r'<text x="36" y="\d+"[^>]*font-size="18"[^>]*>([^<]+)<', svg)
+    return re.findall(
+        rf'<text x="{cp.PAD}" y="\d+"[^>]*font-size="{cp.SIZE["name"]}"[^>]*>([^<]+)<', svg)
 
 
 def test_dlinnoe_imya_perenositsya_na_vtoruyu_stroku(repo):
