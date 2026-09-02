@@ -167,3 +167,81 @@ def test_nezapuskaemye_nazvany_v_itoge(tmp_path, capsys):
                       "        run: python scripts/stub.py\n", encoding="utf-8")
     assert preflight.main(["--root", str(root)]) == 0
     assert "не запускалось локально" in capsys.readouterr().out
+
+
+# ── локальная замена входа: тело, которое уедет телом изменения ───────────
+#
+# Замер, из которого это выросло: три изменения подряд за одно окно уехали без
+# строки связи с задачей и вернулись красными. Прогон говорил «предмет
+# появляется только на изменении» — и был неправ: предмет появляется в момент
+# коммита, а тело изменения собирается из ПЕРВОГО коммита ветки.
+
+import subprocess
+
+
+def репо(tmp_path: Path, *тела: str) -> Path:
+    def git(*args):
+        subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
+                       capture_output=True, text=True)
+    git("init", "-q", "-b", "main")
+    git("config", "user.name", "Владелец")
+    git("config", "user.email", "owner@example.com")
+    (tmp_path / "a.txt").write_text("основание", encoding="utf-8")
+    git("add", "-A")
+    git("-c", "commit.gpgsign=false", "commit", "-q", "-m", "основание")
+    git("branch", "-f", "подделка-основания")
+    for i, тело in enumerate(тела):
+        (tmp_path / f"f{i}.txt").write_text(str(i), encoding="utf-8")
+        git("add", "-A")
+        git("-c", "commit.gpgsign=false", "commit", "-q", "-m",
+            f"работа {i}\n\n{тело}")
+    return tmp_path
+
+
+def test_telo_beryotsya_u_PERVOGO_kommita_vetki(tmp_path):
+    """Ровно то, что делает agent-pr.yml: берёт первый, а не последний.
+
+    Случай не косметический: у изменения из двух коммитов строка связи может
+    стоять во втором — и уехать в тело всё равно не может."""
+    root = репо(tmp_path, "Closes #7", "а тут строки связи нет")
+
+    текст, ошибка = preflight.branch_body(root, base="подделка-основания")
+
+    assert not ошибка and "Closes #7" in текст
+    assert "строки связи нет" not in текст
+
+
+def test_vetka_bez_svoih_kommitov_eto_oshibka_a_ne_pustota(tmp_path):
+    """«Тела нет» и «тело пустое» — разные ответы (039): пустое прошло бы
+    проверку связи молча."""
+    root = репо(tmp_path)
+
+    текст, ошибка = preflight.branch_body(root, base="подделка-основания")
+
+    assert текст == "" and "не несёт своих коммитов" in ошибка
+
+
+def test_neizvestnoe_osnovanie_eto_oshibka(tmp_path):
+    root = репо(tmp_path, "Closes #7")
+
+    _, ошибка = preflight.branch_body(root, base="ветки-такой-нет")
+
+    assert "не спросить коммиты" in ошибка
+
+
+def test_zamena_nazyvaet_sushchestvuyushchiy_skript():
+    """Декларация сверяется с фактом: путь в таблице замен должен быть."""
+    корень = Path(preflight.__file__).resolve().parent.parent
+    for имя, (скрипт, _) in preflight.STAND_IN.items():
+        assert (корень / скрипт).exists(), f"{имя}: нет {скрипт}"
+
+
+def test_zamena_stoit_na_shage_zhivogo_konveyera():
+    """Имя в таблице должно совпадать с шагом ci.yml дословно: разойдясь,
+    замена молча перестанет срабатывать (141)."""
+    корень = Path(preflight.__file__).resolve().parent.parent
+    шаги = preflight.parse_steps(
+        (корень / ".github/workflows/ci.yml").read_text(encoding="utf-8"))
+
+    имена = {s.name for s in шаги}
+    assert set(preflight.STAND_IN) <= имена

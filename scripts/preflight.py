@@ -59,6 +59,41 @@ TIMEOUT_TESTS_S = 1800
 #: и отвечает не о предмете, а о пустой строке.
 EVENT_VARS = ("$BASE", "$HEAD_SHA", "$PR", "$RUNNER_TEMP", "$GH_TOKEN")
 
+#: ЛОКАЛЬНАЯ ЗАМЕНА ВХОДА, А НЕ ВТОРАЯ ПРОВЕРКА. Шаг связи с задачей спрашивает
+#: тело изменения у площадки — локально его нет, и шаг честно значился
+#: непроверяемым. Но предмет есть: тело изменения СОБИРАЕТСЯ ИЗ ПЕРВОГО КОММИТА
+#: ветки (`agent-pr.yml` берёт `git log -1 --format=%b`), а коммит лежит здесь.
+#:
+#: Замер, из которого это выросло: три изменения подряд за одно окно уехали без
+#: строки связи и вернулись красными — каждое стоило круга «поправить тело,
+#: перезапустить работу вручную». Прогон говорил «предмет появляется только на
+#: изменении», и это было неверно: предмет появляется в момент коммита.
+#:
+#: Запускается ТОТ ЖЕ скрипт тем же ключом; подменяется только источник текста.
+#: Второй проверки здесь нет и быть не должно (правило 022).
+STAND_IN = {"изменение связано с задачей или освобождено с причиной":
+            ("scripts/pr_body.py", "тело первого коммита ветки")}
+
+
+def branch_body(root: Path, base: str = "origin/main") -> tuple[str, str]:
+    """Тело первого коммита ветки — ровно то, что уедет телом изменения.
+
+    Ошибка возвращается строкой: «спросить не вышло» и «строки нет» — разные
+    ответы, и путать их значит врать прогоном (039).
+    """
+    done = subprocess.run(["git", "-C", str(root), "rev-list", "--reverse",
+                           f"{base}..HEAD"], capture_output=True, text=True)
+    if done.returncode != 0:
+        return "", f"не спросить коммиты ветки: {done.stderr.strip()}"
+    first = done.stdout.split("\n")[0].strip()
+    if not first:
+        return "", f"ветка не несёт своих коммитов поверх {base}"
+    done = subprocess.run(["git", "-C", str(root), "log", "-1", "--format=%b",
+                           first], capture_output=True, text=True)
+    if done.returncode != 0:
+        return "", f"не спросить тело коммита {first[:7]}: {done.stderr.strip()}"
+    return done.stdout, ""
+
 STEP_RE = re.compile(r"^      - (name|uses):\s*(.*)$")
 FIELD_RE = re.compile(r"^        (\w+):\s*(.*)$")
 
@@ -210,6 +245,35 @@ def main(argv: list[str] | None = None) -> int:
         if code != 0:
             print("\n".join(f"    {ln}" for ln in out.splitlines()))
             (broken if code == 2 else findings).append(step.name)
+
+    # ЛОКАЛЬНАЯ ЗАМЕНА ВХОДА. Шаг, чей предмет есть здесь под другим именем,
+    # спрашивается тем же скриптом — но текст берётся у коммита, а не у
+    # площадки. Печатается отдельно от прогнанных: «проверено по коммиту» и
+    # «проверено на изменении» — разные ответы (158).
+    подменено: list[str] = []
+    остались = []
+    for step in skipped:
+        замена = STAND_IN.get(step.name)
+        if замена is None:
+            остались.append(step)
+            continue
+        скрипт, откуда = замена
+        текст, ошибка = branch_body(root)
+        if ошибка:
+            остались.append(step)
+            print(f"~ {step.name}: замена не сработала — {ошибка}")
+            continue
+        done = subprocess.run(  # noqa: S603 — скрипт назван в таблице замен
+            [sys.executable, скрипт, "--check", "--body-file", "-"],
+            cwd=root, input=текст, capture_output=True, text=True)
+        подменено.append(step.name)
+        mark = {0: "✓"}.get(done.returncode, "✗")
+        print(f"{mark} {step.name}  ({откуда})")
+        if done.returncode != 0:
+            tail = (done.stdout or "") + (done.stderr or "")
+            print("\n".join(f"    {ln}" for ln in tail.strip().splitlines()))
+            (broken if done.returncode == 2 else findings).append(step.name)
+    skipped = остались
 
     # ЧЕГО НЕ ЗАПУСКАЛИ — ГОВОРИТСЯ ВСЕГДА, и говорится в конце, рядом с
     # итогом. Строка «прогон чист» без этого списка читалась бы как «проверено
