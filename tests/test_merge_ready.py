@@ -117,3 +117,116 @@ def test_нельзя_сливать_это_код_один(monkeypatch, capsys)
                         type("S", (), {"read": staticmethod(lambda: '{"check_runs":[]}')})())
     assert mr.main(["--required", "catalogue"]) == 1
     assert "сливать нельзя" in capsys.readouterr().err
+
+
+# ── заморозка очереди красным основанием (правило 053) ────────────────────
+#
+# Условие ВХОДА в очередь, а не одна из сортировок: спрашивается прежде
+# проверок самого изменения. Инцидент — 2 сентября 2026: общая ветка
+# покраснела, и за полчаса в неё уехали два изменения с зелёными проверками,
+# снятыми на сломанном основании.
+
+def прогон(name, conclusion, at="2026-09-02T09:00:00Z"):
+    return {"name": name, "status": "completed", "conclusion": conclusion,
+            "createdAt": at}
+
+
+КРАСНОЕ = [прогон("ci", "success"),
+           прогон("attribution-history", "success", "2026-09-02T08:53:00Z"),
+           прогон("attribution-history", "failure", "2026-09-02T09:07:00Z")]
+ЗЕЛЁНОЕ = [прогон("ci", "success"),
+           прогон("attribution-history", "failure", "2026-09-02T09:07:00Z"),
+           прогон("attribution-history", "success", "2026-09-02T09:31:00Z")]
+
+
+def test_красное_основание_замораживает_очередь():
+    why, state = mr.frozen(КРАСНОЕ, labels=[], thaw="blocker")
+
+    assert "attribution-history" in why and "заморожена" in why
+    assert state == ""
+
+
+def test_метка_размораживает_очередь():
+    why, state = mr.frozen(КРАСНОЕ, labels=["area/gates", "blocker"],
+                           thaw="blocker")
+
+    assert why == ""
+
+
+def test_разморозка_не_выдаёт_основание_за_зелёное():
+    """«Прошло, потому что метка» и «прошло, потому что чисто» — разные
+    ответы, и подмена первого вторым была бы враньём в отчёте (158)."""
+    _, state = mr.frozen(КРАСНОЕ, labels=["blocker"], thaw="blocker")
+
+    assert "красное" in state and "blocker" in state
+
+
+def test_зелёное_основание_очередь_не_держит():
+    why, state = mr.frozen(ЗЕЛЁНОЕ, labels=[], thaw="blocker")
+
+    assert why == "" and state == "основание зелёное"
+
+
+def test_считается_последний_прогон_работы_а_не_любой():
+    """Площадка отдаёт историю событий, а не состояние: рядом со свежим
+    успехом висит вчерашний отказ, и он очередь морозить не должен (009)."""
+    свежий_успех = [прогон("ci", "failure", "2026-09-01T10:00:00Z"),
+                    прогон("ci", "success", "2026-09-02T10:00:00Z")]
+
+    assert mr.frozen(свежий_успех, labels=[], thaw="blocker")[0] == ""
+
+
+def test_идущий_прогон_основание_не_морозит():
+    """«Ещё идёт» — не отказ: заморозка на состоянии, которое пройдёт само,
+    останавливала бы очередь на ровном месте (051)."""
+    идёт = [{"name": "ci", "status": "in_progress", "conclusion": None,
+             "createdAt": "2026-09-02T10:00:00Z"}]
+
+    assert mr.frozen(идёт, labels=[], thaw="blocker")[0] == ""
+
+
+def test_исключение_принадлежит_потребителю():
+    """Список исключений задаёт проект, а не инструмент."""
+    assert mr.frozen(КРАСНОЕ, labels=[], thaw="blocker",
+                     excluded=frozenset({"attribution-history"}))[0] == ""
+
+
+def test_заморозка_спрашивается_до_проверок_изменения(tmp_path, monkeypatch, capsys):
+    """Порядок — предмет правила: у изменения проверки зелёные, и всё равно
+    нельзя. Спроси гейт их первыми — он ответил бы «сливать можно»."""
+    base = tmp_path / "base.json"
+    base.write_text(json.dumps(КРАСНОЕ), encoding="utf-8")
+    monkeypatch.setattr("sys.stdin", type("S", (), {
+        "read": staticmethod(lambda: json.dumps([ok()]))})())
+
+    assert mr.main(["--required", "catalogue", "--base-runs", str(base)]) == 1
+    assert "заморожена" in capsys.readouterr().err
+
+
+def test_только_заморозка_проверок_изменения_не_читает(tmp_path, capsys):
+    """Условие входа спрашивают до того, как у изменения появятся проверки."""
+    base = tmp_path / "base.json"
+    base.write_text(json.dumps(ЗЕЛЁНОЕ), encoding="utf-8")
+
+    assert mr.main(["--freeze-only", "--base-runs", str(base)]) == 0
+    assert "не заморожена" in capsys.readouterr().out
+
+
+def test_только_заморозка_без_основания_это_третий_исход(capsys):
+    assert mr.main(["--freeze-only"]) == 2
+    assert "не отработала" in capsys.readouterr().err
+
+
+def test_нечитаемое_основание_это_третий_исход(tmp_path, capsys):
+    """«Основание красное» и «основание не спрошено» — разные ответы (039)."""
+    assert mr.main(["--freeze-only",
+                    "--base-runs", str(tmp_path / "нет.json")]) == 2
+    assert "не прочитаны" in capsys.readouterr().err
+
+
+def test_основание_не_список_это_третий_исход(tmp_path, capsys):
+    base = tmp_path / "base.json"
+    base.write_text('{"runs": []}', encoding="utf-8")
+
+    assert mr.main(["--freeze-only", "--base-runs", str(base)]) == 2
+    assert "нет списка" in capsys.readouterr().err
