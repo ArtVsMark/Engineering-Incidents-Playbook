@@ -148,7 +148,7 @@ def selftest() -> int:
             broken.append(f"{name}: ожидалось {expected}, вышло {got}")
         print(f"  {str(got) if got else 'следов нет':<34} — {name}")
 
-    body = comment_for([R("005", ME, "7")], "ArtVsMark/claude-code-playbook")
+    body = comment_for([R("005", ME, "7")], "ArtVsMark/Engineering-Incidents-Playbook")
     if MARKER not in body:
         broken.append("комментарий без маркера — идемпотентность держаться не на чем")
     if "005" not in body or "rules/ru/005-x.md" not in body:
@@ -189,7 +189,7 @@ def selftest() -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--catalogue", default="ArtVsMark/claude-code-playbook")
+    parser.add_argument("--catalogue", default="ArtVsMark/Engineering-Incidents-Playbook")
     parser.add_argument("--ref", default="main")
     parser.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", ""),
                         help="репозиторий потребителя; по умолчанию из окружения")

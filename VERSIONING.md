@@ -70,7 +70,7 @@ one — and no fallback through package metadata.
 Под схему **не подпадает** — у него нет префикса `v`, и в расчёт он не идёт
 намеренно. Он предшествует самой схеме и не несёт ни экспорта правил, ни
 действий: закрепившись на нём, потребитель получил бы каталог без того, к чему
-предлагается подключаться ([#76](https://github.com/ArtVsMark/claude-code-playbook/issues/76)).
+предлагается подключаться ([#76](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/76)).
 
 ## Два значка, и они не дублируют друг друга · Two badges
 

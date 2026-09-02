@@ -2,10 +2,10 @@
 
 > **Читатель:** посетитель — что это такое и стоит ли брать.
 
-[![Релиз](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Frelease.json&cacheSeconds=300)](https://github.com/ArtVsMark/claude-code-playbook/releases)
-[![Версия](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](VERSIONING.md)
-[![Правил в каталоге](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Frules-ru.json)](rules/README.md)
-[![Покрытие](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2Fclaude-code-playbook%2Fbadges%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
+[![Релиз](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Frelease.json&cacheSeconds=300)](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/releases)
+[![Версия](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](VERSIONING.md)
+[![Правил в каталоге](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Frules-ru.json)](rules/README.md)
+[![Покрытие](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
 
 **Каталог из <!--m:rules-->162<!--/m:rules--> правил для Claude Code и GitHub,
 где каждое выросло из реальной поломки.** Работа с агентскими окнами и сводом проекта (`CLAUDE.md`),
@@ -100,9 +100,9 @@
 ## Чем держится правило у потребителей
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-light.svg">
-  <img src="https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/badges/.github/badges/consumers-dark.svg" alt="Чем держится правило у потребителей каталога" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/consumers-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/consumers-light.svg">
+  <img src="https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/consumers-dark.svg" alt="Чем держится правило у потребителей каталога" width="100%">
 </picture>
 
 Собирается прогоном из [`export/where.json`](export/where.json) — ответов самих проектов, а не нашей оценки их. Строка на проект, колонки друг под другом: сравнивать глазом можно только то, что стоит на одном месте. Плашка называет **сколько правил** держится каждым механизмом — доля, которую надо мерить глазом, не читается никак. Третье число, «родил», отвечает на другой вопрос: не как проект каталог потребляет, а сколько правил у него **родилось**. Каталог общий, но растёт неравномерно. Подробно, включая «кто уже решил то, что у соседа не держится ничем», — [`export/where.md`](export/where.md).

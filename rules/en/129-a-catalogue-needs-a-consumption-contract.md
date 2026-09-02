@@ -116,8 +116,8 @@ and nobody can say whether it was rejected there or simply never seen.
 
 ## Trace
 
-The mechanism is specified in ArtVsMark/claude-code-playbook#14, this record is
-ArtVsMark/claude-code-playbook#15; the consumer role in the first project —
+The mechanism is specified in ArtVsMark/Engineering-Incidents-Playbook#14, this record is
+ArtVsMark/Engineering-Incidents-Playbook#15; the consumer role in the first project —
 ArtVsMark/Stepik-Python-Grader#1351. Rules 126 and 128 are the ones that reached
 one project out of five. See also: [120](120-how-to-run-a-rule-catalogue.md) —
 the authoring order this record continues into consumption, refining it: "no

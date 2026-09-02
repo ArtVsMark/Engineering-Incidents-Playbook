@@ -86,7 +86,7 @@ anchor, and the marker set contains a pair where one starts with the other.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#69 — both failures and the run that returned
+ArtVsMark/Engineering-Incidents-Playbook#69 — both failures and the run that returned
 `['999', '1']` instead of `['1']`.
 
 Related: [097](097-a-checker-has-two-error-types.md) — the checker's two errors

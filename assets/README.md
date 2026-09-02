@@ -6,7 +6,7 @@
 
 Превью для соцсетей: 1280×640, грузится руками в Settings → General → Social
 preview. Загрузка — единственная операция, недостижимая из окна: у токена нет
-прав на репозиторий как объект ([#57](https://github.com/ArtVsMark/claude-code-playbook/issues/57)).
+прав на репозиторий как объект ([#57](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/57)).
 
 Исходник лежит рядом с производным, потому что иначе следующая правка начнётся
 с вопроса «чем это вообще делали» ([118](../rules/ru/118-keep-the-source-next-to-the-derived.md)).

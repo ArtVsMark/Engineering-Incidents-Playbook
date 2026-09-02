@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "project": "<владелец>/<репозиторий>",
-  "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
+  "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
   "rules": {
     "002": {
       "status": "active",

@@ -99,7 +99,7 @@ that appears in no artefact.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#35 — the candidate, filed by a session belonging
+ArtVsMark/Engineering-Incidents-Playbook#35 — the candidate, filed by a session belonging
 to another project; ArtVsMark/Stepik-Python-Grader — the starting-message
 template and the rulebook section about two sessions.
 

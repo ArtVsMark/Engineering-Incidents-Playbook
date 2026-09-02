@@ -100,7 +100,7 @@ name, and no check ever looks at them.
 ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § two lines of work (§ why
 there is no register file); `CLAUDE.md` § merge queue ("computed, not stored").
 
-The second incident — ArtVsMark/claude-code-playbook#41; ArtVsMark/ArtVsMark —
+The second incident — ArtVsMark/Engineering-Incidents-Playbook#41; ArtVsMark/ArtVsMark —
 the answer file for the catalogue's rules, with verdicts pointing at code that
 had moved. The catalogue itself already gates the asserting half:
 `scripts/check_bindings.py` checks what an answer claims against what is on

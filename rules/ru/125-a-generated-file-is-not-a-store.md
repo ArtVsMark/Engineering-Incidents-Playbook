@@ -80,7 +80,7 @@
 
 ## След
 
-Этот каталог; ArtVsMark/claude-code-playbook#2 — колонка «Область» и её
+Этот каталог; ArtVsMark/Engineering-Incidents-Playbook#2 — колонка «Область» и её
 восстановление из истории. Смежное:
 [118](118-keep-the-source-next-to-the-derived.md),
 [049](049-derive-state-from-live-artifacts.md),

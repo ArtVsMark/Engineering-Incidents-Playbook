@@ -85,7 +85,7 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook — свод появился в тот же вечер, до него окно
+ArtVsMark/Engineering-Incidents-Playbook — свод появился в тот же вечер, до него окно
 нарушило семь правил каталога; ArtVsMark/ArtVsMark — свода нет,
 [ArtVsMark/ArtVsMark#20](https://github.com/ArtVsMark/ArtVsMark/issues/20) и
 [ArtVsMark/ArtVsMark#21](https://github.com/ArtVsMark/ArtVsMark/issues/21) — обе

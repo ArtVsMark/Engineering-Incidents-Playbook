@@ -79,7 +79,7 @@ empty = [key for key, value in {...}.items()
 
 ## След
 
-ArtVsMark/claude-code-playbook#40 — разбор и прогон; сборка метрик витрины
+ArtVsMark/Engineering-Incidents-Playbook#40 — разбор и прогон; сборка метрик витрины
 профиля, ArtVsMark/ArtVsMark.
 
 Смежное: [075](075-a-guard-that-finds-nothing-must-fail.md) — гейт, не нашедший

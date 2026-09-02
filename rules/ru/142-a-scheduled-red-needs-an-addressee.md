@@ -82,7 +82,7 @@ diff печатается, команда починки названа в те�
 
 ## След
 
-ArtVsMark/claude-code-playbook#77 — четыре дня ежедневного красного и разбор;
+ArtVsMark/Engineering-Incidents-Playbook#77 — четыре дня ежедневного красного и разбор;
 `.github/workflows/consumers-sync.yml` — шаг «у находки есть адресат».
 
 Смежное: [075](075-a-guard-that-finds-nothing-must-fail.md) — «не смогли

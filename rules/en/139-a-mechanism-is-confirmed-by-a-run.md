@@ -75,8 +75,8 @@ detail than it was ever run, and not one run is named.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#34 — the auto-merge build and three breakages in
-a row; ArtVsMark/claude-code-playbook#54 — the fourth, the state race.
+ArtVsMark/Engineering-Incidents-Playbook#34 — the auto-merge build and three breakages in
+a row; ArtVsMark/Engineering-Incidents-Playbook#54 — the fourth, the state race.
 
 See also: [039](039-three-outcomes-not-two.md) — the third outcome, which
 reading never finds; [002](002-rule-without-mechanism.md) — a requirement

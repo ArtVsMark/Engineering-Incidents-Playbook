@@ -73,8 +73,8 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#34 — сборка автомержа и три поломки подряд;
-ArtVsMark/claude-code-playbook#54 — четвёртая, гонка состояний.
+ArtVsMark/Engineering-Incidents-Playbook#34 — сборка автомержа и три поломки подряд;
+ArtVsMark/Engineering-Incidents-Playbook#54 — четвёртая, гонка состояний.
 
 Смежное: [039](039-three-outcomes-not-two.md) — третий исход, который чтением не
 находится; [002](002-rule-without-mechanism.md) — требование без механизма;

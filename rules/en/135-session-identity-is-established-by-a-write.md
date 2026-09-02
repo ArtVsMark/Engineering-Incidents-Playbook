@@ -97,8 +97,8 @@ per-session measurement behind it.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#34 — the three measurements, each in its own
-comment; ArtVsMark/claude-code-playbook#36 — the session handover, where the
+ArtVsMark/Engineering-Incidents-Playbook#34 — the three measurements, each in its own
+comment; ArtVsMark/Engineering-Incidents-Playbook#36 — the session handover, where the
 divergence from 131 is named and left to the next session.
 
 Supersedes the **criterion** of rule

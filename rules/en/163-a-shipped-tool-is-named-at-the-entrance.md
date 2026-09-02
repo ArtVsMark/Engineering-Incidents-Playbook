@@ -81,7 +81,7 @@ a tool is mentioned only in the changelog and in its own docstring.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#148
+ArtVsMark/Engineering-Incidents-Playbook#148
 
 Related: [155](155-a-template-you-dont-use-drifts.md) — a template you don't
 use yourself drifts from practice; 163 covers the neighbouring gap: a tool you

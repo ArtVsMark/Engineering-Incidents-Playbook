@@ -1,6 +1,6 @@
 {
   "schema": "1.2",
-  "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
+  "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
   "count": 162,
   "rules": [
     {
@@ -1244,7 +1244,7 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "41"
         }
       ],
@@ -1736,7 +1736,7 @@
           "issue": "1280"
         },
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "42"
         }
       ],
@@ -2090,7 +2090,7 @@
         "en": "rules/en/080-every-new-rule-goes-into-the-catalogue.md"
       },
       "trails": [],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "081",
@@ -3282,11 +3282,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "2"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "126",
@@ -3418,11 +3418,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "14"
         },
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "15"
         },
         {
@@ -3430,7 +3430,7 @@
           "issue": "1351"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "130",
@@ -3456,19 +3456,19 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "16"
         },
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "14"
         },
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "15"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "131",
@@ -3612,7 +3612,7 @@
           "issue": "21"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "135",
@@ -3638,15 +3638,15 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "34"
         },
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "36"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "136",
@@ -3672,11 +3672,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "39"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "137",
@@ -3702,11 +3702,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "40"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "138",
@@ -3732,11 +3732,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "35"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "139",
@@ -3762,15 +3762,15 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "34"
         },
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "54"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "140",
@@ -3796,15 +3796,15 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "54"
         },
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "72"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "141",
@@ -3830,11 +3830,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "69"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "142",
@@ -3860,11 +3860,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "77"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "144",
@@ -3915,11 +3915,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "83"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "146",
@@ -3945,11 +3945,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "88"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "147",
@@ -3975,11 +3975,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "96"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "148",
@@ -4005,11 +4005,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "74"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "149",
@@ -4160,11 +4160,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "197"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
     },
     {
       "id": "155",
@@ -4190,11 +4190,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "213"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook",
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes"
     },
     {
@@ -4343,11 +4343,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "144"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook",
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes"
     },
     {
@@ -4372,11 +4372,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "148"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook",
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes"
     },
     {
@@ -4401,11 +4401,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "148"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook",
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes"
     },
     {
@@ -4432,11 +4432,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-playbook",
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "148"
         }
       ],
-      "origin": "ArtVsMark/claude-code-playbook",
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes"
     }
   ],
@@ -4448,7 +4448,7 @@
       "title": "Данные, приезжающие из чужого проекта, приезжают с условиями публикации",
       "area": "контракты",
       "hypothesis": "Контракт, по которому проект отдаёт данные наружу, называет **не только формат, но и условия**: что с присланным будет сделано, где оно появится и под какой лицензией. Иначе издатель публикует чужой текст на своих условиях, а отдающий узнаёт об этом из витрины.",
-      "source": "Вопрос владельца в окне 31 августа: «лицензия корректна, если мы собираем\nданные с внешних источников?». Проверка по собственному контракту —\nArtVsMark/claude-code-playbook#148.\n\nЗамер на месте: `export/README.md` описывает поля, версии и правила эволюции\nсхемы, а слова о лицензии в нём нет ни одного. При этом каталог публикует\nдословно: поля `where` потребителей целыми абзацами лежат в `export/where.json`\nи в сводке, а `claim` и `incident` их предложений попадают в тело публичной\nзадачи-адресата.",
+      "source": "Вопрос владельца в окне 31 августа: «лицензия корректна, если мы собираем\nданные с внешних источников?». Проверка по собственному контракту —\nArtVsMark/Engineering-Incidents-Playbook#148.\n\nЗамер на месте: `export/README.md` описывает поля, версии и правила эволюции\nсхемы, а слова о лицензии в нём нет ни одного. При этом каталог публикует\nдословно: поля `where` потребителей целыми абзацами лежат в `export/where.json`\nи в сводке, а `claim` и `incident` их предложений попадают в тело публичной\nзадачи-адресата.",
       "confirmed_by": "Подключится проект **не** этого владельца, его текст попадёт в сводку и\nкартинку, и он скажет, что не давал на это согласия, — либо, наоборот, спросит\nоб условиях **до** подключения, и окажется, что ответить нечем, кроме как\nдописать их задним числом.\n\nВторой способ дешевле и вероятнее: вопрос об условиях задают перед тем, как\nкласть файл, а не после.",
       "applicability": "**Работает**, по-видимому, для любого контракта, по которому одна сторона\nсобирает данные другой и публикует производное: агрегаторы, витрины, реестры,\nсводки по экосистеме.\n\n**Не работает** там, где обе стороны принадлежат одному владельцу и останутся\nтакими: условия там есть по факту владения, а записанные превратятся в\nцеремонию. Граница проверяемая — она исчезает в день, когда в реестре\nпоявляется чужой репозиторий.\n\n---\n\nЗаписано кандидатом, а не правилом, потому что **инцидента нет**: ни один\nпотребитель ещё не возражал, и все пять проектов реестра принадлежат одному\nвладельцу. Практическая часть при этом сделана сразу — контракт получил раздел\nоб условиях, а лицензия разделена на текст и код: гипотеза о том, что это\n**правило**, ждёт подтверждения, но цена ожидания оплачивается не молчанием.",
       "file": "candidates/data-arrives-with-terms.md"
@@ -4460,7 +4460,7 @@
       "title": "Правило, назвавшее свои пути, доходит до работы; остальные соревнуются за внимание",
       "area": "процесс",
       "hypothesis": "Правило, при котором названы пути его предмета, можно подавать окну тогда, когда оно работает в этих путях, — и не подавать в остальное время. Свод из ста пятидесяти двух записей одинакового веса заставляет окно решать «что из этого про меня» на каждом шаге, а решение это принимается молча и проверить его нечем.",
-      "source": "https://github.com/chokmah-me/claude-code-playbook — path-scoped rules как\nустройство свода. Пришло разбором похожих проектов, задача\nArtVsMark/claude-code-playbook#190.",
+      "source": "https://github.com/chokmah-me/claude-code-playbook — path-scoped rules как\nустройство свода. Пришло разбором похожих проектов, задача\nArtVsMark/Engineering-Incidents-Playbook#190.",
       "confirmed_by": "У нас сломается так: окно правит файлы одной зоны, нарушает правило **этой же\nзоны**, и разбор показывает, что запись была прочитана и потеряна среди\nтребований соседних зон. Не «окно не знало» — а «знало и не применило к тому,\nчто делало».\n\nПризнак, отличающий это от простой невнимательности: нарушение должно попасть в\nзону, по которой шла работа, при том что правило соседней зоны в том же окне\nсоблюдено. Одного случая мало — нужны два, иначе это разовая ошибка, а не\nсвойство устройства.\n\nОбратное опровержение тоже названо: если нарушения распределены по зонам ровно\nи не связаны с тем, где окно работало, — гипотеза неверна, и дело не в\nадресности, а в чём-то другом.",
       "applicability": "**Работает**, по-видимому, там, где у свода есть **естественные зоны по\nартефактам** и работа обычно идёт внутри одной зоны за раз. У каталога это так:\nпять зон, и большинство изменений трогает одну-две.\n\n**Не работает** там, где правило по своей природе сквозное. Требования к\nавторству коммита, к форме тела изменения, к трём исходам проверки не\nпринадлежат никакой зоне — они действуют везде, и привязка к путям их бы\nспрятала. То есть адресность применима к части корпуса, а не ко всему, и\nпопытка расписать по зонам **каждую** запись сама была бы поломкой.\n\n**Не работает** и там, где нарушение видно только на стыке зон: правка скрипта\nломает витрину, и обе зоны нужны одновременно. Замер по каталогу: изменения\nчерез границу зон бывают — сегодняшнее несёт три зоны сразу.\n\n---\n\nСоседнее в каталоге, разграничение сделано намеренно.\n[029](../rules/ru/029-triggers-and-canon.md) отвечает, ГДЕ лежат детали:\nглавный файл говорит «надо ли мне туда идти», специальный — «как именно».\nЗдесь другое: не где лежит деталь, а **когда запись вообще предъявляется**.\nБлиже всего [099](../rules/ru/099-classification-conflicts-resolve-by-consequence.md):\nконфликт классификации разрешается по последствию. Оно и подсказывает\nопасность — область записи и зона артефактов похожи, но отвечают на разные\nвопросы: область говорит, ПРО ЧТО запись, зона — какие файлы правят. Подменить\nодно другим значило бы завести вторую классификацию той же территории (022), а\nне адресность.\n\nПоэтому гипотеза лежит здесь, а не в правилах: инцидента у нас нет. Есть чужое\nрешение, наша готовая половина механизма и названный способ узнать, что оно\nнам нужно.",
       "file": "candidates/rules-scoped-by-path-reach-the-work.md"

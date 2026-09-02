@@ -279,6 +279,7 @@ python scripts/check_connect.py
 python scripts/check_readers.py
 python scripts/check_locale.py
 python scripts/check_skips.py
+python scripts/check_own_name.py
 python scripts/check_roles.py
 python scripts/check_prose.py
 python scripts/history_metrics.py --check

@@ -12,7 +12,7 @@
 
 https://github.com/chokmah-me/claude-code-playbook — path-scoped rules как
 устройство свода. Пришло разбором похожих проектов, задача
-ArtVsMark/claude-code-playbook#190.
+ArtVsMark/Engineering-Incidents-Playbook#190.
 
 ## Предполагаемая причина
 
