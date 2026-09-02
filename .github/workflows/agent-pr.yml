@@ -72,7 +72,15 @@ jobs:
           BRANCH: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          open=$(gh pr list --head "$BRANCH" --state open --json number --jq 'length')
+          # ЧТЕНИЕ ИДЁТ ПО REST, А НЕ ЧЕРЕЗ GraphQL. `gh pr list` ходит в
+          # GraphQL, а у него отдельная и куда более узкая квота: 2 сентября
+          # она кончилась, и ЧЕТЫРЕ изменения подряд не открылись вовсе —
+          # первая же команда отвечала «API rate limit already exceeded».
+          # Толчок при этом проходил, ветки лежали готовыми, и понять это
+          # можно было только по логу прогона. Тот же вопрос по REST стоит в
+          # другой, широкой квоте (правило 041: две величины, не одна).
+          open=$(gh api "repos/$GITHUB_REPOSITORY/pulls?head=${GITHUB_REPOSITORY%%/*}:$BRANCH&state=open" \
+                   --jq 'length' 2>/dev/null || echo 0)
           if [ "$open" != "0" ]; then
             echo "для $BRANCH изменение уже открыто — второй раз не завожу"
             # EXISTS, А НЕ SKIP. Прежде здесь стоял SKIP=1, и он глушил ВЕСЬ
@@ -120,11 +128,20 @@ jobs:
           python3 scripts/pr_body.py --build \
             --subject "$(cat "$RUNNER_TEMP/title.txt")" \
             --body-file "$RUNNER_TEMP/raw-body.md" > "$RUNNER_TEMP/body.md"
-          gh pr create \
-            --base "$BASE" --head "$BRANCH" \
-            --title "$(cat "$RUNNER_TEMP/title.txt")" \
-            --body-file "$RUNNER_TEMP/body.md"
-          echo "изменение открыто владельцем: автор в общей ветке будет человеком"
+          # ОТКРЫТИЕ ТОЖЕ ПО REST. `gh pr create` ходит в GraphQL, и когда 2
+          # сентября его квота кончилась, конвейер встал целиком: четыре ветки
+          # лежали толкнутыми, а изменений по ним не было. Тело идёт
+          # `--rawfile`, а не подстановкой в строку: между текстом и площадкой
+          # иначе встали бы две интерпретации (013).
+          jq -n --arg title "$(cat "$RUNNER_TEMP/title.txt")" \
+                --arg head "$BRANCH" --arg base "$BASE" \
+                --rawfile body "$RUNNER_TEMP/body.md" \
+                '{title: $title, head: $head, base: $base, body: $body}' \
+            > "$RUNNER_TEMP/pr.json"
+          gh api --method POST "repos/$GITHUB_REPOSITORY/pulls" \
+            --input "$RUNNER_TEMP/pr.json" --jq '.number' \
+            > "$RUNNER_TEMP/number.txt"
+          echo "изменение открыто владельцем (#$(cat "$RUNNER_TEMP/number.txt")): автор в общей ветке будет человеком"
 
       # ЗОНУ СТАВИТ МАШИНА, А НЕ ЧЕЛОВЕК. Инцидент правила 064 измерен на
       # нём же: «машина метила исправнее человека» — всё, что ставилось
@@ -159,9 +176,21 @@ jobs:
           zones=$(python3 scripts/check_labels.py \
                     --paths-from "$RUNNER_TEMP/paths.txt" | paste -sd, -) || zones=""
           if [ -n "$zones" ]; then
-            gh pr edit "$BRANCH" --add-label "$zones" \
-              && echo "зона проставлена: $zones" \
-              || echo "::warning::зону $zones проставить не вышло — гейт скажет об этом на изменении"
+            # МЕТКА СТАВИТСЯ ПО REST. `gh pr edit` ходит в GraphQL, и 2 сентября
+            # это уронило шаг «зона изменения проставлена» на изменении, где
+            # весь остальной прогон был зелёным: квота GraphQL кончилась, а
+            # метка — вход механизма, без неё гейт краснеет (064).
+            number=$(gh api "repos/$GITHUB_REPOSITORY/pulls?head=${GITHUB_REPOSITORY%%/*}:$BRANCH&state=open" \
+                       --jq '.[0].number' 2>/dev/null || echo "")
+            if [ -z "$number" ] || [ "$number" = "null" ]; then
+              echo "::warning::изменение по $BRANCH не найдено — зону $zones ставить некуда"
+            else
+              jq -n --arg z "$zones" '{labels: ($z | split(","))}' > "$RUNNER_TEMP/labels.json"
+              gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$number/labels" \
+                --input "$RUNNER_TEMP/labels.json" --silent \
+                && echo "зона проставлена: $zones" \
+                || echo "::warning::зону $zones проставить не вышло — гейт скажет об этом на изменении"
+            fi
           else
             echo "тронутых зон нет — метка не нужна"
           fi

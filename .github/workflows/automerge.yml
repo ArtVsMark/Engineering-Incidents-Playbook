@@ -87,12 +87,16 @@ jobs:
           PR: ${{ github.event.pull_request.number || inputs.pr }}
         run: |
           set -euo pipefail
-          gh pr view "$PR" \
-            --json number,title,isDraft,state,baseRefName,headRefName,baseRefOid,headRefOid,autoMergeRequest,labels \
-            --jq '"number=\(.number)", "title=\(.title)", "draft=\(.isDraft)",
-                  "state=\(.state)", "base=\(.baseRefName)", "head=\(.headRefName)",
-                  "base_sha=\(.baseRefOid)", "head_sha=\(.headRefOid)",
-                  "armed=\(.autoMergeRequest != null)",
+          # ПО REST, А НЕ ЧЕРЕЗ GraphQL: у второго своя узкая квота, и 2
+          # сентября она кончилась — конвейер встал целиком, хотя код был
+          # зелёным. Поля те же, имена другие; `auto_merge` REST отдаёт так
+          # же, как GraphQL `autoMergeRequest`.
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" \
+            --jq '"number=\(.number)", "title=\(.title)", "draft=\(.draft)",
+                  "state=\(.state | ascii_upcase)", "base=\(.base.ref)",
+                  "head=\(.head.ref)", "base_sha=\(.base.sha)",
+                  "head_sha=\(.head.sha)",
+                  "armed=\(.auto_merge != null)",
                   "labels=\([.labels[].name] | join(","))"' >> "$GITHUB_OUTPUT"
           # Кавычки внутри jq НЕ экранируются: выражение стоит в одинарных
           # кавычках оболочки, и `\"` доезжает до jq как обратная косая с

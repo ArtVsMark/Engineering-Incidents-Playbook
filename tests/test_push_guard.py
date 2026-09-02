@@ -103,3 +103,38 @@ def test_slovo_push_v_chuzhoy_komande_ne_schitaetsya(окно):
     окно("echo git push origin agent/чужая")
 
     assert pg.main() == 0
+
+
+def test_telo_dokumenta_na_vhode_ne_komanda(окно):
+    """Замер живой пробы: окно писало прогон через `cat > … <<'YML'`, и внутри
+    файла стоял ПРИМЕР для человека — «переименуйте: git push …». Сторож
+    разобрал пример как команду и отверг запись файла.
+
+    Случай «строка в файле не команда» в наборе уже был, но проверял запись
+    ЧУЖИМ инструментом; запись через оболочку им не покрывалась (140)."""
+    окно("cat > f.yml <<'YML'\n"
+         "echo 'переименуйте: git push -u origin agent/чужая'\n"
+         "YML\n"
+         "echo записано")
+
+    assert pg.main() == 0
+
+
+def test_tolchok_posle_dokumenta_vidno(окно, capsys):
+    """Граница с другой стороны: пропускается ТЕЛО, а не всё остальное."""
+    окно("cat > f.txt <<'EOF'\n"
+         "git push origin agent/из-текста\n"
+         "EOF\n"
+         "git push origin agent/настоящая")
+
+    assert pg.main() == 2
+    err = capsys.readouterr().err
+    assert "agent/настоящая" in err and "из-текста" not in err
+
+
+def test_dokument_bez_zakryvayushchey_stroki_ne_veshaet_storozha(окно):
+    """Незакрытый документ — не наше дело: разбор кончается, а не зацикливается."""
+    окно("cat > f.txt <<'EOF'\ngit push origin agent/чужая")
+
+    assert pg.main() == 0
+
