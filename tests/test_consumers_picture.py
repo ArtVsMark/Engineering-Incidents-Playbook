@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import json
+import re
 import xml.etree.ElementTree as ET
 
 import consumers_picture as cp
@@ -405,3 +406,76 @@ def test_kolonka_rodil_ne_naezzhaet_na_plashki(repo):
 
     assert плашки, "плашек не нашлось — случай проверяет не то"
     assert min(плашки) >= cp.COL_BORN + 40
+
+
+# ── длинное имя переносится, а не растягивает картинку ───────────────────
+#
+# Первая редакция починки двигала колонку по самому длинному имени — картинка
+# становилась шире, а значит мельче: витрина показывает её по ширине места.
+# Владелец увидел это сразу. Ширина теперь не зависит от имён вовсе.
+
+def первая_колонка(svg: str) -> int:
+    m = re.search(r'<text x="(\d+)" y="\d+"[^>]*font-size="11\.5"', svg)
+    assert m, "подписи колонок не нашлись"
+    return int(m.group(1))
+
+
+def имена(svg: str) -> list[str]:
+    return re.findall(r'<text x="36" y="\d+"[^>]*font-size="18"[^>]*>([^<]+)<', svg)
+
+
+def test_dlinnoe_imya_perenositsya_na_vtoruyu_stroku(repo):
+    """Ровно инцидент: `Engineering-Incidents-Playbook` не влезал в просвет."""
+    срез(repo, [подключён("Engineering-Incidents-Playbook")])
+
+    куски = имена(рисуй(repo))
+
+    assert len(куски) == 2
+    assert "".join(куски) == "Engineering-Incidents-Playbook"
+
+
+def test_kolonka_ne_dvigaetsya_ot_dliny_imeni(repo):
+    """Предмет правила: ширина картинки не зависит от имён."""
+    короткие = первая_колонка(рисуй(срез(repo, [подключён("a")])))
+    длинные = первая_колонка(рисуй(срез(repo, [подключён("a" * 40)])))
+
+    assert короткие == длинные == cp.COL_MIN
+
+
+def test_razryv_ishchetsya_po_defisu(repo):
+    """Перенос посреди слова читается хуже: разрыв ищется по дефису."""
+    assert cp.wrap_name("Engineering-Incidents-Playbook")[0].endswith("-")
+
+
+def test_bez_defisa_ryvyom_po_mestu(repo):
+    """Имя без разрывов рвётся жёстко: это лучше, чем выехать за колонку."""
+    куски = cp.wrap_name("a" * 30)
+
+    assert len(куски) == 2 and len(куски[0]) == cp.NAME_LINE
+
+
+def test_ne_vlezshiy_hvost_obryvaetsya_mnogotochiem(repo):
+    """Третьей строки нет, и обрыв НАЗВАН, а не сделан молча (158)."""
+    куски = cp.wrap_name("a" * 80)
+
+    assert len(куски) == 2 and куски[1].endswith("…")
+
+
+def test_perenos_ne_shiryaet_kartinku_a_udlinyaet(repo):
+    """Ширина — не рычаг: она у витрины дороже высоты, потому что от неё
+    зависит масштаб всего текста."""
+    узкое = рисуй(срез(repo, [подключён("a")]))
+    широкое = рисуй(срез(repo, [подключён("a" * 40)]))
+    ш = lambda s: int(re.search(r'<svg width="(\d+)"', s).group(1))
+    в = lambda s: int(re.search(r'height="(\d+)"', s).group(1))
+
+    assert ш(узкое) == ш(широкое)
+    assert в(широкое) > в(узкое)
+
+
+def test_korotkie_imena_vysotu_ne_menyayut(repo):
+    """Растёт она только когда перенос действительно случился."""
+    svg = рисуй(срез(repo, [подключён("a"), подключён("b")]))
+    высота = int(re.search(r'height="(\d+)"', svg).group(1))
+
+    assert высота == cp.TOP + cp.ROW * 2 + cp.PAD - 8

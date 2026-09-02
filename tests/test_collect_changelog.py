@@ -394,3 +394,56 @@ def test_bez_tegov_eto_tretiy_ishod(monkeypatch, repo, capsys):
 
     assert cc.main() == 2
     assert "не отработала" in capsys.readouterr().err
+
+
+# ── запись едет вместе с изменением (правило 138) ─────────────────────────
+#
+# Замер по общей ветке: из 34 изменений, тронувших поведение, запись несут 34.
+# Гейт не чинит поломку — он снимает правило с дисциплины (002). Дисциплина,
+# о которой известно, что она стопроцентна, ломается ровно один раз, и
+# незаметно: смотреть на неё уже перестали.
+
+def test_povedenie_bez_zapisi_eto_nahodka():
+    нужна, почему = cc.entry_required(["scripts/a.py", "README.md"], "")
+
+    assert нужна and "scripts/a.py" in почему
+
+
+def test_zapis_ryadom_snimaet_trebovanie():
+    нужна, _ = cc.entry_required(
+        ["scripts/a.py", "changelog.d/x.added.md"], "")
+
+    assert not нужна
+
+
+def test_proza_bez_povedeniya_zapisi_ne_trebuet():
+    """Предмет у границы: правка текста правила поведения не меняет."""
+    нужна, почему = cc.entry_required(["rules/ru/001-a.md", "README.md"], "")
+
+    assert not нужна and "не тронуто" in почему
+
+
+def test_progon_i_deystvie_schitayutsya_povedeniem():
+    for path in (".github/workflows/ci.yml", ".github/actions/x/action.yml"):
+        assert cc.entry_required([path], "")[0], path
+
+
+def test_osvobozhdenie_s_prichinoy_prohodit():
+    """Выход назван: без него гейт обходили бы пустым фрагментом, а пустой
+    фрагмент хуже отсутствующего — он выглядит памятью (126)."""
+    нужна, почему = cc.entry_required(
+        ["scripts/a.py"], "Тело.\n\nЖурнал: не требуется — правка опечатки\n")
+
+    assert not нужна and "правка опечатки" in почему
+
+
+def test_osvobozhdenie_bez_prichiny_ne_schitaetsya():
+    """Пустое освобождение — та же отписка, только с ключевым словом."""
+    assert cc.entry_required(["scripts/a.py"], "Журнал: не требуется — ")[0]
+
+
+def test_osvobozhdenie_ishchetsya_strokoy_a_ne_vhozhdeniem():
+    """Слова в прозе освобождением не являются: строка стоит своей строкой."""
+    тело = "Здесь сказано, что журнал: не требуется — и это просто фраза.\n"
+
+    assert cc.entry_required(["scripts/a.py"], тело)[0]
