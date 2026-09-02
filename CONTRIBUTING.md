@@ -123,6 +123,42 @@ fails the index build, and that is the mechanism keeping the trees together.
 *partial* revert: remove the behaviour, keep the names. A full revert breaks
 the import and the red proves nothing.
 
+## Своё ожидание — тоже гипотеза · Your own expectation is a hypothesis
+
+Ожидание, написанное своей рукой, не доказывает ничего
+([055](rules/ru/055-your-own-expectations-are-a-hypothesis.md)). Пока его не
+подтвердил внешний источник, расхождение означает «один из двух неправ», а не
+«предмет сломан». Практически это значит: **порог, словарь и «так быть не
+может» берутся у замера, а не у автора.**
+
+Внешних источников у каталога три, и все три доступны без сети к чужим людям:
+
+- **корпус.** Порог считается по всем записям, а не по одной. Пороги
+  `check_locale.py` замерены на 162 парах: доля кириллицы в английском дереве
+  0.000–0.022 при потолке 0.15, в русском 0.814–0.946 при поле 0.50 — между
+  худшим настоящим значением и порогом разы, а не проценты.
+- **сосед.** Прежде чем строить свой механизм, спрашивают его ответ
+  ([162](rules/ru/162-a-gap-asks-the-neighbours-first.md)) — и его же берут
+  как контрпример. Проверка «раздел решений называет отвергнутую
+  альтернативу» не заведена именно так: в истории соседа шесть разделов из
+  двенадцати не содержат ни одного слова, по которому отказ узнаётся машинно,
+  и словарь дал бы красное на верной работе
+  ([051](rules/ru/051-warn-on-likely-block-on-certain.md)).
+- **живая проба.** Механизм, читающий площадку, один раз прогоняется вживую
+  ([139](rules/ru/139-a-mechanism-is-confirmed-by-a-run.md)): подделка
+  проверяет только свои правила чтения, а сочиняет их автор вместе со своими
+  допущениями.
+
+Когда внешнего источника нет, остаётся **мутация**: сломать предмет и увидеть
+красное (см. раздел выше). Согласие набора с собой доказательством не является
+([146](rules/ru/146-a-green-gate-does-not-verify-its-premise.md)).
+
+**Your own expectation proves nothing** until an external source confirms it:
+a threshold, a vocabulary or a "this cannot happen" is taken from a measurement
+over the whole corpus, from a neighbouring project's answer, or from one live
+run — never from the author. Where no external source exists, mutate the
+subject and watch it go red.
+
 ## Что идёт в историю, а что в журнал · History or changelog
 
 [`HISTORY.md`](HISTORY.md) отвечает «почему решили именно так»,
