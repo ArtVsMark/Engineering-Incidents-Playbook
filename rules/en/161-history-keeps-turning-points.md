@@ -62,6 +62,10 @@ turn without it stays a story, and a story cannot be checked.
 - an unclosed release sits under its own heading and gets its number and date
   from the release itself, never by hand: renaming by hand is the same
   "don't forget" agreement on which the metrics row broke;
+- a turn that changed the PROJECT's direction rather than its work is added
+  **briefly to the opening narrative** — a paragraph, not a section: work
+  changed goes into its release's decisions, intent changed goes to the front,
+  where the history is read whole and first;
 - an ordinary addition, a fixed link, a rebuild of derived files is **not** a
   turn — that is a changelog fragment;
 - a living document has a limit expressed as a number: what falls outside the

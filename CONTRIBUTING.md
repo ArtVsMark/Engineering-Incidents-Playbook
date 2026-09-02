@@ -192,6 +192,12 @@ subject and watch it go red.
 же форме; переименовывает его в номер и дату сам выпуск
 (`scripts/history_metrics.py --add`), а не рука.
 
+**Поворот, развернувший направление ПРОЕКТА, дописывается кратко в «Как он
+появился»** — абзацем, а не разделом. Мерка простая: изменилась работа —
+пиши в «Решения» своего выпуска; изменился замысел, и дальше проект стал
+другим — абзац в начале. Кратко здесь не стиль, а условие: начальная часть
+читается целиком и первой, и разросшись, перестанет читаться вовсе.
+
 **Сюда не идёт** обычное добавление правила, починка ссылки, обновление
 перевода, пересборка производных: это фрагмент в [`changelog.d/`](changelog.d/).
 
@@ -249,6 +255,7 @@ python scripts/check_connect.py
 python scripts/check_readers.py
 python scripts/check_locale.py
 python scripts/check_skips.py
+python scripts/check_roles.py
 python scripts/check_prose.py
 python scripts/history_metrics.py --check
 python scripts/check_labels.py --paths-from <файл со списком путей> --have <метки>
