@@ -19,7 +19,11 @@ from pathlib import Path
 import history_metrics as hm
 from conftest import write
 
-ROW = "| v1.0.0 | 2 | 2 | 1 | 1 из 2 | Первый выпуск подделки |"
+#: Числа посчитаны РУКОЙ, а не взяты у скрипта: два правила, две области,
+#: одна локальная ссылка, два теста в одном модуле, один ответ «ничем» из
+#: двух действующих. Возьми мы их у snapshot — набор подтверждал бы, что
+#: скрипт согласен сам с собой (146).
+ROW = "| v1.0.0 | 2 | 2 | 1 | 2 | 1 | 1 из 2 | Первый выпуск подделки |"
 
 #: Раздел выпуска. Единица истории — выпуск (правило 161), и гейт спрашивает
 #: его у каждого тега: строка метрик без раздела оставляет выпуск без решений.
@@ -41,8 +45,8 @@ HISTORY = """# История подделки
 
 ## Эволюция метрик каталога
 
-| Релиз | Правил | Областей | Ссылок | Ничем | Ключевое |
-|---|---:|---:|---:|---:|---|
+| Релиз | Правил | Областей | Ссылок | Тестов | Модулей | Ничем | Ключевое |
+|---|---:|---:|---:|---:|---:|---:|---|
 {rows}
 
 Числа живут только строками таблицы: это снимок на момент выпуска.
@@ -81,6 +85,9 @@ def fake(repo: Path, rows: str = ROW, section: str = SECTION) -> Path:
     write(repo / "rules/ru/002-second.md",
           RULE.format(title="Второе", areas="тесты"))
     write(repo / ".rules/bindings.json", BINDINGS)
+    # Два теста в одном модуле: ноль прошёл бы мимо счётчика незамеченным.
+    write(repo / "tests/test_подделка.py",
+          "def test_один():\n    pass\n\n\ndef test_два():\n    pass\n")
 
     git(repo, "init", "-q", "-b", "main")
     git(repo, "config", "user.name", "Владелец")
@@ -232,3 +239,60 @@ def test_дата_раздела_берётся_у_тега_а_не_у_часо�
     дата, ошибка = hm.tag_date(repo, "v1.0.0")
 
     assert not ошибка and дата.endswith("2026")
+
+
+# ── тесты и модули в снимке, пересчёт строк (схема витрины 1.1) ───────────
+#
+# Число тестов отвечает на вопрос СОПРОВОЖДАЮЩЕГО, и живёт оно строкой
+# выпуска, а не значком: значок с ним дёргался бы от каждого изменения.
+# Адрес назван в .rules/showcase.json полем `where`.
+
+def test_тесты_считаются_по_дереву_а_не_прогоном(repo):
+    """Снимок выпуска — про дерево ТЕГА. Прогон дал бы число текущего."""
+    fake(repo)
+    (repo / "tests" / "test_подделка.py").write_text(
+        "def test_один():\n    pass\n", encoding="utf-8")   # рабочее дерево беднее
+
+    files, err = hm.files_at_tag(repo, "v1.0.0")
+
+    assert not err
+    assert hm.snapshot(files)["тестов"] == "2"
+
+
+def test_асинхронный_тест_тоже_считается(repo):
+    fake(repo)
+    files, _ = hm.files_at_tag(repo, "v1.0.0")
+    свой = dict(files)
+    свой["tests/test_ещё.py"] = "async def test_три():\n    pass\n"
+
+    assert hm.snapshot(свой)["модулей"] == "2"
+    assert hm.snapshot(свой)["тестов"] == "3"
+
+
+def test_не_тестовый_модуль_в_счёт_не_идёт(repo):
+    """`tests/conftest.py` и `scripts/*` тестовыми модулями не являются."""
+    fake(repo)
+    files, _ = hm.files_at_tag(repo, "v1.0.0")
+    свой = dict(files)
+    свой["tests/conftest.py"] = "def test_обманка():\n    pass\n"
+    свой["scripts/test_похожий.py"] = "def test_обманка():\n    pass\n"
+
+    assert hm.snapshot(свой)["модулей"] == "1"
+
+
+def test_пересчёт_чинит_строку_и_бережёт_ключевое(repo):
+    """Смена состава колонок — единственный случай, ради которого он есть."""
+    fake(repo, rows="| v1.0.0 | 9 | 9 | 9 | 9 | 9 | 9 из 9 | Первый выпуск подделки |")
+
+    assert hm.main(["--root", str(repo), "--recount"]) == 0
+    text = (repo / "HISTORY.md").read_text(encoding="utf-8")
+    assert ROW in text
+    assert hm.main(["--root", str(repo), "--check"]) == 0
+
+
+def test_пересчёт_строки_без_тега_это_третий_исход(repo, capsys):
+    """«Строка врёт» и «строку не с чем сверить» — разные ответы (039)."""
+    fake(repo, rows=ROW + "\n| v9.9.9 | 1 | 1 | 1 | 1 | 1 | 1 из 1 | Мираж |")
+
+    assert hm.main(["--root", str(repo), "--recount"]) == 2
+    assert "тега такого нет" in capsys.readouterr().err
