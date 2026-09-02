@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import json
+import re
 import xml.etree.ElementTree as ET
 
 import consumers_picture as cp
@@ -405,3 +406,53 @@ def test_kolonka_rodil_ne_naezzhaet_na_plashki(repo):
 
     assert плашки, "плашек не нашлось — случай проверяет не то"
     assert min(плашки) >= cp.COL_BORN + 40
+
+
+# ── имя проекта не наезжает на колонку (правило 005 на поверхности) ───────
+#
+# Первая колонка стояла вписанным числом 300 и протухла в тот день, когда
+# репозиторий переименовали: `Engineering-Incidents-Playbook` на 18px жирным
+# шире просвета, и имя наехало на «разобрано». Нашёл это владелец глазами.
+
+def первая_колонка(svg: str) -> int:
+    """Где начинается колонка «разобрано» — по подписи над ней."""
+    m = re.search(r'<text x="(\d+)" y="\d+"[^>]*font-size="11\.5"', svg)
+    assert m, "подписи колонок не нашлись"
+    return int(m.group(1))
+
+
+def конец_имени(name: str) -> float:
+    return cp.PAD + len(name) * cp.NAME_K
+
+
+def test_длинное_имя_раздвигает_колонки(repo):
+    """Ровно инцидент: имя длиннее просвета сдвигает первую колонку вправо."""
+    длинное = "Engineering-Incidents-Playbook"
+    срез(repo, [подключён(длинное)])
+
+    x = первая_колонка(рисуй(repo))
+
+    assert x > конец_имени(длинное), "имя наезжает на колонку"
+    assert x > cp.COL_MIN, "колонка не сдвинулась вовсе"
+
+
+def test_korotkie_imena_ostavlyayut_kolonku_na_meste(repo):
+    """Предмет у границы: прежняя ширина — нижняя граница, а не начальная.
+
+    Иначе картинка с короткими именами перестала бы совпадать с прошлыми
+    снимками, и сравнивать её было бы не с чем."""
+    срез(repo, [подключён("a"), подключён("b")])
+
+    assert первая_колонка(рисуй(repo)) == cp.COL_MIN
+
+
+def test_kolonki_dvigayutsya_vmeste(repo):
+    """Сдвигается не одна колонка, а весь ряд: числа обязаны стоять друг под
+    другом, иначе сравнивать их глазом нельзя."""
+    срез(repo, [подключён("Engineering-Incidents-Playbook")])
+    svg = рисуй(repo)
+    xs = [int(x) for x in re.findall(r'<text x="(\d+)" y="\d+"[^>]*font-size="11\.5"', svg)]
+
+    assert len(xs) >= 3
+    assert xs[1] - xs[0] == cp.COL_D_TRAILS
+    assert xs[2] - xs[0] == cp.COL_D_BORN
