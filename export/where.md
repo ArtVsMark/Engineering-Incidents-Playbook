@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `claude-code-playbook` | подключён | 29 | 23 | 162 | 0 | 0 | 120 | 80 | 4 | 23 | 13 | 73 |  |
+| `claude-code-playbook` | подключён | 29 | 23 | 162 | 0 | 0 | 120 | 81 | 4 | 24 | 11 | 73 |  |
 | `Stepik-Python-Grader` | подключён | 68 | 128 | 162 | 0 | 0 | 159 | 65 | 31 | 63 | 0 | 127 |  |
 | `ArtVsMark` | подключён | 15 | 10 | 162 | 0 | 0 | 79 | 46 | 6 | 11 | 16 | 32 |  |
 | `claude-code-usage` | подключён | 1 | 1 | 152 | 10 | 0 | 9 | 7 | 0 | 1 | 1 | 9 |  |
@@ -40,8 +40,6 @@
 | 121 | `Stepik-Python-Grader` — конвейер: scripts/check_container_closure.py — ночной обход сверяет состояние эпика со счётчиком незакрытых дочерних задач: закрытый контейнер с открытой работой становится находкой с адресатом | `claude-code-playbook` |
 | 125 | `claude-code-playbook` — гейт: scripts/build_rules_index.py — область и даты из источников; `Stepik-Python-Grader` — гейт: scripts/check_generated_sources.py — у производного файла назван живой исходник; DIGEST.md и указатель правил пересобираются генератором, а не правятся | `ArtVsMark` |
 | 130 | `Stepik-Python-Grader` — конвейер: scripts/link_rules_to_issues.py — новое правило приходит вместе со списком кандидатов из нашего трекера | `claude-code-playbook` |
-| 132 | `Stepik-Python-Grader` — конвейер: scripts/check_work_overlap.py показывает пересечение неблокирующим шагом scripts/preflight.py, а CLAUDE.md § Метки при заведении issue требует объявить все задачи сборного изменения (Closes #N либо «Часть #N»); `ArtVsMark` — документ: CLAUDE.md § Критические запреты — не везти в одном PR несколько тем; .github/pull_request_template.md — тот же вопрос критику. Гейта нет намеренно: число затронутых зон сборности не доказывает, а ложный отказ на широкой теме дороже пропуска. Правило само требует предупреждения, а не отказа, — а предупреждать здесь некому | `claude-code-playbook` |
-| 135 | `Stepik-Python-Grader` — документ: CLAUDE.md § Формат коммитов: автор PR — человек, соавторство — место вклада Claude; scripts/check_pr_ready.py и scripts/check_attribution.py --check-branch запускаются окном, а не прогоном; `ArtVsMark` — гейт: .rules/README.md § Из окна не пишут — личность этого окна установлена пробой того же класса, а не опросом токена, и результат годен только для него: следующее окно проверяет заново. scripts/check_author.py — то, что окно подписалось не тем именем, теперь выясняется записью и проверкой, а не памятью | `claude-code-playbook` |
 | 136 | `claude-code-playbook` — документ: .rules/bindings.json — вердикт о себе пишется после перебора предметов, и перебор называется в причине; гейта на полноту перебора нет; `Stepik-Python-Grader` — гейт: ответ по внешнему правилу пишется в .rules/bindings.json одним заходом: сначала перечисляются все свои предметы правила, потом вердикт; сверяется на ревью PR — гейта на полноту перечисления нет | `ArtVsMark` |
 | 138 | `Stepik-Python-Grader` — документ: docs/agent/environments.md — решение оседает задачей или комментарием сразу, эстафета передаётся ссылками; шаблон стартового сообщения окна там же; `ArtVsMark` — гейт: CLAUDE.md § Журнал изменений — журнал пополняется тем же заходом, что и правка, а не перед выпуском; решение оседает записью в HISTORY.md сразу; scripts/check_journal.py держит это гейтом: изменение, правящее scripts/ или .github/workflows/, обязано нести строку в HISTORY.md. Замер, из-за которого гейт завёлся, а не опасение: по 71 первопредку общей ветки 30 изменений правили поведение, и 3 приехали без записи — одно из них настоящее решение на 48 строк в прогоне очереди правил (#53), где отложенная запись означает, что следующее окно разбирает тот же вопрос заново. У отказа есть НАЗВАННЫЙ выход: строка «Журнал: не требуется — причина» в сообщении коммита снимает требование и остаётся в истории. Без выхода гейт обходили бы пустой записью, а пустая запись хуже отсутствующей — она выглядит как память. Содержание записи гейт не судит: отличить решение от опечатки машина не может, и обе стороны границы названы | `claude-code-playbook` |
 | 139 | `Stepik-Python-Grader` — документ: CONTRIBUTING.md § Когда дефект считается исправленным и чек-лист CLAUDE.md: дефект закрыт прогоном той поверхности, где найден, — браузер браузером, CLI командой; `ArtVsMark` — документ: .rules/README.md § Конвейер — каждое звено названо вместе с изменением, на котором оно отработало: механизм считается подтверждённым прогоном, а не чтением | `claude-code-playbook` |
@@ -66,16 +64,17 @@
 | `claude-code-playbook` | `scripts/check_gates.py` | 11 |
 | `claude-code-playbook` | `.github/workflows/automerge.yml` | 8 |
 | `claude-code-playbook` | `.github/workflows/ci.yml` | 8 |
+| `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 7 |
+| `claude-code-playbook` | `AGENTS.md` | 7 |
 | `claude-code-playbook` | `export/README.md` | 7 |
 | `claude-code-playbook` | `scripts/aggregate_bindings.py` | 7 |
 | `claude-code-playbook` | `scripts/check_bindings.py` | 7 |
-| `claude-code-playbook` | `.github/workflows/agent-pr.yml` | 6 |
-| `claude-code-playbook` | `AGENTS.md` | 6 |
 | `claude-code-playbook` | `CONTRIBUTING.md` | 6 |
 | `claude-code-playbook` | `scripts/check_charter.py` | 6 |
 | `claude-code-playbook` | `scripts/check_showcase.py` | 5 |
 | `claude-code-playbook` | `scripts/link_trails.py` | 5 |
 | `claude-code-playbook` | `scripts/audit_catalogue.py` | 4 |
+| `claude-code-playbook` | `scripts/check_attribution.py` | 4 |
 | `claude-code-playbook` | `scripts/check_prose.py` | 4 |
 | `claude-code-playbook` | `scripts/check_workflows.py` | 4 |
 | `claude-code-playbook` | `scripts/collect_proposals.py` | 4 |
@@ -86,9 +85,9 @@
 | `claude-code-playbook` | `CLAUDE.md` | 3 |
 | `claude-code-playbook` | `HISTORY.md` | 3 |
 | `claude-code-playbook` | `README.md` | 3 |
-| `claude-code-playbook` | `scripts/check_attribution.py` | 3 |
 | `claude-code-playbook` | `scripts/history_metrics.py` | 3 |
 | `claude-code-playbook` | `scripts/version.py` | 3 |
+| `claude-code-playbook` | `.github/workflows/attribution-history.yml` | 2 |
 | `claude-code-playbook` | `.github/workflows/consumers-sync.yml` | 2 |
 | `claude-code-playbook` | `.github/workflows/main-red.yml` | 2 |
 | `claude-code-playbook` | `.rules/bindings.json` | 2 |
@@ -99,7 +98,7 @@
 | `claude-code-playbook` | `scripts/merge_ready.py` | 2 |
 | `claude-code-playbook` | `scripts/sync_labels.py` | 2 |
 | `claude-code-playbook` | `tests/test_ghcli.py` | 2 |
-| `claude-code-playbook` | _остальные_ · _the rest_ | 36 механизмов по одному правилу; без названного адреса: 0 из 107 |
+| `claude-code-playbook` | _остальные_ · _the rest_ | 35 механизмов по одному правилу; без названного адреса: 0 из 109 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 38 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/preflight.md` | 8 |
