@@ -208,6 +208,32 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
     return "\n".join(lines) + "\n"
 
 
+
+def found_issue(out: str) -> tuple[str, str]:
+    """Разобрать ответ трекера о задаче-«входящих»: номер и состояние.
+
+    ПУСТОТА ОТ jq — ЭТО СТРОКА "null null", А НЕ ПУСТАЯ СТРОКА. Индексация
+    пустого массива даёт `null`, а интерполяция `"\\(.number) \\(.state)"`
+    печатает его словом. Дальше «null» — непустая строка, то есть истинная, и
+    ветка «завести задачу» не выполняется никогда: вместо неё уходит
+    `gh issue edit null`, а площадка отвечает `invalid issue format: "null"`.
+
+    То есть у потребителя, у которого задачи-«входящих» ещё нет, механизм
+    отказывал на КАЖДОМ прогоне и завести первую задачу не мог в принципе.
+    Замер: ArtVsMark/claude-code-usage, четыре прогона подряд с 29 августа —
+    все красные, ни одного зелёного.
+
+    Само выражение jq теперь отдаёт пустоту (`// empty`), и «null» сюда
+    приходить перестал. Разбор всё равно его переживает: ответ внешней команды
+    — контракт, который нам не принадлежит, и второй способ ошибиться здесь
+    дороже одной строки кода.
+    """
+    number, state = (out.split() + ["", ""])[:2]
+    if number == "null":
+        return "", ""
+    return number, state
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--catalogue", default="ArtVsMark/claude-code-playbook")
@@ -281,12 +307,13 @@ def main() -> int:
     # иначе он бы раздвоился.
     code, found = gh("issue", "list", "--state", "all", "--limit", "100",
                      "--json", "number,body,state",
-                     "--jq", f'[.[] | select(.body | contains("{MARKER}"))][0] | "\\(.number) \\(.state)"')
+                     "--jq", f'[.[] | select(.body | contains("{MARKER}"))][0] '
+                             f'// empty | "\\(.number) \\(.state)"')
     if code != 0:
         print(f"проверка не отработала: трекер не ответил — {found}", file=sys.stderr)
         return 2
 
-    number, state = (found.split() + ["", ""])[:2]
+    number, state = found_issue(found)
     pending = bool(missing or unreviewed or stale)
 
     if number:

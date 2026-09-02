@@ -31,7 +31,12 @@ def arm(monkeypatch, rules, answered, issue=None):
     def fake_gh(*args):
         calls.append(args)
         if args[:2] == ("issue", "list"):
-            return 0, (f"{issue[0]} {issue[1]}" if issue else "")
+            # ПОДДЕЛКА ОТДАЁТ ТО, ЧТО ОТДАЁТ ПЛОЩАДКА, А НЕ ТО, ЧТО ЗАДУМАНО.
+            # Раньше здесь стояла пустая строка — и четыре теста «задачи нет»
+            # гонялись на значении, которого `gh --jq` не возвращает никогда:
+            # индексация пустого набора печатается словом «null null». Тесты
+            # были зелёными, а механизм не мог завести первую задачу вовсе.
+            return 0, (f"{issue[0]} {issue[1]}" if issue else "null null")
         if args[:2] == ("issue", "create"):
             return 0, "https://example/issues/99"
         return 0, ""
@@ -186,3 +191,23 @@ def test_pustoy_razdel_ne_pechataetsya():
     """Заголовок без строк читается как «мы посмотрели и там пусто», а посмотреть
     могли и не суметь: пустое состояние объявляется, когда оно измерено (027)."""
     assert "У соседей" not in si.body_for([], [], "o/cat", solved=[])
+
+
+# ── разбор ответа трекера ─────────────────────────────────────────────────
+
+
+def test_pustota_ot_jq_eto_null_null():
+    """`gh --jq` на пустом наборе печатает «null null», а не пустоту.
+
+    Строка «null» непустая, то есть истинная: ветка «завести задачу» не
+    выполнялась никогда, вместо неё уходил `gh issue edit null`.
+    """
+    assert si.found_issue("null null") == ("", "")
+
+
+def test_pustaya_stroka_tozhe_otsutstvie():
+    assert si.found_issue("") == ("", "")
+
+
+def test_nayidennaya_zadacha_razbiraetsya():
+    assert si.found_issue("52 OPEN") == ("52", "OPEN")
