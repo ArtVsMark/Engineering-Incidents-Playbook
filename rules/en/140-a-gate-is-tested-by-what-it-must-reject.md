@@ -118,8 +118,8 @@ X through", and there is not a single run with X.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#54 — the measurement that exposed the gap between
-the rulebook and the attribution gate. ArtVsMark/claude-code-playbook#72 — the
+ArtVsMark/Engineering-Incidents-Playbook#54 — the measurement that exposed the gap between
+the rulebook and the attribution gate. ArtVsMark/Engineering-Incidents-Playbook#72 — the
 second incident: a set of refusals only let a false refusal through on eighteen
 live links. The mechanism is `scripts/check_gates.py` and `tests/`: every set is
 two-sided, and how many gates each of the two mechanisms covers is printed by

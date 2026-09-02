@@ -40,7 +40,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 EXPORT = ROOT / "export" / "rules.json"
 CONTRACT = ROOT / "export" / "README.md"
-CATALOGUE = "ArtVsMark/claude-code-playbook"
+CATALOGUE = "ArtVsMark/Engineering-Incidents-Playbook"
 
 #: Закреплённый тег живёт в маркере контракта: его переписывает выпуск.
 REF_RE = re.compile(r"<!--m:ref-->(.+?)<!--/m:ref-->")

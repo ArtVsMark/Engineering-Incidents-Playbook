@@ -79,4 +79,4 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#96
+ArtVsMark/Engineering-Incidents-Playbook#96

@@ -79,7 +79,7 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#39 — разбор и прогон; вердикт по 004 в ответе
+ArtVsMark/Engineering-Incidents-Playbook#39 — разбор и прогон; вердикт по 004 в ответе
 витрины профиля, ArtVsMark/ArtVsMark.
 
 Смежное: [044](044-check-the-premise-before-fixing.md) — то же для находки, а не

@@ -88,7 +88,7 @@ from a person.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#148
+ArtVsMark/Engineering-Incidents-Playbook#148
 
 Related: [002](002-rule-without-mechanism.md) — a rule without a mechanism is a
 promise; 162 answers the next question, where to get that mechanism most

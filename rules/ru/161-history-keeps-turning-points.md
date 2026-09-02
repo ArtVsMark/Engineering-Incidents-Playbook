@@ -85,7 +85,7 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#148
+ArtVsMark/Engineering-Incidents-Playbook#148
 
 Смежное: [042](042-decision-records-its-alternatives.md) — как пишется **одно**
 решение: контекст, альтернативы, последствия; 161 отвечает на предыдущий

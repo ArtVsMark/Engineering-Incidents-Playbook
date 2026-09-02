@@ -23,7 +23,7 @@ edited by hand.
 ```jsonc
 {
   "schema": "1.2",
-  "catalogue": "https://github.com/ArtVsMark/claude-code-playbook",
+  "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
   "count": 130,                       // пример · example value
   "rules": [
     {
@@ -34,7 +34,7 @@ edited by hand.
       "added": "2026-08-21",              // из истории файла · from file history
       "files": { "ru": "rules/ru/129-….md", "en": "rules/en/129-….md" },
       "trails": [                          // структурно, а не строкой · structured
-        { "repo": "ArtVsMark/claude-code-playbook", "issue": "15" }
+        { "repo": "ArtVsMark/Engineering-Incidents-Playbook", "issue": "15" }
       ],
       "portable": "partly",                // ключа может НЕ БЫТЬ · key may be ABSENT
                                            // да · нет · частично → yes · no · partly
@@ -121,7 +121,7 @@ Plain HTTP from the raw link on `main`: no platform API, no clone, no token —
 anyone can subscribe, including a project the catalogue has nothing to do with.
 
 ```
-https://raw.githubusercontent.com/ArtVsMark/claude-code-playbook/main/export/rules.json
+https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/main/export/rules.json
 ```
 
 **`portable` — необязательный ключ, и его отсутствие значит «не отвечали».**
@@ -462,7 +462,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ArtVsMark/claude-code-playbook@<!--m:ref-->v1.1.0<!--/m:ref-->
+      - uses: ArtVsMark/Engineering-Incidents-Playbook@<!--m:ref-->v1.1.0<!--/m:ref-->
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -470,7 +470,7 @@ jobs:
 **Пример закреплён тегом, а не веткой — и это не мелочь оформления.** Раньше
 здесь стоял `@main`, то есть контракт **показывал** ровно то, от чего
 **предостерегает** абзацем ниже. Потребитель копирует пример, а не абзац
-([#76](https://github.com/ArtVsMark/claude-code-playbook/issues/76)). Номер в
+([#76](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/76)). Номер в
 примере переписывает выпуск, а не человек ([035](../rules/ru/035-version-is-never-edited-by-hand.md));
 схема нумерации — [`VERSIONING.md`](../VERSIONING.md). Закрепиться на более
 старом релизе законно: это и значит «закрепиться».
@@ -552,7 +552,7 @@ of the rules: it only means this project no longer answers in public.
 ```yaml
 - uses: actions/checkout@v4
   with: { fetch-depth: 0 }        # гейту нужна история
-- uses: ArtVsMark/claude-code-playbook/.github/actions/attribution@<!--m:ref-->v1.1.0<!--/m:ref-->
+- uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/attribution@<!--m:ref-->v1.1.0<!--/m:ref-->
   with:
     authors: .github/authors.txt  # СВОЙ список согласованных имён
     baseline: ""                  # свой коммит, с которого спрашивать

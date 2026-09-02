@@ -95,4 +95,4 @@ exit 0
 
 ## След
 
-ArtVsMark/claude-code-playbook#83
+ArtVsMark/Engineering-Incidents-Playbook#83

@@ -19,7 +19,7 @@ inputs:
   catalogue:
     description: "Репозиторий каталога, откуда берётся экспорт правил"
     required: false
-    default: ArtVsMark/claude-code-playbook
+    default: ArtVsMark/Engineering-Incidents-Playbook
   ref:
     description: "Ветка или тег каталога"
     required: false

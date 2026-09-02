@@ -59,11 +59,11 @@ python scripts/onboard_consumer.py --repo владелец/имя --out ПАПК
 | Инструмент · Tool | Что делает · What it does | Где запускается · Where |
 |---|---|---|
 | `scripts/onboard_consumer.py` | собирает набор для подключения: ответ, канал предложений, прогон с закреплённым тегом | у каталога, набор несёт человек |
-| `uses: ArtVsMark/claude-code-playbook@<!--m:ref-->v1.1.0<!--/m:ref-->` | действие «входящие»: тянет `export/rules.json`, сверяет с ответом проекта, ведёт задачу | в репозитории потребителя |
+| `uses: ArtVsMark/Engineering-Incidents-Playbook@<!--m:ref-->v1.1.0<!--/m:ref-->` | действие «входящие»: тянет `export/rules.json`, сверяет с ответом проекта, ведёт задачу | в репозитории потребителя |
 | `scripts/sync_inbox.py` | то же самое напрямую, без действия — если прогонов GitHub нет | в репозитории потребителя |
 | `scripts/link_trails.py` | обратная сторона следа: задача узнаёт, что породила правило | в репозитории потребителя |
 | `scripts/main_red.py` | дежурный по общей ветке: одна задача, пока `main` красная | в репозитории потребителя |
-| `uses: ArtVsMark/claude-code-playbook/.github/actions/attribution@<!--m:ref-->v1.1.0<!--/m:ref-->` | сверяет авторство коммитов со списком согласованных имён | в репозитории потребителя |
+| `uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/attribution@<!--m:ref-->v1.1.0<!--/m:ref-->` | сверяет авторство коммитов со списком согласованных имён | в репозитории потребителя |
 
 Версия в примерах закреплена тегом и подставляется сборкой, а не вписывается
 руками ([035](rules/ru/035-version-is-never-edited-by-hand.md)): смотреть на неё надо в

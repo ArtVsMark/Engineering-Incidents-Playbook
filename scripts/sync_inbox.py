@@ -236,7 +236,7 @@ def found_issue(out: str) -> tuple[str, str]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--catalogue", default="ArtVsMark/claude-code-playbook")
+    ap.add_argument("--catalogue", default="ArtVsMark/Engineering-Incidents-Playbook")
     ap.add_argument("--ref", default="main")
     ap.add_argument("--bindings", default=".rules/bindings.json")
     # КТО Я — чтобы не показывать проекту его собственный механизм как

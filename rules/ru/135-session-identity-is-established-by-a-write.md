@@ -90,8 +90,8 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#34 — три замера, каждый отдельным комментарием;
-ArtVsMark/claude-code-playbook#36 — передача окна, где расхождение с 131 названо
+ArtVsMark/Engineering-Incidents-Playbook#34 — три замера, каждый отдельным комментарием;
+ArtVsMark/Engineering-Incidents-Playbook#36 — передача окна, где расхождение с 131 названо
 и оставлено следующему окну.
 
 Заменяет **признак** правила [131](131-no-writes-from-a-cloud-session.md): его

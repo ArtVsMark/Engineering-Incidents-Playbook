@@ -74,7 +74,7 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#144
+ArtVsMark/Engineering-Incidents-Playbook#144
 
 Смежное: [125](125-a-generated-file-is-not-a-store.md) — производное не может
 быть хранилищем; здесь тот же артефакт рассматривается со стороны **места**, а

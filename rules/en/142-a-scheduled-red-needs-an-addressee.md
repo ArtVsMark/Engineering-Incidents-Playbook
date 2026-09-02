@@ -83,7 +83,7 @@ and the tracker says nothing about it.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#77 — four days of daily red and the post-mortem;
+ArtVsMark/Engineering-Incidents-Playbook#77 — four days of daily red and the post-mortem;
 `.github/workflows/consumers-sync.yml` — the step "the finding has an
 addressee".
 

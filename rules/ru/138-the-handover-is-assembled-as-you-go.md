@@ -91,7 +91,7 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#35 — кандидат, заведённый окном другого проекта;
+ArtVsMark/Engineering-Incidents-Playbook#35 — кандидат, заведённый окном другого проекта;
 ArtVsMark/Stepik-Python-Grader — шаблон стартового сообщения и раздел свода про
 два окна.
 

@@ -89,7 +89,7 @@ there was none, or it is the course of work that landed in the wrong document.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#148
+ArtVsMark/Engineering-Incidents-Playbook#148
 
 Related: [042](042-decision-records-its-alternatives.md) — how **one** decision
 is written: context, alternatives, consequences; 161 answers the previous

@@ -77,7 +77,7 @@ built files, authored by a run rather than a person.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#144
+ArtVsMark/Engineering-Incidents-Playbook#144
 
 Related: [125](125-a-generated-file-is-not-a-store.md) — a generated file cannot
 be a store; here the same artefact is considered from the side of **place**

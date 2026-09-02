@@ -83,7 +83,7 @@ opening a generated file.
 
 ## Trace
 
-This catalogue; ArtVsMark/claude-code-playbook#2 — the "Area" column and its
+This catalogue; ArtVsMark/Engineering-Incidents-Playbook#2 — the "Area" column and its
 recovery from history. See also:
 [118](118-keep-the-source-next-to-the-derived.md),
 [049](049-derive-state-from-live-artifacts.md),

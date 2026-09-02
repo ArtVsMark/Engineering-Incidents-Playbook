@@ -66,7 +66,7 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook — этот каталог.
+ArtVsMark/Engineering-Incidents-Playbook — этот каталог.
 
 Смежное: [042](042-decision-records-its-alternatives.md) — решения,
 [043](043-decisions-are-superseded-not-edited.md) — пересмотр,

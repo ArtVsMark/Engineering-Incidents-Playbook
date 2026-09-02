@@ -80,7 +80,7 @@
 
 ## След
 
-ArtVsMark/claude-code-playbook#148
+ArtVsMark/Engineering-Incidents-Playbook#148
 
 Смежное: [155](155-a-template-you-dont-use-drifts.md) — заготовка, которой не
 пользуешься сам, расходится с практикой; 163 о соседнем разрыве: инструмент,

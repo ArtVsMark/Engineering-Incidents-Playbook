@@ -1,5 +1,5 @@
 Правило 163: инструмент, отданный наружу, назван на входе, а не в журнале
-(ArtVsMark/claude-code-playbook#148). Замер на себе: `scripts/onboard_consumer.py`
+(ArtVsMark/Engineering-Incidents-Playbook#148). Замер на себе: `scripts/onboard_consumer.py`
 — команда, которой проект и подключается, — не упоминалась ни в `README.md`, ни
 в `START.md`, ни в контракте; единственным местом был `CHANGELOG.md` за день
 постройки. `main_red.py` и `link_trails.py` выносились со словами «стал доступен

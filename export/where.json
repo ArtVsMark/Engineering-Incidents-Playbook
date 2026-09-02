@@ -1,9 +1,9 @@
 {
   "schema": "1.0",
-  "catalogue": "ArtVsMark/claude-code-playbook",
+  "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
   "consumers": [
     {
-      "repo": "ArtVsMark/claude-code-playbook",
+      "repo": "ArtVsMark/Engineering-Incidents-Playbook",
       "role": "каталог",
       "schema": "1.1",
       "state": "подключён",
@@ -247,7 +247,7 @@
         },
         "022": {
           "mechanism": "gate",
-          "where": "scripts/check_charter.py — свод и CONTRIBUTING.md сверяются с шагами .github/workflows/ci.yml"
+          "where": "scripts/check_charter.py — свод и CONTRIBUTING.md сверяются с шагами .github/workflows/ci.yml scripts/check_own_name.py — то же правило о СОБСТВЕННОМ имени каталога: оно берётся у адреса origin, а не из реестра, и сверяется с ним; любая ссылка на репозиторий того же владельца обязана быть либо самим каталогом, либо записью реестра, либо объявленным исключением с причиной (068). Замер 2 сентября: репозиторий переименован, в дереве осталось 245 упоминаний старого имени, и перенаправление площадки скрыло это полностью — оба адреса отвечали 200, узналось из предупреждения git push. Имя приходит СНАРУЖИ намеренно: возьми гейт его из реестра, старое имя совпало бы с собой и он промолчал бы ровно там, ради чего построен (146)."
         },
         "023": {
           "mechanism": "document",

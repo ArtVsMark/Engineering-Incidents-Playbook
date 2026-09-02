@@ -73,7 +73,7 @@ inputs:
   catalogue:
     description: "Репозиторий каталога, откуда берётся сам гейт"
     required: false
-    default: ArtVsMark/claude-code-playbook
+    default: ArtVsMark/Engineering-Incidents-Playbook
   catalogue-ref:
     description: >-
       Версия каталога. Закрепите тегом: подключаться к движущейся ветке значит

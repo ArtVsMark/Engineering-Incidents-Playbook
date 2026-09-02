@@ -80,7 +80,7 @@ mechanism, and the word "all" does not appear in it.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#39 — the analysis and the run; the verdict on 004
+ArtVsMark/Engineering-Incidents-Playbook#39 — the analysis and the run; the verdict on 004
 in the profile showcase's answer file, ArtVsMark/ArtVsMark.
 
 See also: [044](044-check-the-premise-before-fixing.md) — the same for a finding

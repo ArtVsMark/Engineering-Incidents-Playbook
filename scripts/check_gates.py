@@ -117,7 +117,7 @@ GOOD = {
 
 ## След
 
-ArtVsMark/claude-code-playbook#1
+ArtVsMark/Engineering-Incidents-Playbook#1
 """,
     "en": """# Fixture heading
 
@@ -141,7 +141,7 @@ The mechanism.
 
 ## Trace
 
-ArtVsMark/claude-code-playbook#1
+ArtVsMark/Engineering-Incidents-Playbook#1
 """,
 }
 
@@ -153,7 +153,7 @@ AUDIT_CASES = [
     ("«Применимость» без границы", [("ru", "**Не работает** там-то.\n\n", "")], 1,
      "без границы каталог копируют целиком, включая заведомо чужое — "
      "ради этого раздел и заведён"),
-    ("след прозой", [("ru", "ArtVsMark/claude-code-playbook#1",
+    ("след прозой", [("ru", "ArtVsMark/Engineering-Incidents-Playbook#1",
                       "Этот каталог, кажется.")], 1,
      "след, не ведущий ни в задачу, ни в потребителя, за месяц становится "
      "«кто-то говорил, что так лучше»"),
@@ -212,7 +212,7 @@ def build_catalogue(root: Path, spoil: list[tuple[str, str, str]]) -> str | None
         registry.mkdir(parents=True, exist_ok=True)
         (registry / "consumers.json").write_text(
             '{"schema": "1.0", "consumers": '
-            '[{"repo": "ArtVsMark/claude-code-playbook"}]}\n', encoding="utf-8")
+            '[{"repo": "ArtVsMark/Engineering-Incidents-Playbook"}]}\n', encoding="utf-8")
     return None
 
 
@@ -351,7 +351,7 @@ def suite_shape() -> tuple[list[str], int]:
     good = ("# Заголовок\n\n**Область.** гейты\n\n**Правило.** Утверждение.\n\n"
             "## Инцидент\n\nЧто сломалось.\n\n## Почему\n\nМеханизм.\n\n"
             "## Применимость\n\n**Не работает** там-то.\n\n"
-            "## След\n\nArtVsMark/claude-code-playbook#1\n")
+            "## След\n\nArtVsMark/Engineering-Incidents-Playbook#1\n")
 
     cases = [
         ("полная запись проходит", good, False,
@@ -386,7 +386,7 @@ def suite_shape() -> tuple[list[str], int]:
                          f"{COLLIDING}\n\nArtVsMark/Stepik-Python-Grader#999\n"),
             encoding="utf-8")
         trails, err = index.trails_of(
-            path, "ru", {"ArtVsMark/claude-code-playbook",
+            path, "ru", {"ArtVsMark/Engineering-Incidents-Playbook",
                          "ArtVsMark/Stepik-Python-Grader"})
         issues = [t["issue"] for t in trails]
         ok = err is None and issues == ["1"]
@@ -463,7 +463,7 @@ def suite_index() -> tuple[list[str], int]:
                "под гейт")
 
         # ── происхождение: первый названный ПОТРЕБИТЕЛЬ, а не первый токен ─
-        известные = {"ArtVsMark/claude-code-playbook",
+        известные = {"ArtVsMark/Engineering-Incidents-Playbook",
                      "ArtVsMark/Stepik-Python-Grader"}
         свой = d / "orig.md"
         свой.write_text(
@@ -728,7 +728,7 @@ def suite_near() -> tuple[list[str], int]:
                 f"## Почему\n\n{claim} — свойство площадки, а не намерения.\n\n"
                 f"## Применимость\n\n**Работает** там, где {claim}.\n\n"
                 f"**Не работает** там, где предмета нет.\n\n"
-                f"## След\n\nArtVsMark/claude-code-playbook#1\n")
+                f"## След\n\nArtVsMark/Engineering-Incidents-Playbook#1\n")
 
     findings: list[str] = []
     with tempfile.TemporaryDirectory() as tmp:
