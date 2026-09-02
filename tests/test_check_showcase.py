@@ -25,8 +25,13 @@ from conftest import write
 
 
 def prepare(root: Path, questions: list[dict], readme: str = "", badges=()) -> None:
+    # Адресат по умолчанию — посетитель: почти все случаи набора про него, и
+    # выписывать `for` в каждом значило бы прятать предмет случая за обвязкой.
+    # Случай «адресата нет» задаёт его явно как None — setdefault не тронет.
+    for q in questions:
+        q.setdefault("for", "visitor")
     write(root / ".rules" / "showcase.json",
-          json.dumps({"schema": "1.0", "questions": questions}, ensure_ascii=False))
+          json.dumps({"schema": "1.1", "questions": questions}, ensure_ascii=False))
     write(root / "README.md", readme or "# Проект\n")
     write(root / ".github" / "workflows" / "ci.yml", "run: python scripts/a.py\n")
     (root / "tests").mkdir(parents=True, exist_ok=True)
@@ -232,3 +237,92 @@ def test_chistoe_derevo_gate_propuskaet(repo):
     subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
 
     assert run(repo) == 0
+
+
+# ── адресат вопроса и источник ответа (схема 1.1) ─────────────────────────
+#
+# До схемы 1.1 у трёх вопросов из десяти стояло «значка нет; получается
+# прогоном pytest -q»: причина верная, а источник назван прозой и не
+# проверяется ничем. Теперь вопрос называет адресата, и ответ ему разный.
+
+ИСТОЧНИК = ("колонка «Тестов» в HISTORY.md; считает "
+            "scripts/history_metrics.py по дереву тега")
+
+
+def сопровождающему(where: str = ИСТОЧНИК) -> dict:
+    return {"id": "tests", "ask": "сколько тестов", "for": "maintainer",
+            "where": where}
+
+
+def test_вопрос_сопровождающего_с_адресом_проходит(repo, capsys):
+    prepare(repo, [сопровождающему()])
+    write(repo / "HISTORY.md", "# И\n")
+    write(repo / "scripts" / "history_metrics.py", "# п\n")
+
+    assert run(repo) == 0
+    assert "адресом источника 1" in capsys.readouterr().out
+
+
+def test_вопрос_сопровождающего_без_адреса_это_находка(repo, capsys):
+    """Ровно инцидент: «значка нет, получается прогоном pytest -q»."""
+    prepare(repo, [{"id": "tests", "ask": "сколько тестов", "for": "maintainer",
+                    "absent": "значка нет: получается прогоном pytest -q"}])
+
+    assert run(repo) == 1
+    assert "нет `where`" in capsys.readouterr().err
+
+
+def test_адрес_без_разрешимого_пути_это_находка(repo, capsys):
+    """Рецепт для человека адресом живого источника не является (049)."""
+    prepare(repo, [сопровождающему("запустите pytest -q и посмотрите число")])
+
+    assert run(repo) == 1
+    assert "рецепт для человека" in capsys.readouterr().err
+
+
+def test_названный_но_несуществующий_источник_это_находка(repo, capsys):
+    """Декларация сверяется с деревом, а не принимается на слово (044)."""
+    prepare(repo, [сопровождающему("колонка в HISTORY.md; считает "
+                                   "scripts/которого-нет.py")])
+    write(repo / "HISTORY.md", "# И\n")
+
+    out = (run(repo), capsys.readouterr().err)
+    assert out[0] == 1 and "которого-нет.py" in out[1]
+
+
+def test_значок_вопросу_сопровождающего_это_находка(repo, capsys):
+    """Число, дёргающееся от каждого изменения, шумит там, куда смотрят раз."""
+    prepare(repo, [{"id": "tests", "ask": "сколько тестов", "for": "maintainer",
+                    "badge": ".github/badges/tests.json"}],
+            badges=[".github/badges/tests.json"])
+
+    assert run(repo) == 1
+    assert "отвечает значок" in capsys.readouterr().err
+
+
+def test_адрес_вопросу_посетителя_это_находка(repo, capsys):
+    """Посетитель не ходит в исходники: ему значок либо названная причина."""
+    prepare(repo, [{"id": "coverage", "ask": "покрытие", "for": "visitor",
+                    "where": "scripts/coverage_badge.py"}])
+
+    assert run(repo) == 1
+    assert "не ходит в исходники" in capsys.readouterr().err
+
+
+def test_вопрос_без_адресата_это_находка(repo, capsys):
+    """Без адресата «значка нет» и «источник назван» неразличимы."""
+    prepare(repo, [{"id": "tests", "ask": "сколько тестов", "for": None,
+                    "where": ИСТОЧНИК}])
+
+    assert run(repo) == 1
+    assert "не назван адресат" in capsys.readouterr().err
+
+
+def test_адресат_вне_словаря_это_находка(repo, capsys):
+    """Словарь закрытый: «кому это» с открытым списком означает столько
+    ответов, сколько авторов (068)."""
+    prepare(repo, [{"id": "tests", "ask": "сколько тестов", "for": "все",
+                    "where": ИСТОЧНИК}])
+
+    assert run(repo) == 1
+    assert "не назван адресат" in capsys.readouterr().err
