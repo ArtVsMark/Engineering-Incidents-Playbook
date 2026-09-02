@@ -86,8 +86,40 @@ def without_heredocs(command: str) -> str:
     return "\n".join(out)
 
 
-def targets(command: str) -> list[str]:
-    """Имена веток, названные в командах `git push` этой строки."""
+#: Команды, которые МЕНЯЮТ текущую ветку. Сторож обязан их учитывать: он
+#: спрашивает ветку у git ДО того, как команда выполнится, и `git checkout X &&
+#: git push origin X` выглядел бы толчком в чужую. Замер: за одну смену это
+#: отвергло верный толчок трижды подряд.
+SWITCH = {"checkout", "switch"}
+#: Ключи `checkout`/`switch`, за которыми идёт имя новой ветки.
+SWITCH_WITH_NAME = {"-b", "-B", "-c", "-C"}
+
+
+def switched_to(words: list[str]) -> str | None:
+    """Ветка, на которую переходит эта команда, если она переходит."""
+    if len(words) < 3 or words[0] != "git" or words[1] not in SWITCH:
+        return None
+    tail = words[2:]
+    for i, w in enumerate(tail):
+        if w in SWITCH_WITH_NAME and i + 1 < len(tail):
+            return tail[i + 1]
+        if not w.startswith("-") and not REDIRECT.search(w):
+            return w
+    return None
+
+
+def targets(command: str, current: str | None = None) -> list[str]:
+    """Имена веток, названные в командах `git push`, — те, что ЧУЖИЕ.
+
+    Ветка считается по ходу строки: `git switch X && git push origin X` — это
+    толчок в свою, а не в чужую, и отвергать его значит краснеть на верной
+    работе (051).
+
+    Имя, собранное подстановкой (`$b`, `${имя}`), сторож не разворачивает и не
+    угадывает: он пропускает такой толчок. Его предмет — НАЗВАННАЯ чужая
+    ветка; «неизвестно» и «чужая» — разные ответы, и путать их значит
+    запрещать недостоверное (051).
+    """
     out: list[str] = []
     # Перевод строки разделяет команды не хуже `&&`, и в записи файла
     # через оболочку он единственный разделитель.
@@ -95,6 +127,10 @@ def targets(command: str) -> list[str]:
         try:
             words = shlex.split(part)
         except ValueError:              # незакрытая кавычка — не наше дело
+            continue
+        переход = switched_to(words)
+        if переход is not None:
+            current = переход
             continue
         if len(words) < 2 or words[0] != "git" or "push" not in words[:3]:
             continue
@@ -120,7 +156,12 @@ def targets(command: str) -> list[str]:
         for ref in positional[1:]:
             if REFSPEC.match(ref):
                 continue                # `HEAD:ветка` — цель названа явно
-            out.append(ref.removeprefix("refs/heads/"))
+            имя = ref.removeprefix("refs/heads/")
+            # Подстановка оболочки: значения сторож не знает и не выдумывает.
+            if "$" in имя or "`" in имя:
+                continue
+            if current is not None and имя != current:
+                out.append(имя)
     return out
 
 
@@ -132,13 +173,10 @@ def main() -> int:
     if event.get("tool_name") != "Bash":
         return 0
     command = (event.get("tool_input") or {}).get("command") or ""
-    named = targets(command)
-    if not named:
-        return 0
     branch = current_branch()
     if branch is None or branch == "HEAD":
         return 0                        # отделённая голова — сравнивать не с чем
-    чужие = [b for b in named if b != branch]
+    чужие = targets(command, branch)
     if not чужие:
         return 0
 
