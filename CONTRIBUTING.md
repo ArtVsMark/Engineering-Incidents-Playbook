@@ -219,6 +219,7 @@ python scripts/check_connect.py
 python scripts/check_readers.py
 python scripts/check_locale.py
 python scripts/check_skips.py
+python scripts/check_roles.py
 python scripts/check_prose.py
 python scripts/history_metrics.py --check
 python scripts/check_labels.py --paths-from <файл со списком путей> --have <метки>
