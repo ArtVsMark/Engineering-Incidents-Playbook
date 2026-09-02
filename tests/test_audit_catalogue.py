@@ -32,15 +32,16 @@ from pathlib import Path
 import audit_catalogue as ac
 from conftest import write
 
-TURN = """## Поворотный момент: номер присуждается здесь · 27 августа 2026
+RELEASE = """## v1.0.0 · 27 августа 2026 · конвейер стал автором
 
-**Ситуация.** Замер показал перекос.
+**Контекст.** Замер показал перекос: правила рождались в других проектах.
 
-**Альтернативы.** Раздавать номера в проектах — отвергнуто, займут один.
+**Что вошло.** Номер присуждается здесь — задача
+[#91](https://github.com/o/r/issues/91).
 
-**Решение.** Номер присуждается здесь.
+**Решения.** Раздавать номера в проектах отвергнуто: займут один.
 
-**Во что превратилось.** Задача [#91](https://github.com/o/r/issues/91).
+**Итог.** Каталог перестал быть складом.
 """
 
 
@@ -58,8 +59,8 @@ def slot(repo: Path, ru: str, en: str) -> dict:
 
 # ── здоровые предметы ──────────────────────────────────────────────────────
 
-def test_поворот_по_форме_проходит(repo):
-    history(repo, TURN)
+def test_раздел_выпуска_по_форме_проходит(repo):
+    history(repo, RELEASE)
     assert ac.check_history(repo) == []
 
 
@@ -67,49 +68,74 @@ def test_документа_нет_это_не_находка(repo):
     assert ac.check_history(repo) == []
 
 
+def test_незакрытый_выпуск_проверяется_той_же_меркой(repo):
+    """До тега раздел живёт под «Не выпущено» и формы не теряет."""
+    history(repo, RELEASE.replace("## v1.0.0 · 27 августа 2026 ·", "## Не выпущено ·"))
+    assert ac.check_history(repo) == []
+
+
 def test_ссылка_задачей_без_адреса_тоже_разрешается(repo):
-    history(repo, TURN.replace("[#91](https://github.com/o/r/issues/91)", "o/r#91"))
+    history(repo, RELEASE.replace("[#91](https://github.com/o/r/issues/91)", "o/r#91"))
     assert ac.check_history(repo) == []
 
 
 def test_образец_формы_в_заборе_кода_находкой_не_считается(repo):
     """Предмет у самой границы: критерий описывает форму и сам ей не следует."""
-    history(repo, "# История\n\n```\n" + TURN.replace(
-        "номер присуждается здесь", "<название>") + "```\n" + TURN)
+    history(repo, "# История\n\n```\n" + RELEASE.replace(
+        "конвейер стал автором", "<чем этот выпуск был>") + "```\n" + RELEASE)
     assert ac.check_history(repo) == []
 
 
-def test_обычные_разделы_истории_поворотами_не_считаются(repo):
+def test_обычные_разделы_истории_выпусками_не_считаются(repo):
     history(repo, "# История\n\n## Как он появился\n\nтекст без разделов\n")
     assert ac.check_history(repo) == []
 
 
 # ── предметы, которые гейт обязан отвергнуть ───────────────────────────────
 
-def test_поворот_без_альтернатив_это_находка(repo):
-    history(repo, TURN.replace("**Альтернативы.**", "**Что ещё думали.**"))
+def test_раздел_без_решений_это_находка(repo):
+    history(repo, RELEASE.replace("**Решения.**", "**Что ещё думали.**"))
     out = ac.check_history(repo)
-    assert out and "Альтернативы" in out[0]
+    assert out and "Решения" in out[0]
 
 
-def test_поворот_без_решения_это_находка(repo):
-    history(repo, TURN.replace("**Решение.**", "**Итог.**"))
-    assert any("Решение" in p for p in ac.check_history(repo))
+def test_раздел_без_итога_это_находка(repo):
+    history(repo, RELEASE.replace("**Итог.**", "**Хвост.**"))
+    assert any("Итог" in p for p in ac.check_history(repo))
 
 
-def test_во_что_превратилось_без_ссылки_это_находка(repo):
-    history(repo, TURN.replace("Задача [#91](https://github.com/o/r/issues/91).",
-                               "Из этого много чего выросло."))
+def test_что_вошло_без_ссылки_это_находка(repo):
+    history(repo, RELEASE.replace(
+        "Номер присуждается здесь — задача\n[#91](https://github.com/o/r/issues/91).",
+        "Из этого много чего выросло."))
     out = ac.check_history(repo)
     assert out and "рассказом" in out[0]
 
 
-def test_второй_поворот_проверяется_отдельно_от_первого(repo):
-    history(repo, TURN + "\n" + TURN.replace(
-        "номер присуждается здесь", "второй поворот").replace(
-        "**Альтернативы.** Раздавать номера в проектах — отвергнуто, займут один.\n\n", ""))
+def test_ссылка_в_итоге_вместо_что_вошло_не_спасает(repo):
+    """Граница спроса названа: ссылка живёт там, где перечислено вошедшее.
+
+    В «Итоге» ссылке делать нечего — он про смысл, а не про артефакт, и
+    зачёт ссылки где угодно превратил бы проверку в поиск ссылки по разделу.
+    """
+    history(repo, RELEASE.replace(
+        "Номер присуждается здесь — задача\n[#91](https://github.com/o/r/issues/91).",
+        "Номер присуждается здесь.").replace(
+        "**Итог.** Каталог перестал быть складом.",
+        "**Итог.** Склад кончился — [#91](https://github.com/o/r/issues/91)."))
     out = ac.check_history(repo)
-    assert len(out) == 1 and "второй поворот" in out[0]
+    assert out and "рассказом" in out[0]
+
+
+def test_второй_выпуск_проверяется_отдельно_от_первого(repo):
+    history(repo, RELEASE + "\n" + RELEASE.replace(
+        "## v1.0.0 · 27 августа 2026 · конвейер стал автором",
+        "## v1.1.0 · 28 августа 2026 · контракт с потребителями").replace(
+        "**Решения.** Раздавать номера в проектах отвергнуто: займут один.\n\n", ""))
+    out = ac.check_history(repo)
+    assert len(out) == 1 and "v1.1.0" in out[0]
+
+
 def test_записи_без_поля_проходят(repo):
     assert ac.check_portable("001", slot(repo, RU.format(f=""), EN.format(f=""))) == []
 
@@ -160,33 +186,34 @@ def test_ответ_без_причины_это_находка(repo):
 # недавно» и не сообщает об этом. Гейт держит только СЧЁТ: дословность
 # переноса в архив машинно не проверить, и это сказано в самом скрипте.
 
-def turns(n: int) -> str:
-    return "\n".join(TURN.replace("номер присуждается здесь", f"поворот {i}")
-                      for i in range(n))
+def releases(n: int) -> str:
+    return "\n".join(RELEASE.replace("## v1.0.0 · 27 августа 2026 ·",
+                                     f"## v2.{i}.0 · 1 сентября 2026 ·")
+                     for i in range(n))
 
 
 def test_окно_не_переполнено_проходит(repo):
-    history(repo, turns(ac.HISTORY_WINDOW))
+    history(repo, releases(ac.HISTORY_WINDOW))
     assert ac.check_history(repo) == []
 
 
 def test_переполненное_окно_это_находка(repo):
-    history(repo, turns(ac.HISTORY_WINDOW + 1))
+    history(repo, releases(ac.HISTORY_WINDOW + 1))
     out = ac.check_history(repo)
     assert out and "окно" in out[0]
 
 
-def test_находка_называет_СТАРШИЕ_повороты_поимённо(repo):
+def test_находка_называет_СТАРШИЕ_выпуски_поимённо(repo):
     """Не «слишком много», а что именно переносить — и с какого края."""
-    history(repo, turns(ac.HISTORY_WINDOW + 2))
+    history(repo, releases(ac.HISTORY_WINDOW + 2))
     out = [p for p in ac.check_history(repo) if "окно" in p]
     assert out
-    assert "«поворот 0»" in out[0] and "«поворот 1»" in out[0]
-    assert f"«поворот {ac.HISTORY_WINDOW + 1}»" not in out[0]
+    assert "«v2.0.0»" in out[0] and "«v2.1.0»" in out[0]
+    assert f"«v2.{ac.HISTORY_WINDOW + 1}.0»" not in out[0]
 
 
 def test_находка_называет_куда_переносить(repo):
-    history(repo, turns(ac.HISTORY_WINDOW + 1))
+    history(repo, releases(ac.HISTORY_WINDOW + 1))
     out = [p for p in ac.check_history(repo) if "окно" in p]
     assert out and ac.HISTORY_ARCHIVE in out[0]
 

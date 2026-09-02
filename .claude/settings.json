@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/push_guard.py",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/push_guard.py\"",
             "timeout": 10,
             "statusMessage": "сверяю ветку толчка"
           }
