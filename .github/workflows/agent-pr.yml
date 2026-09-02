@@ -176,9 +176,21 @@ jobs:
           zones=$(python3 scripts/check_labels.py \
                     --paths-from "$RUNNER_TEMP/paths.txt" | paste -sd, -) || zones=""
           if [ -n "$zones" ]; then
-            gh pr edit "$BRANCH" --add-label "$zones" \
-              && echo "зона проставлена: $zones" \
-              || echo "::warning::зону $zones проставить не вышло — гейт скажет об этом на изменении"
+            # МЕТКА СТАВИТСЯ ПО REST. `gh pr edit` ходит в GraphQL, и 2 сентября
+            # это уронило шаг «зона изменения проставлена» на изменении, где
+            # весь остальной прогон был зелёным: квота GraphQL кончилась, а
+            # метка — вход механизма, без неё гейт краснеет (064).
+            number=$(gh api "repos/$GITHUB_REPOSITORY/pulls?head=${GITHUB_REPOSITORY%%/*}:$BRANCH&state=open" \
+                       --jq '.[0].number' 2>/dev/null || echo "")
+            if [ -z "$number" ] || [ "$number" = "null" ]; then
+              echo "::warning::изменение по $BRANCH не найдено — зону $zones ставить некуда"
+            else
+              jq -n --arg z "$zones" '{labels: ($z | split(","))}' > "$RUNNER_TEMP/labels.json"
+              gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$number/labels" \
+                --input "$RUNNER_TEMP/labels.json" --silent \
+                && echo "зона проставлена: $zones" \
+                || echo "::warning::зону $zones проставить не вышло — гейт скажет об этом на изменении"
+            fi
           else
             echo "тронутых зон нет — метка не нужна"
           fi
