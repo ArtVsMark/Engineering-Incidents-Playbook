@@ -111,10 +111,49 @@ COL_D_TRAILS, COL_D_BORN, COL_D_PILLS, PILL_GAP = 134, 256, 378, 10
 NAME_K = 10.8
 
 
-def columns(data: list[dict]) -> tuple[int, int, int, int]:
-    """Колонки строки: первая по самому длинному имени, остальные от неё."""
-    longest = max((len(r.get("name") or "") for r in data), default=0)
-    first = max(COL_MIN, int(PAD + longest * NAME_K + COL_GAP))
+#: Сколько знаков имени помещается в одну строку до первой колонки.
+NAME_LINE = int((COL_MIN - PAD - COL_GAP) / NAME_K)
+#: Строк на имя — две. Третья не заводится: имя, не уложившееся в две строки,
+#: это уже не имя, а фраза, и хвост режется с многоточием — обрыв назван, а не
+#: сделан молча (158).
+NAME_LINES = 2
+#: Высота строки, когда хоть одно имя перенесено. Растёт ВСЯ таблица, а не
+#: одна строка: числа обязаны стоять друг под другом.
+ROW_WRAPPED = 46
+
+
+def wrap_name(name: str) -> list[str]:
+    """Имя в одну-две строки. Разрыв по дефису или подчёркиванию, если он есть.
+
+    ПОЧЕМУ ПЕРЕНОС, А НЕ РАЗДВИЖКА КОЛОНОК. Первая редакция этой починки
+    двигала колонку вправо по самому длинному имени — и картинка становилась
+    шире, а значит МЕЛЬЧЕ: витрина показывает её по ширине места, и лишние
+    двести точек уменьшают весь текст. Владелец увидел это сразу. Ширина
+    остаётся прежней, растёт высота — и только когда перенос действительно
+    случился.
+    """
+    if len(name) <= NAME_LINE:
+        return [name]
+    # Разрыв ищем в последней трети допустимого куска: раньше — рвём слишком
+    # рано и первая строка полупустая, позже — второй строке не хватит места.
+    голова = name[:NAME_LINE]
+    место = max(голова.rfind("-"), голова.rfind("_"))
+    if место >= NAME_LINE // 2:
+        первая, хвост = name[:место + 1], name[место + 1:]
+    else:
+        первая, хвост = голова, name[NAME_LINE:]
+    if len(хвост) > NAME_LINE:
+        хвост = хвост[:NAME_LINE - 1] + "…"
+    return [первая, хвост]
+
+
+def columns(data: list[dict] | None = None) -> tuple[int, int, int, int]:
+    """Колонки строки. НЕ ЗАВИСЯТ ОТ ДЛИНЫ ИМЁН — длинное имя переносится.
+
+    Аргумент оставлен ради вызывающих: раньше колонки считались по самому
+    длинному имени, и это делало картинку шире и мельче.
+    """
+    first = COL_MIN
     return (first, first + COL_D_TRAILS, first + COL_D_BORN, first + COL_D_PILLS)
 
 
@@ -251,7 +290,10 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
     cols = widths(data, t, w, keys)
     span = sum(cols.values()) + PILL_GAP * (len(keys) - 1)
     width = max(MIN_WIDTH, COL_PILLS + span + PAD)
-    height = TOP + ROW * len(data) + PAD - 8
+    # Высота растёт только если перенос случился — и тогда у ВСЕХ строк.
+    lines = {r.get("name") or "": wrap_name(r.get("name") or "") for r in data}
+    row = ROW_WRAPPED if any(len(v) > 1 for v in lines.values()) else ROW
+    height = TOP + row * len(data) + PAD - 8
     p = [
         f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" '
         # Подпись для чтения с экрана — на языке витрины: она и есть то,
@@ -278,8 +320,13 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
 
     y = TOP
     for r in data:
-        p.append(text(PAD, y + 17, r["name"], t["name"], 18, 800,
-                      ' letter-spacing="-0.4"'))
+        куски = lines[r["name"]]
+        # Одна строка стоит там же, где стояла всегда; две — симметрично
+        # вокруг того же места, чтобы ряд не «поехал» относительно чисел.
+        база = y + 17 if len(куски) == 1 else y + 8
+        for n, кусок in enumerate(куски):
+            p.append(text(PAD, база + n * 19, кусок, t["name"], 18, 800,
+                          ' letter-spacing="-0.4"'))
         # «Родил» показывается и у НЕподключённого проекта: происхождение
         # записи не зависит от того, ответил ли проект каталогу, и прочерк
         # здесь означал бы «не знаем», хотя знаем (правило 027).
@@ -300,7 +347,7 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
             state = w.get(STATE.get(r["state"], ""), r["state"])
             markup, _ = pill(x, y + 2, state, w["empty"], t["muted"], t)
             p.append(markup)
-        y += ROW
+        y += row
     p.append("</svg>")
     return "\n".join(p) + "\n"
 
