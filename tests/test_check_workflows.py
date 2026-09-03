@@ -138,8 +138,22 @@ def test_opasnoe_sobytie_bez_zakrepleniya_nahodka(tmp_path):
     исполняется при её правах: здесь закреплять обязательно."""
     workflow(tmp_path, "risky.yml",
              "on:\n  pull_request_target:\n  workflow_dispatch:\n"
-             "jobs:\n  a:\n    timeout-minutes: 5\n")
+             "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
+             "      - uses: actions/checkout@v4\n")
     assert cw.main(["--root", str(tmp_path)]) == 1
+
+
+def test_bez_chuzhogo_koda_zakreplyat_nechego(tmp_path):
+    """ВТОРАЯ ГРАНИЦА, И ОНА ИЗ ЖИВОГО ОТКАЗА. Прогон на `workflow_run`, у
+    которого нет ни выкачки, ни чужого действия, исполняет только собственные
+    `run:` — а сам файл на этом событии берётся с общей ветки. Закреплять
+    нечего, и требование заставило бы ДОБАВИТЬ выкачку ради проверки, которая
+    её же и сторожит. Замер: так гейт отверг `thaw.yml` (051)."""
+    workflow(tmp_path, "thaw.yml",
+             "on:\n  workflow_run:\n  workflow_dispatch:\n"
+             "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
+             "      - run: gh workflow run automerge.yml\n")
+    assert cw.main(["--root", str(tmp_path)]) == 0
 
 
 def test_opasnoe_sobytie_s_zakrepleniem_chisto(tmp_path):
