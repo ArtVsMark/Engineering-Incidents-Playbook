@@ -15,7 +15,7 @@
 | `Engineering-Incidents-Playbook` | подключён | 34 | 26 | 175 | 0 | 0 | 137 | 92 | 8 | 24 | 13 | 85 |  |
 | `Stepik-Python-Grader` | подключён | 69 | 129 | 163 | 12 | 0 | 160 | 66 | 31 | 63 | 0 | 128 |  |
 | `ArtVsMark` | подключён | 16 | 10 | 175 | 0 | 0 | 101 | 60 | 11 | 13 | 15 | 34 |  |
-| `Claude-Code_Usage-Token` | подключён | 9 | 10 | 175 | 0 | 0 | 101 | 72 | 1 | 21 | 7 | 51 |  |
+| `Claude-Code_Usage-Token` | подключён | 9 | 10 | 175 | 0 | 0 | 101 | 72 | 1 | 21 | 7 | 52 |  |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
 ## Чем держат другие · How others enforce it
@@ -227,7 +227,7 @@
 | `Claude-Code_Usage-Token` | `tests/test_repo_links.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_shell_ascii.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_transcripts.py` | 2 |
-| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 10 механизмов по одному правилу; без названного адреса: 0 из 94 |
+| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 11 механизмов по одному правилу; без названного адреса: 0 из 94 |
 
 ## Правила · Rules
 
