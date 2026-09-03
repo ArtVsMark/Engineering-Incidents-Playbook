@@ -12,7 +12,7 @@
 # работы конвейера, и им нужен файл, а не поле, которое надо уметь прочитать.
 # Одно место на оба потребителя (правило 022).
 [project]
-name = "claude-code-playbook"
+name = "engineering-incidents-playbook"
 version = "0.0.0"
 description = "Каталог правил: обвязка тестов. Пакетом не публикуется."
 requires-python = ">=3.12"

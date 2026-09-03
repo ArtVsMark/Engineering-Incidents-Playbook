@@ -10,13 +10,13 @@
 
 ## Потребители · Consumers
 
-| Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 34 | 26 | 175 | 0 | 0 | 133 | 91 | 6 | 24 | 12 | 0 | 83 |  |
-| `Stepik-Python-Grader` | подключён | 69 | 129 | 163 | 12 | 0 | 160 | 66 | 31 | 63 | 0 | 0 | 128 |  |
-| `ArtVsMark` | подключён | 16 | 10 | 165 | 10 | 0 | 89 | 52 | 11 | 12 | 13 | 0 | 34 |  |
-| `Claude-Code_Usage-Token` | подключён | 9 | 10 | 162 | 13 | 0 | 43 | 30 | 0 | 7 | 1 | 5 | 27 |  |
-| `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
+| Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `Engineering-Incidents-Playbook` | подключён | 34 | 26 | 175 | 0 | 0 | 133 | 93 | 6 | 24 | 10 | 83 |  |
+| `Stepik-Python-Grader` | подключён | 69 | 129 | 163 | 12 | 0 | 160 | 66 | 31 | 63 | 0 | 128 |  |
+| `ArtVsMark` | подключён | 16 | 10 | 165 | 10 | 0 | 89 | 52 | 11 | 12 | 13 | 34 |  |
+| `Claude-Code_Usage-Token` | подключён | 9 | 10 | 175 | 0 | 0 | 64 | 50 | 0 | 13 | 1 | 47 |  |
+| `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
 ## Чем держат другие · How others enforce it
 
@@ -29,8 +29,8 @@
 |---|---|---|
 | 006 | `Engineering-Incidents-Playbook` — документ: CLAUDE.md § Когда окно перезапускают — срок назван числом (три–пять дней) и к нему даны признаки, по которым не ждут календаря: окно перечитывает прочитанное, противоречит себе внутри смены, пересказ прошлого длиннее сегодняшней работы. ГРАНИЦА: возраст окна каталогу не виден — счётчика сессии площадка не даёт, и держится это чтением при старте, а не проверкой; `Stepik-Python-Grader` — документ: CLAUDE.md § Два окна: «Окно живёт 3–5 дней, дальше перезапуск — обязательно»; замер 764 против 81 прочитанного токена на токен выхода и шаблон эстафеты — docs/agent/environments.md; `Claude-Code_Usage-Token` — документ: CLAUDE.md § «Окно живёт 3–5 дней»; эстафета передаётся ссылками на issue, а не пересказом. | `ArtVsMark` |
 | 009 | `Engineering-Incidents-Playbook` — гейт: scripts/check_charter.py и scripts/check_showcase.py считают через множество, а не по вхождениям: гейт, названный в конвейере дважды, считается одним; `Stepik-Python-Grader` — гейт: scripts/version.py считает PATCH по номерам PR и уникализирует их множеством (issue #1042), сверяет scripts/check_version_consistency.py; `Claude-Code_Usage-Token` — гейт: scripts/pr_ready.py — latest_by_name: check-runs считаются по уникальным именам, второй комплект после обновления ветки не удваивает счёт и не воскрешает вчерашнее красное. Плюс scripts/check_showcase (preflight): вопросы набора витрины считаются по уникальным id. Правило уже стоило проекту неверного вывода — CLAUDE.md, § «Как читать результат проверок»: «32 проверки» вместо шестнадцати продержались сутки. | `ArtVsMark` |
-| 016 | `Engineering-Incidents-Playbook` — гейт: scripts/aggregate_bindings.py и scripts/collect_proposals.py печатают «и ещё N» вместо тихого урезания списка находок; `Stepik-Python-Grader` — гейт: scripts/check_truncation_marks.py — функция, режущая по пределу-константе, обязана оставить признак обрыва (флаг, многоточие, полную длину рядом); предел, заданный параметром, объявлен в контракте и молчанием не является; `Claude-Code_Usage-Token` — гейт: scripts/preflight.py печатает охват («просмотрено N, пропущено двоичных M»); src/claude_code_usage/transcripts.py — Coverage со строками, нечитаемыми и незнакомыми полями. Без этих чисел слепота источника неотличима от чистого результата. | `ArtVsMark` |
-| 028 | `Stepik-Python-Grader` — конвейер: scripts/check_issue_checklists.py — комплексный issue от трёх находок ведёт чек-лист с исходом каждой | `Engineering-Incidents-Playbook` |
+| 016 | `Engineering-Incidents-Playbook` — гейт: scripts/aggregate_bindings.py и scripts/collect_proposals.py печатают «и ещё N» вместо тихого урезания списка находок; `Stepik-Python-Grader` — гейт: scripts/check_truncation_marks.py — функция, режущая по пределу-константе, обязана оставить признак обрыва (флаг, многоточие, полную длину рядом); предел, заданный параметром, объявлен в контракте и молчанием не является; `Claude-Code_Usage-Token` — гейт: scripts/preflight.py печатает охват («просмотрено N, пропущено двоичных M»); src/claude_code_usage/transcripts.py — Coverage со строками, повторами ответа и незнакомыми полями; scripts/subprocess_encoding.py и scripts/utf8_output.py — «разобрано файлов N, пропущено M» и «проверено N, не предмет M»; scripts/rules_answer.py — «записей N, с адресом M». | `ArtVsMark` |
+| 028 | `Stepik-Python-Grader` — конвейер: scripts/check_issue_checklists.py — комплексный issue от трёх находок ведёт чек-лист с исходом каждой; `Claude-Code_Usage-Token` — документ: .github/pull_request_template.md — восемь пунктов галочками, а не прозой; CLAUDE.md § «Перед PR» — тот же чек-лист, исполняемый одной командой scripts/preflight.py. Состояние задачи не вычисляется чтением: у каждого пункта либо галочка, либо её нет. | `Engineering-Incidents-Playbook` |
 | 038 | `Stepik-Python-Grader` — документ: CLAUDE.md § Два окна: имя окна начинается с окружения ([WEB]/[LOCAL]/[CLI]), метка ставится при открытии; канон — docs/agent/environments.md | `ArtVsMark` |
 | 052 | `Stepik-Python-Grader` — конвейер: scripts/move_merge_queue.py обновляет только голову очереди — из main остальные не двигаются (CLAUDE.md § Гейты: N против N(N−1)/2) | `Engineering-Incidents-Playbook` |
 | 105 | `Stepik-Python-Grader` — конвейер: .github/workflows/claude-code-review.yml — ревью ведёт отдельный прогон, не то окно, что писало код; claude-review в списке обязательных проверок защиты main | `Engineering-Incidents-Playbook`, `ArtVsMark` |
@@ -39,13 +39,15 @@
 | 121 | `Stepik-Python-Grader` — конвейер: scripts/check_container_closure.py — ночной обход сверяет состояние эпика со счётчиком незакрытых дочерних задач: закрытый контейнер с открытой работой становится находкой с адресатом | `Engineering-Incidents-Playbook` |
 | 125 | `Engineering-Incidents-Playbook` — гейт: scripts/build_rules_index.py — область и даты из источников; `Stepik-Python-Grader` — гейт: scripts/check_generated_sources.py — у производного файла назван живой исходник; DIGEST.md и указатель правил пересобираются генератором, а не правятся | `ArtVsMark` |
 | 136 | `Engineering-Incidents-Playbook` — документ: .rules/bindings.json — вердикт о себе пишется после перебора предметов, и перебор называется в причине; гейта на полноту перебора нет; `Stepik-Python-Grader` — гейт: ответ по внешнему правилу пишется в .rules/bindings.json одним заходом: сначала перечисляются все свои предметы правила, потом вердикт; сверяется на ревью PR — гейта на полноту перечисления нет | `ArtVsMark` |
-| 139 | `Stepik-Python-Grader` — документ: CONTRIBUTING.md § Когда дефект считается исправленным и чек-лист CLAUDE.md: дефект закрыт прогоном той поверхности, где найден, — браузер браузером, CLI командой; `ArtVsMark` — документ: .rules/README.md § Конвейер — каждое звено названо вместе с изменением, на котором оно отработало: механизм считается подтверждённым прогоном, а не чтением; `Claude-Code_Usage-Token` — шаг процесса: Оплачено четырьмя случаями за серию: mergeable_state «behind» без защиты ветки не появляется; в эталон попадал джоб самой очереди; очередь не просыпалась на последней позеленевшей проверке; отменённый прогон шёл впереди успешного. Ни один не был виден по зелёному набору тестов. | `Engineering-Incidents-Playbook` |
+| 139 | `Stepik-Python-Grader` — документ: CONTRIBUTING.md § Когда дефект считается исправленным и чек-лист CLAUDE.md: дефект закрыт прогоном той поверхности, где найден, — браузер браузером, CLI командой; `ArtVsMark` — документ: .rules/README.md § Конвейер — каждое звено названо вместе с изменением, на котором оно отработало: механизм считается подтверждённым прогоном, а не чтением; `Claude-Code_Usage-Token` — гейт: tests/test_repo_links.py, tests/test_subprocess_encoding.py, tests/test_utf8_output.py — гейт запускается ПРОЦЕССОМ и проверяется его код возврата, а не чтение исходника. Оплачено четырьмя случаями за серию: mergeable_state «behind» без защиты ветки не появляется; в эталон попадал джоб самой очереди; очередь не просыпалась на последней позеленевшей проверке; отменённый прогон шёл впереди успешного. Ни один не был виден по зелёному набору тестов. | `Engineering-Incidents-Playbook` |
 | 141 | `Engineering-Incidents-Playbook` — гейт: scripts/check_gates.py — набор «сборка указателя»: маркер и его расширение прогоняются как отдельный случай; `Stepik-Python-Grader` — гейт: scripts/check_marker_matching.py — константа-маркер не подставляется в startswith/removeprefix; префикс от маркера отличается именем, и это названо в самих константах; `Claude-Code_Usage-Token` — гейт: scripts/preflight.py — _НАБОР_ССЫЛКОЙ ищет ссылку, а не подстроку адреса; scripts/pr_check.py — _PR_EVENT не принимает pull_request_target за pull_request. Первое оплачено инцидентом: гейт остался зелёным, когда адрес ссылки подменили, а подпись оставили. | `ArtVsMark` |
 | 144 | `Stepik-Python-Grader` — конвейер: scripts/check_audit_registry.py — mention_verdict берёт окно контекста абзацем, а заголовок раздела перевешивает форму строки; закреплено тестами test_check_audit_registry.py | `Engineering-Incidents-Playbook`, `ArtVsMark` |
-| 146 | `Engineering-Incidents-Playbook` — гейт: scripts/aggregate_bindings.py — обязательная проверка сверяет сводку с ОТВЕТОМ на диске, а не только саму с собой; до #122 она подтверждала своё основание тем же зелёным, каким подтверждала себя. Остальное правило держится разбором при приёмке: замер живого предмета машинно не отличить от рассуждения; `Stepik-Python-Grader` — документ: docs/agent/preflight.md § Что гейты не ловят: зелёный гейт подтверждает себя, утверждение проверяется замером на живом предмете, замер пишется рядом с механизмом; `Claude-Code_Usage-Token` — шаг процесса: Мутационные прогоны: гейт признаётся работающим, только если краснеет на подделке. Две мутации за серию прошли зелёными и показали, что тестов не хватает — «пустая строка обрывает блок run» и «нечисловое значение складывается». | `ArtVsMark` |
+| 146 | `Engineering-Incidents-Playbook` — гейт: scripts/aggregate_bindings.py — обязательная проверка сверяет сводку с ОТВЕТОМ на диске, а не только саму с собой; до #122 она подтверждала своё основание тем же зелёным, каким подтверждала себя. Остальное правило держится разбором при приёмке: замер живого предмета машинно не отличить от рассуждения; `Stepik-Python-Grader` — документ: docs/agent/preflight.md § Что гейты не ловят: зелёный гейт подтверждает себя, утверждение проверяется замером на живом предмете, замер пишется рядом с механизмом; `Claude-Code_Usage-Token` — гейт: tests/test_subprocess_encoding.py — тест на дерево проекта отделён от тестов на подделках: зелёный гейт подтверждает себя, а утверждение о дереве проверяется отдельно. Две мутации за серию прошли зелёными и показали, что тестов не хватает — «пустая строка обрывает блок run» и «нечисловое значение складывается». | `ArtVsMark` |
 | 153 | `Engineering-Incidents-Playbook` — документ: export/README.md § контракт — чужие решения описаны ссылкой на репозиторий потребителя, а не пересказом их устройства; .rules/consumers.json — про потребителя хранится адрес и роль, но не объяснение, почему у него так. Держится чтением при приёмке: отличить ссылку от пересказа машинно нечем; `Stepik-Python-Grader` — конвейер: docs/agent/rules/DIGEST.md собирается из каталога генератором (scripts/generate_rules_digest.py), а не переписывается руками: чужой текст здесь производное с живым исходником, и расхождение ловит check_rules_digest.py | `ArtVsMark` |
 | 158 | `Stepik-Python-Grader` — документ: docs/agent/preflight.md § Что гейты не ловят: scripts/check_three_outcomes.py требует наличия третьего исхода, но не адреса отказа; признак «в сообщении есть адрес» от «есть любая подстановка» машинно не отличить; `ArtVsMark` — гейт: scripts/build_metrics.py::naming — адрес отказавшего источника прикрепляется в точке обращения, а не восстанавливается трассировкой; scripts/hold.py и scripts/check_labels.py печатают предмет отказа вместе с причиной. Правило родилось здесь: окно 31 августа дважды прогнало гейт и дважды искало, какой из двадцати источников ответил 403.; `Claude-Code_Usage-Token` — гейт: Третий исход называет предмет: scripts/shell_ascii.py печатает путь каталога, в котором не нашлось workflow; scripts/release.py — путь колеса; scripts/changelog.py — имя файла фрагмента; scripts/gh_rest.py — метод и путь запроса. | `Engineering-Incidents-Playbook` |
-| 165 | `ArtVsMark` — code: scripts/checks.py::git_paths — пути из git читаются по NUL, помощник общий на трёх потребителей: scripts/check_roles.py::tracked, scripts/check_journal.py и scripts/check_mechanisms.py::tracked_assets. Три копии разъехались бы молча — первый же исправленный оставил бы два слепых (090). ДЕФЕКТ БЫЛ ЖИВОЙ И ВОСПРОИЗВЕДЁН: на подделанном дереве из трёх файлов в assets/ — normal-dark.svg, утечка-dark.svg и «с пробелом.svg» — разбор по строкам увидел ОДИН: git экранирует не-ASCII имена кавычками с восьмеричными последовательностями, и фильтр по расширению не срабатывает, потому что строка кончается кавычкой. Разбор диапазона в гейте журнала был хуже вдвое: .split() рвал по пробелам и путь с пробелом превращал в два. ОХВАТ НАЗЫВАЕТСЯ ЧИСЛОМ у всех трёх: «файлов 42, строк 37» у ролей, «файлов в изменении N» у журнала, «картинок в дереве N» у механизмов — без числа слепота проверки неотличима от чистого результата. | `Engineering-Incidents-Playbook` |
+| 165 | `ArtVsMark` — code: scripts/checks.py::git_paths — пути из git читаются по NUL, помощник общий на трёх потребителей: scripts/check_roles.py::tracked, scripts/check_journal.py и scripts/check_mechanisms.py::tracked_assets. Три копии разъехались бы молча — первый же исправленный оставил бы два слепых (090). ДЕФЕКТ БЫЛ ЖИВОЙ И ВОСПРОИЗВЕДЁН: на подделанном дереве из трёх файлов в assets/ — normal-dark.svg, утечка-dark.svg и «с пробелом.svg» — разбор по строкам увидел ОДИН: git экранирует не-ASCII имена кавычками с восьмеричными последовательностями, и фильтр по расширению не срабатывает, потому что строка кончается кавычкой. Разбор диапазона в гейте журнала был хуже вдвое: .split() рвал по пробелам и путь с пробелом превращал в два. ОХВАТ НАЗЫВАЕТСЯ ЧИСЛОМ у всех трёх: «файлов 42, строк 37» у ролей, «файлов в изменении N» у журнала, «картинок в дереве N» у механизмов — без числа слепота проверки неотличима от чистого результата.; `Claude-Code_Usage-Token` — гейт: scripts/preflight.py (tracked_files с -z и ScanResult с охватом), scripts/repo_links.py (tracked_files), src/claude_code_usage/transcripts.py (Coverage со строками, повторами и нечитаемыми). Правило родилось здесь: без -z проверка на секреты печатала «всё чисто», не прочитав ни одного файла с русским именем. | `Engineering-Incidents-Playbook` |
+| 169 | `Claude-Code_Usage-Token` — гейт: .github/workflows/merge-queue.yml — очередь просыпается от завершения каждого workflow по pull_request, а расписание оставлено дополнением, а не основой. Замер: cron 13,43 давал задержку до получаса. Правило родилось здесь. | `Engineering-Incidents-Playbook` |
+| 170 | `Claude-Code_Usage-Token` — гейт: tests/test_registry.py и tests/test_transcripts.py — у подделок есть источник: форма снята с живого ответа реестра (docs/spec.md § «Что измеряем», замер 2026-09-02) и с живого транскрипта. Правило родилось здесь, и цена названа вживую: в tests/test_transcripts.py подделке НЕ ХВАТАЛО message.id и requestId, поэтому двойной счёт расхода не ловился ничем (#52). | `Engineering-Incidents-Playbook` |
 
 ## Сколько держит механизм · How much each mechanism holds
 
@@ -66,12 +68,12 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/check_charter.py` | 7 |
 | `Engineering-Incidents-Playbook` | `CONTRIBUTING.md` | 6 |
+| `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_prose.py` | 5 |
-| `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 5 |
+| `Engineering-Incidents-Playbook` | `scripts/check_workflows.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/link_trails.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/audit_catalogue.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/check_attribution.py` | 4 |
-| `Engineering-Incidents-Playbook` | `scripts/check_workflows.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/main_red.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/refresh_derived.py` | 4 |
@@ -97,7 +99,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/sync_inbox.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 41 механизмов по одному правилу; без названного адреса: 0 из 121 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 41 механизмов по одному правилу; без названного адреса: 0 из 123 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 38 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/preflight.md` | 8 |
@@ -173,22 +175,41 @@
 | `ArtVsMark` | `pr-check.yml` | 2 |
 | `ArtVsMark` | `projects.json` | 2 |
 | `ArtVsMark` | _остальные_ · _the rest_ | 7 механизмов по одному правилу; без названного адреса: 0 из 76 |
-| `Claude-Code_Usage-Token` | `CLAUDE.md` | 7 |
-| `Claude-Code_Usage-Token` | `scripts/changelog.py` | 7 |
-| `Claude-Code_Usage-Token` | `scripts/pr_check.py` | 7 |
-| `Claude-Code_Usage-Token` | `scripts/preflight.py` | 6 |
-| `Claude-Code_Usage-Token` | `scripts/check_pr_metadata.py` | 4 |
+| `Claude-Code_Usage-Token` | `scripts/preflight.py` | 14 |
+| `Claude-Code_Usage-Token` | `CLAUDE.md` | 12 |
+| `Claude-Code_Usage-Token` | `scripts/pr_check.py` | 9 |
+| `Claude-Code_Usage-Token` | `scripts/changelog.py` | 8 |
+| `Claude-Code_Usage-Token` | `scripts/rules_answer.py` | 6 |
+| `Claude-Code_Usage-Token` | `scripts/utf8_output.py` | 6 |
+| `Claude-Code_Usage-Token` | `docs/spec.md` | 5 |
+| `Claude-Code_Usage-Token` | `scripts/check_pr_metadata.py` | 5 |
+| `Claude-Code_Usage-Token` | `scripts/shell_ascii.py` | 5 |
+| `Claude-Code_Usage-Token` | `scripts/subprocess_encoding.py` | 5 |
+| `Claude-Code_Usage-Token` | `tests/test_subprocess_encoding.py` | 5 |
+| `Claude-Code_Usage-Token` | `.rules/showcase.json` | 4 |
+| `Claude-Code_Usage-Token` | `docs/labels.md` | 4 |
+| `Claude-Code_Usage-Token` | `scripts/pr_ready.py` | 4 |
+| `Claude-Code_Usage-Token` | `tests/test_pr_check.py` | 4 |
+| `Claude-Code_Usage-Token` | `.github/workflows/merge-queue.yml` | 3 |
+| `Claude-Code_Usage-Token` | `.rules/bindings.json` | 3 |
+| `Claude-Code_Usage-Token` | `docs/release.md` | 3 |
+| `Claude-Code_Usage-Token` | `docs/versioning.md` | 3 |
 | `Claude-Code_Usage-Token` | `scripts/merge_queue.py` | 3 |
-| `Claude-Code_Usage-Token` | `scripts/pr_ready.py` | 3 |
 | `Claude-Code_Usage-Token` | `scripts/release.py` | 3 |
-| `Claude-Code_Usage-Token` | `scripts/shell_ascii.py` | 3 |
+| `Claude-Code_Usage-Token` | `scripts/repo_links.py` | 3 |
+| `Claude-Code_Usage-Token` | `src/claude_code_usage/transcripts.py` | 3 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/whitelist.py` | 3 |
-| `Claude-Code_Usage-Token` | `.rules/proposals.json` | 2 |
-| `Claude-Code_Usage-Token` | `.rules/showcase.json` | 2 |
-| `Claude-Code_Usage-Token` | `docs/labels.md` | 2 |
-| `Claude-Code_Usage-Token` | `docs/spec.md` | 2 |
+| `Claude-Code_Usage-Token` | `tests/test_changelog.py` | 3 |
+| `Claude-Code_Usage-Token` | `tests/test_utf8_output.py` | 3 |
+| `Claude-Code_Usage-Token` | `.github/workflows/release.yml` | 2 |
+| `Claude-Code_Usage-Token` | `CHANGELOG.md` | 2 |
+| `Claude-Code_Usage-Token` | `docs/roles.md` | 2 |
 | `Claude-Code_Usage-Token` | `scripts/gh_rest.py` | 2 |
-| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 12 механизмов по одному правилу; без названного адреса: 7 из 42 |
+| `Claude-Code_Usage-Token` | `tests/test_registry.py` | 2 |
+| `Claude-Code_Usage-Token` | `tests/test_repo_links.py` | 2 |
+| `Claude-Code_Usage-Token` | `tests/test_shell_ascii.py` | 2 |
+| `Claude-Code_Usage-Token` | `tests/test_transcripts.py` | 2 |
+| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 13 механизмов по одному правилу; без названного адреса: 0 из 63 |
 
 ## Правила · Rules
 
@@ -201,9 +222,9 @@
 | 005 | действует | действует | действует | действует |
 | 006 | действует | действует | действует | действует |
 | 007 | нет предмета | действует | нет предмета | не рассмотрено |
-| 008 | действует | нет предмета | действует | не рассмотрено |
+| 008 | действует | нет предмета | действует | нет предмета |
 | 009 | действует | действует | действует | действует |
-| 010 | действует | действует | действует | не рассмотрено |
+| 010 | действует | действует | действует | действует |
 | 011 | действует | действует | действует | действует |
 | 012 | действует | действует | нет предмета | не рассмотрено |
 | 013 | действует | действует | нет предмета | не рассмотрено |
@@ -214,15 +235,15 @@
 | 018 | действует | действует | нет предмета | не рассмотрено |
 | 019 | нет предмета | действует | нет предмета | не рассмотрено |
 | 020 | отклонено | действует | нет предмета | не рассмотрено |
-| 021 | действует | действует | действует | не рассмотрено |
+| 021 | действует | действует | действует | действует |
 | 022 | действует | действует | действует | действует |
-| 023 | действует | действует | действует | не рассмотрено |
-| 024 | действует | действует | отклонено | не рассмотрено |
-| 025 | действует | действует | действует | не рассмотрено |
-| 026 | действует | действует | нет предмета | не рассмотрено |
+| 023 | действует | действует | действует | действует |
+| 024 | действует | действует | отклонено | действует |
+| 025 | действует | действует | действует | отклонено |
+| 026 | действует | действует | нет предмета | действует |
 | 027 | действует | действует | действует | действует |
-| 028 | действует | действует | нет предмета | не рассмотрено |
-| 029 | действует | действует | нет предмета | не рассмотрено |
+| 028 | действует | действует | нет предмета | действует |
+| 029 | действует | действует | нет предмета | действует |
 | 030 | действует | действует | нет предмета | действует |
 | 031 | отклонено | действует | нет предмета | не рассмотрено |
 | 032 | нет предмета | действует | действует | не рассмотрено |
@@ -233,7 +254,7 @@
 | 037 | нет предмета | действует | нет предмета | действует |
 | 038 | нет предмета | действует | действует | не рассмотрено |
 | 039 | действует | действует | действует | действует |
-| 040 | действует | действует | нет предмета | не рассмотрено |
+| 040 | действует | действует | нет предмета | действует |
 | 041 | действует | действует | действует | не рассмотрено |
 | 042 | действует | действует | нет предмета | действует |
 | 043 | действует | действует | нет предмета | не рассмотрено |
@@ -356,16 +377,16 @@
 | 161 | действует | действует | действует | не рассмотрено |
 | 162 | действует | действует | действует | не рассмотрено |
 | 163 | действует | действует | нет предмета | нет предмета |
-| 164 | действует | действует | действует | — |
-| 165 | действует | — | действует | — |
-| 166 | действует | — | действует | — |
-| 167 | действует | — | — | — |
-| 168 | действует | — | — | — |
-| 169 | действует | — | — | — |
-| 170 | действует | — | — | — |
-| 171 | действует | — | — | — |
-| 172 | действует | — | — | — |
-| 173 | действует | — | — | — |
-| 174 | действует | — | — | — |
-| 175 | действует | — | — | — |
-| 176 | действует | — | — | — |
+| 164 | действует | действует | действует | действует |
+| 165 | действует | — | действует | действует |
+| 166 | действует | — | действует | действует |
+| 167 | действует | — | — | действует |
+| 168 | действует | — | — | действует |
+| 169 | действует | — | — | действует |
+| 170 | действует | — | — | действует |
+| 171 | действует | — | — | действует |
+| 172 | действует | — | — | действует |
+| 173 | действует | — | — | действует |
+| 174 | действует | — | — | действует |
+| 175 | действует | — | — | действует |
+| 176 | действует | — | — | действует |
