@@ -8,14 +8,14 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-09-03",
-      "answered": 171,
+      "answered": 172,
       "by_status": {
         "not-applicable": 35,
-        "active": 129,
+        "active": 130,
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 88,
+        "gate": 89,
         "document": 24,
         "pipeline": 6,
         "none": 11
@@ -191,7 +191,8 @@
         "169": "active",
         "170": "active",
         "171": "active",
-        "172": "active"
+        "172": "active",
+        "173": "active"
       },
       "holds": {
         "002": {
@@ -709,10 +710,14 @@
         "172": {
           "mechanism": "gate",
           "where": "scripts/check_own_name.py — своё имя берётся у адреса origin, а не из реестра, и старое имя, оставшееся в дереве, краснеет"
+        },
+        "173": {
+          "mechanism": "gate",
+          "where": "scripts/pr_body.py — три ответа различаются машинно, «Part of #NNN» требует названного остатка; scripts/check_task_state.py плюс .github/workflows/task-state.yml — состояние задачи спрашивается ПОСЛЕ слияния, замечание пишется в саму задачу"
         }
       },
-      "trails": 33,
-      "born": 25
+      "trails": 34,
+      "born": 26
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",

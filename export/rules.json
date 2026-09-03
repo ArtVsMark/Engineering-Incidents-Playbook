@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "count": 171,
+  "count": 172,
   "rules": [
     {
       "id": "001",
@@ -4716,6 +4716,37 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "173",
+      "slug": "a-change-closes-the-task-or-names-the-rest",
+      "title": {
+        "ru": "Изменение закрывает задачу целиком либо называет остаток",
+        "en": "A change closes the task in full or names what is left"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "конвейер"
+        ],
+        "en": [
+          "process",
+          "pipeline"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/173-a-change-closes-the-task-or-names-the-rest.md",
+        "en": "rules/en/173-a-change-closes-the-task-or-names-the-rest.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "186"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes"
     }
   ],
