@@ -106,6 +106,21 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          # ДЕРЕВО ПОСЛЕ СБОРКИ ГРЯЗНОЕ, И ПЕРЕКЛЮЧИТЬСЯ С НЕГО НЕЛЬЗЯ. Сборка
+          # выше переписывает производные общей ветки — с тех пор как в
+          # export/rules.json появилось время сборки, файл отличается ВСЕГДА,
+          # даже когда содержание то же. `git checkout badges` на таком дереве
+          # отказывается: «your local changes would be overwritten».
+          #
+          # Замер: три прогона подряд красными (157, 158, 159 от 3 сентября),
+          # и это красное на общей ветке — то есть заморозка очереди для всех.
+          #
+          # Собранное уже скопировано в $RUNNER_TEMP выше, поэтому здесь можно
+          # выбросить рабочее дерево целиком: ветке `badges` принадлежит только
+          # то, что лежит в temp.
+          git checkout -- .
+          git clean -fd -- export .github/badges >/dev/null 2>&1 || true
+
           if git ls-remote --exit-code --heads origin badges >/dev/null 2>&1; then
             git fetch origin badges --depth 1
             git checkout badges
