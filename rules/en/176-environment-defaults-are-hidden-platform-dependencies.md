@@ -94,7 +94,7 @@ name an encoding.
 ## Trace
 
 ArtVsMark/Claude-Code_Usage-Token#63 — scripts/subprocess_encoding.py, the
-incident on change #62; measured 3 September: 2 findings across 35 sources
+incident on change ArtVsMark/Claude-Code_Usage-Token#62; measured 3 September: 2 findings across 35 sources
 
 Related: [037](037-finding-status-depends-on-window.md) — green on a forgery is a
 hypothesis; here the hypothesis is green on **part of the matrix**, and for a

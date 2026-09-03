@@ -8,17 +8,17 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-09-03",
-      "answered": 172,
+      "answered": 175,
       "by_status": {
         "not-applicable": 35,
-        "active": 130,
+        "active": 133,
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 89,
+        "gate": 90,
         "document": 24,
         "pipeline": 6,
-        "none": 11
+        "none": 13
       },
       "rules": {
         "001": "not-applicable",
@@ -192,7 +192,10 @@
         "170": "active",
         "171": "active",
         "172": "active",
-        "173": "active"
+        "173": "active",
+        "174": "active",
+        "175": "active",
+        "176": "active"
       },
       "holds": {
         "002": {
@@ -714,6 +717,18 @@
         "173": {
           "mechanism": "gate",
           "where": "scripts/pr_body.py — три ответа различаются машинно, «Part of #NNN» требует названного остатка; scripts/check_task_state.py плюс .github/workflows/task-state.yml — состояние задачи спрашивается ПОСЛЕ слияния, замечание пишется в саму задачу"
+        },
+        "174": {
+          "mechanism": "gate",
+          "where": "scripts/build_rules_index.py — выгрузка export/rules.json собирается издателем и читается потребителями (витрина профиля берёт числа оттуда, а не считает их клоном); scripts/aggregate_bindings.py — то же для сводки export/where.json"
+        },
+        "175": {
+          "mechanism": "none",
+          "where": "в .rules/showcase.json один ответ вида «предмета нет»; scripts/check_showcase.py проверяет ФОРМУ набора — что на каждый вопрос есть ответ и названа причина, — а правдивость утверждения не проверяет"
+        },
+        "176": {
+          "mechanism": "none",
+          "where": "замер по дереву 3 сентября: 23 вызова subprocess с text=True и НИ ОДНОГО с явным encoding=; матрица прогонов у каталога отсутствует вовсе — .github/workflows/ci.yml идёт только на ubuntu-latest"
         }
       },
       "trails": 34,
@@ -1542,8 +1557,8 @@
           "where": ".rules/bindings.json и .rules/proposals.json — рядом с каждым `schema` стоит ключ `schema_of`, называющий предмет в точке чтения (сам `schema` переименованию не подлежит: имя задаёт контракт каталога). Наличие обоих ключей и значение каждого номера проверяет scripts/check_rule_bindings.py::version_subjects — шагом «Rule bindings answer the catalogue» обязательного docs-guardrails в .github/workflows/ci.yml и хуком pre-commit, то есть на каждый PR; дрейф от templates/bindings.json и templates/proposals.json каталога — contract_drift и proposal_drift ночным обходом .github/workflows/tracker-guardrails.yml"
         }
       },
-      "trails": 68,
-      "born": 128
+      "trails": 69,
+      "born": 129
     },
     {
       "repo": "ArtVsMark/ArtVsMark",
@@ -2075,7 +2090,7 @@
           "where": "scripts/neighbours.py — читает сводку каталога «чем держат другие» и по каждому нашему вердикту без механизма показывает соседей с их адресами; шаг «Чем это держат соседи» в .github/workflows/pr-check.yml приносит это в изменение. Себя в советчики не берёт, неподключённого соседа не берёт, ответ без разрешимого адреса не берёт — пересказ помогает не больше, чем его отсутствие. ГЕЙТОМ НЕ СДЕЛАНО НАМЕРЕННО: «приём переносится» решает человек, стеки разные, и отказ означал бы «повтори за соседом» — ровно ту копию, которую запрещает 090. Первый же прогон дал ответ по всем шестнадцати пробелам витрины."
         }
       },
-      "trails": 15,
+      "trails": 16,
       "born": 10
     },
     {
@@ -2435,8 +2450,8 @@
           "where": "Гейты копят находки в список и читают его после последнего случая: preflight собирает по всем проверкам, shell_ascii — по всем файлам, changelog — по всем фрагментам, release — по всему колесу. Раннего выхода нет ни в одном."
         }
       },
-      "trails": 6,
-      "born": 8
+      "trails": 9,
+      "born": 10
     },
     {
       "repo": "ArtVsMark/Glossary-Python",

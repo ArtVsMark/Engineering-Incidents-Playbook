@@ -89,7 +89,7 @@ ubuntu и macos это UTF-8, на windows-раннере cp1252, где бай�
 ## След
 
 ArtVsMark/Claude-Code_Usage-Token#63 — scripts/subprocess_encoding.py, инцидент
-на изменении #62; замер 3 сентября: 2 находки на 35 исходниках
+на изменении ArtVsMark/Claude-Code_Usage-Token#62; замер 3 сентября: 2 находки на 35 исходниках
 
 Смежное: [037](037-finding-status-depends-on-window.md) — зелёное на подделке
 гипотеза; здесь гипотеза — зелёное на ЧАСТИ МАТРИЦЫ, и по другой причине:

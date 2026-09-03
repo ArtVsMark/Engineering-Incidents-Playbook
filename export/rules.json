@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "count": 172,
+  "count": 175,
   "rules": [
     {
       "id": "001",
@@ -4747,6 +4747,107 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "174",
+      "slug": "facts-about-a-project-are-published-by-it",
+      "title": {
+        "ru": "Факты о проекте публикует сам проект, а не считает сосед",
+        "en": "A project publishes the facts about itself; a neighbour does not compute them"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "метрики"
+        ],
+        "en": [
+          "contracts",
+          "metrics"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/174-facts-about-a-project-are-published-by-it.md",
+        "en": "rules/en/174-facts-about-a-project-are-published-by-it.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1411"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "120"
+        }
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "portable": "yes"
+    },
+    {
+      "id": "175",
+      "slug": "an-absence-claim-that-a-command-can-refute-must-be-a-gate",
+      "title": {
+        "ru": "Утверждение «предмета нет», опровергаемое одной командой, обязано быть гейтом",
+        "en": "An absence claim a single command can refute must be a gate"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "документация"
+        ],
+        "en": [
+          "gates",
+          "documentation"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/175-an-absence-claim-that-a-command-can-refute-must-be-a-gate.md",
+        "en": "rules/en/175-an-absence-claim-that-a-command-can-refute-must-be-a-gate.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "59"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "176",
+      "slug": "environment-defaults-are-hidden-platform-dependencies",
+      "title": {
+        "ru": "Умолчание, взятое из окружения, — скрытая зависимость от платформы",
+        "en": "A default taken from the environment is a hidden platform dependency"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "CI"
+        ],
+        "en": [
+          "code",
+          "CI"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/176-environment-defaults-are-hidden-platform-dependencies.md",
+        "en": "rules/en/176-environment-defaults-are-hidden-platform-dependencies.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "63"
+        },
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "62"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
       "portable": "yes"
     }
   ],

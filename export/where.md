@@ -12,10 +12,10 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 34 | 26 | 172 | 0 | 0 | 130 | 89 | 6 | 24 | 11 | 0 | 81 |  |
-| `Stepik-Python-Grader` | подключён | 68 | 128 | 163 | 9 | 0 | 160 | 66 | 31 | 63 | 0 | 0 | 128 |  |
-| `ArtVsMark` | подключён | 15 | 10 | 163 | 9 | 0 | 86 | 50 | 11 | 12 | 13 | 0 | 34 |  |
-| `Claude-Code_Usage-Token` | подключён | 6 | 8 | 162 | 10 | 0 | 43 | 30 | 0 | 7 | 1 | 5 | 27 |  |
+| `Engineering-Incidents-Playbook` | подключён | 34 | 26 | 175 | 0 | 0 | 133 | 90 | 6 | 24 | 13 | 0 | 82 |  |
+| `Stepik-Python-Grader` | подключён | 69 | 129 | 163 | 12 | 0 | 160 | 66 | 31 | 63 | 0 | 0 | 128 |  |
+| `ArtVsMark` | подключён | 16 | 10 | 163 | 12 | 0 | 86 | 50 | 11 | 12 | 13 | 0 | 34 |  |
+| `Claude-Code_Usage-Token` | подключён | 9 | 10 | 162 | 13 | 0 | 43 | 30 | 0 | 7 | 1 | 5 | 27 |  |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
 ## Чем держат другие · How others enforce it
@@ -54,12 +54,12 @@
 
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
+| `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 12 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 11 |
-| `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 11 |
 | `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 11 |
+| `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 9 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/automerge.yml` | 8 |
 | `Engineering-Incidents-Playbook` | `export/README.md` | 8 |
-| `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 8 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/agent-pr.yml` | 7 |
 | `Engineering-Incidents-Playbook` | `AGENTS.md` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 7 |
@@ -79,6 +79,7 @@
 | `Engineering-Incidents-Playbook` | `CLAUDE.md` | 3 |
 | `Engineering-Incidents-Playbook` | `HISTORY.md` | 3 |
 | `Engineering-Incidents-Playbook` | `README.md` | 3 |
+| `Engineering-Incidents-Playbook` | `export/rules.json` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/history_metrics.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/merge_ready.py` | 3 |
@@ -87,7 +88,6 @@
 | `Engineering-Incidents-Playbook` | `.github/workflows/consumers-sync.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/main-red.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/bindings.json` | 2 |
-| `Engineering-Incidents-Playbook` | `export/rules.json` | 2 |
 | `Engineering-Incidents-Playbook` | `rules/README.md` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_links.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_own_name.py` | 2 |
@@ -96,7 +96,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/sync_inbox.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 39 механизмов по одному правилу; без названного адреса: 0 из 119 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 40 механизмов по одному правилу; без названного адреса: 0 из 120 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 38 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/preflight.md` | 8 |
@@ -365,3 +365,6 @@
 | 171 | действует | — | — | — |
 | 172 | действует | — | — | — |
 | 173 | действует | — | — | — |
+| 174 | действует | — | — | — |
+| 175 | действует | — | — | — |
+| 176 | действует | — | — | — |
