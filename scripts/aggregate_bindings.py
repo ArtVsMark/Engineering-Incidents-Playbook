@@ -711,7 +711,8 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def check_offline(consumers: list[dict], rule_ids: list[str]) -> int:
+def check_offline(consumers: list[dict], rule_ids: list[str],
+                  compare_summary: bool = True) -> int:
     """Сверка без сети: сводка на диске согласована и покрывает весь реестр.
 
     Сюда не ходят наружу сознательно. Обязательная проверка изменения не должна
@@ -756,6 +757,18 @@ def check_offline(consumers: list[dict], rule_ids: list[str]) -> int:
             print(f"объявленный местный ответ не читается: {c['repo']}: "
                   f"{source} {err}", file=sys.stderr)
             return 1
+        # У СВОДКИ ОДИН ПИСАТЕЛЬ, И НА ИЗМЕНЕНИИ ЭТО НЕ МЫ. Требовать от каждой
+        # правки ответа пересобранную сводку значит заводить второго писателя
+        # одного файла — и платить конфликтом на каждом слиянии. Замер
+        # 3 сентября: шесть конфликтов за смену, все в export/where.*, все
+        # разрешались одинаково — прогоном сборщика поверх слитого.
+        #
+        # Свежесть при этом не теряется: `consumers-sync` просыпается на КАЖДЫЙ
+        # толчок в общую ветку и пересобирает сводку там, где она принадлежит
+        # ему одному. Здесь остаётся то, что от сети не зависит и вторым
+        # писателем не делает: читается ли объявленный ответ вообще.
+        if not compare_summary:
+            continue
         want = {rid: rec.get("status") for rid, rec in data.get("rules", {}).items()}
         have = next((s.get("rules") or {} for s in slices
                      if s.get("repo") == c.get("repo")), {})
@@ -829,6 +842,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--check", action="store_true",
                     help="сверить собранное с тем, что лежит на диске")
+    ap.add_argument("--not-my-summary", action="store_true",
+                    help="сводку не сверять: у неё один писатель, и это не я")
     args = ap.parse_args()
 
     # ── исход 2: проверка не отработала ────────────────────────────────────
@@ -852,7 +867,8 @@ def main() -> int:
         return 2
 
     if args.check:
-        return check_offline(consumers, rule_ids)
+        return check_offline(consumers, rule_ids,
+                             compare_summary=not args.not_my_summary)
 
     slices, problems = collect(consumers)
     try:
