@@ -7,7 +7,7 @@
       "role": "каталог",
       "schema": "1.1",
       "state": "подключён",
-      "read_at": "2026-09-02",
+      "read_at": "2026-09-03",
       "answered": 163,
       "by_status": {
         "not-applicable": 35,
@@ -679,14 +679,14 @@
       "role": "потребитель",
       "schema": "1.1",
       "state": "подключён",
-      "read_at": "2026-09-02",
-      "answered": 162,
+      "read_at": "2026-09-03",
+      "answered": 163,
       "by_status": {
-        "active": 159,
+        "active": 160,
         "not-applicable": 3
       },
       "by_mechanism": {
-        "gate": 65,
+        "gate": 66,
         "pipeline": 31,
         "document": 63
       },
@@ -852,7 +852,8 @@
         "160": "active",
         "161": "active",
         "162": "active",
-        "163": "active"
+        "163": "active",
+        "164": "active"
       },
       "holds": {
         "001": {
@@ -1490,6 +1491,10 @@
         "163": {
           "mechanism": "document",
           "where": "docs/use/installation.md и README.md — вход описан командами (pip install -e, stepik-grader, stepik-grader-gui), список команд один и живёт в CLAUDE.md § Команды; копирование образцов названо там же"
+        },
+        "164": {
+          "mechanism": "gate",
+          "where": ".rules/bindings.json и .rules/proposals.json — рядом с каждым `schema` стоит ключ `schema_of`, называющий предмет в точке чтения (сам `schema` переименованию не подлежит: имя задаёт контракт каталога). Наличие обоих ключей и значение каждого номера проверяет scripts/check_rule_bindings.py::version_subjects — шагом «Rule bindings answer the catalogue» обязательного docs-guardrails в .github/workflows/ci.yml и хуком pre-commit, то есть на каждый PR; дрейф от templates/bindings.json и templates/proposals.json каталога — contract_drift и proposal_drift ночным обходом .github/workflows/tracker-guardrails.yml"
         }
       },
       "trails": 68,
@@ -1500,12 +1505,13 @@
       "role": "потребитель",
       "schema": "1.2",
       "state": "подключён",
-      "read_at": "2026-09-02",
-      "answered": 162,
+      "read_at": "2026-09-03",
+      "answered": 163,
       "by_status": {
         "active": 86,
         "not-applicable": 75,
-        "rejected": 1
+        "rejected": 1,
+        "unreviewed": 1
       },
       "by_mechanism": {
         "gate": 50,
@@ -1675,7 +1681,8 @@
         "160": "active",
         "161": "active",
         "162": "active",
-        "163": "not-applicable"
+        "163": "not-applicable",
+        "164": "unreviewed"
       },
       "holds": {
         "001": {
@@ -2012,7 +2019,7 @@
         },
         "160": {
           "mechanism": "pipeline",
-          "where": ".github/workflows/metrics.yml — производные картинки (metrics-*, featured-*, tile-*) публикуются отдельной веткой assets, а не хранятся в дереве общей ветки; .github/workflows/snake.yml — тот же приём, применённый раньше и по той же причине: змейка живёт в ветке output. ПЕРЕНЯТО У СОСЕДЕЙ, а не изобретено: грейдер публикует значки веткой badges, каталог отвергает артефакт, вернувшийся в дерево. ГРАНИЦА НАЗВАНА: README.md остаётся в main и продолжает меняться суточно — страницу профиля площадка читает только оттуда, унести её некуда. Числа в её тексте — часть обещания «страница читается при отключённых картинках», и снимать их ради тишины в истории значило бы платить читателем."
+          "where": ".github/workflows/metrics.yml — производные картинки (metrics-*, featured-*, tile-*) рисуются каждым прогоном и публикуются веткой assets; в дереве общей ветки их нет вовсе (.gitignore), витрина ссылается на них по ветке, и рукодельные — header-*, typing-*, divider-* — остаются в дереве и адресуются относительно. ГЕЙТ: scripts/check_mechanisms.py::derived_findings отвергает и производное, вернувшееся в дерево, и ссылку на лежащий в дереве файл, которого там нет; что считать производным, гейт не хранит списком, а читает из разметки самой витрины. .github/workflows/snake.yml — тот же приём, применённый раньше и по той же причине: змейка живёт в ветке output. ПЕРЕНЯТО У СОСЕДЕЙ, а не изобретено: грейдер публикует значки веткой badges, каталог отвергает артефакт, вернувшийся в дерево. ГРАНИЦА НАЗВАНА: README.md остаётся в main и продолжает меняться суточно — страницу профиля площадка читает только оттуда, унести её некуда. Числа в её тексте — часть обещания «страница читается при отключённых картинках», и снимать их ради тишины в истории значило бы платить читателем. ЦЕНА ПЕРВОГО ШАГА ЗАМЕРЕНА: вердикт стоял active со дня объявления, а публикация впервые побежала сутки спустя и упала на правах (403) — механизм без прогона от живого не отличается."
         },
         "161": {
           "mechanism": "document",
@@ -2031,7 +2038,7 @@
       "role": "потребитель",
       "schema": "1.0",
       "state": "подключён",
-      "read_at": "2026-09-02",
+      "read_at": "2026-09-03",
       "answered": 162,
       "by_status": {
         "active": 43,
