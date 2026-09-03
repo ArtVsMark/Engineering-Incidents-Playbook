@@ -43,6 +43,19 @@ on:
       pr:
         description: "номер изменения"
         required: true
+  # ВТОРОЙ ВХОД СУЩЕСТВУЕТ ПОТОМУ, ЧТО ПЕРВЫЙ НЕДОСТУПЕН РАЗМОРОЗКЕ. Замер 3
+  # сентября: `gh workflow run` токеном владельца — HTTP 403 «Resource not
+  # accessible by personal access token». Запуск рабочего процесса требует
+  # права `actions: write` (у классического токена — области `workflow`),
+  # которого у токена очереди нет и которое даёт не эта сторона. Событию
+  # репозитория хватает `contents: write` — того самого права, которым токен
+  # уже сливает изменения, то есть проверенного работой.
+  #
+  # ПОЧЕМУ НЕ GITHUB_TOKEN. Событие, посланное штатным токеном, прогонов НЕ
+  # заводит вовсе — площадка обрывает так рекурсию. Разморозка молча не
+  # работала бы, и это ровно 146.
+  repository_dispatch:
+    types: [thaw]
 
 # Записи делает токен владельца, штатному хватает чтения.
 permissions:
@@ -50,7 +63,7 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: automerge-${{ github.event.pull_request.number || inputs.pr }}
+  group: automerge-${{ github.event.pull_request.number || inputs.pr || github.event.client_payload.pr }}
   cancel-in-progress: true
 
 jobs:
@@ -84,7 +97,7 @@ jobs:
         if: env.SKIP != '1'
         env:
           GH_TOKEN: ${{ env.MERGE_QUEUE_TOKEN }}
-          PR: ${{ github.event.pull_request.number || inputs.pr }}
+          PR: ${{ github.event.pull_request.number || inputs.pr || github.event.client_payload.pr }}
         run: |
           set -euo pipefail
           # ПО REST, А НЕ ЧЕРЕЗ GraphQL: у второго своя узкая квота, и 2
