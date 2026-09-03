@@ -52,7 +52,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # Что в сводке меняется само по себе, знает тот, кто это пишет. Импорт, а не
 # копия: копия молча отстанет, и пересборка начнёт заводить пустые изменения.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from aggregate_bindings import VOLATILE  # noqa: E402
+from aggregate_bindings import VOLATILE, VOLATILE_TOP  # noqa: E402
 
 #: Сборщики в порядке зависимости: картинка рисуется из `export/where.json`,
 #: который пишет сводка. Обратный порядок нарисовал бы вчерашние числа.
@@ -153,6 +153,14 @@ def only_volatile(root: Path, name: str) -> bool:
     except (OSError, ValueError):
         return False
     for doc in (was, now):
+        # ДВА УРОВНЯ, И ВТОРОЙ СТОИЛ ЦИКЛА. Летучее поле есть и внутри записи
+        # потребителя (дата чтения), и на верхнем уровне документа (время
+        # сборки). Первый уровень снимался с самого начала, второй появился
+        # вместе с `generated_at` — и пересборка немедленно завела два
+        # изменения подряд, в каждом одна строка со временем. Слияние такого
+        # изменения — снова толчок в общую ветку, то есть цикл сам себя кормит.
+        for key in VOLATILE_TOP:
+            doc.pop(key, None)
         for entry in doc.get("consumers", []):
             for key in VOLATILE:
                 entry.pop(key, None)
@@ -342,9 +350,36 @@ def selftest() -> int:
     if rc != 1 or names != ["export/where.json"]:
         bad.append(f"данные рядом с датой обязаны дать 1, дали {rc} {names}")
 
+    # ТО ЖЕ НА ВЕРХНЕМ УРОВНЕ, И ЭТО СТОИЛО ЦИКЛА. Отметка времени сборки лежит
+    # не внутри записи потребителя, а над ней; первая редакция снимала только
+    # внутренний уровень. 3 сентября пересборка стала заводить изменение на
+    # каждый толчок в общую ветку — слияние рождало новое время, новое время
+    # рождало слияние (#304, #305, в каждом одна строка).
+    d = repo("import json, pathlib\n"
+             "p = pathlib.Path('export/where.json')\n"
+             "d = json.loads(p.read_text(encoding='utf-8'))\n"
+             "d['generated_at'] = 'завтра'\n"
+             "p.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')\n",
+             json_seed=True)
+    rc, names, _ = refresh(d)
+    if rc != 0 or names:
+        bad.append(f"одно время сборки обязано дать 0, дало {rc} {names}")
+
+    # ...и обратная сторона: данные рядом с новым временем — изменение (140).
+    d = repo("import json, pathlib\n"
+             "p = pathlib.Path('export/where.json')\n"
+             "d = json.loads(p.read_text(encoding='utf-8'))\n"
+             "d['generated_at'] = 'завтра'\n"
+             "d['consumers'][0]['answered'] = 99\n"
+             "p.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')\n",
+             json_seed=True)
+    rc, names, _ = refresh(d)
+    if rc != 1 or names != ["export/where.json"]:
+        bad.append(f"данные рядом со временем обязаны дать 1, дали {rc} {names}")
+
     for b in bad:
         print(f"  ✗ {b}", file=sys.stderr)
-    print(f"самопроверка обновления производных: случаев 11, провалов {len(bad)}",
+    print(f"самопроверка обновления производных: случаев 13, провалов {len(bad)}",
           file=sys.stderr if bad else sys.stdout)
     return 1 if bad else 0
 
