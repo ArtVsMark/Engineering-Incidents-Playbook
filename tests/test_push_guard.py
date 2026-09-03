@@ -138,3 +138,41 @@ def test_dokument_bez_zakryvayushchey_stroki_ne_veshaet_storozha(окно):
 
     assert pg.main() == 0
 
+
+def test_perehod_v_vetku_pered_tolchkom_eto_svoya(окно):
+    """Замер: за смену это отвергло верный толчок трижды подряд. Сторож
+    спрашивает ветку у git ДО того, как команда выполнится, и `checkout X &&
+    push X` выглядел толчком в чужую."""
+    окно("git checkout -q agent/другая && git push origin agent/другая")
+
+    assert pg.main() == 0
+
+
+def test_switch_schitaetsya_naravne_s_checkout(окно):
+    окно("git switch agent/другая && git push -u origin agent/другая")
+
+    assert pg.main() == 0
+
+
+def test_novaya_vetka_klyuchom_tozhe_svoya(окно):
+    """`checkout -B имя` заводит ветку и переходит в неё — она уже своя."""
+    окно("git checkout -B agent/новая origin/main && git push origin agent/новая")
+
+    assert pg.main() == 0
+
+
+def test_posle_perehoda_chuzhaya_vsyo_ravno_chuzhaya(окно, capsys):
+    """Граница с другой стороны: сторож следует за переходом, а не слепнет."""
+    окно("git switch agent/одна && git push origin agent/другая")
+
+    assert pg.main() == 2
+    assert "agent/другая" in capsys.readouterr().err
+
+
+def test_imya_podstanovkoy_ne_ugadyvaetsya(окно):
+    """«Неизвестно» и «чужая» — разные ответы (051): значения переменной
+    сторож не знает и запрещать по догадке не должен."""
+    окно("git push -q origin $b")
+
+    assert pg.main() == 0
+
