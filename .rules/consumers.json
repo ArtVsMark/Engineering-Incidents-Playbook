@@ -27,11 +27,11 @@
       "since": "2026-08-22"
     },
     {
-      "repo": "ArtVsMark/claude-code-usage",
+      "repo": "ArtVsMark/Claude-Code_Usage-Token",
       "role": "потребитель",
-      "bindings": "https://raw.githubusercontent.com/ArtVsMark/claude-code-usage/main/.rules/bindings.json",
+      "bindings": "https://raw.githubusercontent.com/ArtVsMark/Claude-Code_Usage-Token/main/.rules/bindings.json",
       "access": "public",
-      "proposals": "https://raw.githubusercontent.com/ArtVsMark/claude-code-usage/main/.rules/proposals.json",
+      "proposals": "https://raw.githubusercontent.com/ArtVsMark/Claude-Code_Usage-Token/main/.rules/proposals.json",
       "since": "2026-08-22"
     },
     {
