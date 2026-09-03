@@ -12,9 +12,9 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 34 | 26 | 175 | 0 | 0 | 133 | 90 | 6 | 24 | 13 | 0 | 82 |  |
+| `Engineering-Incidents-Playbook` | подключён | 34 | 26 | 175 | 0 | 0 | 133 | 91 | 6 | 24 | 12 | 0 | 83 |  |
 | `Stepik-Python-Grader` | подключён | 69 | 129 | 163 | 12 | 0 | 160 | 66 | 31 | 63 | 0 | 0 | 128 |  |
-| `ArtVsMark` | подключён | 16 | 10 | 163 | 12 | 0 | 86 | 50 | 11 | 12 | 13 | 0 | 34 |  |
+| `ArtVsMark` | подключён | 16 | 10 | 165 | 10 | 0 | 89 | 52 | 11 | 12 | 13 | 0 | 34 |  |
 | `Claude-Code_Usage-Token` | подключён | 9 | 10 | 162 | 13 | 0 | 43 | 30 | 0 | 7 | 1 | 5 | 27 |  |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
@@ -45,6 +45,7 @@
 | 146 | `Engineering-Incidents-Playbook` — гейт: scripts/aggregate_bindings.py — обязательная проверка сверяет сводку с ОТВЕТОМ на диске, а не только саму с собой; до #122 она подтверждала своё основание тем же зелёным, каким подтверждала себя. Остальное правило держится разбором при приёмке: замер живого предмета машинно не отличить от рассуждения; `Stepik-Python-Grader` — документ: docs/agent/preflight.md § Что гейты не ловят: зелёный гейт подтверждает себя, утверждение проверяется замером на живом предмете, замер пишется рядом с механизмом; `Claude-Code_Usage-Token` — шаг процесса: Мутационные прогоны: гейт признаётся работающим, только если краснеет на подделке. Две мутации за серию прошли зелёными и показали, что тестов не хватает — «пустая строка обрывает блок run» и «нечисловое значение складывается». | `ArtVsMark` |
 | 153 | `Engineering-Incidents-Playbook` — документ: export/README.md § контракт — чужие решения описаны ссылкой на репозиторий потребителя, а не пересказом их устройства; .rules/consumers.json — про потребителя хранится адрес и роль, но не объяснение, почему у него так. Держится чтением при приёмке: отличить ссылку от пересказа машинно нечем; `Stepik-Python-Grader` — конвейер: docs/agent/rules/DIGEST.md собирается из каталога генератором (scripts/generate_rules_digest.py), а не переписывается руками: чужой текст здесь производное с живым исходником, и расхождение ловит check_rules_digest.py | `ArtVsMark` |
 | 158 | `Stepik-Python-Grader` — документ: docs/agent/preflight.md § Что гейты не ловят: scripts/check_three_outcomes.py требует наличия третьего исхода, но не адреса отказа; признак «в сообщении есть адрес» от «есть любая подстановка» машинно не отличить; `ArtVsMark` — гейт: scripts/build_metrics.py::naming — адрес отказавшего источника прикрепляется в точке обращения, а не восстанавливается трассировкой; scripts/hold.py и scripts/check_labels.py печатают предмет отказа вместе с причиной. Правило родилось здесь: окно 31 августа дважды прогнало гейт и дважды искало, какой из двадцати источников ответил 403.; `Claude-Code_Usage-Token` — гейт: Третий исход называет предмет: scripts/shell_ascii.py печатает путь каталога, в котором не нашлось workflow; scripts/release.py — путь колеса; scripts/changelog.py — имя файла фрагмента; scripts/gh_rest.py — метод и путь запроса. | `Engineering-Incidents-Playbook` |
+| 165 | `ArtVsMark` — code: scripts/checks.py::git_paths — пути из git читаются по NUL, помощник общий на трёх потребителей: scripts/check_roles.py::tracked, scripts/check_journal.py и scripts/check_mechanisms.py::tracked_assets. Три копии разъехались бы молча — первый же исправленный оставил бы два слепых (090). ДЕФЕКТ БЫЛ ЖИВОЙ И ВОСПРОИЗВЕДЁН: на подделанном дереве из трёх файлов в assets/ — normal-dark.svg, утечка-dark.svg и «с пробелом.svg» — разбор по строкам увидел ОДИН: git экранирует не-ASCII имена кавычками с восьмеричными последовательностями, и фильтр по расширению не срабатывает, потому что строка кончается кавычкой. Разбор диапазона в гейте журнала был хуже вдвое: .split() рвал по пробелам и путь с пробелом превращал в два. ОХВАТ НАЗЫВАЕТСЯ ЧИСЛОМ у всех трёх: «файлов 42, строк 37» у ролей, «файлов в изменении N» у журнала, «картинок в дереве N» у механизмов — без числа слепота проверки неотличима от чистого результата. | `Engineering-Incidents-Playbook` |
 
 ## Сколько держит механизм · How much each mechanism holds
 
@@ -96,7 +97,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/sync_inbox.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 40 механизмов по одному правилу; без названного адреса: 0 из 120 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 41 механизмов по одному правилу; без названного адреса: 0 из 121 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 38 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/preflight.md` | 8 |
@@ -144,34 +145,34 @@
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 82 механизмов по одному правилу; без названного адреса: 0 из 160 |
-| `ArtVsMark` | `scripts/build_metrics.py` | 25 |
-| `ArtVsMark` | `scripts/check_mechanisms.py` | 21 |
+| `ArtVsMark` | `scripts/build_metrics.py` | 26 |
+| `ArtVsMark` | `scripts/check_mechanisms.py` | 23 |
 | `ArtVsMark` | `.github/workflows/automerge.yml` | 12 |
 | `ArtVsMark` | `CLAUDE.md` | 12 |
 | `ArtVsMark` | `scripts/check_labels.py` | 12 |
 | `ArtVsMark` | `README.md` | 11 |
 | `ArtVsMark` | `.github/workflows/open-pr.yml` | 10 |
 | `ArtVsMark` | `.github/workflows/pr-check.yml` | 9 |
+| `ArtVsMark` | `scripts/check_roles.py` | 9 |
 | `ArtVsMark` | `.github/workflows/metrics.yml` | 8 |
-| `ArtVsMark` | `scripts/check_roles.py` | 8 |
 | `ArtVsMark` | `scripts/check_page.py` | 7 |
 | `ArtVsMark` | `.rules/README.md` | 6 |
 | `ArtVsMark` | `scripts/check_author.py` | 6 |
 | `ArtVsMark` | `scripts/check_bindings.py` | 6 |
+| `ArtVsMark` | `scripts/checks.py` | 6 |
 | `ArtVsMark` | `scripts/gh_outcome.py` | 6 |
 | `ArtVsMark` | `.github/workflows/main-red.yml` | 5 |
 | `ArtVsMark` | `.github/workflows/release-hold.yml` | 5 |
 | `ArtVsMark` | `.github/workflows/rules-inbox.yml` | 5 |
 | `ArtVsMark` | `HISTORY.md` | 5 |
-| `ArtVsMark` | `scripts/checks.py` | 5 |
 | `ArtVsMark` | `scripts/hold.py` | 5 |
-| `ArtVsMark` | `.rules/bindings.json` | 3 |
+| `ArtVsMark` | `.rules/bindings.json` | 4 |
 | `ArtVsMark` | `.rules/proposals.json` | 3 |
 | `ArtVsMark` | `.rules/roles.md` | 3 |
+| `ArtVsMark` | `scripts/check_journal.py` | 3 |
 | `ArtVsMark` | `pr-check.yml` | 2 |
 | `ArtVsMark` | `projects.json` | 2 |
-| `ArtVsMark` | `scripts/check_journal.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 7 механизмов по одному правилу; без названного адреса: 0 из 73 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 7 механизмов по одному правилу; без названного адреса: 0 из 76 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 7 |
 | `Claude-Code_Usage-Token` | `scripts/changelog.py` | 7 |
 | `Claude-Code_Usage-Token` | `scripts/pr_check.py` | 7 |
@@ -355,9 +356,9 @@
 | 161 | действует | действует | действует | не рассмотрено |
 | 162 | действует | действует | действует | не рассмотрено |
 | 163 | действует | действует | нет предмета | нет предмета |
-| 164 | действует | действует | не рассмотрено | — |
-| 165 | действует | — | — | — |
-| 166 | действует | — | — | — |
+| 164 | действует | действует | действует | — |
+| 165 | действует | — | действует | — |
+| 166 | действует | — | действует | — |
 | 167 | действует | — | — | — |
 | 168 | действует | — | — | — |
 | 169 | действует | — | — | — |
