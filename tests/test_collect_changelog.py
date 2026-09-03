@@ -447,3 +447,16 @@ def test_osvobozhdenie_ishchetsya_strokoy_a_ne_vhozhdeniem():
     тело = "Здесь сказано, что журнал: не требуется — и это просто фраза.\n"
 
     assert cc.entry_required(["scripts/a.py"], тело)[0]
+
+
+def test_pereezd_snimaet_odin_uroven_u_ssylki():
+    """Фрагмент лежит на уровень ниже собранного файла — ровно один `../`."""
+    текст = "см. [лицензию](../LICENSE) и [правило](../rules/ru/126-a.md)"
+
+    assert cc.retarget(текст) == "см. [лицензию](LICENSE) и [правило](rules/ru/126-a.md)"
+
+
+def test_chuzhie_adresa_pri_pereezde_ne_trogayutsya():
+    """Обратная сторона (140): внешняя ссылка, якорь и соседний файл — не цель."""
+    for текст in ("[док](https://example/../y)", "[а](#б)", "[сосед](sibling.md)"):
+        assert cc.retarget(текст) == текст, текст
