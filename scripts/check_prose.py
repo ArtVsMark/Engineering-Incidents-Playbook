@@ -99,11 +99,11 @@ LINK_RE = re.compile(r"\]\(([^)]+)\)")
 def tracked(root: Path) -> list[Path]:
     """Отслеживаемые файлы. Непрослеживаемый мусор проверять незачем."""
     try:
-        out = subprocess.run(["git", "-C", str(root), "ls-files"],
+        out = subprocess.run(["git", "-C", str(root), "ls-files", "-z"],
                              capture_output=True, text=True, encoding="utf-8", check=True).stdout
     except (OSError, subprocess.CalledProcessError):
         return []
-    return [root / line for line in out.split("\n") if line]
+    return [root / line for line in out.split("\0") if line]
 
 
 def details_lines(text: str) -> list[int]:
