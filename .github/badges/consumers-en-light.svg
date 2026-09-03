@@ -19,16 +19,16 @@
 <rect x="1057" y="130" width="123" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="1070" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">process step<tspan fill="#8250DF" font-weight="700" dx="7">0</tspan></text>
 <text x="36" y="182" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Stepik-Python-</text>
 <text x="36" y="201" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Grader</text>
-<text x="300" y="193" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">162</text>
+<text x="300" y="193" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">163</text>
 <text x="418" y="193" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">68</text>
 <text x="526" y="193" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">128</text>
-<rect x="640" y="176" width="75" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="653" y="192" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">gate<tspan fill="#0969DA" font-weight="700" dx="7">65</tspan></text>
+<rect x="640" y="176" width="75" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="653" y="192" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">gate<tspan fill="#0969DA" font-weight="700" dx="7">66</tspan></text>
 <rect x="725" y="176" width="103" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="738" y="192" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">pipeline<tspan fill="#1A7F37" font-weight="700" dx="7">31</tspan></text>
 <rect x="838" y="176" width="103" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="851" y="192" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">document<tspan fill="#8250DF" font-weight="700" dx="7">63</tspan></text>
 <rect x="951" y="176" width="88" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="964" y="192" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">nothing<tspan fill="#CF222E" font-weight="700" dx="7">0</tspan></text>
 <rect x="1057" y="176" width="123" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="1070" y="192" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">process step<tspan fill="#8250DF" font-weight="700" dx="7">0</tspan></text>
 <text x="36" y="237" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">ArtVsMark</text>
-<text x="300" y="239" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">162</text>
+<text x="300" y="239" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">163</text>
 <text x="418" y="239" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">15</text>
 <text x="526" y="239" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">10</text>
 <rect x="640" y="222" width="75" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="653" y="238" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">gate<tspan fill="#0969DA" font-weight="700" dx="7">50</tspan></text>
