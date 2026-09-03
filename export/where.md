@@ -13,8 +13,8 @@
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Шагом · Step | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 30 | 24 | 163 | 0 | 0 | 121 | 84 | 6 | 24 | 7 | 0 | 79 |  |
-| `Stepik-Python-Grader` | подключён | 68 | 128 | 162 | 1 | 0 | 159 | 65 | 31 | 63 | 0 | 0 | 127 |  |
-| `ArtVsMark` | подключён | 15 | 10 | 162 | 1 | 0 | 86 | 50 | 11 | 12 | 13 | 0 | 34 |  |
+| `Stepik-Python-Grader` | подключён | 68 | 128 | 163 | 0 | 0 | 160 | 66 | 31 | 63 | 0 | 0 | 128 |  |
+| `ArtVsMark` | подключён | 15 | 10 | 163 | 0 | 0 | 86 | 50 | 11 | 12 | 13 | 0 | 34 |  |
 | `claude-code-usage` | подключён | 1 | 1 | 162 | 1 | 0 | 43 | 30 | 0 | 7 | 1 | 5 | 27 |  |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
@@ -97,17 +97,19 @@
 | `Stepik-Python-Grader` | `CLAUDE.md` | 38 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/preflight.md` | 8 |
+| `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 8 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |
-| `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 7 |
 | `Stepik-Python-Grader` | `scripts/gh_rest.py` | 7 |
 | `Stepik-Python-Grader` | `docs/agent/roles.md` | 6 |
 | `Stepik-Python-Grader` | `scripts/check_docs_guardrails.py` | 6 |
 | `Stepik-Python-Grader` | `scripts/check_pr_ready.py` | 6 |
 | `Stepik-Python-Grader` | `scripts/preflight.py` | 6 |
-| `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 4 |
+| `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 5 |
+| `Stepik-Python-Grader` | `.rules/bindings.json` | 4 |
 | `Stepik-Python-Grader` | `CHANGELOG.md` | 4 |
 | `Stepik-Python-Grader` | `scripts/check_attribution.py` | 4 |
-| `Stepik-Python-Grader` | `.rules/bindings.json` | 3 |
+| `Stepik-Python-Grader` | `.github/workflows/tracker-guardrails.yml` | 3 |
+| `Stepik-Python-Grader` | `.rules/proposals.json` | 3 |
 | `Stepik-Python-Grader` | `HISTORY.md` | 3 |
 | `Stepik-Python-Grader` | `docs/agent/claude-handoff.md` | 3 |
 | `Stepik-Python-Grader` | `docs/agent/course-walkthrough.md` | 3 |
@@ -117,8 +119,6 @@
 | `Stepik-Python-Grader` | `scripts/rerun_flaky_checks.py` | 3 |
 | `Stepik-Python-Grader` | `src/stepik_grader/web/playground.py` | 3 |
 | `Stepik-Python-Grader` | `.claude/hooks/pre_tool_use.py` | 2 |
-| `Stepik-Python-Grader` | `.github/workflows/tracker-guardrails.yml` | 2 |
-| `Stepik-Python-Grader` | `.rules/proposals.json` | 2 |
 | `Stepik-Python-Grader` | `CONTRIBUTING.md` | 2 |
 | `Stepik-Python-Grader` | `docs/dev/corpus.md` | 2 |
 | `Stepik-Python-Grader` | `docs/dev/glossary.md` | 2 |
@@ -136,12 +136,13 @@
 | `Stepik-Python-Grader` | `scripts/nightly_checks.py` | 2 |
 | `Stepik-Python-Grader` | `src/stepik_grader/core/runner.py` | 2 |
 | `Stepik-Python-Grader` | `src/stepik_grader/web/runs.py` | 2 |
+| `Stepik-Python-Grader` | `templates/bindings.json` | 2 |
 | `Stepik-Python-Grader` | `tests/conftest.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
-| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 82 механизмов по одному правилу; без названного адреса: 0 из 159 |
+| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 82 механизмов по одному правилу; без названного адреса: 0 из 160 |
 | `ArtVsMark` | `scripts/build_metrics.py` | 25 |
-| `ArtVsMark` | `scripts/check_mechanisms.py` | 20 |
+| `ArtVsMark` | `scripts/check_mechanisms.py` | 21 |
 | `ArtVsMark` | `.github/workflows/automerge.yml` | 12 |
 | `ArtVsMark` | `CLAUDE.md` | 12 |
 | `ArtVsMark` | `scripts/check_labels.py` | 12 |
@@ -351,4 +352,4 @@
 | 161 | действует | действует | действует | не рассмотрено |
 | 162 | действует | действует | действует | не рассмотрено |
 | 163 | действует | действует | нет предмета | нет предмета |
-| 164 | действует | — | — | — |
+| 164 | действует | действует | не рассмотрено | — |
