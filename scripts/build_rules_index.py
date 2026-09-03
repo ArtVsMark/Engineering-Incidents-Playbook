@@ -51,6 +51,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import re
 import subprocess
@@ -66,7 +67,7 @@ OUT = RULES / "README.md"
 EXPORT = ROOT / "export" / "rules.json"
 #: Версия контракта выгрузки. Поле `candidates` добавлено — по правилам
 #: эволюции (export/README.md) добавление поля это MINOR.
-EXPORT_SCHEMA = "1.2"
+EXPORT_SCHEMA = "1.3"
 CATALOGUE_URL = "https://github.com/ArtVsMark/Engineering-Incidents-Playbook"
 
 #: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
@@ -646,6 +647,78 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
     return dates, []
 
 
+#: Файлы, у каждого из которых свой номер формата. Читаются ЖИВЫМИ, а не
+#: переписываются сюда константами: две копии одного номера разошлись бы молча
+#: (049, 022). Ключ — короткое имя контракта для потребителя.
+CONTRACT_FILES = {
+    "export": "export/rules.json",
+    "bindings": ".rules/bindings.json",
+    "consumers": ".rules/consumers.json",
+    "proposals": ".rules/proposals.json",
+    "showcase": ".rules/showcase.json",
+    "where": "export/where.json",
+}
+
+
+def contracts_now(root: Path | None = None) -> dict[str, str]:
+    """Номера всех форматов каталога — одним чтением для потребителя.
+
+    ЗАЧЕМ ЭТО В ВЫГРУЗКЕ. Правило 174: факты о себе публикует сам проект.
+    Номера у нас названы прозой в VERSIONING.md — читателю-человеку этого
+    хватает, машине нет: потребитель, желающий узнать, не сменился ли контракт,
+    вынужден был бы разбирать таблицу в markdown либо тянуть шесть файлов.
+
+    ПОЧЕМУ НЕ ОДИН ОБЩИЙ НОМЕР. Он вернул бы ровно ту поломку, из которой
+    выросло 164: разные форматы под одним ключом. Цена считается по 157 —
+    подъём версии контракта означает ПЕРЕЧИТЫВАНИЕ ответов на той стороне, и
+    общий номер заставлял бы перечитывать форматы, которые не двигались.
+
+    Ключа нет — значит не прочитали: файла нет или в нём нет `schema`. Нулём и
+    пустой строкой отсутствие не обозначается (174).
+    """
+    база = root or ROOT
+    # СВОЙ НОМЕР — ИЗ КОНСТАНТЫ, А НЕ ИЗ ФАЙЛА, который эта же сборка сейчас
+    # перезапишет: читая себя с диска, выгрузка сообщала бы ПРЕДЫДУЩУЮ версию
+    # своего формата. Замер: первый прогон так и напечатал 1.2 при 1.3 в коде.
+    out: dict[str, str] = {"export": EXPORT_SCHEMA}
+    for имя, путь in CONTRACT_FILES.items():
+        try:
+            данные = json.loads((база / путь).read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if имя == "export":
+            continue
+        номер = данные.get("schema")
+        if isinstance(номер, str) and номер:
+            out[имя] = номер
+    return out
+
+
+#: Ключи, которые меняются от самой сборки, а не от содержания каталога.
+VOLATILE = ("generated_at",)
+
+
+def same_export(path: Path, built: str) -> bool:
+    """Совпадает ли лежащая выгрузка с собранной — без летучих ключей.
+
+    Сравнение идёт по РАЗОБРАННЫМ данным, а не по тексту: побайтное дало бы
+    вечное «устарело» из-за отметки времени, а выкусывание её строкой сломалось
+    бы на первом же изменении форматирования (166 — проверять отношение, а не
+    присутствие подстроки).
+    """
+    try:
+        лежит = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+        собрано = json.loads(built)
+    except (OSError, ValueError):
+        return False
+    if лежит is None:
+        return False
+    for ключ in VOLATILE:
+        лежит.pop(ключ, None)
+        собрано.pop(ключ, None)
+    return лежит == собрано
+
+
 def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]],
                   dates: dict[str, str], trails: dict[str, list]) -> str:
     rules = []
@@ -679,6 +752,12 @@ def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]]
     doc = {
         "schema": EXPORT_SCHEMA,
         "catalogue": CATALOGUE_URL,
+        # Отметка времени обязательна: без неё свежесть не отличить от застоя,
+        # и застывшая выгрузка читается как честная (046, 174).
+        "generated_at": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
+        # Все номера форматов разом — чтобы смену контракта было ВИДНО одним
+        # чтением, а перечитывать заставлял только тот, что двинулся (157, 164).
+        "contracts": contracts_now(),
         "count": len(rules),
         "rules": rules,
         "candidates": candidates_export(),
@@ -1170,7 +1249,12 @@ def main() -> int:
         # пропускать (051). Свежесть значков держит работа badges.yml, которая
         # запускается на каждый толчок в main.
         stale = [OUT] if (OUT.read_text(encoding="utf-8") if OUT.exists() else "") != text else []
-        if (EXPORT.read_text(encoding="utf-8") if EXPORT.exists() else "") != export:
+        # ОТМЕТКА ВРЕМЕНИ — НЕ СОДЕРЖАНИЕ. Сравнивать выгрузку побайтно после
+        # того, как в ней появилось `generated_at`, значит объявлять её
+        # устаревшей ВСЕГДА: каждая сборка ставит новый момент, и гейт краснел
+        # бы на верной работе — ровно то, что запрещает 160 и о чём
+        # предупреждает 051. Сверяется всё, кроме летучих ключей.
+        if not same_export(EXPORT, export):
             stale.append(EXPORT)
         stale += [p for p, want in marks.items()
                   if p.read_text(encoding="utf-8") != want]

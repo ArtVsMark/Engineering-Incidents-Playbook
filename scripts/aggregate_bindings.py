@@ -61,6 +61,8 @@ from check_bindings import MECHANISM_ORDER, addressed  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 CONSUMERS = ROOT / ".rules" / "consumers.json"
 EXPORT_JSON = ROOT / "export" / "where.json"
+SUMMARY_SCHEMA = "1.1"
+
 EXPORT_MD = ROOT / "export" / "where.md"
 RULES = ROOT / "export" / "rules.json"
 
@@ -903,8 +905,16 @@ def main() -> int:
     problems += свои_схемы
 
     doc = {
-        "schema": "1.0",
+        # 1.1: добавлена отметка времени. Прибавление поля читателя 1.0 не
+        # ломает — он его просто не видит, — но номер двигается всё равно:
+        # состав полей изменился, и молчание об этом сделало бы номер
+        # бесполезным (164).
+        "schema": SUMMARY_SCHEMA,
         "catalogue": registry.get("consumers", [{}])[0].get("repo", ""),
+        # Без отметки времени свежесть не отличить от застоя, а застывшая
+        # сводка читается как честная (046, 174). У сводки один писатель, и
+        # время ставит он.
+        "generated_at": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
         "consumers": slices,
     }
     text_json = json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
