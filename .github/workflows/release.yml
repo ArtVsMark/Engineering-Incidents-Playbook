@@ -153,6 +153,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           WANT: ${{ inputs.version }}
           KEY: ${{ inputs.summary }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
           # ПОДПИСЬ СТАВИТСЯ ПЕРВОЙ СТРОКОЙ, И ЭТО ЗАМЕР. На первом же живом
@@ -186,7 +187,28 @@ jobs:
           if git diff --quiet; then
             echo "журнал, строка и пример уже на месте"
           else
-            git commit -am "chore(release): журнал, строка метрик и пример на $WANT [skip ci]"
+            # ТРЕЙЛЕРЫ ОБЯЗАТЕЛЬНЫ, И ЭТО ЗАМЕР. Первый удавшийся выпуск завёл в
+            # общей ветке коммит 861737c без единого трейлера, и
+            # `attribution-history` покраснел на нём в тот же час: в режиме
+            # первопредков гейт требует `Co-Authored-By` у КАЖДОГО коммита
+            # итоговой истории, а не только у объединяющих.
+            #
+            # Поймано дежурным, а не мной: шаг был прогнан на копии до строки
+            # «коммит сделан» и объявлен рабочим. Проверять надо было не то,
+            # что коммит появился, а то, что он проходит собственные гейты
+            # каталога (139).
+            #
+            # Подпись та же, что у `consumers-sync`: этот коммит делает
+            # конвейер, и соавторство у пипелайновых коммитов уже объявлено там.
+            {
+              echo "chore(release): журнал, строка метрик и пример на $WANT [skip ci]"
+              echo
+              echo "Собрано прогоном: $RUN"
+              echo
+              echo "Co-Authored-By: Claude <noreply@anthropic.com>"
+              echo "Claude-Session: $RUN"
+            } > "$RUNNER_TEMP/release-msg.txt"
+            git commit -q -a -F "$RUNNER_TEMP/release-msg.txt"
             git push origin HEAD:main
             # Тег переставляется на коммит с закрытым журналом, строкой и
             # закреплённым примером: иначе потребитель, закрепившийся на теге,
