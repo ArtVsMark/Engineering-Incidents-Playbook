@@ -628,7 +628,8 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
                         "Нужен полный клон (fetch-depth: 0)")]
         out = subprocess.run(
             ["git", "-C", str(ROOT), "log", "--diff-filter=A", "--name-only",
-             "--format=%aI", "--", "rules/ru/[0-9][0-9][0-9]-*.md"],
+             "-z", "--format=%aI%x00", "--",
+             "rules/ru/[0-9][0-9][0-9]-*.md"],
             capture_output=True, text=True, encoding="utf-8", check=True,
         ).stdout
     except (OSError, subprocess.CalledProcessError) as e:
@@ -636,14 +637,19 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
 
     dates: dict[str, str] = {}
     stamp = ""
-    for line in out.split("\n"):
-        line = line.strip()
-        if not line:
+    # РАЗБОР ПО NUL (правило 165), и у `git log` он со своей особенностью:
+    # `--name-only -z` разделяет NUL'ами ИМЕНА, а строку формата отдаёт как
+    # есть — поэтому в формат добавлен свой `%x00`. Замер: без него разбор
+    # молча не находил ни одной даты, и сборка сказала «правило ещё не в
+    # истории» о правилах, которые в ней есть.
+    for кусок in out.split("\0"):
+        кусок = кусок.strip()
+        if not кусок:
             continue
-        if line[0].isdigit() and "T" in line:
-            stamp = line[:10]
-        elif line.startswith("rules/ru/"):
-            dates.setdefault(Path(line).name[:3], stamp)
+        if кусок[0].isdigit() and "T" in кусок:
+            stamp = кусок[:10]
+        elif кусок.startswith("rules/ru/"):
+            dates.setdefault(Path(кусок).name[:3], stamp)
     return dates, []
 
 

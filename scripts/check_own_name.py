@@ -120,11 +120,11 @@ OWN_SUITE = "tests/test_check_own_name.py"
 
 
 def files(root: Path) -> list[Path]:
-    done = subprocess.run(["git", "-C", str(root), "ls-files"],
+    done = subprocess.run(["git", "-C", str(root), "ls-files", "-z"],
                           capture_output=True, text=True, encoding="utf-8")
     if done.returncode != 0:
         return []
-    return [root / f for f in done.stdout.split()
+    return [root / f for f in done.stdout.split("\0")
             if f.endswith(SUFFIXES) and f != OWN_SUITE and (root / f).exists()]
 
 

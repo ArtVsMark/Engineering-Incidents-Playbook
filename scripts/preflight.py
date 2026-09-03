@@ -210,11 +210,11 @@ def run_step(step: Step, root: Path) -> tuple[int, str]:
 
 def branch_paths(root: Path, base: str = "origin/main") -> tuple[list[str], str]:
     """Пути, которые изменение тронет, — тот же вопрос, что задаёт прогон."""
-    done = subprocess.run(["git", "-C", str(root), "diff", "--name-only",
+    done = subprocess.run(["git", "-C", str(root), "diff", "--name-only", "-z",
                            f"{base}...HEAD"], capture_output=True, text=True, encoding="utf-8")
     if done.returncode != 0:
         return [], f"не спросить изменённые пути: {done.stderr.strip()}"
-    return [s for s in done.stdout.splitlines() if s.strip()], ""
+    return [s for s in done.stdout.split("\0") if s.strip()], ""
 
 
 def stand_in_call(kind: str, root: Path) -> tuple[list[str], str, str]:

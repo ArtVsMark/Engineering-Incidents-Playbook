@@ -92,7 +92,8 @@ def main(argv: list[str] | None = None) -> int:
         my_files = files_of(mine)
     else:
         done = subprocess.run(
-            ["git", "-C", str(root), "diff", "--name-only", f"origin/main...{branch}"],
+            ["git", "-C", str(root), "diff", "--name-only", "-z",
+             f"origin/main...{branch}"],
             capture_output=True, text=True, encoding="utf-8")
         if done.returncode != 0:
             print("проверка не отработала: список своих файлов не получен — "
