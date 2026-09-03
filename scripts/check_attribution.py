@@ -92,7 +92,7 @@ def tail(body: str) -> str:
 
 def git(repo: Path, *args: str) -> str:
     return subprocess.run(["git", "-C", str(repo), *args],
-                          capture_output=True, text=True, check=True).stdout
+                          capture_output=True, text=True, encoding="utf-8", check=True).stdout
 
 
 #: Заголовок, после которого перечисляются АВТОРЫ, а не соавторы. До него —

@@ -182,7 +182,7 @@ import subprocess
 def репо(tmp_path: Path, *тела: str) -> Path:
     def git(*args):
         subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, encoding="utf-8")
     git("init", "-q", "-b", "main")
     git("config", "user.name", "Владелец")
     git("config", "user.email", "owner@example.com")

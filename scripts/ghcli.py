@@ -37,7 +37,7 @@ NO_GH_WHY = ("нет команды gh — поставьте GitHub CLI либ�
 def run(*args: str) -> tuple[int, str]:
     """Код возврата и вывод `gh`. Отсутствие самого `gh` — тоже исход."""
     try:
-        done = subprocess.run(["gh", *args], capture_output=True, text=True)
+        done = subprocess.run(["gh", *args], capture_output=True, text=True, encoding="utf-8")
     except OSError as e:
         return NO_GH, f"{NO_GH_WHY} ({e.strerror or e})"
     return done.returncode, (done.stdout or done.stderr).strip()
