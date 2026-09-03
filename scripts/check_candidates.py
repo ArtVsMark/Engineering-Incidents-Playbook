@@ -28,17 +28,33 @@
 Запуск:  python scripts/check_candidates.py [--root <корень>]
 Коды:    0 чисто · 1 есть находки · 2 проверка не отработала
 
+ЧТО БЫВАЕТ, КОГДА КАНДИДАТ УЕЗЖАЕТ В КОРПУС. До этой правки — ничего: файл
+оставался лежать. Тогда об одном предмете существуют две записи, и одна из них
+говорит «нашего инцидента нет», пока вторая описывает инцидент (022). Гейт
+теперь отвергает совпадение слага кандидата со слагом правила или с принятым
+предложением, а по каждому кандидату печатает БЛИЖАЙШЕЕ правило — чтобы уехавший
+предмет было видно раньше, чем совпадёт слаг.
+
+Близость считается той же мерой, что у check_duplicates, и берётся у него, а не
+пишется здесь заново: две формулировки «насколько это похоже» разошлись бы молча
+(022). Порога у меры нет, и гейт по ней НЕ судит — он показывает.
+
 Реализует правила каталога:
-  119 — candidates/README.md кандидатом не считается: свой артефакт держат вне маски входа.
+  119 — candidates/README.md кандидатом не считается: свой артефакт держат вне маски входа;
+  022 — у предмета одна запись: уехавший в корпус кандидат не остаётся гипотезой;
+  026 — вердикт по гипотезе записывается: уехала — файл удаляется вместе с ссылкой.
 """
 
 from __future__ import annotations
 
 import argparse
 import datetime as dt
+import json
 import re
 import sys
 from pathlib import Path
+
+import check_duplicates
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -92,6 +108,53 @@ def cited_by_rules(root: Path, names: set[str]) -> list[str]:
                     out.append(f"{rule.relative_to(root)} ссылается на "
                                f"кандидата {tail}")
     return out
+
+
+def promoted(root: Path, found: list[Path]) -> tuple[list[str], list[str]]:
+    """Кандидаты, чей предмет уже уехал в корпус, и ближайшее правило у каждого.
+
+    Два ответа, и они разной силы. СОВПАДЕНИЕ СЛАГА — отказ: один предмет
+    описан дважды, причём одна запись утверждает, что инцидента нет (022).
+    БЛИЗОСТЬ — не отказ, а строка отчёта: порога у меры нет, это измерено, и
+    судить по ней значило бы отвергать законные пары.
+    """
+    slugs_rules = {p.stem[4:] for p in (root / "rules" / "ru").glob("[0-9][0-9][0-9]-*.md")}
+    принятые: set[str] = set()
+    verdicts = root / ".rules" / "proposals.json"
+    if verdicts.exists():
+        try:
+            данные = json.loads(verdicts.read_text(encoding="utf-8"))
+            принятые = {ключ.split(":", 1)[1]
+                        for ключ, v in данные.get("verdicts", {}).items()
+                        if ":" in ключ and v.get("status") == "admitted"}
+        except (ValueError, KeyError, TypeError):
+            принятые = set()
+
+    отказы: list[str] = []
+    отчёт: list[str] = []
+    правила = check_duplicates.load_rules(root)
+    for path in found:
+        слаг = path.stem
+        if слаг in slugs_rules:
+            отказы.append(f"{path.name}: предмет уехал в корпус — правило с тем "
+                          "же слагом уже есть. Две записи об одном, и эта "
+                          "говорит «инцидента нет» (022, 026)")
+            continue
+        if слаг in принятые:
+            отказы.append(f"{path.name}: предложение с тем же слагом принято "
+                          "как правило — гипотеза стала записью, а файл остался")
+            continue
+        текст = path.read_text(encoding="utf-8")
+        мой = check_duplicates.shingles(текст)
+        близкие = sorted(
+            ((check_duplicates.jaccard(мой, check_duplicates.shingles(
+                данные["text"])), номер) for номер, данные in правила.items()),
+            reverse=True)[:1]
+        if близкие:
+            вес, номер = близкие[0]
+            отчёт.append(f"{path.name}: ближайшее правило {номер} ({вес:.3f}) — "
+                         "порога у меры нет, это к прочтению, а не приговор")
+    return отказы, отчёт
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -152,6 +215,8 @@ def main(argv: list[str] | None = None) -> int:
                             "инцидентом или отвергнуть с причиной (026)")
 
     problems += cited_by_rules(root, {p.name for p in found})
+    уехавшие, соседи = promoted(root, found)
+    problems += уехавшие
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if problems:
@@ -165,6 +230,8 @@ def main(argv: list[str] | None = None) -> int:
 
     for w in warnings:
         print(f"предупреждение: {w}")
+    for строка in соседи:
+        print(f"  · {строка}")
 
     # ── исход 0 ────────────────────────────────────────────────────────────
     if not found:

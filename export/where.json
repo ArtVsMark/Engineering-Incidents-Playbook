@@ -15,10 +15,10 @@
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 91,
+        "gate": 93,
         "document": 24,
         "pipeline": 6,
-        "none": 12
+        "none": 10
       },
       "rules": {
         "001": "not-applicable",
@@ -691,8 +691,8 @@
           "where": "scripts/check_links.py::LINK_RE — ссылка ищется разметкой, а не подстрокой адреса, и другие скрипты берут это выражение, а не переписывают своё"
         },
         "167": {
-          "mechanism": "none",
-          "where": "имена переменных и ключи env: во всех прогонах каталога латиницей; проверки, которая бы это держала, нет"
+          "mechanism": "gate",
+          "where": "scripts/check_workflows.py — имена ключей env: и присваиваний в шагах прогонов обязаны быть ASCII; проза, имена шагов и сообщения не трогаются"
         },
         "168": {
           "mechanism": "gate",
@@ -723,8 +723,8 @@
           "where": "scripts/build_rules_index.py — выгрузка export/rules.json собирается издателем и читается потребителями (витрина профиля берёт числа оттуда, а не считает их клоном); scripts/aggregate_bindings.py — то же для сводки export/where.json"
         },
         "175": {
-          "mechanism": "none",
-          "where": "в .rules/showcase.json один ответ вида «предмета нет»; scripts/check_showcase.py проверяет ФОРМУ набора — что на каждый вопрос есть ответ и названа причина, — а правдивость утверждения не проверяет"
+          "mechanism": "gate",
+          "where": "scripts/check_showcase.py — ответ, начинающийся с «предмета нет», сверяется с деревом; асимметрия односторонняя: предмет найден — отказ, не найден — молчание"
         },
         "176": {
           "mechanism": "gate",
@@ -2110,20 +2110,19 @@
     {
       "repo": "ArtVsMark/Claude-Code_Usage-Token",
       "role": "потребитель",
-      "schema": "1.0",
+      "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-09-03",
-      "answered": 162,
+      "answered": 175,
       "by_status": {
-        "active": 43,
-        "unreviewed": 113,
-        "rejected": 2,
-        "not-applicable": 4
+        "active": 64,
+        "unreviewed": 103,
+        "not-applicable": 5,
+        "rejected": 3
       },
       "by_mechanism": {
-        "gate": 30,
-        "document": 7,
-        "process-step": 5,
+        "gate": 50,
+        "document": 13,
         "none": 1
       },
       "rules": {
@@ -2134,9 +2133,9 @@
         "005": "active",
         "006": "active",
         "007": "unreviewed",
-        "008": "unreviewed",
+        "008": "not-applicable",
         "009": "active",
-        "010": "unreviewed",
+        "010": "active",
         "011": "active",
         "012": "unreviewed",
         "013": "unreviewed",
@@ -2147,15 +2146,15 @@
         "018": "unreviewed",
         "019": "unreviewed",
         "020": "unreviewed",
-        "021": "unreviewed",
+        "021": "active",
         "022": "active",
-        "023": "unreviewed",
-        "024": "unreviewed",
-        "025": "unreviewed",
-        "026": "unreviewed",
+        "023": "active",
+        "024": "active",
+        "025": "rejected",
+        "026": "active",
         "027": "active",
-        "028": "unreviewed",
-        "029": "unreviewed",
+        "028": "active",
+        "029": "active",
         "030": "active",
         "031": "unreviewed",
         "032": "unreviewed",
@@ -2166,7 +2165,7 @@
         "037": "active",
         "038": "unreviewed",
         "039": "active",
-        "040": "unreviewed",
+        "040": "active",
         "041": "unreviewed",
         "042": "active",
         "043": "unreviewed",
@@ -2288,7 +2287,20 @@
         "160": "rejected",
         "161": "unreviewed",
         "162": "unreviewed",
-        "163": "not-applicable"
+        "163": "not-applicable",
+        "164": "active",
+        "165": "active",
+        "166": "active",
+        "167": "active",
+        "168": "active",
+        "169": "active",
+        "170": "active",
+        "171": "active",
+        "172": "active",
+        "173": "active",
+        "174": "active",
+        "175": "active",
+        "176": "active"
       },
       "holds": {
         "001": {
@@ -2297,7 +2309,7 @@
         },
         "002": {
           "mechanism": "document",
-          "where": "CLAUDE.md — каждое правило называет гейт, который его держит: scripts/check_pr_metadata.py, scripts/pr_check.py, scripts/shell_ascii.py, scripts/changelog.py. Правило без механизма записано как таковое, а не выдано за гарантию."
+          "where": "CLAUDE.md — каждое правило называет гейт, который его держит: scripts/check_pr_metadata.py, scripts/pr_check.py, scripts/shell_ascii.py, scripts/changelog.py, scripts/repo_links.py, scripts/subprocess_encoding.py, scripts/utf8_output.py, scripts/rules_answer.py. Правило без механизма остаётся, только если механизма нет по природе, и тогда это сказано вслух."
         },
         "003": {
           "mechanism": "gate",
@@ -2319,37 +2331,69 @@
           "mechanism": "gate",
           "where": "scripts/pr_ready.py — latest_by_name: check-runs считаются по уникальным именам, второй комплект после обновления ветки не удваивает счёт и не воскрешает вчерашнее красное. Плюс scripts/check_showcase (preflight): вопросы набора витрины считаются по уникальным id. Правило уже стоило проекту неверного вывода — CLAUDE.md, § «Как читать результат проверок»: «32 проверки» вместо шестнадцати продержались сутки."
         },
+        "010": {
+          "mechanism": "gate",
+          "where": "scripts/pr_ready.py — «проверок на голове PR нет вовсе» это отдельный вердикт, а не «зелено»: условие «нет красных и нет ожидающих» истинно на пустом множестве. CLAUDE.md § «Как читать результат проверок» называет это первым из трёх правил чтения, вместе с «конфликт — это проверок нет вовсе»."
+        },
         "011": {
           "mechanism": "gate",
           "where": ".github/workflows/merge-queue.yml — очередь просыпается от завершения каждого workflow, ходящего по pull_request, а расписание оставлено дополнением. Замер: cron 13,43 дал 10 срабатываний вместо 72 за 36 часов (#43)."
         },
         "016": {
           "mechanism": "gate",
-          "where": "scripts/preflight.py печатает охват («просмотрено N, пропущено двоичных M»); src/claude_code_usage/transcripts.py — Coverage со строками, нечитаемыми и незнакомыми полями. Без этих чисел слепота источника неотличима от чистого результата."
+          "where": "scripts/preflight.py печатает охват («просмотрено N, пропущено двоичных M»); src/claude_code_usage/transcripts.py — Coverage со строками, повторами ответа и незнакомыми полями; scripts/subprocess_encoding.py и scripts/utf8_output.py — «разобрано файлов N, пропущено M» и «проверено N, не предмет M»; scripts/rules_answer.py — «записей N, с адресом M»."
         },
         "017": {
           "mechanism": "document",
           "where": "docs/spec.md и CLAUDE.md § «Правила измерения» — остаток измеряется, а не запрашивается; пока шкала не откалибрована, инструмент говорит «остаток неизвестен», а не рисует проценты."
         },
+        "021": {
+          "mechanism": "document",
+          "where": "docs/roles.md (окно, исполняющее роли), docs/labels.md (мержащий), docs/release.md (релиз-инженер), docs/spec.md (разработчик ядра), docs/storage-setup.md (тот, кто ставит инструмент), docs/versioning.md (участник; у него читатель назван прямо первой строкой). Раскладка по читателю, а не по теме: «версия» встречается в трёх из них, и тематическая полка перемешала бы три разные аудитории."
+        },
         "022": {
           "mechanism": "gate",
           "where": "scripts/check_pr_metadata.py читает номенклатуру меток из docs/labels.md, второго списка в коде нет; scripts/pr_check.py читает состав обязательных прогонов из дерева PR, а не из константы."
         },
+        "023": {
+          "mechanism": "gate",
+          "where": "README.md — первые пять минут: что за инструмент, чего он не обещает и набор вопросов витрины; остальное по ссылкам в docs/. Держится не обещанием: scripts/preflight.py (check_showcase) требует, чтобы набор был на витрине ССЫЛКОЙ, а не упоминанием — до названных пробелов должно быть можно дойти."
+        },
+        "024": {
+          "mechanism": "document",
+          "where": "HISTORY.md — как шло; CHANGELOG.md — что сделали; changelog.d/ — фрагменты ещё не выпущенного. В действующих документах (CLAUDE.md, docs/*.md) журнала работ нет: они описывают, как устроено сейчас. Инцидент в них называется ради доказательства правила, а не ради хроники."
+        },
+        "026": {
+          "mechanism": "gate",
+          "where": ".rules/bindings.json — у rejected и not-applicable причина обязательна, и scripts/rules_answer.py отказывает без неё: отклонение — такое же решение, как исправление. docs/release.md называет отвергнутый hatch-vcs вместе с ценой; .rules/showcase.json — девять названных пробелов с причинами."
+        },
         "027": {
           "mechanism": "gate",
           "where": "scripts/changelog.py — «складывать нечего» отказ, а не пустой раздел; .rules/showcase.json называет девять пробелов поимённо с причинами."
+        },
+        "028": {
+          "mechanism": "document",
+          "where": ".github/pull_request_template.md — восемь пунктов галочками, а не прозой; CLAUDE.md § «Перед PR» — тот же чек-лист, исполняемый одной командой scripts/preflight.py. Состояние задачи не вычисляется чтением: у каждого пункта либо галочка, либо её нет."
+        },
+        "029": {
+          "mechanism": "document",
+          "where": "CLAUDE.md — компактный триггер: роли таблицей, метки одной строкой, «как читать проверки» тремя пунктами. Детали в каноне: docs/roles.md (когда роль включается и что имеет право остановить), docs/labels.md (номенклатура), docs/versioning.md (схема номеров). Главный файл отвечает «надо ли мне туда идти», а не «как именно»."
         },
         "030": {
           "mechanism": "gate",
           "where": "scripts/changelog.py — фрагменты changelog.d/, гейт не пропускает PR с типом bug или enhancement без записи; --fold складывает их в CHANGELOG.md при подготовке версии."
         },
         "037": {
-          "mechanism": "process-step",
-          "where": "Применяется и в зеркальном виде, которого в самом правиле нет: зелёное на подделке — тоже гипотеза. Разбор в .rules/proposals.json, предложение mirror-of-037; инцидент — подделка gh в каталоге отдавала пустую строку там, где площадка отдаёт «null null», и четыре теста две недели были зелёными на неработающем механизме."
+          "mechanism": "gate",
+          "where": "tests/test_registry.py и tests/test_transcripts.py — подделки повторяют форму, СНЯТУЮ с живого источника, а не придуманную; docs/spec.md § «Что измеряем» называет дату замера формы. Применяется и в зеркальном виде, которого в самом правиле нет: зелёное на подделке — тоже гипотеза (принято каталогом как 170)."
         },
         "039": {
           "mechanism": "gate",
-          "where": "scripts/preflight.py, scripts/changelog.py, scripts/release.py — EXIT_FAILED отделён от EXIT_BROKEN: «проверка нашла проблему» и «проверку не удалось прогнать» это разные исходы."
+          "where": "scripts/preflight.py, scripts/changelog.py, scripts/release.py, scripts/subprocess_encoding.py, scripts/rules_answer.py — EXIT_FAILED отделён от EXIT_BROKEN: «проверка нашла проблему» и «проверку не удалось прогнать» это разные исходы. У subprocess_encoding разведение оплачено тестом: вне git-репозитория перечисление падало кодом 128, и трейсбек давал код 1 — тот же, каким гейт сообщает о настоящей находке."
+        },
+        "040": {
+          "mechanism": "gate",
+          "where": "scripts/preflight.py прогоняет ВЕСЬ набор, а не профильную выборку, и пропусков в нём нет ни одного: pytest.mark.skip и xfail в tests/ не встречаются вовсе — проверено перебором. Там, где пропуск бывает по природе, он СЧИТАЕТСЯ и печатается: «пропущено двоичных N» у проверки на секреты, «не предмет N» у scripts/utf8_output.py, «повторов ответа N» у src/claude_code_usage/transcripts.py."
         },
         "042": {
           "mechanism": "document",
@@ -2393,7 +2437,7 @@
         },
         "075": {
           "mechanism": "gate",
-          "where": "scripts/shell_ascii.py — «workflow не найдено, гейт остался без предмета»; scripts/pr_check.py — «в дереве нет ни одного workflow по pull_request»; scripts/changelog.py — «складывать нечего»; scripts/release.py — «колеса нет»."
+          "where": "scripts/shell_ascii.py — «workflow не найдено, гейт остался без предмета»; scripts/pr_check.py — «в дереве нет ни одного workflow по pull_request»; scripts/changelog.py — «складывать нечего»; scripts/subprocess_encoding.py и scripts/utf8_output.py — «без предмета» на СВОЁМ обходе, но не на чужом перечислении: судить о списке, который дал вызывающий, гейт не вправе."
         },
         "077": {
           "mechanism": "gate",
@@ -2404,8 +2448,8 @@
           "where": "scripts/pr_check.py — meaningful(): отменённый прогон не несёт вердикта и уступает любому значащему, но зелёным не считается. Оплачено вживую: площадка отдала отменённый прогон впереди успешного, и обязательная проверка покраснела на собственном PR."
         },
         "080": {
-          "mechanism": "process-step",
-          "where": ".rules/proposals.json — шесть предложений, каждое с инцидентом и следом. CLAUDE.md § «Новое правило — в общий каталог» требует записи тем же заходом, а не «потом»."
+          "mechanism": "document",
+          "where": ".rules/proposals.json — одиннадцать предложений, каждое с инцидентом и следом; десять уже приняты каталогом (165–172, 175, 176). CLAUDE.md § «Новое правило — в общий каталог» требует записи тем же заходом, а не «потом»."
         },
         "096": {
           "mechanism": "document",
@@ -2413,11 +2457,11 @@
         },
         "097": {
           "mechanism": "gate",
-          "where": "У каждого гейта тесты на обе ошибки: подделанное дерево находится и верное не заворачивается. tests/test_pr_check.py, tests/test_shell_ascii.py, tests/test_changelog.py, tests/test_pr_metadata.py."
+          "where": "tests/test_pr_check.py, tests/test_shell_ascii.py, tests/test_changelog.py, tests/test_subprocess_encoding.py, tests/test_utf8_output.py, tests/test_showcase.py — у каждого гейта тесты на обе ошибки: подделанное дерево находится и верное не заворачивается. Второе не формальность: гейт «предмета нет» краснел бы на верном ответе «значка нет», и его сняли бы первой же правкой."
         },
         "104": {
           "mechanism": "gate",
-          "where": "workflow_dispatch есть у merge-queue.yml, release.yml (с сухим прогоном), rules-inbox.yml. Кнопка пригодилась дважды: очередь пришлось двигать руками, пока она не просыпалась вовремя."
+          "where": ".github/workflows/merge-queue.yml, .github/workflows/release.yml (с сухим прогоном), .github/workflows/rules-inbox.yml — workflow_dispatch у каждого. Кнопка пригодилась дважды: очередь пришлось двигать руками, пока она не просыпалась вовремя."
         },
         "128": {
           "mechanism": "gate",
@@ -2428,12 +2472,12 @@
           "where": "CLAUDE.md целиком и есть контекст проекта; эстафета передаётся ссылками на issue, а не пересказом — «иначе проблема переезжает вместе с ней»."
         },
         "139": {
-          "mechanism": "process-step",
-          "where": "Оплачено четырьмя случаями за серию: mergeable_state «behind» без защиты ветки не появляется; в эталон попадал джоб самой очереди; очередь не просыпалась на последней позеленевшей проверке; отменённый прогон шёл впереди успешного. Ни один не был виден по зелёному набору тестов."
+          "mechanism": "gate",
+          "where": "tests/test_repo_links.py, tests/test_subprocess_encoding.py, tests/test_utf8_output.py — гейт запускается ПРОЦЕССОМ и проверяется его код возврата, а не чтение исходника. Оплачено четырьмя случаями за серию: mergeable_state «behind» без защиты ветки не появляется; в эталон попадал джоб самой очереди; очередь не просыпалась на последней позеленевшей проверке; отменённый прогон шёл впереди успешного. Ни один не был виден по зелёному набору тестов."
         },
         "140": {
-          "mechanism": "process-step",
-          "where": "Каждый гейт проверяется мутациями на копии дерева, и список пойманных идёт в тело PR. За серию: 12 мутаций у shell_ascii, 9 у pr_check, 6 у changelog, 7 у whitelist. Две ушли с первого захода и дали недостающие тесты."
+          "mechanism": "gate",
+          "where": "tests/test_utf8_output.py, tests/test_subprocess_encoding.py, tests/test_repo_links.py, tests/test_shell_ascii.py — у каждого гейта есть тест «гейт отдаёт ненулевой код» на подделке, которую он обязан отвергнуть. За серию: 12 мутаций у shell_ascii, 9 у pr_check, 6 у changelog, 7 у whitelist; две ушли с первого захода и дали недостающие тесты."
         },
         "141": {
           "mechanism": "gate",
@@ -2441,19 +2485,19 @@
         },
         "145": {
           "mechanism": "gate",
-          "where": "Тесты перечисляют исходы механизма поимённо: у pr_check — нет прогона, идёт, красный, отменённый, все отменены, лишний; у changelog — нет записи, чужой язык, второе складывание, пустой каталог."
+          "where": "tests/test_pr_check.py, tests/test_changelog.py, tests/test_subprocess_encoding.py — исходы перечислены поимённо: у pr_check нет прогона, идёт, красный, отменённый, все отменены, лишний; у changelog нет записи, чужой язык, второе складывание, пустой каталог; у subprocess_encoding находка, воздержание при **kwargs и EXIT_BROKEN на неудаче перечисления."
         },
         "146": {
-          "mechanism": "process-step",
-          "where": "Мутационные прогоны: гейт признаётся работающим, только если краснеет на подделке. Две мутации за серию прошли зелёными и показали, что тестов не хватает — «пустая строка обрывает блок run» и «нечисловое значение складывается»."
+          "mechanism": "gate",
+          "where": "tests/test_subprocess_encoding.py — тест на дерево проекта отделён от тестов на подделках: зелёный гейт подтверждает себя, а утверждение о дереве проверяется отдельно. Две мутации за серию прошли зелёными и показали, что тестов не хватает — «пустая строка обрывает блок run» и «нечисловое значение складывается»."
         },
         "150": {
           "mechanism": "gate",
-          "where": "Тесты зовут сам гейт и сверяют вердикт: pr_check.verdict, changelog.main, release.check_wheel, check_pr_metadata.metadata_problems. Условие правила в утверждении не пересказывается."
+          "where": "tests/test_pr_check.py, tests/test_changelog.py, tests/test_release.py, tests/test_pr_metadata.py — тесты зовут сам гейт и сверяют вердикт (pr_check.verdict, changelog.main, release.check_wheel, check_pr_metadata.metadata_problems). Условие правила в утверждении не пересказывается."
         },
         "154": {
           "mechanism": "document",
-          "where": "Единственная запись с mechanism=none — правило 048 — называет причину: «полнота входа сейчас держится намерением, а не проверкой — очередь на гейт»."
+          "where": ".rules/bindings.json — единственная запись с mechanism=none (правило 048) называет причину: «полнота входа держится намерением, а не проверкой». scripts/rules_answer.py требует этого механизмом: active с mechanism=none обязан сказать, чем держится, иначе это молчание."
         },
         "158": {
           "mechanism": "gate",
@@ -2461,7 +2505,59 @@
         },
         "159": {
           "mechanism": "gate",
-          "where": "Гейты копят находки в список и читают его после последнего случая: preflight собирает по всем проверкам, shell_ascii — по всем файлам, changelog — по всем фрагментам, release — по всему колесу. Раннего выхода нет ни в одном."
+          "where": "scripts/preflight.py, scripts/shell_ascii.py, scripts/changelog.py, scripts/release.py, scripts/utf8_output.py — находки копятся в список и читаются после последнего случая. Раннего выхода нет ни в одном."
+        },
+        "164": {
+          "mechanism": "document",
+          "where": "docs/versioning.md § «Форм две, и это названо, а не сглажено» — выпущенная X.Y.0 (литерал в src/claude_code_usage/__init__.py) и счётная X.Y.N (вычисляется из истории) названы разными именами в точке чтения. scripts/version.py --check держит связь между ними, а scripts/rules_answer.py — что schema в .rules/bindings.json это версия ФОРМАТА ОТВЕТА, а не выгрузки и не выпуска каталога. Наш файл был примером в инциденте самого правила: здесь стояло 1.0 там, где контракт требует 1.1."
+        },
+        "165": {
+          "mechanism": "gate",
+          "where": "scripts/preflight.py (tracked_files с -z и ScanResult с охватом), scripts/repo_links.py (tracked_files), src/claude_code_usage/transcripts.py (Coverage со строками, повторами и нечитаемыми). Правило родилось здесь: без -z проверка на секреты печатала «всё чисто», не прочитав ни одного файла с русским именем."
+        },
+        "166": {
+          "mechanism": "gate",
+          "where": "scripts/preflight.py — _НАБОР_ССЫЛКОЙ ищет `](адрес` либо `]: адрес`, а не подстроку. Правило родилось здесь: проверка на подстроку оставалась зелёной, когда у ссылки подменили цель, — условие выполнялось на подписи."
+        },
+        "167": {
+          "mechanism": "gate",
+          "where": "scripts/shell_ascii.py — присваивание, ключ env, переменная цикла и подстановка проверяются на ASCII; проза (комментарии, name:, echo) не трогается. CLAUDE.md § «Язык» называет оба способа отказа, и второй тихий. Правило родилось здесь."
+        },
+        "168": {
+          "mechanism": "gate",
+          "where": "scripts/pr_check.py и .github/workflows/pr-check.yml — обязательная проверка ровно одна, «PR check», и она НЕ зависит от других работ через needs:, потому что пропущенный джоб защита засчитывает как пройденный. Совпадение имени джоба с константой держит tests/test_pr_check.py. Правило родилось здесь."
+        },
+        "169": {
+          "mechanism": "gate",
+          "where": ".github/workflows/merge-queue.yml — очередь просыпается от завершения каждого workflow по pull_request, а расписание оставлено дополнением, а не основой. Замер: cron 13,43 давал задержку до получаса. Правило родилось здесь."
+        },
+        "170": {
+          "mechanism": "gate",
+          "where": "tests/test_registry.py и tests/test_transcripts.py — у подделок есть источник: форма снята с живого ответа реестра (docs/spec.md § «Что измеряем», замер 2026-09-02) и с живого транскрипта. Правило родилось здесь, и цена названа вживую: в tests/test_transcripts.py подделке НЕ ХВАТАЛО message.id и requestId, поэтому двойной счёт расхода не ловился ничем (#52)."
+        },
+        "171": {
+          "mechanism": "gate",
+          "where": "scripts/pr_check.py — состав обязательных проверок берётся из дерева самого изменения, а не с общей ветки. Правило родилось здесь: эталон с main делал неразрешимым любой PR, который состав проверок МЕНЯЕТ, — вердикт «джобы не созданы» становился вечным."
+        },
+        "172": {
+          "mechanism": "gate",
+          "where": "scripts/repo_links.py — перепись адресов: имя вносится одной строкой в список АДРЕСА, остальное гейт находит пофайлово; в прогоне список сверяется с живым GITHUB_REPOSITORY. Правило родилось здесь: после трёх переименований 28 ссылок устарели, и все восемь гейтов остались зелёными."
+        },
+        "173": {
+          "mechanism": "gate",
+          "where": "scripts/check_pr_metadata.py — связь с задачей обязательна и имеет ровно три формы: «Closes #N», «Часть #N — <что именно>» с пояснением, «Без issue: <причина>». Вторая половина правила — проверка судьбы задачи ПОСЛЕ слияния — механизмом здесь не держится, и это названо, а не умолчано: закрытие проверяет площадка, остаток частичного изменения не проверяет никто."
+        },
+        "174": {
+          "mechanism": "gate",
+          "where": ".rules/showcase.json и .github/badges/version.json — числа об устройстве проекта публикует сам проект машиночитаемо, а scripts/preflight.py (check_showcase) сверяет значок с деревом и не даёт объявить пробел без причины. Соседи читают эти файлы, а не считают по нашему дереву."
+        },
+        "175": {
+          "mechanism": "gate",
+          "where": "scripts/preflight.py — функция _проверить_предмет: ответ витрины, начатый с «предмета нет», сверяется с деревом (для выпуска предмет подтверждается тегом схемы). Правило родилось здесь: ответ «проект не выпускался ни разу» пережил два выпуска, пока гейт проверял форму контракта, а не действительность (#59)."
+        },
+        "176": {
+          "mechanism": "gate",
+          "where": "scripts/subprocess_encoding.py (читатель обязан назвать encoding) и scripts/utf8_output.py (писатель обязан поставить UTF-8 первым делом в main) — обе половины одного умолчания. Правило родилось здесь: промах виден только на трети матрицы и только на подходящих данных, а stderr не падает вовсе и печатает \\uXXXX вместо отказа (#63, #67, #69)."
         }
       },
       "trails": 9,
