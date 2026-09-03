@@ -81,25 +81,25 @@ jobs:
 
           # Черновик не берут (он «ещё не беру»), и уже взведённый тоже:
           # повторное включение ничего не меняет, а лишний вызов стоит квоты.
-          стоящие=$(printf '%s' "$pulls" \
+          pending=$(printf '%s' "$pulls" \
             | jq -r '.[] | select(.draft == false and .auto_merge == null) | .number')
 
-          if [ -z "$стоящие" ]; then
+          if [ -z "$pending" ]; then
             echo "перевзводить нечего: стоящих изменений без автомержа нет"
             exit 0
           fi
 
           # Третий исход виден отдельно (039): «перевзвёл ноль, потому что
           # некого» и «перевзвёл ноль, потому что не смог» — разные ответы.
-          сбои=0
-          for pr in $стоящие; do
+          failed=0
+          for pr in $pending; do
             if gh workflow run automerge.yml -f pr="$pr"; then
               echo "изменение #$pr: автомерж перевзведён — основание позеленело"
             else
               echo "::warning::Изменение #$pr: перезапуск automerge не удался."
-              сбои=$((сбои + 1))
+              failed=$((failed + 1))
             fi
           done
-          if [ "$сбои" -ne 0 ]; then
-            echo "::warning::Не перевзведено изменений: $сбои."
+          if [ "$failed" -ne 0 ]; then
+            echo "::warning::Не перевзведено изменений: $failed."
           fi

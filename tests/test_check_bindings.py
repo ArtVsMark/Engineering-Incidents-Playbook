@@ -399,3 +399,30 @@ def test_bez_svodki_metrika_govorit_chto_ne_schitalas(monkeypatch, repo, capsys)
 
     assert cb.main() == 0
     assert "не считалось" in capsys.readouterr().out
+
+
+# ── «не применимо» перечитывается пробой (175) ─────────────────────────────
+
+def test_proba_oprovergaet_ne_primenimo(tmp_path):
+    """Ровно тот случай, что нашёлся четырежды на живом ответе каталога:
+    условия проекта изменились, а строка осталась и выглядит решением."""
+    (tmp_path / "scripts").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "scripts" / "s.py").write_text(
+        "urllib.request.urlopen(url)\n", encoding="utf-8")
+    assert "ходит наружу" in cb.refuted("001", tmp_path)
+
+
+def test_bez_uliki_molchanie(tmp_path):
+    """АСИММЕТРИЯ: не нашли опровержения — молчим. «Не нашли» и «нет» разные
+    ответы, и в мелком клоне первое происходит постоянно."""
+    (tmp_path / "scripts").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "scripts" / "s.py").write_text("print('тихо')\n", encoding="utf-8")
+    assert cb.refuted("001", tmp_path) == ""
+
+
+def test_pravilo_bez_proby_ne_schitaetsya_provernnym(tmp_path):
+    """Пробы нет — это НЕ «проверено»: такие обязаны считаться отдельно и
+    называться числом, иначе непроверенное неотличимо от чистого (075)."""
+    assert cb.refuted("019", tmp_path) == ""
+    assert "019" not in cb.REFUTED_BY
+

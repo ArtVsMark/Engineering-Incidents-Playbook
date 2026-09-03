@@ -173,3 +173,33 @@ def test_na_pull_request_zakreplenie_ne_trebuetsya(tmp_path):
              "on:\n  pull_request:\n  workflow_dispatch:\n"
              "jobs:\n  a:\n    timeout-minutes: 5\n")
     assert cw.main(["--root", str(tmp_path)]) == 0
+
+
+# ── имена оболочки латиницей (167) ─────────────────────────────────────────
+
+def test_env_klyuch_kirillicey_nahodka(tmp_path):
+    """Тихая половина ошибки: переменная создаётся, а `$ТИП` не раскрывается —
+    условие всегда даёт одну ветку, и шаг зеленеет, не проверив ничего."""
+    workflow(tmp_path, "w.yml", BUTTON + "jobs:\n  a:\n    timeout-minutes: 5\n"
+             "    env:\n      ТИП: bug\n")
+    assert cw.main(["--root", str(tmp_path)]) == 1
+
+
+def test_prisvaivanie_kirillicey_nahodka():
+    """Громкая половина: bash разбирает строку как ИМЯ КОМАНДЫ, код 127."""
+    assert cw.non_ascii_names("        файлы=$(git diff)\n") == ["файлы"]
+
+
+def test_latinskie_imena_chisto():
+    текст = "    env:\n      TYPE: bug\n      BASE: main\n"
+    assert cw.non_ascii_names(текст) == []
+
+
+def test_proza_i_imena_shagov_ne_trogayutsya(tmp_path):
+    """ГРАНИЦА: имя шага и сообщение — на языке проекта, и требовать от них
+    латиницу значило бы краснеть на верном файле (051)."""
+    workflow(tmp_path, "w.yml", BUTTON + "jobs:\n  a:\n    timeout-minutes: 5\n"
+             "    steps:\n      - name: зоны выводятся из путей верно\n"
+             "        run: echo 'проверка прошла'\n")
+    assert cw.main(["--root", str(tmp_path)]) == 0
+
