@@ -787,7 +787,7 @@
     "165": {
       "status": "active",
       "mechanism": "none",
-      "where": "замер по дереву: scripts/build_rules_index.py, check_overlap.py, check_own_name.py, check_prose.py, check_showcase.py, collect_changelog.py, history_metrics.py, preflight.py берут список путей у git без -z; четыре из них потом читают эти файлы",
+      "where": "замер по дереву: scripts/build_rules_index.py, scripts/check_overlap.py, scripts/check_own_name.py, scripts/check_prose.py, scripts/check_showcase.py, scripts/collect_changelog.py, scripts/history_metrics.py, scripts/preflight.py берут список путей у git без -z; четыре из них потом читают эти файлы",
       "why": "предмет достижим и не наступил: имена в дереве латиницей, поэтому слепота есть, а случая нет. Гейта под это не построено — очередь на механизм, а не отсутствие предмета"
     },
     "166": {

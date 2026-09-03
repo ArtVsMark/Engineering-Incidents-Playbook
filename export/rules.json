@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "count": 163,
+  "count": 171,
   "rules": [
     {
       "id": "001",
@@ -1214,11 +1214,11 @@
       },
       "trails": [
         {
-          "repo": "ArtVsMark/claude-code-usage",
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
           "issue": "13"
         }
       ],
-      "origin": "ArtVsMark/claude-code-usage"
+      "origin": "ArtVsMark/Claude-Code_Usage-Token"
     },
     {
       "id": "049",
@@ -4468,6 +4468,254 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "165",
+      "slug": "git-file-list-needs-nul",
+      "title": {
+        "ru": "Список путей из git читают по NUL, а проверка называет охват",
+        "en": "A file list from git is read by NUL, and the check states its coverage"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "гейты"
+        ],
+        "en": [
+          "code",
+          "gates"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/165-git-file-list-needs-nul.md",
+        "en": "rules/en/165-git-file-list-needs-nul.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "214"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "166",
+      "slug": "check-the-link-not-the-path",
+      "title": {
+        "ru": "Проверяя ссылку, ищут ссылку, а не путь в тексте",
+        "en": "To check a link, look for the link, not for the path in the text"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "документация"
+        ],
+        "en": [
+          "gates",
+          "documentation"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/166-check-the-link-not-the-path.md",
+        "en": "rules/en/166-check-the-link-not-the-path.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "27"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "167",
+      "slug": "shell-identifiers-must-be-ascii",
+      "title": {
+        "ru": "Имена переменных shell — латиницей, даже если проект ведётся не на ней",
+        "en": "Shell variable names are ASCII, even when the project is not written in it"
+      },
+      "areas": {
+        "ru": [
+          "CI",
+          "код"
+        ],
+        "en": [
+          "CI",
+          "code"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/167-shell-identifiers-must-be-ascii.md",
+        "en": "rules/en/167-shell-identifiers-must-be-ascii.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "10"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "168",
+      "slug": "one-aggregating-required-check",
+      "title": {
+        "ru": "Обязательная проверка одна, имя её постоянно, и собрана она не через `needs:`",
+        "en": "One required check, with a constant name, and not assembled through `needs:`"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "CI"
+        ],
+        "en": [
+          "pipeline",
+          "CI"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/168-one-aggregating-required-check.md",
+        "en": "rules/en/168-one-aggregating-required-check.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "6"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "partly"
+    },
+    {
+      "id": "169",
+      "slug": "cron-is-a-hint-not-a-cadence",
+      "title": {
+        "ru": "Расписание площадки — пожелание, а не частота, и у страховки обязан быть замер",
+        "en": "A platform schedule is a hint, not a cadence, and a safety net needs a measurement"
+      },
+      "areas": {
+        "ru": [
+          "автоматика",
+          "CI"
+        ],
+        "en": [
+          "automation",
+          "CI"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/169-cron-is-a-hint-not-a-cadence.md",
+        "en": "rules/en/169-cron-is-a-hint-not-a-cadence.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "43"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "partly"
+    },
+    {
+      "id": "170",
+      "slug": "green-on-a-forgery-is-a-hypothesis-too",
+      "title": {
+        "ru": "Зелёное на подделке — тоже гипотеза, и у подделки обязан быть источник",
+        "en": "Green on a forgery is a hypothesis too, and a forgery needs a source"
+      },
+      "areas": {
+        "ru": [
+          "тесты",
+          "качество"
+        ],
+        "en": [
+          "tests",
+          "quality"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/170-green-on-a-forgery-is-a-hypothesis-too.md",
+        "en": "rules/en/170-green-on-a-forgery-is-a-hypothesis-too.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "250"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "171",
+      "slug": "the-reference-set-comes-from-the-tree-under-test",
+      "title": {
+        "ru": "Эталон берут из дерева самого изменения, а не с общей ветки",
+        "en": "The reference set comes from the tree under test, not from the main branch"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "конвейер"
+        ],
+        "en": [
+          "gates",
+          "pipeline"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/171-the-reference-set-comes-from-the-tree-under-test.md",
+        "en": "rules/en/171-the-reference-set-comes-from-the-tree-under-test.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "46"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "172",
+      "slug": "a-shim-you-cannot-decline-needs-an-inventory",
+      "title": {
+        "ru": "Заглушке, от которой нельзя отказаться, отвечают переписью",
+        "en": "A shim you cannot decline is answered with an inventory"
+      },
+      "areas": {
+        "ru": [
+          "архитектура",
+          "данные"
+        ],
+        "en": [
+          "architecture",
+          "data"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/172-a-shim-you-cannot-decline-needs-an-inventory.md",
+        "en": "rules/en/172-a-shim-you-cannot-decline-needs-an-inventory.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "214"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
       "portable": "yes"
     }
   ],

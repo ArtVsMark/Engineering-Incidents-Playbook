@@ -23,8 +23,8 @@ The owner renamed three repositories in one day. In the consumer's tree the old
 names were written in **twenty places across fourteen files**: version badges,
 task links in both showcases, three addresses in the issue templates, the project
 URLs in the manifest, the consumer's and the catalogue's addresses in its answer,
-six trace fields in its proposals and — the costliest — 
-`uses: ArtVsMark/claude-code-playbook@v1.1.0`, that is, the **only** link to the
+six trace fields in its proposals and — the costliest — a pinned `uses:` line
+naming the catalogue under its former name, that is, the **only** link to the
 rule catalogue.
 
 Measured after the rename: a manual run — green, the action resolved through the

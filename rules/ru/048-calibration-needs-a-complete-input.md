@@ -62,4 +62,4 @@
 
 ## След
 
-ArtVsMark/claude-code-usage#13.
+ArtVsMark/Claude-Code_Usage-Token#13.

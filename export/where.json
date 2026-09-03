@@ -7,18 +7,18 @@
       "role": "каталог",
       "schema": "1.1",
       "state": "подключён",
-      "read_at": "2026-09-02",
-      "answered": 163,
+      "read_at": "2026-09-03",
+      "answered": 171,
       "by_status": {
         "not-applicable": 35,
-        "active": 121,
+        "active": 129,
         "rejected": 7
       },
       "by_mechanism": {
-        "gate": 84,
+        "gate": 88,
         "document": 24,
         "pipeline": 6,
-        "none": 7
+        "none": 11
       },
       "rules": {
         "001": "not-applicable",
@@ -183,7 +183,15 @@
         "161": "active",
         "162": "active",
         "163": "active",
-        "164": "active"
+        "164": "active",
+        "165": "active",
+        "166": "active",
+        "167": "active",
+        "168": "active",
+        "169": "active",
+        "170": "active",
+        "171": "active",
+        "172": "active"
       },
       "holds": {
         "002": {
@@ -669,24 +677,56 @@
         "164": {
           "mechanism": "gate",
           "where": "VERSIONING.md § Номеров здесь несколько, и они двигаются врозь — таблица называет КАЖДЫЙ номер, что он версионирует, кто на него смотрит и когда он двигается; в самом контракте export/README.md оговорка стоит В ТОЧКЕ ЧТЕНИЯ, строкой рядом с числом, а не в отдельном документе. Держат это два гейта. scripts/check_prose.py::schema_unnamed — номер формата, объявленный в файле и НЕ названный в политике версий, это находка: читатель прочтёт его как версию каталога, и ровно так и был прочитан. scripts/aggregate_bindings.py::schema_findings — расхождение версий у потребителей и у собственной заготовки называется на КАЖДОМ изменении, а не только в ночном прогоне: данных хватает на диске, а собранное и никому не доставленное адресата не имеет (142). Чужое печатается без отказа — файл чужой (051); своё, заготовка, отказ. ИЗМЕРЕНО: из трёх подключённых ответов с контрактом совпал один; у одного стоял номер схемы ВЫГРУЗКИ в поле схемы ОТВЕТА, у другого — на версию ниже, и ни то ни другое ни один прогон на изменении не называл. ГРАНИЦА: переименование самого ключа (`export_schema` вместо `schema`) правило допускает как лучший ответ, но здесь не сделано — ключ читают четыре потребителя, и смена имени это подъём версии контракта, то есть отдельная работа с их стороны (157)"
+        },
+        "165": {
+          "mechanism": "none",
+          "where": "замер по дереву: scripts/build_rules_index.py, scripts/check_overlap.py, scripts/check_own_name.py, scripts/check_prose.py, scripts/check_showcase.py, scripts/collect_changelog.py, scripts/history_metrics.py, scripts/preflight.py берут список путей у git без -z; четыре из них потом читают эти файлы"
+        },
+        "166": {
+          "mechanism": "gate",
+          "where": "scripts/check_links.py::LINK_RE — ссылка ищется разметкой, а не подстрокой адреса, и другие скрипты берут это выражение, а не переписывают своё"
+        },
+        "167": {
+          "mechanism": "none",
+          "where": "имена переменных и ключи env: во всех прогонах каталога латиницей; проверки, которая бы это держала, нет"
+        },
+        "168": {
+          "mechanism": "gate",
+          "where": ".github/workflows/ci.yml — работа catalogue, единственное обязательное имя; scripts/merge_ready.py --required catalogue спрашивает её ПОИМЁННО, а не «что-то зелёное»"
+        },
+        "169": {
+          "mechanism": "none",
+          "where": "расписания каталога — consumers-sync (06:23) и main-red (07:41) — суточные и являются ОСНОВНЫМ путём, а не страховкой; счётчика срабатываний по источнику нет"
+        },
+        "170": {
+          "mechanism": "none",
+          "where": "подделки есть — scripts/check_gates.py на подделанном дереве и подделка площадки в tests/test_sync_inbox.py, где форма ответа снята с живого случая после отказа у потребителя"
+        },
+        "171": {
+          "mechanism": "gate",
+          "where": "scripts/check_charter.py — объявленные гейты сверяются с шагами .github/workflows/ci.yml ТОГО ЖЕ дерева, а не с последним прогоном общей ветки"
+        },
+        "172": {
+          "mechanism": "gate",
+          "where": "scripts/check_own_name.py — своё имя берётся у адреса origin, а не из реестра, и старое имя, оставшееся в дереве, краснеет"
         }
       },
-      "trails": 30,
-      "born": 24
+      "trails": 33,
+      "born": 25
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
       "role": "потребитель",
       "schema": "1.1",
       "state": "подключён",
-      "read_at": "2026-09-02",
-      "answered": 162,
+      "read_at": "2026-09-03",
+      "answered": 163,
       "by_status": {
-        "active": 159,
+        "active": 160,
         "not-applicable": 3
       },
       "by_mechanism": {
-        "gate": 65,
+        "gate": 66,
         "pipeline": 31,
         "document": 63
       },
@@ -852,7 +892,8 @@
         "160": "active",
         "161": "active",
         "162": "active",
-        "163": "active"
+        "163": "active",
+        "164": "active"
       },
       "holds": {
         "001": {
@@ -1490,6 +1531,10 @@
         "163": {
           "mechanism": "document",
           "where": "docs/use/installation.md и README.md — вход описан командами (pip install -e, stepik-grader, stepik-grader-gui), список команд один и живёт в CLAUDE.md § Команды; копирование образцов названо там же"
+        },
+        "164": {
+          "mechanism": "gate",
+          "where": ".rules/bindings.json и .rules/proposals.json — рядом с каждым `schema` стоит ключ `schema_of`, называющий предмет в точке чтения (сам `schema` переименованию не подлежит: имя задаёт контракт каталога). Наличие обоих ключей и значение каждого номера проверяет scripts/check_rule_bindings.py::version_subjects — шагом «Rule bindings answer the catalogue» обязательного docs-guardrails в .github/workflows/ci.yml и хуком pre-commit, то есть на каждый PR; дрейф от templates/bindings.json и templates/proposals.json каталога — contract_drift и proposal_drift ночным обходом .github/workflows/tracker-guardrails.yml"
         }
       },
       "trails": 68,
@@ -1500,12 +1545,13 @@
       "role": "потребитель",
       "schema": "1.2",
       "state": "подключён",
-      "read_at": "2026-09-02",
-      "answered": 162,
+      "read_at": "2026-09-03",
+      "answered": 163,
       "by_status": {
         "active": 86,
         "not-applicable": 75,
-        "rejected": 1
+        "rejected": 1,
+        "unreviewed": 1
       },
       "by_mechanism": {
         "gate": 50,
@@ -1675,7 +1721,8 @@
         "160": "active",
         "161": "active",
         "162": "active",
-        "163": "not-applicable"
+        "163": "not-applicable",
+        "164": "unreviewed"
       },
       "holds": {
         "001": {
@@ -2012,7 +2059,7 @@
         },
         "160": {
           "mechanism": "pipeline",
-          "where": ".github/workflows/metrics.yml — производные картинки (metrics-*, featured-*, tile-*) публикуются отдельной веткой assets, а не хранятся в дереве общей ветки; .github/workflows/snake.yml — тот же приём, применённый раньше и по той же причине: змейка живёт в ветке output. ПЕРЕНЯТО У СОСЕДЕЙ, а не изобретено: грейдер публикует значки веткой badges, каталог отвергает артефакт, вернувшийся в дерево. ГРАНИЦА НАЗВАНА: README.md остаётся в main и продолжает меняться суточно — страницу профиля площадка читает только оттуда, унести её некуда. Числа в её тексте — часть обещания «страница читается при отключённых картинках», и снимать их ради тишины в истории значило бы платить читателем."
+          "where": ".github/workflows/metrics.yml — производные картинки (metrics-*, featured-*, tile-*) рисуются каждым прогоном и публикуются веткой assets; в дереве общей ветки их нет вовсе (.gitignore), витрина ссылается на них по ветке, и рукодельные — header-*, typing-*, divider-* — остаются в дереве и адресуются относительно. ГЕЙТ: scripts/check_mechanisms.py::derived_findings отвергает и производное, вернувшееся в дерево, и ссылку на лежащий в дереве файл, которого там нет; что считать производным, гейт не хранит списком, а читает из разметки самой витрины. .github/workflows/snake.yml — тот же приём, применённый раньше и по той же причине: змейка живёт в ветке output. ПЕРЕНЯТО У СОСЕДЕЙ, а не изобретено: грейдер публикует значки веткой badges, каталог отвергает артефакт, вернувшийся в дерево. ГРАНИЦА НАЗВАНА: README.md остаётся в main и продолжает меняться суточно — страницу профиля площадка читает только оттуда, унести её некуда. Числа в её тексте — часть обещания «страница читается при отключённых картинках», и снимать их ради тишины в истории значило бы платить читателем. ЦЕНА ПЕРВОГО ШАГА ЗАМЕРЕНА: вердикт стоял active со дня объявления, а публикация впервые побежала сутки спустя и упала на правах (403) — механизм без прогона от живого не отличается."
         },
         "161": {
           "mechanism": "document",
@@ -2027,11 +2074,11 @@
       "born": 10
     },
     {
-      "repo": "ArtVsMark/claude-code-usage",
+      "repo": "ArtVsMark/Claude-Code_Usage-Token",
       "role": "потребитель",
       "schema": "1.0",
       "state": "подключён",
-      "read_at": "2026-09-02",
+      "read_at": "2026-09-03",
       "answered": 162,
       "by_status": {
         "active": 43,
@@ -2383,8 +2430,8 @@
           "where": "Гейты копят находки в список и читают его после последнего случая: preflight собирает по всем проверкам, shell_ascii — по всем файлам, changelog — по всем фрагментам, release — по всему колесу. Раннего выхода нет ни в одном."
         }
       },
-      "trails": 1,
-      "born": 1
+      "trails": 6,
+      "born": 8
     },
     {
       "repo": "ArtVsMark/Glossary-Python",
