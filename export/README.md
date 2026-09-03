@@ -572,6 +572,44 @@ having no gate.
 Версию каталога стоит закрепить тегом: подключаться к движущейся ветке значит
 получать чужую правку гейта в свой красный прогон.
 
+## Номера контрактов и свежесть · Contract numbers and freshness
+
+`export/rules.json` несёт **все** номера форматов каталога разом — блок
+`contracts` — и отметку времени `generated_at`. Одним чтением видно, не
+сменился ли контракт, и когда выгрузка собрана в последний раз.
+
+```json
+{
+  "schema": "1.3",
+  "generated_at": "2026-09-03T09:24:00+00:00",
+  "contracts": {
+    "export": "1.3", "bindings": "1.1", "consumers": "1.1",
+    "proposals": "1.0", "showcase": "1.1", "where": "1.1"
+  }
+}
+```
+
+**Ключа нет — значит не прочитали.** Номер, которого нет в блоке, означает, что
+файл недоступен или не объявляет `schema`; нулём и пустой строкой отсутствие не
+обозначается. То же соглашение действует по всей выгрузке.
+
+**Единого номера нет намеренно** — разные форматы живут своей жизнью, и подъём
+версии контракта означает перечитывание ответов на вашей стороне. Общий номер
+заставлял бы перечитывать форматы, которые не двигались. Полностью — в
+[`VERSIONING.md`](../VERSIONING.md).
+
+`export/where.json` несёт `generated_at` по той же причине: без неё свежесть не
+отличить от застоя.
+
+---
+
+`export/rules.json` carries **all** the catalogue's format numbers at once — the
+`contracts` block — plus a `generated_at` timestamp. One read tells you whether a
+contract moved and when the export was last built. A missing key means "not
+read", never zero. There is deliberately no single unified number: a contract
+version bump is a re-read on your side, and one number would force re-reads of
+formats that never moved.
+
 ## Сводная таблица · The summary table
 
 [`where.md`](where.md) и [`where.json`](where.json) собираются
