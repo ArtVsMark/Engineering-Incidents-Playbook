@@ -98,7 +98,7 @@ def test_пустая_сборка_это_пустая_строка(monkeypatch,
 
 def git(repo: Path, *args: str) -> None:
     subprocess.run(["git", "-C", str(repo), *args], check=True,
-                   capture_output=True, text=True)
+                   capture_output=True, text=True, encoding="utf-8")
 
 
 def выпуск(repo: Path, *теги: str) -> None:

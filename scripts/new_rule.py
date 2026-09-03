@@ -173,7 +173,7 @@ def neighbours(root: Path, path: Path) -> str:
     """Верхушка соседей по ЧЕРНОВИКУ — как подсказка, а не как ответ."""
     done = subprocess.run(
         [sys.executable, str(root / "scripts" / "check_duplicates.py"),
-         "--near", str(path)], capture_output=True, text=True)
+         "--near", str(path)], capture_output=True, text=True, encoding="utf-8")
     return (done.stdout or done.stderr).strip()
 
 

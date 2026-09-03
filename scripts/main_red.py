@@ -179,7 +179,7 @@ def selftest() -> int:
         broken.append("тело задачи не несёт ни списка работ, ни шаблона потребителя")
 
     probe = subprocess.run([sys.executable, __file__, "--body-file", "/nonexistent"],
-                           capture_output=True, text=True)
+                           capture_output=True, text=True, encoding="utf-8")
     if probe.returncode != 2:
         broken.append(f"исход «дежурный не отработал» дал код {probe.returncode}, а не 2")
     print(f"  код {probe.returncode}                            — шаблон не прочитан")
