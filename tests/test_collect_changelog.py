@@ -447,3 +447,30 @@ def test_osvobozhdenie_ishchetsya_strokoy_a_ne_vhozhdeniem():
     тело = "Здесь сказано, что журнал: не требуется — и это просто фраза.\n"
 
     assert cc.entry_required(["scripts/a.py"], тело)[0]
+
+
+# ── переезд ломает относительные ссылки (замер 3 сентября) ─────────────────
+
+def test_ssylka_pereceli_vaetsya_na_koren():
+    """Фрагмент лежит уровнем ниже, и `../LICENSE` в нём верен. В корневом
+    CHANGELOG.md тот же адрес ведёт наружу репозитория — молча."""
+    assert cc.retarget("[CC BY 4.0](../LICENSE)") == "[CC BY 4.0](LICENSE)"
+
+
+def test_vnutrennyaya_ssylka_ne_trogaetsya():
+    """ЛОЖНЫЙ ОТКАЗ ЗДЕСЬ ДОРОЖЕ ПРОПУСКА: тронув верную ссылку, сборка
+    сломала бы то, что работало."""
+    исходно = "правило [164](rules/ru/164-a-version-says-what-it-versions.md)"
+    assert cc.retarget(исходно) == исходно
+
+
+def test_snimaetsya_rovno_odin_uroven():
+    """Переезд — один уровень, значит и снимается один: `../../x` из фрагмента
+    и `../x` из корня указывают в одно место."""
+    assert cc.retarget("[вверх](../../соседний)") == "[вверх](../соседний)"
+
+
+def test_vneshnyaya_ssylka_ne_trogaetsya():
+    исходно = "[площадка](https://github.com/ArtVsMark)"
+    assert cc.retarget(исходно) == исходно
+

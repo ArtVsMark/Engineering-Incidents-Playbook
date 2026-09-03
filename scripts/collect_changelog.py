@@ -44,6 +44,8 @@ import datetime as dt
 import re
 import subprocess
 import sys
+
+import check_links
 from pathlib import Path
 
 # Что считается тегом выпуска, решает одно место на весь каталог: у второго
@@ -182,6 +184,32 @@ def fragments() -> list[Path]:
     return sorted(p for p in FRAGMENTS.glob("*.md") if p.name != "README.md")
 
 
+def retarget(text: str) -> str:
+    """Ссылки фрагмента перецеливаются на корень при переезде в CHANGELOG.md.
+
+    ПОЧЕМУ ЭТО НУЖНО. Фрагмент лежит в `changelog.d/`, и относительная ссылка в
+    нём пишется оттуда: `../LICENSE`. Сборка переносит ТЕКСТ в корневой
+    CHANGELOG.md, где тот же адрес указывает наружу репозитория. Ссылка была
+    верной и стала битой, причём молча: гейт ссылок краснеет уже на собранном
+    файле, а автор фрагмента к тому времени давно ушёл.
+
+    Замер 3 сентября: сбор 75 записей дал ДВЕ битые ссылки — обе на файлы
+    лицензий, обе законные во фрагменте.
+
+    Что считать ссылкой, спрашивается у check_links, а не решается заново:
+    вторая формулировка разошлась бы с первой молча (022).
+    """
+    def один(m: "re.Match[str]") -> str:
+        адрес = m.group(1)
+        if not адрес.startswith("../"):
+            return m.group(0)
+        # Снимается РОВНО один уровень, на любой глубине: переезд из
+        # changelog.d/ в корень — это ровно один уровень, и `../../x` из
+        # фрагмента означает то же место, что `../x` из корня.
+        return m.group(0).replace("(" + адрес, "(" + адрес[3:], 1)
+    return check_links.LINK_RE.sub(один, text)
+
+
 def validate() -> tuple[dict[str, list[str]], list[str]]:
     """Разбирает фрагменты. Возвращает записи по секциям и список находок."""
     found: dict[str, list[str]] = {s: [] for s in SECTIONS}
@@ -203,7 +231,7 @@ def validate() -> tuple[dict[str, list[str]], list[str]]:
             problems.append(f"{path.name}: ведущий «-» подставит сборка, "
                             "в тексте он лишний")
             continue
-        found[m.group(2)].append(" ".join(text.split()))
+        found[m.group(2)].append(retarget(" ".join(text.split())))
     return found, problems
 
 
