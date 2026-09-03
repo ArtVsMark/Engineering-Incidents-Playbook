@@ -65,8 +65,44 @@ MARKER = "<!-- main-red: не удаляйте, по этой строке за�
 #: «инструмента нет» становилось неотличимо от находки.
 gh = ghcli.run
 
+#: Исходы, которые вердиктом НЕ являются. Отмена ничего не проверила и ничего
+#: не утверждает — это третий исход, а не красное (правило 039). Считать её
+#: отказом опасно ровно там, где она случается чаще всего: `ci` на общей ветке
+#: отменяется конкурентностью при слияниях подряд, и 2 сентября это заморозило
+#: очередь на зелёном основании — изменение #283 простояло час.
+NO_VERDICT = ("cancelled", "stale", "skipped", "neutral")
+
+
+def _fold(runs: list[dict], excluded: frozenset[str]) -> tuple[dict[str, dict], set[str]]:
+    """Последний прогон С ВЕРДИКТОМ по каждому имени и имена вовсе без вердикта."""
+    latest: dict[str, dict] = {}
+    seen_names: set[str] = set()
+    for run in runs:
+        name = run.get("name") or ""
+        if name in excluded:
+            continue
+        seen_names.add(name)
+        if run.get("status") != "completed":
+            continue
+        if run.get("conclusion") in NO_VERDICT:
+            continue
+        seen = latest.get(name)
+        if seen is None or (run.get("createdAt") or "") > (seen.get("createdAt") or ""):
+            latest[name] = run
+    return latest, seen_names - set(latest)
+
+
+def unresolved_names(runs: list[dict], excluded: frozenset[str]) -> list[str]:
+    """Имена, у которых нет НИ ОДНОГО прогона с вердиктом.
+
+    Отдельно от красных и отдельно от зелёных: «не отработала» — это третий
+    исход, и молчание о нём неотличимо от чистого результата (039, 075).
+    """
+    return sorted(_fold(runs, excluded)[1])
+
+
 def red_names(runs: list[dict], excluded: frozenset[str]) -> list[str]:
-    """Имена работ, у которых ПОСЛЕДНИЙ завершённый прогон не зелёный.
+    """Имена работ, у которых последний прогон С ВЕРДИКТОМ не зелёный.
 
     Свёртка по имени, а не по записям: площадка отдаёт по одному имени столько
     записей, сколько раз проверка запускалась, и это история событий, а не
@@ -75,6 +111,15 @@ def red_names(runs: list[dict], excluded: frozenset[str]) -> list[str]:
 
     Незавершённые пропускаются: «ещё идёт» — не отказ, и заводить задачу на
     состояние, которое пройдёт само, значит приучать листать трекер мимо.
+
+    ОТМЕНЁННЫЕ ПРОПУСКАЮТСЯ ТОЖЕ, и это стоило инцидента. Прежняя редакция
+    брала последний ЗАВЕРШЁННЫЙ прогон, а отмену считала незелёным исходом.
+    На общей ветке `ci` отменяется конкурентностью при каждом слиянии поверх
+    предыдущего, поэтому 2 сентября в 15:46:58 последним завершённым `ci`
+    оказался отменённый, следующий ещё шёл, — и очередь встала на зелёном
+    основании. Отмена ничего не проверила: пропуская её, свёртка доходит до
+    последнего настоящего вердикта, а красное, стоящее ПОД отменой, при этом
+    остаётся красным.
 
     Исключения принадлежат ПОТРЕБИТЕЛЮ, а не инструменту, и у каталога их
     больше НЕТ. Пока здесь стояла `attribution-history` — «её красное означает
@@ -86,16 +131,7 @@ def red_names(runs: list[dict], excluded: frozenset[str]) -> list[str]:
     переживает свою причину молча. У другого проекта список свой и по своей
     причине.
     """
-    latest: dict[str, dict] = {}
-    for run in runs:
-        if run.get("status") != "completed":
-            continue
-        name = run.get("name") or ""
-        if name in excluded:
-            continue
-        seen = latest.get(name)
-        if seen is None or (run.get("createdAt") or "") > (seen.get("createdAt") or ""):
-            latest[name] = run
+    latest, _ = _fold(runs, excluded)
     return sorted(name for name, run in latest.items()
                   if run.get("conclusion") != "success")
 
@@ -160,6 +196,15 @@ def selftest() -> int:
         ("исключение не глушит остальных",
          [R("attribution-history", "completed", "failure"), R("ci", "completed", "failure")],
          {"attribution-history"}, ["ci"]),
+        ("отмена последней, успех под ней — основание зелёное",
+         [R("ci", "completed", "success", "2026-01-01"),
+          R("ci", "completed", "cancelled", "2026-01-02"),
+          R("ci", "completed", "cancelled", "2026-01-03")], set(), []),
+        ("красное под отменой красным и остаётся",
+         [R("ci", "completed", "failure", "2026-01-01"),
+          R("ci", "completed", "cancelled", "2026-01-02")], set(), ["ci"]),
+        ("одни отмены — не красное и не зелёное",
+         [R("ci", "completed", "cancelled")], set(), []),
         ("прогонов нет вовсе", [], set(), []),
         ("несколько красных — по алфавиту",
          [R("release", "completed", "failure"), R("ci", "completed", "timed_out")], set(),
@@ -171,6 +216,15 @@ def selftest() -> int:
         if got != expected:
             broken.append(f"{name}: ожидалось {expected}, вышло {got}")
         print(f"  {'красных: ' + ', '.join(got) if got else 'зелено':<28} — {name}")
+
+    # Третий исход свёртки прогоняется отдельно (145): «нет ни одного вердикта»
+    # не красное и не зелёное, и молчание о нём неотличимо от чистого (075).
+    без_вердикта = unresolved_names([R("ci", "completed", "cancelled")], frozenset())
+    if без_вердикта != ["ci"]:
+        broken.append(f"работа без вердикта не названа: вышло {без_вердикта}")
+    if unresolved_names([R("ci", "completed", "success")], frozenset()) != []:
+        broken.append("зелёная работа названа работой без вердикта")
+    print(f"  без вердикта: {', '.join(без_вердикта):<15} — отмена ничего не проверила")
 
     body = body_for("Текст потребителя.", ["ci"], "https://example/run/1")
     if MARKER not in body:
