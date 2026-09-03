@@ -127,8 +127,20 @@ def agreed(authors: Path) -> tuple[set[str], set[str]]:
     сторону — новый человек получает отказ и приходит с этим, а не уезжает
     молча в защищённую историю, где переписать уже нечем (правило 114).
     """
-    co: set[str] = set()
-    people: set[str] = set()
+    co, people = sections(authors)
+    return set(co), {mail_of(l) for l in people if mail_of(l)}
+
+
+def sections(authors: Path) -> tuple[list[str], list[str]]:
+    """Строки файла двумя разделами, В ПОРЯДКЕ ФАЙЛА: соавторы, затем авторы.
+
+    Порядок значим у второго раздела: первая строка — та подпись, которой
+    проект подписывает СВОИ коммиты, и `--print-author` отдаёт именно её.
+    Разбор живёт здесь, а не у зовущего: у файла один читатель (022), иначе
+    второй разберёт его иначе и разойдётся молча.
+    """
+    co: list[str] = []
+    people: list[str] = []
     target = co
     for raw in authors.read_text(encoding="utf-8").split("\n"):
         line = raw.strip()
@@ -137,8 +149,8 @@ def agreed(authors: Path) -> tuple[set[str], set[str]]:
         if line.lower().startswith(AUTHORS_HEAD):
             target = people
             continue
-        target.add(line)
-    return co, {mail_of(l) for l in people if mail_of(l)}
+        target.append(line)
+    return co, people
 
 
 def mail_of(line: str) -> str:
@@ -250,6 +262,16 @@ def main() -> int:
     ap.add_argument("--require-coauthor", action="store_true",
                     help="считать отказом коммит вовсе без атрибуции; по "
                          "умолчанию такие только считаются и печатаются числом")
+    # ПОЧЕМУ ПОДПИСЬ ОТДАЁТ ГЕЙТ, А НЕ ПРОГОН ПИШЕТ ЕЁ СЕБЕ. Прогон выпуска
+    # коммитит в общую ветку и ставит АННОТИРОВАННЫЙ тег — обоим нужна подпись,
+    # и она обязана быть автором из раздела «[авторы]», иначе тот же гейт
+    # отвергнет собственный коммит выпуска. Третья копия почты в дереве
+    # разошлась бы с этим списком молча (049), поэтому подпись берётся оттуда,
+    # где список уже разбирается.
+    ap.add_argument("--print-author", action="store_true",
+                    help="напечатать подпись проекта — первую строку раздела "
+                         "«[авторы]» — и выйти. Ею подписывают коммиты, "
+                         "которые проект делает сам")
     ap.add_argument("--since", default=None,
                     help="объявленное начало для --first-parents: раньше него "
                          "не спрашивать. Без него спрашивается вся история — "
@@ -259,6 +281,22 @@ def main() -> int:
     repo = Path(args.repo).resolve()
     authors = Path(args.authors).resolve() if args.authors else AUTHORS
     baseline = args.baseline
+
+    if args.print_author:
+        # Исход 2, а не пустая строка: подпись, которой нет, прогон выпуска
+        # подставил бы пустой и упал бы ниже с чужой ошибкой (075).
+        try:
+            _, people = sections(authors)
+        except OSError as e:
+            print(f"проверка не отработала: список имён не прочитан — {e}",
+                  file=sys.stderr)
+            return 2
+        if not people:
+            print(f"проверка не отработала: раздел «[авторы]» в {authors} пуст "
+                  f"— подписывать нечем", file=sys.stderr)
+            return 2
+        print(people[0])
+        return 0
 
     # ── исход 2: проверка не отработала ────────────────────────────────────
     try:
