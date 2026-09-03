@@ -281,3 +281,30 @@ def test_chuzhoy_soavtor_v_hvoste_po_prezhnemu_nahodka(repo, monkeypatch):
         "--authors", str(path), "--require-declared-author"])
 
     assert ca.main() == 1
+
+
+def test_подпись_проекта_это_первая_строка_раздела(repo, capsys, monkeypatch):
+    """Прогон выпуска подписывается ею: порядок в файле значим, а не случаен."""
+    make_repo(repo)
+    path = authors_file(
+        repo, f"{AGREED}\n\n[авторы]\n{OWNER}\nВторой <second@example.com>\n")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--authors", str(path), "--print-author"])
+
+    assert ca.main() == 0
+    assert capsys.readouterr().out.strip() == OWNER
+
+
+def test_пустой_раздел_авторов_подписи_не_даёт(repo, capsys, monkeypatch):
+    """Обратная сторона (140): подпись, которой нет, — исход 2, а не пустота.
+
+    Пустую строку прогон выпуска подставил бы в git config и упал бы ниже с
+    чужой ошибкой — «страж, не нашедший предмета, обязан краснеть» (075).
+    """
+    make_repo(repo)
+    path = authors_file(repo, f"{AGREED}\n")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--authors", str(path), "--print-author"])
+
+    assert ca.main() == 2
+    assert capsys.readouterr().out.strip() == ""

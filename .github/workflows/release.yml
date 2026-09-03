@@ -116,6 +116,30 @@ jobs:
           KEY: ${{ inputs.summary }}
         run: |
           set -euo pipefail
+          # ПОДПИСЬ СТАВИТСЯ ПЕРВОЙ СТРОКОЙ, И ЭТО ЗАМЕР. На первом же живом
+          # запуске (прогон 33769248638, 3 сентября) шаг умер на строке ниже:
+          #
+          #   *** Please tell me who you are.
+          #   fatal: empty ident name … not allowed
+          #   ##[error]Process completed with exit code 128
+          #
+          # `git tag -a` — АННОТИРОВАННЫЙ тег, у него есть автор, и подписи он
+          # требует так же, как коммит. Она задавалась ниже, внутри `else`, то
+          # есть после первой же команде, которой была нужна. Прогон выпуска
+          # никогда до этого не запускался — механизм был гипотезой (002), и
+          # проверить его можно было только выпуском.
+          #
+          # ПОДПИСЬ БЕРЁТСЯ ИЗ СПИСКА АВТОРОВ, А НЕ ВПИСЫВАЕТСЯ ЗДЕСЬ. Коммит
+          # выпуска уезжает в общую ветку, и автором в нём обязан стоять
+          # человек из раздела «[авторы]» — иначе тот же гейт отверг бы
+          # собственный коммит выпуска. Бот, стоявший здесь раньше, в списке не
+          # объявлен: `--require-declared-author` сказал бы это на первом же
+          # изменении после выпуска. Третья копия почты в дереве разошлась бы с
+          # списком молча (049, 131).
+          signature=$(python scripts/check_attribution.py --print-author)
+          git config user.name  "${signature%% <*}"
+          git config user.email "$(printf '%s' "$signature" | sed -n 's/.*<\(.*\)>.*/\1/p')"
+
           git tag -a "$WANT" -m "$WANT"
           python scripts/version.py --pin
           python scripts/collect_changelog.py --close "$WANT"
@@ -123,8 +147,6 @@ jobs:
           if git diff --quiet; then
             echo "журнал, строка и пример уже на месте"
           else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git commit -am "chore(release): журнал, строка метрик и пример на $WANT [skip ci]"
             git push origin HEAD:main
             # Тег переставляется на коммит с закрытым журналом, строкой и
