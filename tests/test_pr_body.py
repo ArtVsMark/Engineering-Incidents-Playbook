@@ -112,3 +112,36 @@ def test_нет_файла_это_третий_исход(repo, capsys):
 
 def test_тело_не_передано_это_третий_исход(capsys):
     assert pb.main(["--check"]) == 2
+
+
+# ── третий ответ: сделана часть (173) ──────────────────────────────────────
+
+def test_chast_s_ostatkom_prohodit(tmp_path):
+    """«Часть» — такой же полноправный ответ, как закрытие: без него автор
+    вынужден соврать в одну из сторон."""
+    f = tmp_path / "b.md"
+    f.write_text("Правка витрины.\n\nPart of #186\n\nОстаётся: два ответа.\n",
+                 encoding="utf-8")
+    assert pb.main(["--check", "--body-file", str(f)]) == 0
+
+
+def test_chast_bez_ostatka_otvergaetsya(tmp_path):
+    """Гейт проверяется тем, что обязан отвергнуть (140): «часть» без остатка
+    неотличима от полного закрытия."""
+    f = tmp_path / "b.md"
+    f.write_text("Правка витрины.\n\nPart of #186\n", encoding="utf-8")
+    assert pb.main(["--check", "--body-file", str(f)]) == 1
+
+
+def test_pustoy_ostatok_ostatkom_ne_schitaetsya():
+    """«Остаётся:» с пустотой — это пустота с двоеточием."""
+    assert not pb.names_rest("Part of #1\n\nОстаётся:\n")
+
+
+def test_sborka_ne_zakryvaet_chastichnoe(tmp_path):
+    """ГРАНИЦА: дописать `Closes` поверх «части» значило бы закрыть задачу,
+    сделанную наполовину."""
+    out, problem = pb.build("Правка (#186)", "Тело.\n\nPart of #186\n")
+    assert problem is None
+    assert "Closes" not in out
+

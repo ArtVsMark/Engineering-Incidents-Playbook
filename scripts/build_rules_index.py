@@ -20,7 +20,10 @@
   021 — указатель объявляет своего читателя строкой, которую пишет эта сборка:
         документ, собираемый машиной, руками её не получит;
   077 — паритет ДЕРЕВЬЕВ держит эта сборка, а язык записи — scripts/check_locale.py:
-        совпадение имён и разделов переводом не является, и здесь это сказано вслух.
+        совпадение имён и разделов переводом не является, и здесь это сказано вслух;
+  174 — факты о себе публикует сам проект: export/rules.json собирается ЗДЕСЬ и
+        читается потребителями, а не пересчитывается ими по нашему дереву.
+        Отметки времени в выгрузке пока нет — пробел назван в ответе каталога.
 
 Падает (код 1), если:
   • правило есть на одном языке и отсутствует на другом — та самая ошибка,
@@ -616,7 +619,7 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
     try:
         shallow = subprocess.run(
             ["git", "-C", str(ROOT), "rev-parse", "--is-shallow-repository"],
-            capture_output=True, text=True, check=True,
+            capture_output=True, text=True, encoding="utf-8", check=True,
         ).stdout.strip()
         if shallow == "true":
             return {}, [("клон мелкий: истории нет, а дата появления взялась бы от "
@@ -625,7 +628,7 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
         out = subprocess.run(
             ["git", "-C", str(ROOT), "log", "--diff-filter=A", "--name-only",
              "--format=%aI", "--", "rules/ru/[0-9][0-9][0-9]-*.md"],
-            capture_output=True, text=True, check=True,
+            capture_output=True, text=True, encoding="utf-8", check=True,
         ).stdout
     except (OSError, subprocess.CalledProcessError) as e:
         return {}, [f"история недоступна, дату появления взять неоткуда: {e}"]

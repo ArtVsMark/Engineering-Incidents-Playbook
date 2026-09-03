@@ -117,7 +117,7 @@ def release(tag: str) -> str:
 
 def git(root: Path, *args: str) -> subprocess.CompletedProcess:
     return subprocess.run(["git", "-C", str(root), *args],
-                          capture_output=True, text=True)
+                          capture_output=True, text=True, encoding="utf-8")
 
 
 def tags(root: Path) -> tuple[list[str] | None, str | None]:
@@ -267,7 +267,7 @@ MONTHS = ("января", "февраля", "марта", "апреля", "ма�
 def tag_date(root: Path, tag: str) -> tuple[str, str]:
     """Дата тега словами. Ошибка возвращается строкой, а не трассировкой."""
     done = subprocess.run(["git", "-C", str(root), "log", "-1", "--format=%cs",
-                           tag], capture_output=True, text=True)
+                           tag], capture_output=True, text=True, encoding="utf-8")
     if done.returncode != 0 or not done.stdout.strip():
         return "", f"у тега {tag} не спросить дату: {done.stderr.strip()}"
     year, month, day = done.stdout.strip().split("-")

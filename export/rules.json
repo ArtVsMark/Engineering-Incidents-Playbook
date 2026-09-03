@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "count": 171,
+  "count": 175,
   "rules": [
     {
       "id": "001",
@@ -4717,9 +4717,153 @@
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
       "portable": "yes"
+    },
+    {
+      "id": "173",
+      "slug": "a-change-closes-the-task-or-names-the-rest",
+      "title": {
+        "ru": "Изменение закрывает задачу целиком либо называет остаток",
+        "en": "A change closes the task in full or names what is left"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "конвейер"
+        ],
+        "en": [
+          "process",
+          "pipeline"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/173-a-change-closes-the-task-or-names-the-rest.md",
+        "en": "rules/en/173-a-change-closes-the-task-or-names-the-rest.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "186"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "174",
+      "slug": "facts-about-a-project-are-published-by-it",
+      "title": {
+        "ru": "Факты о проекте публикует сам проект, а не считает сосед",
+        "en": "A project publishes the facts about itself; a neighbour does not compute them"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "метрики"
+        ],
+        "en": [
+          "contracts",
+          "metrics"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/174-facts-about-a-project-are-published-by-it.md",
+        "en": "rules/en/174-facts-about-a-project-are-published-by-it.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1411"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "120"
+        }
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "portable": "yes"
+    },
+    {
+      "id": "175",
+      "slug": "an-absence-claim-that-a-command-can-refute-must-be-a-gate",
+      "title": {
+        "ru": "Утверждение «предмета нет», опровергаемое одной командой, обязано быть гейтом",
+        "en": "An absence claim a single command can refute must be a gate"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "документация"
+        ],
+        "en": [
+          "gates",
+          "documentation"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/175-an-absence-claim-that-a-command-can-refute-must-be-a-gate.md",
+        "en": "rules/en/175-an-absence-claim-that-a-command-can-refute-must-be-a-gate.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "59"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "176",
+      "slug": "environment-defaults-are-hidden-platform-dependencies",
+      "title": {
+        "ru": "Умолчание, взятое из окружения, — скрытая зависимость от платформы",
+        "en": "A default taken from the environment is a hidden platform dependency"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "CI"
+        ],
+        "en": [
+          "code",
+          "CI"
+        ]
+      },
+      "added": "2026-09-03",
+      "files": {
+        "ru": "rules/ru/176-environment-defaults-are-hidden-platform-dependencies.md",
+        "en": "rules/en/176-environment-defaults-are-hidden-platform-dependencies.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "63"
+        },
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "62"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
     }
   ],
   "candidates": [
+    {
+      "kind": "hypothesis",
+      "slug": "ci-is-a-gate-not-a-feedback-loop",
+      "lang": "ru",
+      "title": "Конвейер — ворота, а не петля обратной связи",
+      "area": "процесс",
+      "hypothesis": "У окна два способа узнать, работает ли только что написанное: прогнать проверку у себя или толкнуть ветку и посмотреть на конвейер. Второй выглядит бесплатным — зелёный прогон не стоит ни токена, читать нечего. Гипотеза в том, что он **не бесплатен, а платится не тем ресурсом**: минутами стены, общими раннерами и риском красной общей ветки, которая морозит очередь у всех сразу. Отсюда требование, если гипотеза подтвердится: конвейер — ворота на выходе, а не петля обратной связи внутри работы.",
+      "source": "Задача [#287](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/287),\nзаведённая окном-диспетчером 3 сентября по вопросу владельца: «может тестирование\nотдать CI и разбирать инциденты, а тесты самому — только в крайнем случае».\n\nЗамеры оттуда, у грейдера: 220 тестовых файлов, одиннадцать обязательных\nпроверок, полный прогон — 15,4–18,9 минуты (медиана около 17). То есть одна\nгипотеза, проверяемая через толчок, стоит около семнадцати минут стены. Там же\nдве истории: голодовка раннеров на четырнадцать часов, когда конвейер не отвечал\nни на один вопрос, и красная общая ветка на тринадцать часов, которую из облака\nснять было нечем.",
+      "confirmed_by": "Признак, отличающий это от общих рассуждений, взят из самой задачи:\n\n- **разбор, где окно потратило больше двух циклов конвейера на гипотезу,\n  проверяемую локально за секунды** — не «конвейер был медленным», а «ответ был\n  доступен дешевле». Двух таких случаев хватит;\n- либо **красная общая ветка или занятая очередь, возникшие из толчка, сделанного\n  чтобы узнать результат**, а не чтобы отдать готовое.\n\nСейчас случай **один**: тот самый #285, и он уже оплачен починкой причины. Один\nслучай — это невнимательность, а не механизм; правилом это станет на втором.",
+      "applicability": "Гипотеза говорит о работе, где локальная проверка **возможна**. Там, где она\nневозможна по построению — матрица операционных систем, интеграция с площадкой,\nправа токена, — выбора нет, и конвейер остаётся единственным ответом. Это ровно\nграница [018](../rules/ru/018-cloud-checks-nodes-local-checks-chain.md): одно\nокружение проверяет узлы, другое — цепочку.\n\nОтличие от 018 и причина, по которой запись заведена отдельно: 018 отвечает на\nвопрос «где проверка **осмысленна**» — то есть про правильность, и отказ там\nгромкий, тест соврал. Здесь вопрос другой: когда проверку можно провести в обоих\nместах, какое выбирают для итерации. Это про стоимость, и отказ тихий.\n\nВозможно, всё сведётся к границе применимости 018, а не к отдельному правилу —\nтогда так и надо будет записать, вслух.",
+      "file": "candidates/ci-is-a-gate-not-a-feedback-loop.md"
+    },
     {
       "kind": "hypothesis",
       "slug": "data-arrives-with-terms",

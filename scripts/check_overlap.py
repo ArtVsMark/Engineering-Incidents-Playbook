@@ -47,7 +47,7 @@ LIMIT = 50
 
 def current_branch(root: Path) -> str:
     done = subprocess.run(["git", "-C", str(root), "rev-parse",
-                           "--abbrev-ref", "HEAD"], capture_output=True, text=True)
+                           "--abbrev-ref", "HEAD"], capture_output=True, text=True, encoding="utf-8")
     return done.stdout.strip()
 
 
@@ -93,7 +93,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         done = subprocess.run(
             ["git", "-C", str(root), "diff", "--name-only", f"origin/main...{branch}"],
-            capture_output=True, text=True)
+            capture_output=True, text=True, encoding="utf-8")
         if done.returncode != 0:
             print("проверка не отработала: список своих файлов не получен — "
                   f"{done.stderr.strip()[:120]}", file=sys.stderr)
