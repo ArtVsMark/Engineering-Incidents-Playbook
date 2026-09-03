@@ -182,6 +182,25 @@ def fragments() -> list[Path]:
     return sorted(p for p in FRAGMENTS.glob("*.md") if p.name != "README.md")
 
 
+#: Ссылка внутри фрагмента: `](цель)`. Внешние адреса и якори не трогаются.
+LINK_RE = re.compile(r"\]\((\.\./)([^)\s]+)\)")
+
+
+def retarget(text: str) -> str:
+    """Перецеливает относительные ссылки при переезде фрагмента в общий файл.
+
+    Фрагмент лежит в `changelog.d/`, а собранная запись — в корневом
+    `CHANGELOG.md`, на уровень выше. Ссылка `../LICENSE`, верная у себя,
+    после переезда указывает ВЫШЕ корня и не открывается.
+
+    Замер: собранный раздел вёз четыре такие ссылки — `../LICENSE`,
+    `../LICENSE-CODE` и две на правила, — и все четыре были битыми.
+    Уровень ровно один, поэтому снимается ровно один `../`: правило 158 —
+    отказ обязан называть адрес, а перецеленная ссылка и есть адрес.
+    """
+    return LINK_RE.sub(lambda m: f"]({m.group(2)})", text)
+
+
 def validate() -> tuple[dict[str, list[str]], list[str]]:
     """Разбирает фрагменты. Возвращает записи по секциям и список находок."""
     found: dict[str, list[str]] = {s: [] for s in SECTIONS}
@@ -203,7 +222,7 @@ def validate() -> tuple[dict[str, list[str]], list[str]]:
             problems.append(f"{path.name}: ведущий «-» подставит сборка, "
                             "в тексте он лишний")
             continue
-        found[m.group(2)].append(" ".join(text.split()))
+        found[m.group(2)].append(retarget(" ".join(text.split())))
     return found, problems
 
 
