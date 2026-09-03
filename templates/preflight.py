@@ -80,7 +80,7 @@ class Result:
 def _tracked_files() -> list[Path]:
     """Файлы под контролем версий. Пустой ответ — повод упасть (правило 075)."""
     out = subprocess.run(
-        ["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, text=True, timeout=60
+        ["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60
     )
     if out.returncode != 0:
         raise RuntimeError(f"git ls-files не отработал: {out.stderr.strip()}")
@@ -133,7 +133,7 @@ def run_step(step: Step) -> Result:
         return Result(step.name, BROKEN, f"инструмент не установлен: {step.argv[0]}", 0.0)
     try:
         proc = subprocess.run(
-            step.argv, cwd=ROOT, capture_output=True, text=True, timeout=step.timeout_s
+            step.argv, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=step.timeout_s
         )
     except subprocess.TimeoutExpired:
         return Result(step.name, BROKEN, f"предел времени {step.timeout_s} с", time.monotonic() - t0)

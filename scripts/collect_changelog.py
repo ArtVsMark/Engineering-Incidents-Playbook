@@ -172,7 +172,7 @@ def added_since(ref: str) -> tuple[list[Path], str | None]:
         done = subprocess.run(
             ["git", "diff", "--name-only", "--diff-filter=A", f"{ref}...HEAD",
              "--", FRAGMENTS.name],
-            cwd=ROOT, capture_output=True, text=True)
+            cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
     except FileNotFoundError:
         return [], "нет команды git"
     if done.returncode != 0:

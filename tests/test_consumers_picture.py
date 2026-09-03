@@ -482,3 +482,28 @@ def test_korotkie_imena_vysotu_ne_menyayut(repo):
     высота = int(re.search(r'height="(\d+)"', svg).group(1))
 
     assert высота == cp.TOP + cp.ROW * 2 + cp.PAD - 8
+
+
+# ── «не применимо» видно на картинке ───────────────────────────────────────
+
+def test_kolonka_ne_primenimo_risuetsya():
+    """До этой правки читатель видел «ничем» и не мог отличить долг от
+    решения: правило без механизма и правило, к проекту не относящееся."""
+    doc = {"consumers": [{"repo": "o/r", "state": "подключён", "answered": 10,
+                          "rules": {"001": {}},
+                          "by_mechanism": {"gate": 7},
+                          "by_status": {"not-applicable": 3}}]}
+    строки = cp.rows(doc)
+    assert строки[0]["not-applicable"] == 3
+    assert "not-applicable" in cp.shown(строки)
+
+
+def test_bez_neprimenimyh_kolonki_net():
+    """Колонка показывается, пока ею отвечают: вписанная навсегда пережила бы
+    последнего потребителя, и вычеркнуть её было бы некому (049)."""
+    doc = {"consumers": [{"repo": "o/r", "state": "подключён", "answered": 10,
+                          "rules": {"001": {}},
+                          "by_mechanism": {"gate": 10},
+                          "by_status": {"active": 10}}]}
+    assert "not-applicable" not in cp.shown(cp.rows(doc))
+

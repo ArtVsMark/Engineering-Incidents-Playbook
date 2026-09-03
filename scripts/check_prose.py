@@ -100,7 +100,7 @@ def tracked(root: Path) -> list[Path]:
     """Отслеживаемые файлы. Непрослеживаемый мусор проверять незачем."""
     try:
         out = subprocess.run(["git", "-C", str(root), "ls-files"],
-                             capture_output=True, text=True, check=True).stdout
+                             capture_output=True, text=True, encoding="utf-8", check=True).stdout
     except (OSError, subprocess.CalledProcessError):
         return []
     return [root / line for line in out.split("\n") if line]

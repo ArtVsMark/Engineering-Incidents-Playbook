@@ -91,7 +91,7 @@ def git(*args: str) -> str | None:
     """stdout git-команды без хвостового перевода строки; None при любой ошибке."""
     try:
         done = subprocess.run(("git", "-C", str(ROOT), *args),
-                              capture_output=True, text=True, check=False)
+                              capture_output=True, text=True, encoding="utf-8", check=False)
     except OSError:
         return None
     return done.stdout.strip() if done.returncode == 0 else None

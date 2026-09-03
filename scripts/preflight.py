@@ -77,6 +77,20 @@ STAND_IN = {
         ("body", "тело первого коммита ветки"),
     "запись журнала едет вместе с изменением":
         ("journal", "изменённые пути и тело первого коммита"),
+    # ТРЕТИЙ ШАГ ПОДДАЁТСЯ ТОЙ ЖЕ ЗАМЕНЕ, и это выяснилось дорого. Он числился
+    # непроверяемым только потому, что его команда поминает `$BASE`, — а
+    # `$BASE` это и есть общая ветка, которая лежит здесь как `origin/main`.
+    #
+    # Замер 3 сентября: изменение #285 уехало с фрагментом починки без строки
+    # вердикта и вернулось красным. Прогон перед толчком напечатал «чисто: 32
+    # шага» и назвал этот шаг непроверенным; тот же скрипт с `--added-since
+    # origin/main` воспроизвёл отказ на рабочем столе за секунду.
+    #
+    # Цена не в одном круге. Прогон, УМАЛЯЮЩИЙ свою способность, толкает окно
+    # узнавать результат из конвейера — а там ответ стоит минут стены и общего
+    # ресурса на всех (задача #287).
+    "починка ответила, тянет ли она на правило":
+        ("fix_verdict", "фрагменты, добавленные поверх origin/main"),
 }
 
 
@@ -87,14 +101,14 @@ def branch_body(root: Path, base: str = "origin/main") -> tuple[str, str]:
     ответы, и путать их значит врать прогоном (039).
     """
     done = subprocess.run(["git", "-C", str(root), "rev-list", "--reverse",
-                           f"{base}..HEAD"], capture_output=True, text=True)
+                           f"{base}..HEAD"], capture_output=True, text=True, encoding="utf-8")
     if done.returncode != 0:
         return "", f"не спросить коммиты ветки: {done.stderr.strip()}"
     first = done.stdout.split("\n")[0].strip()
     if not first:
         return "", f"ветка не несёт своих коммитов поверх {base}"
     done = subprocess.run(["git", "-C", str(root), "log", "-1", "--format=%b",
-                           first], capture_output=True, text=True)
+                           first], capture_output=True, text=True, encoding="utf-8")
     if done.returncode != 0:
         return "", f"не спросить тело коммита {first[:7]}: {done.stderr.strip()}"
     return done.stdout, ""
@@ -184,7 +198,7 @@ def run_step(step: Step, root: Path) -> tuple[int, str]:
     try:
         done = subprocess.run(  # noqa: S603 — команда взята из своего же ci.yml
             [sys.executable, *step.command[1:]],
-            cwd=root, capture_output=True, text=True, timeout=step.timeout_s)
+            cwd=root, capture_output=True, text=True, encoding="utf-8", timeout=step.timeout_s)
     except subprocess.TimeoutExpired:
         return 2, f"шаг не уложился в {step.timeout_s} с"
     except OSError as exc:
@@ -197,7 +211,7 @@ def run_step(step: Step, root: Path) -> tuple[int, str]:
 def branch_paths(root: Path, base: str = "origin/main") -> tuple[list[str], str]:
     """Пути, которые изменение тронет, — тот же вопрос, что задаёт прогон."""
     done = subprocess.run(["git", "-C", str(root), "diff", "--name-only",
-                           f"{base}...HEAD"], capture_output=True, text=True)
+                           f"{base}...HEAD"], capture_output=True, text=True, encoding="utf-8")
     if done.returncode != 0:
         return [], f"не спросить изменённые пути: {done.stderr.strip()}"
     return [s for s in done.stdout.splitlines() if s.strip()], ""
@@ -210,6 +224,13 @@ def stand_in_call(kind: str, root: Path) -> tuple[list[str], str, str]:
     конвейере: вторая проверка над той же территорией разошлась бы с первой
     (022), а «почти та же» проверка — худший из возможных ответов.
     """
+    # Шагу, смотрящему на ДИАПАЗОН, тело коммита не нужно: спрашивать его
+    # значило бы отказывать в замене там, где предмет есть (051). Тот же скрипт
+    # и тот же ключ; подменяется только база — `$BASE` площадки это общая
+    # ветка, и локально она называется origin/main (022).
+    if kind == "fix_verdict":
+        return (["scripts/collect_changelog.py", "--check",
+                 "--added-since", "origin/main"], "", "")
     текст, ошибка = branch_body(root)
     if ошибка:
         return [], "", ошибка
@@ -308,7 +329,7 @@ def main(argv: list[str] | None = None) -> int:
             continue
         done = subprocess.run(  # noqa: S603 — команда собрана таблицей замен
             [sys.executable, *argv_],
-            cwd=root, input=stdin_, capture_output=True, text=True)
+            cwd=root, input=stdin_, capture_output=True, text=True, encoding="utf-8")
         подменено.append(step.name)
         mark = {0: "✓"}.get(done.returncode, "✗")
         print(f"{mark} {step.name}  ({откуда})")

@@ -72,7 +72,7 @@ BINDINGS = """{
 
 def git(repo: Path, *args: str) -> subprocess.CompletedProcess:
     return subprocess.run(["git", "-C", str(repo), *args], check=True,
-                          capture_output=True, text=True)
+                          capture_output=True, text=True, encoding="utf-8")
 
 
 def fake(repo: Path, rows: str = ROW, section: str = SECTION) -> Path:

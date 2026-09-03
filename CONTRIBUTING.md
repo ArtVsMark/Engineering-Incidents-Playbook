@@ -285,6 +285,7 @@ python scripts/check_roles.py
 python scripts/check_prose.py
 python scripts/history_metrics.py --check
 python scripts/check_task_state.py --selftest
+python scripts/check_subprocess.py
 python scripts/check_labels.py --paths-from <файл со списком путей> --have <метки>
 python scripts/pr_body.py --check --body-file <файл с телом изменения>
 ```

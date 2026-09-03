@@ -46,8 +46,14 @@ https://github.com/owner/other-project#12
 
 
 def prepare(root: Path, files: dict[str, str], rules: dict[str, str] | None = None):
-    """Кладёт минимальное дерево: rules/ru обязательно, иначе исход 2."""
-    write(root / "rules" / "ru" / "001-a.md", "# Правило\n")
+    """Кладёт минимальное дерево: rules/ru обязательно, иначе исход 2.
+
+    Слаг правила-заглушки НЕ должен совпадать со слагом кандидата: совпадение —
+    настоящая находка гейта («предмет уехал в корпус»), и раньше эта заглушка
+    называлась `001-a.md` при кандидате `a.md`, то есть подделка нечаянно
+    воспроизводила отвергаемый случай.
+    """
+    write(root / "rules" / "ru" / "001-заглушка-корпуса.md", "# Правило\n")
     (root / "rules" / "en").mkdir(parents=True, exist_ok=True)
     for name, text in (rules or {}).items():
         write(root / "rules" / "ru" / name, text)
@@ -217,3 +223,46 @@ def test_пустая_папка_даёт_пустой_список_а_не_от
     monkeypatch.setattr(bri, "ROOT", repo)
 
     assert bri.candidates_export() == []
+
+
+# ── кандидат уехал в корпус (022, 026) ─────────────────────────────────────
+
+def дерево(root, слаг: str, правило: str = "") -> None:
+    """Минимальное дерево: один кандидат и, если задано, одно правило."""
+    (root / "candidates").mkdir(parents=True, exist_ok=True)
+    (root / "candidates" / f"{слаг}.md").write_text(
+        "# Заголовок\n\n**Область.** процесс\n\n**Гипотеза.** Утверждение.\n\n"
+        "## Источник\n\nArtVsMark/Engineering-Incidents-Playbook#1\n\n"
+        "## Предполагаемая причина\n\nПричина.\n\n"
+        "## Чем подтвердится\n\nПризнак.\n\n"
+        "## Применимость\n\nГраница.\n", encoding="utf-8")
+    (root / "rules" / "ru").mkdir(parents=True, exist_ok=True)
+    if правило:
+        (root / "rules" / "ru" / правило).write_text("# Правило\n", encoding="utf-8")
+
+
+def test_sovpadenie_slaga_s_pravilom_otkaz(tmp_path):
+    """Один предмет описан дважды, и кандидат утверждает, что инцидента нет."""
+    дерево(tmp_path, "уехавший", "177-уехавший.md")
+    отказы, _ = cc.promoted(tmp_path, sorted((tmp_path / "candidates").glob("*.md")))
+    assert отказы and "уехал в корпус" in отказы[0]
+
+
+def test_bez_sovpadeniya_chisto(tmp_path):
+    """ЛОЖНЫЙ ОТКАЗ ЗДЕСЬ ДОРОЖЕ: близость — не приговор, порога у меры нет."""
+    дерево(tmp_path, "своя-гипотеза", "177-другое.md")
+    отказы, отчёт = cc.promoted(tmp_path, sorted((tmp_path / "candidates").glob("*.md")))
+    assert отказы == []
+    assert отчёт and "ближайшее правило" in отчёт[0]
+
+
+def test_prinyatoe_predlozhenie_s_tem_zhe_slagom_otkaz(tmp_path):
+    """Гипотеза стала записью через канал предложений, а файл остался."""
+    дерево(tmp_path, "принятая", "")
+    (tmp_path / ".rules").mkdir(parents=True, exist_ok=True)
+    (tmp_path / ".rules" / "proposals.json").write_text(
+        '{"verdicts": {"ArtVsMark/Сосед:принятая": {"status": "admitted"}}}',
+        encoding="utf-8")
+    отказы, _ = cc.promoted(tmp_path, sorted((tmp_path / "candidates").glob("*.md")))
+    assert отказы and "принято как правило" in отказы[0]
+
