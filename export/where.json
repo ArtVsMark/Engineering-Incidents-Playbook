@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-03T16:00:59+00:00",
+  "generated_at": "2026-09-03T20:49:28+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -757,15 +757,15 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-09-03",
-      "answered": 163,
+      "answered": 175,
       "by_status": {
-        "active": 160,
+        "active": 172,
         "not-applicable": 3
       },
       "by_mechanism": {
-        "gate": 66,
-        "pipeline": 31,
-        "document": 63
+        "gate": 71,
+        "pipeline": 36,
+        "document": 65
       },
       "rules": {
         "001": "active",
@@ -930,7 +930,19 @@
         "161": "active",
         "162": "active",
         "163": "active",
-        "164": "active"
+        "164": "active",
+        "165": "active",
+        "166": "active",
+        "167": "active",
+        "168": "active",
+        "169": "active",
+        "170": "active",
+        "171": "active",
+        "172": "active",
+        "173": "active",
+        "174": "active",
+        "175": "active",
+        "176": "active"
       },
       "holds": {
         "001": {
@@ -1572,6 +1584,54 @@
         "164": {
           "mechanism": "gate",
           "where": ".rules/bindings.json и .rules/proposals.json — рядом с каждым `schema` стоит ключ `schema_of`, называющий предмет в точке чтения (сам `schema` переименованию не подлежит: имя задаёт контракт каталога). Наличие обоих ключей и значение каждого номера проверяет scripts/check_rule_bindings.py::version_subjects — шагом «Rule bindings answer the catalogue» обязательного docs-guardrails в .github/workflows/ci.yml и хуком pre-commit, то есть на каждый PR; дрейф от templates/bindings.json и templates/proposals.json каталога — contract_drift и proposal_drift ночным обходом .github/workflows/tracker-guardrails.yml"
+        },
+        "165": {
+          "mechanism": "gate",
+          "where": "scripts/check_hidden_defaults.py — разбор исходника отвергает список путей от git без -z; шаг «Умолчания заданы явно» обязательного docs-guardrails в .github/workflows/ci.yml и хук pre-commit. Сами списки читаются по NUL: scripts/preflight.py (git_paths), scripts/check_work_overlap.py, scripts/check_adr_records.py; охват называет числом scripts/preflight.py (fingerprint_coverage). Подтверждено живой пробой: отпечаток не замечал правок в файле с кириллическим именем, то есть pre-push хук принимал состояние, которого гейт не проверял (issue #1417)"
+        },
+        "166": {
+          "mechanism": "gate",
+          "where": "scripts/check_docs_guardrails.py ищет разметку ссылки `](адрес`, а не подстроку адреса, — шаг обязательного docs-guardrails в .github/workflows/ci.yml; регрессии в tests/test_check_docs_guardrails.py. Подстрока зеленела бы на подписи ссылки при подменённой цели"
+        },
+        "167": {
+          "mechanism": "gate",
+          "where": "scripts/check_workflow_guardrails.py (non_ascii_shell_names) — имена переменных оболочки и ключей env: в .github/workflows/*.yml; шаг обязательного docs-guardrails в .github/workflows/ci.yml. Тихая форма опаснее громкой: переменная с не-ASCII именем создаётся, но $ИМЯ не раскрывается, и шаг зеленеет, не проверив ничего (issue #1421)"
+        },
+        "168": {
+          "mechanism": "pipeline",
+          "where": "scripts/check_branch_protection.py сверяет список обязательных проверок с ruleset дословно — ночным обходом .github/workflows/tracker-guardrails.yml. Обязательных проверок у нас одиннадцать, шесть из них — имена ячеек матрицы, то есть ровно названная правилом ловушка; агрегирующей проверки с постоянным именем нет, это issue #1420, а до неё риск назван в CLAUDE.md § Гейты"
+        },
+        "169": {
+          "mechanism": "document",
+          "where": "docs/agent/preflight.md § Что гейты НЕ ловят — очередь слияний застрахована расписанием (.github/workflows/merge-queue.yml, cron «23 * * * *», в шапке названо страховкой), а замера срабатываний по источникам нет: issue #1427. Ночной прогон cross-OS бейджа (CLAUDE.md § Метрики) под правило не подпадает — предмет там суточный, и правило само называет эту границу"
+        },
+        "170": {
+          "mechanism": "pipeline",
+          "where": "scripts/capture_github_fixtures.py --check — у каждой подделки чужого интерфейса есть снятый источник с блоком происхождения (tests/fixtures/github/), сверка ночным обходом .github/workflows/tracker-guardrails.yml; разбор гоняется на снятых ответах в tests/test_fixture_sources.py. Ответы Stepik API из облака снять нечем — эти подделки названы несверенными, и это остаток задачи #1422"
+        },
+        "171": {
+          "mechanism": "document",
+          "where": "docs/agent/preflight.md § Что гейты НЕ ловят — эталон обязательных проверок в scripts/check_branch_protection.py (EXPECTED_CHECKS) является КОПИЕЙ имён из .github/workflows/ci.yml, а не производным от него: переименование ячейки матрицы оставит ruleset и константу согласными друг с другом, а работы — с другими именами. Самоблокировка и починка — issue #1420"
+        },
+        "172": {
+          "mechanism": "pipeline",
+          "where": "scripts/check_stale_repo_names.py — перепись имён репозиториев в действующих файлах против канона от площадки, ночным обходом .github/workflows/tracker-guardrails.yml; scripts/check_catalogue_name.py сверяет объявленное имя каталога с каноном. История отделена от адреса явно: журналы и архив в перепись не входят (issue #1421)"
+        },
+        "173": {
+          "mechanism": "pipeline",
+          "where": "scripts/check_issue_state_after_merge.py спрашивает у трекера судьбу задачи ПОСЛЕ слияния — закрыта ли закрытая, открыта ли частичная, назван ли остаток галочками; ночным обходом .github/workflows/tracker-guardrails.yml. Первая половина — три ответа (Closes #N · «Часть #N — что именно» · «Без issue:») — в scripts/check_pr_ready.py, но он числится в GATE_DEBT: запускает его окно руками, поэтому уровень взят по слабейшему звену (issue #1419)"
+        },
+        "174": {
+          "mechanism": "pipeline",
+          "where": "scripts/generate_facts.py публикует факты о проекте машиночитаемо — шаг в .github/workflows/ci.yml (под `|| true`, слияние не держит). Правило родилось здесь: след ведёт на #1411, соседи перестали считать наши числа сами"
+        },
+        "175": {
+          "mechanism": "gate",
+          "where": ".rules/bindings.json — ответ «предмета нет» несёт СВОЙ рецепт опровержения полем `absent`; проверяет scripts/check_rule_bindings.py (absence_claims) шагом «Rule bindings answer the catalogue» обязательного docs-guardrails в .github/workflows/ci.yml и хуком pre-commit. Отказ односторонний: нашли опровержение — красное, не нашли — молчим (issue #1421)"
+        },
+        "176": {
+          "mechanism": "gate",
+          "where": "scripts/check_hidden_defaults.py (encoding_findings) — текстовый subprocess без encoding= отвергается разбором исходника, а не прогоном; шаг обязательного docs-guardrails в .github/workflows/ci.yml и хук pre-commit. Прогон отвечает «сегодня не совпало», разбор — «умолчание не задано» (issue #1417)"
         }
       },
       "trails": 69,
@@ -2196,8 +2256,8 @@
       },
       "by_mechanism": {
         "gate": 84,
-        "document": 35,
-        "none": 21,
+        "document": 36,
+        "none": 20,
         "pipeline": 5
       },
       "rules": {
@@ -2448,7 +2508,7 @@
         },
         "022": {
           "mechanism": "gate",
-          "where": "scripts/check_pr_metadata.py читает номенклатуру меток из docs/labels.md, второго списка в коде нет; scripts/pr_check.py читает состав обязательных прогонов из дерева PR, а не из константы."
+          "where": "scripts/check_pr_metadata.py читает номенклатуру меток из docs/labels.md, второго списка в коде нет; scripts/pr_check.py читает состав обязательных прогонов из дерева PR, а не из константы. Живое подтверждение 2026-09-03: у охвата транскриптов источников оказалось ДВА — Coverage.__str__ и своя строка в src/claude_code_usage/cli.py, — и второй разошёлся с первым, потеряв число повторов ответа. Тест при этом был зелёным, потому что смотрел на первый, а человек видел второй. Починено сведением к одному источнику; подделочная запись транскрипта по той же причине поднята в tests/conftest.py."
         },
         "023": {
           "mechanism": "gate",
@@ -2479,8 +2539,8 @@
           "where": "scripts/changelog.py — фрагменты changelog.d/, гейт не пропускает PR с типом bug или enhancement без записи; --fold складывает их в CHANGELOG.md при подготовке версии."
         },
         "032": {
-          "mechanism": "none",
-          "where": "НЕ ДЕРЖИТСЯ НИЧЕМ, и слепая зона названа, а не замазана. Предмет наблюдаем: команда sample запускается и её поведение видно. Запущена целиком на настоящем материале она не была ни разу — всё знание получено чтением кода и подделанными данными в тестах, и это теперь сказано в обеих витринах, § «Статус». Оговорку «нет среды для запуска» применить нельзя только наполовину: у ОБЛАЧНОГО окна её действительно нет — реестр сессий живёт в MCP, которого у него не заведено, — а у локального она есть. То есть это не «негде запустить», а «не запускали», и правило требует называть разницу."
+          "mechanism": "document",
+          "where": "README.md и README.en.md, § «Статус». Правило требует ЗАПУСКАТЬ там, где предмет наблюдаем, и запуск состоялся: 2026-09-03 транскриптный сбор прогнан на живом транскрипте — 3833 строки, 650 ответов, — и первый же прогон нашёл то, чего не увидели ни тесты, ни чтение кода: вывод команды молчал о 572 отброшенных повторах, то есть о 47% строк с расходом. Правило окупилось с первого применения. Что осталось непрогнанным, названо там же и не замазано: реестровая половина и запись в хранилище. У облачного окна реестра нет — MCP ему не заведён, — и это «негде запустить»; у локального он есть, и там это по-прежнему «не запускали»."
         },
         "033": {
           "mechanism": "none",

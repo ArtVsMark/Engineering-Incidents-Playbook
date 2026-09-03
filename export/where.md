@@ -13,9 +13,9 @@
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 34 | 26 | 175 | 0 | 0 | 137 | 93 | 8 | 24 | 12 | 85 |  |
-| `Stepik-Python-Grader` | подключён | 69 | 129 | 163 | 12 | 0 | 160 | 66 | 31 | 63 | 0 | 128 |  |
+| `Stepik-Python-Grader` | подключён | 69 | 129 | 175 | 0 | 0 | 172 | 71 | 36 | 65 | 0 | 138 |  |
 | `ArtVsMark` | подключён | 16 | 10 | 175 | 0 | 0 | 101 | 60 | 11 | 13 | 15 | 34 |  |
-| `Claude-Code_Usage-Token` | подключён | 9 | 10 | 175 | 0 | 0 | 145 | 84 | 5 | 35 | 21 | 60 |  |
+| `Claude-Code_Usage-Token` | подключён | 9 | 10 | 175 | 0 | 0 | 145 | 84 | 5 | 36 | 20 | 61 |  |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
 ## Чем держат другие · How others enforce it
@@ -34,7 +34,6 @@
 | 016 | `Engineering-Incidents-Playbook` — гейт: scripts/aggregate_bindings.py и scripts/collect_proposals.py печатают «и ещё N» вместо тихого урезания списка находок; `Stepik-Python-Grader` — гейт: scripts/check_truncation_marks.py — функция, режущая по пределу-константе, обязана оставить признак обрыва (флаг, многоточие, полную длину рядом); предел, заданный параметром, объявлен в контракте и молчанием не является; `Claude-Code_Usage-Token` — гейт: scripts/preflight.py печатает охват («просмотрено N, пропущено двоичных M»); src/claude_code_usage/transcripts.py — Coverage со строками, повторами ответа и незнакомыми полями; scripts/subprocess_encoding.py и scripts/utf8_output.py — «разобрано файлов N, пропущено M» и «проверено N, не предмет M»; scripts/rules_answer.py — «записей N, с адресом M». | `ArtVsMark` |
 | 017 | `Stepik-Python-Grader` — конвейер: scripts/gh_rest.py — остаток квоты читается из заголовков каждого ответа (бесплатно) и печатается подкомандой rate, которая сама квоту не тратит; разбор начинается с факта, а не с гипотезы; `Claude-Code_Usage-Token` — документ: docs/spec.md и CLAUDE.md § «Правила измерения» — остаток измеряется, а не запрашивается; пока шкала не откалибрована, инструмент говорит «остаток неизвестен», а не рисует проценты. | `Engineering-Incidents-Playbook` |
 | 028 | `Stepik-Python-Grader` — конвейер: scripts/check_issue_checklists.py — комплексный issue от трёх находок ведёт чек-лист с исходом каждой; `Claude-Code_Usage-Token` — документ: .github/pull_request_template.md — восемь пунктов галочками, а не прозой; CLAUDE.md § «Перед PR» — тот же чек-лист, исполняемый одной командой scripts/preflight.py. Состояние задачи не вычисляется чтением: у каждого пункта либо галочка, либо её нет. | `Engineering-Incidents-Playbook` |
-| 032 | `Stepik-Python-Grader` — документ: docs/agent/roles.md: если предмет роли наблюдаем в работающем продукте, роль обязана его запустить — вывод чтением кода считается неполным; `ArtVsMark` — гейт: .github/workflows/pr-check.yml — вывод о работоспособности делается прогоном вхолостую, а не чтением кода | `Claude-Code_Usage-Token` |
 | 033 | `Stepik-Python-Grader` — документ: docs/agent/multiagent.md § арифметика интервала между стартами; CLAUDE.md § Гейты — порог остатка квоты и интервал опроса статусов | `Engineering-Incidents-Playbook`, `Claude-Code_Usage-Token` |
 | 038 | `Stepik-Python-Grader` — документ: CLAUDE.md § Два окна: имя окна начинается с окружения ([WEB]/[LOCAL]/[CLI]), метка ставится при открытии; канон — docs/agent/environments.md | `ArtVsMark`, `Claude-Code_Usage-Token` |
 | 047 | `Engineering-Incidents-Playbook` — документ: CLAUDE.md § Когда окно перезапускают — сменились правила работы, окна перезапускают, а не рассылают им письма: свод и ядро читаются ОДИН раз, при старте, и правка живому окну не видна вовсе. ГРАНИЦА: реестра живых окон нет и не будет — рассылка потребовала бы знать, кто сейчас открыт; `Stepik-Python-Grader` — документ: CLAUDE.md § Гейты: смена правил транспорта требует перезапуска активных окон — настройки читаются при старте сессии; `ArtVsMark` — документ: CLAUDE.md § Окно — прямой цитатой: сменились правила работы, окна перезапускаются. Этот файл читается один раз, при старте | `Claude-Code_Usage-Token` |
@@ -64,9 +63,9 @@
 | 153 | `Engineering-Incidents-Playbook` — документ: export/README.md § контракт — чужие решения описаны ссылкой на репозиторий потребителя, а не пересказом их устройства; .rules/consumers.json — про потребителя хранится адрес и роль, но не объяснение, почему у него так. Держится чтением при приёмке: отличить ссылку от пересказа машинно нечем; `Stepik-Python-Grader` — конвейер: docs/agent/rules/DIGEST.md собирается из каталога генератором (scripts/generate_rules_digest.py), а не переписывается руками: чужой текст здесь производное с живым исходником, и расхождение ловит check_rules_digest.py; `Claude-Code_Usage-Token` — документ: .github/workflows/rules-inbox.yml — единственное место, где объясняется устройство чужого проекта, и оно попадает ровно в исключение правила: чужое обоснование зафиксировано ВЕРСИЕЙ. Действие каталога подключено тегом v1.1.0, а не main, поэтому абзац «умолчание в закреплённой версии — старое имя» не может устареть от правки на той стороне: та сторона в этом теге больше не двигается. Остальное чужое «почему» лежит ссылкой: правила каталога здесь называются номерами, а не пересказываются, — и в CLAUDE.md, и в .rules/bindings.json. | `ArtVsMark` |
 | 158 | `Stepik-Python-Grader` — документ: docs/agent/preflight.md § Что гейты не ловят: scripts/check_three_outcomes.py требует наличия третьего исхода, но не адреса отказа; признак «в сообщении есть адрес» от «есть любая подстановка» машинно не отличить; `ArtVsMark` — гейт: scripts/build_metrics.py::naming — адрес отказавшего источника прикрепляется в точке обращения, а не восстанавливается трассировкой; scripts/hold.py и scripts/check_labels.py печатают предмет отказа вместе с причиной. Правило родилось здесь: окно 31 августа дважды прогнало гейт и дважды искало, какой из двадцати источников ответил 403.; `Claude-Code_Usage-Token` — гейт: Третий исход называет предмет: scripts/shell_ascii.py печатает путь каталога, в котором не нашлось workflow; scripts/release.py — путь колеса; scripts/changelog.py — имя файла фрагмента; scripts/gh_rest.py — метод и путь запроса. | `Engineering-Incidents-Playbook` |
 | 162 | `Engineering-Incidents-Playbook` — гейт: scripts/check_bindings.py — метрика «НИЧЕМ» тут же называет, сколько из очереди уже решено у соседа, у кого именно и где смотреть адрес; вопрос задаётся в тот момент, когда выбирают, что строить, а не отдельной командой, которую надо помнить. Свёртка одна на весь каталог: ею же собирается раздел «У соседей это уже решено» во входящие потребителю (scripts/sync_inbox.py). ГРАНИЦА: подошёл ли чужой приём, гейт не судит — стеки разные, и это метрика с адресами, а не отказ; красное на «у соседа есть, а у тебя нет» приучало бы пропускать красное (051); `Stepik-Python-Grader` — конвейер: scripts/check_rule_bindings.py::neighbour_holds печатает, чем правило без механизма держится у соседей по своду — собирает из export/where.json каталога, а не походом по чужим репозиториям; ходит ночным обходом; `ArtVsMark` — конвейер: scripts/neighbours.py — читает сводку каталога «чем держат другие» и по каждому нашему вердикту без механизма показывает соседей с их адресами; шаг «Чем это держат соседи» в .github/workflows/pr-check.yml приносит это в изменение. Себя в советчики не берёт, неподключённого соседа не берёт, ответ без разрешимого адреса не берёт — пересказ помогает не больше, чем его отсутствие. ГЕЙТОМ НЕ СДЕЛАНО НАМЕРЕННО: «приём переносится» решает человек, стеки разные, и отказ означал бы «повтори за соседом» — ровно ту копию, которую запрещает 090. Первый же прогон дал ответ по всем шестнадцати пробелам витрины. | `Claude-Code_Usage-Token` |
-| 169 | `Claude-Code_Usage-Token` — гейт: .github/workflows/merge-queue.yml — очередь просыпается от завершения каждого workflow по pull_request, а расписание оставлено дополнением, а не основой. Замер: cron 13,43 давал задержку до получаса. Правило родилось здесь. | `Engineering-Incidents-Playbook`, `ArtVsMark` |
-| 170 | `ArtVsMark` — code: scripts/hold.py::selftest — у подделки ответа площадки НАЗВАН ИСТОЧНИК, и он снят с живой стороны, а не сочинён. Форм оказалось ДВЕ, и обе настоящие: `gh pr view --json statusCheckRollup` отдаёт GraphQL-форму в ВЕРХНЕМ регистре, REST /commits/{sha}/check-runs — ту же запись в НИЖНЕМ; снято на коммите 6a8be4e витрины: name='build' status='completed' conclusion='success'. ДО 3 СЕНТЯБРЯ НАБОР ГОНЯЛСЯ ТОЛЬКО НА ВЕРХНЕЙ ФОРМЕ: регистр в scripts/hold.py::checks_state нормализуется, но ничем не проверялся — зелёное доказывало согласованность кода с представлением автора о площадке, а не с площадкой. Добавлены три случая на снятой форме: успех, провал и «ещё бежит».; `Claude-Code_Usage-Token` — гейт: tests/test_registry.py и tests/test_transcripts.py — у подделок есть источник: форма снята с живого ответа реестра (docs/spec.md § «Что измеряем», замер 2026-09-02) и с живого транскрипта. Правило родилось здесь, и цена названа вживую: в tests/test_transcripts.py подделке НЕ ХВАТАЛО message.id и requestId, поэтому двойной счёт расхода не ловился ничем (#52). | `Engineering-Incidents-Playbook` |
-| 173 | `Engineering-Incidents-Playbook` — гейт: scripts/pr_body.py — три ответа различаются машинно, «Part of #NNN» требует названного остатка; scripts/check_task_state.py плюс .github/workflows/task-state.yml — состояние задачи спрашивается ПОСЛЕ слияния, замечание пишется в саму задачу; `Claude-Code_Usage-Token` — гейт: scripts/check_pr_metadata.py — связь с задачей обязательна и имеет ровно три формы: «Closes #N», «Часть #N — <что именно>» с пояснением, «Без issue: <причина>». Вторая половина правила — проверка судьбы задачи ПОСЛЕ слияния — механизмом здесь не держится, и это названо, а не умолчано: закрытие проверяет площадка, остаток частичного изменения не проверяет никто. | `ArtVsMark` |
+| 169 | `Stepik-Python-Grader` — документ: docs/agent/preflight.md § Что гейты НЕ ловят — очередь слияний застрахована расписанием (.github/workflows/merge-queue.yml, cron «23 * * * *», в шапке названо страховкой), а замера срабатываний по источникам нет: issue #1427. Ночной прогон cross-OS бейджа (CLAUDE.md § Метрики) под правило не подпадает — предмет там суточный, и правило само называет эту границу; `Claude-Code_Usage-Token` — гейт: .github/workflows/merge-queue.yml — очередь просыпается от завершения каждого workflow по pull_request, а расписание оставлено дополнением, а не основой. Замер: cron 13,43 давал задержку до получаса. Правило родилось здесь. | `Engineering-Incidents-Playbook`, `ArtVsMark` |
+| 170 | `Stepik-Python-Grader` — конвейер: scripts/capture_github_fixtures.py --check — у каждой подделки чужого интерфейса есть снятый источник с блоком происхождения (tests/fixtures/github/), сверка ночным обходом .github/workflows/tracker-guardrails.yml; разбор гоняется на снятых ответах в tests/test_fixture_sources.py. Ответы Stepik API из облака снять нечем — эти подделки названы несверенными, и это остаток задачи #1422; `ArtVsMark` — code: scripts/hold.py::selftest — у подделки ответа площадки НАЗВАН ИСТОЧНИК, и он снят с живой стороны, а не сочинён. Форм оказалось ДВЕ, и обе настоящие: `gh pr view --json statusCheckRollup` отдаёт GraphQL-форму в ВЕРХНЕМ регистре, REST /commits/{sha}/check-runs — ту же запись в НИЖНЕМ; снято на коммите 6a8be4e витрины: name='build' status='completed' conclusion='success'. ДО 3 СЕНТЯБРЯ НАБОР ГОНЯЛСЯ ТОЛЬКО НА ВЕРХНЕЙ ФОРМЕ: регистр в scripts/hold.py::checks_state нормализуется, но ничем не проверялся — зелёное доказывало согласованность кода с представлением автора о площадке, а не с площадкой. Добавлены три случая на снятой форме: успех, провал и «ещё бежит».; `Claude-Code_Usage-Token` — гейт: tests/test_registry.py и tests/test_transcripts.py — у подделок есть источник: форма снята с живого ответа реестра (docs/spec.md § «Что измеряем», замер 2026-09-02) и с живого транскрипта. Правило родилось здесь, и цена названа вживую: в tests/test_transcripts.py подделке НЕ ХВАТАЛО message.id и requestId, поэтому двойной счёт расхода не ловился ничем (#52). | `Engineering-Incidents-Playbook` |
+| 173 | `Engineering-Incidents-Playbook` — гейт: scripts/pr_body.py — три ответа различаются машинно, «Part of #NNN» требует названного остатка; scripts/check_task_state.py плюс .github/workflows/task-state.yml — состояние задачи спрашивается ПОСЛЕ слияния, замечание пишется в саму задачу; `Stepik-Python-Grader` — конвейер: scripts/check_issue_state_after_merge.py спрашивает у трекера судьбу задачи ПОСЛЕ слияния — закрыта ли закрытая, открыта ли частичная, назван ли остаток галочками; ночным обходом .github/workflows/tracker-guardrails.yml. Первая половина — три ответа (Closes #N · «Часть #N — что именно» · «Без issue:») — в scripts/check_pr_ready.py, но он числится в GATE_DEBT: запускает его окно руками, поэтому уровень взят по слабейшему звену (issue #1419); `Claude-Code_Usage-Token` — гейт: scripts/check_pr_metadata.py — связь с задачей обязательна и имеет ровно три формы: «Closes #N», «Часть #N — <что именно>» с пояснением, «Без issue: <причина>». Вторая половина правила — проверка судьбы задачи ПОСЛЕ слияния — механизмом здесь не держится, и это названо, а не умолчано: закрытие проверяет площадка, остаток частичного изменения не проверяет никто. | `ArtVsMark` |
 
 ## Сколько держит механизм · How much each mechanism holds
 
@@ -120,28 +119,28 @@
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
 | `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 42 механизмов по одному правилу; без названного адреса: 0 из 125 |
-| `Stepik-Python-Grader` | `CLAUDE.md` | 38 |
+| `Stepik-Python-Grader` | `CLAUDE.md` | 40 |
+| `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
-| `Stepik-Python-Grader` | `docs/agent/preflight.md` | 8 |
-| `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 8 |
+| `Stepik-Python-Grader` | `docs/agent/preflight.md` | 10 |
+| `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 9 |
+| `Stepik-Python-Grader` | `.github/workflows/tracker-guardrails.yml` | 7 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |
+| `Stepik-Python-Grader` | `scripts/check_docs_guardrails.py` | 7 |
+| `Stepik-Python-Grader` | `scripts/check_pr_ready.py` | 7 |
 | `Stepik-Python-Grader` | `scripts/gh_rest.py` | 7 |
+| `Stepik-Python-Grader` | `scripts/preflight.py` | 7 |
 | `Stepik-Python-Grader` | `docs/agent/roles.md` | 6 |
-| `Stepik-Python-Grader` | `scripts/check_docs_guardrails.py` | 6 |
-| `Stepik-Python-Grader` | `scripts/check_pr_ready.py` | 6 |
-| `Stepik-Python-Grader` | `scripts/preflight.py` | 6 |
-| `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 5 |
-| `Stepik-Python-Grader` | `.rules/bindings.json` | 4 |
+| `Stepik-Python-Grader` | `.rules/bindings.json` | 5 |
 | `Stepik-Python-Grader` | `CHANGELOG.md` | 4 |
+| `Stepik-Python-Grader` | `scripts/check_adr_records.py` | 4 |
 | `Stepik-Python-Grader` | `scripts/check_attribution.py` | 4 |
-| `Stepik-Python-Grader` | `.github/workflows/tracker-guardrails.yml` | 3 |
+| `Stepik-Python-Grader` | `scripts/check_work_overlap.py` | 4 |
+| `Stepik-Python-Grader` | `scripts/check_workflow_guardrails.py` | 4 |
 | `Stepik-Python-Grader` | `.rules/proposals.json` | 3 |
 | `Stepik-Python-Grader` | `HISTORY.md` | 3 |
 | `Stepik-Python-Grader` | `docs/agent/claude-handoff.md` | 3 |
 | `Stepik-Python-Grader` | `docs/agent/course-walkthrough.md` | 3 |
-| `Stepik-Python-Grader` | `scripts/check_adr_records.py` | 3 |
-| `Stepik-Python-Grader` | `scripts/check_work_overlap.py` | 3 |
-| `Stepik-Python-Grader` | `scripts/check_workflow_guardrails.py` | 3 |
 | `Stepik-Python-Grader` | `scripts/rerun_flaky_checks.py` | 3 |
 | `Stepik-Python-Grader` | `src/stepik_grader/web/playground.py` | 3 |
 | `Stepik-Python-Grader` | `.claude/hooks/pre_tool_use.py` | 2 |
@@ -149,9 +148,11 @@
 | `Stepik-Python-Grader` | `docs/dev/corpus.md` | 2 |
 | `Stepik-Python-Grader` | `docs/dev/glossary.md` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_audit_registry.py` | 2 |
+| `Stepik-Python-Grader` | `scripts/check_branch_protection.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_declared_outcomes.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_gate_tests.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_generated_sources.py` | 2 |
+| `Stepik-Python-Grader` | `scripts/check_hidden_defaults.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_locale_guardrails.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_raw_values.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_rules_digest.py` | 2 |
@@ -166,7 +167,7 @@
 | `Stepik-Python-Grader` | `tests/conftest.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
-| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 82 механизмов по одному правилу; без названного адреса: 0 из 160 |
+| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 90 механизмов по одному правилу; без названного адреса: 0 из 172 |
 | `ArtVsMark` | `scripts/build_metrics.py` | 30 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 27 |
 | `ArtVsMark` | `CLAUDE.md` | 14 |
@@ -208,9 +209,9 @@
 | `Claude-Code_Usage-Token` | `scripts/pr_ready.py` | 9 |
 | `Claude-Code_Usage-Token` | `scripts/utf8_output.py` | 9 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/whitelist.py` | 9 |
+| `Claude-Code_Usage-Token` | `src/claude_code_usage/cli.py` | 7 |
 | `Claude-Code_Usage-Token` | `docs/labels.md` | 6 |
 | `Claude-Code_Usage-Token` | `scripts/check_pr_metadata.py` | 6 |
-| `Claude-Code_Usage-Token` | `src/claude_code_usage/cli.py` | 6 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/storage.py` | 6 |
 | `Claude-Code_Usage-Token` | `.rules/showcase.json` | 5 |
 | `Claude-Code_Usage-Token` | `scripts/shell_ascii.py` | 5 |
@@ -218,13 +219,13 @@
 | `Claude-Code_Usage-Token` | `tests/test_subprocess_encoding.py` | 5 |
 | `Claude-Code_Usage-Token` | `.github/workflows/merge-queue.yml` | 4 |
 | `Claude-Code_Usage-Token` | `CHANGELOG.md` | 4 |
+| `Claude-Code_Usage-Token` | `README.md` | 4 |
 | `Claude-Code_Usage-Token` | `docs/release.md` | 4 |
 | `Claude-Code_Usage-Token` | `docs/roles.md` | 4 |
 | `Claude-Code_Usage-Token` | `scripts/repo_links.py` | 4 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/transcripts.py` | 4 |
 | `Claude-Code_Usage-Token` | `tests/test_pr_check.py` | 4 |
 | `Claude-Code_Usage-Token` | `HISTORY.md` | 3 |
-| `Claude-Code_Usage-Token` | `README.md` | 3 |
 | `Claude-Code_Usage-Token` | `docs/versioning.md` | 3 |
 | `Claude-Code_Usage-Token` | `scripts/gh_rest.py` | 3 |
 | `Claude-Code_Usage-Token` | `scripts/release.py` | 3 |
@@ -235,12 +236,13 @@
 | `Claude-Code_Usage-Token` | `.github/badges/version.json` | 2 |
 | `Claude-Code_Usage-Token` | `.github/workflows/release.yml` | 2 |
 | `Claude-Code_Usage-Token` | `.rules/proposals.json` | 2 |
+| `Claude-Code_Usage-Token` | `README.en.md` | 2 |
 | `Claude-Code_Usage-Token` | `docs/storage-setup.md` | 2 |
 | `Claude-Code_Usage-Token` | `scripts/subprocess_timeout.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_registry.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_repo_links.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_shell_ascii.py` | 2 |
-| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 16 механизмов по одному правилу; без названного адреса: 0 из 124 |
+| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 16 механизмов по одному правилу; без названного адреса: 0 из 125 |
 
 ## Правила · Rules
 
@@ -409,15 +411,15 @@
 | 162 | действует | действует | действует | действует |
 | 163 | действует | действует | нет предмета | нет предмета |
 | 164 | действует | действует | действует | действует |
-| 165 | действует | — | действует | действует |
-| 166 | действует | — | действует | действует |
-| 167 | действует | — | действует | действует |
-| 168 | действует | — | действует | действует |
-| 169 | действует | — | действует | действует |
-| 170 | действует | — | действует | действует |
-| 171 | действует | — | действует | действует |
-| 172 | действует | — | действует | действует |
-| 173 | действует | — | действует | действует |
-| 174 | действует | — | действует | действует |
-| 175 | действует | — | действует | действует |
-| 176 | действует | — | действует | действует |
+| 165 | действует | действует | действует | действует |
+| 166 | действует | действует | действует | действует |
+| 167 | действует | действует | действует | действует |
+| 168 | действует | действует | действует | действует |
+| 169 | действует | действует | действует | действует |
+| 170 | действует | действует | действует | действует |
+| 171 | действует | действует | действует | действует |
+| 172 | действует | действует | действует | действует |
+| 173 | действует | действует | действует | действует |
+| 174 | действует | действует | действует | действует |
+| 175 | действует | действует | действует | действует |
+| 176 | действует | действует | действует | действует |
