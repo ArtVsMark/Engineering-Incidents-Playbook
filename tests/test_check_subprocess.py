@@ -67,3 +67,35 @@ def test_gejt_otvechaet_otkazom_cherez_main(tmp_path):
     (tmp_path / "scripts" / "x.py").write_text(
         "import subprocess\nsubprocess.run(['git'], text=True)\n", encoding="utf-8")
     assert cs.main(["--root", str(tmp_path)]) == 1
+
+
+# ── список путей читается по NUL (165) ─────────────────────────────────────
+
+def test_spisok_putey_bez_z_nahodka():
+    """Ровно тот случай, что дал семь мест на живом дереве."""
+    код = 'subprocess.run(["git", "ls-files"], capture_output=True)'
+    assert [n for n, _ in cs.unseparated(код)] == [1]
+
+
+def test_s_z_chisto():
+    код = 'subprocess.run(["git", "ls-files", "-z"], capture_output=True)'
+    assert cs.unseparated(код) == []
+
+
+def test_quotepath_prinimaetsya_kak_ravnosilnyy():
+    """ГРАНИЦА, НАЙДЕННАЯ ЖИВЫМ ОТКАЗОМ: `core.quotePath=false` снимает ту же
+    поломку с другой стороны, и два места в дереве отвечали именно так."""
+    код = ('subprocess.run(["git", "-c", "core.quotePath=false", "status",'
+           ' "--porcelain"])')
+    assert cs.unseparated(код) == []
+
+
+def test_vyzov_bez_spiska_putey_ne_nahodka():
+    """У `git describe` списка нет — требовать от него разделитель значило бы
+    краснеть на верном вызове."""
+    assert cs.unseparated('subprocess.run(["git", "describe", "--tags"])') == []
+
+
+def test_ne_git_ne_trogaetsya():
+    assert cs.unseparated('subprocess.run(["ls", "--name-only"])') == []
+

@@ -786,9 +786,9 @@
     },
     "165": {
       "status": "active",
-      "mechanism": "none",
-      "where": "замер по дереву: scripts/build_rules_index.py, scripts/check_overlap.py, scripts/check_own_name.py, scripts/check_prose.py, scripts/check_showcase.py, scripts/collect_changelog.py, scripts/history_metrics.py, scripts/preflight.py берут список путей у git без -z; четыре из них потом читают эти файлы",
-      "why": "предмет достижим и не наступил: имена в дереве латиницей, поэтому слепота есть, а случая нет. Гейта под это не построено — очередь на механизм, а не отсутствие предмета"
+      "mechanism": "gate",
+      "where": "scripts/check_subprocess.py — разбор дерева: вызов git, отдающий список путей, обязан нести -z либо -c core.quotePath=false; охват печатают сами гейты числом просмотренного (check_own_name: 566 файлов, check_prose: 458 документов)",
+      "why": "закрыто работой: семь мест брали список без -z, четыре из них потом читали эти файлы. Правка разбора истории попутно дала регрессию — у git log --name-only -z нужен свой %x00 в формате, — и она названа границей прямо в гейте"
     },
     "166": {
       "status": "active",

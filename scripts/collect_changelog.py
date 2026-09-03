@@ -168,8 +168,8 @@ def added_since(ref: str) -> tuple[list[Path], str | None]:
     """Фрагменты, ДОБАВЛЕННЫЕ этим изменением. Спрашивать со всех нельзя."""
     try:
         done = subprocess.run(
-            ["git", "diff", "--name-only", "--diff-filter=A", f"{ref}...HEAD",
-             "--", FRAGMENTS.name],
+            ["git", "diff", "--name-only", "-z", "--diff-filter=A",
+             f"{ref}...HEAD", "--", FRAGMENTS.name],
             cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
     except FileNotFoundError:
         return [], "нет команды git"
