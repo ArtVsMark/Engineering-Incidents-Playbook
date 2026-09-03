@@ -62,7 +62,17 @@ from check_bindings import MECHANISM_ORDER  # noqa: E402
 #: отвечают: подмена устаревшего слова одним из новых была бы догадкой за
 #: потребителя, а картинка обещает его собственный ответ.
 LEGACY_KEYS = ("process-step",)
-ALL_KEYS = tuple(MECHANISM_ORDER) + LEGACY_KEYS
+
+#: «НЕ ПРИМЕНИМО» — НЕ МЕХАНИЗМ, А СТАТУС, и до этой правки картинка его не
+#: показывала вовсе. Читатель видел «ничем» и не мог отличить два разных
+#: состояния: правило действует, а механизма ещё нет (очередь) — и правило к
+#: проекту не относится вовсе (предмета нет). Первое это долг, второе решение,
+#: и складывать их в одну колонку значит врать картинкой.
+#:
+#: Числа берутся из `by_status` сводки, которая их и так публикует: колонки не
+#: было, а данные были.
+STATUS_KEYS = ("not-applicable",)
+ALL_KEYS = tuple(MECHANISM_ORDER) + LEGACY_KEYS + STATUS_KEYS
 
 #: Палитра площадки, тема к теме. Значения те же, что у витрины профиля.
 THEME = {
@@ -70,11 +80,13 @@ THEME = {
             "accent": "#0969DA", "label": "#636C76", "pill": "#F6F8FA",
             "gate": "#0969DA", "pipeline": "#1A7F37", "document": "#8250DF",
             "process-step": "#8250DF", "none": "#CF222E",
+            "not-applicable": "#636C76",
             "muted": "#8C959F"},
     True: {"card": "#0D1117", "stroke": "#30363D", "name": "#F0F6FC",
            "accent": "#58A6FF", "label": "#7D8590", "pill": "#161B22",
            "gate": "#58A6FF", "pipeline": "#3FB950", "document": "#A371F7",
            "process-step": "#A371F7", "none": "#F85149",
+           "not-applicable": "#8B949E",
            "muted": "#8B949E"},
 }
 
@@ -187,6 +199,7 @@ LANG = {
         "held": "чем держится",
         "gate": "гейт", "pipeline": "конвейер", "document": "документ",
         "process-step": "шаг процесса", "none": "ничем",
+        "not-applicable": "не применимо",
         "off": "не подключён", "unknown": "неизвестно", "empty": "none",
     },
     "en": {
@@ -197,6 +210,7 @@ LANG = {
         "held": "held by",
         "gate": "gate", "pipeline": "pipeline", "document": "document",
         "process-step": "process step", "none": "nothing",
+        "not-applicable": "not applicable",
         "off": "not connected", "unknown": "unknown", "empty": "none",
     },
 }
@@ -210,11 +224,15 @@ def rows(doc: dict) -> list[dict]:
     out = []
     for c in doc.get("consumers", []):
         mech = c.get("by_mechanism") or {}
+        # Статус приходит из другого поля сводки, чем механизм: складывать их в
+        # один словарь до этого места значило бы потерять, откуда число.
+        статус = c.get("by_status") or {}
         out.append({
             "name": (c.get("repo") or "?").split("/")[-1],
             "state": c.get("state", ""),
             "connected": bool(c.get("rules")),
-            **{k: mech.get(k, 0) for k in ALL_KEYS},
+            **{k: mech.get(k, 0) for k in tuple(MECHANISM_ORDER) + LEGACY_KEYS},
+            **{k: статус.get(k, 0) for k in STATUS_KEYS},
             "trails": c.get("trails", 0),
             "born": c.get("born", 0),
             "answered": c.get("answered") or 0,
@@ -257,7 +275,14 @@ def shown(data: list[dict]) -> list[str]:
     (правило 049).
     """
     used = {k for r in data if r["connected"] for k in ALL_KEYS if r.get(k)}
-    return list(MECHANISM_ORDER) + [k for k in LEGACY_KEYS if k in used]
+    # СТАТУС ИДЁТ ПОСЛЕДНИМ И ПОКАЗЫВАЕТСЯ, ПОКА ИМ ОТВЕЧАЮТ. Он не механизм:
+    # «не применимо» отвечает на другой вопрос — относится ли правило к проекту
+    # вообще. Без этой колонки «ничем» читается двусмысленно: и как долг
+    # (механизма ещё нет), и как решение (механизм не нужен). Это разные
+    # состояния, и складывать их в одну колонку значит врать картинкой.
+    return (list(MECHANISM_ORDER)
+            + [k for k in LEGACY_KEYS if k in used]
+            + [k for k in STATUS_KEYS if k in used])
 
 
 def widths(data: list[dict], t: dict, w: dict,
