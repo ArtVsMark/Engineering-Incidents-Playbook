@@ -284,6 +284,7 @@ python scripts/check_own_name.py
 python scripts/check_roles.py
 python scripts/check_prose.py
 python scripts/history_metrics.py --check
+python scripts/check_derived.py --range <база>...HEAD --branch <ветка>
 python scripts/check_labels.py --paths-from <файл со списком путей> --have <метки>
 python scripts/pr_body.py --check --body-file <файл с телом изменения>
 ```
