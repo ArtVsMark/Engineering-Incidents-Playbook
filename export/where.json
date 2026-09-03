@@ -1,6 +1,7 @@
 {
-  "schema": "1.0",
+  "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
+  "generated_at": "2026-09-03T12:49:08+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
