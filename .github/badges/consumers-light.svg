@@ -2,17 +2,17 @@
 <rect x="0.5" y="0.5" width="1216" height="385" rx="16" fill="#FFFFFF" stroke="#D0D7DE"/>
 <rect x="36" y="28" width="46" height="4" rx="2" fill="#0969DA"/>
 <text x="36" y="68" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="31" font-weight="800" letter-spacing="-0.6">Чем держится правило у потребителей</text>
-<text x="36" y="94" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="500">ответы самих проектов на каждое из 180 правил каталога — не наша оценка их</text>
+<text x="36" y="94" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="500">ответы самих проектов на каждое из 181 правил каталога — не наша оценка их</text>
 <text x="300" y="114" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3">разобрано</text>
 <text x="418" y="114" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3">связей</text>
 <text x="526" y="114" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3">родил</text>
 <text x="910" y="114" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">чем держится</text>
 <text x="36" y="136" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Engineering-</text>
 <text x="36" y="155" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Incidents-Playbook</text>
-<text x="300" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">180</text>
-<text x="418" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">35</text>
-<text x="526" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">27</text>
-<rect x="640" y="130" width="83" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="653" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">гейт<tspan fill="#0969DA" font-weight="700" dx="7">105</tspan></text>
+<text x="300" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">181</text>
+<text x="418" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">36</text>
+<text x="526" y="147" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">28</text>
+<rect x="640" y="130" width="83" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="653" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">гейт<tspan fill="#0969DA" font-weight="700" dx="7">106</tspan></text>
 <rect x="733" y="130" width="95" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="746" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">конвейер<tspan fill="#1A7F37" font-weight="700" dx="7">8</tspan></text>
 <rect x="846" y="130" width="103" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="859" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">документ<tspan fill="#8250DF" font-weight="700" dx="7">25</tspan></text>
 <rect x="959" y="130" width="75" height="24" rx="12" fill="#F6F8FA" stroke="#D0D7DE"/><text x="972" y="146" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">ничем<tspan fill="#CF222E" font-weight="700" dx="7">4</tspan></text>

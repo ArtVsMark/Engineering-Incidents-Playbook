@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T10:10:21+00:00",
+  "generated_at": "2026-09-04T11:31:03+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,15 +9,15 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-09-04",
-      "answered": 180,
+      "answered": 181,
       "by_status": {
-        "active": 142,
+        "active": 143,
         "not-applicable": 31,
         "rejected": 7
       },
       "by_mechanism": {
         "pipeline": 8,
-        "gate": 105,
+        "gate": 106,
         "document": 25,
         "none": 4
       },
@@ -201,7 +201,8 @@
         "178": "active",
         "179": "active",
         "180": "active",
-        "181": "active"
+        "181": "active",
+        "182": "active"
       },
       "holds": {
         "001": {
@@ -771,10 +772,14 @@
         "181": {
           "mechanism": "gate",
           "where": "scripts/check_exclusive.py + .rules/exclusives.json — исключительные утверждения объявленных документов ранжируются по близости предмета, и у каждой из верхних пар обязан быть вердикт: разные предметы · согласны · уточняет · ПРОТИВОРЕЧИЕ"
+        },
+        "182": {
+          "mechanism": "gate",
+          "where": "scripts/check_bindings.py — у каждого ответа `mechanism: none` обязано стоять поле `machine_half`: что следует из данных целиком и почему оно не построено"
         }
       },
-      "trails": 35,
-      "born": 27
+      "trails": 36,
+      "born": 28
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
