@@ -59,9 +59,11 @@ def imported(path: Path) -> set[str]:
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
+            # не проза: путь модуля — `os.path` даёт верхний пакет `os`.
             out |= {a.name.split(".")[0] for a in node.names}
         elif isinstance(node, ast.ImportFrom):
             if node.level == 0 and node.module:
+                # не проза: тот же путь модуля, но со стороны `from`.
                 out.add(node.module.split(".")[0])
     return out
 
