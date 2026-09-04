@@ -37,9 +37,9 @@
     {
       "repo": "ArtVsMark/Glossary-Python",
       "role": "потребитель",
-      "bindings": null,
+      "bindings": "https://raw.githubusercontent.com/ArtVsMark/Glossary-Python/main/.rules/bindings.json",
       "access": "public",
-      "proposals": null,
+      "proposals": "https://raw.githubusercontent.com/ArtVsMark/Glossary-Python/main/.rules/proposals.json",
       "since": "2026-08-22"
     }
   ],
