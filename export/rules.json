@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T08:27:17+00:00",
+  "generated_at": "2026-09-04T09:00:53+00:00",
   "contracts": {
     "export": "1.4",
     "bindings": "1.1",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 176,
+  "count": 179,
   "rules": [
     {
       "id": "001",
@@ -5766,6 +5766,116 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "178",
+      "slug": "a-source-mismatch-is-your-reader-until-proven-otherwise",
+      "title": {
+        "ru": "Расхождение источников — это твоё чтение, пока не доказано обратное",
+        "en": "A source mismatch is your reader until proven otherwise"
+      },
+      "areas": {
+        "ru": [
+          "диагностика",
+          "данные"
+        ],
+        "en": [
+          "diagnostics",
+          "data"
+        ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
+      "added": "2026-09-04",
+      "files": {
+        "ru": "rules/ru/178-a-source-mismatch-is-your-reader-until-proven-otherwise.md",
+        "en": "rules/en/178-a-source-mismatch-is-your-reader-until-proven-otherwise.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "52"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "179",
+      "slug": "cancellation-group-must-name-the-head",
+      "title": {
+        "ru": "Группа отмены называет голову, а не только номер изменения",
+        "en": "A cancellation group must name the head, not just the change number"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "CI",
+          "конкурентность"
+        ],
+        "en": [
+          "pipeline",
+          "CI",
+          "concurrency"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "added": "2026-09-04",
+      "files": {
+        "ru": "rules/ru/179-cancellation-group-must-name-the-head.md",
+        "en": "rules/en/179-cancellation-group-must-name-the-head.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "87"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "partly"
+    },
+    {
+      "id": "180",
+      "slug": "a-gate-resolves-the-call-not-the-last-name-segment",
+      "title": {
+        "ru": "Гейт разрешает вызов по импортам файла, а не по последнему звену имени",
+        "en": "A gate resolves a call through the file's imports, not the last name segment"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "код"
+        ],
+        "en": [
+          "gates",
+          "code"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "added": "2026-09-04",
+      "files": {
+        "ru": "rules/ru/180-a-gate-resolves-the-call-not-the-last-name-segment.md",
+        "en": "rules/en/180-a-gate-resolves-the-call-not-the-last-name-segment.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "95"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
       "portable": "yes"
     }
   ],
