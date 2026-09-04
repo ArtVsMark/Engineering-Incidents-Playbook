@@ -616,7 +616,7 @@ formats that never moved.
 
 ## Сводная таблица · The summary table
 
-[`where.md`](where.md) и [`where.json`](where.json) собираются
+[`where.md`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.md) и [`where.json`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.json) собираются
 `scripts/aggregate_bindings.py` из ответов потребителей и руками не правятся.
 Пустая клетка означает «потребитель не подключён», а не «правило им отклонено» —
 это те самые состояния, ради различения которых контракт и заведён.
