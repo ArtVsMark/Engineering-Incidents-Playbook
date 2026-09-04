@@ -774,3 +774,51 @@ def test_nepodklyuchivshiysya_v_schyot_ne_idyot():
     чужие, _ = ab.schema_findings([{"repo": "o/них", "schema": "", "rules": {}}])
 
     assert not чужие
+
+
+# ── «ответа нет» опровергается пробой, а не календарём (правила 175, 075) ───
+
+def читатель(ответ):
+    """Подделка чтения по адресу. Источник подделки (правило 170): форма снята
+    с живого ответа Glossary-Python по
+    `https://raw.githubusercontent.com/ArtVsMark/Glossary-Python/main/.rules/bindings.json`
+    — схема 1.1, ключ `rules` со 179 записями."""
+    return lambda url: (ответ, None)
+
+
+ОБЪЯВЛЕН = [{"repo": "чужой/проект", "access": "public", "since": "2026-09-01"}]
+
+
+def test_otvet_est_a_adres_ne_zapolnen_nahodka():
+    """ГЛАВНЫЙ СЛУЧАЙ, И ОН ЖИВОЙ. Glossary-Python объявили 22 августа, адрес
+    не заполнили, а ответ он завёл — 179 правил по общепринятому адресу.
+    Сводка показывала ноль, витрина рисовала подключённым с нулём, и заметил
+    это владелец глазами: срок UNCONNECTED_DAYS дотикал бы ещё 17 дней."""
+    найдено = ab.unconnected(ОБЪЯВЛЕН, читатель({"rules": {"001": {}}}))
+    assert найдено and "ответ ЕСТЬ" in найдено[0]
+
+
+def test_otveta_net_vovse_srok_eshchyo_ne_vyshel():
+    """ГРАНИЦА: подключение занимает время, и красное на первой неделе
+    приучало бы читать красное как фон (051)."""
+    assert ab.unconnected(ОБЪЯВЛЕН, читатель(None)) == []
+
+
+def test_pustoy_otvet_ne_schitaetsya_otvetom():
+    """Файл по адресу лежит, а правил в нём нет — это не «ответил», а «завёл
+    заготовку». Считать её ответом значило бы зеленеть на пустоте (075)."""
+    assert ab.unconnected(ОБЪЯВЛЕН, читатель({"rules": {}})) == []
+
+
+def test_privatnyy_ne_probuetsya():
+    """ГРАНИЦА: приватный ответ по общему адресу не читается по построению, и
+    проба сказала бы «нет» о том, что просто закрыто."""
+    приватный = [dict(ОБЪЯВЛЕН[0], access="private")]
+    assert ab.unconnected(приватный, читатель({"rules": {"001": {}}})) == []
+
+
+def test_adres_zapolnen_probu_ne_delayut():
+    """Заполненный адрес читается обычным путём — пробе тут делать нечего."""
+    заполнен = [dict(ОБЪЯВЛЕН[0], bindings="https://пример/х.json")]
+    assert ab.unconnected(заполнен, читатель({"rules": {"001": {}}})) == []
+
