@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T09:29:13+00:00",
+  "generated_at": "2026-09-04T09:32:34+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -17,9 +17,9 @@
       },
       "by_mechanism": {
         "pipeline": 8,
-        "gate": 97,
+        "gate": 99,
         "document": 24,
-        "none": 12
+        "none": 10
       },
       "rules": {
         "001": "active",
@@ -308,8 +308,8 @@
           "where": "scripts/collect_changelog.py --check"
         },
         "033": {
-          "mechanism": "none",
-          "where": "интервал прогонов по расписанию выбран словами («не в 0 и не в 30, чтобы не совпадать с пиком»), а не выведен из бюджета: consumers-sync 06:23, main-red 07:41"
+          "mechanism": "gate",
+          "where": "scripts/check_schedules.py + .rules/schedules.json — цена прогона объявляется числом, а гейт СЧИТАЕТ: сколько вызовов наружу расписания просят в худший час и укладывается ли сумма по всем расписаниям этого часа в объявленную долю часового лимита"
         },
         "035": {
           "mechanism": "gate",
@@ -720,8 +720,8 @@
           "where": ".github/workflows/ci.yml — работа catalogue, единственное обязательное имя; scripts/merge_ready.py --required catalogue спрашивает её ПОИМЁННО, а не «что-то зелёное»"
         },
         "169": {
-          "mechanism": "none",
-          "where": "расписания каталога — consumers-sync (06:23) и main-red (07:41) — суточные и являются ОСНОВНЫМ путём, а не страховкой; разморозка очереди в .github/workflows/thaw.yml заведена по СОБЫТИЮ именно поэтому — расписание там выглядело бы страховкой, которой оно не является"
+          "mechanism": "gate",
+          "where": "scripts/check_schedules.py — роль расписания объявлена в .rules/schedules.json: main либо safety-net. У страховки обязателен замер срабатываний, а страховка со сроком короче промежутка расписания отвергается сразу"
         },
         "170": {
           "mechanism": "none",
