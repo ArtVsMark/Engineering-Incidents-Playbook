@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T09:39:58+00:00",
+  "generated_at": "2026-09-04T09:43:27+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -18,8 +18,8 @@
       "by_mechanism": {
         "pipeline": 8,
         "gate": 101,
-        "document": 24,
-        "none": 8
+        "document": 25,
+        "none": 7
       },
       "rules": {
         "001": "active",
@@ -360,8 +360,8 @@
           "where": "scripts/sync_labels.py предупреждает о неучтённой метке и НЕ удаляет её; значки выведены из-под гейта на ветку badges по той же причине"
         },
         "052": {
-          "mechanism": "none",
-          "where": "очередь на слияние есть, а правило не обеспечено: окно обновляло ВСЕ ветки после каждого слияния вместо головы очереди — квадрат холостой работы, измеренный за одно окно"
+          "mechanism": "document",
+          "where": "AGENTS.md § «Из общей ветки обновляется только голова очереди» — свод читает окно при старте, а исполнитель здесь именно окно"
         },
         "053": {
           "mechanism": "gate",
