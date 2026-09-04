@@ -335,7 +335,7 @@ the outside.
 ## На каких условиях · The terms
 
 Отдавая ответ по адресу из реестра, потребитель **разрешает каталогу
-публиковать его содержимое** в производных: сводке `export/where.md`, картинке
+публиковать его содержимое** в производных: сводке `export/where.md` на ветке `badges`, картинке
 витрины и задачах-адресатах. Публикуется дословно и **всегда с именем проекта**
 — поля `where` цитируются целыми абзацами, потому что их ценность в адресе
 механизма, а не в пересказе.
@@ -350,7 +350,7 @@ the outside.
 
 By publishing an answer at the address in the registry, a consumer **permits
 the catalogue to publish its contents** in derived artefacts: the
-`export/where.md` summary, the showcase picture and the addressee issues.
+`export/where.md` summary on the `badges` branch, the showcase picture and the addressee issues.
 Quoting is verbatim and **always names the project**. The catalogue does not
 relicense anybody's text — it quotes it with attribution. The catalogue's own
 records are under CC BY 4.0, its scripts and executable templates under MIT.
@@ -601,7 +601,8 @@ having no gate.
 заставлял бы перечитывать форматы, которые не двигались. Полностью — в
 [`VERSIONING.md`](../VERSIONING.md).
 
-`export/where.json` несёт `generated_at` по той же причине: без неё свежесть не
+`export/where.json` — он лежит на ветке `badges`, а не в общей — несёт
+`generated_at` по той же причине: без неё свежесть не
 отличить от застоя.
 
 ---

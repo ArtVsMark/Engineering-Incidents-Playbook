@@ -24,6 +24,11 @@ name: badges
 on:
   push:
     branches: [main]
+  # Ответ потребителя сменился — сводку надо пересобрать, и делает это ТОТ ЖЕ
+  # прогон, что её публикует. Второй писатель одной ветки давал бы конфликт на
+  # ровном месте, а именно от него мы и уходим (022).
+  repository_dispatch:
+    types: [summary]
   release:
     types: [published]
   # У события всегда есть ручная кнопка (правило 104).
@@ -83,9 +88,16 @@ jobs:
           python scripts/build_rules_index.py >/dev/null
           python -m coverage run -m pytest -q >/dev/null
           python scripts/coverage_badge.py
-          # Картинка витрины — тот же класс, что и значки: производная от
-          # уже собранного `export/where.json`, живёт на этой же ветке и
-          # обновляется тем же прогоном. Своих чисел не считает (022).
+          # СВОДКА СОБИРАЕТСЯ ЗДЕСЬ, ПОТОМУ ЧТО ЗДЕСЬ ЖЕ И ПУБЛИКУЕТСЯ. В общей
+          # ветке её больше нет: производное с одним писателем в дереве не
+          # живёт (160), а половинчатая починка — объявить писателя, оставив
+          # файл, — предмет не сняла: конфликт вернулся тем же вечером, стоило
+          # правилу поехать вместе с ответом о нём.
+          #
+          # Порядок значим: сводка строится из ответов потребителей, картинка —
+          # из сводки. Обратный порядок дал бы картинку на вчерашних числах.
+          python scripts/aggregate_bindings.py >/dev/null
+          python scripts/refresh_derived.py >/dev/null || true
           python scripts/consumers_picture.py
 
       # Ветка `badges` осиротевшая: истории кода в ней нет, только значки.
@@ -102,6 +114,11 @@ jobs:
           # завести второй список значков рядом с .rules/showcase.json —
           # две классификации одной территории расходятся молча (022).
           cp .github/badges/*.json .github/badges/*.svg "$tmp/.github/badges/"
+          # Сводка кладётся рядом с картинкой и по тому же адресу, по которому
+          # её читают: `export/where.*` на ветке `badges`. Путь внутри ветки
+          # сохранён намеренно — читателю меняется ВЕТКА, а не имя файла.
+          mkdir -p "$tmp/export"
+          cp export/where.json export/where.md "$tmp/export/"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
