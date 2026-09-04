@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T09:00:53+00:00",
+  "generated_at": "2026-09-04T10:06:13+00:00",
   "contracts": {
     "export": "1.4",
     "bindings": "1.1",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 179,
+  "count": 180,
   "rules": [
     {
       "id": "001",
@@ -5876,6 +5876,37 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "181",
+      "slug": "an-exclusive-claim-binds-the-document",
+      "title": {
+        "ru": "Исключительное утверждение принадлежит документу, а не разделу",
+        "en": "An exclusive claim binds the document, not the section"
+      },
+      "areas": {
+        "ru": [
+          "документация",
+          "процесс"
+        ],
+        "en": [
+          "documentation",
+          "process"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "added": "2026-09-04",
+      "files": {
+        "ru": "rules/ru/181-an-exclusive-claim-binds-the-document.md",
+        "en": "rules/en/181-an-exclusive-claim-binds-the-document.md"
+      },
+      "trails": [],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
       "portable": "yes"
     }
   ],
