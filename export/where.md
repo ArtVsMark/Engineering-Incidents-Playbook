@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 35 | 27 | 179 | 0 | 0 | 141 | 103 | 8 | 25 | 5 | 91 |  |
+| `Engineering-Incidents-Playbook` | подключён | 35 | 27 | 179 | 0 | 0 | 141 | 104 | 8 | 25 | 4 | 91 |  |
 | `Stepik-Python-Grader` | подключён | 69 | 129 | 175 | 4 | 0 | 172 | 71 | 37 | 64 | 0 | 139 |  |
 | `ArtVsMark` | подключён | 16 | 10 | 176 | 3 | 0 | 101 | 60 | 11 | 13 | 15 | 34 |  |
 | `Claude-Code_Usage-Token` | подключён | 12 | 13 | 175 | 4 | 0 | 145 | 84 | 5 | 36 | 20 | 61 |  |
@@ -73,9 +73,9 @@
 | `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 12 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 11 |
 | `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 11 |
+| `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 10 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/automerge.yml` | 9 |
 | `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 9 |
-| `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 9 |
 | `Engineering-Incidents-Playbook` | `AGENTS.md` | 8 |
 | `Engineering-Incidents-Playbook` | `export/README.md` | 8 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/agent-pr.yml` | 7 |
@@ -117,7 +117,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 44 механизмов по одному правилу; без названного адреса: 0 из 136 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 44 механизмов по одному правилу; без названного адреса: 0 из 137 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 39 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
