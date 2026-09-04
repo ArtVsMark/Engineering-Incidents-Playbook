@@ -129,6 +129,7 @@ def tags(root: Path) -> tuple[list[str] | None, str | None]:
     if not found:
         return None, (f"{root} — тегов выпуска нет ни одного. Мелкий клон "
                       "тегов не приносит, а без них сверять строки не с чем")
+    # не проза: номер версии — «1.2» режется на числа для сортировки.
     return sorted(found, key=lambda t: [int(p) for p in release(t).split(".")]), None
 
 

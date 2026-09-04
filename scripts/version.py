@@ -151,6 +151,7 @@ def version() -> tuple[str, str] | None:
     tag = latest_tag()
     if tag is None:
         return None
+    # не проза: номер тега вида v1.2.0 — три числа, а не предложение.
     major, minor, _ = tag.lstrip("v").split(".")
     return f"{major}.{minor}", f"{major}.{minor}.{accepted_since(f'{tag}..HEAD')}"
 
