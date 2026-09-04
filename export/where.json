@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T12:34:58+00:00",
+  "generated_at": "2026-09-04T12:39:27+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -16,10 +16,10 @@
         "rejected": 7
       },
       "by_mechanism": {
-        "pipeline": 8,
+        "pipeline": 9,
         "gate": 106,
         "document": 25,
-        "none": 4
+        "none": 3
       },
       "rules": {
         "001": "active",
@@ -498,8 +498,8 @@
           "where": ".github/workflows/ci.yml — workflow_dispatch"
         },
         "105": {
-          "mechanism": "none",
-          "where": "внешний аудит делает владелец, а не то же окно: нарушения собственных правил каталога нашлись по его вопросу, а не по самопроверке, и цена этого записана в своде"
+          "mechanism": "pipeline",
+          "where": ".github/workflows/review.yml — ревью ведёт ОТДЕЛЬНЫЙ прогон со своей учётной записью, а не то окно, что писало изменение. Форма взята у соседа ArtVsMark/Stepik-Python-Grader, чей ответ по 105 лежит в export/where.json (правило 162); расхождения с ним названы в шапке нашего файла"
         },
         "106": {
           "mechanism": "gate",
