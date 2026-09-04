@@ -14,8 +14,8 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 36 | 28 | 181 | 0 | 0 | 143 | 106 | 9 | 25 | 3 | 94 |  |
 | `Stepik-Python-Grader` | подключён | 69 | 130 | 175 | 6 | 0 | 172 | 71 | 37 | 64 | 0 | 139 |  |
-| `ArtVsMark` | подключён | 16 | 10 | 176 | 5 | 0 | 101 | 60 | 11 | 13 | 15 | 34 |  |
-| `Claude-Code_Usage-Token` | подключён | 12 | 13 | 175 | 6 | 0 | 145 | 84 | 5 | 36 | 20 | 61 |  |
+| `ArtVsMark` | подключён | 16 | 10 | 181 | 0 | 0 | 107 | 64 | 11 | 15 | 15 | 34 |  |
+| `Claude-Code_Usage-Token` | подключён | 12 | 13 | 175 | 6 | 0 | 146 | 84 | 6 | 36 | 20 | 63 |  |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
 ## Чем держат другие · How others enforce it
@@ -168,26 +168,26 @@
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 91 механизмов по одному правилу; без названного адреса: 0 из 172 |
-| `ArtVsMark` | `scripts/build_metrics.py` | 30 |
-| `ArtVsMark` | `scripts/check_mechanisms.py` | 27 |
+| `ArtVsMark` | `scripts/build_metrics.py` | 33 |
+| `ArtVsMark` | `scripts/check_mechanisms.py` | 29 |
 | `ArtVsMark` | `CLAUDE.md` | 14 |
 | `ArtVsMark` | `scripts/check_labels.py` | 14 |
-| `ArtVsMark` | `.github/workflows/automerge.yml` | 12 |
+| `ArtVsMark` | `.github/workflows/automerge.yml` | 13 |
 | `ArtVsMark` | `README.md` | 12 |
+| `ArtVsMark` | `.github/workflows/pr-check.yml` | 11 |
 | `ArtVsMark` | `.github/workflows/open-pr.yml` | 10 |
-| `ArtVsMark` | `.github/workflows/pr-check.yml` | 10 |
 | `ArtVsMark` | `scripts/check_roles.py` | 10 |
 | `ArtVsMark` | `.github/workflows/metrics.yml` | 8 |
-| `ArtVsMark` | `.rules/README.md` | 7 |
+| `ArtVsMark` | `.rules/README.md` | 8 |
+| `ArtVsMark` | `scripts/check_bindings.py` | 8 |
+| `ArtVsMark` | `scripts/checks.py` | 8 |
 | `ArtVsMark` | `HISTORY.md` | 7 |
 | `ArtVsMark` | `scripts/check_author.py` | 7 |
-| `ArtVsMark` | `scripts/check_bindings.py` | 7 |
 | `ArtVsMark` | `scripts/check_page.py` | 7 |
-| `ArtVsMark` | `scripts/checks.py` | 7 |
+| `ArtVsMark` | `.github/workflows/release-hold.yml` | 6 |
 | `ArtVsMark` | `scripts/gh_outcome.py` | 6 |
 | `ArtVsMark` | `scripts/hold.py` | 6 |
 | `ArtVsMark` | `.github/workflows/main-red.yml` | 5 |
-| `ArtVsMark` | `.github/workflows/release-hold.yml` | 5 |
 | `ArtVsMark` | `.github/workflows/rules-inbox.yml` | 5 |
 | `ArtVsMark` | `.rules/bindings.json` | 4 |
 | `ArtVsMark` | `.rules/roles.md` | 4 |
@@ -196,7 +196,7 @@
 | `ArtVsMark` | `pr-check.yml` | 3 |
 | `ArtVsMark` | `projects.json` | 2 |
 | `ArtVsMark` | `scripts/neighbours.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 6 механизмов по одному правилу; без названного адреса: 0 из 86 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 6 механизмов по одному правилу; без названного адреса: 0 из 92 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 29 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 24 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 13 |
@@ -209,11 +209,11 @@
 | `Claude-Code_Usage-Token` | `scripts/pr_ready.py` | 9 |
 | `Claude-Code_Usage-Token` | `scripts/utf8_output.py` | 9 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/whitelist.py` | 9 |
+| `Claude-Code_Usage-Token` | `.rules/showcase.json` | 7 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/cli.py` | 7 |
 | `Claude-Code_Usage-Token` | `docs/labels.md` | 6 |
 | `Claude-Code_Usage-Token` | `scripts/check_pr_metadata.py` | 6 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/storage.py` | 6 |
-| `Claude-Code_Usage-Token` | `.rules/showcase.json` | 5 |
 | `Claude-Code_Usage-Token` | `scripts/shell_ascii.py` | 5 |
 | `Claude-Code_Usage-Token` | `scripts/subprocess_encoding.py` | 5 |
 | `Claude-Code_Usage-Token` | `tests/test_subprocess_encoding.py` | 5 |
@@ -225,6 +225,7 @@
 | `Claude-Code_Usage-Token` | `scripts/repo_links.py` | 4 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/transcripts.py` | 4 |
 | `Claude-Code_Usage-Token` | `tests/test_pr_check.py` | 4 |
+| `Claude-Code_Usage-Token` | `.github/workflows/badges.yml` | 3 |
 | `Claude-Code_Usage-Token` | `HISTORY.md` | 3 |
 | `Claude-Code_Usage-Token` | `docs/versioning.md` | 3 |
 | `Claude-Code_Usage-Token` | `scripts/gh_rest.py` | 3 |
@@ -233,16 +234,16 @@
 | `Claude-Code_Usage-Token` | `tests/test_changelog.py` | 3 |
 | `Claude-Code_Usage-Token` | `tests/test_transcripts.py` | 3 |
 | `Claude-Code_Usage-Token` | `tests/test_utf8_output.py` | 3 |
-| `Claude-Code_Usage-Token` | `.github/badges/version.json` | 2 |
 | `Claude-Code_Usage-Token` | `.github/workflows/release.yml` | 2 |
 | `Claude-Code_Usage-Token` | `.rules/proposals.json` | 2 |
 | `Claude-Code_Usage-Token` | `README.en.md` | 2 |
 | `Claude-Code_Usage-Token` | `docs/storage-setup.md` | 2 |
+| `Claude-Code_Usage-Token` | `scripts/badges.py` | 2 |
 | `Claude-Code_Usage-Token` | `scripts/subprocess_timeout.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_registry.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_repo_links.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_shell_ascii.py` | 2 |
-| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 16 механизмов по одному правилу; без названного адреса: 0 из 125 |
+| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 17 механизмов по одному правилу; без названного адреса: 0 из 126 |
 
 ## Правила · Rules
 
@@ -406,7 +407,7 @@
 | 157 | действует | действует | действует | действует |
 | 158 | действует | действует | действует | действует |
 | 159 | действует | действует | действует | действует |
-| 160 | действует | действует | действует | отклонено |
+| 160 | действует | действует | действует | действует |
 | 161 | действует | действует | действует | действует |
 | 162 | действует | действует | действует | действует |
 | 163 | действует | действует | нет предмета | нет предмета |
@@ -423,9 +424,9 @@
 | 174 | действует | действует | действует | действует |
 | 175 | действует | действует | действует | действует |
 | 176 | действует | действует | действует | действует |
-| 177 | действует | — | не рассмотрено | — |
-| 178 | действует | — | — | — |
-| 179 | действует | — | — | — |
-| 180 | действует | — | — | — |
-| 181 | действует | — | — | — |
-| 182 | действует | — | — | — |
+| 177 | действует | — | действует | — |
+| 178 | действует | — | действует | — |
+| 179 | действует | — | действует | — |
+| 180 | действует | — | действует | — |
+| 181 | действует | — | действует | — |
+| 182 | действует | — | действует | — |
