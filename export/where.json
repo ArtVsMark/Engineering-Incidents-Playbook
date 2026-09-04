@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T07:58:41+00:00",
+  "generated_at": "2026-09-04T07:35:26+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,15 +9,15 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-09-04",
-      "answered": 176,
+      "answered": 175,
       "by_status": {
-        "active": 138,
+        "active": 137,
         "not-applicable": 31,
         "rejected": 7
       },
       "by_mechanism": {
         "pipeline": 8,
-        "gate": 94,
+        "gate": 93,
         "document": 24,
         "none": 12
       },
@@ -196,8 +196,7 @@
         "173": "active",
         "174": "active",
         "175": "active",
-        "176": "active",
-        "177": "active"
+        "176": "active"
       },
       "holds": {
         "001": {
@@ -747,14 +746,10 @@
         "176": {
           "mechanism": "gate",
           "where": "scripts/check_subprocess.py — разбор дерева исходников: текстовый вызов subprocess без encoding= отвергается; включают текстовый режим любые из text, universal_newlines, errors"
-        },
-        "177": {
-          "mechanism": "gate",
-          "where": "scripts/check_bindings.py::tier_zero — каталог спрашивает ступень 0 с СЕБЯ: три числа печатаются всегда (без ответа, не рассмотрено, действует но держится ничем) плюс сверка своей схемы ответа с contracts.bindings собственной выгрузки. Потребителю то же отдаётся разделом «Ступень 0» в scripts/sync_inbox.py. Печать, а не отказ: правило прямо говорит, что заслон называет долг и работу не запрещает — остановить её механизм не может"
         }
       },
-      "trails": 35,
-      "born": 27
+      "trails": 34,
+      "born": 26
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
