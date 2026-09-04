@@ -477,7 +477,7 @@ jobs:
 **предостерегает** абзацем ниже. Потребитель копирует пример, а не абзац
 ([#76](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/76)). Номер в
 примере переписывает выпуск, а не человек ([035](../rules/ru/035-version-is-never-edited-by-hand.md));
-схема нумерации — [`VERSIONING.md`](../VERSIONING.md). Закрепиться на более
+схема нумерации — [`VERSIONING.md`](../docs/VERSIONING.md). Закрепиться на более
 старом релизе законно: это и значит «закрепиться».
 
 **The example pins a tag, not a branch.** It used to show `@main` — the contract
@@ -599,7 +599,7 @@ having no gate.
 **Единого номера нет намеренно** — разные форматы живут своей жизнью, и подъём
 версии контракта означает перечитывание ответов на вашей стороне. Общий номер
 заставлял бы перечитывать форматы, которые не двигались. Полностью — в
-[`VERSIONING.md`](../VERSIONING.md).
+[`VERSIONING.md`](../docs/VERSIONING.md).
 
 `export/where.json` — он лежит на ветке `badges`, а не в общей — несёт
 `generated_at` по той же причине: без неё свежесть не

@@ -77,7 +77,7 @@ def git(repo: Path, *args: str) -> subprocess.CompletedProcess:
 
 def fake(repo: Path, rows: str = ROW, section: str = SECTION) -> Path:
     """Репозиторий с одним выпуском: две записи и ровно одна локальная ссылка."""
-    write(repo / "HISTORY.md", HISTORY.format(rows=rows, section=section))
+    write(repo / "docs" / "HISTORY.md", HISTORY.format(rows=rows, section=section))
     # Единственная локальная ссылка во всём дереве — она и есть «Ссылок: 1».
     write(repo / "rules/ru/001-first.md",
           RULE.format(title="Первое", areas="гейты, тесты")
@@ -151,7 +151,7 @@ def test_нет_истории_это_третий_исход(repo):
     """«Нечего проверять» не равно «всё хорошо» (039): документа может не быть
     у потребителя заготовки, но тогда гейт обязан сказать это, а не зеленеть."""
     fake(repo)
-    (repo / "HISTORY.md").unlink()
+    (repo / "docs" / "HISTORY.md").unlink()
 
     assert hm.main(["--root", str(repo), "--check"]) == 2
 
@@ -203,7 +203,7 @@ def test_незакрытый_раздел_закрывается_выпуско
 
     assert hm.main(["--root", str(repo), "--add", "v1.0.0",
                     "--key", "первый выпуск", "--at-tag"]) == 0
-    text = (repo / "HISTORY.md").read_text(encoding="utf-8")
+    text = (repo / "docs" / "HISTORY.md").read_text(encoding="utf-8")
     assert "## Не выпущено" not in text
     assert "## v1.0.0 · " in text and "первый выпуск подделки" in text
     assert hm.main(["--root", str(repo), "--check"]) == 0
@@ -223,7 +223,7 @@ def test_раздел_под_своим_номером_не_переименов
 
     assert hm.main(["--root", str(repo), "--add", "v1.0.0",
                     "--key", "первый выпуск", "--at-tag"]) == 0
-    text = (repo / "HISTORY.md").read_text(encoding="utf-8")
+    text = (repo / "docs" / "HISTORY.md").read_text(encoding="utf-8")
     assert text.count("## v1.0.0 · ") == 1
     assert "1 сентября 2026" in text          # дата раздела своя, не подменена
 
@@ -285,7 +285,7 @@ def test_пересчёт_чинит_строку_и_бережёт_ключев
     fake(repo, rows="| v1.0.0 | 9 | 9 | 9 | 9 | 9 | 9 из 9 | Первый выпуск подделки |")
 
     assert hm.main(["--root", str(repo), "--recount"]) == 0
-    text = (repo / "HISTORY.md").read_text(encoding="utf-8")
+    text = (repo / "docs" / "HISTORY.md").read_text(encoding="utf-8")
     assert ROW in text
     assert hm.main(["--root", str(repo), "--check"]) == 0
 

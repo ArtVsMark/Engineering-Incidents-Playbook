@@ -89,7 +89,7 @@ def test_versiya_v_proze_ne_nahodka(tmp_path):
     """ГРАНИЦА, И ОНА ИЗМЕРЕНА: поиск `X.Y.Z` по дереву каталога даёт
     шестнадцать файлов, и все законны — история выпусков, схема версий, чужие
     версии в инцидентах. Проверяется поле манифеста, а не проза."""
-    root = repo_with(tmp_path, {"HISTORY.md": "Тег v1.0.0 поставлен в тот же день.\n"})
+    root = repo_with(tmp_path, {"docs/HISTORY.md": "Тег v1.0.0 поставлен в тот же день.\n"})
     assert cp.main(["--root", str(root)]) == 0
 
 
@@ -222,7 +222,7 @@ def test_angliyskaya_vitrina_tozhe_schitaetsya(tmp_path):
 
 def дерево(tmp_path, файл: str, схема: str, versioning: str) -> Path:
     return repo_with(tmp_path, {файл: '{\n  "schema": "%s"\n}\n' % схема,
-                                "VERSIONING.md": versioning})
+                                "docs/VERSIONING.md": versioning})
 
 
 def test_nazvannaya_shema_prohodit(tmp_path):

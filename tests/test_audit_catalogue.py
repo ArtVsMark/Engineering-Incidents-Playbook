@@ -46,7 +46,7 @@ RELEASE = """## v1.0.0 · 27 августа 2026 · конвейер стал а
 
 
 def history(root: Path, text: str) -> Path:
-    return write(root / "HISTORY.md", text)
+    return write(root / "docs" / "HISTORY.md", text)
 RU = "# Правило\n\n**Область.** процесс\n\n**Правило.** Что-то.\n\n{f}## Инцидент\n\nБыло.\n"
 EN = "# A rule\n\n**Area.** process\n\n**The rule.** Something.\n\n{f}## The incident\n\nHappened.\n"
 P_RU = "**Переносится вне Claude Code.** да — не зависит от площадки.\n\n"

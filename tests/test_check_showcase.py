@@ -245,7 +245,7 @@ def test_chistoe_derevo_gate_propuskaet(repo):
 # прогоном pytest -q»: причина верная, а источник назван прозой и не
 # проверяется ничем. Теперь вопрос называет адресата, и ответ ему разный.
 
-ИСТОЧНИК = ("колонка «Тестов» в HISTORY.md; считает "
+ИСТОЧНИК = ("колонка «Тестов» в docs/HISTORY.md; считает "
             "scripts/history_metrics.py по дереву тега")
 
 
@@ -256,7 +256,7 @@ def сопровождающему(where: str = ИСТОЧНИК) -> dict:
 
 def test_вопрос_сопровождающего_с_адресом_проходит(repo, capsys):
     prepare(repo, [сопровождающему()])
-    write(repo / "HISTORY.md", "# И\n")
+    write(repo / "docs" / "HISTORY.md", "# И\n")
     write(repo / "scripts" / "history_metrics.py", "# п\n")
 
     assert run(repo) == 0
@@ -282,9 +282,9 @@ def test_адрес_без_разрешимого_пути_это_находка
 
 def test_названный_но_несуществующий_источник_это_находка(repo, capsys):
     """Декларация сверяется с деревом, а не принимается на слово (044)."""
-    prepare(repo, [сопровождающему("колонка в HISTORY.md; считает "
+    prepare(repo, [сопровождающему("колонка в docs/HISTORY.md; считает "
                                    "scripts/которого-нет.py")])
-    write(repo / "HISTORY.md", "# И\n")
+    write(repo / "docs" / "HISTORY.md", "# И\n")
 
     out = (run(repo), capsys.readouterr().err)
     assert out[0] == 1 and "которого-нет.py" in out[1]

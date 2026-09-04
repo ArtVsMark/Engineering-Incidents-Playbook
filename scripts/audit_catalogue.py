@@ -199,7 +199,7 @@ def check_history(root: Path) -> list[str]:
     тега» отвечает `history_metrics.py`: там уже живут теги, их даты и деревья,
     и второй сборщик того же разошёлся бы с первым (022).
     """
-    path = root / "HISTORY.md"
+    path = root / "docs" / "HISTORY.md"
     if not path.exists():
         return []
     text = path.read_text(encoding="utf-8")
