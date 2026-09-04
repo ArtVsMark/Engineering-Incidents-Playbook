@@ -203,3 +203,57 @@ def test_proza_i_imena_shagov_ne_trogayutsya(tmp_path):
              "        run: echo 'проверка прошла'\n")
     assert cw.main(["--root", str(tmp_path)]) == 0
 
+
+# ── правило 179: группа отмены называет голову ──────────────────────────────
+
+ГРУППА_БЕЗ_ГОЛОВЫ = (
+    "concurrency:\n"
+    "  group: ci-${{ github.ref }}\n"
+    "  cancel-in-progress: true\n")
+ГРУППА_С_ГОЛОВОЙ = (
+    "concurrency:\n"
+    "  group: ci-${{ github.ref }}-"
+    "${{ github.event.pull_request.head.sha || github.sha }}\n"
+    "  cancel-in-progress: true\n")
+РАБОТА = "jobs:\n  a:\n    timeout-minutes: 5\n"
+
+
+def test_otmena_bez_golovy_nahodka(tmp_path):
+    """Тот самый предмет: github.ref на pull_request — refs/pull/N/merge, один
+    для всех событий изменения, и прогон на устаревшем коммите вытесняет
+    прогон на актуальном."""
+    workflow(tmp_path, "w.yml", BUTTON + ГРУППА_БЕЗ_ГОЛОВЫ + РАБОТА)
+    assert cw.main(["--root", str(tmp_path)]) == 1
+
+
+def test_golova_v_gruppe_chisto(tmp_path):
+    workflow(tmp_path, "w.yml", BUTTON + ГРУППА_С_ГОЛОВОЙ + РАБОТА)
+    assert cw.main(["--root", str(tmp_path)]) == 0
+
+
+def test_gruppa_bez_otmeny_pod_pravilo_ne_podpadaet(tmp_path):
+    """ГРАНИЦА: очередь ничего не вытесняет, и голова в ней раздробила бы ровно
+    то, что собирают, — так устроены automerge и thaw."""
+    текст = (BUTTON + "concurrency:\n  group: automerge-${{ inputs.pr }}\n"
+             "  cancel-in-progress: false\n" + РАБОТА)
+    workflow(tmp_path, "w.yml", текст)
+    assert cw.main(["--root", str(tmp_path)]) == 0
+
+
+def test_predmet_sostoyanie_nazvan_spiskom(tmp_path):
+    """ГРАНИЦА ИЗ САМОГО ПРАВИЛА: у badges предмет — состояние ветки, а не
+    коммит, и голова вернула бы гонку двух писателей одного файла. Разрешение
+    объявлено списком с причиной, а не выведено из формы файла."""
+    workflow(tmp_path, "badges.yml", BUTTON
+             + "concurrency:\n  group: badges\n  cancel-in-progress: true\n"
+             + РАБОТА)
+    assert cw.main(["--root", str(tmp_path)]) == 0
+
+
+def test_gruppa_vnutri_raboty_tozhe_razbiraetsya():
+    """`concurrency` объявляют и на уровне работы; дефект там тот же, а
+    sections() знает только ключи первой колонки."""
+    текст = ("jobs:\n  a:\n    concurrency:\n      group: x-${{ github.ref }}\n"
+             "      cancel-in-progress: true\n    timeout-minutes: 5\n")
+    assert cw.cancelling_groups(текст) == [("x-${{ github.ref }}", True)]
+

@@ -53,7 +53,9 @@ NUL без `%x00` в формате, молча перестал находит�
   165 — список путей из git читается по NUL, а проверка называет охват;
   039 — три исхода: чисто · есть находки · проверка не отработала;
   075 — ноль просмотренных файлов это отказ, а не чистый прогон;
-  165 — печатается ОХВАТ: сколько файлов просмотрено, а не только находки.
+  165 — печатается ОХВАТ: сколько файлов просмотрено, а не только находки;
+  180 — предмет разрешается по импортам разбираемого файла, а не по
+        последнему звену имени вызова.
 """
 
 from __future__ import annotations
@@ -69,7 +71,9 @@ ROOT = Path(__file__).resolve().parent.parent
 #: CPython, а не наше соглашение.
 TEXT_KEYS = ("text", "universal_newlines", "errors")
 
-#: Вызовы subprocess, у которых бывает текстовый режим.
+#: Вызовы subprocess, у которых бывает текстовый режим. Это ИСХОДНЫЕ имена в
+#: модуле, а не то, как вызов записан в файле: разрешение до исходного имени —
+#: работа resolve_calls (правило 180).
 CALLS = ("run", "check_output", "Popen", "check_call", "call")
 
 #: Подкоманды и ключи git, отдающие СПИСОК ПУТЕЙ. Только они требуют `-z`:
@@ -78,26 +82,70 @@ CALLS = ("run", "check_output", "Popen", "check_call", "call")
 LISTING = ("ls-files", "--name-only", "--porcelain", "--diff-filter")
 
 
+
+def resolve_calls(tree: ast.AST) -> tuple[set[str], dict[str, str]]:
+    """Как subprocess назван В ЭТОМ ФАЙЛЕ: имена модуля и псевдонимы функций.
+
+    ПОЧЕМУ НЕ ПО ПОСЛЕДНЕМУ ЗВЕНУ ИМЕНИ (правило 180). Совпадение звена ничего
+    не доказывает: в дереве каталога ДВЕНАДЦАТЬ своих функций с именем `run`.
+    Сегодня они не попадают в находки лишь потому, что триггером служит
+    `text=`, которого у своих функций не бывает, — то есть по счастливой
+    случайности, а не по построению. У потребителя такая же конструкция с более
+    широким триггером дала 17 ложных находок из 48, автоматическая правка
+    дописала своим функциям несуществующий параметр, и пятнадцать тестов упали.
+
+    ОБРАТНАЯ ПОЛОВИНА ТОГО ЖЕ, и у нас она была открыта полностью: вызов через
+    `from subprocess import run as ...` по последнему звену не находился вовсе —
+    гейт зеленел ровно за отсутствие того, чего не умел увидеть (146).
+
+    Возвращает: имена, под которыми доступен САМ МОДУЛЬ, и отображение
+    «имя в файле → исходное имя функции».
+    """
+    модули: set[str] = set()
+    функции: dict[str, str] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for a in node.names:
+                if a.name == "subprocess":
+                    модули.add(a.asname or "subprocess")
+        elif isinstance(node, ast.ImportFrom) and node.module == "subprocess":
+            for a in node.names:
+                функции[a.asname or a.name] = a.name
+    return модули, функции
+
+
+def called_name(node: ast.Call, модули: set[str],
+                функции: dict[str, str]) -> str:
+    """Исходное имя функции subprocess у этого вызова; пусто — вызов чужой."""
+    if isinstance(node.func, ast.Attribute):
+        владелец = node.func.value
+        if isinstance(владелец, ast.Name) and владелец.id in модули:
+            return node.func.attr
+        return ""
+    if isinstance(node.func, ast.Name):
+        return функции.get(node.func.id, "")
+    return ""
+
 def offenders(source: str) -> list[tuple[int, str]]:
     """Строки текстовых вызовов без `encoding=`. Разбор дерева, а не поиск строк.
 
     Поиск подстрокой здесь дал бы ложные находки на слове `text=True` в
     докстроке и пропустил бы вызов, разложенный по строкам (166: проверка
     отношения через присутствие подстроки зеленеет там, где отношения нет).
+
+    Предмет определяется по ИМПОРТАМ файла, а не по последнему звену имени
+    вызова (180) — см. resolve_calls.
     """
     try:
         tree = ast.parse(source)
     except SyntaxError:
         return []
+    модули, функции = resolve_calls(tree)
     found: list[tuple[int, str]] = []
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
-        имя = ""
-        if isinstance(node.func, ast.Attribute):
-            имя = node.func.attr
-        elif isinstance(node.func, ast.Name):
-            имя = node.func.id
+        имя = called_name(node, модули, функции)
         if имя not in CALLS:
             continue
         ключи = {kw.arg for kw in node.keywords if kw.arg}
