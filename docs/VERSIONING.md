@@ -2,12 +2,12 @@
 
 > **Читатель:** участник — по какой схеме здесь ставят номера.
 
-Канон схемы нумерации. Что изменилось по выпускам — [`CHANGELOG.md`](CHANGELOG.md);
+Канон схемы нумерации. Что изменилось по выпускам — [`CHANGELOG.md`](../CHANGELOG.md);
 почему решили именно так — [`HISTORY.md`](HISTORY.md). Это разные вопросы и
-разные документы ([021](rules/ru/021-split-docs-by-reader.md)).
+разные документы ([021](../rules/ru/021-split-docs-by-reader.md)).
 
 The canon of the numbering scheme. What changed per release lives in
-[`CHANGELOG.md`](CHANGELOG.md); why it was decided this way, in
+[`CHANGELOG.md`](../CHANGELOG.md); why it was decided this way, in
 [`HISTORY.md`](HISTORY.md).
 
 > **Это НЕ SemVer.** Схема взята у [грейдера](https://github.com/ArtVsMark/Stepik-Python-Grader)
@@ -49,11 +49,11 @@ MAJOR . MINOR . PATCH
   третьим исходом и говорит, что делать (`git fetch --tags`), вместо
   правдоподобного `0.0.N`. Так клонирует облачное окно и `actions/checkout` без
   `fetch-depth: 0` — значок выглядел бы свежим, а был бы ложным
-  ([075](rules/ru/075-a-guard-that-finds-nothing-must-fail.md)).
+  ([075](../rules/ru/075-a-guard-that-finds-nothing-must-fail.md)).
 
 ## Чем отличается от грейдера · How this differs from the grader
 
-Названо, а не сглажено ([046](rules/ru/046-name-the-gaps-do-not-level-them.md)).
+Названо, а не сглажено ([046](../rules/ru/046-name-the-gaps-do-not-level-them.md)).
 
 У грейдера версия живёт в **двух** формах: метаданные пакета от
 `setuptools-scm` (PEP 440, `X.Y.0.postN+g<hash>`) и логический счётчик. Здесь
@@ -83,11 +83,11 @@ one — and no fallback through package metadata.
 | Номер | Что версионирует | Кто на него смотрит | Когда двигается |
 |---|---|---|---|
 | тег `vX.Y.0` | сам каталог | все | по правилам выше |
-| `schema` в [`export/rules.json`](export/rules.json) | формат машинной выгрузки правил | потребитель, который её читает | когда меняется состав полей выгрузки |
-| `schema` в [`.rules/bindings.json`](.rules/bindings.json) | формат ответа проекта о правилах | потребитель, который его пишет | когда меняется состав полей ответа |
-| `schema` в [`.rules/consumers.json`](.rules/consumers.json) | формат реестра потребителей | только каталог | когда меняется состав записи реестра |
-| `schema` в [`.rules/proposals.json`](.rules/proposals.json) | формат предложения правила снизу | проект, который его присылает | когда меняется форма предложения |
-| `schema` в [`.rules/showcase.json`](.rules/showcase.json) | формат набора вопросов витрины | каталог и потребители витрины | когда меняется состав вопроса |
+| `schema` в [`export/rules.json`](../export/rules.json) | формат машинной выгрузки правил | потребитель, который её читает | когда меняется состав полей выгрузки |
+| `schema` в [`.rules/bindings.json`](../.rules/bindings.json) | формат ответа проекта о правилах | потребитель, который его пишет | когда меняется состав полей ответа |
+| `schema` в [`.rules/consumers.json`](../.rules/consumers.json) | формат реестра потребителей | только каталог | когда меняется состав записи реестра |
+| `schema` в [`.rules/proposals.json`](../.rules/proposals.json) | формат предложения правила снизу | проект, который его присылает | когда меняется форма предложения |
+| `schema` в [`.rules/showcase.json`](../.rules/showcase.json) | формат набора вопросов витрины | каталог и потребители витрины | когда меняется состав вопроса |
 | `schema` в [`export/where.json`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.json) | формат сводки «где действует» | тот, кто читает сводку машинно | когда меняется состав среза потребителя |
 
 **Все номера публикуются машиночитаемо, и это не дубль таблицы.** Таблица выше —
@@ -95,12 +95,12 @@ one — and no fallback through package metadata.
 и `generated_at`. Потребителю, который хочет знать, не сменился ли контракт,
 иначе пришлось бы разбирать markdown либо тянуть шесть файлов. Номера в блоке
 читаются **живыми** — из самих файлов, а не переписываются константами: две
-копии одного номера разошлись бы молча ([049](rules/ru/049-derive-state-from-live-artifacts.md), [022](rules/ru/022-one-canonical-document.md)).
+копии одного номера разошлись бы молча ([049](../rules/ru/049-derive-state-from-live-artifacts.md), [022](../rules/ru/022-one-canonical-document.md)).
 
 **Единого номера здесь нет намеренно.** Он вернул бы ту самую поломку, из
-которой выросло [164](rules/ru/164-a-version-says-what-it-versions.md): разные
+которой выросло [164](../rules/ru/164-a-version-says-what-it-versions.md): разные
 форматы под одним ключом. Цена считается по
-[157](rules/ru/157-a-contract-version-bump-is-a-re-read.md) — подъём версии
+[157](../rules/ru/157-a-contract-version-bump-is-a-re-read.md) — подъём версии
 контракта означает перечитывание ответов на той стороне, и общий номер заставлял
 бы перечитывать форматы, которые не двигались.
 
@@ -117,7 +117,7 @@ one — and no fallback through package metadata.
 обязан перечитывать её при каждом выпуске каталога: выпуск может не тронуть
 формат вовсе. И наоборот — формат может смениться между выпусками. Один номер
 на двоих означал бы либо ложные тревоги, либо пропущенные поломки
-([041](rules/ru/041-two-honest-numbers-beat-one-averaged.md): две честные
+([041](../rules/ru/041-two-honest-numbers-beat-one-averaged.md): две честные
 величины лучше одной усреднённой).
 
 **Схема, не названная в этой таблице, — находка.** Держит это
@@ -144,7 +144,7 @@ or missed breakage. A schema absent from the table above is a finding.
 
 Кнопкой `release` в рабочих процессах, руками из окна — нет: постановка тега и
 публикация релиза несут личность человека, а на записи из агентского окна прокси
-подменяет учётные данные ([131](rules/ru/131-no-writes-from-a-cloud-session.md)).
+подменяет учётные данные ([131](../rules/ru/131-no-writes-from-a-cloud-session.md)).
 
 1. фрагменты журнала собираются в `[Unreleased]`: `python scripts/collect_changelog.py --collect`;
 2. владелец запускает `release.yml`, называя версию вида `vX.Y.0`;

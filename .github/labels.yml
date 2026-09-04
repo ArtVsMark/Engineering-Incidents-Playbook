@@ -37,7 +37,7 @@
   description: "Зона: экспорт и контракт потребления"
 - name: "area/showcase"
   color: "1d76db"
-  paths: ["README.md", "README.en.md", "START.md", "TOP-10.md", "HISTORY.md", "CHANGELOG.md", "changelog.d/**", ".github/badges/**"]
+  paths: ["README.md", "README.en.md", "START.md", "TOP-10.md", "docs/HISTORY.md", "CHANGELOG.md", "changelog.d/**", ".github/badges/**"]
   description: "Зона: витрины, START, TOP-10, история, журнал"
 
 # `documentation` живёт здесь не как зона, а как разметка, которая УЖЕ СТОИТ на

@@ -3,7 +3,7 @@
 > **Reader:** visitor — what this is and whether to take it.
 
 [![Release](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Frelease.json&cacheSeconds=300)](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/releases)
-[![Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](VERSIONING.md)
+[![Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](docs/VERSIONING.md)
 [![Rules in the catalogue](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Frules-en.json)](rules/README.md)
 [![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
 

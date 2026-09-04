@@ -185,7 +185,7 @@ subject and watch it go red.
 
 ## Что идёт в историю, а что в журнал · History or changelog
 
-[`HISTORY.md`](HISTORY.md) отвечает «почему решили именно так»,
+[`HISTORY.md`](docs/HISTORY.md) отвечает «почему решили именно так»,
 [`CHANGELOG.md`](CHANGELOG.md) — «что изменилось». Смешивание съедает оба, и
 критерий отбора обязан быть записан, иначе его подменяет память автора
 ([161](rules/ru/161-history-keeps-turning-points.md)).

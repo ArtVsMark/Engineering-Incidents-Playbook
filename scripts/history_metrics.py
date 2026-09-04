@@ -80,7 +80,7 @@ import check_links
 
 ROOT = Path(__file__).resolve().parent.parent
 
-HISTORY = "HISTORY.md"
+HISTORY = "docs/HISTORY.md"
 SECTION = "## Эволюция метрик каталога"
 #: Заголовок раздела выпуска: «## v1.1.0 · 28 августа 2026 · чем он был».
 #: Единица истории — выпуск (правило 161), и раздел, которого нет, оставляет

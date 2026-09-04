@@ -3,10 +3,10 @@
 > **Читатель:** историк — что изменилось по выпускам.
 
 Что изменилось в каталоге, по выпускам. Почему изменилось и какие решения за
-этим стоят — [`HISTORY.md`](HISTORY.md): это разные вопросы и разные документы.
+этим стоят — [`HISTORY.md`](docs/HISTORY.md): это разные вопросы и разные документы.
 
 What changed in the catalogue, by release. Why it changed and the decisions
-behind it live in [`HISTORY.md`](HISTORY.md) — different questions, different
+behind it live in [`HISTORY.md`](docs/HISTORY.md) — different questions, different
 documents.
 
 > Записи не пишутся в этот файл руками. Каждое изменение кладёт свой фрагмент в
