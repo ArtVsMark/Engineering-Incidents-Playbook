@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T09:43:27+00:00",
+  "generated_at": "2026-09-04T09:47:52+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -17,9 +17,9 @@
       },
       "by_mechanism": {
         "pipeline": 8,
-        "gate": 101,
+        "gate": 102,
         "document": 25,
-        "none": 7
+        "none": 6
       },
       "rules": {
         "001": "active",
@@ -724,8 +724,8 @@
           "where": "scripts/check_schedules.py — роль расписания объявлена в .rules/schedules.json: main либо safety-net. У страховки обязателен замер срабатываний, а страховка со сроком короче промежутка расписания отвергается сразу"
         },
         "170": {
-          "mechanism": "none",
-          "where": "подделки есть — scripts/check_gates.py на подделанном дереве и подделка площадки в tests/test_sync_inbox.py, где форма ответа снята с живого случая после отказа у потребителя"
+          "mechanism": "gate",
+          "where": "scripts/check_forgeries.py — у набора, подменяющего шов наружу (ghcli.run, gh, gh_json, fetch_*, urlopen, остаток), обязано стоять объявление источника: слово-маркер И АДРЕС в одной строке — команда площадки в обратных кавычках, ссылка, путь или номер задачи. Список швов разрешительный, с причиной у каждой строки"
         },
         "171": {
           "mechanism": "gate",
