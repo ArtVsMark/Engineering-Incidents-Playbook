@@ -12,10 +12,10 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 35 | 27 | 176 | 0 | 0 | 138 | 94 | 8 | 24 | 12 | 85 |  |
-| `Stepik-Python-Grader` | подключён | 69 | 129 | 175 | 1 | 0 | 172 | 71 | 37 | 64 | 0 | 139 |  |
-| `ArtVsMark` | подключён | 16 | 10 | 175 | 1 | 0 | 101 | 60 | 11 | 13 | 15 | 34 |  |
-| `Claude-Code_Usage-Token` | подключён | 9 | 10 | 175 | 1 | 0 | 145 | 84 | 5 | 36 | 20 | 61 |  |
+| `Engineering-Incidents-Playbook` | подключён | 35 | 27 | 179 | 0 | 0 | 141 | 96 | 8 | 24 | 13 | 86 |  |
+| `Stepik-Python-Grader` | подключён | 69 | 129 | 175 | 4 | 0 | 172 | 71 | 37 | 64 | 0 | 139 |  |
+| `ArtVsMark` | подключён | 16 | 10 | 176 | 3 | 0 | 101 | 60 | 11 | 13 | 15 | 34 |  |
+| `Claude-Code_Usage-Token` | подключён | 12 | 13 | 175 | 4 | 0 | 145 | 84 | 5 | 36 | 20 | 61 |  |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
 ## Чем держат другие · How others enforce it
@@ -87,8 +87,8 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_charter.py` | 7 |
 | `Engineering-Incidents-Playbook` | `CONTRIBUTING.md` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 6 |
+| `Engineering-Incidents-Playbook` | `scripts/check_workflows.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_prose.py` | 5 |
-| `Engineering-Incidents-Playbook` | `scripts/check_workflows.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/link_trails.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/audit_catalogue.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/check_attribution.py` | 4 |
@@ -101,24 +101,26 @@
 | `Engineering-Incidents-Playbook` | `HISTORY.md` | 3 |
 | `Engineering-Incidents-Playbook` | `README.md` | 3 |
 | `Engineering-Incidents-Playbook` | `export/rules.json` | 3 |
+| `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/history_metrics.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/merge_ready.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_inbox.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/version.py` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/attribution-history.yml` | 2 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/badges.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/consumers-sync.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/main-red.yml` | 2 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/off-prefix.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/bindings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `rules/README.md` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_links.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_own_name.py` | 2 |
-| `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/ghcli.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 42 механизмов по одному правилу; без названного адреса: 0 из 126 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 41 механизмов по одному правилу; без названного адреса: 0 из 128 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 39 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
@@ -423,4 +425,7 @@
 | 174 | действует | действует | действует | действует |
 | 175 | действует | действует | действует | действует |
 | 176 | действует | действует | действует | действует |
-| 177 | действует | — | — | — |
+| 177 | действует | — | не рассмотрено | — |
+| 178 | действует | — | — | — |
+| 179 | действует | — | — | — |
+| 180 | действует | — | — | — |

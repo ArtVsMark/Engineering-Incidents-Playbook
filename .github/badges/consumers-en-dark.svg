@@ -2,20 +2,20 @@
 <rect x="0.5" y="0.5" width="1236" height="385" rx="16" fill="#0D1117" stroke="#30363D"/>
 <rect x="36" y="28" width="46" height="4" rx="2" fill="#58A6FF"/>
 <text x="36" y="68" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="31" font-weight="800" letter-spacing="-0.6">How rules are enforced across consumers</text>
-<text x="36" y="94" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="500">each project&apos;s own answer on all 176 catalogue rules — not our assessment of them</text>
+<text x="36" y="94" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="500">each project&apos;s own answer on all 179 catalogue rules — not our assessment of them</text>
 <text x="300" y="114" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3">answered</text>
 <text x="418" y="114" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3">trails</text>
 <text x="526" y="114" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3">born</text>
 <text x="920" y="114" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">held by</text>
 <text x="36" y="136" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Engineering-</text>
 <text x="36" y="155" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Incidents-Playbook</text>
-<text x="300" y="147" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">176</text>
+<text x="300" y="147" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">179</text>
 <text x="418" y="147" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">35</text>
 <text x="526" y="147" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">27</text>
-<rect x="640" y="130" width="75" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="653" y="146" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">gate<tspan fill="#58A6FF" font-weight="700" dx="7">94</tspan></text>
+<rect x="640" y="130" width="75" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="653" y="146" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">gate<tspan fill="#58A6FF" font-weight="700" dx="7">96</tspan></text>
 <rect x="725" y="130" width="95" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="738" y="146" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">pipeline<tspan fill="#3FB950" font-weight="700" dx="7">8</tspan></text>
 <rect x="838" y="130" width="103" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="851" y="146" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">document<tspan fill="#A371F7" font-weight="700" dx="7">24</tspan></text>
-<rect x="951" y="130" width="96" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="964" y="146" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">nothing<tspan fill="#F85149" font-weight="700" dx="7">12</tspan></text>
+<rect x="951" y="130" width="96" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="964" y="146" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">nothing<tspan fill="#F85149" font-weight="700" dx="7">13</tspan></text>
 <rect x="1057" y="130" width="144" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="1070" y="146" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">not applicable<tspan fill="#8B949E" font-weight="700" dx="7">31</tspan></text>
 <text x="36" y="182" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Stepik-Python-</text>
 <text x="36" y="201" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Grader</text>
@@ -28,7 +28,7 @@
 <rect x="951" y="176" width="88" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="964" y="192" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">nothing<tspan fill="#F85149" font-weight="700" dx="7">0</tspan></text>
 <rect x="1057" y="176" width="137" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="1070" y="192" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">not applicable<tspan fill="#8B949E" font-weight="700" dx="7">3</tspan></text>
 <text x="36" y="237" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">ArtVsMark</text>
-<text x="300" y="239" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">175</text>
+<text x="300" y="239" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">176</text>
 <text x="418" y="239" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">16</text>
 <text x="526" y="239" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">10</text>
 <rect x="640" y="222" width="75" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="653" y="238" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">gate<tspan fill="#58A6FF" font-weight="700" dx="7">60</tspan></text>
@@ -39,8 +39,8 @@
 <text x="36" y="274" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Claude-Code_Usage-</text>
 <text x="36" y="293" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Token</text>
 <text x="300" y="285" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">175</text>
-<text x="418" y="285" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">9</text>
-<text x="526" y="285" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">10</text>
+<text x="418" y="285" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">12</text>
+<text x="526" y="285" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800">13</text>
 <rect x="640" y="268" width="75" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="653" y="284" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">gate<tspan fill="#58A6FF" font-weight="700" dx="7">84</tspan></text>
 <rect x="725" y="268" width="95" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="738" y="284" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">pipeline<tspan fill="#3FB950" font-weight="700" dx="7">5</tspan></text>
 <rect x="838" y="268" width="103" height="24" rx="12" fill="#161B22" stroke="#30363D"/><text x="851" y="284" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600">document<tspan fill="#A371F7" font-weight="700" dx="7">36</tspan></text>

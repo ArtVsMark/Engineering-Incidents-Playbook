@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T08:42:49+00:00",
+  "generated_at": "2026-09-04T09:05:29+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,17 +9,17 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-09-04",
-      "answered": 176,
+      "answered": 179,
       "by_status": {
-        "active": 138,
+        "active": 141,
         "not-applicable": 31,
         "rejected": 7
       },
       "by_mechanism": {
         "pipeline": 8,
-        "gate": 94,
+        "gate": 96,
         "document": 24,
-        "none": 12
+        "none": 13
       },
       "rules": {
         "001": "active",
@@ -197,7 +197,10 @@
         "174": "active",
         "175": "active",
         "176": "active",
-        "177": "active"
+        "177": "active",
+        "178": "active",
+        "179": "active",
+        "180": "active"
       },
       "holds": {
         "001": {
@@ -751,6 +754,18 @@
         "177": {
           "mechanism": "gate",
           "where": "scripts/check_bindings.py::tier_zero — каталог спрашивает ступень 0 с СЕБЯ: три числа печатаются всегда (без ответа, не рассмотрено, действует но держится ничем) плюс сверка своей схемы ответа с contracts.bindings собственной выгрузки. Потребителю то же отдаётся разделом «Ступень 0» в scripts/sync_inbox.py. Печать, а не отказ: правило прямо говорит, что заслон называет долг и работу не запрещает — остановить её механизм не может"
+        },
+        "178": {
+          "mechanism": "none",
+          "where": "нигде: сверка двух источников об одной величине у каталога происходит в одном месте — scripts/check_bindings.py читает свои ответы и сводку соседей, — но требования 178 там никто не предъявляет. Считает он по номеру правила, а не по строке, то есть первая дешёвая гипотеза закрыта СЛУЧАЙНО: гейт строился под 162. Объявлять его держателем значило бы ровно то, за что каталог платил дважды за смену (146)"
+        },
+        "179": {
+          "mechanism": "gate",
+          "where": "scripts/check_workflows.py::cancelling_groups — у всякой группы concurrency с cancel-in-progress: true в имени обязана стоять голова; разбор по отступу, а не только по верхнему уровню, потому что группу объявляют и внутри работы. Разрешение объявлено списком CANCELS_BY_STATE с причиной у каждой строки: у .github/workflows/badges.yml и .github/workflows/off-prefix.yml предмет — состояние, а не коммит"
+        },
+        "180": {
+          "mechanism": "gate",
+          "where": "scripts/check_subprocess.py::resolve_calls — предмет разрешается по импортам разбираемого файла: имена, под которыми доступен модуль, и отображение «имя в файле → исходное имя функции». Обе стороны стоят случаями в tests/test_check_subprocess.py"
         }
       },
       "trails": 35,
@@ -1648,11 +1663,12 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-09-04",
-      "answered": 175,
+      "answered": 176,
       "by_status": {
         "active": 101,
         "not-applicable": 73,
-        "rejected": 1
+        "rejected": 1,
+        "unreviewed": 1
       },
       "by_mechanism": {
         "gate": 60,
@@ -1836,7 +1852,8 @@
         "173": "active",
         "174": "active",
         "175": "active",
-        "176": "active"
+        "176": "active",
+        "177": "unreviewed"
       },
       "holds": {
         "001": {
@@ -3024,8 +3041,8 @@
           "where": "scripts/subprocess_encoding.py (читатель обязан назвать encoding) и scripts/utf8_output.py (писатель обязан поставить UTF-8 первым делом в main) — обе половины одного умолчания. Правило родилось здесь: промах виден только на трети матрицы и только на подходящих данных, а stderr не падает вовсе и печатает \\uXXXX вместо отказа (#63, #67, #69)."
         }
       },
-      "trails": 9,
-      "born": 10
+      "trails": 12,
+      "born": 13
     },
     {
       "repo": "ArtVsMark/Glossary-Python",
