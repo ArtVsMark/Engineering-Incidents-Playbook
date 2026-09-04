@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T09:47:52+00:00",
+  "generated_at": "2026-09-04T09:52:43+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -17,9 +17,9 @@
       },
       "by_mechanism": {
         "pipeline": 8,
-        "gate": 102,
+        "gate": 103,
         "document": 25,
-        "none": 6
+        "none": 5
       },
       "rules": {
         "001": "active",
@@ -624,8 +624,8 @@
           "where": ".github/workflows/consumers-sync.yml — шаг «у находки есть адресат» заводит задачу при отказе"
         },
         "144": {
-          "mechanism": "none",
-          "where": "разбор записей идёт по разметке — пустая строка и заголовок раздела, — то есть правило соблюдается, но не проверяется"
+          "mechanism": "gate",
+          "where": "scripts/check_text_cuts.py — у каждого разреза строки по точке (split, rsplit, partition, find, index; включая регулярку [.!?]) обязана стоять рядом пометка «не проза: <что именно>». Разбор дерева, а не поиск подстроки"
         },
         "145": {
           "mechanism": "gate",
