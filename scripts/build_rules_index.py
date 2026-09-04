@@ -775,7 +775,17 @@ CONTRACT_FILES = {
     "consumers": ".rules/consumers.json",
     "proposals": ".rules/proposals.json",
     "showcase": ".rules/showcase.json",
-    "where": "export/where.json",
+}
+
+#: Номера, которые берутся у СБОРЩИКА, а не у файла. Сводка «где действует»
+#: живёт на ветке `badges` и в дереве общей ветки отсутствует — прочитать её
+#: `schema` отсюда нельзя, и попытка давала «ключа нет, значит не прочитали»:
+#: контракт молча терял бы номер при каждой сборке в чистом клоне.
+#:
+#: Формат принадлежит тому, кто его пишет, а не тому месту, где лежит файл.
+#: Поэтому номер спрашивается у сборщика — там же, где он и объявлен (022).
+CONTRACT_MODULES = {
+    "where": ("aggregate_bindings", "SUMMARY_SCHEMA"),
 }
 
 
@@ -808,6 +818,13 @@ def contracts_now(root: Path | None = None) -> dict[str, str]:
         if имя == "export":
             continue
         номер = данные.get("schema")
+        if isinstance(номер, str) and номер:
+            out[имя] = номер
+    for имя, (модуль, поле) in CONTRACT_MODULES.items():
+        try:
+            номер = getattr(__import__(модуль), поле)
+        except (ImportError, AttributeError):
+            continue
         if isinstance(номер, str) and номер:
             out[имя] = номер
     return out

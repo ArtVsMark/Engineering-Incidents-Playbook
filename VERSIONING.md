@@ -88,7 +88,7 @@ one — and no fallback through package metadata.
 | `schema` в [`.rules/consumers.json`](.rules/consumers.json) | формат реестра потребителей | только каталог | когда меняется состав записи реестра |
 | `schema` в [`.rules/proposals.json`](.rules/proposals.json) | формат предложения правила снизу | проект, который его присылает | когда меняется форма предложения |
 | `schema` в [`.rules/showcase.json`](.rules/showcase.json) | формат набора вопросов витрины | каталог и потребители витрины | когда меняется состав вопроса |
-| `schema` в [`export/where.json`](export/where.json) | формат сводки «где действует» | тот, кто читает сводку машинно | когда меняется состав среза потребителя |
+| `schema` в [`export/where.json`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.json) | формат сводки «где действует» | тот, кто читает сводку машинно | когда меняется состав среза потребителя |
 
 **Все номера публикуются машиночитаемо, и это не дубль таблицы.** Таблица выше —
 для человека; `export/rules.json` несёт блок `contracts` со всеми номерами разом

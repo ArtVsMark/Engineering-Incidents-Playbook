@@ -52,23 +52,34 @@ ROOT = Path(__file__).resolve().parent.parent
 #: Разрешительно и с причиной у каждой строки: список «всё, кроме…» завтра
 #: пропустил бы новый файл (068).
 OWNED_BY_JOB = {
-    "export/where.md": "consumers-sync → refresh_derived.py: вход — ответы "
-                       "потребителей, они меняются без нас",
-    "export/where.json": "consumers-sync → refresh_derived.py: тот же вход и "
-                         "тот же владелец",
+    "export/where.md": "badges.yml → ветка `badges`: сводка живёт там же, где "
+                       "картинка витрины, и в общей ветке её нет вовсе",
+    "export/where.json": "badges.yml → ветка `badges`: тот же владелец и то же "
+                         "место",
 }
 
 #: Ветка, на которой эти файлы и есть предмет работы. Одна и названа поимённо.
-REFRESH_BRANCH = "agent/consumers-refresh"
-
-#: Правка сборщика меняет ВИД сводки, и тогда новая сводка едет с ним: иначе
-#: смену формата нечем ни отревьюить, ни проверить.
-BUILDERS = ("scripts/aggregate_bindings.py", "scripts/refresh_derived.py")
+#: ИСКЛЮЧЕНИЙ БОЛЬШЕ НЕТ, И ЭТО ЗАМЕР, А НЕ УЖЕСТОЧЕНИЕ. Их было два: ветка
+#: пересборки и «правка сборщика везёт новую сводку с собой». Пока файл лежал в
+#: общей ветке, оба были осмысленны — сводку кто-то должен был обновлять. Теперь
+#: файла в дереве нет вовсе, и любое его появление означает одно: он вернулся.
+#:
+#: Половинчатая починка стоила ровно этого. 3 сентября сводке объявили одного
+#: писателя, оставив её в дереве: рутинные конфликты исчезли, а предмет остался
+#: — писателей снова стало двое, как только правило поехало вместе с ответом о
+#: нём, и конфликт вернулся тем же вечером на изменении #329.
 
 
 def changed(rng: str, root: Path) -> tuple[list[str] | None, str]:
     """Пути, тронутые диапазоном. None — спросить не удалось."""
-    done = subprocess.run(["git", "-C", str(root), "diff", "--name-only", "-z", rng],
+    # УДАЛЕНИЕ ПОД ОХРАНУ НЕ ПОПАДАЕТ, И ЭТО ПОЙМАЛ ТЕСТ. Гейт запрещает
+    # ДЕРЖАТЬ производное в дереве; изменение, которое его оттуда убирает,
+    # делает ровно то, чего гейт хочет, — и первая редакция отвергала его,
+    # потому что путь стоит в разнице в обе стороны. Ложный отказ на верной
+    # работе (051), и притом на единственной работе, которая гейт удовлетворяет.
+    # `--diff-filter=d` — строчная буква исключает удалённые.
+    done = subprocess.run(["git", "-C", str(root), "diff", "--name-only", "-z",
+                           "--diff-filter=d", rng],
                           capture_output=True, text=True, encoding="utf-8")
     if done.returncode != 0:
         return None, (done.stderr or "").strip()
@@ -77,13 +88,27 @@ def changed(rng: str, root: Path) -> tuple[list[str] | None, str]:
     return [p for p in done.stdout.split("\0") if p], ""
 
 
-def findings(paths: list[str], branch: str) -> list[str]:
-    """Производные, которые едут в изменении вопреки владельцу."""
-    if branch == REFRESH_BRANCH:
-        return []
-    if any(b in paths for b in BUILDERS):
-        return []
-    return sorted(p for p in paths if p in OWNED_BY_JOB)
+def findings(paths: list[str], branch: str, tracked: set[str] | None = None) -> list[str]:
+    """Производные, вернувшиеся в дерево общей ветки.
+
+    ДВА ПРЕДМЕТА, А НЕ ОДИН. Путь в разнице означает, что файл везут изменением;
+    путь в списке отслеживаемых — что он лежит в дереве и без изменения.
+    Второе важнее: `.gitignore` при слиянии не спрашивают, и файл возвращается
+    молча. Ровно та же пара стоит у картинок витрины (`check_showcase.py`).
+    """
+    вернулись = {p for p in paths if p in OWNED_BY_JOB}
+    вернулись |= {p for p in (tracked or set()) if p in OWNED_BY_JOB}
+    return sorted(вернулись)
+
+
+def tracked_paths(root: Path) -> set[str]:
+    """Что git отслеживает в дереве. Пусто — спросить не удалось."""
+    done = subprocess.run(  # noqa: S603 — аргументы свои
+        ["git", "-C", str(root), "ls-files", "-z", "--", "export/"],
+        capture_output=True, text=True, encoding="utf-8")
+    if done.returncode != 0:
+        return set()
+    return {p for p in done.stdout.split("\0") if p}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -102,17 +127,18 @@ def main(argv: list[str] | None = None) -> int:
               file=sys.stderr)
         return 2
 
-    found = findings(paths, args.branch)
+    found = findings(paths, args.branch, tracked_paths(args.root))
     # ── исход 1 ────────────────────────────────────────────────────────────
     if found:
-        print("производные едут в изменении, а владеет ими прогон:",
+        print("производные вернулись в общую ветку, а место им на `badges`:",
               file=sys.stderr)
         for p in found:
             print(f"  • {p} — {OWNED_BY_JOB[p]}", file=sys.stderr)
-        print("\n  Уберите их из изменения: `git checkout origin/main -- "
-              + " ".join(found) + "`.\n  Пересоберёт их прогон, и в общей ветке "
-              "они окажутся свежее, чем здесь.\n  Замер: три конфликта за одну "
-              "смену, и все — в этих файлах.", file=sys.stderr)
+        print("\n  Уберите их из дерева: `git rm --cached "
+              + " ".join(found) + "`.\n  Собирает и публикует их badges.yml на "
+              "ветке `badges`, рядом с картинкой витрины; читатели ходят туда.\n"
+              "  Замер: шесть конфликтов за одну смену, и все — в этих файлах; "
+              "ни один не был поломкой.", file=sys.stderr)
         return 1
 
     print(f"производные в порядке: тронуто путей {len(paths)}, "

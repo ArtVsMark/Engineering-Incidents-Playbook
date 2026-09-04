@@ -33,16 +33,28 @@ def test_izmenenie_bez_svodki_chisto():
     assert cd.findings(["rules/ru/001-x.md", "export/rules.json"], "agent/тема") == []
 
 
-def test_pravka_sborshchika_vezyot_svodku_zakonno():
-    """ГРАНИЦА: правка сборщика меняет ВИД сводки, и без неё смену формата
-    нечем ни отревьюить, ни проверить."""
-    assert cd.findings([СБОРЩИК, "export/where.md"], "agent/тема") == []
+def test_pravka_sborshchika_svodku_bolshe_ne_osvobozhdaet():
+    """ИСКЛЮЧЕНИЙ НЕТ, И ЭТО ЗАМЕР. Пока сводка лежала в дереве, правка
+    сборщика законно везла её с собой. Файла в дереве больше нет — и правка
+    сборщика перестала быть поводом его вернуть."""
+    assert cd.findings([СБОРЩИК, "export/where.md"], "agent/тема") == ["export/where.md"]
 
 
-def test_vetka_peresborki_osvobozhdena():
-    """Освобождена одна ветка и названа поимённо (068): там сводка и есть
-    предмет работы."""
-    assert cd.findings(["export/where.md"], cd.REFRESH_BRANCH) == []
+def test_vetka_peresborki_bolshe_ne_osvobozhdena():
+    """Ветки пересборки не стало вместе с изменениями, которые она открывала:
+    публикует сводку тот же прогон, что публикует картинку."""
+    assert cd.findings(["export/where.md"], "agent/consumers-refresh") == ["export/where.md"]
+
+
+def test_svodka_v_dereve_nahodka_dazhe_bez_izmeneniya():
+    """Второй предмет: `.gitignore` при слиянии не спрашивают, и файл
+    возвращается молча — без единого пути в разнице."""
+    assert cd.findings([], "agent/тема", {"export/where.json"}) == ["export/where.json"]
+
+
+def test_chuzhoe_v_export_pod_ohranu_ne_popadaet():
+    """Обратная сторона (140): под охраной названные два файла, а не папка."""
+    assert cd.findings([], "agent/тема", {"export/rules.json", "export/README.md"}) == []
 
 
 def test_ukazatel_pod_ohranoy_ne_stoit():
@@ -84,5 +96,12 @@ def test_gejt_otvechaet_otkazom_cherez_main(tmp_path):
 
     общие = ["--root", str(tmp_path), "--range", "HEAD~1...HEAD", "--branch"]
     assert cd.main([*общие, "agent/тема"]) == 1
-    # И обратная сторона на том же дереве: освобождённая ветка проходит.
-    assert cd.main([*общие, cd.REFRESH_BRANCH]) == 0
+    # И на прежде освобождённой ветке тоже: исключений не осталось, потому что
+    # не осталось законного повода держать файл в дереве.
+    assert cd.main([*общие, "agent/consumers-refresh"]) == 1
+
+    # ОБРАТНАЯ СТОРОНА НА ТОМ ЖЕ ДЕРЕВЕ (140): файл убран — гейт молчит.
+    git("rm", "-q", "export/where.md")
+    git("commit", "-qm", "сводка ушла на ветку badges")
+    assert cd.main(["--root", str(tmp_path), "--range", "HEAD~1...HEAD",
+                    "--branch", "agent/тема"]) == 0
