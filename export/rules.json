@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T10:06:13+00:00",
+  "generated_at": "2026-09-04T11:28:11+00:00",
   "contracts": {
     "export": "1.4",
     "bindings": "1.1",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 180,
+  "count": 181,
   "rules": [
     {
       "id": "001",
@@ -5907,6 +5907,42 @@
       },
       "trails": [],
       "origin": "ArtVsMark/Stepik-Python-Grader",
+      "portable": "yes"
+    },
+    {
+      "id": "182",
+      "slug": "an-unmechanisable-answer-is-split-in-two",
+      "title": {
+        "ru": "Ответ «машинно нельзя» разбирается надвое, прежде чем ему поверят",
+        "en": "An answer of \"no machine can check this\" is split in two before it is believed"
+      },
+      "areas": {
+        "ru": [
+          "каталог",
+          "гейты"
+        ],
+        "en": [
+          "catalogue",
+          "gates"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "added": "2026-09-04",
+      "files": {
+        "ru": "rules/ru/182-an-unmechanisable-answer-is-split-in-two.md",
+        "en": "rules/en/182-an-unmechanisable-answer-is-split-in-two.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "148"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes"
     }
   ],

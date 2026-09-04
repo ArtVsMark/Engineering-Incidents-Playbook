@@ -186,7 +186,8 @@ def test_у_отсутствия_механизма_адреса_не_требу
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
                                "where": "намерение, за которым пока ничего",
-                               "why": "не дошли руки: предмет счётный"}}},
+                               "why": "не дошли руки: предмет счётный",
+                               "machine_half": "есть, но нашла бы пустоту (182)"}}},
             export_of("001"))
     assert cb.main() == 0
 
@@ -214,7 +215,9 @@ def test_ничем_с_причиной_проходит(monkeypatch, repo):
             {"rules": {"001": {"status": "active", "mechanism": "none",
                                "where": "держится договорённостью",
                                "why": "требует суждения: что считать решением, "
-                                      "решает читатель"}}},
+                                      "решает читатель",
+                               "machine_half": "нет: препятствие одно на обе "
+                                               "половины (182)"}}},
             export_of("001"))
     assert cb.main() == 0
 
@@ -279,7 +282,8 @@ def test_у_ничем_блока_не_спрашивают(monkeypatch, repo):
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
                                "where": "scripts/страж.py",
-                               "why": "не дошли руки: предмет счётный"}}},
+                               "why": "не дошли руки: предмет счётный",
+                               "machine_half": "есть, но нашла бы пустоту (182)"}}},
             export_of("001"))
     assert cb.main() == 0
 
@@ -345,10 +349,18 @@ def с_соседями(monkeypatch, repo: Path, ответ: dict, соседи=
 
 
 def ничем(why: str = "требует суждения: пока так") -> dict:
+    """Ответ «держится ничем» — с разбором надвое, которого требует 182.
+
+    Поле стоит в общем помощнике, а не в отдельном случае: без него КАЖДЫЙ
+    случай, строящий такой ответ, отвечал бы отказом по другой причине, и набор
+    проверял бы не то, что написано (150).
+    """
     return {"project": "мой/каталог",
             "rules": {"001": {"status": "active", "mechanism": "none",
                               "where": "договорённостью, гейта нет",
-                              "why": why}}}
+                              "why": why,
+                              "machine_half": "нет: препятствие одно на обе "
+                                              "половины (182)"}}}
 
 
 def test_reshennoe_u_sosseda_nazvano_v_metrike(monkeypatch, repo, capsys):
@@ -469,4 +481,47 @@ def test_bez_rashozhdeniya_lishnego_ne_pechataetsya(monkeypatch, repo, capsys):
     out = capsys.readouterr().out
     assert "решено у соседа: правил 1" in out
     assert "записей" not in out
+
+
+# ── у «none» спрашивается разбор надвое (правило 182) ───────────────────────
+
+def без_разбора(why: str = "требует суждения: понимание, а не форма") -> dict:
+    return {"project": "мой/каталог",
+            "rules": {"001": {"status": "active", "mechanism": "none",
+                              "where": "нигде", "why": why}}}
+
+
+def test_none_bez_razbora_nadvoe_otkaz(monkeypatch, repo, capsys):
+    """ГЛАВНЫЙ СЛУЧАЙ 182, и он про ЧЕСТНЫЙ ответ, а не про отписку.
+
+    Причина есть и она подробная — именно поэтому её никто не перепроверяет.
+    Замер 4 сентября: 158, 170 и 144 простояли месяцами с такими причинами и
+    закрылись за один заход, потому что лёгкая половина лежала рядом.
+    """
+    prepare(monkeypatch, repo, без_разбора(), export_of("001"))
+
+    assert cb.main() == 1
+    assert "разбора надвое нет" in capsys.readouterr().err
+
+
+def test_s_razborom_chisto(monkeypatch, repo, capsys):
+    ответ = без_разбора()
+    ответ["rules"]["001"]["machine_half"] = (
+        "есть, но нашла бы пустоту: предмета в дереве нет ни одного (146)")
+    prepare(monkeypatch, repo, ответ, export_of("001"))
+
+    assert cb.main() == 0
+
+
+def test_mehanizm_est_razbor_ne_sprashivaetsya(monkeypatch, repo, capsys):
+    """ГРАНИЦА: у ответа С механизмом делить нечего — вопрос «что из этого
+    машинно» уже отвечен самим механизмом, и красное на нём было бы ложным
+    отказом (051)."""
+    гейт(repo, '"""Сторож. Реализует правила каталога:\n  001 — предмет.\n"""\n')
+    ответ = без_разбора()
+    ответ["rules"]["001"]["mechanism"] = "gate"
+    ответ["rules"]["001"]["where"] = "scripts/страж.py"
+    prepare(monkeypatch, repo, ответ, export_of("001"))
+
+    assert cb.main() == 0
 
