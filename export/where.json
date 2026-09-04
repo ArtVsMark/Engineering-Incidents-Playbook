@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T09:05:29+00:00",
+  "generated_at": "2026-09-04T09:29:13+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -17,9 +17,9 @@
       },
       "by_mechanism": {
         "pipeline": 8,
-        "gate": 96,
+        "gate": 97,
         "document": 24,
-        "none": 13
+        "none": 12
       },
       "rules": {
         "001": "active",
@@ -676,8 +676,8 @@
           "where": "scripts/aggregate_bindings.py — schema_lag(): версия ответа каждого потребителя сверяется с версией ОТВЕТА КАТАЛОГА, а не с константой в коде; отставание печатается разделом «правится не здесь». Там же сверяется templates/bindings.json: заготовка, отстав, рассылает устаревшую версию всем, кто подключается"
         },
         "158": {
-          "mechanism": "none",
-          "where": "предмет есть и правило соблюдается: scripts/aggregate_bindings.py, scripts/collect_proposals.py, scripts/link_trails.py и scripts/main_red.py называют в третьем исходе, ЧТО именно не прочиталось — репозиторий, URL, файл или номер задачи. Гейта нет"
+          "mechanism": "gate",
+          "where": "scripts/check_third_outcome.py — разбор исходников scripts/: у каждого оператора, отдающего код 2, сообщение обязано называть предмет подстановкой либо буквальным адресом (путь, имя файла, номер задачи, ссылка, длинный ключ, имя в верхнем регистре)"
         },
         "159": {
           "mechanism": "gate",
