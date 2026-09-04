@@ -47,7 +47,9 @@ def main() -> int:
         if not any(part in SKIP_DIRS for part in p.parts)
     ]
     if not files:
-        print("не найдено ни одного документа — проверять нечего", file=sys.stderr)
+        print(f"проверка не отработала: под {ROOT} не нашлось ни одного "
+              f"*.md вне {sorted(SKIP_DIRS)} — проверять нечего",
+              file=sys.stderr)
         return 2
 
     problems: list[str] = []
@@ -72,7 +74,9 @@ def main() -> int:
                     problems.append(f"{rel}: якоря нет → {raw}")
 
     if checked == 0:
-        print("в документах нет ни одной локальной ссылки — вход подозрителен", file=sys.stderr)
+        print(f"проверка не отработала: в {len(files)} документах под {ROOT} "
+              "нет ни одной локальной ссылки — вход подозрителен",
+              file=sys.stderr)
         return 2
 
     if problems:

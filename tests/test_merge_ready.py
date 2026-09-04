@@ -103,7 +103,7 @@ def test_ответ_без_списка_это_третий_исход(monkeypat
     monkeypatch.setattr("sys.stdin",
                         type("S", (), {"read": staticmethod(lambda: '{"message":"нет"}')})())
     assert mr.main([]) == 2
-    assert "нет списка проверок" in capsys.readouterr().err
+    assert "нет ключа `check_runs`" in capsys.readouterr().err
 
 
 def test_голый_список_тоже_принимается(monkeypatch):

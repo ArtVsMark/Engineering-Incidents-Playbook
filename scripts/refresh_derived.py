@@ -398,8 +398,8 @@ def main(argv: list[str] | None = None) -> int:
     for p in problems:
         print(f"  ✗ {p}", file=sys.stderr)
     if rc == 2:
-        print("обновление производных НЕ отработало — это чинит человек",
-              file=sys.stderr)
+        print(f"обновление производных НЕ отработало: смотрите {DERIVED} — "
+              "это чинит человек", file=sys.stderr)
         return 2
     if rc == 0:
         print("производные совпадают с тем, что отдают потребители")

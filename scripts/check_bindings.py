@@ -353,8 +353,8 @@ def main() -> int:
 
     rules = answer.get("rules")
     if not isinstance(rules, dict) or not rules:
-        print("проверка не отработала: в ответе нет записей — сверять нечего",
-              file=sys.stderr)
+        print(f"проверка не отработала: в {BINDINGS.relative_to(ROOT)} нет ни "
+              "одной записи — сверять нечего", file=sys.stderr)
         return 2
 
     known = {r["id"]: r for r in export["rules"]}

@@ -86,7 +86,7 @@ def main() -> int:
 
     percent = measured()
     if percent is None:
-        print("замер не отработал: нет данных покрытия — сначала "
+        print(f"замер не отработал: {DATA} не прочитан — сначала "
               "`coverage run -m pytest`", file=sys.stderr)
         return 2
 

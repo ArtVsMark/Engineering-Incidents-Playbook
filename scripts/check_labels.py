@@ -174,8 +174,8 @@ def main(argv: list[str] | None = None) -> int:
               file=sys.stderr)
         return 2
     if not paths:
-        print("проверка не отработала: список тронутых путей пуст — "
-              "изменение без файлов сверять не с чем", file=sys.stderr)
+        print(f"проверка не отработала: {args.paths_from} пуст — изменение "
+              "без файлов сверять не с чем", file=sys.stderr)
         return 2
 
     надо = needed(paths, zmap)

@@ -112,8 +112,8 @@ def main(argv: list[str] | None = None) -> int:
     # ── исход 2 ────────────────────────────────────────────────────────────
     tests = sorted((root / "tests").glob("*.py"))
     if not tests:
-        print("проверка не отработала: тестов нет — смотреть нечего",
-              file=sys.stderr)
+        print(f"проверка не отработала: в {root / 'tests'} нет ни одного "
+              "*.py — смотреть нечего", file=sys.stderr)
         return 2
     allowed, err = declared(root)
     if err:

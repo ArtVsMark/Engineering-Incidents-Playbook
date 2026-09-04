@@ -136,7 +136,8 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if args.body_file is None:
-        print("проверка не отработала: тело не передано", file=sys.stderr)
+        print("проверка не отработала: --body-file не передан — тело "
+              "изменения брать неоткуда", file=sys.stderr)
         return 2
     if str(args.body_file) == "-":
         body = sys.stdin.read()
@@ -148,8 +149,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.check:
         if not body.strip():
-            print("проверка не отработала: тело изменения пусто — проверять нечего",
-                  file=sys.stderr)
+            print(f"проверка не отработала: {args.body_file} пуст — "
+                  "проверять нечего", file=sys.stderr)
             return 2
         rid = linked(body)
         if rid:

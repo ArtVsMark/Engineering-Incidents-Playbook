@@ -189,7 +189,8 @@ def main(argv: list[str] | None = None) -> int:
     # ── исход 2 ────────────────────────────────────────────────────────────
     raw = sys.stdin.read()
     if not raw.strip():
-        print("проверка не отработала: список проверок не передан", file=sys.stderr)
+        print("проверка не отработала: на stdin пусто — список проверок "
+              "подаётся туда (`gh api ... | merge_ready.py`)", file=sys.stderr)
         return 2
     try:
         doc = json.loads(raw)
@@ -199,8 +200,8 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     runs = doc.get("check_runs") if isinstance(doc, dict) else doc
     if not isinstance(runs, list):
-        print("проверка не отработала: в ответе нет списка проверок",
-              file=sys.stderr)
+        print("проверка не отработала: в JSON со stdin нет ключа "
+              "`check_runs` и сам он не список", file=sys.stderr)
         return 2
 
     ok, why = verdict(runs, required)

@@ -79,8 +79,8 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not branch:
-        print("проверка не отработала: имя ветки не получено — git не ответил",
-              file=sys.stderr)
+        print(f"проверка не отработала: `git -C {args.root} rev-parse "
+              "--abbrev-ref HEAD` не назвал ветку", file=sys.stderr)
         return 2
     changes, err = open_changes()
     if err:
