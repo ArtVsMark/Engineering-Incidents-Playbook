@@ -257,3 +257,33 @@ def test_gruppa_vnutri_raboty_tozhe_razbiraetsya():
              "      cancel-in-progress: true\n    timeout-minutes: 5\n")
     assert cw.cancelling_groups(текст) == [("x-${{ github.ref }}", True)]
 
+
+# ── `id:` и вывод шага — идентификаторы, а не проза (правило 167) ───────────
+
+def test_id_kirillicey_nahodka():
+    """ЖИВОЙ ОТКАЗ, а не выдумка: `id: ключ` в review.yml сделал файл
+    НЕРАЗБИРАЕМЫМ — прогон падал за ноль секунд, работ ноль, шагов ноль, и
+    выглядело это обычным красным. Красный прогон на общей ветке заморозил
+    очередь, и два изменения простояли молча."""
+    текст = "jobs:\n  a:\n    steps:\n      - id: ключ\n        run: echo\n"
+    assert cw.non_ascii_names(текст) == ["id: ключ"]
+
+
+def test_obrashchenie_k_vyvodu_kirillicey_nahodka():
+    текст = "        if: steps.ключ.outputs.есть == 'да'\n"
+    assert cw.non_ascii_names(текст) == ["steps.ключ.outputs.есть"]
+
+
+def test_name_shaga_ostayotsya_na_yazyke_proekta():
+    """ГРАНИЦА, И ОНА ТОНКАЯ: `name:` — проза для человека и пишется
+    по-русски; `id:` — имя для площадки. Прежняя редакция гейта не различала
+    их и разрешала оба, потому что смотрела на КЛЮЧ, а не на значение."""
+    текст = ("jobs:\n  a:\n    steps:\n"
+             "      - name: ключа ревью нет — внешний взгляд не состоится\n"
+             "        id: token\n        run: echo\n")
+    assert cw.non_ascii_names(текст) == []
+
+
+def test_latinskiy_vyvod_chisto():
+    assert cw.non_ascii_names("        if: steps.token.outputs.present == 'yes'\n") == []
+
