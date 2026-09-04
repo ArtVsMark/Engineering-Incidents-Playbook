@@ -148,3 +148,36 @@ def test_import_vnutri_funktsii_tozhe_schitaetsya():
            "    import subprocess\n"
            "    subprocess.run(['x'], text=True)\n")
     assert [n for n, _ in cs.offenders(код)] == [3]
+
+
+# ── правила 017 и 058: площадку зовут через одну дверь ─────────────────────
+
+def test_gh_naprjamuyu_nahodka():
+    """Мимо ghcli «лимит кончился» снова становится неотличимо от «ничего не
+    нашлось»: площадка отдаёт 1 в обоих случаях. Цена известна — 2 сентября
+    четыре изменения подряд не открылись, и никто не покраснел."""
+    код = 'import subprocess\nsubprocess.run(["gh", "issue", "list"])\n'
+    assert cs.мимо_двери(код) == [2]
+
+
+def test_gh_kortezhem_tozhe_nahodka():
+    код = 'import subprocess\nsubprocess.run(("gh", "pr", "view"))\n'
+    assert cs.мимо_двери(код) == [2]
+
+
+def test_which_ne_vyzov_podprotsessa():
+    """ГРАНИЦА: `shutil.which("gh")` спрашивает, есть ли инструмент, и площадку
+    не трогает вовсе. Красное на нём — ложный отказ (051)."""
+    assert cs.мимо_двери('import shutil\nshutil.which("gh")\n') == []
+
+
+def test_sosednyaya_komanda_ne_trogaetsya():
+    """Предмет — ПЕРВОЕ слово списка, а не наличие строки «gh» в вызове:
+    проверка отношения через подстроку краснела бы там, где отношения нет
+    (166)."""
+    assert cs.мимо_двери('import subprocess\nsubprocess.run(["git", "log"])\n') == []
+
+
+def test_cherez_dver_chisto():
+    assert cs.мимо_двери('import ghcli\nghcli.run("issue", "list")\n') == []
+
