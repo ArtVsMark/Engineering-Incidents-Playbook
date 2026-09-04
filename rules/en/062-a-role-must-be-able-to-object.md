@@ -2,6 +2,8 @@
 
 **Area.** roles
 
+**Tier.** 1 — rules and roles
+
 **The rule.** A new role passes an admission test: its own question, its own
 artefact, **its own objection** to a specific existing role. If it fails, it is
 a documentation section, not a role.

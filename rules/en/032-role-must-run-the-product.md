@@ -2,6 +2,8 @@
 
 **Area.** roles, audit
 
+**Tier.** 1 — rules and roles
+
 **The rule.** A conclusion reached by reading code where you could have run the
 thing counts as incomplete.
 

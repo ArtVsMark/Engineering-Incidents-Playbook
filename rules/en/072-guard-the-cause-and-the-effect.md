@@ -2,6 +2,8 @@
 
 **Area.** tests, gates
 
+**Tier.** 3 — gates and processes
+
 **The rule.** One defence checks intent before the run, the other checks the
 consequence after. Each is blind exactly where the other sees.
 

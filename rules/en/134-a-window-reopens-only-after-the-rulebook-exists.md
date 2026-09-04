@@ -2,6 +2,8 @@
 
 **Area.** agent sessions, process
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A window reads the **repository**, not its predecessor's memory:
 whatever is not in the project does not exist for it, even if the previous
 window knew it. Hence the order when setting a project up: first the minimal

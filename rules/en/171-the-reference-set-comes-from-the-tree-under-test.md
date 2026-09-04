@@ -2,6 +2,8 @@
 
 **Area.** gates, pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** The reference a change is compared against comes from **the tree of
 that same change**. A reference taken from the main branch arrives from the past
 and makes unresolvable exactly the class of changes that alters the reference

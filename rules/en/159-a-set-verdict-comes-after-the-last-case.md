@@ -2,6 +2,8 @@
 
 **Area.** tests, gates
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A set that collects findings into a list reads that list **after
 the last case**. An early return turns everything that follows into printing:
 the cases run, findings are appended to a list nobody reads again, and the run

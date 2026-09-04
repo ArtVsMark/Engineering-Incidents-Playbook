@@ -2,6 +2,8 @@
 
 **Area.** output, reports
 
+**Tier.** 5 — everything else
+
 **The rule.** A trimmed result must state that it was trimmed, and by how much.
 Otherwise it looks complete.
 

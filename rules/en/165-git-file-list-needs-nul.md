@@ -2,6 +2,8 @@
 
 **Area.** code, gates
 
+**Tier.** 3 — gates and processes
+
 **The rule.** When listing paths from git in order to **read** them, pass `-z`
 and split the output on NUL. Without it git escapes names containing non-ASCII
 characters and spaces, the reconstructed path does not resolve, and the file

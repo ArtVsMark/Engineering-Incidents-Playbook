@@ -2,6 +2,8 @@
 
 **Area.** collaboration
 
+**Tier.** 5 — everything else
+
 **The rule.** A change to a branch driven by another person or another session
 is made by its owner. You report what needs resolving and how.
 

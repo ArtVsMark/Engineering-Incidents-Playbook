@@ -2,6 +2,8 @@
 
 **Area.** documentation, security
 
+**Tier.** 5 — everything else
+
 **The rule.** If the guarantee differs across platforms, publish a **table of
 asymmetry**, not a single word. Every gap says why it was left and what the
 right solution would be.

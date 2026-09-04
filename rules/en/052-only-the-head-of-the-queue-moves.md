@@ -2,6 +2,8 @@
 
 **Area.** pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** While changes land one at a time, the one to synchronise with the
 shared branch is **whoever is next**. Updating everyone after every merge is a
 quadratic amount of wasted work.

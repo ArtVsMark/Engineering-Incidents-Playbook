@@ -8,6 +8,8 @@
 
 **Area.** agent sessions, pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** An operation that must carry a human's identity is never run from
 an agent session: the proxy substitutes credentials **on writes**, and a bot
 becomes the author. You cannot detect this by asking the token who it is — on

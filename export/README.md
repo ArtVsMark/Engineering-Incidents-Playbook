@@ -33,6 +33,9 @@ edited by hand.
       "slug": "a-catalogue-needs-a-consumption-contract",
       "title": { "ru": "…", "en": "…" },
       "areas": { "ru": ["каталог", "контракты"], "en": ["catalogue", "contracts"] },
+      "tier": { "n": 1, "ru": "правила и роли", "en": "rules and roles" },
+                                           // КОГДА правило берут, а не о чём оно
+                                           // WHEN a rule is taken up, not what about
       "added": "2026-08-21",              // из истории файла · from file history
       "files": { "ru": "rules/ru/129-….md", "en": "rules/en/129-….md" },
       "trails": [                          // структурно, а не строкой · structured
@@ -580,10 +583,10 @@ having no gate.
 
 ```json
 {
-  "schema": "1.3",
+  "schema": "1.4",
   "generated_at": "2026-09-03T09:24:00+00:00",
   "contracts": {
-    "export": "1.3", "bindings": "1.1", "consumers": "1.1",
+    "export": "1.4", "bindings": "1.1", "consumers": "1.1",
     "proposals": "1.0", "showcase": "1.1", "where": "1.1"
   }
 }

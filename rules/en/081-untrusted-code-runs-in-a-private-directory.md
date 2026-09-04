@@ -2,6 +2,8 @@
 
 **Area.** security
 
+**Tier.** 5 — everything else
+
 **The rule.** A file that will be executed goes into a directory created for one
 run and readable only by its owner. The shared temporary directory is untrusted
 input, not a convenient location.

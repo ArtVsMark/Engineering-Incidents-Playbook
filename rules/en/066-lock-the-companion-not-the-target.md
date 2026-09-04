@@ -2,6 +2,8 @@
 
 **Area.** code, concurrency
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** If writing is made atomic by replacing the file, lock a **separate
 companion file**. A lock on the target itself disappears together with the
 target at the moment of replacement.

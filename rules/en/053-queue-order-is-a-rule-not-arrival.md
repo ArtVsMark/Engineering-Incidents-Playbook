@@ -2,6 +2,8 @@
 
 **Area.** pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** The merge queue is ordered by **importance**, not by who turned
 green earliest. What fixes a shared breakage goes first; while the shared branch
 is red, nothing else moves at all.

@@ -2,6 +2,8 @@
 
 **Area.** process, documentation
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A template a project hands out — a gate skeleton, a config sample, a
 process outline — is used at home the same way it is offered to the consumer, or
 it says why home is different. "It runs" is not that check: it answers a

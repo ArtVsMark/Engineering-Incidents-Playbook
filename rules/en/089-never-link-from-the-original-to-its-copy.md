@@ -2,6 +2,8 @@
 
 **Area.** documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** The relationship between a source and its showcase is
 one-directional. A link from the original to the copy sends the reader to
 something knowingly older, and the completeness of the source is measured against

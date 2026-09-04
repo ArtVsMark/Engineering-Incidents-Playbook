@@ -2,6 +2,8 @@
 
 **Area.** parallel work
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Not in a salvo. A wave, a debrief, the next wave. A large salvo
 manufactures its own failure, and the bigger it is, the more expensive the loss.
 

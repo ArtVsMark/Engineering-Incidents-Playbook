@@ -2,6 +2,8 @@
 
 **Area.** pipeline, CI
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Branch protection requires checks **by name**, and the name is
 entered verbatim into a setting — outside the repository and outside review.
 That yields two silent failures. First: a name nobody creates puts the change

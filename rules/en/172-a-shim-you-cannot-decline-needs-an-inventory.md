@@ -2,6 +2,8 @@
 
 **Area.** architecture, data
 
+**Tier.** 4 — code and tests
+
 **The rule.** When compatibility is held not by your code but by the
 **platform**, and cannot be switched off, the rule
 [094](094-a-compatibility-shim-makes-migration-permanent.md) — "break it now and

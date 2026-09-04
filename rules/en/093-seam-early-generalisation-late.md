@@ -2,6 +2,8 @@
 
 **Area.** architecture
 
+**Tier.** 4 — code and tests
+
 **The rule.** A known future fork gets a **seam** immediately: a minimal
 reversible refactor that fixes the contract. A shared abstraction over similar
 implementations is created only when a **third** appears.

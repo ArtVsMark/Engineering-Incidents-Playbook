@@ -2,6 +2,8 @@
 
 **Area.** agent sessions
 
+**Tier.** 3 — gates and processes
+
 **The rule.** Before deciding that work has been abandoned, check the session
 registry: the session may be waiting for permission, and then it needs a person,
 not a repair.

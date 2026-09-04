@@ -2,6 +2,8 @@
 
 **Area.** documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** A document describes how things work **now**. "What we did", "what
 we plan" and "how it went" live in three other places.
 

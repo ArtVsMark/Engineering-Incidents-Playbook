@@ -2,6 +2,8 @@
 
 **Area.** process, pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Commit message trailers are read only from the **tail block** —
 the last paragraph, made entirely of `Key: value` lines. Parsing by "the line
 starts with a trailer name" takes a prose mention for a directive, and it does

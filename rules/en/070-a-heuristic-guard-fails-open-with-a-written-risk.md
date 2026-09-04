@@ -2,6 +2,8 @@
 
 **Area.** security
 
+**Tier.** 5 — everything else
+
 **The rule.** A check that is a guess by nature **lets things through** when data
 is missing rather than refusing — but only if real barriers stand beside it and
 the residual risk is stated in writing.

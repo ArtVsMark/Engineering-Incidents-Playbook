@@ -2,6 +2,8 @@
 
 **Area.** parallel work
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** The next wave launches only after the previous one is reviewed,
 along two axes: who fell over — and **what came out**. The second axis matters
 more.

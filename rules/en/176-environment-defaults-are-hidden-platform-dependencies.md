@@ -2,6 +2,8 @@
 
 **Area.** code, CI
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** A default computed from the **environment** is a hidden platform
 dependency, and a job matrix does not prove it correct. The locale's encoding
 behind `text=True` in `subprocess`, the timezone behind naive datetimes, the

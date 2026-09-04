@@ -2,6 +2,8 @@
 
 **Area.** catalogue, data
 
+**Tier.** 1 — rules and roles
+
 **The rule.** Data lives in the source the derived file is built from. A
 generator reads **sources only**, never its own output: otherwise the sole
 source of a value is its own previous copy.

@@ -2,6 +2,8 @@
 
 **Area.** tests
 
+**Tier.** 4 — code and tests
+
 **The rule.** Remove only the behaviour and keep the new names. Otherwise you
 have proved something other than what you think.
 

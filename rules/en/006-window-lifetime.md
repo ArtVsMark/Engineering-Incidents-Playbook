@@ -2,6 +2,8 @@
 
 **Area.** agent sessions
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A long-lived session grows expensive and preserves obsolete rules.
 Past that span, restart it and hand over the baton.
 

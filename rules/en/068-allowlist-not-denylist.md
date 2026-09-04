@@ -2,6 +2,8 @@
 
 **Area.** security
 
+**Tier.** 5 — everything else
+
 **The rule.** What we accept and what we serve is enumerated by name. A denylist
 knows nothing about what appears tomorrow, and lets new things through in
 silence.

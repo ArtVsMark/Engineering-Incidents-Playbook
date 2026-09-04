@@ -2,6 +2,8 @@
 
 **Area.** comparison, quality
 
+**Tier.** 4 — code and tests
+
 **The rule.** Every allowance in a comparison is named explicitly, with its
 reason, and a strict mode exists where nothing is forgiven. Unenumerated leniency
 turns into a set of heuristics nobody trusts.

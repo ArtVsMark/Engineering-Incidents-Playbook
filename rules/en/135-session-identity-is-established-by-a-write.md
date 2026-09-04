@@ -2,6 +2,8 @@
 
 **Area.** agent sessions, pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** That a session is an agent session in the cloud tells you nothing
 about its identity on writes. The criterion is the credentials **this** session
 was handed, and they are announced nowhere. Asking does not reveal them: on reads

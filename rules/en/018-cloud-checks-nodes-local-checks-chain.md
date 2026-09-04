@@ -2,6 +2,8 @@
 
 **Area.** environments
 
+**Tier.** 5 — everything else
+
 **The rule.** Every check has an environment where it is meaningful. A check in
 the wrong environment yields a false green.
 

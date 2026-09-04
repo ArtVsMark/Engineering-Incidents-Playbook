@@ -2,6 +2,8 @@
 
 **Area.** gates, metrics
 
+**Tier.** 3 — gates and processes
+
 **The rule.** The "did the source answer" guard is placed on the **raw** value.
 Never show the guard a formatted value: formatting destroys the very mark by
 which the guard recognises emptiness, and turns a dead source into a plausible

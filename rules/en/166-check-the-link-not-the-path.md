@@ -2,6 +2,8 @@
 
 **Area.** gates, documentation
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A check that a document **links** to a file looks for the link
 itself — `](address` or `]: address` — not for the address as a substring. The
 address appears in the document twice, in the link target and in its label, and

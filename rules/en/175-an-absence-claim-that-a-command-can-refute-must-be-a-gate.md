@@ -2,6 +2,8 @@
 
 **Area.** gates, documentation
 
+**Tier.** 3 — gates and processes
+
 **The rule.** The answer "there is nothing here" is a **claim about reality**,
 not a turn of phrase, and it goes stale silently: no mechanism moves prose, while
 prose looks like a considered decision. Prose as a whole is unverifiable and a

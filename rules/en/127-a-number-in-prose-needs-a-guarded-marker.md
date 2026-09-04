@@ -2,6 +2,8 @@
 
 **Area.** documentation, gates
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A number may sit in prose under three conditions at once: it is
 inside a **named marker**, a **build rewrites it from the source that produces
 it**, and **a missing marker fails the build**. Without the third condition there

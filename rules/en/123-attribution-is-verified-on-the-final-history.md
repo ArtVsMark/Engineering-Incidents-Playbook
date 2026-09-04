@@ -2,6 +2,8 @@
 
 **Area.** pipeline, history
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** The commit message that lands on the shared branch is
 **recomposed** at merge time. Whatever the author wrote in the branch is only
 input to that recomposition, and the platform may substitute its own authorship

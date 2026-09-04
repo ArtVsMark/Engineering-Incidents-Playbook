@@ -2,6 +2,8 @@
 
 **Area.** process, pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** One change, one topic. A combined change can be made **honest** by
 declaring every task it closes, but it cannot be made **reviewable**: it cannot
 be reviewed, reverted or bisected topic by topic. Honesty and reviewability are

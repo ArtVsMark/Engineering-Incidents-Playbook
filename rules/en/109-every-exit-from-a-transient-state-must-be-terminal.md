@@ -2,6 +2,8 @@
 
 **Area.** code, interface
 
+**Tier.** 4 — code and tests
+
 **The rule.** You cannot leave a state of "starting", "stopping" or "checking"
 silently. Every branch, including the early ones, must leave a **final** status —
 otherwise the system is stuck in the transient state forever.

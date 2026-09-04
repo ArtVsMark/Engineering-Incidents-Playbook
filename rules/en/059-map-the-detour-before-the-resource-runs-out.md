@@ -2,6 +2,8 @@
 
 **Area.** quotas, planning
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Know beforehand what stops working and what keeps working when
 each resource runs out. The mode on exhaustion is **accumulate**, not wait.
 

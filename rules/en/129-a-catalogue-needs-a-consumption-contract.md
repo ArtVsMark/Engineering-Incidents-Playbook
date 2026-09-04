@@ -2,6 +2,8 @@
 
 **Area.** catalogue, contracts
 
+**Tier.** 1 — rules and roles
+
 **The rule.** An authoring order is not enough. A catalogue needs a **consumption
 contract**: a machine-readable export, each consumer's answer about the fate of
 every rule, a back-link into the originating issue, and a schema version. Without

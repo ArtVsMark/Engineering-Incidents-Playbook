@@ -2,6 +2,8 @@
 
 **Area.** tooling
 
+**Tier.** 5 — everything else
+
 **The rule.** Escape sequences pass through the shell and change on the way. A
 file is the only reliable carrier.
 

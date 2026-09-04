@@ -2,6 +2,8 @@
 
 **Area.** metrics
 
+**Tier.** 5 — everything else
+
 **The rule.** If no single truthful number exists, publish two — each with a
 note saying what exactly it measures. Averaging them into one means lying twice.
 

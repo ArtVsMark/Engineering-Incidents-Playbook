@@ -2,6 +2,8 @@
 
 **Area.** AI, quality
 
+**Tier.** 4 — code and tests
+
 **The rule.** A non-deterministic component has no "correct answer" to compare
 against. Acceptance runs on properties that must always hold, plus a sample that
 somebody actually reads.

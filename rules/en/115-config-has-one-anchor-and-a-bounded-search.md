@@ -2,6 +2,8 @@
 
 **Area.** configuration
 
+**Tier.** 5 — everything else
+
 **The rule.** The upward search for a settings file stops at the project
 boundary, not at the root of the file system. And all the product's surfaces share
 **one** anchor — otherwise a single launch reads settings from two different

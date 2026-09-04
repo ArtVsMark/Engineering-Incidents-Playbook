@@ -2,6 +2,8 @@
 
 **Area.** release, CI
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** What fires once and cannot be undone cannot be verified by running
 it. Guard it with a separate invariant check — before the occasion arrives.
 

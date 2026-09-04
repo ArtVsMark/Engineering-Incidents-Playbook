@@ -2,6 +2,8 @@
 
 **Area.** gates, runs
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A mechanism with more than one declared outcome is verified by
 running **every** one of them, not just the successful path. Running one path
 confirms that the mechanism starts, and nothing more. Unrun branches usually do

@@ -2,6 +2,8 @@
 
 **Area.** pipeline, observation
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** A check that runs on a schedule must, when it fails, **reach a
 person** — through an issue, a message, anything addressed. Red on the runs tab
 is not an addressee. Until one exists, such a check differs from an unrun one

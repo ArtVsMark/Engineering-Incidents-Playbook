@@ -2,6 +2,8 @@
 
 **Area.** product, release
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** A product is not shown widely until it has been through a **real**
 scenario end to end. Promotion does not create quality; it magnifies both quality
 and its absence.

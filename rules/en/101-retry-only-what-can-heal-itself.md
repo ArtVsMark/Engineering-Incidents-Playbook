@@ -2,6 +2,8 @@
 
 **Area.** network, reliability
 
+**Tier.** 4 — code and tests
+
 **The rule.** A retry makes sense for transient failures — overload, a connection
 glitch, unavailability. A permanent failure is not cured by retrying: "not found"
 does not become found on the second attempt. And if the server named a pause,

@@ -2,6 +2,8 @@
 
 **Area.** contracts
 
+**Tier.** 1 — rules and roles
+
 **The rule.** Termination by the user's own will gets its own terminal status.
 Mixing it with failure is not allowed: the response differs for both machine and
 human.

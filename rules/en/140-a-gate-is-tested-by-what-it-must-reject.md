@@ -2,6 +2,8 @@
 
 **Area.** gates, tests
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A gate has a subject it is **obliged to refuse** and a subject it
 is **obliged to pass**; both are put through it on purpose. Until such a run
 exists, "the gate will not let it through" is a promise — and it is usually

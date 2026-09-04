@@ -2,6 +2,8 @@
 
 **Area.** pipeline, process
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Who took what, what is queued, what is ready — all of it is
 **computed** from things that already exist (branches, tasks, API responses),
 not stored in a separate file somebody has to remember to update.

@@ -2,6 +2,8 @@
 
 **Area.** contracts, documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** A project publishing several independently versioned artefacts
 must make every number say **what** it is the version of — in the field name or
 next to it, **at the point of reading**. The same key on different subjects

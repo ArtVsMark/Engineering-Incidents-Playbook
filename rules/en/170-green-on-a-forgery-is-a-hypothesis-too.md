@@ -2,6 +2,8 @@
 
 **Area.** tests, quality
 
+**Tier.** 4 — code and tests
+
 **The rule.** [037](037-finding-status-depends-on-window.md) says: a defect found
 on a forgery is a hypothesis until confirmed on the real surface. The converse
 holds just as firmly: **green** on a forgery is a hypothesis too. A suite run

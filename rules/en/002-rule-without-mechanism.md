@@ -2,6 +2,8 @@
 
 **Area.** process, CI
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** A requirement that cannot be checked by machine will not be
 followed. Either build a gate, or do not write it down.
 

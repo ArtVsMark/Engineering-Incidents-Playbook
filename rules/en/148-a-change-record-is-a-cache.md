@@ -2,6 +2,8 @@
 
 **Area.** pipeline, data
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Read a change's state from its **head** (the checks on the commit)
 and from the **main branch** (does it carry that commit). The change record is a
 cached projection, and it lags behind events that reached the head. The lag has a

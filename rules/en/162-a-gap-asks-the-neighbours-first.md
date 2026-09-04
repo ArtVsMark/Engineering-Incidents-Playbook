@@ -2,6 +2,8 @@
 
 **Area.** process
 
+**Tier.** 3 — gates and processes
+
 **The rule.** Before building a mechanism for a rule that has none, look at
 **what holds that rule in the projects answering to the same rulebook** — and
 if the technique carries over, repeat it. A neighbour's answer is not an order:

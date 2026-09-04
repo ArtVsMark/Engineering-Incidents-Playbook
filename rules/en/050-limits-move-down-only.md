@@ -2,6 +2,8 @@
 
 **Area.** gates
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A number in a gate is a ceiling, not a setting. It comes down as
 the cleanup progresses and **never goes up**: raising the ceiling means the gate
 was adjusted to fit the breach.

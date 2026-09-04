@@ -2,6 +2,8 @@
 
 **Area.** localisation
 
+**Tier.** 5 — everything else
+
 **The rule.** Checking that the key set is complete verifies that a string was
 not forgotten and says nothing about whether it was **translated**. Separate
 checks are needed for properties of the text.

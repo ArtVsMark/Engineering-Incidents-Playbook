@@ -2,6 +2,8 @@
 
 **Area.** gates, pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Until a mechanism has run against a live subject it is not
 confirmed, however correctly it reads. A platform's refusal depends on state
 that does not exist in the code, so "I read it and I am satisfied" confirms only

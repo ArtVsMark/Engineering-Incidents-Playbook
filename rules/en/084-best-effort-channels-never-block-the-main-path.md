@@ -2,6 +2,8 @@
 
 **Area.** architecture
 
+**Tier.** 4 — code and tests
+
 **The rule.** An addition to the main function fails **quietly and at once**: any
 of its errors is swallowed, there are no retries, and its time is bounded. A
 retry here does more harm than the failure.

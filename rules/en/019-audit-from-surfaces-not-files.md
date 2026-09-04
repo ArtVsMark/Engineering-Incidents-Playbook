@@ -2,6 +2,8 @@
 
 **Area.** audit
 
+**Tier.** 3 — gates and processes
+
 **The rule.** Walking the files gives you code coverage and misses everything
 that is not in the code. Start from the list of things the user meets.
 

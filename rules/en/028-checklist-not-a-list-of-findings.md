@@ -2,6 +2,8 @@
 
 **Area.** tracker
 
+**Tier.** 3 — gates and processes
+
 **The rule.** From three items upwards, use tick boxes rather than prose.
 Otherwise the state of the task has to be computed by reading.
 

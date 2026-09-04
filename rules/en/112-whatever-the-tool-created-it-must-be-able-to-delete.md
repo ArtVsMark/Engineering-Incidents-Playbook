@@ -2,6 +2,8 @@
 
 **Area.** privacy, product
 
+**Tier.** 5 — everything else
+
 **The rule.** Every accumulation the product created has a first-class delete
 command. "Delete the file manually" is not a method: the user did not create that
 file and is not obliged to know about it.

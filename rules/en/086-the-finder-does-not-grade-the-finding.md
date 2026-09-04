@@ -2,6 +2,8 @@
 
 **Area.** audit
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A finding is graded by a separate checker instructed to "refute by
 default". And that checker's scale is calibrated with examples, or it will not
 filter out the weak but downgrade everything.

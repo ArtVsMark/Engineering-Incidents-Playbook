@@ -2,6 +2,8 @@
 
 **Area.** showcases
 
+**Tier.** 5 — everything else
+
 **The rule.** The README holds only what a person needs in the first five
 minutes. Everything else is behind a link.
 

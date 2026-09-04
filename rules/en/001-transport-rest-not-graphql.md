@@ -2,6 +2,8 @@
 
 **Area.** quotas, API
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Every GitHub operation goes over REST. GraphQL is used only when
 the operation physically does not exist in REST, and every such case is named
 explicitly.

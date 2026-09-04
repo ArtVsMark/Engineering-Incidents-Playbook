@@ -2,6 +2,8 @@
 
 **Area.** pipeline, observation
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** A switch that cancels an operation on a non-match cancels it
 **silently**: "did not match" and "matched, nothing to do" produce one observable
 outcome — nothing. Whoever pushed sees their command succeed and walks away

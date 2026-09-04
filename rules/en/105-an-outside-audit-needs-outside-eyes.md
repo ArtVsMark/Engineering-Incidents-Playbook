@@ -2,6 +2,8 @@
 
 **Area.** audit
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A second pass by **your own** tool reproduces the same blind spots.
 An outside view means a different executor with a different history, not another
 attempt.

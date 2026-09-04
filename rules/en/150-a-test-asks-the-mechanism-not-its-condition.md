@@ -2,6 +2,8 @@
 
 **Area.** tests, gates
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A test that checks a check calls it and asserts on the **verdict**.
 Restating the condition in the assertion — "no longer than the limit", "an
 extension from the list" — reproduces part of the rule and drops the rest, so it

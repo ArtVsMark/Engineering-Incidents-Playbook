@@ -2,6 +2,8 @@
 
 **Area.** quotas, observation
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** A watch loop is the most expensive way to use an API. Prefer
 subscription to polling; poll only conditionally and only over the delta.
 

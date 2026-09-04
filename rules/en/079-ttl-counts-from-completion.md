@@ -2,6 +2,8 @@
 
 **Area.** code, resources
 
+**Tier.** 4 — code and tests
+
 **The rule.** A record's lifetime is measured from **the moment it became
 terminal**. Counting from enqueueing sweeps the result away faster the longer the
 work took.

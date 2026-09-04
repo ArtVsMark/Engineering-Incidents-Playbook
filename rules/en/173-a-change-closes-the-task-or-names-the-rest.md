@@ -2,6 +2,8 @@
 
 **Area.** process, pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** A change that answers a task has exactly **three** admissible
 answers: it closes the task in full, it does **part** of it and names what is
 left, or it is exempt by a line stating why. There is no fourth answer — merge

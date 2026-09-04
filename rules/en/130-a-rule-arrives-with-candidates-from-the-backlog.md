@@ -2,6 +2,8 @@
 
 **Area.** catalogue, tracker
 
+**Tier.** 1 — rules and roles
+
 **The rule.** Delivering a rule is not enough. It arrives together with a **list
 of candidates from the recipient's backlog** — open issues it may already answer.
 A rule with no subject in your project stays an abstraction that gets postponed.

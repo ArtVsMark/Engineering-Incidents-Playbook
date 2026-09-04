@@ -2,6 +2,8 @@
 
 **Area.** contracts, documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** If a project ships **mechanisms** and not only text — an
 onboarding command, an action, a ready-to-run job — then the entrance is
 described with them: "connect with a command, not by copying". The list of

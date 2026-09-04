@@ -2,6 +2,8 @@
 
 **Area.** process
 
+**Tier.** 3 — gates and processes
+
 **The rule.** The list of places to look for what to do is defined by an order.
 You go top to bottom; the first non-empty source is the plan. Statuses live
 **only** in the tracker and are not duplicated into files.

@@ -2,6 +2,8 @@
 
 **Area.** interface
 
+**Tier.** 5 — everything else
+
 **The rule.** A hint to the user never sends them to a file, directory or name
 that does not exist on their machine. The author sees a repository; the user sees
 an installed package.
