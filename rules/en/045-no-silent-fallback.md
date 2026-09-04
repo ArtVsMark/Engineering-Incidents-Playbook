@@ -2,6 +2,8 @@
 
 **Area.** reliability
 
+**Tier.** 4 — code and tests
+
 **The rule.** If the requested mode is unavailable, the work **fails with a
 clear error** rather than continuing quietly in a weakened mode.
 

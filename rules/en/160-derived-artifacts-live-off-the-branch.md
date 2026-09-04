@@ -2,6 +2,8 @@
 
 **Area.** pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** An artefact rebuilt **more often than changes arrive** — a badge,
 a picture, a report over live data — is not stored in the main branch's tree.
 Its place is a separate branch a workflow writes to. Otherwise it turns every

@@ -2,6 +2,8 @@
 
 **Area.** gates, audit
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A gate with a two-sided suite that has survived mutation confirms
 one thing: the mechanism behaves as declared. **It does not confirm that the
 claim it was built for is true.** The claim is verified separately and against a

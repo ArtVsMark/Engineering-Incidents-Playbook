@@ -2,6 +2,8 @@
 
 **Area.** documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** The main file answers "do I need to go there". The specialised one
 answers "how exactly". Mixing them makes the first bloat and the second go
 unread.

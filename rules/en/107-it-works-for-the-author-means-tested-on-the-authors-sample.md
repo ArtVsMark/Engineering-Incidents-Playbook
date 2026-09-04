@@ -2,6 +2,8 @@
 
 **Area.** borrowing
 
+**Tier.** 5 — everything else
+
 **The rule.** Somebody else's tool was tested on whatever its author had. Beyond
 the bounds of their sample it is not broken — it is **untested**, and those are
 different diagnoses.

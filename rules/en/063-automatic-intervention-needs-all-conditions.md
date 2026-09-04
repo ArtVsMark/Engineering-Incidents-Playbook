@@ -2,6 +2,8 @@
 
 **Area.** automation
 
+**Tier.** 5 — everything else
+
 **The rule.** If a false positive damages somebody else's work, write the
 criterion as a conjunction: intervene only when **every** condition is met. Any
 unmet condition means "do not touch".

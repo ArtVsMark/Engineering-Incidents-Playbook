@@ -2,6 +2,8 @@
 
 **Area.** catalogue, contracts
 
+**Tier.** 1 — rules and roles
+
 **The rule.** A project answering an external rule first enumerates **all** of
 its own subjects of that rule, and only then writes a verdict. A rejection
 argued from the first example that came to mind rejects that example, not the

@@ -2,6 +2,8 @@
 
 **Area.** catalogue, process
 
+**Tier.** 1 — rules and roles
+
 **The rule.** The catalogue has a unit (a file), a number, mandatory sections, and
 **a two-way link to the project through the Trace field**. The reverse index —
 "which rules apply here" — is **built from the traces**, not maintained by hand.

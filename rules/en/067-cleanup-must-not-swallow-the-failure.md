@@ -2,6 +2,8 @@
 
 **Area.** code, reliability
 
+**Tier.** 4 — code and tests
+
 **The rule.** A handler that cleans up after itself catches **everything** that
 interrupted the work and always re-raises the cause. A narrow catch misses the
 interruption; a broad catch without re-raising hides the failure.

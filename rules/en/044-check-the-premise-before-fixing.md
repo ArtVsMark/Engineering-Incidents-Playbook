@@ -2,6 +2,8 @@
 
 **Area.** audit
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A finding contains a claim about the current state. That claim is
 verified as the first action — before planning, before the task, before code.
 

@@ -2,6 +2,8 @@
 
 **Area.** gates, code
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A structural marker — a heading, a label name, a key, a branch
 prefix — is matched against the **whole line**, not against its beginning.
 Prefix matching silently accepts a neighbouring marker that happens to start

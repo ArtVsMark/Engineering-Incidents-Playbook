@@ -2,6 +2,8 @@
 
 **Area.** metrics
 
+**Tier.** 5 — everything else
+
 **The rule.** A counter that sums records about one object lies whenever the
 object repeats. Collapse by identifier first.
 

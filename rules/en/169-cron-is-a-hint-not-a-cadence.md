@@ -2,6 +2,8 @@
 
 **Area.** automation, CI
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** A platform scheduler says "sometime", not "every half hour". So a
 mechanism that must fire within minutes cannot be backed by a schedule, and the
 reasoning "if the event is lost, the schedule will pick it up" is wrong by

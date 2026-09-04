@@ -2,6 +2,8 @@
 
 **Area.** data, migrations
 
+**Tier.** 1 — rules and roles
+
 **The rule.** Each step is applied **only** to a state that has not been through
 it. Running every step unconditionally breaks what is already migrated, and "a
 version higher than expected" is not an error but the norm for a newer store.

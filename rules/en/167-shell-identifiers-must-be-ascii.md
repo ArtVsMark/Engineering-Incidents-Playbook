@@ -2,6 +2,8 @@
 
 **Area.** CI, code
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** A project's internal language does not extend to the shell: a
 variable name in bash must consist of ASCII. The mistake shows up in two ways,
 and the second is the dangerous one. An assignment with a non-ASCII name is

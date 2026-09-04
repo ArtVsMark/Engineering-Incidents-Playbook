@@ -2,6 +2,8 @@
 
 **Area.** pipeline, automation
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Machinery that meets a predictable obstacle must skip the item,
 mark it, and carry on. Failing outright is a defect in the machinery.
 

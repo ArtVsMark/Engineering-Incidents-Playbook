@@ -2,6 +2,8 @@
 
 **Area.** contracts, data
 
+**Tier.** 1 — rules and roles
+
 **The rule.** Formatting is a lossy operation. When you emit a quantity for
 display, emit the original number beside it: parsing the string back is
 reconstructing what you destroyed yourself.

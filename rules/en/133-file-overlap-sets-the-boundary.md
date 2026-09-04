@@ -2,6 +2,8 @@
 
 **Area.** pipeline, planning
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** The boundary of one change is set by **file overlap**, not by the
 number of tasks. Tasks editing the same file travel together; tasks that do not
 overlap travel apart. "One task, one change" is a formal criterion, and it fails

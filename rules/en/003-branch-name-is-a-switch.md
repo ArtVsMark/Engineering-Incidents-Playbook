@@ -2,6 +2,8 @@
 
 **Area.** pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** If the pipeline reacts to a branch prefix, that belongs in the
 first line of the project's rules — together with what happens under any other
 name.

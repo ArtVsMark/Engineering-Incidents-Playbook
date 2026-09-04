@@ -2,6 +2,8 @@
 
 **Area.** code, data
 
+**Tier.** 4 — code and tests
+
 **The rule.** Files the tool creates are named so that they **do not fall under
 its own input selection rule**. Otherwise it starts processing its own output.
 

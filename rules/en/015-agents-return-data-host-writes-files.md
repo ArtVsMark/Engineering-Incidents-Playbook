@@ -2,6 +2,8 @@
 
 **Area.** parallel work
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Parallel executors hand back a result; they do not write into the
 shared tree. Writing belongs to one party.
 

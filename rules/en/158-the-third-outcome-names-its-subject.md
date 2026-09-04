@@ -2,6 +2,8 @@
 
 **Area.** gates, reliability
 
+**Tier.** 3 — gates and processes
+
 **The rule.** "The check did not run" must say **what exactly** did not run:
 which source, file, address. The code and text of a foreign error answer "what
 happened", but not the one question the third outcome exists for — is this

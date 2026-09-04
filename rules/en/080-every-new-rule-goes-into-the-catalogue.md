@@ -2,6 +2,8 @@
 
 **Area.** process, catalogue
 
+**Tier.** 1 — rules and roles
+
 **The rule.** Every hard-won new rule goes into this catalogue — with its
 incident, its reason and its limits. The project keeps the working wording and a
 link; the history lives here.

@@ -2,6 +2,8 @@
 
 **Area.** data
 
+**Tier.** 5 — everything else
+
 **The rule.** Anything produced by a transformation is accompanied by its source.
 When the transformation rules change, the derived output is rebuilt **locally**,
 without going back to the origin.

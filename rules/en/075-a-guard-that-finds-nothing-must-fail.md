@@ -2,6 +2,8 @@
 
 **Area.** gates
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A check that looks up an object by name **fails with an explicit
 error** when the object is absent, instead of going green on empty input.
 

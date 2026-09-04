@@ -2,6 +2,8 @@
 
 **Area.** privacy, product
 
+**Tier.** 5 — everything else
+
 **The rule.** When data collection benefits the product and the user does not
 need it, the default is **off**. You compensate not by turning it on but by
 making it easy to enable, plus an unobtrusive reminder.

@@ -2,6 +2,8 @@
 
 **Area.** contracts, metrics
 
+**Tier.** 1 — rules and roles
+
 **The rule.** A number describing a project's **structure** — how many tests it
 has, which versions it builds on, how many checks a change creates — is
 published by that project as a machine-readable file, and the consumer reads it.

@@ -2,6 +2,8 @@
 
 **Area.** audit, process
 
+**Tier.** 3 — gates and processes
+
 **The rule.** At the end of every phase a separate checker answers not "what is
 wrong with the product" but "what is wrong with how we checked it": what share of
 the output is genuinely new, what the phase did not cover, where the declared

@@ -2,6 +2,8 @@
 
 **Area.** runs, process
 
+**Tier.** 3 — gates and processes
+
 **The rule.** Nothing is analysed during a collection step: run it, write the
 raw result, move on. Analysis is a separate pass, at the boundary of a natural
 unit of work.

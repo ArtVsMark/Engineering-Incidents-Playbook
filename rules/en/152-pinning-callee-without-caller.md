@@ -2,6 +2,8 @@
 
 **Area.** pipeline, security
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Pinning called code to the shared branch is worth doing only where the
 **calling** file is also taken from the shared branch. On a `pull_request` event
 the platform takes the workflow file from the change itself — so whoever edits

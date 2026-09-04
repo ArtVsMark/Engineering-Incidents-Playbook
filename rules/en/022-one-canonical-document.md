@@ -2,6 +2,8 @@
 
 **Area.** documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** Duplicated descriptions diverge. Always. The only question is how
 many weeks pass before you notice.
 

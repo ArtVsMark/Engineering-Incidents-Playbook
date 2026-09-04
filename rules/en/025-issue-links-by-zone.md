@@ -2,6 +2,8 @@
 
 **Area.** documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** An issue number is a date stamp. Logs need it; text explaining how
 something works is worse for it.
 

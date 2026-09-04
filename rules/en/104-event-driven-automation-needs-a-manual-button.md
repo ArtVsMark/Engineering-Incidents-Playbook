@@ -2,6 +2,8 @@
 
 **Area.** CI, automation
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Events get lost. If the only way to start is an event, add a manual
 launch — otherwise the only way to wake it becomes a junk change.
 

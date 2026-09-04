@@ -2,6 +2,8 @@
 
 **Area.** release
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** The entry arrives with the change, as a separate file. Assembly
 happens at release.
 

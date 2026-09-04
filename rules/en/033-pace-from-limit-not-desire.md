@@ -2,6 +2,8 @@
 
 **Area.** quotas, pace
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** The interval between launches follows arithmetically from the
 budget. Otherwise the work hits the wall mid-wave — and loses the whole wave.
 

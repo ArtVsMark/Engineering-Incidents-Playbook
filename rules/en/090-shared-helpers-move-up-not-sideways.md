@@ -2,6 +2,8 @@
 
 **Area.** architecture
 
+**Tier.** 4 — code and tests
+
 **The rule.** When two independent subsystems need the same utility, it is moved
 to a level **above both**. Importing from a sibling creates an edge that should
 not exist.

@@ -2,6 +2,8 @@
 
 **Area.** tests, gates
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A guard comparing "before" and "after" snapshots attributes a change
 to whoever it was completing when it noticed. Neighbouring processes produce false
 accusations, and they must be excluded **by the shape of the name**, not by a

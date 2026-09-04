@@ -2,6 +2,8 @@
 
 **Area.** community
 
+**Tier.** 5 — everything else
+
 **The rule.** Tasks marked as an entry point for new contributors are written in
 the language of the audience the label exists for. And there must be more than
 one such label: a newcomer's path does not end at the first contribution.

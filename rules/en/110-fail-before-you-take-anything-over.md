@@ -2,6 +2,8 @@
 
 **Area.** code, reliability
 
+**Tier.** 4 — code and tests
+
 **The rule.** Parsing input, validating arguments, compiling — all **before**
 acquiring a resource or replacing shared state. Otherwise an exception leaves the
 system replaced, and the user gets an internal error instead of their own.

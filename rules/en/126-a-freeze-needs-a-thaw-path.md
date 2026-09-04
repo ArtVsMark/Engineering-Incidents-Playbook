@@ -2,6 +2,8 @@
 
 **Area.** automation, pipeline
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** If a system can freeze itself, it must have a thaw path that does
 **not** run through the frozen action. Otherwise the protection turns into a
 permanent block at the first flake.

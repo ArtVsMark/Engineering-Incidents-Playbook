@@ -2,6 +2,8 @@
 
 **Area.** diagnostics, agent sessions
 
+**Tier.** 3 — gates and processes
+
 **The rule.** The trail of a failed run — the test name, the reason, the stack —
 must live in a channel available to **whoever performs the fix**, not only to the
 human at the console. The carrier is chosen by the reader's permissions: if they

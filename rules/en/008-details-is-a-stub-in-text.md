@@ -2,6 +2,8 @@
 
 **Area.** showcases
 
+**Tier.** 5 — everything else
+
 **The rule.** On a page read automatically or at a glance, `<details>` yields a
 heading with no content. Expand it or drop it.
 

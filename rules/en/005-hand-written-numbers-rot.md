@@ -2,6 +2,8 @@
 
 **Area.** documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** A figure in documentation is either recomputed automatically, or
 it does not belong there.
 

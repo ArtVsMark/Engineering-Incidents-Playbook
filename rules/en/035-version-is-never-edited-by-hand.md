@@ -2,6 +2,8 @@
 
 **Area.** release
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** The version is set in one place and substituted everywhere. Manual
 editing produces a mismatch that surfaces after publication.
 

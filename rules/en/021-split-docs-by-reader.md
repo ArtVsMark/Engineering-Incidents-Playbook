@@ -2,6 +2,8 @@
 
 **Area.** documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** First ask who reads this, then decide where it goes. A topical
 layout mixes audiences together.
 

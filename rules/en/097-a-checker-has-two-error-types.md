@@ -2,6 +2,8 @@
 
 **Area.** tests, quality
 
+**Tier.** 4 — code and tests
+
 **The rule.** A false "passed" and a false "failed" are different defects with
 different consequences. A regression test is written for **both** sides
 separately; covering one creates the illusion of covering both.

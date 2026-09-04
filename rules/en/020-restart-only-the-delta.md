@@ -2,6 +2,8 @@
 
 **Area.** parallel work
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Work out what is already done and repeat only what is missing. A
 full restart pays twice for one result.
 

@@ -2,6 +2,8 @@
 
 **Area.** audit, documentation
 
+**Tier.** 3 — gates and processes
+
 **The rule.** "What is wrong and where" and "what comes before what and why" are
 two different questions and two different documents. One large audit produces
 both, and they must not be mixed.

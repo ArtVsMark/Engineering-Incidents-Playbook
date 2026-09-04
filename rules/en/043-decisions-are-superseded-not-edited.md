@@ -2,6 +2,8 @@
 
 **Area.** decisions
 
+**Tier.** 1 — rules and roles
+
 **The rule.** Changing a decision means a **new** record that marks the old one
 superseded. The old one is not edited.
 

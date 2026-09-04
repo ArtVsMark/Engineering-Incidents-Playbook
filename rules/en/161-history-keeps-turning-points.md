@@ -2,6 +2,8 @@
 
 **Area.** documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** What goes into the history is a decision that **turned the
 direction**: the shape of the work changed, a flaw was found in the mechanism
 itself, an outside signal redirected the plan, a stated plan was rolled back.

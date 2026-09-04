@@ -2,6 +2,8 @@
 
 **Area.** architecture, data
 
+**Tier.** 4 — code and tests
+
 **The rule.** Data with different lifetimes and different write patterns is not
 merged into one store. A shared file glues together what does not belong
 together and takes away the properties the formats were chosen for.

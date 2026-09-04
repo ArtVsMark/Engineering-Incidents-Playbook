@@ -2,6 +2,8 @@
 
 **Area.** agent sessions, process
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A decision taken in conversation lands as an artefact
 **immediately** — an issue, a comment, a decision record. Then handing over is
 reduced to links. Whatever is left "for later" exists only in the session's

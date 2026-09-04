@@ -2,6 +2,8 @@
 
 **Area.** gates
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A signal that fires on legitimate cases must be a warning and must
 **not block**. Only what is proven blocks.
 

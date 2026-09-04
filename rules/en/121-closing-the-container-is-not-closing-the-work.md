@@ -2,6 +2,8 @@
 
 **Area.** process, audit
 
+**Tier.** 3 — gates and processes
+
 **The rule.** An epic, a milestone, a sprint close by their own criteria; units of
 work close by theirs. Completion is proved by **a count of unclosed units**, not
 by the container looking empty.

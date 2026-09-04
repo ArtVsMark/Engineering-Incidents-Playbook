@@ -2,6 +2,8 @@
 
 **Area.** tooling
 
+**Tier.** 5 — everything else
+
 **The rule.** The version of a linter, formatter or builder is set in **one**
 place, and it has an upper bound. Otherwise the local check and the shared build
 diverge, and the local one stops meaning anything.

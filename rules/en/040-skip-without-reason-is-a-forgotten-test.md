@@ -2,6 +2,8 @@
 
 **Area.** tests
 
+**Tier.** 4 — code and tests
+
 **The rule.** Every skip must carry a reason, and the number of skips must be
 visible by name. A suite of thousands of tests gives confidence exactly as long
 as the skips are explained.

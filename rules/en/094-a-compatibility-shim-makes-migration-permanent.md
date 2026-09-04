@@ -2,6 +2,8 @@
 
 **Area.** architecture, migrations
 
+**Tier.** 4 — code and tests
+
 **The rule.** A migration is either clean or does not start. A compatibility
 layer left in "for the time being" turns one canonical path into two and outlives
 the migration itself.

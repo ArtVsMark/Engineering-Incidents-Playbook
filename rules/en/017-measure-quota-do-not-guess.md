@@ -2,6 +2,8 @@
 
 **Area.** quotas, diagnostics
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Diagnosis starts with facts about the quota, not with hypotheses
 about causes. Asking for the remainder is usually free.
 

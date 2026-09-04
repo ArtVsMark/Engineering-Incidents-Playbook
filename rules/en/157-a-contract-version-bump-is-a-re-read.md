@@ -2,6 +2,8 @@
 
 **Area.** contracts, data
 
+**Tier.** 1 — rules and roles
+
 **The rule.** A contract version bump requires re-reading **your answers**, not
 merely checking that they still parse. The meaning of fields moves with the
 number, and formal validity survives it: the records keep passing the check

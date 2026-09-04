@@ -2,6 +2,8 @@
 
 **Area.** agent sessions
 
+**Tier.** 3 — gates and processes
+
 **The rule.** If you changed the rules the sessions work by, restart the
 sessions. Age has nothing to do with it: the rule changes by an event, while
 context is read once, at startup.

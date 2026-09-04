@@ -2,6 +2,8 @@
 
 **Area.** documentation, code
 
+**Tier.** 4 — code and tests
+
 **The rule.** Do not copy the rationale for **someone else's** decision into your
 repository — link to it. Write your own "why" in full, because whoever edits the
 code edits it too. A foreign rationale goes stale the moment the other side

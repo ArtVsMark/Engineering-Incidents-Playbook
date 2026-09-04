@@ -134,6 +134,45 @@ def значимые(text: str) -> set[str]:
             if len(w) >= WORD_MIN and w not in NOISE}
 
 
+#: Задача «про правила»: в заголовке назван номер правила либо путь в дерево.
+#: Ищется ССЫЛКА, а не слово «правило»: заголовок «правила игры» предметом не
+#: является, и мягкий порог здесь стоил бы дороже пропуска (166).
+RULE_IN_TITLE = re.compile(r"(?i)правил\w*\s*№?\s*(\d{3})\b|\brule\s*(\d{3})\b|rules/(?:ru|en)/(\d{3})-")
+
+
+def tier_of(rule: dict) -> int:
+    """Ступень правила из выгрузки. Нет поля — последняя: старый контракт.
+
+    ПОЧЕМУ НЕ ОТКАЗ. Потребитель может читать выгрузку версии до 1.4, где
+    поля нет вовсе. Отказ здесь означал бы, что подъём контракта ломает
+    доставку правил у того, кто ещё не перечитал (157); молчаливая пятая
+    ступень означает только «порядок неизвестен, берите последним».
+    """
+    t = rule.get("tier")
+    n = t.get("n") if isinstance(t, dict) else t
+    return n if isinstance(n, int) and 1 <= n <= 5 else 5
+
+
+def started_here(issues: list[dict]) -> list[dict]:
+    """Открытые задачи проекта, в заголовке которых назван номер правила.
+
+    ЗАЧЕМ ЭТО ПЕРВЫМ РАЗДЕЛОМ. Ступень 0 — не тема, а СОСТОЯНИЕ: пока по
+    правилам есть начатое и незакрытое, порядок ступеней не начинается.
+    Владелец каталога назвал предмет прямо: «если есть задачи по правилам или
+    не все правила отработаны, в первую очередь надо отработать их».
+
+    Иначе получается то, что каталог уже видел на себе: задача #186 шесть дней
+    называла уже починенное, а рядом заводились новые.
+    """
+    found = []
+    for i in issues:
+        m = RULE_IN_TITLE.search(i.get("title") or "")
+        if m:
+            found.append({"number": i["number"], "title": i["title"],
+                          "rule": next(g for g in m.groups() if g)})
+    return found
+
+
 def candidates_here(unreviewed: list[dict], issues: list[dict]) -> list[dict]:
     """Задачи ЭТОГО проекта, на которые правило, возможно, отвечает.
 
@@ -190,11 +229,23 @@ def stale_here(answered: dict, rules: list[dict]) -> list[str]:
     return sorted(set(answered) - {r["id"] for r in rules})
 
 
+#: Имена ступеней для печати. Порядок и есть смысл: ступень 0 — состояние
+#: проекта, ступени 1–5 — темы. Номер приезжает из выгрузки каталога.
+TIER_NAMES = {
+    1: "правила и роли",
+    2: "конвейер и CI",
+    3: "гейты и процессы",
+    4: "код и тесты",
+    5: "всё остальное",
+}
+
+
 def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
              stale: list[str] | None = None, total: int | None = None,
              answered: int | None = None,
              solved: list[dict] | None = None,
-             candidates: list[dict] | None = None) -> str:
+             candidates: list[dict] | None = None,
+             started: list[dict] | None = None) -> str:
     lines = [
         MARKER,
         "",
@@ -216,6 +267,30 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
             f"**Правил в каталоге: {total}. Разобрано здесь: {разобрано}.** "
             f"Ответа нет вовсе у {len(missing)}, записано `unreviewed` "
             f"у {len(unreviewed)}.",
+            "",
+        ]
+
+    # СТУПЕНЬ 0 СТОИТ ПЕРВОЙ, И ЭТО НЕ ОФОРМЛЕНИЕ. Пока по правилам есть
+    # начатое и незакрытое, порядок ступеней не начинается: правило,
+    # взятое поверх незакрытого, множит очередь, а не разбирает её.
+    if started:
+        lines += [
+            "## Ступень 0 — сперва доделайте начатое",
+            "",
+            "Открытые задачи этого проекта, в заголовке которых назван "
+            "номер правила. **Пока они открыты, разбор новых правил ниже — "
+            "очередь, а не работа.**",
+            "",
+            "| Задача | Про правило |",
+            "|---|---|",
+        ]
+        for i in started:
+            lines.append(f"| #{i['number']} {i['title']} | {i['rule']} |")
+        lines += [
+            "",
+            "Ступень 0 — состояние, а не тема: своих правил у неё нет, есть "
+            "только незакрытая работа. Закрытие задачи оставлено человеку — "
+            "оно говорит «я посмотрел», а механизм такого сказать не может.",
             "",
         ]
 
@@ -288,16 +363,30 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
                   "ответ есть по каждому правилу каталога."]
         return "\n".join(lines) + "\n"
 
+    # ПОРЯДОК РАЗБОРА — ПО СТУПЕНЯМ, А НЕ ПО НОМЕРАМ. Номер говорит, когда
+    # правило завелось; ступень — когда его берут. Новому проекту нужен
+    # второй порядок: без ответа по 062 («роль заводится, если способна
+    # возразить») разбор всего остального некому исполнять.
+    def по_ступеням(rules: list[dict]) -> list[str]:
+        out: list[str] = []
+        for n in sorted(TIER_NAMES):
+            свои = [r for r in rules if tier_of(r) == n]
+            if not свои:
+                continue
+            out += [f"**Ступень {n} — {TIER_NAMES[n]}** ({len(свои)})", ""]
+            out += [f"- **{r['id']}** — {r['title']['ru']}" for r in свои]
+            out += [""]
+        return out
+
     if missing:
         lines += ["## Ответа нет вовсе", "",
                   "Правило появилось в каталоге, а записи о нём в ответе нет.", ""]
-        lines += [f"- **{r['id']}** — {r['title']['ru']}" for r in missing]
-        lines += [""]
+        lines += по_ступеням(missing)
     if unreviewed:
         lines += ["## Записано `unreviewed`", "",
                   "Очередь на рассмотрение, а не позор: «не дошли руки» — "
                   "честный статус, пока он не застаивается.", ""]
-        lines += [f"- **{r['id']}** — {r['title']['ru']}" for r in unreviewed]
+        lines += по_ступеням(unreviewed)
     return "\n".join(lines) + "\n"
 
 
@@ -397,11 +486,12 @@ def main() -> int:
         print("задачи проекта не спрошены — раздела кандидатов не будет",
               file=sys.stderr)
     candidates = candidates_here(unreviewed, свои_задачи)
+    начатое = started_here(свои_задачи)
     решено = sum(1 for r in rules
                  if answered.get(r["id"], {}).get("status") not in (None, "unreviewed"))
     body = body_for(missing, unreviewed, args.catalogue, stale=stale,
                     total=len(rules), answered=решено, solved=solved,
-                    candidates=candidates)
+                    candidates=candidates, started=начатое)
     if args.dry_run:
         print(body)
         return 1 if (missing or unreviewed or stale) else 0

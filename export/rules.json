@@ -1,9 +1,9 @@
 {
-  "schema": "1.3",
+  "schema": "1.4",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-03T12:54:33+00:00",
+  "generated_at": "2026-09-04T07:30:17+00:00",
   "contracts": {
-    "export": "1.3",
+    "export": "1.4",
     "bindings": "1.1",
     "consumers": "1.1",
     "proposals": "1.0",
@@ -28,6 +28,11 @@
           "quotas",
           "API"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -63,6 +68,11 @@
           "CI"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/002-rule-without-mechanism.md",
@@ -94,6 +104,11 @@
         "en": [
           "pipeline"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -130,6 +145,11 @@
           "automation"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/004-conflict-is-normal-not-outage.md",
@@ -157,6 +177,11 @@
         "en": [
           "documentation"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -190,6 +215,11 @@
           "agent sessions"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/006-window-lifetime.md",
@@ -217,6 +247,11 @@
         "en": [
           "agent sessions"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -250,6 +285,11 @@
           "showcases"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/008-details-is-a-stub-in-text.md",
@@ -282,6 +322,11 @@
           "metrics"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/009-count-unique-not-total.md",
@@ -309,6 +354,11 @@
         "en": [
           "CI"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -340,6 +390,11 @@
           "observation"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/011-events-not-polling.md",
@@ -362,6 +417,11 @@
         "en": [
           "collaboration"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -386,6 +446,11 @@
           "tooling"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/013-write-escapes-to-file-not-heredoc.md",
@@ -409,6 +474,11 @@
           "tests"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/014-red-before-fix-needs-partial-revert.md",
@@ -431,6 +501,11 @@
         "en": [
           "parallel work"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -457,6 +532,11 @@
           "reports"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/016-no-silent-truncation.md",
@@ -482,6 +562,11 @@
           "diagnostics"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/017-measure-quota-do-not-guess.md",
@@ -504,6 +589,11 @@
         "en": [
           "environments"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -528,6 +618,11 @@
           "audit"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/019-audit-from-surfaces-not-files.md",
@@ -550,6 +645,11 @@
         "en": [
           "parallel work"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -574,6 +674,11 @@
           "documentation"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/021-split-docs-by-reader.md",
@@ -596,6 +701,11 @@
         "en": [
           "documentation"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -621,6 +731,11 @@
           "showcases"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/023-readme-is-a-storefront.md",
@@ -643,6 +758,11 @@
         "en": [
           "documentation"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -667,6 +787,11 @@
           "documentation"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/025-issue-links-by-zone.md",
@@ -689,6 +814,11 @@
         "en": [
           "audit"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -715,6 +845,11 @@
           "interface"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/027-empty-state-is-a-state.md",
@@ -737,6 +872,11 @@
         "en": [
           "tracker"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -761,6 +901,11 @@
           "documentation"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/029-triggers-and-canon.md",
@@ -784,6 +929,11 @@
           "release"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/030-changelog-from-fragments.md",
@@ -806,6 +956,11 @@
         "en": [
           "parallel work"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -832,6 +987,11 @@
           "audit"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/032-role-must-run-the-product.md",
@@ -857,6 +1017,11 @@
           "pace"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/033-pace-from-limit-not-desire.md",
@@ -880,6 +1045,11 @@
           "parallel work"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/034-small-zone-per-executor.md",
@@ -902,6 +1072,11 @@
         "en": [
           "release"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -928,6 +1103,11 @@
           "environments"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/036-expensive-window-enters-twice-and-briefly.md",
@@ -951,6 +1131,11 @@
           "audit"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/037-finding-status-depends-on-window.md",
@@ -973,6 +1158,11 @@
         "en": [
           "agent sessions"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -999,6 +1189,11 @@
           "reliability"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/039-three-outcomes-not-two.md",
@@ -1023,6 +1218,11 @@
           "tests"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/040-skip-without-reason-is-a-forgotten-test.md",
@@ -1045,6 +1245,11 @@
         "en": [
           "metrics"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -1069,6 +1274,11 @@
           "decisions"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/042-decision-records-its-alternatives.md",
@@ -1091,6 +1301,11 @@
         "en": [
           "decisions"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -1115,6 +1330,11 @@
           "audit"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/044-check-the-premise-before-fixing.md",
@@ -1137,6 +1357,11 @@
         "en": [
           "reliability"
         ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
       },
       "added": "2026-08-21",
       "files": {
@@ -1163,6 +1388,11 @@
           "security"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/046-name-the-gaps-do-not-level-them.md",
@@ -1185,6 +1415,11 @@
         "en": [
           "agent sessions"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -1216,6 +1451,11 @@
           "quotas"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/048-calibration-needs-a-complete-input.md",
@@ -1246,6 +1486,11 @@
           "process"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/049-derive-state-from-live-artifacts.md",
@@ -1274,6 +1519,11 @@
           "gates"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/050-limits-move-down-only.md",
@@ -1296,6 +1546,11 @@
         "en": [
           "gates"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -1320,6 +1575,11 @@
           "pipeline"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/052-only-the-head-of-the-queue-moves.md",
@@ -1342,6 +1602,11 @@
         "en": [
           "pipeline"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -1381,6 +1646,11 @@
           "process"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/054-collect-and-analyse-are-separate-passes.md",
@@ -1405,6 +1675,11 @@
           "tests",
           "audit"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -1431,6 +1706,11 @@
           "documentation"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/056-a-signal-states-what-it-does-not-mean.md",
@@ -1454,6 +1734,11 @@
           "process"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/057-unmechanizable-rules-are-named-explicitly.md",
@@ -1476,6 +1761,11 @@
         "en": [
           "quotas"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -1502,6 +1792,11 @@
           "planning"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/059-map-the-detour-before-the-resource-runs-out.md",
@@ -1524,6 +1819,11 @@
         "en": [
           "parallel work"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -1548,6 +1848,11 @@
           "parallel work"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/061-environment-bans-belong-in-the-task.md",
@@ -1571,6 +1876,11 @@
           "roles"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/062-a-role-must-be-able-to-object.md",
@@ -1593,6 +1903,11 @@
         "en": [
           "automation"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -1618,6 +1933,11 @@
           "process",
           "pipeline"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -1647,6 +1967,11 @@
           "community"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/065-the-onramp-must-speak-the-newcomers-language.md",
@@ -1671,6 +1996,11 @@
           "code",
           "concurrency"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -1702,6 +2032,11 @@
           "reliability"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/067-cleanup-must-not-swallow-the-failure.md",
@@ -1729,6 +2064,11 @@
         "en": [
           "security"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -1768,6 +2108,11 @@
           "concurrency"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/069-write-the-field-not-the-snapshot.md",
@@ -1795,6 +2140,11 @@
         "en": [
           "security"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -1826,6 +2176,11 @@
           "architecture"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/071-deliberate-duplication-is-signed.md",
@@ -1856,6 +2211,11 @@
           "gates"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/072-guard-the-cause-and-the-effect.md",
@@ -1883,6 +2243,11 @@
         "en": [
           "tooling"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -1914,6 +2279,11 @@
           "CI"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/074-one-shot-irreversible-steps-get-their-own-guard.md",
@@ -1942,6 +2312,11 @@
           "gates"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/075-a-guard-that-finds-nothing-must-fail.md",
@@ -1964,6 +2339,11 @@
         "en": [
           "interface"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -1992,6 +2372,11 @@
         "en": [
           "localisation"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -2024,6 +2409,11 @@
         "en": [
           "contracts"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -2059,6 +2449,11 @@
           "resources"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/079-ttl-counts-from-completion.md",
@@ -2093,6 +2488,11 @@
           "catalogue"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/080-every-new-rule-goes-into-the-catalogue.md",
@@ -2115,6 +2515,11 @@
         "en": [
           "security"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -2143,6 +2548,11 @@
         "en": [
           "roles"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -2178,6 +2588,11 @@
           "quality"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/083-generated-output-is-checked-by-properties.md",
@@ -2200,6 +2615,11 @@
         "en": [
           "architecture"
         ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
       },
       "added": "2026-08-21",
       "files": {
@@ -2225,6 +2645,11 @@
           "AI",
           "security"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -2254,6 +2679,11 @@
           "audit"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/086-the-finder-does-not-grade-the-finding.md",
@@ -2276,6 +2706,11 @@
         "en": [
           "audit"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -2302,6 +2737,11 @@
           "process"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/088-the-critic-checks-the-method-not-the-subject.md",
@@ -2324,6 +2764,11 @@
         "en": [
           "documentation"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -2348,6 +2793,11 @@
           "architecture"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/090-shared-helpers-move-up-not-sideways.md",
@@ -2370,6 +2820,11 @@
         "en": [
           "process"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -2405,6 +2860,11 @@
           "documentation"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/092-findings-and-ordering-live-in-different-documents.md",
@@ -2427,6 +2887,11 @@
         "en": [
           "architecture"
         ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
       },
       "added": "2026-08-21",
       "files": {
@@ -2453,6 +2918,11 @@
           "migrations"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/094-a-compatibility-shim-makes-migration-permanent.md",
@@ -2477,6 +2947,11 @@
           "privacy",
           "product"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -2503,6 +2978,11 @@
           "data"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/096-storage-follows-lifecycle-not-convenience.md",
@@ -2527,6 +3007,11 @@
           "tests",
           "quality"
         ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
       },
       "added": "2026-08-21",
       "files": {
@@ -2553,6 +3038,11 @@
           "documentation"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/098-the-unit-of-splitting-follows-usage.md",
@@ -2576,6 +3066,11 @@
           "taxonomy"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/099-classification-conflicts-resolve-by-consequence.md",
@@ -2598,6 +3093,11 @@
         "en": [
           "reliability"
         ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
       },
       "added": "2026-08-21",
       "files": {
@@ -2624,6 +3124,11 @@
           "reliability"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/101-retry-only-what-can-heal-itself.md",
@@ -2649,6 +3154,11 @@
           "quality"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/102-leniency-is-enumerated-and-switchable.md",
@@ -2673,6 +3183,11 @@
           "tests",
           "gates"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -2708,6 +3223,11 @@
           "automation"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/104-event-driven-automation-needs-a-manual-button.md",
@@ -2740,6 +3260,11 @@
           "audit"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/105-an-outside-audit-needs-outside-eyes.md",
@@ -2765,6 +3290,11 @@
           "release"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/106-publicity-multiplies-both-sides.md",
@@ -2788,6 +3318,11 @@
           "borrowing"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/107-it-works-for-the-author-means-tested-on-the-authors-sample.md",
@@ -2810,6 +3345,11 @@
         "en": [
           "documentation"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -2835,6 +3375,11 @@
           "code",
           "interface"
         ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
       },
       "added": "2026-08-21",
       "files": {
@@ -2865,6 +3410,11 @@
           "code",
           "reliability"
         ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
       },
       "added": "2026-08-21",
       "files": {
@@ -2898,6 +3448,11 @@
           "interface"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/111-do-it-instead-of-advising-it.md",
@@ -2928,6 +3483,11 @@
           "product"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/112-whatever-the-tool-created-it-must-be-able-to-delete.md",
@@ -2956,6 +3516,11 @@
           "contracts"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/113-a-contract-states-how-it-may-change.md",
@@ -2980,6 +3545,11 @@
           "data",
           "migrations"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -3013,6 +3583,11 @@
           "configuration"
         ]
       },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/115-config-has-one-anchor-and-a-bounded-search.md",
@@ -3045,6 +3620,11 @@
           "parallel work"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/116-the-collector-script-is-a-source-of-loss.md",
@@ -3068,6 +3648,11 @@
           "parallel work"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/117-numeric-limits-belong-in-the-task-spec.md",
@@ -3090,6 +3675,11 @@
         "en": [
           "data"
         ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
       },
       "added": "2026-08-21",
       "files": {
@@ -3116,6 +3706,11 @@
           "data"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/119-tool-artefacts-stay-outside-the-input-mask.md",
@@ -3140,6 +3735,11 @@
           "catalogue",
           "process"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -3171,6 +3771,11 @@
           "audit"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/121-closing-the-container-is-not-closing-the-work.md",
@@ -3195,6 +3800,11 @@
           "contracts",
           "data"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -3221,6 +3831,11 @@
           "history"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/123-attribution-is-verified-on-the-final-history.md",
@@ -3245,6 +3860,11 @@
           "CI",
           "tests"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -3284,6 +3904,11 @@
           "data"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/125-a-generated-file-is-not-a-store.md",
@@ -3313,6 +3938,11 @@
           "automation",
           "pipeline"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-21",
       "files": {
@@ -3352,6 +3982,11 @@
           "gates"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/127-a-number-in-prose-needs-a-guarded-marker.md",
@@ -3381,6 +4016,11 @@
           "gates",
           "tracker"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-21",
       "files": {
@@ -3420,6 +4060,11 @@
           "contracts"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-21",
       "files": {
         "ru": "rules/ru/129-a-catalogue-needs-a-consumption-contract.md",
@@ -3457,6 +4102,11 @@
           "catalogue",
           "tracker"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-21",
       "files": {
@@ -3496,6 +4146,11 @@
           "pipeline"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-22",
       "files": {
         "ru": "rules/ru/131-no-writes-from-a-cloud-session.md",
@@ -3529,6 +4184,11 @@
           "process",
           "pipeline"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-22",
       "files": {
@@ -3572,6 +4232,11 @@
           "planning"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-22",
       "files": {
         "ru": "rules/ru/133-file-overlap-sets-the-boundary.md",
@@ -3605,6 +4270,11 @@
           "agent sessions",
           "process"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-22",
       "files": {
@@ -3640,6 +4310,11 @@
           "pipeline"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-22",
       "files": {
         "ru": "rules/ru/135-session-identity-is-established-by-a-write.md",
@@ -3674,6 +4349,11 @@
           "contracts"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-22",
       "files": {
         "ru": "rules/ru/136-a-verdict-comes-after-enumerating-every-subject.md",
@@ -3703,6 +4383,11 @@
           "gates",
           "metrics"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-22",
       "files": {
@@ -3734,6 +4419,11 @@
           "process"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-22",
       "files": {
         "ru": "rules/ru/138-the-handover-is-assembled-as-you-go.md",
@@ -3763,6 +4453,11 @@
           "gates",
           "pipeline"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-22",
       "files": {
@@ -3798,6 +4493,11 @@
           "tests"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-22",
       "files": {
         "ru": "rules/ru/140-a-gate-is-tested-by-what-it-must-reject.md",
@@ -3832,6 +4532,11 @@
           "code"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-26",
       "files": {
         "ru": "rules/ru/141-a-marker-is-matched-whole-not-by-prefix.md",
@@ -3861,6 +4566,11 @@
           "pipeline",
           "observation"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-26",
       "files": {
@@ -3892,6 +4602,11 @@
           "tooling"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-26",
       "files": {
         "ru": "rules/ru/144-context-window-for-prose-is-a-paragraph.md",
@@ -3916,6 +4631,11 @@
           "gates",
           "runs"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-26",
       "files": {
@@ -3947,6 +4667,11 @@
           "audit"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-27",
       "files": {
         "ru": "rules/ru/146-a-green-gate-does-not-verify-its-premise.md",
@@ -3976,6 +4701,11 @@
           "pipeline",
           "observation"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-27",
       "files": {
@@ -4007,6 +4737,11 @@
           "data"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-27",
       "files": {
         "ru": "rules/ru/148-a-change-record-is-a-cache.md",
@@ -4037,6 +4772,11 @@
           "gates"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-27",
       "files": {
         "ru": "rules/ru/149-the-suite-owns-its-temp.md",
@@ -4061,6 +4801,11 @@
           "tests",
           "gates"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-27",
       "files": {
@@ -4087,6 +4832,11 @@
           "agent sessions"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-27",
       "files": {
         "ru": "rules/ru/151-the-trail-goes-where-the-fixer-can-reach.md",
@@ -4111,6 +4861,11 @@
           "pipeline",
           "security"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-28",
       "files": {
@@ -4138,6 +4893,11 @@
           "code"
         ]
       },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
       "added": "2026-08-28",
       "files": {
         "ru": "rules/ru/153-foreign-why-is-a-link-not-a-copy.md",
@@ -4161,6 +4921,11 @@
         "en": [
           "process"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-28",
       "files": {
@@ -4191,6 +4956,11 @@
           "process",
           "documentation"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-31",
       "files": {
@@ -4223,6 +4993,11 @@
           "pipeline"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-08-31",
       "files": {
         "ru": "rules/ru/156-trailers-live-in-the-tail-not-in-the-prose.md",
@@ -4253,6 +5028,11 @@
           "contracts",
           "data"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-08-31",
       "files": {
@@ -4285,6 +5065,11 @@
           "reliability"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-31",
       "files": {
         "ru": "rules/ru/158-the-third-outcome-names-its-subject.md",
@@ -4316,6 +5101,11 @@
           "gates"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-08-31",
       "files": {
         "ru": "rules/ru/159-a-set-verdict-comes-after-the-last-case.md",
@@ -4344,6 +5134,11 @@
         "en": [
           "pipeline"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-08-31",
       "files": {
@@ -4374,6 +5169,11 @@
           "documentation"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-31",
       "files": {
         "ru": "rules/ru/161-history-keeps-turning-points.md",
@@ -4402,6 +5202,11 @@
         "en": [
           "process"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-08-31",
       "files": {
@@ -4434,6 +5239,11 @@
           "documentation"
         ]
       },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
       "added": "2026-08-31",
       "files": {
         "ru": "rules/ru/163-a-shipped-tool-is-named-at-the-entrance.md",
@@ -4464,6 +5274,11 @@
           "contracts",
           "documentation"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-09-02",
       "files": {
@@ -4496,6 +5311,11 @@
           "gates"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-09-03",
       "files": {
         "ru": "rules/ru/165-git-file-list-needs-nul.md",
@@ -4526,6 +5346,11 @@
           "gates",
           "documentation"
         ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
       },
       "added": "2026-09-03",
       "files": {
@@ -4558,6 +5383,11 @@
           "code"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-09-03",
       "files": {
         "ru": "rules/ru/167-shell-identifiers-must-be-ascii.md",
@@ -4588,6 +5418,11 @@
           "pipeline",
           "CI"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-09-03",
       "files": {
@@ -4620,6 +5455,11 @@
           "CI"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-09-03",
       "files": {
         "ru": "rules/ru/169-cron-is-a-hint-not-a-cadence.md",
@@ -4650,6 +5490,11 @@
           "tests",
           "quality"
         ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
       },
       "added": "2026-09-03",
       "files": {
@@ -4682,6 +5527,11 @@
           "pipeline"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-09-03",
       "files": {
         "ru": "rules/ru/171-the-reference-set-comes-from-the-tree-under-test.md",
@@ -4712,6 +5562,11 @@
           "architecture",
           "data"
         ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
       },
       "added": "2026-09-03",
       "files": {
@@ -4744,6 +5599,11 @@
           "pipeline"
         ]
       },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
       "added": "2026-09-03",
       "files": {
         "ru": "rules/ru/173-a-change-closes-the-task-or-names-the-rest.md",
@@ -4774,6 +5634,11 @@
           "contracts",
           "metrics"
         ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
       },
       "added": "2026-09-03",
       "files": {
@@ -4810,6 +5675,11 @@
           "documentation"
         ]
       },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
       "added": "2026-09-03",
       "files": {
         "ru": "rules/ru/175-an-absence-claim-that-a-command-can-refute-must-be-a-gate.md",
@@ -4840,6 +5710,11 @@
           "code",
           "CI"
         ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
       },
       "added": "2026-09-03",
       "files": {
@@ -4884,6 +5759,18 @@
       "confirmed_by": "Подключится проект **не** этого владельца, его текст попадёт в сводку и\nкартинку, и он скажет, что не давал на это согласия, — либо, наоборот, спросит\nоб условиях **до** подключения, и окажется, что ответить нечем, кроме как\nдописать их задним числом.\n\nВторой способ дешевле и вероятнее: вопрос об условиях задают перед тем, как\nкласть файл, а не после.",
       "applicability": "**Работает**, по-видимому, для любого контракта, по которому одна сторона\nсобирает данные другой и публикует производное: агрегаторы, витрины, реестры,\nсводки по экосистеме.\n\n**Не работает** там, где обе стороны принадлежат одному владельцу и останутся\nтакими: условия там есть по факту владения, а записанные превратятся в\nцеремонию. Граница проверяемая — она исчезает в день, когда в реестре\nпоявляется чужой репозиторий.\n\n---\n\nЗаписано кандидатом, а не правилом, потому что **инцидента нет**: ни один\nпотребитель ещё не возражал, и все пять проектов реестра принадлежат одному\nвладельцу. Практическая часть при этом сделана сразу — контракт получил раздел\nоб условиях, а лицензия разделена на текст и код: гипотеза о том, что это\n**правило**, ждёт подтверждения, но цена ожидания оплачивается не молчанием.",
       "file": "candidates/data-arrives-with-terms.md"
+    },
+    {
+      "kind": "hypothesis",
+      "slug": "rules-are-adopted-in-a-declared-order",
+      "lang": "ru",
+      "title": "Правила внедряются в объявленном порядке, а не по номерам",
+      "area": "каталог",
+      "hypothesis": "Каталог из ста семидесяти пяти правил отдаётся новому проекту плоским списком, упорядоченным по номеру. Номер говорит, **когда правило завелось**, — и это единственный порядок, который потребитель видит. Гипотеза в том, что порядок разбора решает, будет ли каталог принят вообще: правила «про сами правила и роли» без ответа делают бессмысленным разбор всего остального, потому что некому и нечем его исполнять. Отсюда требование, если гипотеза подтвердится: у правила объявлена **ступень внедрения**, и потребитель разбирает их по ступеням, а не по номерам.",
+      "source": "Задача [ArtVsMark/Engineering-Incidents-Playbook#326](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/326):\nпредложение владельца от 3 сентября, записанное дословно — порядок из пяти\nступеней, ступень 0 про незакрытые задачи и три поправки по ходу разбора.\n\nСвоего инцидента у каталога нет, и это главное, что отделяет запись от правила.\nБлижайший предмет назван: **`ArtVsMark/Glossary-Python` не подключён** — ответ\nпотребителя ещё не заведён. Следующее подключение и будет первой живой пробой.",
+      "confirmed_by": "**Подтвердится, если** при подключении `Glossary-Python` разбор по ступеням\nдоходит до ответа быстрее, чем разбор по номерам у прошлых потребителей, и\nпервые тридцать ответов приходятся на ступени 1–2. Замер сравнимый: у трёх\nподключённых потребителей известно, сколько правил разобрано и в каких\nобластях осталось «ничем».\n\n**Опровергнется, если** порядок не меняет ничего: ответы приходят вперемешку по\nступеням, либо потребитель разбирает каталог целиком за один заход и порядок ему\nбезразличен. Второй исход вероятен у проекта одного владельца и был бы честным\nрезультатом: механизм тогда лишний.\n\n**Отдельно опровергается ступень 0.** Она подтвердится, если у потребителя,\nимеющего открытые задачи по правилам, разбор новых правил действительно\nостанавливается; опровергнется, если такие задачи висят месяцами и разбор идёт\nмимо них — тогда ступень 0 не работает как заслон, а только называет долг.",
+      "applicability": "Предполагается верным для каталога, который отдаётся НЕСКОЛЬКИМ потребителям и\nвырос настолько, что читается не за один заход. Проекту с двумя десятками\nсобственных правил ступень не нужна: их разбирают целиком.\n\nНе работает там, где потребитель один и он же автор: порядок ему известен\nзаранее, и объявлять его значило бы вести документ для себя.",
+      "file": "candidates/rules-are-adopted-in-a-declared-order.md"
     },
     {
       "kind": "hypothesis",

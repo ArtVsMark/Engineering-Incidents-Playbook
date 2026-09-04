@@ -2,6 +2,8 @@
 
 **Area.** parallel work
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** Split a role across two or three executors and give each plan no
 more than three items. A large zone dies whole.
 

@@ -2,6 +2,8 @@
 
 **Area.** CI
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** The condition "nothing red and nothing pending" is true of the
 empty set. Verify that the checks were created at all.
 

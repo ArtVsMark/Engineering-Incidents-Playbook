@@ -2,6 +2,8 @@
 
 **Area.** documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** A growing document has a limit expressed as a number: this many
 most recent sections. Everything beyond the window moves to the archive
 **verbatim** — not shortened, not ticked off. A gate holds the limit.

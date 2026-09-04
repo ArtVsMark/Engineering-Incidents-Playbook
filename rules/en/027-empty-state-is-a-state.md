@@ -2,6 +2,8 @@
 
 **Area.** documentation, interface
 
+**Tier.** 5 — everything else
+
 **The rule.** "Nothing here right now, as of this date" is information. A merely
 empty file is an ambiguity.
 

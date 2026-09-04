@@ -2,6 +2,8 @@
 
 **Area.** gates, tracker
 
+**Tier.** 3 — gates and processes
+
 **The rule.** When a required field's subject is a **set** (issues, areas,
 platforms, touched modules), the gate checks it for completeness, not for
 non-emptiness. One entry where five are due lies worse than an empty field:

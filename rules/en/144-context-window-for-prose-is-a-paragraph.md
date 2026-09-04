@@ -2,6 +2,8 @@
 
 **Area.** gates, tooling
 
+**Tier.** 3 — gates and processes
+
 **The rule.** Machine parsing of human-written text takes its context as a
 **paragraph** — blank line to blank line — not as "the sentence up to the
 nearest full stop". In technical prose the full stop lives inside names

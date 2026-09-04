@@ -2,6 +2,8 @@
 
 **Area.** contracts, documentation
 
+**Tier.** 1 — rules and roles
+
 **The rule.** The description of a status, code or label has two halves: what it
 means and **what it does not mean**. The second half matters more.
 

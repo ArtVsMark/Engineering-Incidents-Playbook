@@ -2,6 +2,8 @@
 
 **Area.** process
 
+**Tier.** 3 — gates and processes
+
 **The rule.** A rule declared unbacked by any mechanism must say **why** there is
 none: it takes judgement · the subject belongs to someone else · the check costs
 more than the violation · nobody got to it yet. Without a reason, `none` means

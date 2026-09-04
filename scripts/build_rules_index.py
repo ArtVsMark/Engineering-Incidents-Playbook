@@ -67,7 +67,7 @@ OUT = RULES / "README.md"
 EXPORT = ROOT / "export" / "rules.json"
 #: Версия контракта выгрузки. Поле `candidates` добавлено — по правилам
 #: эволюции (export/README.md) добавление поля это MINOR.
-EXPORT_SCHEMA = "1.3"
+EXPORT_SCHEMA = "1.4"
 CATALOGUE_URL = "https://github.com/ArtVsMark/Engineering-Incidents-Playbook"
 
 #: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
@@ -381,6 +381,60 @@ AREAS = {
     },
 }
 
+#: Ступень внедрения: в каком порядке правила берут в НОВОМ проекте и в каком
+#: разбирают накопленное. Список закрытый, как AREAS, и по той же причине:
+#: свободное значение развело бы «1» и «первая» молча (099).
+#:
+#: ПОЧЕМУ СТУПЕНЬ — СВОЁ ПОЛЕ, А НЕ ВЫВОД ИЗ ОБЛАСТИ. Замер по дереву: правила
+#: «про сами правила» рассыпаны по восьми областям — 021 и 024 стоят в
+#: «документации», 043 в «решениях», 114 в «данных», — и любое выведение
+#: отправило бы их в последнюю ступень. Область говорит, О ЧЁМ правило;
+#: ступень — КОГДА его берут. Это разные вопросы, и одним полем они не
+#: отвечаются (022).
+#:
+#: СТУПЕНИ 0 ЗДЕСЬ НЕТ, И ЭТО НЕ ПРОПУСК. Нулевая — «сперва доделай начатое по
+#: правилам» — свойство СОСТОЯНИЯ проекта, а не правила: открытые задачи и
+#: неразобранные правила. Ей неоткуда взяться в файле правила, и живёт она во
+#: «входящих» потребителя.
+TIERS = {
+    1: {
+        "ru": "правила и роли",
+        "en": "rules and roles",
+        "about_ru": "как правило заводится, живёт, доезжает до потребителя и умирает — и кто на всё это смотрит: формат, вердикты, контракт, миграции, состав ролей",
+        "about_en": "how a rule is born, lives, reaches a consumer and dies — and who looks at all of it: format, verdicts, contract, migrations, the set of roles",
+    },
+    2: {
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI",
+        "about_ru": "чем изменение доезжает до общей ветки и чем оно по дороге проверяется: очередь, слияние, выпуск, атрибуция, квоты, прогоны",
+        "about_en": "how a change reaches the shared branch and what checks it on the way: queue, merge, release, attribution, quotas, CI runs",
+    },
+    3: {
+        "ru": "гейты и процессы",
+        "en": "gates and processes",
+        "about_ru": "чем правило держится и как устроена работа вокруг него: исходы проверки, роли, трекер",
+        "about_en": "what backs a rule and how the work around it is arranged: check outcomes, roles, tracker",
+    },
+    4: {
+        "ru": "код и тесты",
+        "en": "code and tests",
+        "about_ru": "решения внутри кода, надёжность работы и то, чем они покрыты тестами",
+        "about_en": "decisions inside the code, runtime reliability, and the tests that cover them",
+    },
+    5: {
+        "ru": "всё остальное",
+        "en": "everything else",
+        "about_ru": "нужное, но не блокирующее подключение: документация, витрины, приватность, продукт",
+        "about_en": "needed but not blocking adoption: documentation, showcases, privacy, product",
+    },
+}
+
+TIER_RE = {
+    "ru": re.compile(r"^\*\*Ступень\.\*\*\s*(\d+)\s*—\s*(.+?)\s*$", re.M),
+    "en": re.compile(r"^\*\*Tier\.\*\*\s*(\d+)\s*—\s*(.+?)\s*$", re.M),
+}
+
+
 
 #: Переносимость записи за пределы Claude Code. Поле НЕОБЯЗАТЕЛЬНОЕ и задним
 #: числом не проставляется: у README каталога есть общее предупреждение «не
@@ -538,6 +592,12 @@ def check_vocabulary() -> list[str]:
             problems.append(f"словарь AREAS, «{name}»: не заполнено — {', '.join(missing)}")
     if not AREAS:
         problems.append("словарь AREAS пуст")
+    for num, fields in TIERS.items():
+        missing = [k for k in ("ru", "en", "about_ru", "about_en") if not fields.get(k)]
+        if missing:
+            problems.append(f"словарь TIERS, ступень {num}: не заполнено — {', '.join(missing)}")
+    if not TIERS:
+        problems.append("словарь TIERS пуст")
     return problems
 
 
@@ -545,6 +605,59 @@ def areas_of(path: Path, lang: str) -> list[str]:
     """Область правила — из самого файла. Пусто, если строки нет."""
     m = AREA_RE[lang].search(path.read_text(encoding="utf-8"))
     return [a.strip() for a in m.group(1).split(",") if a.strip()] if m else []
+
+
+def tier_of(path: Path, lang: str) -> tuple[int | None, str]:
+    """Ступень правила — из самого файла. `None`, если строки нет."""
+    m = TIER_RE[lang].search(path.read_text(encoding="utf-8"))
+    if not m:
+        return None, ""
+    return int(m.group(1)), m.group(2).strip()
+
+
+def check_tiers(found: dict[str, dict[str, Path]]) -> tuple[dict[str, int], list[str]]:
+    """Читает ступени из правил и сверяет их с закрытым словарём.
+
+    ИМЯ СТУПЕНИ СВЕРЯЕТСЯ, А НЕ ПРИНИМАЕТСЯ НА ВЕРУ. В строке стоит и номер, и
+    имя — номер для машины, имя для человека, который читает правило. Позволить
+    имени разойтись со словарём значило бы завести вторую копию значения, и
+    разошлась бы она молча (049): в файле «конвейер», в словаре «пайплайн», а
+    отличить их нечем.
+    """
+    problems: list[str] = []
+    result: dict[str, int] = {}
+    for num in sorted(found):
+        slot = found[num]
+        if not all(l in slot for l in LANGS):
+            continue                      # об этом уже скажет check_pairs
+        got: dict[str, tuple[int | None, str]] = {
+            lang: tier_of(slot[lang], lang) for lang in LANGS
+        }
+        missing = [l for l in LANGS if got[l][0] is None]
+        if missing:
+            for lang in missing:
+                problems.append(
+                    f"{num}: нет строки «Ступень» в {lang}/{slot[lang].name} — "
+                    f"ступени {', '.join(str(n) for n in sorted(TIERS))}; "
+                    f"формат «**Ступень.** N — имя»")
+            continue
+        if got["ru"][0] != got["en"][0]:
+            problems.append(
+                f"{num}: ступени деревьев расходятся — ru {got['ru'][0]}, en {got['en'][0]}")
+            continue
+        tier = got["ru"][0]
+        if tier not in TIERS:
+            problems.append(
+                f"{num}: ступень {tier} вне словаря TIERS — "
+                f"есть {', '.join(str(n) for n in sorted(TIERS))}")
+            continue
+        wrong = [f"{l} «{got[l][1]}» ждёт «{TIERS[tier][l]}»"
+                 for l in LANGS if got[l][1] != TIERS[tier][l]]
+        if wrong:
+            problems.append(f"{num}: имя ступени разошлось со словарём — {'; '.join(wrong)}")
+            continue
+        result[num] = tier
+    return result, problems
 
 
 def check_areas(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list[str]], list[str]]:
@@ -726,7 +839,8 @@ def same_export(path: Path, built: str) -> bool:
 
 
 def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]],
-                  dates: dict[str, str], trails: dict[str, list]) -> str:
+                  dates: dict[str, str], trails: dict[str, list],
+                  tiers: dict[str, int]) -> str:
     rules = []
     for num in sorted(found):
         ru, en = found[num]["ru"], found[num]["en"]
@@ -736,6 +850,13 @@ def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]]
             "slug": ru.stem[4:],
             "title": {"ru": title_of(ru), "en": title_of(en)},
             "areas": {"ru": names, "en": [AREAS[a]["en"] for a in names]},
+            # Ступень внедрения: КОГДА правило берут, а не о чём оно. Номер —
+            # для машины (по нему сортируют), имя — для человека. Порядок
+            # ступеней и есть смысл поля, поэтому отдаётся число, а не слаг:
+            # слаг пришлось бы упорядочивать на той стороне, и порядок разошёлся
+            # бы у двух потребителей молча (049).
+            "tier": {"n": tiers[num],
+                     "ru": TIERS[tiers[num]]["ru"], "en": TIERS[tiers[num]]["en"]},
             "added": dates[num],
             "files": {"ru": f"rules/ru/{ru.name}", "en": f"rules/en/{en.name}"},
             "trails": trails.get(num, []),
@@ -1200,6 +1321,8 @@ def main() -> int:
     FILES.update(found)
     areas, area_problems = check_areas(found)
     problems += area_problems
+    tiers, tier_problems = check_tiers(found)
+    problems += tier_problems
 
     nums = sorted(int(n) for n in found)
     gaps = [i for i in range(nums[0], nums[-1] + 1) if i not in set(nums)] if nums else []
@@ -1230,7 +1353,7 @@ def main() -> int:
         return 1
 
     text = render(found, gaps, areas)
-    export = render_export(found, areas, dates, trails)
+    export = render_export(found, areas, dates, trails, tiers)
     marks: dict[Path, str] = {}
     for path in MARKERS:
         body, gap = marked(path, len(found))

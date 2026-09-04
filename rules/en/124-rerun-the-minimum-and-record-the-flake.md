@@ -2,6 +2,8 @@
 
 **Area.** CI, tests
 
+**Tier.** 2 — the pipeline and CI
+
 **The rule.** When one check fails, re-run **that one**, not the whole suite.
 But a re-run is **diagnosis**: if it passes the second time, that result must be
 recorded as instability, or the test suite quietly loses its credibility.
