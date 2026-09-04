@@ -357,7 +357,8 @@ def test_reshennoe_u_sosseda_nazvano_v_metrike(monkeypatch, repo, capsys):
 
     assert cb.main() == 0
     out = capsys.readouterr().out
-    assert "решено у соседа 1" in out and "грейдер" in out and "001" in out
+    assert "решено у соседа: правил 1" in out
+    assert "грейдер" in out and "001" in out
 
 
 def test_u_sosseda_tozhe_nichem_eto_otvet(monkeypatch, repo, capsys):
@@ -425,4 +426,47 @@ def test_pravilo_bez_proby_ne_schitaetsya_provernnym(tmp_path):
     называться числом, иначе непроверенное неотличимо от чистого (075)."""
     assert cb.refuted("019", tmp_path) == ""
     assert "019" not in cb.REFUTED_BY
+
+
+# ── два числа об одной величине печатаются вместе и названными (правило 178) ─
+
+ДВОЕ = {
+    "consumers": [
+        {"repo": "мой/каталог", "holds": {}},
+        {"repo": "чужой/грейдер", "holds": {
+            "001": {"mechanism": "gate", "where": "scripts/check_docs.py"},
+        }},
+        {"repo": "чужой/счётчик", "holds": {
+            "001": {"mechanism": "gate", "where": "scripts/other.py"},
+        }},
+    ]
+}
+
+
+def test_pravil_i_zapisey_nazvany_porozn(monkeypatch, repo, capsys):
+    """ГЛАВНЫЙ СЛУЧАЙ 178, и он про СВОЁ чтение, а не про природу данных.
+
+    Одно правило держат двое соседей: правил решено 1, а записей об этом 2.
+    Читатель, сложивший числа по проектам, получит 2 и объяснит расхождение
+    тем, что источники меряют разное, — самым дорогим объяснением из
+    возможных. Дешёвая гипотеза «считаем одну величину дважды» закрывается
+    печатью числа уникальных идентификаторов рядом с числом строк.
+    """
+    с_соседями(monkeypatch, repo, ничем(), ДВОЕ)
+
+    assert cb.main() == 0
+    out = capsys.readouterr().out
+    assert "решено у соседа: правил 1" in out
+    assert "записей 2" in out
+
+
+def test_bez_rashozhdeniya_lishnego_ne_pechataetsya(monkeypatch, repo, capsys):
+    """Обратная половина: когда чисел не два, а одно, второе не выдумывается.
+    Лишняя скобка в каждой строке приучила бы её не читать (051)."""
+    с_соседями(monkeypatch, repo, ничем())
+
+    assert cb.main() == 0
+    out = capsys.readouterr().out
+    assert "решено у соседа: правил 1" in out
+    assert "записей" not in out
 
