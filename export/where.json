@@ -1,23 +1,23 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-03T20:49:28+00:00",
+  "generated_at": "2026-09-04T07:58:41+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
       "role": "каталог",
       "schema": "1.1",
       "state": "подключён",
-      "read_at": "2026-09-03",
-      "answered": 175,
+      "read_at": "2026-09-04",
+      "answered": 176,
       "by_status": {
-        "active": 137,
+        "active": 138,
         "not-applicable": 31,
         "rejected": 7
       },
       "by_mechanism": {
         "pipeline": 8,
-        "gate": 93,
+        "gate": 94,
         "document": 24,
         "none": 12
       },
@@ -196,7 +196,8 @@
         "173": "active",
         "174": "active",
         "175": "active",
-        "176": "active"
+        "176": "active",
+        "177": "active"
       },
       "holds": {
         "001": {
@@ -746,17 +747,21 @@
         "176": {
           "mechanism": "gate",
           "where": "scripts/check_subprocess.py — разбор дерева исходников: текстовый вызов subprocess без encoding= отвергается; включают текстовый режим любые из text, universal_newlines, errors"
+        },
+        "177": {
+          "mechanism": "gate",
+          "where": "scripts/check_bindings.py::tier_zero — каталог спрашивает ступень 0 с СЕБЯ: три числа печатаются всегда (без ответа, не рассмотрено, действует но держится ничем) плюс сверка своей схемы ответа с contracts.bindings собственной выгрузки. Потребителю то же отдаётся разделом «Ступень 0» в scripts/sync_inbox.py. Печать, а не отказ: правило прямо говорит, что заслон называет долг и работу не запрещает — остановить её механизм не может"
         }
       },
-      "trails": 34,
-      "born": 26
+      "trails": 35,
+      "born": 27
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
       "role": "потребитель",
       "schema": "1.1",
       "state": "подключён",
-      "read_at": "2026-09-03",
+      "read_at": "2026-09-04",
       "answered": 175,
       "by_status": {
         "active": 172,
@@ -764,8 +769,8 @@
       },
       "by_mechanism": {
         "gate": 71,
-        "pipeline": 36,
-        "document": 65
+        "pipeline": 37,
+        "document": 64
       },
       "rules": {
         "001": "active",
@@ -1602,8 +1607,8 @@
           "where": "scripts/check_branch_protection.py сверяет список обязательных проверок с ruleset дословно — ночным обходом .github/workflows/tracker-guardrails.yml. Обязательных проверок у нас одиннадцать, шесть из них — имена ячеек матрицы, то есть ровно названная правилом ловушка; агрегирующей проверки с постоянным именем нет, это issue #1420, а до неё риск назван в CLAUDE.md § Гейты"
         },
         "169": {
-          "mechanism": "document",
-          "where": "docs/agent/preflight.md § Что гейты НЕ ловят — очередь слияний застрахована расписанием (.github/workflows/merge-queue.yml, cron «23 * * * *», в шапке названо страховкой), а замера срабатываний по источникам нет: issue #1427. Ночной прогон cross-OS бейджа (CLAUDE.md § Метрики) под правило не подпадает — предмет там суточный, и правило само называет эту границу"
+          "mechanism": "pipeline",
+          "where": "scripts/measure_queue_wakeups.py — замер источников пробуждения очереди выводится из живых прогонов, ночным обходом .github/workflows/tracker-guardrails.yml; отказ односторонний: страховка объявлена и по расписанию не пришло ни одного прогона. Шапка .github/workflows/merge-queue.yml называет наблюдаемое (42 срабатывания вместо ~201 за 201 час), а не заказанное"
         },
         "170": {
           "mechanism": "pipeline",
@@ -1642,7 +1647,7 @@
       "role": "потребитель",
       "schema": "1.1",
       "state": "подключён",
-      "read_at": "2026-09-03",
+      "read_at": "2026-09-04",
       "answered": 175,
       "by_status": {
         "active": 101,
@@ -2247,7 +2252,7 @@
       "role": "потребитель",
       "schema": "1.1",
       "state": "подключён",
-      "read_at": "2026-09-03",
+      "read_at": "2026-09-04",
       "answered": 175,
       "by_status": {
         "active": 145,

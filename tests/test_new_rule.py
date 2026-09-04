@@ -43,7 +43,7 @@ def run(repo, *argv):
     return nr.main([*argv, "--root", str(repo)])
 
 
-OK = ("--slug", "a-new-thing", "--area", "процесс",
+OK = ("--slug", "a-new-thing", "--area", "процесс", "--tier", "3",
       "--trail", "owner/repo#12")
 
 
@@ -96,19 +96,19 @@ def test_занятый_слаг_это_находка(repo, capsys):
 
 
 def test_область_вне_словаря_это_находка(repo, capsys):
-    assert run(tree(repo), "--slug", "x", "--area", "выдуманная",
+    assert run(tree(repo), "--slug", "x", "--area", "выдуманная", "--tier", "3",
                "--trail", "owner/repo#12") == 1
     assert "вне словаря" in capsys.readouterr().err
 
 
 def test_след_прозой_это_находка(repo, capsys):
-    assert run(tree(repo), "--slug", "x", "--area", "процесс",
+    assert run(tree(repo), "--slug", "x", "--area", "процесс", "--tier", "3",
                "--trail", "где-то там") == 1
     assert "не разрешается" in capsys.readouterr().err
 
 
 def test_слаг_кириллицей_это_находка(repo, capsys):
-    assert run(tree(repo), "--slug", "правило", "--area", "процесс",
+    assert run(tree(repo), "--slug", "правило", "--area", "процесс", "--tier", "3",
                "--trail", "owner/repo#12") == 1
     assert "не по форме" in capsys.readouterr().err
 
@@ -124,7 +124,7 @@ def connected(slug="a-real-incident", incident="Сломалось вот это
 def test_предложение_становится_каркасом(repo):
     c, p = connected()
     assert run(tree(repo, consumers=c, proposals=p),
-               "--from-proposal", "o/one:a-real-incident", "--area", "процесс") == 0
+               "--from-proposal", "o/one:a-real-incident", "--area", "процесс", "--tier", "3") == 0
     ru = (repo / "rules" / "ru" / "003-a-real-incident.md").read_text(encoding="utf-8")
     assert "o/one — scripts/x.py" in ru
 
@@ -134,28 +134,28 @@ def test_номер_присваивает_каталог_а_не_проект(r
     проектов уже нечем починить."""
     c, p = connected()
     assert run(tree(repo, consumers=c, proposals=p),
-               "--from-proposal", "o/one:a-real-incident", "--area", "процесс") == 0
+               "--from-proposal", "o/one:a-real-incident", "--area", "процесс", "--tier", "3") == 0
     assert (repo / "rules" / "ru" / "003-a-real-incident.md").exists()
 
 
 def test_предложение_без_инцидента_это_находка(repo, capsys):
     c, p = connected(incident="")
     assert run(tree(repo, consumers=c, proposals=p),
-               "--from-proposal", "o/one:a-real-incident", "--area", "процесс") == 1
+               "--from-proposal", "o/one:a-real-incident", "--area", "процесс", "--tier", "3") == 1
     assert "без инцидента" in capsys.readouterr().err
 
 
 def test_предложение_от_необъявленного_проекта_это_находка(repo, capsys):
     c, p = connected()
     assert run(tree(repo, consumers=c, proposals=p),
-               "--from-proposal", "чужой/проект:a-real-incident", "--area", "процесс") == 1
+               "--from-proposal", "чужой/проект:a-real-incident", "--area", "процесс", "--tier", "3") == 1
     assert "не объявлен потребителем" in capsys.readouterr().err
 
 
 def test_канал_в_эту_сторону_не_подключён_это_находка(repo, capsys):
     _, p = connected()
     assert run(tree(repo, proposals=p),
-               "--from-proposal", "o/one:a-real-incident", "--area", "процесс") == 1
+               "--from-proposal", "o/one:a-real-incident", "--area", "процесс", "--tier", "3") == 1
     assert "не назван адрес предложений" in capsys.readouterr().err
 
 

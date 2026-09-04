@@ -59,6 +59,8 @@ EN_SKELETON = """# <One-line rule: a claim, not a topic>
 
 **Area.** {area_en}
 
+**Tier.** {tier_n} — {tier_en}
+
 **The rule.** <Two or three sentences. What to do and what not to do.>
 
 ## The incident
@@ -103,14 +105,19 @@ def next_number(taken: dict[str, str]) -> str:
     return f"{max(int(n) for n in taken) + 1:03d}"
 
 
-def areas(root: Path) -> tuple[dict[str, str], str | None]:
-    """Словарь областей из сборки указателя: он закрытый и живёт там."""
+def словари(root: Path) -> tuple[dict[str, str], dict[int, dict], str | None]:
+    """Словари областей и ступеней из сборки указателя: оба закрытые и живут там.
+
+    Читаются, а не копируются: вторая копия имени ступени разошлась бы со
+    сборкой молча, и каркас начал бы порождать правила, которые сам же гейт и
+    отвергает (022, 049).
+    """
     sys.path.insert(0, str(root / "scripts"))
     try:
         import build_rules_index as index
     except Exception as e:  # pragma: no cover — сборка не импортируется
-        return {}, f"словарь областей не прочитан — {e}"
-    return {k: v["en"] for k, v in index.AREAS.items()}, None
+        return {}, {}, f"словари областей и ступеней не прочитаны — {e}"
+    return ({k: v["en"] for k, v in index.AREAS.items()}, index.TIERS, None)
 
 
 def trail_resolves(trail: str, root: Path) -> bool:
@@ -180,6 +187,11 @@ def neighbours(root: Path, path: Path) -> str:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--slug", help="слаг латиницей, без номера; при --from-proposal берётся оттуда")
+    ap.add_argument("--tier", required=True, type=int, choices=(1, 2, 3, 4, 5),
+                    help="ступень внедрения: 1 правила и роли · 2 конвейер и CI · "
+                         "3 гейты и процессы · 4 код и тесты · 5 всё остальное. "
+                         "Умолчания нет намеренно: молчаливая пятая означала бы "
+                         "«не спросили», а не «берут последним»")
     ap.add_argument("--area", required=True,
                     help="одна-три области через запятую, из закрытого словаря")
     ap.add_argument("--trail",
@@ -221,7 +233,7 @@ def main(argv: list[str] | None = None) -> int:
         print("проверка не отработала: нет заготовки templates/rule-template.md",
               file=sys.stderr)
         return 2
-    known_areas, err = areas(root)
+    known_areas, TIERS, err = словари(root)
     if err:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
@@ -258,6 +270,15 @@ def main(argv: list[str] | None = None) -> int:
     ru_body = (root / "templates" / "rule-template.md").read_text(encoding="utf-8")
     ru_body = re.sub(r"(?m)^\*\*Область\.\*\*.*?(?=\n\n)", f"**Область.** {args.area}",
                      ru_body, count=1, flags=re.S)
+    # Ступень подставляется вслед за областью и в ту же форму, что читает
+    # сборка указателя: имя берётся из её словаря, а не пишется здесь заново
+    # (022) — вторая копия имени разошлась бы молча.
+    ступень = f"**Ступень.** {args.tier} — {TIERS[args.tier]['ru']}"
+    if re.search(r"(?m)^\*\*Ступень\.\*\*", ru_body):
+        ru_body = re.sub(r"(?m)^\*\*Ступень\.\*\*.*$", ступень, ru_body, count=1)
+    else:
+        ru_body = re.sub(r"(?m)^(\*\*Область\.\*\*.*)$",
+                         lambda m: f"{m.group(1)}\n\n{ступень}", ru_body, count=1)
     # След подставляется целиком: он разрешим и проверен выше, человеку в нём
     # делать нечего. Всё остальное в заготовке остаётся местом для суждения.
     ru_body = re.sub(r"(?ms)^## След\n\n`<.*?>`\n",
@@ -270,7 +291,9 @@ def main(argv: list[str] | None = None) -> int:
             path.write_text(ru_body, encoding="utf-8")
         else:
             en_areas = ", ".join(known_areas[a] for a in wanted)
-            path.write_text(EN_SKELETON.format(area_en=en_areas, trail=args.trail),
+            path.write_text(EN_SKELETON.format(area_en=en_areas, trail=args.trail,
+                                               tier_n=args.tier,
+                                               tier_en=TIERS[args.tier]['en']),
                             encoding="utf-8")
         made.append(str(path.relative_to(root)))
 

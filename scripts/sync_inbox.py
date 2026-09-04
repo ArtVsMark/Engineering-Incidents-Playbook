@@ -16,6 +16,11 @@
      за прогон (правило 104: у события есть ручная кнопка, но не свалка).
 
 Реализует правила каталога:
+  177 — незакрытая работа по правилам идёт впереди новой: раздел «Ступень 0»
+        печатает три числа ВСЕГДА и сверяет свою схему ответа со схемой
+        первоисточника; заслон называет долг, но работу не запрещает;
+  157 — подъём контракта означает перечитывание ОТВЕТОВ, а не только правку
+        формата: расхождение номеров печатается отдельной строкой;
   130 — правило приходит к получателю ВМЕСТЕ с кандидатами из его
         бэклога: без предмета в своём проекте оно остаётся
         абстракцией, которую откладывают;
@@ -49,13 +54,24 @@ import urllib.request
 MARKER = "<!-- rules-inbox: не удаляйте, по этой строке задача находится снова -->"
 
 
-def fetch_rules(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None]:
+def fetch_export(catalogue: str, ref: str) -> tuple[dict | None, str | None]:
+    """Выгрузка целиком: нужны и правила, и объявленные номера контрактов.
+
+    Раньше читались только правила. Номера контрактов лежат в том же файле, и
+    второй запрос за ними был бы лишним обращением к сети ради данных, которые
+    уже приехали.
+    """
     url = f"https://raw.githubusercontent.com/{catalogue}/{ref}/export/rules.json"
     try:
         with urllib.request.urlopen(url, timeout=30) as resp:
-            return json.loads(resp.read().decode("utf-8")).get("rules", []), None
+            return json.loads(resp.read().decode("utf-8")), None
     except (urllib.error.URLError, OSError, ValueError) as e:
         return None, f"{url} — {e}"
+
+
+def fetch_rules(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None]:
+    doc, err = fetch_export(catalogue, ref)
+    return (None, err) if doc is None else (doc.get("rules", []), None)
 
 
 def fetch_where(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None]:
@@ -153,6 +169,47 @@ def tier_of(rule: dict) -> int:
     return n if isinstance(n, int) and 1 <= n <= 5 else 5
 
 
+def contract_gap(answered_schema: str | None, expected: str | None) -> str | None:
+    """Разошлась ли своя схема ответа со схемой первоисточника.
+
+    ЭТО ТРЕТЬЕ ЛИЦО СТУПЕНИ 0, и оно из [157]: смена версии чужого контракта —
+    повод ПЕРЕЧИТАТЬ ответы, а не только поправить формат. Сверка возможна
+    сегодня и без новых полей: каталог публикует ожидаемый номер в
+    `contracts.bindings`, проект объявляет свой в `schema`.
+
+    Замер, ради которого это заведено (инцидент правила 164): у подключённого
+    проекта стояло `"schema": "1.2"` — номер формата ВЫГРУЗКИ в поле формата
+    ОТВЕТА, где контракт требует 1.1. Файл валиден, гейт зелёный, расхождение
+    видно только сверкой.
+
+    Третий исход отдельно: номера нет ни с одной стороны — это «не знаем», а не
+    «сходится». Молчание здесь означало бы, что несверенное считается сверенным.
+    """
+    if not expected:
+        return "каталог не объявил ожидаемый номер формата ответа — сверить нечем"
+    if not answered_schema:
+        return (f"в ответе не объявлен `schema`, а каталог ждёт {expected} — "
+                "несверенное не считается сошедшимся")
+    if answered_schema != expected:
+        return (f"формат ответа объявлен как {answered_schema}, каталог ждёт "
+                f"{expected} — ответы перечитываются под новый контракт")
+    return None
+
+
+def held_by_nothing(answered: dict) -> list[str]:
+    """Правила, признанные действующими и не держащиеся ничем.
+
+    ЭТО И ЕСТЬ «НЕ ОТРАБОТАНО», а не «не дошли руки»: ответ дан, статус
+    `active`, механизма нет. Отличие от `unreviewed` существенно — там честно
+    сказано «ещё не смотрели», здесь сказано «действует», и это неправда.
+
+    Замер 3 сентября: 47 таких правил на трёх подключённых проектах из четырёх.
+    """
+    return sorted(rid for rid, rec in answered.items()
+                  if rec.get("status") == "active"
+                  and (rec.get("mechanism") or "none") == "none")
+
+
 def started_here(issues: list[dict]) -> list[dict]:
     """Открытые задачи проекта, в заголовке которых назван номер правила.
 
@@ -245,7 +302,9 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
              answered: int | None = None,
              solved: list[dict] | None = None,
              candidates: list[dict] | None = None,
-             started: list[dict] | None = None) -> str:
+             started: list[dict] | None = None,
+             nothing: list[str] | None = None,
+             contract: str | None = None) -> str:
     lines = [
         MARKER,
         "",
@@ -270,29 +329,55 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
             "",
         ]
 
-    # СТУПЕНЬ 0 СТОИТ ПЕРВОЙ, И ЭТО НЕ ОФОРМЛЕНИЕ. Пока по правилам есть
-    # начатое и незакрытое, порядок ступеней не начинается: правило,
-    # взятое поверх незакрытого, множит очередь, а не разбирает её.
-    if started:
+    # СТУПЕНЬ 0 СТОИТ ПЕРВОЙ И ПЕЧАТАЕТСЯ ВСЕГДА (правило 177). Три числа,
+    # видные только при поломке, отвечают на вопрос «что сломалось» и молчат о
+    # том, закрыт ли долг вообще; «ноль» здесь — состояние, а не пустота (027).
+    задач = len(started or [])
+    ничем = len(nothing or [])
+    очередь = len(missing) + len(unreviewed)
+    держит = задач or ничем or очередь or contract
+    lines += [
+        "## Ступень 0 — незакрытая работа по правилам",
+        "",
+        f"**Задач по правилам: {задач}. Правил без ответа или «не рассмотрено»: "
+        f"{очередь}. Признано действующими, но держится ничем: {ничем}.**",
+        "",
+    ]
+    if contract:
         lines += [
-            "## Ступень 0 — сперва доделайте начатое",
+            f"⚠️ **Контракт разошёлся.** {contract}",
             "",
-            "Открытые задачи этого проекта, в заголовке которых назван "
-            "номер правила. **Пока они открыты, разбор новых правил ниже — "
-            "очередь, а не работа.**",
+            "Это [правило 157](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/157-a-contract-bump-is-a-re-read.md): "
+            "смена версии чужого контракта — повод перечитать ОТВЕТЫ, а не "
+            "только поправить формат. Пока номера расходятся, ответы ниже "
+            "собраны под другой контракт.",
             "",
-            "| Задача | Про правило |",
-            "|---|---|",
         ]
+    if started:
+        lines += ["| Задача | Про правило |", "|---|---|"]
         for i in started:
             lines.append(f"| #{i['number']} {i['title']} | {i['rule']} |")
+        lines.append("")
+    if nothing:
         lines += [
+            "**Действует, но не держится ничем:** " + ", ".join(
+                f"`{rid}`" for rid in nothing) + ".",
             "",
-            "Ступень 0 — состояние, а не тема: своих правил у неё нет, есть "
-            "только незакрытая работа. Закрытие задачи оставлено человеку — "
-            "оно говорит «я посмотрел», а механизм такого сказать не может.",
+            "Это не «не дошли руки» — там честно сказано `unreviewed`. Здесь "
+            "сказано «действует», и это неправда: механизма нет.",
             "",
         ]
+    if держит:
+        lines += [
+            "**Пока эти числа не ноль, разбор новых правил ниже — очередь, а "
+            "не работа.** Ступень 0 — состояние, а не тема: своих правил у неё "
+            "нет. Механизм называет долг и не запрещает работу: остановить "
+            "чужую работу он не может и не притворяется, что может. Закрытие "
+            "задачи оставлено человеку — оно говорит «я посмотрел».",
+            "",
+        ]
+    else:
+        lines += ["Долга по правилам нет. Это состояние, а не пустая строка.", ""]
 
     if solved:
         lines += [
@@ -433,7 +518,8 @@ def main() -> int:
     args = ap.parse_args()
 
     # ── исход 2: проверка не отработала ────────────────────────────────────
-    rules, err = fetch_rules(args.catalogue, args.ref)
+    выгрузка, err = fetch_export(args.catalogue, args.ref)
+    rules = None if выгрузка is None else выгрузка.get("rules", [])
     if err:
         print(f"проверка не отработала: экспорт каталога не прочитан — {err}",
               file=sys.stderr)
@@ -445,11 +531,19 @@ def main() -> int:
 
     try:
         with open(args.bindings, encoding="utf-8") as fh:
-            answered = json.load(fh).get("rules", {})
+            свой_ответ = json.load(fh)
+        answered = свой_ответ.get("rules", {})
+        своя_схема = свой_ответ.get("schema")
     except FileNotFoundError:
         # Проект ещё не подключён. Это не поломка: все правила нерассмотрены,
         # и задача-«входящие» именно об этом и скажет.
+        #
+        # Схема здесь НЕ «сходится», а НЕИЗВЕСТНА, и это разные ответы: сверка
+        # скажет «не объявлен», а не промолчит (039). Пока переменная
+        # заводилась только в удачной ветке, скрипт падал UnboundLocalError
+        # вместо третьего исхода — поймано тестом отсутствия gh.
         answered = {}
+        своя_схема = None
     except (OSError, ValueError) as e:
         print(f"проверка не отработала: {args.bindings} не разобран — {e}",
               file=sys.stderr)
@@ -487,11 +581,15 @@ def main() -> int:
               file=sys.stderr)
     candidates = candidates_here(unreviewed, свои_задачи)
     начатое = started_here(свои_задачи)
+    ничем = held_by_nothing(answered)
+    расхождение = contract_gap(
+        своя_схема, ((выгрузка or {}).get("contracts") or {}).get("bindings"))
     решено = sum(1 for r in rules
                  if answered.get(r["id"], {}).get("status") not in (None, "unreviewed"))
     body = body_for(missing, unreviewed, args.catalogue, stale=stale,
                     total=len(rules), answered=решено, solved=solved,
-                    candidates=candidates, started=начатое)
+                    candidates=candidates, started=начатое,
+                    nothing=ничем, contract=расхождение)
     if args.dry_run:
         print(body)
         return 1 if (missing or unreviewed or stale) else 0
