@@ -147,7 +147,7 @@ def test_витрины_нет_это_третий_исход(repo, capsys):
     prepare(repo, [{"id": "pypi", "ask": "п", "absent": "предмета нет вовсе, вот так"}])
     (repo / "README.md").unlink()
     assert run(repo) == 2
-    assert "витрины нет" in capsys.readouterr().err
+    assert "нет ни одной витрины" in capsys.readouterr().err
 
 
 # ── чего этот гейт больше не делает ────────────────────────────────────────

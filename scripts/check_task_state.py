@@ -150,8 +150,8 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if args.body_file is None or not args.body_file.exists():
-        print("проверка не отработала: тело слитого изменения не передано",
-              file=sys.stderr)
+        print(f"проверка не отработала: --body-file не передан либо не "
+              f"существует ({args.body_file})", file=sys.stderr)
         return 2
     body = args.body_file.read_text(encoding="utf-8")
     closes, parts = tasks(body)

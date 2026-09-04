@@ -158,15 +158,15 @@ def main(argv: list[str] | None = None) -> int:
               file=sys.stderr)
         return 2
     if not questions:
-        print("проверка не отработала: набор не называет ни одного вопроса — "
-              "витрина без вопросов не витрина", file=sys.stderr)
+        print(f"проверка не отработала: {root / SET} не называет ни одного "
+              "вопроса — витрина без вопросов не витрина", file=sys.stderr)
         return 2
 
     shown = "\n".join((root / name).read_text(encoding="utf-8")
                       for name in SHOWCASES if (root / name).exists())
     if not shown:
-        print("проверка не отработала: витрины нет — показывать ответы негде",
-              file=sys.stderr)
+        print(f"проверка не отработала: под {root} нет ни одной витрины из "
+              f"{list(SHOWCASES)} — показывать ответы негде", file=sys.stderr)
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
