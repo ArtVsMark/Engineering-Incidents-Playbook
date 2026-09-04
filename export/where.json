@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T09:58:53+00:00",
+  "generated_at": "2026-09-04T10:10:21+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,15 +9,15 @@
       "schema": "1.1",
       "state": "подключён",
       "read_at": "2026-09-04",
-      "answered": 179,
+      "answered": 180,
       "by_status": {
-        "active": 141,
+        "active": 142,
         "not-applicable": 31,
         "rejected": 7
       },
       "by_mechanism": {
         "pipeline": 8,
-        "gate": 104,
+        "gate": 105,
         "document": 25,
         "none": 4
       },
@@ -200,7 +200,8 @@
         "177": "active",
         "178": "active",
         "179": "active",
-        "180": "active"
+        "180": "active",
+        "181": "active"
       },
       "holds": {
         "001": {
@@ -766,6 +767,10 @@
         "180": {
           "mechanism": "gate",
           "where": "scripts/check_subprocess.py::resolve_calls — предмет разрешается по импортам разбираемого файла: имена, под которыми доступен модуль, и отображение «имя в файле → исходное имя функции». Обе стороны стоят случаями в tests/test_check_subprocess.py"
+        },
+        "181": {
+          "mechanism": "gate",
+          "where": "scripts/check_exclusive.py + .rules/exclusives.json — исключительные утверждения объявленных документов ранжируются по близости предмета, и у каждой из верхних пар обязан быть вердикт: разные предметы · согласны · уточняет · ПРОТИВОРЕЧИЕ"
         }
       },
       "trails": 35,
@@ -1655,7 +1660,7 @@
         }
       },
       "trails": 69,
-      "born": 129
+      "born": 130
     },
     {
       "repo": "ArtVsMark/ArtVsMark",

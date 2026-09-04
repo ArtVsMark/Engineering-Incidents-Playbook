@@ -12,10 +12,10 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 35 | 27 | 179 | 0 | 0 | 141 | 104 | 8 | 25 | 4 | 91 |  |
-| `Stepik-Python-Grader` | подключён | 69 | 129 | 175 | 4 | 0 | 172 | 71 | 37 | 64 | 0 | 139 |  |
-| `ArtVsMark` | подключён | 16 | 10 | 176 | 3 | 0 | 101 | 60 | 11 | 13 | 15 | 34 |  |
-| `Claude-Code_Usage-Token` | подключён | 12 | 13 | 175 | 4 | 0 | 145 | 84 | 5 | 36 | 20 | 61 |  |
+| `Engineering-Incidents-Playbook` | подключён | 35 | 27 | 180 | 0 | 0 | 142 | 105 | 8 | 25 | 4 | 93 |  |
+| `Stepik-Python-Grader` | подключён | 69 | 130 | 175 | 5 | 0 | 172 | 71 | 37 | 64 | 0 | 139 |  |
+| `ArtVsMark` | подключён | 16 | 10 | 176 | 4 | 0 | 101 | 60 | 11 | 13 | 15 | 34 |  |
+| `Claude-Code_Usage-Token` | подключён | 12 | 13 | 175 | 5 | 0 | 145 | 84 | 5 | 36 | 20 | 61 |  |
 | `Glossary-Python` | не подключён | 0 | 0 | — | — | — | — | — | — | — | — | — | ответ потребителя ещё не заведён |
 
 ## Чем держат другие · How others enforce it
@@ -117,7 +117,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 44 механизмов по одному правилу; без названного адреса: 0 из 137 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 46 механизмов по одному правилу; без названного адреса: 0 из 138 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 39 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
@@ -426,3 +426,4 @@
 | 178 | действует | — | — | — |
 | 179 | действует | — | — | — |
 | 180 | действует | — | — | — |
+| 181 | действует | — | — | — |
