@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T09:32:34+00:00",
+  "generated_at": "2026-09-04T09:39:58+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -17,9 +17,9 @@
       },
       "by_mechanism": {
         "pipeline": 8,
-        "gate": 99,
+        "gate": 101,
         "document": 24,
-        "none": 10
+        "none": 8
       },
       "rules": {
         "001": "active",
@@ -260,8 +260,8 @@
           "where": "scripts/aggregate_bindings.py и scripts/collect_proposals.py печатают «и ещё N» вместо тихого урезания списка находок"
         },
         "017": {
-          "mechanism": "none",
-          "where": "остаток квоты каталог не спрашивает ни одним прогоном; исчерпание видно только по отказу — так и вышло 2 сентября, когда agent-pr упал на первой команде, а четыре изменения не открылись вовсе"
+          "mechanism": "gate",
+          "where": "scripts/ghcli.py::остаток — при ПЕРВОМ отказе площадки запрашивается gh api rate_limit (сам запрос квоту не расходует) и факты приписываются к сообщению; scripts/check_subprocess.py — звать gh мимо этой двери нельзя, иначе мерить будет некому"
         },
         "018": {
           "mechanism": "gate",
@@ -384,8 +384,8 @@
           "where": "scripts/check_bindings.py требует поле mechanism, и значение `none` печатается метрикой поимённо: правило без механизма названо, а не забыто"
         },
         "058": {
-          "mechanism": "none",
-          "where": "четыре прогона зовут gh, то есть расходуют квоту площадки; остановки по исчерпании нет ни у одного — 2 сентября agent-pr упал на первой команде, и четыре изменения подряд не открылись вовсе"
+          "mechanism": "gate",
+          "where": "scripts/ghcli.py — у исчерпания свой терминальный код QUOTA_OUT, вне набора кодов gh и отличный от NO_GH; ghcli.failed его знает, поэтому вызывающий останавливается, а не идёт дальше. scripts/check_subprocess.py держит дверь единственной"
         },
         "062": {
           "mechanism": "gate",

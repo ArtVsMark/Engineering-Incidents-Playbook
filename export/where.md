@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 35 | 27 | 179 | 0 | 0 | 141 | 99 | 8 | 24 | 10 | 89 |  |
+| `Engineering-Incidents-Playbook` | подключён | 35 | 27 | 179 | 0 | 0 | 141 | 101 | 8 | 24 | 8 | 89 |  |
 | `Stepik-Python-Grader` | подключён | 69 | 129 | 175 | 4 | 0 | 172 | 71 | 37 | 64 | 0 | 139 |  |
 | `ArtVsMark` | подключён | 16 | 10 | 176 | 3 | 0 | 101 | 60 | 11 | 13 | 15 | 34 |  |
 | `Claude-Code_Usage-Token` | подключён | 12 | 13 | 175 | 4 | 0 | 145 | 84 | 5 | 36 | 20 | 61 |  |
@@ -32,13 +32,11 @@
 | 012 | `Engineering-Incidents-Playbook` — гейт: .claude/hooks/push_guard.py — хук PreToolUse, объявленный в .claude/settings.json: толчок в ветку, отличную от текущей головы, отвергается ДО вызова git. Конвейер такого не ловит — он видит артефакт, а не действие, и к его запуску ветка уже сдвинута. Приём взят у грейдера — у него это тоже хук перед вызовом инструмента, — а файл нет: его запрет шире и собран под его конвейер. Разрешены толчок без имени ветки, толчок текущей и явная ссылка HEAD:<ветка>. Набор — tests/test_push_guard.py; живая проба состоялась при постройке: хук отверг толчок в несуществующую ветку и на ней же нашлась своя поломка — `2>&1` считалось именем ветки. ГРАНИЦА: ЧЬЯ ветка, сторож по-прежнему не знает — он знает только, что она не та, на которой стоит окно; `Stepik-Python-Grader` — гейт: .claude/hooks/pre_tool_use.py — пуш в ветку, отличную от текущей, отвергается до вызова git; CI такое поймать не может, он видит артефакт, а не действие | `Claude-Code_Usage-Token` |
 | 013 | `Engineering-Incidents-Playbook` — конвейер: .github/workflows/agent-pr.yml передаёт заголовок и тело файлами (`--body-file`), а не строкой в оболочке; то же в .github/workflows/automerge.yml; `Stepik-Python-Grader` — гейт: .claude/hooks/pre_tool_use.py — heredoc без кавычек в делимитере с экранированием в теле отвергается до записи файла | `Claude-Code_Usage-Token` |
 | 016 | `Engineering-Incidents-Playbook` — гейт: scripts/aggregate_bindings.py и scripts/collect_proposals.py печатают «и ещё N» вместо тихого урезания списка находок; `Stepik-Python-Grader` — гейт: scripts/check_truncation_marks.py — функция, режущая по пределу-константе, обязана оставить признак обрыва (флаг, многоточие, полную длину рядом); предел, заданный параметром, объявлен в контракте и молчанием не является; `Claude-Code_Usage-Token` — гейт: scripts/preflight.py печатает охват («просмотрено N, пропущено двоичных M»); src/claude_code_usage/transcripts.py — Coverage со строками, повторами ответа и незнакомыми полями; scripts/subprocess_encoding.py и scripts/utf8_output.py — «разобрано файлов N, пропущено M» и «проверено N, не предмет M»; scripts/rules_answer.py — «записей N, с адресом M». | `ArtVsMark` |
-| 017 | `Stepik-Python-Grader` — конвейер: scripts/gh_rest.py — остаток квоты читается из заголовков каждого ответа (бесплатно) и печатается подкомандой rate, которая сама квоту не тратит; разбор начинается с факта, а не с гипотезы; `Claude-Code_Usage-Token` — документ: docs/spec.md и CLAUDE.md § «Правила измерения» — остаток измеряется, а не запрашивается; пока шкала не откалибрована, инструмент говорит «остаток неизвестен», а не рисует проценты. | `Engineering-Incidents-Playbook` |
 | 028 | `Stepik-Python-Grader` — конвейер: scripts/check_issue_checklists.py — комплексный issue от трёх находок ведёт чек-лист с исходом каждой; `Claude-Code_Usage-Token` — документ: .github/pull_request_template.md — восемь пунктов галочками, а не прозой; CLAUDE.md § «Перед PR» — тот же чек-лист, исполняемый одной командой scripts/preflight.py. Состояние задачи не вычисляется чтением: у каждого пункта либо галочка, либо её нет. | `Engineering-Incidents-Playbook` |
 | 033 | `Engineering-Incidents-Playbook` — гейт: scripts/check_schedules.py + .rules/schedules.json — цена прогона объявляется числом, а гейт СЧИТАЕТ: сколько вызовов наружу расписания просят в худший час и укладывается ли сумма по всем расписаниям этого часа в объявленную долю часового лимита; `Stepik-Python-Grader` — документ: docs/agent/multiagent.md § арифметика интервала между стартами; CLAUDE.md § Гейты — порог остатка квоты и интервал опроса статусов | `Claude-Code_Usage-Token` |
 | 038 | `Stepik-Python-Grader` — документ: CLAUDE.md § Два окна: имя окна начинается с окружения ([WEB]/[LOCAL]/[CLI]), метка ставится при открытии; канон — docs/agent/environments.md | `ArtVsMark`, `Claude-Code_Usage-Token` |
 | 047 | `Engineering-Incidents-Playbook` — документ: CLAUDE.md § Когда окно перезапускают — сменились правила работы, окна перезапускают, а не рассылают им письма: свод и ядро читаются ОДИН раз, при старте, и правка живому окну не видна вовсе. ГРАНИЦА: реестра живых окон нет и не будет — рассылка потребовала бы знать, кто сейчас открыт; `Stepik-Python-Grader` — документ: CLAUDE.md § Гейты: смена правил транспорта требует перезапуска активных окон — настройки читаются при старте сессии; `ArtVsMark` — документ: CLAUDE.md § Окно — прямой цитатой: сменились правила работы, окна перезапускаются. Этот файл читается один раз, при старте | `Claude-Code_Usage-Token` |
 | 052 | `Stepik-Python-Grader` — конвейер: scripts/move_merge_queue.py обновляет только голову очереди — из main остальные не двигаются (CLAUDE.md § Гейты: N против N(N−1)/2); `Claude-Code_Usage-Token` — гейт: scripts/merge_queue.py — `update-branch` вызывается ТОЛЬКО для головы очереди («обновляю голову очереди #N»), остальные не трогаются вовсе: обновлять всех после каждого слияния — квадрат холостой работы. Замер этой серии: из четырёх PR подряд очередь обновила ровно те два, что оказывались следующими. | `Engineering-Incidents-Playbook` |
-| 058 | `Stepik-Python-Grader` — конвейер: scripts/gh_rest.py — стоп-кран по остатку: ниже DEFAULT_QUOTA_FLOOR (600, порог меняется GH_REST_QUOTA_FLOOR) операция не начинается, код возврата EXIT_WAIT «ждать», а не повтор; исчерпанный лимит поднимает RateLimited со временем сброса; `Claude-Code_Usage-Token` — документ: CLAUDE.md § «Работа с GitHub» и scripts/gh_rest.py. Главное решение принято до повторов, а не после: GraphQL запрещён целиком, потому что одна его операция стоит ~300 points из 5000 в час против 1 у REST, — разница в 300 раз, и она дважды выжигала квоту в соседнем проекте. Повторов при отказе площадки нет ни одного: GitHubError поднимается наверх и останавливает работу, а не отодвигает сброс. Обход страниц ограничен потолком MAX_PAGES — бесконечно полные страницы не закрутят цикл. Единственные повторы в проекте — у git push (src/claude_code_usage/storage.py), и там отказ временный по природе: перед каждой попыткой ветка подтягивается, то есть причина устраняется, а не перепроверяется. | `Engineering-Incidents-Playbook` |
 | 059 | `Stepik-Python-Grader` — документ: docs/agent/preflight.md § Маршрут при исчерпании лимитов: что недоступно, что работает и чем занять время до сброса квоты | `Claude-Code_Usage-Token` |
 | 065 | `Engineering-Incidents-Playbook` — документ: CONTRIBUTING.md, раздел «Путь новичка»: обе метки входа объявлены в .github/labels.yml, тело задачи ведётся на двух языках, и правило действует в момент навешивания метки. Двуязычие тела не проверяется ничем — метку вешает человек; `Stepik-Python-Grader` — конвейер: scripts/check_good_first_issues_bilingual.py — good first issue и help wanted ведутся на двух языках, и меток именно две: путь участника не кончается первым вкладом; `ArtVsMark` — документ: README.md § Contributions welcome — витрина двуязычна, и задачи по ссылке ведутся на двух языках | `Claude-Code_Usage-Token` |
 | 086 | `Engineering-Incidents-Playbook` — гейт: scripts/collect_proposals.py::check_verdicts — оценку находке ставит НЕ нашедший: проект присылает предложение БЕЗ номера (форма запрещает поле прямо), а вердикт выносит принимающая сторона, и гейт требует у каждого предложения статус из закрытого набора, у принятого — существующий номер правила, у отклонённого — причину. Номер не переиспользуется: два предложения под одним отвергаются. ГРАНИЦА, И ОНА ПОЛОВИНА ПРАВИЛА: вторая половина — «шкала опровергателя калибруется примерами» — не держится ничем, и предмета для неё пока нет: вердиктов семь, все «принято», ни одного отказа. Гейт на калибровку отказа мерил бы пустоту (075), и заводить его стоит с первым же отклонённым предложением. У соседа калибровка держится документом — шкалой на примерах в своде (162); `Stepik-Python-Grader` — документ: CLAUDE.md § Режим ответов (🔍 не ставит окончательную тяжесть — его оценка заявка; ⚖️ доказывает) и docs/agent/multiagent.md § адверсариальный верификатор со шкалой на примерах | `Claude-Code_Usage-Token` |
@@ -88,10 +86,12 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_workflows.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_prose.py` | 5 |
+| `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/link_trails.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/audit_catalogue.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/check_attribution.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 4 |
+| `Engineering-Incidents-Playbook` | `scripts/ghcli.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/main_red.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/refresh_derived.py` | 4 |
 | `Engineering-Incidents-Playbook` | `.github/labels.yml` | 3 |
@@ -100,7 +100,6 @@
 | `Engineering-Incidents-Playbook` | `HISTORY.md` | 3 |
 | `Engineering-Incidents-Playbook` | `README.md` | 3 |
 | `Engineering-Incidents-Playbook` | `export/rules.json` | 3 |
-| `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/history_metrics.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/merge_ready.py` | 3 |
@@ -117,11 +116,10 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_links.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_own_name.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_schedules.py` | 2 |
-| `Engineering-Incidents-Playbook` | `scripts/ghcli.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 42 механизмов по одному правилу; без названного адреса: 0 из 131 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 42 механизмов по одному правилу; без названного адреса: 0 из 133 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 39 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 12 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
