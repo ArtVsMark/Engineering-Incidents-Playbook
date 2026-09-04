@@ -41,12 +41,16 @@ def arm(monkeypatch, rules, answered, issue=None):
             return 0, "https://example/issues/99"
         return 0, ""
 
-    monkeypatch.setattr(si, "fetch_rules", lambda c, r: (rules, None))
+    # Подменяется тот шов, который зовёт main: выгрузка читается целиком,
+    # потому что ступени 0 нужен блок contracts, а не только правила.
+    monkeypatch.setattr(si, "fetch_export",
+                        lambda c, r: ({"rules": rules,
+                                       "contracts": {"bindings": "1.1"}}, None))
     monkeypatch.setattr(si, "gh", fake_gh)
     monkeypatch.setenv("GH_TOKEN", "x")
     import json, pathlib, tempfile
     path = pathlib.Path(tempfile.mkdtemp()) / "bindings.json"
-    path.write_text(json.dumps({"rules": answered}), encoding="utf-8")
+    path.write_text(json.dumps({"schema": "1.1", "rules": answered}), encoding="utf-8")
     monkeypatch.setattr("sys.argv", ["sync_inbox.py", "--bindings", str(path)])
     return calls
 
@@ -292,3 +296,51 @@ def test_razdel_nazyvaet_svoyu_granicu():
 
     assert "подсказка, а не вердикт" in body
     assert "#7" in body
+
+
+# ── ступень 0: три лица незакрытой работы (правило 177) ────────────────────
+
+def test_ступень_ноль_считает_три_лица_долга():
+    """Каждое лицо считается отдельно: смешать их значило бы потерять предмет."""
+    ответ = {"001": {"status": "active", "mechanism": "gate"},
+             "002": {"status": "active", "mechanism": "none"},
+             "003": {"status": "active"},
+             "004": {"status": "unreviewed"},
+             "005": {"status": "not-applicable", "mechanism": "none"}}
+
+    assert si.held_by_nothing(ответ) == ["002", "003"]
+
+
+def test_не_применимо_и_не_рассмотрено_долгом_ничем_не_считаются():
+    """Обратная сторона (140). «Не применимо» — объявленное состояние, а не долг;
+    `unreviewed` честно говорит «ещё не смотрели» и считается своим числом."""
+    ответ = {"005": {"status": "not-applicable", "mechanism": "none"},
+             "004": {"status": "unreviewed"}}
+
+    assert si.held_by_nothing(ответ) == []
+
+
+def test_сверка_контракта_даёт_четыре_ответа():
+    """Три исхода плюс молчание: несверенное не считается сошедшимся (039, 157)."""
+    assert si.contract_gap("1.1", "1.1") is None
+    assert "перечитываются" in si.contract_gap("1.0", "1.1")
+    assert "не объявлен" in si.contract_gap(None, "1.1")
+    assert "сверить нечем" in si.contract_gap("1.1", None)
+
+
+def test_задача_про_правила_ищется_ссылкой_а_не_словом():
+    """«Правила игры» предметом не является: ищется НОМЕР, а не слово (166)."""
+    задачи = [{"number": 1, "title": "Правило 128: поле на полноту"},
+              {"number": 2, "title": "rules/ru/062-a-role.md — завести роль"},
+              {"number": 3, "title": "Правила игры для новичков"},
+              {"number": 4, "title": "Обновить README"}]
+
+    assert [i["number"] for i in si.started_here(задачи)] == [1, 2]
+
+
+def test_ступень_ноль_печатается_и_при_нулях():
+    """Число, видное лишь при поломке, молчит о том, закрыт ли долг (027, 041)."""
+    тело = si.body_for(missing=[], unreviewed=[], catalogue="o/r", total=1,
+                       answered=1, started=[], nothing=[], contract=None)
+
+    assert "Ступень 0" in тело and "Долга по правилам нет" in тело

@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T07:30:17+00:00",
+  "generated_at": "2026-09-04T07:58:41+00:00",
   "contracts": {
     "export": "1.4",
     "bindings": "1.1",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 175,
+  "count": 176,
   "rules": [
     {
       "id": "001",
@@ -5732,6 +5732,40 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "177",
+      "slug": "unfinished-rule-work-comes-first",
+      "title": {
+        "ru": "Незакрытая работа по правилам идёт впереди новой",
+        "en": "Unfinished rule work comes before new work"
+      },
+      "areas": {
+        "ru": [
+          "каталог"
+        ],
+        "en": [
+          "catalogue"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "added": "2026-09-04",
+      "files": {
+        "ru": "rules/ru/177-unfinished-rule-work-comes-first.md",
+        "en": "rules/en/177-unfinished-rule-work-comes-first.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "326"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes"
     }
   ],
