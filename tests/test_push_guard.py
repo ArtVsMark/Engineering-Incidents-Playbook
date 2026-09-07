@@ -234,7 +234,14 @@ def test_telo_beryotsya_u_togo_zhe_vybora_chto_i_u_konveyera(monkeypatch, tmp_pa
 
     assert pg.первый_коммит_ветки(tmp_path) == "deadbeef\n"
     assert any("pr_source_commit.py" in " ".join(c) for c in вызовы), вызовы
-    assert any(c[:2] == ["git", "-C"] and "--format=%B" in c for c in вызовы), вызовы
+    # ОТПЕЧАТОК ОБЯЗАН ДОЛЕТЕТЬ ДО ВТОРОГО ВЫЗОВА, И ИМЕННО ЭТО ЗДЕСЬ ПРЕДМЕТ.
+    # Прежний случай спрашивал лишь «был ли вызов с --format=%B» и остался бы
+    # зелёным, уйди туда `названо.stdout` без `.strip()` или чужой коммит
+    # вовсе: проверка гоняла предмет, а не то, что обязана отвергнуть (140).
+    тело = next((c for c in вызовы if "--format=%B" in c), None)
+    assert тело is not None, вызовы
+    assert тело[:2] == ["git", "-C"] and тело[2] == str(tmp_path), тело
+    assert тело[-1] == "deadbeef", тело
 
 
 def test_chuzhoe_derevo_bez_vybora_ne_meshaet(tmp_path):

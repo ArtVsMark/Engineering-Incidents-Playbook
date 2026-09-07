@@ -84,17 +84,27 @@ def test_chuzhoy_kommit_slitoy_vetki_propuskaetsya(дерево):
 
 
 def test_neskolko_chuzhih_kommitov_propuskayutsya_podryad(дерево):
-    """Соседняя ветка редко состоит из одного коммита: уплотнение схлопывает
-    её целиком, и в общей ветке стоит заголовок ПЕРВОГО из них. Значит второй
-    и третий чужие коммиты заголовком не совпадут ни с чем — и выбор обязан
-    отдать не их. Граница названа в скрипте прямо: здесь он ошибётся."""
+    """НАЙДЕНО РЕВЬЮ, А НЕ РАССУЖДЕНИЕМ, И ЭТО ОБЫЧНЫЙ ВХОД. Соседняя ветка
+    редко состоит из одного коммита: уплотнение схлопывает её целиком, и в
+    общей ветке стоит заголовок ПЕРВОГО из них. Второй («chore: пересобрать
+    производные») не совпадает заголовком ни с чем — и первая редакция выбора
+    отдавала его. Случай при этом ЗАПИСЫВАЛ эту ошибку ожидаемым результатом,
+    и набор зеленел на дефекте (146).
+
+    Держит теперь признак по содержимому: второй чужой коммит на своих путях
+    не отличается от общей ветки, потому что уплотнение унесло туда обе его
+    правки."""
     git(дерево, "checkout", "-q", "-b", "agent/соседняя")
     commit(дерево, "fix(export): чужая тема (049)", name="a")
     вторая = commit(дерево, "chore: пересобрать производные", name="a2")
 
+    # Уплотнение несёт в общую ветку ОБА файла соседки одним коммитом, и
+    # содержимое там то же самое: иначе случай проверял бы не уплотнение.
     git(дерево, "checkout", "-q", "main")
-    commit(дерево, "fix(export): чужая тема (049)", name="a",
-           content="слито уплотнением")
+    (дерево / "a").write_text("fix(export): чужая тема (049)", encoding="utf-8")
+    (дерево / "a2").write_text("chore: пересобрать производные", encoding="utf-8")
+    git(дерево, "add", "a", "a2")
+    git(дерево, "commit", "-q", "-m", "fix(export): чужая тема (049)")
 
     git(дерево, "checkout", "-q", вторая)
     git(дерево, "checkout", "-q", "-b", "agent/своя")
@@ -103,8 +113,41 @@ def test_neskolko_chuzhih_kommitov_propuskayutsya_podryad(дерево):
     sha, code, why = psc.choose(дерево, "main")
 
     assert code == 0
-    assert sha != свой, "второй чужой коммит заголовком не совпадает — известный остаток"
-    assert sha == вторая, why
+    assert sha == свой, why
+
+
+def test_chuzhoy_kommit_bez_sovpadeniya_zagolovka_lovitsya_soderzhimym(дерево):
+    """Граница с другой стороны: признак по содержимому работает и БЕЗ
+    заголовка в общей ветке. Уплотнение могло уехать под другим именем —
+    заголовок изменения правится руками, и правился сегодня трижды."""
+    git(дерево, "checkout", "-q", "-b", "agent/соседняя")
+    commit(дерево, "fix(export): чужая тема (049)", name="a")
+
+    git(дерево, "checkout", "-q", "main")
+    commit(дерево, "совсем другой заголовок", name="a",
+           content="fix(export): чужая тема (049)")
+
+    git(дерево, "checkout", "-q", "agent/соседняя")
+    git(дерево, "checkout", "-q", "-b", "agent/своя")
+    свой = commit(дерево, "feat(rules): своя тема (204)", name="b")
+
+    sha, code, why = psc.choose(дерево, "main")
+
+    assert (sha, code) == (свой, 0), why
+
+
+def test_svoy_kommit_ne_propuskaetsya_iz_za_sosedney_pravki(дерево):
+    """ЛОЖНЫЙ ПРОПУСК ЗДЕСЬ ДОРОЖЕ ЛИШНЕГО: он уносит заголовок вперёд, к
+    производным. Свой коммит трогает файл, которого в общей ветке нет вовсе, —
+    признак по содержимому обязан молчать, даже когда рядом стоит слитая
+    соседка (051)."""
+    git(дерево, "checkout", "-q", "-b", "agent/своя")
+    свой = commit(дерево, "feat(rules): своя тема (205)", name="новый")
+    commit(дерево, "chore: пересобрать производные", name="ещё")
+
+    sha, code, why = psc.choose(дерево, "main")
+
+    assert (sha, code) == (свой, 0), why
 
 
 def test_vetka_bez_kommitov_eto_ishod_1(дерево):
@@ -117,7 +160,7 @@ def test_vetka_bez_kommitov_eto_ishod_1(дерево):
     assert "main" in why
 
 
-def test_vse_zagolovki_uzhe_v_obshchey_vetke_beryot_pervyy(дерево):
+def test_vsya_vetka_opoznana_kak_slitaya_beryot_pervyy(дерево):
     """«Неизвестно» и «чужое» — разные ответы (051). Своей работы не видно,
     но изменение всё равно обязано открыться (147): выбор называет первый
     коммит и говорит, что это запасной путь."""
@@ -125,7 +168,7 @@ def test_vse_zagolovki_uzhe_v_obshchey_vetke_beryot_pervyy(дерево):
     первый = commit(дерево, "chore: повтор", name="a")
 
     git(дерево, "checkout", "-q", "main")
-    commit(дерево, "chore: повтор", name="a", content="слито уплотнением")
+    commit(дерево, "chore: повтор", name="a", content="иное содержимое")
     git(дерево, "checkout", "-q", "agent/своя")
 
     sha, code, why = psc.choose(дерево, "main")
