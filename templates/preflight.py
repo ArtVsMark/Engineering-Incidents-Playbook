@@ -188,6 +188,87 @@ def check_transport() -> Result:
     return Result("transport", OK, f"проверено файлов: {scanned}", time.monotonic() - t0)
 
 
+#: Откуда берётся выгрузка каталога. Читается ЛОКАЛЬНАЯ копия, если она есть:
+#: ходить в сеть из прогона перед толчком значит менять его цену и надёжность
+#: на удобство. Нет копии — шаг честно говорит, что не отработал.
+CATALOGUE_EXPORT = ROOT / ".rules" / "catalogue-rules.json"
+
+
+def check_trails() -> Result:
+    """Правило 185: следы каталога, ведущие в МОИ документы, разрешаются.
+
+    ПОЧЕМУ ЭТО ПРОВЕРЯЕТ ПОТРЕБИТЕЛЬ, А НЕ КАТАЛОГ. След указывает на документ
+    в ЭТОМ дереве — значит только здесь его и можно разрешить: у прогона
+    каталога чужого дерева нет. И правит его тоже эта сторона: тот, кто
+    переименовал раздел, знает о переименовании в тот же миг, а автор ссылки не
+    узнает никогда, пока не пойдёт по следу.
+
+    ЗАМЕР, ИЗ КОТОРОГО ЭТО ВЫРОСЛО (7 сентября 2026, каталог против грейдера):
+    71 след-документ, два сгнили молча — раздел переименовали, след остался.
+    А в английском дереве каталога разрешались ТРИ из семидесяти одного: там
+    название раздела перевели вместе с текстом записи.
+
+    ЧТО СЧИТАЕТСЯ НАХОДКОЙ. Файла нет либо раздел не найден в его тексте.
+    Раздел ищется подстрокой, а не разбором заголовков: у документа бывает
+    «§ Что прощается / § Что не прощается» — два адреса в одной строке, и
+    разбор заголовками отверг бы законную форму (051).
+    """
+    t0 = time.monotonic()
+    if not CATALOGUE_EXPORT.exists():
+        return Result("trails", BROKEN,
+                      f"нет {CATALOGUE_EXPORT.relative_to(ROOT)} — выгрузку каталога "
+                      "кладёт сюда шаг синхронизации; без неё проверять нечего",
+                      time.monotonic() - t0)
+    try:
+        данные = json.loads(CATALOGUE_EXPORT.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        return Result("trails", BROKEN, f"{CATALOGUE_EXPORT.name}: {exc}",
+                      time.monotonic() - t0)
+
+    # СВОЁ ИМЯ ПОТРЕБИТЕЛЬ ЗНАЕТ САМ, А НЕ УЗНАЁТ ИЗ ВЫГРУЗКИ. Выгрузка одна
+    # на всех, и ключа «чей это прогон» в ней нет по построению. Имя лежит в
+    # СВОЁМ ответе — .rules/bindings.json, поле project, — и это единственное
+    # место, где оно и должно быть: иначе две копии имени разошлись бы молча.
+    ответ = ROOT / ".rules" / "bindings.json"
+    if not ответ.exists():
+        return Result("trails", BROKEN,
+                      f"нет {ответ.relative_to(ROOT)} — своё имя проекта берётся "
+                      "оттуда, и без него шаг проверял бы чужие следы",
+                      time.monotonic() - t0)
+    try:
+        моё = (json.loads(ответ.read_text(encoding="utf-8")).get("project") or "").strip()
+    except (OSError, ValueError) as exc:
+        return Result("trails", BROKEN, f"{ответ.name}: {exc}", time.monotonic() - t0)
+    if not моё:
+        return Result("trails", BROKEN,
+                      f"в {ответ.relative_to(ROOT)} пусто поле project — некому "
+                      "сказать, какие следы мои",
+                      time.monotonic() - t0)
+
+    hits, всего = [], 0
+    for правило in данные.get("rules") or []:
+        for след in правило.get("trails") or []:
+            if след.get("repo") != моё or "doc" not in след:
+                continue
+            всего += 1
+            цель = ROOT / след["doc"]
+            if not цель.is_file():
+                hits.append(f"{правило.get('id')}: нет {след['doc']}")
+                continue
+            раздел = (след.get("section") or "").strip()
+            if раздел and раздел not in цель.read_text(encoding="utf-8", errors="replace"):
+                hits.append(f"{правило.get('id')}: {след['doc']} — нет «{раздел}»")
+
+    if всего == 0:
+        return Result("trails", OK, "следов каталога в мои документы нет",
+                      time.monotonic() - t0)
+    if hits:
+        return Result("trails", FINDINGS,
+                      f"{len(hits)} из {всего} следов не разрешаются",
+                      time.monotonic() - t0, hits)
+    return Result("trails", OK, f"следов проверено: {всего}", time.monotonic() - t0)
+
+
 def run_step(step: Step) -> Result:
     t0 = time.monotonic()
     if step.requires_files and not any(ROOT.glob(p) for p in step.requires_files):
@@ -238,6 +319,7 @@ def main() -> int:
     if "secrets" in selected:
         results.append(check_secrets())
         results.append(check_transport())
+        results.append(check_trails())
     results.extend(run_step(s) for s in STEPS if s.name in selected)
 
     print()
