@@ -287,3 +287,58 @@ def test_name_shaga_ostayotsya_na_yazyke_proekta():
 def test_latinskiy_vyvod_chisto():
     assert cw.non_ascii_names("        if: steps.token.outputs.present == 'yes'\n") == []
 
+
+
+# ── код возврата доживает до разбора (145) ─────────────────────────────────
+
+
+def test_prisvaivanie_koda_otdelnoy_strokoy_nahodka():
+    """ЖИВОЙ ОТКАЗ, 4 сентября. `task-state` разбирал три исхода и объявлял
+    себя предупреждением, а покраснел на первом же коммите, назвавшем задачу:
+    площадка зовёт шаг как `bash -e {0}`, оболочка умерла на присвоении, и
+    ни `printf`, ни обе ветки разбора не выполнились. Причина отказа при этом
+    пропала вместе с выводом — красное было, диагностики не было."""
+    текст = "        run: |\n          out=$(cmd 2>&1); rc=$?\n          echo x\n"
+    assert cw.dead_exit_codes(текст) == ["строка 2: rc=$?"]
+
+
+def test_prisvaivanie_na_svoey_stroke_nahodka():
+    """Форма из самого правила 145: команда, следом `rc=$?` отдельной строкой."""
+    текст = "        run: |\n          python x.py\n          rc=$?\n"
+    assert cw.dead_exit_codes(текст) == ["строка 3: rc=$?"]
+
+
+def test_forma_cherez_ili_zakonna():
+    """`||` снимает `-e` со всей конструкции — присвоение выполняется."""
+    текст = "        run: |\n          python x.py || rc=$?\n"
+    assert cw.dead_exit_codes(текст) == []
+
+
+def test_yavnaya_udacha_s_ili_zakonna():
+    """`&& rc=0 || rc=$?` — та же живая форма с явным нулём."""
+    текст = "        run: |\n          out=$(gh pr view 2>&1) && rc=0 || rc=$?\n"
+    assert cw.dead_exit_codes(текст) == []
+
+
+def test_probros_koda_naruzhu_ne_predmet():
+    """`exit $?` разбором НЕ является: он отдаёт код наружу, и под `-e` итог
+    тот же. Находка здесь была бы о форме, а не о поломке (051)."""
+    assert cw.dead_exit_codes("        run: |\n          f\n          exit $?\n") == []
+
+
+def test_usloviye_na_kode_ne_prinimaetsya_za_prisvaivanie():
+    """Слева от `=` обязано стоять ИМЯ. `[ $? -eq 0 ]` присвоением не является."""
+    assert cw.dead_exit_codes("        run: |\n          [ $? -eq 0 ] && echo x\n") == []
+
+
+def test_upominanie_v_kommentarii_ne_nahodka():
+    """Комментарий — проза о форме, а не сама форма. Ровно эта строка стоит в
+    трёх прогонах каталога как предупреждение следующему."""
+    текст = "        run: |\n          # без `rc=$?` тут ничего не разберётся\n"
+    assert cw.dead_exit_codes(текст) == []
+
+
+def test_hvostovoy_kommentariy_nahodku_ne_pryachet():
+    """`#` ПОСЛЕ кода строку не оправдывает: форма от этого не оживает."""
+    текст = "        run: |\n          cmd; rc=$?  # разберём ниже\n"
+    assert cw.dead_exit_codes(текст) == ["строка 2: rc=$?"]
