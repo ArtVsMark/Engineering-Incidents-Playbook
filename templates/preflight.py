@@ -269,6 +269,64 @@ def check_trails() -> Result:
     return Result("trails", OK, f"следов проверено: {всего}", time.monotonic() - t0)
 
 
+def check_contracts() -> Result:
+    """Правило 157: номера контрактов каталога сверяются со своим ответом.
+
+    ПОЧЕМУ СВЕРЯЕТСЯ ЗДЕСЬ, А НЕ ПРИСЫЛАЕТСЯ ОТТУДА. Каталог ПУБЛИКУЕТ свои
+    номера — блок `contracts` в выгрузке. Значит письма не нужно: достаточно
+    прочитать то, что уже лежит рядом, и сравнить со своим. Механизм, который
+    ждёт уведомления, ломается вместе с каналом уведомления; механизм, который
+    сверяет два файла на диске, не ломается никак.
+
+    ЧТО ЗНАЧИТ РАСХОЖДЕНИЕ. Выгрузка сменила формат — значит ответы, собранные
+    по прежнему, отвечают на другой вопрос: записи остаются валидными, означая
+    уже другое. Правило 157 требует не «поправить номер», а ПЕРЕЧИТАТЬ правила
+    и ответить заново; номер проставляется последним, как подпись под работой.
+
+    ЗАМЕР, ИЗ КОТОРОГО ЭТО ВЫРОСЛО (7 сентября 2026): выгрузка каталога
+    поднялась 1.4 → 1.5, а в ответе одного из потребителей прозой стояло
+    «выгрузка правил каталога — 1.2» — отставание на три подъёма, невидимое
+    обеим сторонам. Издатель считал, что объявил; потребитель — что его файл
+    валиден.
+    """
+    t0 = time.monotonic()
+    выгрузка, ответ = CATALOGUE_EXPORT, ROOT / ".rules" / "bindings.json"
+    for путь in (выгрузка, ответ):
+        if not путь.exists():
+            return Result("contracts", BROKEN,
+                          f"нет {путь.relative_to(ROOT)} — сверять номера не с чем",
+                          time.monotonic() - t0)
+    try:
+        их = (json.loads(выгрузка.read_text(encoding="utf-8")).get("contracts") or {})
+        мой = json.loads(ответ.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        return Result("contracts", BROKEN, str(exc), time.monotonic() - t0)
+
+    издано = (их.get("export") or "").strip()
+    if not издано:
+        return Result("contracts", BROKEN,
+                      f"{выгрузка.name} не называет contracts.export — "
+                      "каталог не объявил версию, с которой сверяться",
+                      time.monotonic() - t0)
+    моё = (мой.get("answers_to") or "").strip()
+    if not моё:
+        return Result("contracts", FINDINGS,
+                      f"ответ не называет answers_to; у каталога выгрузка {издано}",
+                      time.monotonic() - t0,
+                      ["Проставьте answers_to — версию выгрузки, по которой "
+                       "построены ответы. Без неё отставание не заметит никто."])
+    if моё != издано:
+        return Result("contracts", FINDINGS,
+                      f"ответ построен на выгрузке {моё}, у каталога {издано}",
+                      time.monotonic() - t0,
+                      [f"Перечитайте правила по выгрузке {издано} и ответьте заново: "
+                       "записи остаются валидными, означая уже другое (157).",
+                       "Номер answers_to проставляется последним — подписью под "
+                       "перечитыванием, а не вместо него."])
+    return Result("contracts", OK, f"выгрузка {издано} — ответ построен на ней",
+                  time.monotonic() - t0)
+
+
 def run_step(step: Step) -> Result:
     t0 = time.monotonic()
     if step.requires_files and not any(ROOT.glob(p) for p in step.requires_files):
@@ -318,6 +376,7 @@ def main() -> int:
     results: list[Result] = []
     if "secrets" in selected:
         results.append(check_secrets())
+        results.append(check_contracts())
         results.append(check_transport())
         results.append(check_trails())
     results.extend(run_step(s) for s in STEPS if s.name in selected)
