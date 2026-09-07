@@ -53,4 +53,4 @@ year.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § the README as a storefront
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § README как витрина

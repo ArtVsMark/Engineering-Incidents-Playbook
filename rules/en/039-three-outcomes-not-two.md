@@ -76,6 +76,6 @@ well" from "the check never started".
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/dev/supply-chain.md` § three outcomes,
+ArtVsMark/Stepik-Python-Grader — `docs/dev/supply-chain.md` § Три исхода,
 not two. Related: [010](010-empty-checklist-is-not-green.md) — an empty list of
 checks.

@@ -47,4 +47,4 @@ files.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § plan from surfaces
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Аудит планируется

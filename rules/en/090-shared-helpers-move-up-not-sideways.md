@@ -62,6 +62,6 @@ its neighbour.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § architectural invariants (leaf
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Архитектурные инварианты (leaf
 modules), ADR-0011, the import graph test. Related:
 [071](071-deliberate-duplication-is-signed.md).

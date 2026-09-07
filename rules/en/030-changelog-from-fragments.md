@@ -67,4 +67,4 @@ and a shared file is cheaper.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § updating the changelog
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Обновление CHANGELOG

@@ -63,6 +63,6 @@ intended mechanism: there a pause genuinely helps.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § when the quota is
+ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § Исчерпав квоту
 out, § `used` counts attempts. Related:
 [017](017-measure-quota-do-not-guess.md).

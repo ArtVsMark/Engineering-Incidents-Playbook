@@ -69,6 +69,6 @@ mentioned.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § environment
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Прогонным агентам
 prohibitions go straight into the prompt of run agents. Related:
 [034](034-small-zone-per-executor.md).

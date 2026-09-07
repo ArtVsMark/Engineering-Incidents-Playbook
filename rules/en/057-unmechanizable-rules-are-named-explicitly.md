@@ -65,6 +65,6 @@ checks.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § what the gates
+ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § Что гейты не ловят.
 miss. Related: [002](002-rule-without-mechanism.md) — the other side: a rule for
 which a mechanism is possible must get one.

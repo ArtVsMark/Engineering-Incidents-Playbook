@@ -62,7 +62,7 @@ the number grew, with no explanation beside it.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § links to issues (the
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Ссылки на issue (the
 `_DESIGN_TAIL_BUDGET` / `_AGENT_TAIL_BUDGET` budgets), § line budget and link
 check. Related: [002](002-rule-without-mechanism.md),
 [023](023-readme-is-a-storefront.md).

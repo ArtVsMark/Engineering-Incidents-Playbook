@@ -69,5 +69,5 @@ and there is no answer to "which class of defect dominates".
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/course-walkthrough.md` § collection
+ArtVsMark/Stepik-Python-Grader — `docs/agent/course-walkthrough.md` § Сбор и
 and analysis are separate.

@@ -50,4 +50,4 @@ number of attempts says nothing about the number of successes.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § diagnosis first
+ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § Диагностика — первым шагом, а не после часа догадок

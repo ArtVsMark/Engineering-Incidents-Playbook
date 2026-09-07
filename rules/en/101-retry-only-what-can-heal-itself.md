@@ -66,7 +66,7 @@ something that does not exist.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/use/installation.md` § resilience to
+ArtVsMark/Stepik-Python-Grader — `docs/use/installation.md` § Устойчивость к
 network failures, `core/stepik_client.make_session()`. Related:
 [058](058-when-the-quota-is-out-stop.md),
 [084](084-best-effort-channels-never-block-the-main-path.md).

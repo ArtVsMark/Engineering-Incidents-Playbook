@@ -62,5 +62,5 @@ conversation a second time.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § what `SANDBOX_VIOLATION` means
+ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § Что означает
 (and what it does not).

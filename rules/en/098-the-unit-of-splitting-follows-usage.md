@@ -62,5 +62,5 @@ enough to understand.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/dev/glossary.md` § one concept, one card
+ArtVsMark/Stepik-Python-Grader — `docs/dev/glossary.md` § Одна концепция — одна, one card
 (the list of deliberate bundles).

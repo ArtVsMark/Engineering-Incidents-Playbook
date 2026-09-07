@@ -62,5 +62,5 @@ say "we did not measure" than to draw a table from guesses.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § per-OS guarantees (asymmetry is
+ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § Гарантии по ОС (asymmetry is
 not a bug but a documented trade-off).
