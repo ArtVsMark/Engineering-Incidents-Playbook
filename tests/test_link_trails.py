@@ -88,13 +88,17 @@ def test_zapis_odna_i_vtoroy_progon_molchit(monkeypatch, capsys):
     written: list[str] = []
     state = {"exists": 0}
 
+    # ЧТЕНИЕ ОТ ЗАПИСИ ОТЛИЧАЕТСЯ ПОЛЕМ, А НЕ ПОДКОМАНДОЙ. После перевода на
+    # REST (001) оба вызова — `gh api`, и различает их наличие `-f body=`:
+    # GET по тому же адресу читает, POST с телом пишет. Подделка, глядящая на
+    # первое слово, считала бы чтение записью — и «сухой прогон» зеленел бы,
+    # ничего не проверив (146).
     def fake(*args):
-        if args[0] == "issue" and args[1] == "view":
+        пишет = any(a.startswith("body=") for a in args)
+        if not пишет:
             return 0, str(state["exists"])
-        if args[0] == "issue" and args[1] == "comment":
-            written.append(args[2]); state["exists"] = 1
-            return 0, "ok"
-        return 0, ""
+        written.append(args[-1]); state["exists"] = 1
+        return 0, "ok"
 
     monkeypatch.setattr(lt.ghcli, "run", fake)
     monkeypatch.setattr(lt, "fetch_rules", lambda c, r: ([rule("005")], None))
@@ -111,8 +115,8 @@ def test_suhoy_progon_ne_pishet(monkeypatch, capsys):
     written: list[str] = []
 
     def fake(*args):
-        if args[0] == "issue" and args[1] == "view":
-            return 0, "0"
+        if not any(a.startswith("body=") for a in args):
+            return 0, "0"                      # чтение — не запись
         written.append(args[1])
         return 0, ""
 

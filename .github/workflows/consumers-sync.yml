@@ -163,8 +163,12 @@ jobs:
           fi
           # СПИСОК, А НЕ ПОИСК — по той же причине, что и ниже: поисковый
           # индекс площадки догоняет минутами и заводит вторую задачу.
-          open=$(gh issue list --state open --limit 200 --json number,title \
-                   --jq '[.[] | select(.title == env.TITLE)] | length')
+          # ПО REST (001): `gh issue list` идёт через GraphQL — ~300 points
+          # из часовых 5000 против одного запроса. У REST в /issues лежат И
+          # изменения тоже, поэтому они отсеиваются явно: без этого одноимённое
+          # ИЗМЕНЕНИЕ считалось бы уже открытой задачей.
+          open=$(gh api "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" \
+                   --jq '[.[] | select(.pull_request == null) | select(.title == env.TITLE)] | length')
           if [ "$open" != "0" ]; then
             echo "задача уже открыта — второй раз не завожу"
             exit 0
@@ -188,8 +192,10 @@ jobs:
             echo
             echo "Прогон: $RUN"
           } > "$RUNNER_TEMP/foreign.md"
-          gh issue create --title "$TITLE" --label "area/export" \
-            --body-file "$RUNNER_TEMP/foreign.md"
+          # ПО REST (001) — см. отбор открытых задач выше.
+          gh api "repos/$GITHUB_REPOSITORY/issues" \
+            -f title="$TITLE" -f "labels[]=area/export" \
+            -F body=@"$RUNNER_TEMP/foreign.md" >/dev/null
 
       - name: у находки есть адресат
         if: failure()
@@ -204,8 +210,12 @@ jobs:
           # в три минуты оба не нашли только что заведённую задачу и завели по
           # своей — #133 и #134, при обещанной ОДНОЙ (правило 142). Обычный
           # список отдаёт актуальное состояние сразу, и отбор идёт здесь.
-          open=$(gh issue list --state open --limit 200 --json number,title \
-                   --jq '[.[] | select(.title == env.TITLE)] | length')
+          # ПО REST (001): `gh issue list` идёт через GraphQL — ~300 points
+          # из часовых 5000 против одного запроса. У REST в /issues лежат И
+          # изменения тоже, поэтому они отсеиваются явно: без этого одноимённое
+          # ИЗМЕНЕНИЕ считалось бы уже открытой задачей.
+          open=$(gh api "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" \
+                   --jq '[.[] | select(.pull_request == null) | select(.title == env.TITLE)] | length')
           if [ "$open" != "0" ]; then
             echo "задача уже открыта — второй раз не завожу"
             exit 0
@@ -225,5 +235,7 @@ jobs:
             echo
             echo "Прогон: $RUN"
           } > "$RUNNER_TEMP/body.md"
-          gh issue create --title "$TITLE" --label "area/export" \
-            --body-file "$RUNNER_TEMP/body.md"
+          # ПО REST (001) — см. отбор открытых задач выше.
+          gh api "repos/$GITHUB_REPOSITORY/issues" \
+            -f title="$TITLE" -f "labels[]=area/export" \
+            -F body=@"$RUNNER_TEMP/body.md" >/dev/null

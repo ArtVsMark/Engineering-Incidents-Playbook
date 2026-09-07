@@ -353,7 +353,15 @@ jobs:
               echo "::warning::Изменение #$PR: ждать нечего, но есть незелёные проверки — не сливаю."
               return 0
             fi
-            out=$(gh pr merge "$PR" --squash --subject "$SUBJECT" --body "$BODY" 2>&1) && mrc=0 || mrc=$?
+            # ПО REST, И ЭТО НЕ ТО ЖЕ, ЧТО ВКЛЮЧЕНИЕ АВТОМЕРЖА НИЖЕ (001).
+            # Включать автомерж умеет только GraphQL — у него нет REST-адреса
+            # вовсе, и он назван поимённо в .rules/transport.json. А вот СЛИТЬ
+            # изменение REST умеет: PUT …/pulls/N/merge. Разница в цене та же
+            # — ~300 points против одного запроса, — и приходится она на самое
+            # больное место: 7 сентября конвейер встал именно на исчерпании.
+            out=$(gh api --method PUT "repos/$GITHUB_REPOSITORY/pulls/$PR/merge" \
+                    -f merge_method=squash -f commit_title="$SUBJECT" \
+                    -f commit_message="$BODY" 2>&1) && mrc=0 || mrc=$?
             if [ "$mrc" -ne 0 ]; then
               case "$out" in
                 *"ate limit"*xceed*|*"econdary rate limit"*)
