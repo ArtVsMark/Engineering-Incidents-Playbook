@@ -12,11 +12,11 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 38 | 30 | 183 | 0 | 0 | 150 | 113 | 8 | 26 | 3 | 98 |  |
-| `Stepik-Python-Grader` | подключён | 69 | 130 | 181 | 2 | 0 | 178 | 76 | 37 | 65 | 0 | 142 |  |
-| `ArtVsMark` | подключён | 16 | 10 | 181 | 2 | 0 | 108 | 74 | 11 | 21 | 0 | 35 |  |
-| `Claude-Code_Usage-Token` | подключён | 12 | 13 | 181 | 2 | 0 | 152 | 95 | 9 | 46 | 2 | 86 |  |
-| `Glossary-Python` | подключён | 0 | 0 | 181 | 2 | 0 | 117 | 60 | 12 | 29 | 16 | 78 |  |
+| `Engineering-Incidents-Playbook` | подключён | 39 | 31 | 184 | 0 | 0 | 151 | 114 | 8 | 26 | 3 | 98 |  |
+| `Stepik-Python-Grader` | подключён | 69 | 130 | 181 | 3 | 0 | 178 | 76 | 37 | 65 | 0 | 142 |  |
+| `ArtVsMark` | подключён | 16 | 10 | 182 | 2 | 0 | 109 | 75 | 11 | 21 | 0 | 35 |  |
+| `Claude-Code_Usage-Token` | подключён | 12 | 13 | 181 | 3 | 0 | 152 | 95 | 9 | 46 | 2 | 86 |  |
+| `Glossary-Python` | подключён | 0 | 0 | 181 | 3 | 0 | 117 | 60 | 12 | 29 | 16 | 78 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -57,7 +57,7 @@
 
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
-| `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 13 |
+| `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 14 |
 | `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 13 |
 | `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 12 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 11 |
@@ -113,7 +113,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 42 механизмов по одному правилу; без названного адреса: 0 из 147 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 42 механизмов по одному правилу; без названного адреса: 0 из 148 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 40 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
@@ -163,18 +163,18 @@
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 94 механизмов по одному правилу; без названного адреса: 0 из 178 |
-| `ArtVsMark` | `scripts/build_metrics.py` | 39 |
-| `ArtVsMark` | `scripts/check_mechanisms.py` | 38 |
+| `ArtVsMark` | `scripts/build_metrics.py` | 40 |
+| `ArtVsMark` | `scripts/check_mechanisms.py` | 39 |
 | `ArtVsMark` | `CLAUDE.md` | 18 |
 | `ArtVsMark` | `README.md` | 15 |
 | `ArtVsMark` | `scripts/check_labels.py` | 15 |
 | `ArtVsMark` | `.github/workflows/automerge.yml` | 14 |
 | `ArtVsMark` | `.github/workflows/pr-check.yml` | 13 |
+| `ArtVsMark` | `scripts/check_bindings.py` | 13 |
 | `ArtVsMark` | `scripts/check_roles.py` | 13 |
-| `ArtVsMark` | `scripts/check_bindings.py` | 12 |
-| `ArtVsMark` | `.github/workflows/open-pr.yml` | 11 |
+| `ArtVsMark` | `.github/workflows/open-pr.yml` | 12 |
 | `ArtVsMark` | `scripts/checks.py` | 11 |
-| `ArtVsMark` | `.github/workflows/metrics.yml` | 8 |
+| `ArtVsMark` | `.github/workflows/metrics.yml` | 9 |
 | `ArtVsMark` | `.rules/README.md` | 8 |
 | `ArtVsMark` | `scripts/check_author.py` | 8 |
 | `ArtVsMark` | `.rules/roles.md` | 7 |
@@ -189,11 +189,11 @@
 | `ArtVsMark` | `projects.json` | 4 |
 | `ArtVsMark` | `scripts/check_journal.py` | 4 |
 | `ArtVsMark` | `.rules/proposals.json` | 3 |
+| `ArtVsMark` | `open-pr.yml` | 3 |
 | `ArtVsMark` | `pr-check.yml` | 3 |
 | `ArtVsMark` | `.github/workflows/snake.yml` | 2 |
-| `ArtVsMark` | `open-pr.yml` | 2 |
 | `ArtVsMark` | `scripts/neighbours.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 5 механизмов по одному правилу; без названного адреса: 0 из 108 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 5 механизмов по одному правилу; без названного адреса: 0 из 109 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 34 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 30 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 15 |
@@ -469,5 +469,6 @@
 | 180 | действует | действует | действует | действует | нет предмета |
 | 181 | действует | действует | действует | действует | действует |
 | 182 | действует | действует | действует | действует | действует |
-| 183 | действует | — | — | — | — |
+| 183 | действует | — | действует | — | — |
 | 184 | действует | — | — | — | — |
+| 185 | действует | — | — | — | — |
