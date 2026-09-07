@@ -55,8 +55,11 @@ from __future__ import annotations
 
 import argparse
 import re
+import subprocess
 import sys
 from pathlib import Path
+
+import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -108,6 +111,10 @@ CANCELS_BY_STATE = {
 #: есть проверяемый коммит. НЕ годится `github.ref`: на pull_request это
 #: `refs/pull/N/merge`, один и тот же для всех событий изменения (правило 179).
 HEAD_MARKS = ("github.event.pull_request.head.sha", "github.sha")
+
+
+#: `${{ … }}` подставляет площадка ДО оболочки; для `bash -n` это не синтаксис.
+ПОДСТАНОВКА = re.compile(r"\$\{\{[^}]*\}\}")
 
 
 def sections(text: str) -> dict[str, list[str]]:
@@ -255,6 +262,49 @@ def dead_exit_codes(text: str) -> list[str]:
     return мёртвые
 
 
+def unparsable_shell(text: str) -> list[str]:
+    """Блоки `run:`, которые оболочка не разберёт. Пусто — все разбираются.
+
+    ПОЧЕМУ ЭТО ОТДЕЛЬНЫЙ ПРЕДМЕТ, А НЕ ЧАСТЬ РАЗБОРА YAML. Файл может быть
+    безупречным YAML и при этом нести шаг, который оболочка отвергнет на
+    первой строке. Тогда прогон падает МГНОВЕННО и выглядит обычным красным —
+    ровно та картина, что стоила смены 4 сентября (`id: ключ`, 167).
+
+    ЗАМЕР, НА КОТОРОМ ЭТО НАПИСАНО: 7 сентября я сам написал в оболочке
+    функцию с именем `квота_кончилась`. bash её ПРИНИМАЕТ, dash отвергает —
+    «Syntax error: Bad function name». Шаг идёт под `bash -e {0}`, то есть
+    работало бы; но правильность держалась бы умолчанием площадки, а не
+    кодом. Проверяет это `bash -n`: разбор без исполнения.
+
+    ГРАНИЦА. Подстановки площадки (`${{ … }}`) до оболочки не доживают — их
+    подставляют раньше, — поэтому здесь они заменяются на безобидное слово.
+    Иначе находка была бы о синтаксисе шаблона, а не о синтаксисе оболочки
+    (051).
+    """
+    плохо: list[str] = []
+    try:
+        d = yaml.safe_load(text) or {}
+    except yaml.YAMLError:
+        return []                          # неразбираемый YAML — не наш предмет
+    for job, тело in (d.get("jobs") or {}).items():
+        шаги = (тело or {}).get("steps") or []
+        for n, шаг in enumerate(шаги, 1):
+            код = (шаг or {}).get("run")
+            if not isinstance(код, str):
+                continue
+            обёртка = (шаг or {}).get("shell") or (тело or {}).get("defaults", {}).get("run", {}).get("shell")
+            if обёртка and not str(обёртка).startswith(("bash", "sh")):
+                continue                   # не оболочка — python, pwsh и прочее
+            чистый = ПОДСТАНОВКА.sub("substituted", код)
+            r = subprocess.run(["bash", "-n"], input=чистый, text=True,
+                               capture_output=True, encoding="utf-8")
+            if r.returncode != 0:
+                имя = (шаг or {}).get("name") or f"шаг {n}"
+                причина = (r.stderr or "").strip().splitlines()
+                плохо.append(f"{job}/{имя}: {причина[0] if причина else 'не разобран'}")
+    return плохо
+
+
 def jobs_without_timeout(text: str) -> list[str]:
     """Работы, у которых не задан предел времени.
 
@@ -391,6 +441,12 @@ def main(argv: list[str] | None = None) -> int:
                 "refs/pull/N/merge, один и тот же для всех событий изменения — "
                 "прогон на устаревшем коммите вытеснит прогон на актуальном "
                 "(179)")
+        for место in unparsable_shell(text):
+            problems.append(
+                f"{name}: {место}. Оболочка не разберёт этот блок, и прогон "
+                "упадёт МГНОВЕННО — работ ноль, шагов ноль, а выглядит это "
+                "обычным красным. Ровно так 4 сентября `id: ключ` съел смену "
+                "(167): причину искали в изменении, а её там не было")
         for job in jobs_without_timeout(text):
             problems.append(
                 f"{name}: у работы «{job}» нет timeout-minutes. Зависшая "

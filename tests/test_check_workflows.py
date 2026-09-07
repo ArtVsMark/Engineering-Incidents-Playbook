@@ -19,6 +19,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 import check_workflows as cw
 
 BUTTON = "on:\n  push:\n  workflow_dispatch:\n"
@@ -342,3 +344,39 @@ def test_hvostovoy_kommentariy_nahodku_ne_pryachet():
     """`#` ПОСЛЕ кода строку не оправдывает: форма от этого не оживает."""
     текст = "        run: |\n          cmd; rc=$?  # разберём ниже\n"
     assert cw.dead_exit_codes(текст) == ["строка 2: rc=$?"]
+
+
+def прогон(код: str, оболочка: str | None = None) -> str:
+    """Файл прогона с одним шагом `run:` — минимальный носитель предмета."""
+    shell = f"        shell: {оболочка}\n" if оболочка else ""
+    тело = "\n".join("          " + s for s in код.splitlines())
+    return ("name: t\non: [push]\njobs:\n  j:\n    steps:\n"
+            f"      - name: проба\n{shell}        run: |\n{тело}\n")
+
+
+@pytest.mark.parametrize("код, что", [
+    ("if [ 1 -eq 1 ]; then echo да; fi", "закрытое условие"),
+    # bash кириллицу в ИМЕНИ ФУНКЦИИ принимает — в отличие от имени переменной,
+    # и это разные предметы: 167 про второе, здесь про разбираемость вообще.
+    ("квота_кончилась() { echo x; }", "имя функции не латиницей"),
+    # Подстановку площадки оболочка не видит: её подставляют раньше. Находка
+    # здесь была бы о синтаксисе шаблона, а не оболочки (051).
+    ('echo "${{ github.sha }}"', "подстановка площадки"),
+    ('out=$(gh api "repos/${{ github.repository }}/pulls" --jq ".[]")', "подстановка внутри вызова"),
+])
+def test_razbiraemaya_obolochka_nahodkoy_ne_yavlyaetsya(код, что):
+    assert cw.unparsable_shell(прогон(код)) == [], что
+
+
+@pytest.mark.parametrize("код, что", [
+    ("if [ 1 -eq 1 ]; then echo да", "незакрытый if"),
+    ("case $x in a) echo a;;", "незакрытый case"),
+])
+def test_nerazbiraemaya_obolochka_eto_nahodka(код, что):
+    """Такой шаг падает МГНОВЕННО и выглядит обычным красным (167)."""
+    assert len(cw.unparsable_shell(прогон(код))) == 1, что
+
+
+def test_shag_ne_na_obolochke_ne_predmet():
+    """`shell: python` — другой язык; отвергать его было бы находкой о форме."""
+    assert cw.unparsable_shell(прогон("if True", оболочка="python")) == []
