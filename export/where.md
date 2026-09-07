@@ -194,8 +194,8 @@
 | `ArtVsMark` | `.github/workflows/pr-check.yml` | 13 |
 | `ArtVsMark` | `scripts/check_roles.py` | 12 |
 | `ArtVsMark` | `scripts/check_bindings.py` | 11 |
+| `ArtVsMark` | `scripts/checks.py` | 11 |
 | `ArtVsMark` | `.github/workflows/open-pr.yml` | 10 |
-| `ArtVsMark` | `scripts/checks.py` | 10 |
 | `ArtVsMark` | `.github/workflows/metrics.yml` | 8 |
 | `ArtVsMark` | `.rules/README.md` | 8 |
 | `ArtVsMark` | `scripts/check_author.py` | 8 |
