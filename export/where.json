@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-07T09:01:32+00:00",
+  "generated_at": "2026-09-07T12:02:40+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -16,9 +16,9 @@
         "rejected": 7
       },
       "by_mechanism": {
-        "pipeline": 9,
-        "gate": 106,
+        "gate": 107,
         "document": 25,
+        "pipeline": 8,
         "none": 3
       },
       "rules": {
@@ -206,8 +206,8 @@
       },
       "holds": {
         "001": {
-          "mechanism": "pipeline",
-          "where": ".github/workflows/automerge.yml — единственный вызов через GraphQL назван поимённо строкой «включение автомержа умеет только GraphQL»; всё остальное чтение и открытие изменений переведено на REST изменением #278"
+          "mechanism": "gate",
+          "where": "scripts/check_transport.py — вызовы семейств `gh issue`/`gh pr`/`gh project`/`gh search` в scripts/*.py и .github/workflows/*.yml находятся разбором (в питоне по дереву вызовов, в оболочке по строке вызова, комментарии не предмет), и законен только тот, что назван поимённо в .rules/transport.json. Сейчас там один: включение автомержа, у которого REST-адреса нет вовсе"
         },
         "002": {
           "mechanism": "gate",
@@ -3132,9 +3132,9 @@
         "not-applicable": 71
       },
       "by_mechanism": {
-        "gate": 46,
+        "gate": 48,
         "pipeline": 10,
-        "none": 26,
+        "none": 24,
         "document": 28
       },
       "rules": {
@@ -3582,8 +3582,8 @@
           "where": "src/glossary/cli.py — команды validate и stats отдают машиночитаемый JSON рядом с человеческим текстом, а не только отформатированный вывод"
         },
         "123": {
-          "mechanism": "none",
-          "where": "CLAUDE.md"
+          "mechanism": "gate",
+          "where": "scripts/check_attribution.py — проверяется то, что ЛЕГЛО в историю, а не то, что задумывалось в ветке: имя автора каждого коммита диапазона сверяется с разрешительным списком .github/authors.txt, работа «Атрибуция коммитов изменения» в .github/workflows/ci.yml берёт полную историю (fetch-depth: 0) — при глубине 1 сравнивать не с чем. ЗАМЕР, ИЗ-ЗА КОТОРОГО ЗАВЕДЕНО: один деятель приезжал в историю под ТРЕМЯ личностями (Claude с двумя разными почтами и ArtVsMark), и не замечало этого ничто; отдельно — с переходом на автомерж автором коммитов слияния стал github-actions[bot]. ЧЕГО НЕ ДЕРЖИТСЯ: подмена на записи (выясняется пробой, правило 135) и законность самого списка — его ведёт человек"
         },
         "124": {
           "mechanism": "none",
@@ -3682,8 +3682,8 @@
           "where": ".rules/bindings.json — у каждого ответа mechanism none названа причина в поле why"
         },
         "156": {
-          "mechanism": "none",
-          "where": "CLAUDE.md"
+          "mechanism": "gate",
+          "where": "scripts/check_attribution.py — trailer_block() принимает последний абзац ТОЛЬКО ЦЕЛИКОМ: если хоть одна его непустая строка не имеет формы «Ключ: значение», хвостового блока нет вовсе. Предмет отказа прогнан набором tests/test_check_attribution.py и не выдуман: правило родилось у каталога на том, что гейт принял за соавтора середину фразы «github-actions[bot] в уплотнённый коммит». В истории этого проекта ключ Co-Authored-By тоже встречается в теле сообщений, а не только в хвосте"
         },
         "157": {
           "mechanism": "document",
