@@ -61,7 +61,7 @@ first time, and internally there is a ready explanation for it.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `HISTORY.md` § how it started; the 2026-08-10
+ArtVsMark/Stepik-Python-Grader — `HISTORY.md` § Как это началось; the 2026-08-10
 audit (a separate phase for analysing an external report). Related:
 [044](044-check-the-premise-before-fixing.md),
 [086](086-the-finder-does-not-grade-the-finding.md).

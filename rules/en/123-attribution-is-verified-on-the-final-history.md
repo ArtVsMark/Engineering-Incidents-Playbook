@@ -71,7 +71,7 @@ names.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § commit format (authorship under
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Формат коммитов (authorship under
 squash merge). Related:
 [074](074-one-shot-irreversible-steps-get-their-own-guard.md),
 [002](002-rule-without-mechanism.md).

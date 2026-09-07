@@ -70,6 +70,6 @@ openly nearby in fresh form.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § architectural invariants (the
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Архитектурные инварианты (the
 glossary's source of truth), `docs/dev/glossary.md` § sources of truth. Related:
 [022](022-one-canonical-document.md).

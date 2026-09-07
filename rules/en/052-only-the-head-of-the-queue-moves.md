@@ -60,4 +60,4 @@ there updating is pointless anyway.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § merge queue.
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Очередь мержа.

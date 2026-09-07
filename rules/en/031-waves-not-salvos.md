@@ -62,4 +62,4 @@ will differ. The sign of the right size is that the wave completes, not that it
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § the main rule
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Главное правило

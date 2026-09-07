@@ -52,4 +52,4 @@ truncated.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § splitting a role
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Роль дробится

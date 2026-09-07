@@ -79,4 +79,4 @@ tests.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § links to issues
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Ссылки на issue

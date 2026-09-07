@@ -60,4 +60,4 @@ between projects.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § pace
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Темп

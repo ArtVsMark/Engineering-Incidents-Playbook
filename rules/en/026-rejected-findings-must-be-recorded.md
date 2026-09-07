@@ -54,4 +54,4 @@ the outcome". Recording "why not" saves as much time as recording "how yes".
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § a complex issue keeps a checklist
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Комплексный issue ведёт чек-лист

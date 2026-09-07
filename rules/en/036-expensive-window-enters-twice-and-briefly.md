@@ -70,5 +70,5 @@ bureaucracy.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/environments.md` § running an audit
+ArtVsMark/Stepik-Python-Grader — `docs/agent/environments.md` § Как проводить
 across two environments

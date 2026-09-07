@@ -73,7 +73,7 @@ of "my work disappeared" appeared.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/dispatcher.md` § three states of a
+ArtVsMark/Stepik-Python-Grader — `docs/agent/dispatcher.md` § Три состояния
 session, § signs of ownerlessness are a list, not a hunch. Related:
 [007](007-blocked-window-looks-alive.md),
 [012](012-do-not-push-to-someone-elses-branch.md).

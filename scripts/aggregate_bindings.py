@@ -500,6 +500,41 @@ def schema_lag(slices: list[dict], own: str) -> list[str]:
     return out
 
 
+def export_lag(slices: list[dict], own_export: str) -> list[str]:
+    """Потребители, чей ответ построен на устаревшей версии ВЫГРУЗКИ.
+
+    ПОЧЕМУ ЭТОГО НЕ ХВАТАЛО. schema_lag выше сверяет версию ОТВЕТА — формата,
+    в котором потребитель пишет. Но перечитывать ответы его заставляет подъём
+    ДРУГОГО контракта: выгрузки, которую он читает. Эти два номера двигаются
+    порознь, и до 7 сентября второй не сверялся ничем.
+
+    ЗАМЕР В ТОТ ЖЕ ДЕНЬ. Выгрузка каталога поднялась 1.4 → 1.5, а в ответе
+    грейдера полем `schema_of` стояла прозой фраза «выгрузка правил каталога —
+    1.2»: отставание на три подъёма, и ни одна сторона его не видела. Издатель
+    считал, что объявил; потребитель — что его файл валиден. Ровно тот случай,
+    ради которого написано 157, только про соседний номер.
+
+    ПОЛЕ, А НЕ ПРОЗА (166). Версия, на которую потребитель отвечал, лежит
+    отдельным ключом `answers_to`; фраза внутри `schema_of` осталась пояснением
+    для человека и предметом сверки не является — разбирать её регуляркой
+    значило бы ловить редактуру вместо отставания.
+    """
+    out: list[str] = []
+    for s in slices:
+        if not s.get("rules"):
+            continue
+        theirs = (s.get("answers_to") or "").strip()
+        if not theirs:
+            out.append(f"{s['repo']}: ответ не называет версию ВЫГРУЗКИ, по которой "
+                       f"построен (ключ answers_to). Наша сейчас {own_export}: "
+                       "подъём контракта такому потребителю не адресовать")
+        elif theirs != own_export:
+            out.append(f"{s['repo']}: ответ построен на выгрузке {theirs}, у нас "
+                       f"{own_export} — записи валидны, а составленные по ним ответы "
+                       "отвечают на другой вопрос (157)")
+    return out
+
+
 def _schema_of(path: Path) -> str:
     try:
         return json.loads(path.read_text(encoding="utf-8")).get("schema") or ""
@@ -535,7 +570,21 @@ def schema_findings(slices: list[dict]) -> tuple[list[str], list[str]]:
             f"templates/bindings.json: заготовка ответа объявляет схему {tpl}, "
             f"а ответ каталога — {own}. Образец, который раздают, отстал от "
             "того, что применяется дома (155, 157)")
-    return schema_lag(slices, own), свои
+    # ВЕРСИЯ ВЫГРУЗКИ ЧИТАЕТСЯ ЖИВОЙ, ИЗ САМОЙ ВЫГРУЗКИ. Константа рядом
+    # разошлась бы с ней молча — тот же приём, что и у номера ответа (049).
+    export_ver = ""
+    try:
+        export_ver = (json.loads((ROOT / "export" / "rules.json").read_text(encoding="utf-8"))
+                      .get("contracts", {}).get("export") or "")
+    except (OSError, ValueError):
+        pass
+    чужое = schema_lag(slices, own)
+    if export_ver:
+        чужое += export_lag(slices, export_ver)
+    else:
+        свои.append("export/rules.json не назвал contracts.export — сверить, на какой "
+                    "версии выгрузки построены чужие ответы, нечем")
+    return чужое, свои
 
 
 def stale_answers(slices: list[dict], rule_ids: list[str],

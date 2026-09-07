@@ -57,7 +57,7 @@ rewritten.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § conventions.
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § Соглашения. Смежное:
 Related: [024](024-no-worklog-in-active-docs.md),
 [030](030-changelog-from-fragments.md) — what gets edited and what gets
 appended.

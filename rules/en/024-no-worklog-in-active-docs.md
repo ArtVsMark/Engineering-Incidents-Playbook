@@ -49,5 +49,5 @@ plan", it is in the wrong file.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § what an active document
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Чего в активном документе
 must not contain

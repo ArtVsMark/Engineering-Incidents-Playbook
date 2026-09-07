@@ -60,6 +60,6 @@ of being split.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § why there are two coverage
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Покрытие: почему бейджа
 badges. Related: [005](005-hand-written-numbers-rot.md) — a number typed by
 hand.

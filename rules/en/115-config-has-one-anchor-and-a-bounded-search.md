@@ -75,7 +75,7 @@ from, and nobody can explain why.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/use/configuration.md` § why the search is
+ArtVsMark/Stepik-Python-Grader — `docs/use/configuration.md` § Почему поиск
 bounded, § the settings root; ArtVsMark/Stepik-Python-Grader#993,
 ArtVsMark/Stepik-Python-Grader#984. Related:
 [100](100-two-deadlines-start-and-work.md).

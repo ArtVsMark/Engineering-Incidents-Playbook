@@ -43,4 +43,4 @@ the reason** under test, not for the first reason available.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § what the gates miss
+ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § Что гейты не ловят

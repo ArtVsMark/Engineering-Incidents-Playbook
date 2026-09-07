@@ -66,5 +66,5 @@ everything.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/use/configuration.md` § the deadline on
+ArtVsMark/Stepik-Python-Grader — `docs/use/configuration.md` § Дедлайн на сам
 process LAUNCH itself (`STEPIK_GRADER_LAUNCH_TIMEOUT_S`).

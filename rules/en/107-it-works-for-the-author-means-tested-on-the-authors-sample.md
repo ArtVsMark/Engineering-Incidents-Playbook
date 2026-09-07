@@ -64,6 +64,6 @@ from it is precisely a defect, not a sample boundary.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `HISTORY.md` § how it started. Related:
+ArtVsMark/Stepik-Python-Grader — `HISTORY.md` § Как это началось. Смежное:
 [046](046-name-the-gaps-do-not-level-them.md),
 [055](055-your-own-expectations-are-a-hypothesis.md).

@@ -58,5 +58,5 @@ considered normal practice.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § two lines of work
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Две линии работ
 (`scripts/check_work_overlap.py` always exits zero).

@@ -64,6 +64,6 @@ would have to download everything again".
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/use/grader-workflow.md` § about the two
+ArtVsMark/Stepik-Python-Grader — `docs/use/grader-workflow.md` § Про два файла
 statement files. Related:
 [096](096-storage-follows-lifecycle-not-convenience.md).

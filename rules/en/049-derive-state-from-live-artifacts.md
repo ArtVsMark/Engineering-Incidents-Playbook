@@ -99,7 +99,7 @@ name, and no check ever looks at them.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § two lines of work (§ why
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Две линии работ (§ why
 there is no register file); `CLAUDE.md` § merge queue ("computed, not stored").
 
 The second incident — ArtVsMark/Engineering-Incidents-Playbook#41; ArtVsMark/ArtVsMark —

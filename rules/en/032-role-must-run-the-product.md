@@ -59,5 +59,5 @@ not a reason to read — it is a reason to name the blind spot.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/roles.md` § a role does not end at
+ArtVsMark/Stepik-Python-Grader — `docs/agent/roles.md` § Роль не заканчивается
 reading code

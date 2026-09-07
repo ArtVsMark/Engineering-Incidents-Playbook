@@ -64,6 +64,6 @@ introduced.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § AI hints, ADR-0003. Related:
+ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § AI-подсказки, ADR-0003. Related:
 [045](045-no-silent-fallback.md) — the opposite case,
 [058](058-when-the-quota-is-out-stop.md).
