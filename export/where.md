@@ -16,7 +16,7 @@
 | `Stepik-Python-Grader` | подключён | 69 | 130 | 181 | 0 | 0 | 178 | 76 | 37 | 65 | 0 | 142 |  |
 | `ArtVsMark` | подключён | 16 | 10 | 181 | 0 | 0 | 108 | 74 | 11 | 15 | 6 | 35 |  |
 | `Claude-Code_Usage-Token` | подключён | 12 | 13 | 175 | 6 | 0 | 146 | 84 | 6 | 36 | 20 | 64 |  |
-| `Glossary-Python` | подключён | 0 | 0 | 179 | 2 | 0 | 102 | 34 | 6 | 27 | 35 | 34 |  |
+| `Glossary-Python` | подключён | 0 | 0 | 179 | 2 | 0 | 102 | 35 | 6 | 27 | 34 | 36 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -36,7 +36,6 @@
 | 028 | `Stepik-Python-Grader` — конвейер: scripts/check_issue_checklists.py — комплексный issue от трёх находок ведёт чек-лист с исходом каждой; `Claude-Code_Usage-Token` — документ: .github/pull_request_template.md — восемь пунктов галочками, а не прозой; CLAUDE.md § «Перед PR» — тот же чек-лист, исполняемый одной командой scripts/preflight.py. Состояние задачи не вычисляется чтением: у каждого пункта либо галочка, либо её нет. | `Engineering-Incidents-Playbook` |
 | 032 | `Stepik-Python-Grader` — документ: docs/agent/roles.md: если предмет роли наблюдаем в работающем продукте, роль обязана его запустить — вывод чтением кода считается неполным; `ArtVsMark` — гейт: .github/workflows/pr-check.yml — вывод о работоспособности делается прогоном вхолостую, а не чтением кода; `Claude-Code_Usage-Token` — документ: README.md и README.en.md, § «Статус». Правило требует ЗАПУСКАТЬ там, где предмет наблюдаем, и запуск состоялся: 2026-09-03 транскриптный сбор прогнан на живом транскрипте — 3833 строки, 650 ответов, — и первый же прогон нашёл то, чего не увидели ни тесты, ни чтение кода: вывод команды молчал о 572 отброшенных повторах, то есть о 47% строк с расходом. Правило окупилось с первого применения. Что осталось непрогнанным, названо там же и не замазано: реестровая половина и запись в хранилище. У облачного окна реестра нет — MCP ему не заведён, — и это «негде запустить»; у локального он есть, и там это по-прежнему «не запускали». | `Glossary-Python` |
 | 033 | `Engineering-Incidents-Playbook` — гейт: scripts/check_schedules.py + .rules/schedules.json — цена прогона объявляется числом, а гейт СЧИТАЕТ: сколько вызовов наружу расписания просят в худший час и укладывается ли сумма по всем расписаниям этого часа в объявленную долю часового лимита; `Stepik-Python-Grader` — документ: docs/agent/multiagent.md § арифметика интервала между стартами; CLAUDE.md § Гейты — порог остатка квоты и интервал опроса статусов | `Claude-Code_Usage-Token` |
-| 035 | `Engineering-Incidents-Playbook` — гейт: scripts/check_prose.py — поле версии в pyproject.toml обязано быть заглушкой: источник один, git-тег, и его читает scripts/version.py. ГРАНИЦА: проза не проверяется — число-факт от числа в рассказе машинно неотличимо (005), и замер по дереву дал шестнадцать законных файлов на ноль настоящих; `Stepik-Python-Grader` — гейт: версия динамическая из git-тегов (setuptools-scm), дрейф ловит scripts/check_version_consistency.py | `Glossary-Python` |
 | 038 | `Stepik-Python-Grader` — документ: CLAUDE.md § Два окна: имя окна начинается с окружения ([WEB]/[LOCAL]/[CLI]), метка ставится при открытии; канон — docs/agent/environments.md | `ArtVsMark`, `Claude-Code_Usage-Token`, `Glossary-Python` |
 | 043 | `Engineering-Incidents-Playbook` — гейт: scripts/build_rules_index.py — check_superseded: пометка «Заменено» разрешается в существующую запись, не зацикливается и стоит в обоих деревьях; отвергаемый предмет прогоняется в scripts/check_gates.py. ГРАНИЦА: ЗАМЕНЯЕТ ли одна запись другую — суждение автора, гейт держит форму уже принятого решения; `Stepik-Python-Grader` — гейт: scripts/check_adr_records.py; `Claude-Code_Usage-Token` — документ: HISTORY.md и docs/release.md — отменённое решение не правится, а называется вместе с ценой: отвергнутый hatch-vcs описан там, где объяснено, почему версия правится руками. Тот же приём применён к УТВЕРЖДЕНИЮ, а не решению: docs/spec.md § «Откуда взято число» прямо говорит, что прежнее объяснение расхождения источников оказалось неверным, и чем оно заменено, — а не заменяет абзац молча. | `Glossary-Python` |
 | 047 | `Engineering-Incidents-Playbook` — документ: CLAUDE.md § Когда окно перезапускают — сменились правила работы, окна перезапускают, а не рассылают им письма: свод и ядро читаются ОДИН раз, при старте, и правка живому окну не видна вовсе. ГРАНИЦА: реестра живых окон нет и не будет — рассылка потребовала бы знать, кто сейчас открыт; `Stepik-Python-Grader` — документ: CLAUDE.md § Гейты: смена правил транспорта требует перезапуска активных окон — настройки читаются при старте сессии; `ArtVsMark` — документ: CLAUDE.md § Окно — прямой цитатой: сменились правила работы, окна перезапускаются. Этот файл читается один раз, при старте | `Claude-Code_Usage-Token`, `Glossary-Python` |
@@ -279,6 +278,7 @@
 | `Glossary-Python` | `tests/test_facts.py` | 4 |
 | `Glossary-Python` | `tests/test_workflow_guardrails.py` | 4 |
 | `Glossary-Python` | `.pre-commit-config.yaml` | 3 |
+| `Glossary-Python` | `pyproject.toml` | 3 |
 | `Glossary-Python` | `src/glossary/cli.py` | 3 |
 | `Glossary-Python` | `src/glossary/loader.py` | 3 |
 | `Glossary-Python` | `.github/workflows/badges.yml` | 2 |
@@ -287,10 +287,9 @@
 | `Glossary-Python` | `data/glossary.json` | 2 |
 | `Glossary-Python` | `docs/agent/roles.md` | 2 |
 | `Glossary-Python` | `facts.json` | 2 |
-| `Glossary-Python` | `pyproject.toml` | 2 |
 | `Glossary-Python` | `tests/quality_baseline.json` | 2 |
 | `Glossary-Python` | `tests/test_roles.py` | 2 |
-| `Glossary-Python` | _остальные_ · _the rest_ | 7 механизмов по одному правилу; без названного адреса: 0 из 67 |
+| `Glossary-Python` | _остальные_ · _the rest_ | 9 механизмов по одному правилу; без названного адреса: 0 из 68 |
 
 ## Правила · Rules
 

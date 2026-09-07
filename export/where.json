@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-07T07:41:29+00:00",
+  "generated_at": "2026-09-07T07:57:57+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -3132,9 +3132,9 @@
         "not-applicable": 77
       },
       "by_mechanism": {
-        "none": 35,
+        "none": 34,
         "pipeline": 6,
-        "gate": 34,
+        "gate": 35,
         "document": 27
       },
       "rules": {
@@ -3400,8 +3400,8 @@
           "where": "docs/architecture.md"
         },
         "035": {
-          "mechanism": "none",
-          "where": "pyproject.toml"
+          "mechanism": "gate",
+          "where": "pyproject.toml — версия объявлена один раз, полем version секции [project]; src/glossary/_version.py читает её из метаданных установленного дистрибутива, а tests/test_version.py роняет сборку и при расхождении объявленного с установленным, и при возврате литерала в исходники пакета"
         },
         "038": {
           "mechanism": "none",
