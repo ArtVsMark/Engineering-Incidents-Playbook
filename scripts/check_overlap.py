@@ -52,19 +52,41 @@ def current_branch(root: Path) -> str:
 
 
 def open_changes() -> tuple[list[dict] | None, str | None]:
-    """Открытые изменения с их файлами. Вторым — причина отказа с адресом."""
-    code, out = ghcli.run("pr", "list", "--state", "open", "--limit", str(LIMIT),
-                          "--json", "number,title,headRefName,files")
+    """Открытые изменения БЕЗ файлов. Вторым — причина отказа с адресом.
+
+    ПО REST, И СПИСОК ФАЙЛОВ СЮДА НЕ ВХОДИТ. Стояло
+    `gh pr list --json number,title,headRefName,files` — одна команда, но у
+    неё две цены. Первая: `gh pr list` идёт через GraphQL, а у него своя
+    квота, исчерпание которой 7 сентября уронило дежурного и заморозило
+    очередь целиком («GraphQL: API rate limit already exceeded»). Вторая:
+    поле `files` тянет содержимое КАЖДОГО из полусотни изменений, и стоит
+    такой запрос тем дороже, чем больше их открыто.
+
+    Теперь список приходит по REST одним дешёвым запросом, а файлы — только
+    у тех изменений, с которыми есть что сравнивать (обычно ни у одного).
+    """
+    code, out = ghcli.run(
+        "api", f"repos/{{owner}}/{{repo}}/pulls?state=open&per_page={LIMIT}",
+        "--jq", "[.[] | {number, title, headRefName: .head.ref}]")
     if code != 0:
-        return None, f"gh pr list — {out.strip()[:160] or f'код {code}'}"
+        return None, f"gh api pulls — {out.strip()[:160] or f'код {code}'}"
     try:
-        return json.loads(out), None
+        return json.loads(out or "[]"), None
     except ValueError as e:
-        return None, f"ответ gh pr list не разобран — {e}"
+        return None, f"ответ gh api pulls не разобран — {e}"
 
 
-def files_of(change: dict) -> set[str]:
-    return {f.get("path", "") for f in (change.get("files") or [])}
+def files_of(number: int) -> tuple[set[str] | None, str | None]:
+    """Файлы одного изменения по REST. Вторым — причина отказа с адресом."""
+    code, out = ghcli.run(
+        "api", f"repos/{{owner}}/{{repo}}/pulls/{number}/files?per_page=100",
+        "--jq", "[.[].filename]")
+    if code != 0:
+        return None, f"gh api pulls/{number}/files — {out.strip()[:160] or f'код {code}'}"
+    try:
+        return set(json.loads(out or "[]")), None
+    except ValueError as e:
+        return None, f"ответ gh api pulls/{number}/files не разобран — {e}"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -88,18 +110,31 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     mine = next((c for c in changes if c.get("headRefName") == branch), None)
-    if mine is not None:
-        my_files = files_of(mine)
-    else:
-        done = subprocess.run(
-            ["git", "-C", str(root), "diff", "--name-only", "-z",
-             f"origin/main...{branch}"],
-            capture_output=True, text=True, encoding="utf-8")
-        if done.returncode != 0:
-            print("проверка не отработала: список своих файлов не получен — "
-                  f"{done.stderr.strip()[:120]}", file=sys.stderr)
-            return 2
+    # СВОИ ФАЙЛЫ СНАЧАЛА ЛОКАЛЬНО, И ТОЛЬКО ПОТОМ У ПЛОЩАДКИ. Раньше у
+    # открытого изменения их спрашивали у площадки всегда — запрос ради того,
+    # что лежит в рабочем дереве. Гейт зовут ПЕРЕД толчком, истина о своих
+    # файлах здесь, и стоит она ноль.
+    #
+    # НО ЛОКАЛЬНЫЙ ПУТЬ НЕ ВСЕГДА ЕСТЬ, И ЭТО НАШЛИ ТЕСТЫ, А НЕ РАССУЖДЕНИЕ.
+    # Первая редакция брала git diff ЕДИНСТВЕННЫМ способом и падала третьим
+    # исходом там, где `origin/main` не разрешается: мелкий клон в прогоне,
+    # чужое рабочее дерево. Поэтому площадка осталась запасным путём — она
+    # дороже, но она есть тогда, когда локальной истории нет.
+    done = subprocess.run(
+        ["git", "-C", str(root), "diff", "--name-only", "-z",
+         f"origin/main...{branch}"],
+        capture_output=True, text=True, encoding="utf-8")
+    if done.returncode == 0:
         my_files = {line for line in done.stdout.split() if line}
+    elif mine is not None:
+        my_files, err = files_of(mine.get("number"))
+        if err:
+            print(f"проверка не отработала: {err}", file=sys.stderr)
+            return 2
+    else:
+        print("проверка не отработала: список своих файлов не получен — "
+              f"{done.stderr.strip()[:120]}", file=sys.stderr)
+        return 2
     if not my_files:
         print(f"ветка {branch} не трогает ни одного файла — сравнивать нечего")
         return 0
@@ -109,7 +144,11 @@ def main(argv: list[str] | None = None) -> int:
     for change in changes:
         if change.get("headRefName") == branch:
             continue
-        общие = sorted(my_files & files_of(change))
+        чужие, err = files_of(change.get("number"))
+        if err:
+            print(f"проверка не отработала: {err}", file=sys.stderr)
+            return 2
+        общие = sorted(my_files & чужие)
         if общие:
             overlaps.append(
                 f"#{change.get('number')} «{(change.get('title') or '')[:48]}» "

@@ -180,3 +180,27 @@ def test_zamer_derzhitsya_odin_na_protsess(monkeypatch):
     _, вывод = ghcli.run("issue", "view", "2")
     assert "замер этого процесса" in вывод
 
+
+
+@pytest.mark.parametrize("ответ", [
+    # Ровно то, чем площадка ответила 7 сентября: между «rate limit» и
+    # «exceeded» встало «already», и список подстрок этого не поймал.
+    "GraphQL: API rate limit already exceeded for user ID 86671904",
+    "API rate limit exceeded for user ID 86671904",
+    "You have exceeded a secondary rate limit",
+    "HTTP 403: Resource not accessible",
+])
+def test_forma_ischerpaniya_uznayotsya(ответ):
+    """Форму меняет площадка, смысл — нет: узнаём форму, а не редакцию."""
+    assert ghcli.ИСЧЕРПАНИЕ_RE.search(ответ)
+
+
+@pytest.mark.parametrize("ответ", [
+    # Отказ в праве — НЕ исчерпание: лечится выдачей права, а не ожиданием.
+    "GraphQL: Resource not accessible by personal access token (addComment)",
+    "could not resolve to an Issue with the number 999",
+    # Слова про лимит есть, а исчерпания нет: набор двусторонний (140).
+    "rate limit information is not available",
+])
+def test_chuzhoy_otkaz_za_ischerpanie_ne_prinimaetsya(ответ):
+    assert not ghcli.ИСЧЕРПАНИЕ_RE.search(ответ)
