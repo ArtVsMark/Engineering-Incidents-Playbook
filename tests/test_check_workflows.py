@@ -380,3 +380,34 @@ def test_nerazbiraemaya_obolochka_eto_nahodka(код, что):
 def test_shag_ne_na_obolochke_ne_predmet():
     """`shell: python` — другой язык; отвергать его было бы находкой о форме."""
     assert cw.unparsable_shell(прогон("if True", оболочка="python")) == []
+
+
+def действие(код: str, оболочка: str = "bash") -> str:
+    """Составное действие: шаги лежат в `runs:`, а не в `jobs:`."""
+    тело = "\n".join("          " + s for s in код.splitlines())
+    return ("name: a\ndescription: d\nruns:\n  using: composite\n  steps:\n"
+            f"    - name: проба\n      shell: {оболочка}\n      run: |\n{тело}\n")
+
+
+def test_sostavnoe_deystvie_proveryaetsya_toy_zhe_merkoy():
+    """Находка внешнего взгляда на #361: у `action.yml` нет `jobs:` вовсе.
+
+    Цена здесь ВЫШЕ, чем у прогона: неразбираемый шаг составного действия
+    красит прогоны чужих проектов, подключивших его, — без единой их строки
+    в стеке. Ровно та граница, которую файл уже проводил для разбора кода
+    возврата (145), и не провёл для разбираемости.
+    """
+    assert len(cw.unparsable_shell(действие("if [ 1 -eq 1 ]; then echo да"))) == 1
+    assert cw.unparsable_shell(действие("echo ок")) == []
+
+
+def test_defaults_urovnya_fayla_uvazhaetsya():
+    """`defaults.run.shell` бывает и в шапке файла, не только у работы.
+
+    Без этого прогон, объявивший себя pwsh в шапке, мерился бы `bash -n` —
+    ложный красный о чужом языке, находка о форме вместо предмета (051).
+    """
+    текст = ("name: t\non: [push]\ndefaults:\n  run:\n    shell: pwsh\n"
+             "jobs:\n  j:\n    steps:\n      - name: проба\n        run: |\n"
+             "          if ($true) { Write-Host x }\n")
+    assert cw.unparsable_shell(текст) == []
