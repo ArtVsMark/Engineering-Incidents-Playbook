@@ -30,10 +30,18 @@ def событие(command: str, tool: str = "Bash") -> str:
 
 @pytest.fixture
 def окно(monkeypatch):
-    """Окно стоит на своей ветке; вход подаётся как площадкой."""
+    """Окно стоит на своей ветке; вход подаётся как площадкой.
+
+    ВТОРОЙ ПРЕДМЕТ ХУКА ЗДЕСЬ ОТКЛЮЧЁН НАМЕРЕННО. Проверка тела спрашивает
+    НАСТОЯЩЕЕ дерево — коммиты ветки, на которой идёт работа, — и без этой
+    подмены случаи про ветку краснели бы от чужой причины: девять из
+    двадцати двух отказали разом, когда в рабочей ветке появился коммит с
+    неполным телом. Тело проверяется своими случаями ниже (018).
+    """
     def настроить(command: str, branch: str | None = "agent/своя",
                   tool: str = "Bash"):
         monkeypatch.setattr(pg, "current_branch", lambda: branch)
+        monkeypatch.setattr(pg, "тело_не_проходит", lambda корень: None)
         monkeypatch.setattr("sys.stdin", io.StringIO(событие(command, tool)))
     return настроить
 
@@ -198,3 +206,38 @@ def test_tolchok_uznayotsya_razborom(команда, ждём, что):
     стояли внутри строки-аргумента, — поймано пробой на самом хуке.
     """
     assert pg.толкает(команда) is ждём, что
+
+
+def test_telo_beryotsya_u_togo_zhe_vybora_chto_i_u_konveyera(monkeypatch, tmp_path):
+    """ОДИН ВОПРОС — ОДИН ОТВЕТ (022). Хук проверяет ТО ЖЕ тело, которое
+    поставит конвейер, и потому обязан спрашивать коммит у того же скрипта.
+    Свой разбор `origin/main..HEAD` здесь уже стоял и повторял дефект
+    конвейера: на ветке поверх соседней первым в диапазоне идёт чужой коммит.
+    """
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts" / "pr_source_commit.py").write_text("", encoding="utf-8")
+    вызовы: list[list[str]] = []
+
+    class Ответ:
+        """Форма ответа снята с `python3 scripts/pr_source_commit.py --base
+        origin/main`: отпечаток в stdout, объяснение в stderr, код 0 (170)."""
+
+        returncode = 0
+        stdout = "deadbeef\n"
+        stderr = "заголовок даёт deadbeef: «feat(rules): своя тема»\n"
+
+    def подмена(args, **kwargs):
+        вызовы.append([str(a) for a in args])
+        return Ответ()
+
+    monkeypatch.setattr(pg.subprocess, "run", подмена)
+
+    assert pg.первый_коммит_ветки(tmp_path) == "deadbeef\n"
+    assert any("pr_source_commit.py" in " ".join(c) for c in вызовы), вызовы
+    assert any(c[:2] == ["git", "-C"] and "--format=%B" in c for c in вызовы), вызовы
+
+
+def test_chuzhoe_derevo_bez_vybora_ne_meshaet(tmp_path):
+    """Хук запускают и там, где каталога нет вовсе: отказ на пустом месте
+    остановил бы верный толчок (051)."""
+    assert pg.первый_коммит_ветки(tmp_path) is None

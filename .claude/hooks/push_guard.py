@@ -182,25 +182,33 @@ def толкает(command: str) -> bool:
     return False
 
 
-def первый_коммит_ветки() -> str | None:
+def первый_коммит_ветки(корень: Path) -> str | None:
     """Тело коммита, из которого конвейер возьмёт тело изменения.
 
     ПОЧЕМУ ИМЕННО ПЕРВЫЙ. `agent-pr` открывает изменение и ставит ему тело ОДИН
     раз — из первого коммита поверх общей ветки. Правка коммита после толчка
     тела на площадке уже не меняет: там останется то, что уехало первым.
+
+    КОММИТ СПРАШИВАЕТСЯ У ТОГО ЖЕ ВЫБОРА, ЧТО И У КОНВЕЙЕРА. Здесь стоял свой
+    разбор `origin/main..HEAD`, и он повторял дефект конвейера один в один: на
+    ветке поверх соседней первым в диапазоне идёт ЧУЖОЙ коммит, и хук проверял
+    бы чужое тело, а уехало бы своё. Два ответа на один вопрос разошлись бы —
+    и разошлись бы молча (022).
     """
-    for аргументы in (["log", "origin/main..HEAD", "--format=%H"],):
-        done = subprocess.run(["git", *аргументы], capture_output=True,
-                              text=True, encoding="utf-8")
-        if done.returncode != 0:
-            return None
-        коммиты = [s for s in done.stdout.split() if s]
-        if not коммиты:
-            return None                 # ветка без своих коммитов — нечего слать
-        тело = subprocess.run(["git", "log", "-1", "--format=%B", коммиты[-1]],
-                              capture_output=True, text=True, encoding="utf-8")
-        return тело.stdout if тело.returncode == 0 else None
-    return None
+    выбор = корень / "scripts" / "pr_source_commit.py"
+    if not выбор.exists():
+        return None                     # чужое дерево — не наш предмет
+    названо = subprocess.run(
+        [sys.executable, str(выбор), "--root", str(корень), "--base", "origin/main"],
+        capture_output=True, text=True, encoding="utf-8")
+    if названо.returncode != 0:
+        return None                     # коммитов нет либо выбор не отработал
+    sha = названо.stdout.strip()
+    if not sha:
+        return None
+    тело = subprocess.run(["git", "-C", str(корень), "log", "-1", "--format=%B", sha],
+                          capture_output=True, text=True, encoding="utf-8")
+    return тело.stdout if тело.returncode == 0 else None
 
 
 def тело_не_проходит(корень: Path) -> str | None:
@@ -226,7 +234,7 @@ def тело_не_проходит(корень: Path) -> str | None:
     скрипт = корень / "scripts" / "pr_body.py"
     if not скрипт.exists():
         return None                     # чужое дерево — не наш предмет
-    тело = первый_коммит_ветки()
+    тело = первый_коммит_ветки(корень)
     if тело is None:
         return None
     done = subprocess.run([sys.executable, str(скрипт), "--check", "--body-file", "-"],
