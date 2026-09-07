@@ -16,7 +16,7 @@
 | `Stepik-Python-Grader` | подключён | 69 | 130 | 181 | 0 | 0 | 178 | 76 | 37 | 65 | 0 | 142 |  |
 | `ArtVsMark` | подключён | 16 | 10 | 181 | 0 | 0 | 108 | 74 | 11 | 15 | 6 | 35 |  |
 | `Claude-Code_Usage-Token` | подключён | 12 | 13 | 175 | 6 | 0 | 146 | 84 | 6 | 36 | 20 | 64 |  |
-| `Glossary-Python` | подключён | 0 | 0 | 181 | 0 | 0 | 110 | 48 | 10 | 28 | 24 | 60 |  |
+| `Glossary-Python` | подключён | 0 | 0 | 181 | 0 | 0 | 113 | 51 | 10 | 28 | 24 | 62 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -255,17 +255,18 @@
 | `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 18 механизмов по одному правилу; без названного адреса: 0 из 126 |
 | `Glossary-Python` | `.github/workflows/ci.yml` | 11 |
 | `Glossary-Python` | `docs/architecture.md` | 8 |
+| `Glossary-Python` | `src/glossary/validation.py` | 8 |
+| `Glossary-Python` | `tests/test_data_integrity.py` | 8 |
 | `Glossary-Python` | `tests/test_validation.py` | 8 |
 | `Glossary-Python` | `CLAUDE.md` | 7 |
-| `Glossary-Python` | `src/glossary/validation.py` | 7 |
-| `Glossary-Python` | `tests/test_data_integrity.py` | 7 |
 | `Glossary-Python` | `.rules/bindings.json` | 6 |
 | `Glossary-Python` | `README.md` | 5 |
+| `Glossary-Python` | `pyproject.toml` | 5 |
 | `Glossary-Python` | `.github/workflows/rules-inbox.yml` | 4 |
 | `Glossary-Python` | `.pre-commit-config.yaml` | 4 |
 | `Glossary-Python` | `CONTRIBUTING.md` | 4 |
+| `Glossary-Python` | `data/glossary.json` | 4 |
 | `Glossary-Python` | `data/glossary.schema.json` | 4 |
-| `Glossary-Python` | `pyproject.toml` | 4 |
 | `Glossary-Python` | `scripts/automerge.py` | 4 |
 | `Glossary-Python` | `scripts/facts.py` | 4 |
 | `Glossary-Python` | `src/glossary/cli.py` | 4 |
@@ -274,19 +275,20 @@
 | `Glossary-Python` | `tests/test_workflow_guardrails.py` | 4 |
 | `Glossary-Python` | `.github/workflows/automerge.yml` | 3 |
 | `Glossary-Python` | `.github/workflows/badges.yml` | 3 |
-| `Glossary-Python` | `data/glossary.json` | 3 |
+| `Glossary-Python` | `CHANGELOG.md` | 3 |
 | `Glossary-Python` | `src/glossary/loader.py` | 3 |
 | `Glossary-Python` | `.rules/proposals.json` | 2 |
-| `Glossary-Python` | `CHANGELOG.md` | 2 |
 | `Glossary-Python` | `docs/agent/roles.md` | 2 |
 | `Glossary-Python` | `facts.json` | 2 |
 | `Glossary-Python` | `scripts/check_attribution.py` | 2 |
+| `Glossary-Python` | `scripts/check_exclusive.py` | 2 |
 | `Glossary-Python` | `scripts/check_third_outcome.py` | 2 |
 | `Glossary-Python` | `tests/quality_baseline.json` | 2 |
 | `Glossary-Python` | `tests/test_automerge.py` | 2 |
+| `Glossary-Python` | `tests/test_check_attribution.py` | 2 |
 | `Glossary-Python` | `tests/test_roles.py` | 2 |
 | `Glossary-Python` | `tests/test_rules_bindings.py` | 2 |
-| `Glossary-Python` | _остальные_ · _the rest_ | 27 механизмов по одному правилу; без названного адреса: 0 из 86 |
+| `Glossary-Python` | _остальные_ · _the rest_ | 27 механизмов по одному правилу; без названного адреса: 0 из 89 |
 
 ## Правила · Rules
 
@@ -328,7 +330,7 @@
 | 034 | отклонено | действует | нет предмета | нет предмета | нет предмета |
 | 035 | действует | действует | нет предмета | отклонено | действует |
 | 036 | нет предмета | действует | нет предмета | нет предмета | нет предмета |
-| 037 | нет предмета | действует | нет предмета | действует | нет предмета |
+| 037 | нет предмета | действует | нет предмета | действует | действует |
 | 038 | нет предмета | действует | действует | действует | действует |
 | 039 | действует | действует | действует | действует | действует |
 | 040 | действует | действует | нет предмета | действует | действует |
@@ -368,7 +370,7 @@
 | 074 | действует | действует | действует | действует | действует |
 | 075 | действует | действует | действует | действует | действует |
 | 076 | нет предмета | действует | нет предмета | действует | действует |
-| 077 | действует | действует | нет предмета | действует | нет предмета |
+| 077 | действует | действует | нет предмета | действует | действует |
 | 078 | нет предмета | действует | нет предмета | действует | нет предмета |
 | 079 | действует | нет предмета | нет предмета | нет предмета | нет предмета |
 | 080 | действует | действует | действует | действует | действует |
@@ -434,7 +436,7 @@
 | 140 | действует | действует | действует | действует | действует |
 | 141 | действует | действует | действует | действует | действует |
 | 142 | действует | действует | действует | действует | действует |
-| 144 | действует | действует | действует | действует | нет предмета |
+| 144 | действует | действует | действует | действует | действует |
 | 145 | действует | действует | действует | действует | действует |
 | 146 | действует | действует | действует | действует | действует |
 | 147 | действует | действует | действует | действует | действует |
