@@ -15,6 +15,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 import check_bindings as cb
 from conftest import write
 
@@ -34,10 +36,13 @@ def export_of(*ids):
 
 
 def test_полный_ответ_проходит(monkeypatch, repo):
-    write(repo / "CLAUDE.md", "# свод\n")
+    # Ответ «гейт» обязан назвать ИСПОЛНЯЕМОЕ (139), а названный скрипт —
+    # объявить это правило своим: полный ответ и значит «оба конца сходятся».
+    write(repo / "scripts/check_probe.py",
+          '"""Проба.\n\nРеализует правила каталога:\n  001 — держит его целиком.\n"""\n')
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "gate",
-                               "where": "CLAUDE.md — раздел про гейты"}}},
+                               "where": "scripts/check_probe.py — держит правило"}}},
             export_of("001"))
     assert cb.main() == 0
 
@@ -128,10 +133,14 @@ def test_живой_заявленный_файл_находкой_не_счит
 def test_число_словом_только_предупреждает(monkeypatch, repo):
     # Правило 051: «три гейта» устареет, но отказ здесь был бы ложным —
     # живая проза даёт достаточно законных сочетаний со словом-числом.
-    write(repo / "CLAUDE.md", "# свод\n")
+    # Адрес исполняемый, потому что механизм объявлен гейтом (139): предмет
+    # этого случая — слово-число в прозе, и он не должен падать на соседнем
+    # требовании.
+    write(repo / "scripts/check_probe.py",
+          '"""Проба.\n\nРеализует правила каталога:\n  001 — держит его целиком.\n"""\n')
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "gate",
-                               "where": "CLAUDE.md",
+                               "where": "scripts/check_probe.py",
                                "why": "держат три гейта"}}},
             export_of("001"))
     assert cb.main() == 0
@@ -396,11 +405,12 @@ def test_otvet_soseda_bez_adresa_ne_schitaetsya_reshennym(monkeypatch, repo, cap
 def test_pravilo_s_mehanizmom_v_ocheredi_ne_stoit(monkeypatch, repo, capsys):
     """Очередь — это «ничем»; закрытое гейтом сюда попадать не должно, иначе
     метрика зовёт переделывать сделанное."""
-    write(repo / "CLAUDE.md", "# свод\n")
+    write(repo / "scripts/check_probe.py",
+          '"""Проба.\n\nРеализует правила каталога:\n  001 — держит его целиком.\n"""\n')
     с_соседями(monkeypatch, repo,
                {"project": "мой/каталог",
                 "rules": {"001": {"status": "active", "mechanism": "gate",
-                                  "where": "CLAUDE.md — раздел про гейты"}}})
+                                  "where": "scripts/check_probe.py — держит правило"}}})
 
     assert cb.main() == 0
     assert "ни одного" in capsys.readouterr().out
@@ -576,3 +586,54 @@ def test_awaiting_pri_gotovom_mehanizme_eto_nahodka(monkeypatch, repo, capsys):
             export_of("001"))
     assert cb.main() == 1
     assert "механизм назван, а поле awaiting осталось" in capsys.readouterr().err
+
+
+# ── ОТВЕТ «ГЕЙТ» УКАЗЫВАЕТ НА ИСПОЛНЯЕМОЕ (139) ───────────────────────────
+# Замер на живом дереве: 113 ответов gate, 12 без скрипта, и все двенадцать
+# называют другой законный вид. Находок ноль — поэтому набор здесь не роскошь,
+# а единственное место, где проверка вообще ОТВЕРГАЕТ: без него гейт зеленел бы
+# и на собственной поломке (140, 146).
+
+@pytest.mark.parametrize("адрес, что", [
+    ("scripts/check_bindings.py", "скрипт"),
+    (".github/workflows/ci.yml", "прогон"),
+    ("tests/test_check_bindings.py", "набор тестов"),
+    ("action.yml", "составное действие"),
+    (".claude/settings.json", "хук окна"),
+])
+def test_gate_ukazyvayushchiy_na_ispolnyaemoe_prohodit(monkeypatch, repo, адрес, что):
+    """Все пять видов законны. Файл создаётся: соседняя проверка требует, чтобы
+    заявленное СУЩЕСТВОВАЛО, и без этого случай проверял бы её, а не 139."""
+    содержимое = ('"""Проба.\n\nРеализует правила каталога:\n'
+                  '  001 — держит его целиком.\n"""\n'
+                  if адрес.endswith(".py") else "проба\n")
+    write(repo / адрес, содержимое)
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": f"{адрес} — держит правило"}}},
+            export_of("001"))
+    assert cb.main() == 0, что
+
+
+@pytest.mark.parametrize("where, что", [
+    ("держится договорённостью окна", "проза вместо адреса"),
+    ("описано в документе, который читают глазами", "документ — не гейт"),
+    ("", "пустое поле"),
+])
+def test_gate_bez_ispolnyaemogo_eto_nahodka(monkeypatch, repo, capsys, where, что):
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": where}}},
+            export_of("001"))
+    assert cb.main() == 1, что
+    assert "не назван ни один исполняемый адрес" in capsys.readouterr().err
+
+
+def test_document_s_prozoy_nahodkoy_ne_yavlyaetsya(monkeypatch, repo):
+    """Требование адресовано ответу «гейт», а не всякому ответу (051)."""
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "document",
+                               "where": "AGENTS.md — сказано в своде"}}},
+            export_of("001"))
+    assert cb.main() == 0
