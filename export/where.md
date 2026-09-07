@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 36 | 28 | 181 | 0 | 0 | 143 | 106 | 9 | 25 | 3 | 94 |  |
+| `Engineering-Incidents-Playbook` | подключён | 36 | 28 | 181 | 0 | 0 | 143 | 106 | 9 | 25 | 3 | 95 |  |
 | `Stepik-Python-Grader` | подключён | 69 | 130 | 181 | 0 | 0 | 178 | 76 | 37 | 65 | 0 | 142 |  |
 | `ArtVsMark` | подключён | 16 | 10 | 181 | 0 | 0 | 108 | 74 | 11 | 15 | 6 | 35 |  |
 | `Claude-Code_Usage-Token` | подключён | 12 | 13 | 175 | 6 | 0 | 146 | 84 | 6 | 36 | 20 | 64 |  |
@@ -96,9 +96,9 @@
 | `Engineering-Incidents-Playbook` | `export/README.md` | 8 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/agent-pr.yml` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/check_charter.py` | 7 |
+| `Engineering-Incidents-Playbook` | `scripts/check_workflows.py` | 7 |
 | `Engineering-Incidents-Playbook` | `CONTRIBUTING.md` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 6 |
-| `Engineering-Incidents-Playbook` | `scripts/check_workflows.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_prose.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/link_trails.py` | 5 |
@@ -126,6 +126,7 @@
 | `Engineering-Incidents-Playbook` | `.github/workflows/off-prefix.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/bindings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/schedules.json` | 2 |
+| `Engineering-Incidents-Playbook` | `action.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `export/where.json` | 2 |
 | `Engineering-Incidents-Playbook` | `rules/README.md` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_links.py` | 2 |
