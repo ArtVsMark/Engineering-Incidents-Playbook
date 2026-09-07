@@ -54,8 +54,13 @@ jobs:
         run: |
           set -uo pipefail
           git log -1 --format=%B > "$RUNNER_TEMP/body.txt"
+          # Площадка зовёт шаг как `bash -e {0}`, и `set -uo pipefail` этот
+          # `-e` НЕ снимает. Без `|| code=$?` оболочка умирает на ненулевом
+          # коде раньше разбора: и `printf`, и обе ветки ниже — код, до
+          # которого не доходит управление (правило 145).
+          code=0
           out=$(python3 scripts/check_task_state.py \
-                  --body-file "$RUNNER_TEMP/body.txt" --comment 2>&1); code=$?
+                  --body-file "$RUNNER_TEMP/body.txt" --comment 2>&1) || code=$?
           printf '%s\n' "$out"
           # Три исхода различаются, и второй не растворяется в третьем (039).
           if [ "$code" -eq 2 ]; then

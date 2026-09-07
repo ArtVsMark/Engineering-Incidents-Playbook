@@ -209,7 +209,11 @@ jobs:
           BRANCH: ${{ github.ref_name }}
         run: |
           set -uo pipefail
-          out=$(python3 scripts/check_overlap.py --branch "$BRANCH" 2>&1); code=$?
+          # `bash -e {0}` у площадки, и `set -uo pipefail` его не снимает:
+          # без `|| code=$?` оболочка умирает раньше, чем список попадёт в
+          # сводку, — то есть у находки пропадает адресат (145, 147).
+          code=0
+          out=$(python3 scripts/check_overlap.py --branch "$BRANCH" 2>&1) || code=$?
           printf '%s\n' "$out"
           {
             echo "### Пересечение файлов"
