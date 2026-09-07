@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import json
 import os
 import re
 import shutil
@@ -123,6 +124,70 @@ def check_secrets() -> Result:
     return Result("secrets", OK, f"проверено файлов: {scanned}", time.monotonic() - t0)
 
 
+#: Семейства подкоманд `gh`, которые идут через GraphQL. Одна операция там
+#: стоит ~300 points из часовых 5000, REST — один запрос (правило 001).
+GH_GRAPHQL = ("issue", "pr", "project", "search")
+#: Строка, где команда ВЫЗЫВАЕТСЯ, а не упоминается в прозе.
+GH_CALL = re.compile(r"^\s*(?:[\w.]+=\$\()?\s*gh\s+([a-z-]+)\b")
+#: Закрытый список операций без REST-эквивалента. Требование списка — из самого
+#: правила 001: каждый такой случай называется поимённо.
+TRANSPORT_ALLOW = ROOT / ".rules" / "transport.json"
+
+
+def check_transport() -> Result:
+    """Правило 001: к GitHub ходят по REST; GraphQL — только поимённо.
+
+    ПОЧЕМУ ЭТО ЕДЕТ ПОТРЕБИТЕЛЮ. Инцидент был у каталога, но предмет общий:
+    квота у площадки одна на учётную запись, и конвейер, который по REST
+    укладывается в проценты часового бюджета, по GraphQL в час не помещается
+    ФИЗИЧЕСКИ. У каталога 7 сентября исчерпание уронило дежурного и заморозило
+    очередь целиком, а ответ «всё переведено на REST» при этом стоял в
+    привязках и был ложен: держался он прозой, и разошёлся с деревом молча.
+
+    Здесь тот же гейт, что у каталога, но без его дерева: ищет вызовы в
+    `*.py` и в `.github/workflows/*.yml`. Список исключений опционален — если
+    файла нет, законных исключений нет, и это верно по построению: правило
+    требует называть их поимённо, а не подразумевать.
+    """
+    t0 = time.monotonic()
+    try:
+        allow = set()
+        if TRANSPORT_ALLOW.exists():
+            data = json.loads(TRANSPORT_ALLOW.read_text(encoding="utf-8"))
+            allow = {и.get("where", "") for и in data.get("allowed", [])}
+    except (OSError, ValueError) as exc:
+        return Result("transport", BROKEN, f"{TRANSPORT_ALLOW.name}: {exc}",
+                      time.monotonic() - t0)
+
+    hits, scanned = [], 0
+    for path in sorted(ROOT.rglob("*.py")) + sorted(
+            (ROOT / ".github" / "workflows").glob("*.yml")):
+        if ".git" in path.parts or not path.is_file():
+            continue
+        scanned += 1
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except OSError as exc:
+            return Result("transport", BROKEN, f"{path}: {exc}", time.monotonic() - t0)
+        rel = path.relative_to(ROOT).as_posix()
+        for lineno, line in enumerate(text.splitlines(), 1):
+            # Комментарий — это упоминание, а не вызов: находка о нём была бы
+            # находкой о форме текста, а не о транспорте.
+            if line.lstrip().startswith("#"):
+                continue
+            m = GH_CALL.search(line)
+            if m and m.group(1) in GH_GRAPHQL and f"{rel}:{lineno}" not in allow:
+                hits.append(f"{rel}:{lineno}: gh {m.group(1)} — через GraphQL")
+
+    if scanned == 0:
+        return Result("transport", BROKEN, "не найдено ни одного файла для проверки",
+                      time.monotonic() - t0)
+    if hits:
+        return Result("transport", FINDINGS,
+                      f"{len(hits)} вызовов мимо REST", time.monotonic() - t0, hits)
+    return Result("transport", OK, f"проверено файлов: {scanned}", time.monotonic() - t0)
+
+
 def run_step(step: Step) -> Result:
     t0 = time.monotonic()
     if step.requires_files and not any(ROOT.glob(p) for p in step.requires_files):
@@ -172,6 +237,7 @@ def main() -> int:
     results: list[Result] = []
     if "secrets" in selected:
         results.append(check_secrets())
+        results.append(check_transport())
     results.extend(run_step(s) for s in STEPS if s.name in selected)
 
     print()
