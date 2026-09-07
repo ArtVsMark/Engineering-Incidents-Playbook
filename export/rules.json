@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T13:53:26+00:00",
+  "generated_at": "2026-09-07T13:21:11+00:00",
   "contracts": {
     "export": "1.4",
     "bindings": "1.1",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 181,
+  "count": 182,
   "rules": [
     {
       "id": "001",
@@ -5940,6 +5940,42 @@
         {
           "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "148"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "183",
+      "slug": "a-claim-about-the-mechanism-is-checked-against-it",
+      "title": {
+        "ru": "Утверждение о механизме проверяется механизмом, а не перечитыванием",
+        "en": "A claim about the mechanism is checked by a mechanism, not by re-reading"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "документация"
+        ],
+        "en": [
+          "gates",
+          "documentation"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "added": "2026-09-07",
+      "files": {
+        "ru": "rules/ru/183-a-claim-about-the-mechanism-is-checked-against-it.md",
+        "en": "rules/en/183-a-claim-about-the-mechanism-is-checked-against-it.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "355"
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",

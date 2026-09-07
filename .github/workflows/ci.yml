@@ -68,10 +68,36 @@ jobs:
       # переписать, а объединяющее слияние составляет площадка, не автор.
       # Поэтому шаг только на PR: на push проверять уже поздно.
       # Границы диапазона идут через env, а не подстановкой в команду.
+      # СОСТАВ ИЗМЕНЕНИЯ БЕРЁТСЯ У ПЛОЩАДКИ, А НЕ СЧИТАЕТСЯ ПО ДВУМ ТОЧКАМ.
+      # Замер 7 сентября, изменение #361: шаги считали `git diff "$BASE...HEAD"`,
+      # где BASE — база на момент СОБЫТИЯ, а HEAD на pull_request — ветка, уже
+      # слитая с АКТУАЛЬНОЙ общей веткой. Между открытием (12:03) и прогоном
+      # (12:10) в main уехало чужое изменение, его файл попал в diff, и гейт
+      # зоны потребовал метку за ЧУЖОЙ файл. Обе точки движутся, и разъезжаются
+      # они молча.
+      #
+      # У площадки состав изменения один и посчитан ею: `pulls/N/files` — это
+      # ровно файлы ЭТОГО изменения, без гонки. По REST, как требует 001.
+      # Список постраничный: без per_page отдаётся 30 файлов, и изменение
+      # покрупнее молча теряло бы хвост (075).
+      - name: состав изменения — от площадки
+        id: pr_files
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files?per_page=100" \
+            --jq '.[].filename' > "$RUNNER_TEMP/pr-paths.txt"
+          echo "base=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq .base.sha)" >> "$GITHUB_OUTPUT"
+          echo "файлов в изменении: $(wc -l < "$RUNNER_TEMP/pr-paths.txt")"
+
       - name: атрибуция сверена со списком согласованных имён
         if: github.event_name == 'pull_request'
         env:
-          BASE: ${{ github.event.pull_request.base.sha }}
+          # База — из шага выше: значение из события устаревает молча.
+          BASE: ${{ steps.pr_files.outputs.base }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: python scripts/check_attribution.py --range "$BASE..$HEAD_SHA" --require-declared-author
 
@@ -115,10 +141,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
-          BASE: ${{ github.event.pull_request.base.sha }}
         run: |
           set -euo pipefail
-          git diff --name-only "$BASE...HEAD" > "$RUNNER_TEMP/paths.txt"
+          cp "$RUNNER_TEMP/pr-paths.txt" "$RUNNER_TEMP/paths.txt"
           # ПО REST (001) — см. шаг с телом изменения выше.
           have=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq '[.labels[].name] | join(",")')
           python scripts/check_labels.py \
@@ -141,7 +166,8 @@ jobs:
       - name: починка ответила, тянет ли она на правило
         if: github.event_name == 'pull_request'
         env:
-          BASE: ${{ github.event.pull_request.base.sha }}
+          # База — из шага выше: значение из события устаревает молча.
+          BASE: ${{ steps.pr_files.outputs.base }}
         run: python scripts/collect_changelog.py --check --added-since "$BASE"
 
       # Правило 138: решение оседает артефактом ТЕМ ЖЕ заходом, а не перед
@@ -161,10 +187,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}
-          BASE: ${{ github.event.pull_request.base.sha }}
         run: |
           set -euo pipefail
-          git diff --name-only "$BASE...HEAD" > "$RUNNER_TEMP/paths.txt"
+          cp "$RUNNER_TEMP/pr-paths.txt" "$RUNNER_TEMP/paths.txt"
           # ПО REST (001) — см. шаг с телом изменения выше.
           gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq .body > "$RUNNER_TEMP/body.md"
           python scripts/collect_changelog.py --require-entry \
@@ -281,6 +306,16 @@ jobs:
       - name: транспорт к площадке совпадает с объявленным
         run: python scripts/check_transport.py
 
+      # ПРЕДМЕТ ЗАВЁЛСЯ 7 СЕНТЯБРЯ ВМЕСТЕ С ПРОГОНОМ РЕВЬЮ. До него ответ по
+      # 085 гласил «запросов к модели каталог не строит» — и устарел в тот же
+      # час: ревьюер читает изменение, то есть текст, написанный тем, кого он
+      # проверяет. Гейт держит машинную половину — что чужой текст НАЗВАН
+      # данными; послушание модели не держит никто, и это сказано вслух.
+      - name: чужой текст входит в запрос к модели как данные
+        run: python scripts/check_untrusted_prompt.py
+
+      - name: гейт недоверенного входа отвергает свой предмет
+        run: python scripts/check_untrusted_prompt.py --selftest
       # ДВА КРАСНЫХ ЗА ОДИН ДЕНЬ, И ОБА С ЗЕЛЁНЫМ ПРОГОНОМ ПЕРЕД ТОЛЧКОМ.
       # 4 сентября окно гоняло проверки версией языка ниже прогонной;
       # 7 сентября — с пакетом, которого в работе гейтов нет. Общее у обоих:

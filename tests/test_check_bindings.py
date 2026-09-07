@@ -525,3 +525,54 @@ def test_mehanizm_est_razbor_ne_sprashivaetsya(monkeypatch, repo, capsys):
 
     assert cb.main() == 0
 
+
+
+# ── ОТЛОЖЕННОЕ ПРОТИВ ДОЛГА ───────────────────────────────────────────────
+# Поле `awaiting` выводит правило из ступени 0, а значит само становится
+# лазейкой: припиской «построим потом» долг обнулялся бы даром. Три машинных
+# правила заведены одним заходом — исключение из долга, запрет при названном
+# механизме, требование замера — и каждое стоит здесь парой (140).
+# Находка внешнего ревью на #367: первая редакция ушла БЕЗ этих случаев, и
+# двусторонность держалась прогоном автора, а не механизмом.
+
+ОТЛОЖЕНО = ("первого эпика: контейнеров ноль, открытых задач три, "
+            "дочерних нет ни у одной")
+
+
+def test_otlozhennoe_vyvoditsya_iz_dolga(monkeypatch, repo, capsys):
+    """Механизма нет, но событие названо и предмет измерен — это не долг."""
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "none",
+                               "where": "строить не на чем",
+                               "why": "предмета нет",
+                               "machine_half": "есть, но нашла бы пустоту",
+                               "awaiting": ОТЛОЖЕНО}}},
+            export_of("001"))
+    assert cb.main() == 0
+    out = capsys.readouterr().out
+    assert "держится ничем 0" in out
+    assert "отложено до появления предмета: 1" in out
+
+
+def test_otlozhennoe_bez_zamera_eto_nahodka(monkeypatch, repo, capsys):
+    """«Построим потом» — обещание, а не замер: число обязательно."""
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "none",
+                               "where": "строить не на чем",
+                               "why": "предмета нет",
+                               "machine_half": "есть, но нашла бы пустоту",
+                               "awaiting": "построим потом, когда дойдут руки"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "отсутствие предмета не измерено" in capsys.readouterr().err
+
+
+def test_awaiting_pri_gotovom_mehanizme_eto_nahodka(monkeypatch, repo, capsys):
+    """Поле значит «ждём предмета»; рядом с механизмом оно утверждает неправду."""
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": "scripts/check_bindings.py",
+                               "awaiting": ОТЛОЖЕНО}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "механизм назван, а поле awaiting осталось" in capsys.readouterr().err
