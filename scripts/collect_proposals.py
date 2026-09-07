@@ -320,19 +320,27 @@ def main(argv: list[str] | None = None) -> int:
               file=sys.stderr)
         return 2
 
-    code, found = gh("issue", "list", "--state", "open", "--limit", "100",
-                     "--json", "number,body", "--jq",
-                     f'[.[] | select(.body | contains("{MARKER}"))][0].number // empty')
+    # ПО REST (001): `gh issue list` идёт через GraphQL — ~300 points из
+    # часовых 5000 против одного запроса. Изменения из /issues отсеиваются
+    # явно: REST кладёт их в тот же список, и изменение с маркером в теле
+    # сошло бы за задачу.
+    code, found = gh("api", "repos/{owner}/{repo}/issues?state=open&per_page=100",
+                     "--jq",
+                     f'[.[] | select(.pull_request == null) '
+                     f'| select(.body // "" | contains("{MARKER}"))][0].number // empty')
     if code != 0:
         print(f"проверка не отработала: трекер не ответил — {found}",
               file=sys.stderr)
         return 2
 
     if found:
-        code, out = gh("issue", "edit", found, "--body", body)
+        # ПО REST (001) — см. отбор задач выше.
+        code, out = gh("api", "--method", "PATCH",
+                       f"repos/{{owner}}/{{repo}}/issues/{found}", "-f", f"body={body}")
         where = f"задача #{found} обновлена"
     elif pending:
-        code, out = gh("issue", "create", "--title", TITLE, "--body", body)
+        code, out = gh("api", "repos/{owner}/{repo}/issues",
+                       "-f", f"title={TITLE}", "-f", f"body={body}")
         where = f"задача заведена: {out}"
     else:
         print("не разобранных предложений нет; задачи нет — заводить нечего")

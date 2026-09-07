@@ -95,7 +95,10 @@ jobs:
           PR: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
-          gh pr view "$PR" --json body --jq .body > "$RUNNER_TEMP/pr-body.md"
+          # ПО REST (001): `gh pr view` идёт через GraphQL, а одна такая
+          # операция стоит ~300 points из часовых 5000 против одного
+          # запроса REST. Поля те же, имена другие.
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq .body > "$RUNNER_TEMP/pr-body.md"
           python scripts/pr_body.py --check --body-file "$RUNNER_TEMP/pr-body.md"
 
       # Правило 064 объявляло себя обеспеченным гейтом, а держало ДРУГУЮ свою
@@ -116,7 +119,8 @@ jobs:
         run: |
           set -euo pipefail
           git diff --name-only "$BASE...HEAD" > "$RUNNER_TEMP/paths.txt"
-          have=$(gh pr view "$PR" --json labels --jq '[.labels[].name] | join(",")')
+          # ПО REST (001) — см. шаг с телом изменения выше.
+          have=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq '[.labels[].name] | join(",")')
           python scripts/check_labels.py \
             --paths-from "$RUNNER_TEMP/paths.txt" --have "$have"
 
@@ -161,7 +165,8 @@ jobs:
         run: |
           set -euo pipefail
           git diff --name-only "$BASE...HEAD" > "$RUNNER_TEMP/paths.txt"
-          gh pr view "$PR" --json body --jq .body > "$RUNNER_TEMP/body.md"
+          # ПО REST (001) — см. шаг с телом изменения выше.
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq .body > "$RUNNER_TEMP/body.md"
           python scripts/collect_changelog.py --require-entry \
             --paths-from "$RUNNER_TEMP/paths.txt" \
             --body-file "$RUNNER_TEMP/body.md"
@@ -265,6 +270,19 @@ jobs:
       # attribution-history — то есть у тех двух, что дольше всех.
       - name: у прогонов есть кнопка, у работ — предел времени
         run: python scripts/check_workflows.py
+
+      # ОТВЕТ ПО 001 УТВЕРЖДАЛ «всё остальное переведено на REST», И ЭТО БЫЛО
+      # ЛОЖНО: 7 сентября в дереве нашлось 22 вызова семейств `gh issue` и
+      # `gh pr`, идущих через GraphQL, а исчерпание его квоты в тот же день
+      # уронило дежурного и заморозило очередь целиком. Утверждение о
+      # транспорте держалось прозой и разошлось с транспортом молча — ровно
+      # 146. Теперь его держит гейт, а закрытый список исключений, которого
+      # требует само правило, лежит в .rules/transport.json.
+      - name: транспорт к площадке совпадает с объявленным
+        run: python scripts/check_transport.py
+
+      - name: гейт транспорта отвергает свой предмет
+        run: python scripts/check_transport.py --selftest
 
       # САМОПРОВЕРКА БЫЛА НАПИСАНА И НЕ ЗАПУСКАЛАСЬ. Шаг «зона изменения
       # проставлена» ниже живёт только на pull_request и проверяет РЕАЛЬНЫЕ

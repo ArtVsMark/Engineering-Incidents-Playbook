@@ -216,9 +216,12 @@ def main() -> int:
 
     missing: list[str] = []
     for issue, rr in found.items():
-        code, out = ghcli.run("issue", "view", issue, "--repo", args.repo,
-                              "--json", "comments",
-                              "--jq", f'[.comments[] | select(.body | contains("{MARKER}"))] | length')
+        # ПО REST (001): семейство `gh issue` идёт через GraphQL — ~300
+        # points из часовых 5000 против одного запроса, а этот цикл идёт по
+        # ВСЕМ задачам со следом. У комментариев в REST свой адрес, и берётся
+        # сразу он: читать задачу целиком ради них незачем.
+        code, out = ghcli.run("api", f"repos/{args.repo}/issues/{issue}/comments?per_page=100",
+                              "--jq", f'[.[] | select(.body // "" | contains("{MARKER}"))] | length')
         if ghcli.failed(code):
             print(f"не отработал: задача #{issue} не прочитана — {out}", file=sys.stderr)
             return 2
@@ -227,13 +230,17 @@ def main() -> int:
         missing.append(issue)
         if not args.apply:
             continue
-        code, out = ghcli.run("issue", "comment", issue, "--repo", args.repo,
-                              "--body", comment_for(rr, args.catalogue))
+        # ПО REST (001) — см. чтение комментариев выше.
+        code, out = ghcli.run("api", f"repos/{args.repo}/issues/{issue}/comments",
+                              "-f", f"body={comment_for(rr, args.catalogue)}")
         if ghcli.failed(code):
             print(f"не отработал: запись в #{issue} не принята — {out}", file=sys.stderr)
             return 2
         if args.label:
-            ghcli.run("issue", "edit", issue, "--repo", args.repo, "--add-label", args.label)
+            # ПО REST (001). У меток свой адрес, и POST по нему ДОБАВЛЯЕТ
+            # метку, а не заменяет набор — как и `--add-label` до правки.
+            ghcli.run("api", f"repos/{args.repo}/issues/{issue}/labels",
+                      "-f", f"labels[]={args.label}")
 
     print(f"задач со следом: {len(found)}; без обратной ссылки было: {len(missing)}"
           + (f" — дописано {len(missing)}" if args.apply and missing else ""))

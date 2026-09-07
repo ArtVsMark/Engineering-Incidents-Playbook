@@ -580,8 +580,11 @@ def main() -> int:
     # «не приходит без». Ронять доставку правил из-за подсказки значило бы
     # менять предмет на украшение (084).
     свои_задачи: list[dict] = []
-    code_i, out_i = gh("issue", "list", "--state", "open", "--limit", "100",
-                       "--json", "number,title")
+    # ПО REST (001): `gh issue list` идёт через GraphQL — ~300 points из
+    # часовых 5000 против одного запроса. Изменения отсеиваются явно: REST
+    # кладёт их в тот же список.
+    code_i, out_i = gh("api", "repos/{owner}/{repo}/issues?state=open&per_page=100",
+                       "--jq", "[.[] | select(.pull_request == null) | {number, title}]")
     if code_i == 0:
         try:
             свои_задачи = [i for i in json.loads(out_i)
@@ -616,9 +619,11 @@ def main() -> int:
     # прогон не находил её и заводил вторую. Потребитель это и наблюдал —
     # ArtVsMark/ArtVsMark#52 висел открытым с нулём нерассмотренных, потому что
     # иначе он бы раздвоился.
-    code, found = gh("issue", "list", "--state", "all", "--limit", "100",
-                     "--json", "number,body,state",
-                     "--jq", f'[.[] | select(.body | contains("{MARKER}"))][0] '
+    # ПО REST (001) — см. отбор открытых задач выше. Состояние REST отдаёт
+    # строчными («open»/«closed»), а разбор ниже ждёт их же.
+    code, found = gh("api", "repos/{owner}/{repo}/issues?state=all&per_page=100",
+                     "--jq", f'[.[] | select(.pull_request == null) '
+                             f'| select(.body // "" | contains("{MARKER}"))][0] '
                              f'// empty | "\\(.number) \\(.state)"')
     if code != 0:
         print(f"проверка не отработала: трекер не ответил — {found}", file=sys.stderr)
@@ -628,10 +633,13 @@ def main() -> int:
     pending = bool(missing or unreviewed or stale)
 
     if number:
-        code, out = gh("issue", "edit", number, "--body", body)
+        # ПО REST (001) — см. отбор задач выше.
+        code, out = gh("api", "--method", "PATCH",
+                       f"repos/{{owner}}/{{repo}}/issues/{number}", "-f", f"body={body}")
         where = f"задача #{number} обновлена"
     elif pending:
-        code, out = gh("issue", "create", "--title", args.title, "--body", body)
+        code, out = gh("api", "repos/{owner}/{repo}/issues",
+                       "-f", f"title={args.title}", "-f", f"body={body}")
         where = f"задача заведена: {out}"
     else:
         # Завести задачу, чтобы тут же закрыть, — шум без адресата.
@@ -652,7 +660,10 @@ def main() -> int:
     # говорит «я посмотрел», а такого механизм сказать не может (142).
     want = "OPEN" if pending else "CLOSED"
     if state and state.upper() != want:
-        code, out = gh("issue", "reopen" if pending else "close", number)
+        # ПО REST (001): состояние задачи — то же поле, что и тело.
+        code, out = gh("api", "--method", "PATCH",
+                       f"repos/{{owner}}/{{repo}}/issues/{number}",
+                       "-f", f"state={'open' if pending else 'closed'}")
         if code != 0:
             print(f"проверка не отработала: состояние задачи #{number} не "
                   f"изменено — {out}", file=sys.stderr)
