@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-04T13:53:26+00:00",
+  "generated_at": "2026-09-07T13:28:23+00:00",
   "contracts": {
     "export": "1.4",
     "bindings": "1.1",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 181,
+  "count": 182,
   "rules": [
     {
       "id": "001",
@@ -5940,6 +5940,42 @@
         {
           "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "148"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "184",
+      "slug": "an-answer-of-not-applicable-is-split-in-two",
+      "title": {
+        "ru": "Ответ «правило к нам не относится» разбирается надвое так же, как «механизма нет»",
+        "en": "An answer of \"this rule does not apply to us\" is split in two, like \"no mechanism\""
+      },
+      "areas": {
+        "ru": [
+          "каталог",
+          "гейты"
+        ],
+        "en": [
+          "catalogue",
+          "gates"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "added": "2026-09-07",
+      "files": {
+        "ru": "rules/ru/184-an-answer-of-not-applicable-is-split-in-two.md",
+        "en": "rules/en/184-an-answer-of-not-applicable-is-split-in-two.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "355"
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
