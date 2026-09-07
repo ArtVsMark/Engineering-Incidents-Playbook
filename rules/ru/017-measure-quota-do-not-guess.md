@@ -49,5 +49,5 @@ API-лимиты, дисковые квоты, лимиты сборок.
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § Диагностика первым
+ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § Диагностика — первым шагом, а не после часа догадок
 шагом

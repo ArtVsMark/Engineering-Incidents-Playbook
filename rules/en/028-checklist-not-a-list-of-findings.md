@@ -55,4 +55,4 @@ progress itself.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § complex issues
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Комплексный issue

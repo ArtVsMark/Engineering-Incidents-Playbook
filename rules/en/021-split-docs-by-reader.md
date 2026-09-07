@@ -58,4 +58,4 @@ later.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § documentation
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Документация

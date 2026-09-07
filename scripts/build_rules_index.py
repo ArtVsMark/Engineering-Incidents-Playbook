@@ -67,7 +67,7 @@ OUT = RULES / "README.md"
 EXPORT = ROOT / "export" / "rules.json"
 #: Версия контракта выгрузки. Поле `candidates` добавлено — по правилам
 #: эволюции (export/README.md) добавление поля это MINOR.
-EXPORT_SCHEMA = "1.4"
+EXPORT_SCHEMA = "1.5"
 CATALOGUE_URL = "https://github.com/ArtVsMark/Engineering-Incidents-Playbook"
 
 #: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
@@ -112,6 +112,21 @@ TRAIL_RE = re.compile(
     r"([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)#(\d+)"   # владелец/репозиторий#номер
     r"|([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)"          # репозиторий без номера — контекст
     r"|#(\d+)"                                     # голый номер — к последнему контексту
+)
+
+#: СЛЕД-ДОКУМЕНТ — ВТОРАЯ ЗАКОННАЯ ФОРМА, и до 7 сентября выгрузка её теряла.
+#: Шаблон записи разрешает две: «владелец/репозиторий#номер» ЛИБО «потребитель
+#: из реестра с названным артефактом». Разбиралась только первая, и 89 правил
+#: из 183 выглядели «без следа», хотя раздел непустой у всех до единого.
+#:
+#: Цена потери не в числе: потребитель НЕ ЗНАЛ, какие его документы названы
+#: следом, — а значит и скорректировать след при правке документа не мог.
+#: Замер по грейдеру 7 сентября: 71 такой след, два сгнили молча — у 017 раздел
+#: переименован («Диагностика первым» → «Диагностика — первым шагом…»), у 102
+#: строка оборвана на «§ Что прощается / §».
+DOC_TRAIL_RE = re.compile(
+    r"([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)\s+—\s+`?([\w./-]+\.\w+)`?"
+    r"(?:\s*§\s*([^\n(,;]+))?"
 )
 
 AREA_RE = {
@@ -1079,6 +1094,20 @@ def trails_of(path: Path, lang: str, known: set[str]) -> tuple[list[dict[str, st
         if key not in seen:
             seen.add(key)
             out.append({"repo": key[0], "issue": key[1]})
+
+    # ВТОРАЯ ЗАКОННАЯ ФОРМА: потребитель с названным артефактом. Собирается
+    # ПОСЛЕ задач и тем же порядком — чтобы читателю выгрузки след виделся так
+    # же, как в записи. Раздел необязателен: «репозиторий — файл» без § это
+    # ссылка на документ целиком, и она разрешима.
+    for m in DOC_TRAIL_RE.finditer(text[at:]):
+        репо, файл, раздел = m.groups()
+        if репо not in known:
+            continue                       # не потребитель — проза или путь
+        запись = {"repo": репо, "doc": файл}
+        if раздел and раздел.strip():
+            запись["section"] = раздел.strip().rstrip(".").strip("`").strip()
+        if запись not in out:
+            out.append(запись)
     return out, None
 
 
@@ -1164,11 +1193,23 @@ def check_trails(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list], li
                 problems.append(f"{num}: {lang}/{slot[lang].name}: {err}")
         if err_ru or err_en:
             continue
-        if {(d["repo"], d["issue"]) for d in ru} != {(d["repo"], d["issue"]) for d in en}:
+        # СРАВНИВАЮТСЯ ОБА ВИДА, А НЕ ТОЛЬКО ЗАДАЧИ. Пока запись следа знала
+        # одну форму, ключ строился как (repo, issue); с появлением следа-
+        # документа такой ключ падал бы на нём с KeyError — то есть сборка
+        # ломалась бы ровно на законной форме. Ключ теперь описывает запись
+        # целиком, и деревья сверяются по обеим.
+        def ключ(d: dict[str, str]) -> tuple:
+            return (d["repo"], d.get("issue"), d.get("doc"), d.get("section"))
+
+        def показать(следы: list[dict[str, str]]) -> list[str]:
+            return [f"{d['repo']}#{d['issue']}" if "issue" in d
+                    else f"{d['repo']} — {d['doc']}" + (f" § {d['section']}" if d.get("section") else "")
+                    for d in следы]
+
+        if {ключ(d) for d in ru} != {ключ(d) for d in en}:
             problems.append(
                 f"{num}: следы деревьев расходятся — "
-                f"ru {[d['repo'] + '#' + d['issue'] for d in ru]}, "
-                f"en {[d['repo'] + '#' + d['issue'] for d in en]}"
+                f"ru {показать(ru)}, en {показать(en)}"
             )
             continue
         result[num] = ru

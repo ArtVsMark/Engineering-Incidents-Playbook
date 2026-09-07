@@ -61,6 +61,6 @@ apply — but even that is established by comparison, not by assumption.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § additionally for
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Дополнительно для
 audits (the novelty rule). Related: [020](020-restart-only-the-delta.md),
 [026](026-rejected-findings-must-be-recorded.md).

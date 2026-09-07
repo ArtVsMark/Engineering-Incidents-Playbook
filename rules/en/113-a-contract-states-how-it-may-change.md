@@ -71,6 +71,6 @@ a second time.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/dev/result-contract.md` § stability
+ArtVsMark/Stepik-Python-Grader — `docs/dev/result-contract.md` § Ожидания
 expectations. Related: [056](056-a-signal-states-what-it-does-not-mean.md),
 [078](078-cancelled-is-not-an-error.md).

@@ -57,4 +57,4 @@ no.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § sources of truth
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Источники истины

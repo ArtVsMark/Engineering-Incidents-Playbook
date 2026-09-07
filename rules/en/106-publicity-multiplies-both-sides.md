@@ -64,6 +64,6 @@ checked on real material.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `HISTORY.md` § how it started,
+ArtVsMark/Stepik-Python-Grader — `HISTORY.md` § Как это началось,
 `docs/dev/corpus.md` (a false "accepted" as the worst defect). Related:
 [036](036-expensive-window-enters-twice-and-briefly.md).

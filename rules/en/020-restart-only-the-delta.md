@@ -43,4 +43,4 @@ then starting over is cheaper.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § restart the delta
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Рестарт только

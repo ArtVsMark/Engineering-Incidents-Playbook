@@ -47,4 +47,4 @@ URL, supported dependency versions. One source plus a check.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § versioning
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Версионирование

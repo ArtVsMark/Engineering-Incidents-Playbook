@@ -67,7 +67,7 @@ sections would have taken.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/dev/glossary.md` § duplicates from two
+ArtVsMark/Stepik-Python-Grader — `docs/dev/glossary.md` § Дубли двух поколений
 generations of import. Related:
 [098](098-the-unit-of-splitting-follows-usage.md),
 [021](021-split-docs-by-reader.md).

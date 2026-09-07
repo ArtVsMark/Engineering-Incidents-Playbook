@@ -51,4 +51,4 @@ interval are all you have.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § the watcher session
+ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § Окно-наблюдатель

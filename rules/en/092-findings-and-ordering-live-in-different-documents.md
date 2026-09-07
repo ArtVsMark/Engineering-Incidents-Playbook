@@ -64,7 +64,7 @@ is overhead.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § open work (an audit and a queue
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Открытая работа (an audit and a queue
 are different things), `docs/agent/claude-handoff.md`. Related:
 [028](028-checklist-not-a-list-of-findings.md),
 [021](021-split-docs-by-reader.md).

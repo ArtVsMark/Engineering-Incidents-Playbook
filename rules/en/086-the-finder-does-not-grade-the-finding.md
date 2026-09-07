@@ -68,7 +68,7 @@ corrections go the same way.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § additionally for
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Дополнительно для
 audits; audits v1.9.0 (7 of 32), v1.10.0 (141 of 192), 2026-08-10 (83 → 16).
 Related: [037](037-finding-status-depends-on-window.md),
 [044](044-check-the-premise-before-fixing.md).

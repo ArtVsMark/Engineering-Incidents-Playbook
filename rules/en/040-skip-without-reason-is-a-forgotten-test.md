@@ -52,5 +52,5 @@ why" has no one-command answer.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § why skips are visible by
+ArtVsMark/Stepik-Python-Grader — `CONTRIBUTING.md` § Пропуски: почему их видно
 name; `scripts/skip_inventory.py`, `tests/test_skip_inventory.py`.

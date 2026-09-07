@@ -117,7 +117,7 @@ author cannot be contacted.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § two environments,
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Два окна,
 `docs/agent/environments.md` § how to split work between them. Related rules:
 [002](002-rule-without-mechanism.md) — a rule without a mechanism;
 [018](018-cloud-checks-nodes-local-checks-chain.md) — environments check

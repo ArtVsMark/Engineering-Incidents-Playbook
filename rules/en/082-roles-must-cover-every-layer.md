@@ -265,7 +265,7 @@ times more findings than its neighbours.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/roles.md` § the role matrix;
+ArtVsMark/Stepik-Python-Grader — `docs/agent/roles.md` § Матрица подключения;
 ArtVsMark/Stepik-Python-Grader#1007 (33 findings from the browser pass),
 ArtVsMark/Stepik-Python-Grader#1005 (12 findings on locales). Related:
 [062](062-a-role-must-be-able-to-object.md) — the other side;

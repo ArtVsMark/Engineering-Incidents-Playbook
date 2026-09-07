@@ -64,6 +64,6 @@ to is in one.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § labels when raising an issue,
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Метки при заведении issue,
 `CONTRIBUTING.md` § "good first issue" and "help wanted" are raised bilingually.
 Related: [051](051-warn-on-likely-block-on-certain.md).

@@ -70,7 +70,7 @@ scrolling.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § updating the changelog (the three
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Обновление CHANGELOG (the three
 most recent minors, the `check_docs_guardrails.py` gate), § open work (the audit
 lifecycle; the queue is cleaned by deletion). Related:
 [024](024-no-worklog-in-active-docs.md), [050](050-limits-move-down-only.md),

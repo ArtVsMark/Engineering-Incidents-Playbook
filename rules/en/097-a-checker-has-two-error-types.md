@@ -65,6 +65,6 @@ regression is empty.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/dev/corpus.md` § why it exists when there
+ArtVsMark/Stepik-Python-Grader — `docs/dev/corpus.md` § Зачем он
 are tests (the `vertical_tab`, `float_noise`, `crlf_newlines` mutations).
 Related: [055](055-your-own-expectations-are-a-hypothesis.md).

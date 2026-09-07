@@ -72,7 +72,7 @@ trace consists of cheap actions.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § in a multi-phase
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § У многофазного
 audit the critic checks the METHOD of its own phase; the 2026-08-10 audit.
 Related: [032](032-role-must-run-the-product.md),
 [060](060-debrief-every-wave-quality-first.md).

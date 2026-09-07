@@ -66,5 +66,5 @@ labelled an assumption rather than passed off as truth.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/course-walkthrough.md` § broken
+ArtVsMark/Stepik-Python-Grader — `docs/agent/course-walkthrough.md` § Косячные
 answers come from the catalogue, § compare the diagnosis as well as the verdict.

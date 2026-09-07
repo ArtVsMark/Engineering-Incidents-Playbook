@@ -65,6 +65,6 @@ takes more than a minute.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § the route when
+ArtVsMark/Stepik-Python-Grader — `docs/agent/preflight.md` § Маршрут при
 limits run out (§ the boundary runs along "git versus API", § what ran out →
 where to go).

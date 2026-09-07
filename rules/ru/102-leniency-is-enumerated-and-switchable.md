@@ -66,7 +66,7 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — `docs/use/configuration.md` § Что прощается / §
+ArtVsMark/Stepik-Python-Grader — `docs/use/configuration.md` § Что прощается / § Что не прощается
 Что не прощается, режимы сравнения. Смежное:
 [097](097-a-checker-has-two-error-types.md),
 [068](068-allowlist-not-denylist.md).

@@ -45,5 +45,5 @@ boundary helps.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § never truncate
+ArtVsMark/Stepik-Python-Grader — `docs/agent/multiagent.md` § Обрезать текст
 silently
