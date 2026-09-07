@@ -274,6 +274,7 @@ python scripts/refresh_derived.py --selftest
 python scripts/check_showcase.py
 python scripts/check_test_deps.py
 python scripts/check_workflows.py
+python scripts/check_transport.py
 python scripts/check_templates.py
 python scripts/check_connect.py
 python scripts/check_readers.py

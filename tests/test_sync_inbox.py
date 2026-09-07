@@ -35,14 +35,20 @@ def arm(monkeypatch, rules, answered, issue=None):
 
     def fake_gh(*args):
         calls.append(args)
-        if args[:2] == ("issue", "list"):
+        # ПОСЛЕ ПЕРЕВОДА НА REST (001) ВСЕ ВЫЗОВЫ — `gh api`, и различает их
+        # адрес, а не подкоманда. Подделка, глядящая на первое слово, отвечала
+        # бы одинаково на поиск задачи и на её создание.
+        путь = args[1] if len(args) > 1 else ""
+        if "state=all" in путь:
             # ПОДДЕЛКА ОТДАЁТ ТО, ЧТО ОТДАЁТ ПЛОЩАДКА, А НЕ ТО, ЧТО ЗАДУМАНО.
             # Раньше здесь стояла пустая строка — и четыре теста «задачи нет»
             # гонялись на значении, которого `gh --jq` не возвращает никогда:
             # индексация пустого набора печатается словом «null null». Тесты
             # были зелёными, а механизм не мог завести первую задачу вовсе.
             return 0, (f"{issue[0]} {issue[1]}" if issue else "null null")
-        if args[:2] == ("issue", "create"):
+        if "state=open" in путь:
+            return 0, "[]"
+        if путь.endswith("/issues") and any(a.startswith("title=") for a in args):
             return 0, "https://example/issues/99"
         return 0, ""
 
@@ -61,7 +67,25 @@ def arm(monkeypatch, rules, answered, issue=None):
 
 
 def verbs(calls):
-    return [c[1] for c in calls if c[0] == "issue"]
+    """Что вызов ДЕЛАЕТ, а не как называется его подкоманда.
+
+    До перевода на REST глагол стоял вторым словом (`issue close`). Теперь у
+    всех вызовов оно одно — `api`, — и действие видно по методу и полям:
+    состояние правится тем же PATCH, что и тело, а отличает их поле.
+    """
+    из_вызова = []
+    for c in calls:
+        поля = [a for a in c if isinstance(a, str)]
+        если_поле = lambda имя: any(a.startswith(имя) for a in поля)
+        if "PATCH" in поля and если_поле("state=closed"):
+            из_вызова.append("close")
+        elif "PATCH" in поля and если_поле("state=open"):
+            из_вызова.append("reopen")
+        elif "PATCH" in поля and если_поле("body="):
+            из_вызова.append("edit")
+        elif если_поле("title="):
+            из_вызова.append("create")
+    return из_вызова
 
 
 RULES = [{"id": "001", "title": {"ru": "первое"}},
@@ -86,9 +110,8 @@ def test_zakrytaya_zadacha_nahoditsya_i_ne_dublitsya(monkeypatch, capsys):
     # задачи-«входящих». Берётся ВТОРОЙ по признаку, а не по порядку: порядок
     # вызовов — не предмет случая, и привязка к нему ломает его на первой же
     # вставке (141).
-    listing = next(c for c in calls
-                   if c[:2] == ("issue", "list") and "--jq" in c)
-    assert "all" in listing
+    listing = next(c for c in calls if "state=all" in c[1])
+    assert "state=all" in listing[1]
 
 
 def test_poyavilos_nerassmotrennoe_zadacha_otkryvaetsya_zanovo(monkeypatch, capsys):

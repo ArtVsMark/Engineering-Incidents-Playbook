@@ -156,8 +156,12 @@ def find_issue(title_marker: str = MARKER) -> tuple[int | None, str | None]:
     # не нашли только что заведённую задачу и завели по своей — #133 и #134,
     # при обещанной ОДНОЙ (правило 142). Обычный список отдаёт актуальное
     # состояние сразу, и отбор по маркеру идёт ниже, у себя.
-    code, out = gh("issue", "list", "--state", "open",
-                   "--json", "number,body", "--limit", "200")
+    # ПО REST (001): `gh issue list` идёт через GraphQL — ~300 points из
+    # часовых 5000 против одного запроса. В /issues REST кладёт И изменения,
+    # поэтому они отсеиваются явно: иначе одноимённое ИЗМЕНЕНИЕ считалось бы
+    # задачей дежурного.
+    code, out = gh("api", "repos/{owner}/{repo}/issues?state=open&per_page=100",
+                   "--jq", "[.[] | select(.pull_request == null) | {number, body}]")
     if code != 0:
         return None, out
     try:
@@ -308,12 +312,15 @@ def main() -> int:
         return 1
 
     if number is not None:
-        code, out = gh("issue", "edit", str(number), "--body", body)
+        # ПО REST (001) — см. отбор открытых задач выше.
+        code, out = gh("api", "--method", "PATCH",
+                       f"repos/{{owner}}/{{repo}}/issues/{number}", "-f", f"body={body}")
         action = f"задача #{number} обновлена"
     else:
-        create = ["issue", "create", "--title", args.title, "--body", body]
+        create = ["api", "repos/{owner}/{repo}/issues",
+                  "-f", f"title={args.title}", "-f", f"body={body}"]
         if args.label:
-            create += ["--label", args.label]
+            create += ["-f", f"labels[]={args.label}"]
         code, out = gh(*create)
         action = f"задача заведена: {out}"
     if code != 0:
