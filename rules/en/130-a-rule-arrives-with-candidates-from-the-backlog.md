@@ -15,8 +15,8 @@ came out of a single issue. Rule 124 ("re-run the minimum, but green on the
 second attempt is a finding") gathered **three trails**, and all three issues
 **existed before the rule**: they were different symptoms of one cause.
 
-A human connected them, at the moment of writing the rule, because he held the
-backlog in his head. The neighbouring projects of the same owner had no such
+A human connected them, at the moment of writing the rule, because they held
+the backlog in their head. The neighbouring projects of the same owner had no such
 person — and nobody looked for candidates there, although the rules apply to them
 too.
 
