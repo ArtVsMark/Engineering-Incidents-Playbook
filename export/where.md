@@ -12,11 +12,11 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 42 | 31 | 188 | 0 | 0 | 158 | 118 | 8 | 27 | 5 | 99 |  |
-| `Stepik-Python-Grader` | подключён | 174 | 130 | 181 | 7 | 0 | 178 | 76 | 37 | 65 | 0 | 142 |  |
-| `ArtVsMark` | подключён | 19 | 13 | 182 | 6 | 0 | 109 | 75 | 11 | 21 | 0 | 35 |  |
-| `Claude-Code_Usage-Token` | подключён | 16 | 14 | 181 | 7 | 0 | 152 | 95 | 9 | 46 | 2 | 86 |  |
-| `Glossary-Python` | подключён | 0 | 0 | 181 | 7 | 0 | 117 | 60 | 12 | 29 | 16 | 78 |  |
+| `Engineering-Incidents-Playbook` | подключён | 43 | 31 | 189 | 0 | 0 | 159 | 119 | 8 | 27 | 5 | 99 |  |
+| `Stepik-Python-Grader` | подключён | 174 | 130 | 181 | 8 | 0 | 178 | 76 | 37 | 65 | 0 | 142 |  |
+| `ArtVsMark` | подключён | 20 | 14 | 182 | 7 | 0 | 109 | 75 | 11 | 21 | 0 | 35 |  |
+| `Claude-Code_Usage-Token` | подключён | 16 | 14 | 181 | 8 | 0 | 152 | 95 | 9 | 46 | 2 | 86 |  |
+| `Glossary-Python` | подключён | 0 | 0 | 181 | 8 | 0 | 117 | 60 | 12 | 29 | 16 | 78 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -62,8 +62,8 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 14 |
 | `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 12 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 11 |
+| `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 10 |
 | `Engineering-Incidents-Playbook` | `AGENTS.md` | 9 |
-| `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 9 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/agent-pr.yml` | 8 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/automerge.yml` | 8 |
 | `Engineering-Incidents-Playbook` | `export/README.md` | 8 |
@@ -75,6 +75,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_prose.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 5 |
+| `Engineering-Incidents-Playbook` | `.rules/consumers.json` | 4 |
 | `Engineering-Incidents-Playbook` | `.rules/schedules.json` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/audit_catalogue.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/check_attribution.py` | 4 |
@@ -82,7 +83,6 @@
 | `Engineering-Incidents-Playbook` | `scripts/main_red.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/refresh_derived.py` | 4 |
 | `Engineering-Incidents-Playbook` | `.github/labels.yml` | 3 |
-| `Engineering-Incidents-Playbook` | `.rules/consumers.json` | 3 |
 | `Engineering-Incidents-Playbook` | `.rules/transport.json` | 3 |
 | `Engineering-Incidents-Playbook` | `CLAUDE.md` | 3 |
 | `Engineering-Incidents-Playbook` | `README.md` | 3 |
@@ -116,7 +116,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 41 механизмов по одному правилу; без названного адреса: 0 из 153 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 41 механизмов по одному правилу; без названного адреса: 0 из 154 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 40 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
@@ -479,3 +479,4 @@
 | 187 | действует | — | — | — | — |
 | 188 | нет предмета | — | — | — | — |
 | 189 | действует | — | — | — | — |
+| 190 | действует | — | — | — | — |
