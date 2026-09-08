@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T04:48:11+00:00",
+  "generated_at": "2026-09-08T05:01:13+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,9 +10,9 @@
       "answers_to": "1.5",
       "state": "подключён",
       "read_at": "2026-09-08",
-      "answered": 185,
+      "answered": 186,
       "by_status": {
-        "active": 156,
+        "active": 157,
         "not-applicable": 23,
         "rejected": 6
       },
@@ -20,7 +20,7 @@
         "gate": 117,
         "document": 27,
         "pipeline": 8,
-        "none": 4
+        "none": 5
       },
       "rules": {
         "001": "active",
@@ -207,7 +207,8 @@
         "183": "active",
         "184": "active",
         "185": "active",
-        "186": "active"
+        "186": "active",
+        "187": "active"
       },
       "holds": {
         "001": {
@@ -833,9 +834,13 @@
         "186": {
           "mechanism": "gate",
           "where": "tests/test_link_trails.py::test_kod_ne_menyaet_smysla_mezhdu_rezhimami — один вход, два режима, разные ответы: сухой отвечает «есть находки», записывающий «чисто». Держит это scripts/link_trails.py, где код считается по ОСТАТКУ после записи, а исходы объявлены порознь для двух режимов"
+        },
+        "187": {
+          "mechanism": "none",
+          "where": ".github/workflows/ci.yml — у работы `catalogue`, единственной обязательной, условия нет вовсе, и запись она оставляет одну. Условие есть у .github/workflows/review.yml, но этот канал необязателен и слияние не держит (084). Машинного сторожа над этим нет, причина в why"
         }
       },
-      "trails": 40,
+      "trails": 41,
       "born": 31
     },
     {
@@ -2396,8 +2401,8 @@
           "where": "scripts/check_mechanisms.py — двадцать две сверки объявленного с сделанным, и предмет у каждой свой: ::audit_gaps (вердикт без механизма назвал причину), ::audit_verdicts (набор судит все случаи, а не первые), ::own_output_readers (читатели своего вывода названы поимённо), ::check_run_readers, ::schedule_as_backup, ::foreign_why_links, ::cancellation_groups, ::prefix_matched_markers и прочие; scripts/check_bindings.py::audit проверяет, что каждый путь и якорь в поле «где» существует в дереве — вердикт, показывающий в пустоту, отвергается. ПРЕДМЕТ БЫЛ ЖИВОЙ В ДЕНЬ ПРИЁМА ПРАВИЛА: 7 сентября в .github/workflows/metrics.yml появилось `[ -e \"$card\" ] && cp`, тогда как комментарий рядом в .github/workflows/open-pr.yml объявляет обратный приём — «ветвление через if, а не через [ … ] && …, потому что список, закончившийся ложью, увёл бы шаг в отказ». Утверждение было верным, а соседний код ему противоречил; нашлось это прогоном на подделанном пустом шаблоне, а не чтением. ЧТО НЕ ДЕРЖИТСЯ: соответствие прозы СМЫСЛУ механизма машине не даётся — она проверяет, что названное существует и что объявленный класс правил соблюдён, но не то, что комментарий описывает именно этот вызов. Проверено перебором двух утверждений вида «через X, а не через Y»: оба верны — scripts/build_metrics.py::grader_facts действительно читает contents-API, а не raw; open-pr.yml действительно ветвится через if."
         }
       },
-      "trails": 16,
-      "born": 10
+      "trails": 17,
+      "born": 11
     },
     {
       "repo": "ArtVsMark/Claude-Code_Usage-Token",
