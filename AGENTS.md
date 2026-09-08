@@ -65,6 +65,7 @@
 | `python scripts/check_attribution.py` | трейлеры против `.github/authors.txt` |
 | `python scripts/collect_changelog.py --check` | форма фрагментов журнала |
 | `python scripts/check_bindings.py` | ответ каталога по каждому правилу + метрика |
+| `python scripts/check_narrowing.py` | признак сузился — о соседях спрошено строкой `Соседи:` во фрагменте |
 | `python scripts/aggregate_bindings.py --check` | сводка «где действует» собрана из ответов потребителей |
 | `python scripts/audit_catalogue.py` | содержание записи: утверждение, граница «не работает», разрешимый след, паритет разделов |
 | `python scripts/check_charter.py` | этот свод и `CONTRIBUTING` называют те же гейты, что стоят в конвейере |
