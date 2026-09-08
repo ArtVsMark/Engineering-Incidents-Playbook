@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 44 | 32 | 194 | 0 | 0 | 161 | 120 | 8 | 28 | 5 | 103 |  |
 | `Stepik-Python-Grader` | подключён | 175 | 131 | 181 | 13 | 0 | 178 | 76 | 37 | 65 | 0 | 142 |  |
-| `ArtVsMark` | подключён | 23 | 16 | 193 | 1 | 0 | 130 | 91 | 11 | 23 | 0 | 37 |  |
+| `ArtVsMark` | подключён | 23 | 16 | 194 | 0 | 0 | 131 | 92 | 11 | 23 | 0 | 38 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 13 | 0 | 152 | 95 | 9 | 46 | 2 | 86 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 181 | 13 | 0 | 117 | 60 | 12 | 29 | 16 | 78 |  |
 
@@ -168,10 +168,10 @@
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 94 механизмов по одному правилу; без названного адреса: 0 из 178 |
-| `ArtVsMark` | `scripts/build_metrics.py` | 49 |
+| `ArtVsMark` | `scripts/build_metrics.py` | 50 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 43 |
 | `ArtVsMark` | `CLAUDE.md` | 22 |
-| `ArtVsMark` | `.github/workflows/pr-check.yml` | 15 |
+| `ArtVsMark` | `.github/workflows/pr-check.yml` | 16 |
 | `ArtVsMark` | `README.md` | 15 |
 | `ArtVsMark` | `scripts/check_labels.py` | 15 |
 | `ArtVsMark` | `.github/workflows/automerge.yml` | 14 |
@@ -200,7 +200,7 @@
 | `ArtVsMark` | `.github/workflows/snake.yml` | 2 |
 | `ArtVsMark` | `scripts/check_branch.py` | 2 |
 | `ArtVsMark` | `scripts/neighbours.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 5 механизмов по одному правилу; без названного адреса: 0 из 130 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 6 механизмов по одному правилу; без названного адреса: 0 из 131 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 34 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 30 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 15 |
@@ -488,4 +488,4 @@
 | 192 | действует | — | действует | — | — |
 | 193 | нет предмета | — | действует | — | — |
 | 194 | нет предмета | — | действует | — | — |
-| 195 | действует | — | — | — | — |
+| 195 | действует | — | действует | — | — |
