@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T09:37:38+00:00",
+  "generated_at": "2026-09-08T15:23:57+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.2"
   },
-  "count": 193,
+  "count": 194,
   "rules": [
     {
       "id": "001",
@@ -6975,6 +6975,42 @@
       },
       "trails": [],
       "origin": "ArtVsMark/ArtVsMark",
+      "portable": "yes"
+    },
+    {
+      "id": "195",
+      "slug": "a-narrowed-predicate-names-its-neighbour",
+      "title": {
+        "ru": "Починка называет соседние случаи, иначе она чинит один и ломает второй",
+        "en": "A repair names the neighbouring cases, or it fixes one and breaks another"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "качество"
+        ],
+        "en": [
+          "code",
+          "quality"
+        ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/195-a-narrowed-predicate-names-its-neighbour.md",
+        "en": "rules/en/195-a-narrowed-predicate-names-its-neighbour.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "418"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes"
     }
   ],
