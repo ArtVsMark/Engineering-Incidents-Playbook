@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T05:38:30+00:00",
+  "generated_at": "2026-09-08T05:42:28+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 192,
+  "count": 193,
   "rules": [
     {
       "id": "001",
@@ -6944,6 +6944,37 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
+      "portable": "yes"
+    },
+    {
+      "id": "194",
+      "slug": "a-name-is-not-proof-of-ownership",
+      "title": {
+        "ru": "Имя не доказывает владения: принадлежность внешнего ресурса проверяют обратной ссылкой",
+        "en": "A name is no proof of ownership: an external resource is verified by a back-link"
+      },
+      "areas": {
+        "ru": [
+          "данные",
+          "витрины"
+        ],
+        "en": [
+          "data",
+          "showcases"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/194-a-name-is-not-proof-of-ownership.md",
+        "en": "rules/en/194-a-name-is-not-proof-of-ownership.md"
+      },
+      "trails": [],
+      "origin": "ArtVsMark/ArtVsMark",
       "portable": "yes"
     }
   ],
