@@ -115,7 +115,9 @@ def test_доли_правил_берутся_из_сводки_а_не_счит
     раздел, почему = bf.rules("свой/каталог")
     assert почему == ""
     assert раздел == {"total": 9, "gate": 3, "pipeline": 1, "document": 1,
-                      "none": 0, "not_applicable": 4}
+                      "none": 0, "not_applicable": 4, "rejected": 0}
+    # Доли обязаны складываться в целое — иначе расхождение молчаливое (178).
+    assert sum(v for k, v in раздел.items() if k != "total") == раздел["total"]
 
 
 def test_чужого_среза_не_берём(monkeypatch, repo):
@@ -193,3 +195,61 @@ def test_записанный_файл_разбирается_и_несёт_об
     assert записано["schema"] == "1.0"
     # Номер схемы обязан сказать, ЧЕГО он: ключ `schema` носят четыре предмета.
     assert "164" in записано["schema_of"]
+
+
+def test_доли_правил_сходятся_с_целым(monkeypatch, repo):
+    """Находка внешнего взгляда на #409: сумма долей расходилась с `total`.
+
+    Публиковались пять долей при `total` из ответа целиком — 119+8+28+5+27=187
+    против 193, и шесть отклонённых правил не считал ни один ключ. Читатель
+    складывает доли и не получает целого, а спросить не у кого (178, 181).
+    """
+    дерево(repo)
+    подставить(monkeypatch, repo)
+    write(repo / "export/where.json", json.dumps({"consumers": [
+        {"repo": "свой/каталог", "answered": 12,
+         "by_status": {"active": 5, "not-applicable": 4, "rejected": 3},
+         "by_mechanism": {"gate": 2, "pipeline": 1, "document": 1, "none": 1}},
+    ]}))
+    раздел, _ = bf.rules("свой/каталог")
+    доли = sum(v for k, v in раздел.items() if k != "total")
+    assert доли == раздел["total"] == 12
+    assert раздел["rejected"] == 3
+
+
+def test_измерять_нечего_это_исход_один_и_он_достижим(monkeypatch, repo, capsys):
+    """Находка внешнего взгляда на #409: объявленный исход 1 был недостижим.
+
+    Условием стояла неполнота обязательного минимума — а она недостижима:
+    `build()` отдаёт пустые факты только вместе с названной бедой, то есть
+    исходом 2 строкой выше. Объявленный, но недостижимый исход — то же, что
+    мёртвый разбор кода возврата (039, 145).
+
+    Настоящий предмет исхода 1 назван контрактом: проекту, которому измерять
+    нечего, файл НЕ заводится.
+    """
+    # Дерева нет вовсе: ни прогонов, ни манифеста, ни тестов, ни сводки.
+    подставить(monkeypatch, repo)
+    monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
+    monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
+    monkeypatch.setattr(bf.coverage_badge, "measured", lambda: None)
+    assert bf.main([]) == 1
+    err = capsys.readouterr().err
+    assert "измерять нечего" in err
+    # Причина каждого пропуска названа, а не подразумевается (075).
+    assert err.count("не измерено —") == len(bf.ИЗМЕРЯЕМОЕ)
+    assert not (repo / ".github/badges/facts.json").exists()
+
+
+def test_хотя_бы_один_измеренный_раздел_публикуется(monkeypatch, repo):
+    """Вторая сторона (140): один собравшийся раздел — уже повод публиковать."""
+    подставить(monkeypatch, repo)
+    write(repo / "tests/test_a.py", "def test_one():\n    pass\n")
+    monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
+    monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
+    monkeypatch.setattr(bf.coverage_badge, "measured", lambda: None)
+    assert bf.main([]) == 0
+    записано = json.loads((repo / ".github/badges/facts.json")
+                          .read_text(encoding="utf-8"))
+    assert записано["tests"] == {"functions": 1, "modules": 1}
+    assert "rules" not in записано
