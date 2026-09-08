@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T05:11:57+00:00",
+  "generated_at": "2026-09-08T05:20:26+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 189,
+  "count": 190,
   "rules": [
     {
       "id": "001",
@@ -6825,6 +6825,50 @@
         {
           "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "doc": ".rules/consumers.json"
+        }
+      ],
+      "origin": "ArtVsMark/ArtVsMark",
+      "portable": "yes"
+    },
+    {
+      "id": "191",
+      "slug": "a-placeholder-with-a-brake-is-filled-in-the-same-pass",
+      "title": {
+        "ru": "Заготовку со стоп-краном заполняют тем же заходом, что и работу, её породившую",
+        "en": "A placeholder with a brake is filled in the same pass as the work that created it"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "процесс"
+        ],
+        "en": [
+          "pipeline",
+          "process"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/191-a-placeholder-with-a-brake-is-filled-in-the-same-pass.md",
+        "en": "rules/en/191-a-placeholder-with-a-brake-is-filled-in-the-same-pass.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "137"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "138"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "141"
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
