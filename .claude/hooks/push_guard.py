@@ -45,6 +45,43 @@ from pathlib import Path
 
 #: Ключи, за которыми идёт значение, а не имя ветки.
 WITH_VALUE = {"--repo", "-o", "--push-option", "--exec", "--receive-pack"}
+#: Глобальные ключи самого git, за которыми идёт значение: `git -C путь push`.
+#: Отделять их приходится, потому что подкоманда — первое слово БЕЗ ключа.
+GLOBAL_WITH_VALUE = {"-C", "-c", "--git-dir", "--work-tree", "--namespace",
+                     "--exec-path", "--super-prefix"}
+
+
+def подкоманда(words: list[str]) -> tuple[str, list[str]] | None:
+    """Подкоманда git и её аргументы. None — это не вызов git.
+
+    ПОДКОМАНДА — ПЕРВОЕ СЛОВО БЕЗ КЛЮЧА, А НЕ ПРОСТО СЛОВО РЯДОМ. Здесь стояло
+    «`push` среди первых трёх слов», и `git stash push <пути>` — обычное
+    сохранение работы — читалось как толчок в ветку с именем первого файла.
+    Замер 8 сентября: сторож отверг `git stash push scripts/check_bindings.py
+    scripts/check_derived.py` со словами «толчок в scripts/check_derived.py».
+    Ложный отказ на верной работе — то, чего 051 запрещает прямо: красное,
+    которое нельзя снять своей работой, приучают обходить.
+
+    И ЭТО БЫЛ ЕЩЁ РАЗЪЕЗД ВНУТРИ ОДНОГО ХУКА. Соседняя `толкает()` требовала
+    `push` СРАЗУ после `git` и на том же `git stash push` отвечала «нет». Две
+    функции одного сторожа отвечали на один вопрос по-разному, и разошлись бы
+    дальше молча (022). Теперь разбор один, и обе спрашивают его.
+    """
+    if not words or words[0].rsplit("/", 1)[-1] != "git":
+        return None
+    i = 1
+    while i < len(words):
+        слово = words[i]
+        if слово in GLOBAL_WITH_VALUE:
+            i += 2                      # ключ и его значение
+            continue
+        if слово.startswith("-"):
+            i += 1
+            continue
+        return слово, words[i + 1:]
+    return None
+
+
 #: Ссылка вида `HEAD:main` или `refs/heads/x:y` — цель названа явно.
 REFSPEC = re.compile(r"^[^:]+:[^:]+$")
 #: Перенаправление вывода: `>`, `2>&1`, `<file`. В имени ветки этих знаков
@@ -102,9 +139,10 @@ SWITCH_WITH_NAME = {"-b", "-B", "-c", "-C"}
 
 def switched_to(words: list[str]) -> str | None:
     """Ветка, на которую переходит эта команда, если она переходит."""
-    if len(words) < 3 or words[0] != "git" or words[1] not in SWITCH:
+    вызов = подкоманда(words)
+    if вызов is None or вызов[0] not in SWITCH:
         return None
-    tail = words[2:]
+    tail = вызов[1]
     for i, w in enumerate(tail):
         if w in SWITCH_WITH_NAME and i + 1 < len(tail):
             return tail[i + 1]
@@ -137,9 +175,10 @@ def targets(command: str, current: str | None = None) -> list[str]:
         if переход is not None:
             current = переход
             continue
-        if len(words) < 2 or words[0] != "git" or "push" not in words[:3]:
+        вызов = подкоманда(words)
+        if вызов is None or вызов[0] != "push":
             continue
-        tail = words[words.index("push") + 1:]
+        tail = вызов[1]
         positional: list[str] = []
         skip = False
         for word in tail:
@@ -176,12 +215,13 @@ def толкает(command: str) -> bool:
     Тела heredoc уже вырезаны соседней функцией — там текст, а не команды.
     Здесь остаётся вторая форма того же: слово внутри строки-аргумента.
     """
-    try:
-        слова = shlex.split(without_heredocs(command))
-    except ValueError:
-        return False
-    for i, слово in enumerate(слова[:-1]):
-        if слово.rsplit("/", 1)[-1] == "git" and слова[i + 1] == "push":
+    for part in re.split(r"&&|\|\||;|\||\n", without_heredocs(command)):
+        try:
+            слова = shlex.split(part)
+        except ValueError:
+            continue
+        вызов = подкоманда(слова)
+        if вызов is not None and вызов[0] == "push":
             return True
     return False
 
