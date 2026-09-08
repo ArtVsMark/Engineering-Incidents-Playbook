@@ -737,3 +737,23 @@ def test_соседнее_имя_производного_остаётся_на�
     assert cb.main() == 1
     err = capsys.readouterr().err
     assert "where-nobody-builds.json" in err and "разошлась с фактом" in err
+
+
+def test_ступень_ноль_печатается_и_вместе_с_настоящей_находкой(
+        monkeypatch, repo, capsys):
+    """Находка о ЧУЖОЙ декларации не отменяет вопроса о долге по правилам.
+
+    Находка внешнего взгляда на изменении #402: докстрока `tier_zero` обещает
+    «ПЕЧАТАЮТСЯ ВСЕГДА, включая нули», а `main()` при непустом `problems`
+    возвращал 1 раньше вызова — и обещание было неверно по коду при ЛЮБОЙ
+    находке, а не только при снятой в этом же изменении. Числа и находки
+    отвечают на разные вопросы (027, 041), и первое не гасит второго.
+    """
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": "scripts/выдумка.py"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    out = capsys.readouterr()
+    assert "разошлась с фактом" in out.err
+    assert "ступень 0" in out.out
