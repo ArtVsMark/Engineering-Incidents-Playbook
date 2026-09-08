@@ -39,7 +39,7 @@ jobs:
       - name: токен владельца не задан
         if: env.MERGE_QUEUE_TOKEN == ''
         run: |
-          echo "::warning::MERGE_QUEUE_TOKEN не задан — состояние задач не проверяется. Нужен токен владельца с правами issues:read (прочитать состояние задачи) и issues:write (оставить в ней замечание). Это ЕДИНСТВЕННЫЙ прогон каталога, которому нужны права на задачи: у agent-pr и automerge предмет pulls, у consumers-sync contents, у thaw actions — их зелень об этом праве не говорит ничего."
+          echo "::warning::MERGE_QUEUE_TOKEN не задан — состояние задач не проверяется. Нужен токен владельца с правами issues:read (прочитать состояние задачи), issues:write (оставить в ней замечание) и pull-requests:read (обещание живёт в теле ИЗМЕНЕНИЯ, а не слияния — по коммиту спрашивается слитое им изменение). Право на задачи нужно ЕДИНСТВЕННОМУ прогону каталога — этому: у agent-pr и automerge предмет pulls, у consumers-sync contents, у thaw actions — их зелень об этом праве не говорит ничего."
           echo "SKIP=1" >> "$GITHUB_ENV"
 
       - uses: actions/checkout@v4
@@ -53,6 +53,12 @@ jobs:
           GH_TOKEN: ${{ env.MERGE_QUEUE_TOKEN }}
         run: |
           set -uo pipefail
+          # ТЕЛО КОММИТА — ЗАПАСНОЙ ИСТОЧНИК, А НЕ ОСНОВНОЙ. Обещание живёт в
+          # теле ИЗМЕНЕНИЯ: тело squash-коммита `automerge` собирает заново, из
+          # одних трейлеров, и `Closes`/`Part of` в него не попадает никогда.
+          # Выбор источника живёт в скрипте, а не здесь: строкой оболочки он
+          # проверялся бы только настоящим слиянием, то есть после того, как
+          # ответ уже потерян (018, урок 7 сентября про pr_source_commit.py).
           git log -1 --format=%B > "$RUNNER_TEMP/body.txt"
           # Площадка зовёт шаг как `bash -e {0}`, и `set -uo pipefail` этот
           # `-e` НЕ снимает. Без `|| code=$?` оболочка умирает на ненулевом
@@ -60,6 +66,7 @@ jobs:
           # которого не доходит управление (правило 145).
           code=0
           out=$(python3 scripts/check_task_state.py \
+                  --sha "$GITHUB_SHA" \
                   --body-file "$RUNNER_TEMP/body.txt" --comment 2>&1) || code=$?
           printf '%s\n' "$out"
           # Три исхода различаются, и второй не растворяется в третьем (039).
