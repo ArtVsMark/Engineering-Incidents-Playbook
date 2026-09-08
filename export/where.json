@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T15:28:19+00:00",
+  "generated_at": "2026-09-08T15:33:55+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,9 +10,9 @@
       "answers_to": "1.5",
       "state": "подключён",
       "read_at": "2026-09-08",
-      "answered": 193,
+      "answered": 194,
       "by_status": {
-        "active": 160,
+        "active": 161,
         "not-applicable": 27,
         "rejected": 6
       },
@@ -20,7 +20,7 @@
         "gate": 119,
         "document": 28,
         "pipeline": 8,
-        "none": 5
+        "none": 6
       },
       "rules": {
         "001": "active",
@@ -215,7 +215,8 @@
         "191": "not-applicable",
         "192": "active",
         "193": "not-applicable",
-        "194": "not-applicable"
+        "194": "not-applicable",
+        "195": "active"
       },
       "holds": {
         "001": {
@@ -857,10 +858,14 @@
         "192": {
           "mechanism": "document",
           "where": "CLAUDE.md § «Подпись и открытие изменения» — там записаны ДВА замера о поведении площадки вместе с условиями, при которых они верны: «решает учётная запись, ОТКРЫВШАЯ изменение» (замер по 6 изменениям, переподписка коммитов не помогла) и «actions/checkout прописывает extraheader, и он идёт с каждым запросом» (замер 28 августа: толчок ушёл от имени бота при полностью верном URL). Оба названы вместе с исполнителем действия, а не как свойство площадки вообще — именно этого требует правило"
+        },
+        "195": {
+          "mechanism": "none",
+          "where": "предмет у каталога живой и измеренный: 3 находки этого класса за одну смену 8 сентября, все на СВОИХ починках — scripts/review_findings.py дважды (срез `*_` уронил `**kwargs` и `id_`; парная обёртка уронила буллет `* `) и scripts/build_facts.py однажды (добавлен `rejected`, не тронут `unreviewed`). Держится сегодня только внешним взглядом на изменении — прогоном .github/workflows/review.yml, который находку называет, но предметом своим не имеет и на её отсутствие не краснеет"
         }
       },
-      "trails": 43,
-      "born": 31
+      "trails": 44,
+      "born": 32
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
