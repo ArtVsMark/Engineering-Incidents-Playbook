@@ -689,3 +689,51 @@ def test_document_s_prozoy_nahodkoy_ne_yavlyaetsya(monkeypatch, repo):
                                "where": "AGENTS.md — сказано в своде"}}},
             export_of("001"))
     assert cb.main() == 0
+
+
+def test_несобранное_производное_декларацией_не_расходится(monkeypatch, repo):
+    """Инцидент 8 сентября: свежий клон, сборщик в нём ещё не запускался.
+
+    `export/where.json` в общей ветке не лежит вовсе — его пересобирает прогон
+    и держит на своей ветке (`check_derived.OWNED_BY_JOB`). Отказ здесь означал
+    бы, что вердикт о ЧУЖОЙ декларации зависит от того, гоняли ли в этой копии
+    сборщик (037), — а ступень 0 спрашивается с каталога первой же командой
+    нового окна.
+    """
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "pipeline",
+                               "where": "ответ соседа лежит в export/where.json"}}},
+            export_of("001"))
+    assert not (repo / "export" / "where.json").exists()
+    assert cb.main() == 0
+
+
+def test_ступень_ноль_печатается_и_без_собранного_производного(
+        monkeypatch, repo, capsys):
+    """Три числа ступени 0 печатаются ВСЕГДА — так объявляет 177.
+
+    Молчание было дороже самих ложных находок: окно, которому свод велит
+    начинать со ступени 0, не получало её вовсе — ни одного из трёх чисел.
+    """
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "pipeline",
+                               "where": "сводка export/where.json"}}},
+            export_of("001"))
+    cb.main()
+    assert "ступень 0" in capsys.readouterr().out
+
+
+def test_соседнее_имя_производного_остаётся_находкой(monkeypatch, repo, capsys):
+    """Освобождён поимённо названный путь, а не каталог `export/`.
+
+    Список закрытый и разрешительный (068): имя, которого никто не собирает,
+    ревизия обязана отвергать по-прежнему — иначе она перестала бы держать то,
+    ради чего заведена (146).
+    """
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "pipeline",
+                               "where": "сводка export/where-nobody-builds.json"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    err = capsys.readouterr().err
+    assert "where-nobody-builds.json" in err and "разошлась с фактом" in err
