@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T05:03:18+00:00",
+  "generated_at": "2026-09-08T05:11:57+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 188,
+  "count": 189,
   "rules": [
     {
       "id": "001",
@@ -6785,6 +6785,46 @@
         {
           "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "doc": ".claude/hooks/push_guard.py"
+        }
+      ],
+      "origin": "ArtVsMark/ArtVsMark",
+      "portable": "yes"
+    },
+    {
+      "id": "190",
+      "slug": "a-consumers-answer-about-a-neighbour-is-asked-not-remembered",
+      "title": {
+        "ru": "Форму ответа соседа спрашивают, а не помнят: записывается только то, чего у него нет",
+        "en": "A neighbour's answer shape is asked for, not remembered: only its absence is recorded"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "метрики"
+        ],
+        "en": [
+          "contracts",
+          "metrics"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/190-a-consumers-answer-about-a-neighbour-is-asked-not-remembered.md",
+        "en": "rules/en/190-a-consumers-answer-about-a-neighbour-is-asked-not-remembered.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "doc": "scripts/build_metrics.py"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": ".rules/consumers.json"
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
