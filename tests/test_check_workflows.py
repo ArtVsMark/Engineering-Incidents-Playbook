@@ -411,3 +411,48 @@ def test_defaults_urovnya_fayla_uvazhaetsya():
              "jobs:\n  j:\n    steps:\n      - name: проба\n        run: |\n"
              "          if ($true) { Write-Host x }\n")
     assert cw.unparsable_shell(текст) == []
+
+
+# ── ЛОЖНЫЙ ОТКАЗ НА ПРОЗЕ, ЗАМЕР 8 сентября ───────────────────────────────
+#
+# Строка «ВЕРДИКТ: находок N» в промпте ревьюера — предписанная форма ответа
+# для модели — была принята за имя ключа env и отвергнута как «не латиницей».
+# Гейт краснел на верном файле, а ложный отказ дороже пропуска (051).
+
+def test_kirillica_v_promte_ne_nahodka():
+    """РОВНО ПРЕДМЕТ: двоеточие в прозе — не ключ разметки."""
+    прогон = (
+        "jobs:\n  review:\n    steps:\n      - uses: some/action@v1\n"
+        "        with:\n          prompt: |\n"
+        "            Последней строкой поставь ровно это:\n\n"
+        "                ВЕРДИКТ: находок N\n\n"
+        "            По ней твою работу читает механизм.\n")
+
+    assert cw.non_ascii_names(прогон) == []
+
+
+def test_kirillica_v_run_ostayotsya_nahodkoy():
+    """Граница с другой стороны: в `run:` лежит КОД, и там присваивание
+    кириллицей падает кодом 127 — предмет правила 167 никуда не делся."""
+    прогон = ("jobs:\n  x:\n    steps:\n      - name: шаг\n        run: |\n"
+              "          ИМЯ=значение\n          echo \"$ИМЯ\"\n")
+
+    assert cw.non_ascii_names(прогон) == ["ИМЯ"]
+
+
+def test_klyuch_env_kirillicey_ostayotsya_nahodkoy():
+    """И вторая половина границы: настоящий ключ разметки по-прежнему ловится."""
+    прогон = ("jobs:\n  x:\n    steps:\n      - name: шаг\n        env:\n"
+              "          КЛЮЧ: значение\n        run: echo ок\n")
+
+    assert "КЛЮЧ" in cw.non_ascii_names(прогон)
+
+
+def test_posle_bloka_razmetka_chitaetsya_snova():
+    """Блок кончается по отступу: ключи ПОСЛЕ него обязаны проверяться."""
+    прогон = ("jobs:\n  x:\n    steps:\n      - uses: a/b@v1\n"
+              "        with:\n          prompt: |\n            проза: с двоеточием\n"
+              "      - name: следующий\n        env:\n          ЗНАЧЕНИЕ: 1\n"
+              "        run: echo ок\n")
+
+    assert "ЗНАЧЕНИЕ" in cw.non_ascii_names(прогон)
