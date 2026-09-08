@@ -345,3 +345,46 @@ def test_delete_значением_ключа_не_считается_ключо
     ключей, иначе строка отменяет охрану словом внутри чужого аргумента.
     """
     assert pg.targets("git push -o --delete origin чужая", "своя") == ["чужая"]
+
+
+def test_двойное_тире_объявляет_пути_а_не_ветку(окно, capsys):
+    """Инцидент 8 сентября: сторож отверг толчок в СВОЮ ветку.
+
+    `git checkout -- export/rules.json && git push -u origin своя` — разбор
+    возвращал `export/rules.json` как имя ветки, и толчок в свою объявлялся
+    чужим. `checkout` решает две задачи, и различает их `--`: за ним пути.
+    """
+    команда = ("git checkout -- export/rules.json && "
+               "git push -u origin agent/своя")
+    assert pg.targets(команда, "agent/своя") == []
+    окно(команда)
+    assert pg.main() == 0
+    assert capsys.readouterr().err == ""
+
+
+def test_дерево_перед_двойным_тире_тоже_не_переход(окно):
+    """`git checkout main -- файл` берёт содержимое из main, оставаясь на месте.
+
+    Прежний разбор возвращал `main` и объявлял чужой ветку, в которой окно и
+    стоит.
+    """
+    assert pg.targets("git checkout main -- файл && git push origin своя",
+                      "своя") == []
+
+
+def test_точка_именем_ветки_не_бывает(окно):
+    """`git checkout .` — восстановление: `.` git как имя ссылки не принимает."""
+    assert pg.targets("git checkout . && git push origin своя", "своя") == []
+    assert pg.switched_to(["git", "checkout", "."]) is None
+
+
+def test_после_восстановления_чужая_всё_равно_чужая(окно):
+    """Вторая сторона границы: `--` отменяет ПЕРЕХОД, а не охрану.
+
+    Свернув «в команде есть `--`» в «команду не смотрим», сторож пропустил бы
+    ровно то, ради чего заведён (140).
+    """
+    assert pg.targets("git checkout -- файл && git push origin чужая",
+                      "своя") == ["чужая"]
+    assert pg.targets("git checkout чужая && git push origin своя",
+                      "своя") == ["своя"]
