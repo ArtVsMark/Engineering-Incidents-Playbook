@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T05:01:13+00:00",
+  "generated_at": "2026-09-08T05:02:45+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,10 +10,10 @@
       "answers_to": "1.5",
       "state": "подключён",
       "read_at": "2026-09-08",
-      "answered": 186,
+      "answered": 187,
       "by_status": {
         "active": 157,
-        "not-applicable": 23,
+        "not-applicable": 24,
         "rejected": 6
       },
       "by_mechanism": {
@@ -208,7 +208,8 @@
         "184": "active",
         "185": "active",
         "186": "active",
-        "187": "active"
+        "187": "active",
+        "188": "not-applicable"
       },
       "holds": {
         "001": {
@@ -2401,8 +2402,8 @@
           "where": "scripts/check_mechanisms.py — двадцать две сверки объявленного с сделанным, и предмет у каждой свой: ::audit_gaps (вердикт без механизма назвал причину), ::audit_verdicts (набор судит все случаи, а не первые), ::own_output_readers (читатели своего вывода названы поимённо), ::check_run_readers, ::schedule_as_backup, ::foreign_why_links, ::cancellation_groups, ::prefix_matched_markers и прочие; scripts/check_bindings.py::audit проверяет, что каждый путь и якорь в поле «где» существует в дереве — вердикт, показывающий в пустоту, отвергается. ПРЕДМЕТ БЫЛ ЖИВОЙ В ДЕНЬ ПРИЁМА ПРАВИЛА: 7 сентября в .github/workflows/metrics.yml появилось `[ -e \"$card\" ] && cp`, тогда как комментарий рядом в .github/workflows/open-pr.yml объявляет обратный приём — «ветвление через if, а не через [ … ] && …, потому что список, закончившийся ложью, увёл бы шаг в отказ». Утверждение было верным, а соседний код ему противоречил; нашлось это прогоном на подделанном пустом шаблоне, а не чтением. ЧТО НЕ ДЕРЖИТСЯ: соответствие прозы СМЫСЛУ механизма машине не даётся — она проверяет, что названное существует и что объявленный класс правил соблюдён, но не то, что комментарий описывает именно этот вызов. Проверено перебором двух утверждений вида «через X, а не через Y»: оба верны — scripts/build_metrics.py::grader_facts действительно читает contents-API, а не raw; open-pr.yml действительно ветвится через if."
         }
       },
-      "trails": 17,
-      "born": 11
+      "trails": 18,
+      "born": 12
     },
     {
       "repo": "ArtVsMark/Claude-Code_Usage-Token",
