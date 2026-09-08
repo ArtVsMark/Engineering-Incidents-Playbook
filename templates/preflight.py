@@ -327,6 +327,79 @@ def check_contracts() -> Result:
                   time.monotonic() - t0)
 
 
+ЗАМЕР_ОБХОДА = re.compile(
+    r"перечит\w*[^.\n]{0,120}?\d|\d[^.\n]{0,120}?перечит\w*", re.I)
+
+
+def check_reread(base: str = "origin/main") -> Result:
+    """Правило 157, вторая половина: подпись под перечитыванием не едет одна.
+
+    ПОЧЕМУ ЭТОГО МАЛО — СВЕРКИ НОМЕРОВ ВЫШЕ. check_contracts() говорит, что
+    номер отстал, и требует перечитать. Но проставить номер можно и НЕ
+    перечитав: сверка после этого замолчит, а ответы останутся построенными
+    на прежней выгрузке. Тогда механизм учит ровно тому, против чего написано
+    правило — «поправьте номер» вместо «ответьте заново».
+
+    ЗАМЕР, РАДИ КОТОРОГО ЗАВЕДЕНО (8 сентября 2026, у самого каталога).
+    Издатель поднял свою выгрузку 1.4 → 1.5 и ответ 1.1 → 1.2, проставил себе
+    answers_to и тронул при этом ОДНУ запись из семидесяти восьми, составлявших
+    предмет. Требование к пятерым потребителям он в тот же день разослал.
+    Заметил вопрос владельца, а не механизм.
+
+    ЧТО ЗДЕСЬ МАШИННОЕ. Правда ли вы перечитали — из дерева не следует. Следует
+    другое: НАЗВАН ЛИ РАЗМЕР ОБХОДА. Сдвинулась подпись — тело первого коммита
+    ветки обязано сказать числом, сколько записей вы прошли. Число ПРАВОК
+    замером не считается: их бывает одна при предмете в семьдесят восемь.
+    """
+    t0 = time.monotonic()
+    ответ = ROOT / ".rules" / "bindings.json"
+    if not ответ.exists():
+        return Result("reread", BROKEN,
+                      "нет .rules/bindings.json — сверять подпись не с чем",
+                      time.monotonic() - t0)
+
+    def git(*args: str) -> tuple[int, str]:
+        out = subprocess.run(["git", *args], cwd=ROOT, capture_output=True,
+                             text=True, encoding="utf-8", timeout=60)
+        return out.returncode, out.stdout
+
+    код, старое = git("show", f"{base}:.rules/bindings.json")
+    if код != 0:
+        # Файла в базе нет — так выглядит первое подключение; базы нет вовсе —
+        # третий исход. Различать их здесь нечем, и оба безопасны.
+        return Result("reread", OK,
+                      f"ответа в {base} нет — это первый ответ, перечитывать нечего",
+                      time.monotonic() - t0)
+    try:
+        было = json.loads(старое)
+        стало = json.loads(ответ.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        return Result("reread", BROKEN, str(exc), time.monotonic() - t0)
+
+    сдвиг = [к for к in ("schema", "answers_to")
+             if (было.get(к) or "") != (стало.get(к) or "")]
+    if not сдвиг:
+        return Result("reread", OK, "подпись не двигалась", time.monotonic() - t0)
+
+    двинулись = ", ".join(
+        f"{к}: {было.get(к) or '—'} → {стало.get(к) or '—'}" for к in сдвиг)
+    код, первый = git("rev-list", "--reverse", f"{base}..HEAD")
+    отпечаток = (первый.split("\n")[0] or "").strip() if код == 0 else ""
+    тело = git("log", "-1", "--format=%B", отпечаток)[1] if отпечаток else ""
+    if ЗАМЕР_ОБХОДА.search(тело):
+        return Result("reread", OK, f"подпись сдвинулась ({двинулись}), "
+                      "обход назван в теле", time.monotonic() - t0)
+    return Result("reread", FINDINGS,
+                  f"подпись сдвинулась ({двинулись}), а размер обхода не назван",
+                  time.monotonic() - t0,
+                  ["Пройдите по записям, где стояло старое значение: подъём "
+                   "версии требует перечитать ОТВЕТЫ, а не только проверить, "
+                   "что они разбираются (157).",
+                   "Назовите обход в теле первого коммита ветки ЧИСЛОМ: "
+                   "«перечитано N записей предмета, изменено M». Число правок "
+                   "замером не считается."])
+
+
 def run_step(step: Step) -> Result:
     t0 = time.monotonic()
     if step.requires_files and not any(ROOT.glob(p) for p in step.requires_files):
@@ -377,6 +450,7 @@ def main() -> int:
     if "secrets" in selected:
         results.append(check_secrets())
         results.append(check_contracts())
+        results.append(check_reread())
         results.append(check_transport())
         results.append(check_trails())
     results.extend(run_step(s) for s in STEPS if s.name in selected)
