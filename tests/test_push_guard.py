@@ -251,3 +251,52 @@ def test_chuzhoe_derevo_bez_vybora_ne_meshaet(tmp_path):
     """Хук запускают и там, где каталога нет вовсе: отказ на пустом месте
     остановил бы верный толчок (051)."""
     assert pg.первый_коммит_ветки(tmp_path) is None
+
+
+def test_stash_push_не_толчок_в_ветку(окно, capsys):
+    """Инцидент 8 сентября: сторож отверг сохранение работы.
+
+    `git stash push <пути>` — обычное `git stash`, и никакой ветки в нём не
+    названо. Сторож читал «push среди первых трёх слов» и объявлял толчком в
+    ветку с именем первого файла: «толчок в scripts/check_derived.py». Ложный
+    отказ на верной работе — то, чего 051 запрещает прямо.
+    """
+    assert pg.targets("git stash push scripts/a.py scripts/b.py", "своя") == []
+    окно("git stash push -q scripts/check_bindings.py scripts/check_derived.py")
+    assert pg.main() == 0
+    assert capsys.readouterr().err == ""
+
+
+def test_stash_pop_и_list_тоже_не_толчок(окно):
+    """Соседние подкоманды stash — тем же разбором, а не списком исключений."""
+    for команда in ("git stash pop", "git stash list", "git stash push -m push"):
+        assert pg.targets(команда, "своя") == [], команда
+
+
+def test_толчок_через_ключ_каталога_виден(окно):
+    """`git -C путь push origin чужая` — тот же толчок, ключ его не прячет.
+
+    Прежний разбор искал `push` среди первых ТРЁХ слов и на этой форме
+    промахивался в другую сторону: `git -C /длинный/путь push` уже четвёртое.
+    """
+    assert pg.targets("git -C /дерево push origin чужая", "своя") == ["чужая"]
+    assert pg.targets("git -c user.name=X push origin чужая", "своя") == ["чужая"]
+
+
+def test_переход_через_ключ_каталога_учтён(окно):
+    """`git -C путь switch X && git push origin X` — толчок в СВОЮ ветку."""
+    assert pg.targets("git -C /дерево switch тема && git push origin тема",
+                      "своя") == []
+
+
+def test_обе_половины_сторожа_отвечают_одинаково(окно):
+    """Разъезд внутри одного хука: `targets` считала stash толчком, `толкает` — нет.
+
+    Два ответа на один вопрос расходились бы дальше молча (022). Теперь разбор
+    один, и это проверяется прямо: где нет чужой ветки — там и толчка нет.
+    """
+    for команда in ("git stash push файл.py", "git stash list", "git log push"):
+        assert pg.targets(команда, "своя") == [], команда
+        assert not pg.толкает(команда), команда
+    for команда in ("git push origin чужая", "git -C /д push origin чужая"):
+        assert pg.толкает(команда), команда
