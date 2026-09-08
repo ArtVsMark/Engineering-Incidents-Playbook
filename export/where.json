@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T05:40:54+00:00",
+  "generated_at": "2026-09-08T05:53:31+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,10 +10,10 @@
       "answers_to": "1.5",
       "state": "подключён",
       "read_at": "2026-09-08",
-      "answered": 192,
+      "answered": 193,
       "by_status": {
         "active": 160,
-        "not-applicable": 26,
+        "not-applicable": 27,
         "rejected": 6
       },
       "by_mechanism": {
@@ -214,7 +214,8 @@
         "190": "active",
         "191": "not-applicable",
         "192": "active",
-        "193": "not-applicable"
+        "193": "not-applicable",
+        "194": "not-applicable"
       },
       "holds": {
         "001": {
@@ -2420,7 +2421,7 @@
         }
       },
       "trails": 23,
-      "born": 15
+      "born": 16
     },
     {
       "repo": "ArtVsMark/Claude-Code_Usage-Token",
