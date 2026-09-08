@@ -53,6 +53,7 @@ import datetime as dt
 import json
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -101,15 +102,50 @@ STATUS_RU = {
 }
 
 
-def fetch(url: str, timeout: int = 20) -> tuple[dict | None, str | None]:
-    """Ответ потребителя по обычному HTTPS: без API, без токена, без клона."""
-    try:
-        with urllib.request.urlopen(url, timeout=timeout) as resp:
-            return json.loads(resp.read().decode("utf-8")), None
-    except (urllib.error.URLError, OSError) as e:
-        return None, f"не прочитан: {e}"
-    except ValueError as e:
-        return None, f"прочитан, но не разобран: {e}"
+#: Сколько раз спросить ответ потребителя, прежде чем назвать его нечитаемым.
+#: ЗАМЕР 8 сентября: ночной прогон 34255883521 объявил ДВУХ потребителей
+#: недоступными («Connection reset by peer»), покраснел и завёл задачу #437 —
+#: а прогон значков через четверть часа прочитал обоих, и в сводке у них стоит
+#: `read_at: 2026-09-08` и по 181 ответу. Одной попытки мало: «недоступный
+#: ответ — отказ, а не молчание» верно про ОТКАЗ, а сброс соединения отказом
+#: не является, и достоверным его делает только повтор (051).
+ПОПЫТОК = 3
+
+#: Пауза перед следующей попыткой, в секундах: 1, затем 2. Растёт, чтобы не
+#: бить в ту же секунду; при трёх попытках прогон ждёт не больше трёх секунд
+#: на потребителя, и это дешевле ложного красного на всей сводке.
+ПАУЗА = 1.0
+
+
+def fetch(url: str, timeout: int = 20,
+          попыток: int = ПОПЫТОК) -> tuple[dict | None, str | None]:
+    """Ответ потребителя по обычному HTTPS: без API, без токена, без клона.
+
+    ОТВЕТ ПЛОЩАДКИ И МОЛЧАНИЕ ПРОВОДА — РАЗНЫЕ СОСТОЯНИЯ, и повторять стоит
+    только второе. HTTP-код это ОТВЕТ: 404 говорит «файла нет», 403 — «не
+    покажу», и спрашивать их второй раз незачем. Сброс соединения, таймаут,
+    отказ имени — ответа нет вовсе, и по одному такому событию судить нельзя.
+    Исключение среди кодов одно: 5xx означает «мне сейчас плохо», а не «такого
+    нет», и повторяется наравне с обрывом.
+    """
+    последняя = ""
+    for попытка in range(1, попыток + 1):
+        try:
+            with urllib.request.urlopen(url, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8")), None
+        except urllib.error.HTTPError as e:
+            # Порядок ветвей значим: HTTPError — потомок URLError, и внизу он
+            # был бы съеден общей веткой вместе со своим кодом.
+            if e.code < 500:
+                return None, f"не прочитан: {e}"
+            последняя = f"не прочитан: {e}"
+        except (urllib.error.URLError, OSError) as e:
+            последняя = f"не прочитан: {e}"
+        except ValueError as e:
+            return None, f"прочитан, но не разобран: {e}"
+        if попытка < попыток:
+            time.sleep(ПАУЗА * попытка)
+    return None, f"{последняя} — и так {попыток} раза подряд"
 
 
 def read_local(path: str) -> tuple[dict | None, str | None]:
