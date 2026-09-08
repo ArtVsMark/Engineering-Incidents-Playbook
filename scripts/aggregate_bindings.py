@@ -163,6 +163,15 @@ def collect(consumers: list[dict]) -> tuple[list[dict], list[str]]:
             by_mechanism[mech] = by_mechanism.get(mech, 0) + 1
             holds[rid] = {"mechanism": mech, "where": rec.get("where") or ""}
         entry["schema"] = data.get("schema") or ""
+        # ВТОРОЙ НОМЕР ПЕРЕНОСИТСЯ ЗДЕСЬ, И ЭТОГО НЕ БЫЛО. export_lag() ниже
+        # объявлен сверкой ключа `answers_to`, а срез его не нёс вовсе:
+        # сверять было нечего, и гейт отвечал «не называет версию» про ВСЕХ
+        # пятерых — включая нас самих, у кого в файле стоит 1.5. Гейт,
+        # отвергающий всех одинаково, не различает ничего (051), а утверждение
+        # о механизме разошлось с механизмом на второй день после постройки
+        # (183). Замер: строка про Engineering-Incidents-Playbook в сводке
+        # 7 сентября при `answers_to: "1.5"` в .rules/bindings.json.
+        entry["answers_to"] = data.get("answers_to") or ""
         entry["state"] = "подключён"
         # ЭТО ПОЛЕ МЕНЯЕТСЯ КАЖДЫМ ПРОГОНОМ САМО ПО СЕБЕ — см. VOLATILE ниже.
         entry["read_at"] = today

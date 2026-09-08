@@ -100,6 +100,56 @@ def test_живой_ответ_собирается_в_срез(monkeypatch, rep
     assert slices[0]["rules"] == {"001": "active"}
 
 
+# ── ВТОРОЙ НОМЕР: версия ВЫГРУЗКИ, по которой построен ответ ───────────────
+#
+# ЗАМЕР 7 сентября, на живой сводке. export_lag() объявлен сверкой ключа
+# `answers_to`, но collect() его в срез не переносил, и сверять было нечего:
+# гейт отвечал «ответ не называет версию» про ВСЕХ пятерых — включая сам
+# каталог, у которого в .rules/bindings.json стоит "1.5". Гейт, отвергающий
+# всех одинаково, не различает ничего (051), а утверждение о механизме
+# разошлось с механизмом на второй день после постройки (183).
+
+def test_vtoroy_nomer_doezzhaet_do_sreza(monkeypatch, repo):
+    """Ровно предмет дефекта: поле есть в файле — обязано быть в срезе."""
+    prepare(monkeypatch, repo, [])
+    monkeypatch.setattr(ab, "ROOT", repo)
+    write(repo / ".rules" / "bindings.json", json.dumps(
+        {"schema": "1.2", "answers_to": "1.5",
+         "rules": {"001": {"status": "active"}}}))
+
+    slices, _ = ab.collect([{"repo": "owner/one",
+                             "bindings": ".rules/bindings.json"}])
+
+    assert slices[0]["answers_to"] == "1.5"
+
+
+def test_shodyashchiysya_nomer_vygruzki_molchit():
+    """Граница с другой стороны: сверка обязана УМЕТЬ промолчать. Пока поле не
+    доезжало, промолчать она не могла ни на каком входе (140)."""
+    assert ab.export_lag([{"repo": "o/a", "rules": {"001": "active"},
+                           "answers_to": "1.5"}], "1.5") == []
+
+
+def test_otstavshiy_nomer_vygruzki_nazyvaet_oba(monkeypatch, repo):
+    """Отставание называет ОБА номера: «правьте на 1.5» без «у вас 1.2»
+    не даёт понять, насколько отстал ответ и стоит ли перечитывать (158)."""
+    найдено = ab.export_lag([{"repo": "o/a", "rules": {"001": "active"},
+                              "answers_to": "1.2"}], "1.5")
+
+    assert len(найдено) == 1
+    assert "1.2" in найдено[0] and "1.5" in найдено[0]
+
+
+def test_nomer_ne_nazvan_eto_otdelnyy_otvet():
+    """«Не назвал» и «отстал» — разные состояния: первому подъём адресовать
+    нечем вовсе, второму есть куда (027)."""
+    найдено = ab.export_lag([{"repo": "o/a", "rules": {"001": "active"},
+                              "answers_to": ""}], "1.5")
+
+    assert len(найдено) == 1
+    assert "не называет" in найдено[0]
+
+
 # ── сверка собранного: --check ─────────────────────────────────────────────
 
 def test_собранная_сводка_согласована(monkeypatch, repo):
