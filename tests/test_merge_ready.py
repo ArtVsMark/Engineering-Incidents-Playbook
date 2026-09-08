@@ -230,3 +230,112 @@ def test_основание_не_список_это_третий_исход(tmp
 
     assert mr.main(["--freeze-only", "--base-runs", str(base)]) == 2
     assert "нет списка" in capsys.readouterr().err
+
+
+# ── ВЕРДИКТ НЕОБЯЗАТЕЛЬНОГО КАНАЛА: держит молчание, а не краснота ─────────
+#
+# ЗАМЕР 8 сентября: из 29 слитых изменений с прогоном ревью вердикт успел к
+# слиянию у 10. Дежурный ждал всех проверок и так, но СЛИВАЛА площадка по
+# взведённому автомержу, а он ждёт только обязательные. Девятнадцать раз работа
+# канала пропала целиком — в том числе две верные находки на #392.
+
+def прогон(имя, статус="completed", исход="success"):
+    return {"name": имя, "status": статус, "conclusion": исход}
+
+
+def test_verdikt_est_slivaem():
+    """Канал ответил — неважно чем: находки советуют, а не запрещают (084)."""
+    можно, почему = mr.awaited(
+        [прогон("catalogue"), прогон("review", исход="failure")], ["review"])
+
+    assert можно is True
+    assert "failure" in почему
+
+
+def test_verdikta_net_zhdyom():
+    """РОВНО ПРЕДМЕТ: прогон идёт, вердикта нет — слияние ждёт."""
+    можно, почему = mr.awaited(
+        [прогон("catalogue"), прогон("review", статус="in_progress", исход=None)],
+        ["review"])
+
+    assert можно is False
+    assert "review" in почему
+
+
+def test_ne_zapuskalsya_ne_zhdyom():
+    """ОПАСЕНИЕ ВЛАДЕЛЬЦА ЗАКРЫТО ЗДЕСЬ. Ключа нет, изменение из форка, квота
+    кончилась до старта — прогона нет вовсе, и ожидание было бы вечным.
+    Ждать нечего, слияние идёт."""
+    можно, почему = mr.awaited([прогон("catalogue")], ["review"])
+
+    assert можно is True
+    assert "не запускался" in почему
+
+
+def test_otmenyonnyy_progon_eto_verdikt():
+    """Отмена — тоже ответ: прогон завершился, ждать больше нечего. Иначе
+    вытесненный дубль держал бы очередь до бесконечности."""
+    можно, _ = mr.awaited([прогон("review", исход="cancelled")], ["review"])
+
+    assert можно is True
+
+
+def test_bez_imyon_nichego_ne_zhdyom():
+    assert mr.awaited([прогон("catalogue")], [])[0] is True
+
+
+def test_krasnaya_obyazatelnaya_vazhnee_molchaniya(monkeypatch, capsys):
+    """ПОРЯДОК ОТВЕТОВ. Отказ обязательной — причина не сливать НИКОГДА;
+    молчание необязательной — причина не сливать СЕЙЧАС. Печатать первую как
+    вторую значило бы врать отчётом (158)."""
+    import io
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
+        прогон("catalogue", исход="failure"),
+        прогон("review", статус="in_progress", исход=None)]})))
+
+    assert mr.main(["--required", "catalogue", "--await", "review"]) == 1
+    err = capsys.readouterr().err
+    assert "незелёные" in err and "вердикта ещё нет" not in err
+
+
+def test_zelyonaya_obyazatelnaya_no_verdikta_net_eto_rano(monkeypatch, capsys):
+    """Граница с другой стороны: обязательная зелёная, а канал молчит — это
+    «рано», а не «нельзя», и отчёт обязан говорить именно так."""
+    import io
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
+        прогон("catalogue"),
+        прогон("review", статус="in_progress", исход=None)]})))
+
+    assert mr.main(["--required", "catalogue", "--await", "review"]) == 1
+    assert "сливать рано" in capsys.readouterr().err
+
+
+def test_vse_zelyonye_i_verdikt_est_slivaem(monkeypatch, capsys):
+    import io
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
+        прогон("catalogue"), прогон("review", исход="failure")]})))
+
+    assert mr.main(["--required", "catalogue", "--await", "review"]) == 0
+    assert "сливать можно" in capsys.readouterr().out
+
+
+def test_krasnyy_neobyazatelnyy_sliyanie_ne_derzhit(monkeypatch, capsys):
+    """РОВНО 084, И ЭТО ПОЧИНКА. Прежде verdict() считал ВСЕ проверки подряд —
+    красное ревью держало бы слияние, а идущее держало бы его до конца прогона.
+    На замере это не проявилось лишь потому, что за 33 прогона ревью не
+    покраснело ни разу: гейт был зелёным по отсутствию предмета (146)."""
+    import io
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
+        прогон("catalogue"), прогон("review", исход="failure")]})))
+
+    assert mr.main(["--required", "catalogue", "--await", "review"]) == 0
+
+
+def test_bez_await_krasnyy_kanal_po_prezhnemu_derzhit(monkeypatch):
+    """Граница: исключение действует только для НАЗВАННЫХ каналов. Не назвали
+    — работа считается основной, и её краснота держит слияние, как и прежде."""
+    import io
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
+        прогон("catalogue"), прогон("review", исход="failure")]})))
+
+    assert mr.main(["--required", "catalogue"]) == 1
