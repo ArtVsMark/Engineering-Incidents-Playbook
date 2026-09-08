@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T10:19:20+00:00",
+  "generated_at": "2026-09-08T11:14:19+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -2272,7 +2272,7 @@
         },
         "137": {
           "mechanism": "gate",
-          "where": "scripts/build_metrics.py::unanswered — сторож стоит до форматирования и смотрит на измеренное; scripts/build_metrics.py::order_of — форматирование применяется к уже проверенному. Инцидент правила — эта самая сборка: «0000+ tests» проходило мимо сравнения с «0»"
+          "where": "scripts/build_metrics.py::unanswered — сторож стоит до подстановки в README и смотрит на измеренное, а не на строку для показа. Инцидент правила — эта самая сборка: «0000+ tests» проходило мимо сравнения с «0». Форматирующая половина примера (order_of) ушла вместе с плиткой флагмана, когда витрина перестала показывать числа одного проекта; порядок «сторож, потом запись» от этого не изменился"
         },
         "138": {
           "mechanism": "gate",
