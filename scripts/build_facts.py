@@ -1,0 +1,281 @@
+#!/usr/bin/env python3
+"""Факты о каталоге для витрины: их публикует он сам, а не считают за него.
+
+ПОЧЕМУ ФАЙЛ, А НЕ «ВИТРИНА ПОСЧИТАЕТ». Считать чужие числа со стороны значит
+держать копию чужого устройства: где лежат тесты, как назван их каталог, какие
+работы стоят на изменении. Копия верна до первой правки на этой стороне и
+расходится молча. Замер витрины, из-за которого контракт и появился: медиана по
+семи изменениям дала 19 проверок, точный ответ издателя — 16. Это правило 174,
+и каталог его сам же и принял.
+
+ЧИСЛА БЕРУТСЯ У ТЕХ, КТО ИХ СЧИТАЕТ, А НЕ СЧИТАЮТСЯ ЗАНОВО (022):
+  • имя репозитория — `check_own_name.own_slug`, то есть адрес `origin`;
+  • доли правил — свой срез в `export/where.json`, его собрал `aggregate_bindings`;
+  • покрытие — `coverage_badge.measured`, то есть сам замер, а не его
+    округлённая отрисовка в значке;
+  • планка языка — `check_python_version.floor`, версии прогонов — его же
+    `in_workflows`;
+  • события и работы прогонов — `check_workflows.sections`/`events`.
+Второе выражение любого из этих чисел разошлось бы с первым молча.
+
+БЕЗ YAML-ПАРСЕРА, И ЭТО НЕ ВКУС. Работа `catalogue` идёт на голой стандартной
+библиотеке: первая редакция `check_workflows.py` звала `yaml.safe_load` и
+падала с `ModuleNotFoundError`. Разбор прогонов здесь тот же, построчный, и
+берётся он оттуда же, а не пишется второй раз.
+
+РАЗДЕЛА НЕТ — ЗНАЧИТ НЕ ИЗМЕРЯЛИ, И НУЛЁМ ЭТО НЕ ОБОЗНАЧАЕТСЯ. Контракт витрины
+различает три состояния: файла нет — «проект фактов не публикует»; файл есть,
+ключа нет — «не измеряли»; ключ есть — число (039). Поэтому неизмеренный раздел
+ОТСУТСТВУЕТ, а не выставляется в ноль, и каждый пропуск называется вслух: иначе
+молчание неотличимо от измеренного (075).
+
+ФАЙЛ НЕ ЗАВОДИТСЯ ПУСТЫМ. Без обязательного минимума — `schema`, `repo`,
+`generated_at` — публиковать нечего, и пустой ответ хуже отсутствующего: он
+выглядит измеренным отсутствием. Тогда исход 1 и файла нет.
+
+Запуск:
+  python scripts/build_facts.py            # собрать .github/badges/facts.json
+  python scripts/build_facts.py --print    # показать, ничего не записывая
+
+Исходы:
+  0 — файл собран;  1 — обязательный минимум не собрался, файл не записан;
+  2 — сбор не отработал.
+
+Реализует правила каталога:
+  174 — факты о проекте публикует сам проект, а не считает читатель;
+  160 — производное, обновляемое чаще изменений, живёт вне общей ветки:
+        файл пишется в `.github/badges/`, откуда `badges.yml` уносит его на
+        ветку `badges`, и в общей ветке его нет вовсе;
+  164 — номер схемы говорит, ЧЕГО он: рядом стоит `schema_of`, потому что
+        ключ `schema` в этой экосистеме носят четыре разных предмета;
+  022 — каждое число берётся у того, кто его считает;
+  039 — три исхода, и «не измеряли» отличается от «ноль»;
+  075 — пропущенный раздел называется вслух, а не молчит.
+"""
+
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import check_own_name  # noqa: E402
+import check_python_version  # noqa: E402
+import check_workflows  # noqa: E402
+import coverage_badge  # noqa: E402
+
+ROOT = Path(__file__).resolve().parent.parent
+FACTS = ROOT / ".github" / "badges" / "facts.json"
+WHERE = ROOT / "export" / "where.json"
+WORKFLOWS = ROOT / ".github" / "workflows"
+
+#: Версия ФОРМАТА этого файла, строкой. Числом её писать нельзя: `1.0` и `1.10`
+#: неразличимы, и расхождение уже случилось — сосед публикует `1`, а не `"1"`.
+SCHEMA = "1.0"
+
+SCHEMA_OF = ("формат ЭТОГО файла — факты каталога для витрины профиля. Не "
+             "версия каталога, не номер выпуска и не схема выгрузки правил: "
+             "ключ `schema` в этой экосистеме носят четыре разных предмета "
+             "(выгрузка, ответ потребителя, сводка, факты) — правило 164")
+
+#: Что именно здесь считается проверкой на изменении. Определение публикуется
+#: вместе с числом намеренно: снаружи проверок ВИДНО БОЛЬШЕ — работа `open` из
+#: `agent-pr.yml` просыпается на толчок в ветку и попадает в тот же коммит.
+#: Она не «на изменение»: у изменения из форка её не будет. Контракт запрещает
+#: публиковать оценки, поэтому здесь стоит то, что издатель знает точно.
+CHECKS_OF = ("работы прогонов, просыпающихся на событие pull_request. Проверок "
+             "у коммита может быть видно больше: работа, разбуженная толчком в "
+             "ветку, попадает в ту же голову, но изменением не вызвана")
+
+#: Тестовая функция и тестовый модуль. Считается то же, что считает pytest по
+#: своим умолчаниям, и границы названы здесь, а не подразумеваются.
+TEST_DEF_RE = re.compile(r"^\s*(?:async\s+)?def\s+(test_\w*)", re.M)
+
+#: `runs-on: ubuntu-latest` — исполнитель работы. Матрицы у каталога нет, и
+#: значения из неё здесь не раскрываются: раскрытие было бы вторым разбором.
+RUNS_ON_RE = re.compile(r"^\s*runs-on:\s*\"?([\w.-]+)\"?\s*$", re.M)
+
+
+def git(*args: str) -> tuple[int, str]:
+    """Вызов git с прочитанным выводом. Отказ — значение, а не исключение."""
+    try:
+        done = subprocess.run(["git", "-C", str(ROOT), *args],
+                              capture_output=True, text=True, encoding="utf-8")
+    except OSError as exc:
+        return 1, str(exc)
+    return done.returncode, (done.stdout or done.stderr).strip()
+
+
+def tests() -> tuple[dict | None, str]:
+    """Функции и модули набора. Вторая строка — почему раздела не будет."""
+    каталог = ROOT / "tests"
+    if not каталог.is_dir():
+        return None, "каталога tests/ нет"
+    модули = sorted(p for p in каталог.glob("test_*.py"))
+    if not модули:
+        return None, "в tests/ нет ни одного модуля test_*.py"
+    функций = sum(len(TEST_DEF_RE.findall(p.read_text(encoding="utf-8",
+                                                      errors="replace")))
+                  for p in модули)
+    return {"functions": функций, "modules": len(модули)}, ""
+
+
+def checks_per_pr() -> tuple[dict | None, str]:
+    """Работы прогонов, которые будит само изменение."""
+    if not WORKFLOWS.is_dir():
+        return None, "каталога .github/workflows нет"
+    имена: list[str] = []
+    for файл in sorted(WORKFLOWS.glob("*.yml")):
+        текст = файл.read_text(encoding="utf-8", errors="replace")
+        if "pull_request" not in check_workflows.events(текст):
+            continue
+        блок = check_workflows.sections(текст).get("jobs") or []
+        имена += [m.group(1) for m in
+                  (check_workflows.KEY_RE.match(line) for line in блок) if m]
+    if not имена:
+        return None, "ни один прогон не просыпается на pull_request"
+    return {"count": len(имена), "names": sorted(имена), "counts_": CHECKS_OF}, ""
+
+
+def python() -> tuple[dict | None, str]:
+    """Версии языка и исполнители. Планка отдельно от того, на чём гоняем."""
+    манифест = ROOT / "pyproject.toml"
+    if not манифест.is_file():
+        return None, "нет pyproject.toml — планку языка назвать нечем"
+    планка = check_python_version.floor(манифест.read_text(encoding="utf-8"))
+    версии = sorted({v for _, v in check_python_version.in_workflows(ROOT)})
+    if планка is None and not версии:
+        return None, "ни планки в манифесте, ни python-version в прогонах"
+    исполнители = sorted({m.group(1) for файл in WORKFLOWS.glob("*.yml")
+                          for m in RUNS_ON_RE.finditer(
+                              файл.read_text(encoding="utf-8", errors="replace"))})
+    раздел: dict = {}
+    if версии:
+        раздел["supported"] = [f"{a}.{b}" for a, b in версии]
+    if планка is not None:
+        раздел["floor"] = f"{планка[0]}.{планка[1]}"
+    if исполнители:
+        раздел["os"] = исполнители
+    return (раздел or None), ("" if раздел else "нечего сказать о языке")
+
+
+def coverage() -> tuple[float | None, str]:
+    """Покрытие — у того, кто его замерил, а не из отрисованного значка.
+
+    ЧИСЛО БЕРЁТСЯ У ЗАМЕРА, А НЕ У КАРТИНКИ. Первая редакция разбирала поле
+    `message` значка — а оно округлено до целого (`{:.0f}%`), и 99.2 приезжало
+    бы как 99. Контракт витрины просит число ИМЕННО затем, что оно точнее
+    значка: «дублирует значок; число удобнее для сравнения». Разбирать
+    отрисованное значило бы публиковать копию картинки вместо замера (022).
+    """
+    percent = coverage_badge.measured()
+    if percent is None:
+        return None, ("замера покрытия в этом прогоне не было: "
+                      f"{coverage_badge.DATA.name} отсутствует либо пакет "
+                      "coverage не установлен")
+    return round(float(percent), 1), ""
+
+
+def rules(slug: str) -> tuple[dict | None, str]:
+    """Доли правил — из своего среза в сводке, а не пересчётом ответа."""
+    if not WHERE.is_file():
+        return None, ("сводки export/where.json нет: её собирает "
+                      "aggregate_bindings.py, и он должен идти раньше")
+    try:
+        сводка = json.loads(WHERE.read_text(encoding="utf-8"))
+    except ValueError as exc:
+        return None, f"сводка не разобрана: {exc}"
+    свой = next((c for c in сводка.get("consumers", [])
+                 if c.get("repo") == slug), None)
+    if свой is None:
+        return None, f"в сводке нет среза {slug} — имя разошлось с реестром"
+    статусы = свой.get("by_status") or {}
+    механизмы = свой.get("by_mechanism") or {}
+    ответов = свой.get("answered")
+    if not ответов or not механизмы:
+        return None, "срез есть, а чисел в нём нет"
+    return {"total": ответов,
+            "gate": механизмы.get("gate", 0),
+            "pipeline": механизмы.get("pipeline", 0),
+            "document": механизмы.get("document", 0),
+            "none": механизмы.get("none", 0),
+            "not_applicable": статусы.get("not-applicable", 0)}, ""
+
+
+def build() -> tuple[dict | None, list[str], str]:
+    """Факты, список названных пропусков и причина отказа сборки."""
+    slug, беда = check_own_name.own_slug(ROOT)
+    if not slug:
+        return None, [], f"имя репозитория не спросить — {беда}"
+
+    факты: dict = {
+        "schema": SCHEMA,
+        "schema_of": SCHEMA_OF,
+        "repo": slug,
+        "generated_at": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
+    }
+
+    пропуски: list[str] = []
+    код, голова = git("rev-parse", "HEAD")
+    if код == 0 and голова:
+        факты["commit"] = голова
+    else:
+        пропуски.append(f"commit: {голова or 'git не ответил'}")
+
+    for ключ, значение, почему in (
+            ("tests", *tests()),
+            ("checks_per_pr", *checks_per_pr()),
+            ("python", *python()),
+            ("coverage_percent", *coverage()),
+            ("rules", *rules(slug))):
+        if значение is None:
+            пропуски.append(f"{ключ}: {почему}")
+        else:
+            факты[ключ] = значение
+    return факты, пропуски, ""
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--print", action="store_true", dest="show",
+                    help="показать собранное, ничего не записывая")
+    args = ap.parse_args(argv)
+
+    факты, пропуски, беда = build()
+    if беда:
+        print(f"сбор не отработал: {беда}", file=sys.stderr)
+        return 2
+    if факты is None or not all(факты.get(k) for k in
+                                ("schema", "repo", "generated_at")):
+        print("обязательный минимум не собрался — файл не записан. Пустой "
+              "ответ хуже отсутствующего: он выглядит измеренным отсутствием",
+              file=sys.stderr)
+        return 1
+
+    текст = json.dumps(факты, ensure_ascii=False, indent=2) + "\n"
+    if args.show:
+        print(текст, end="")
+    else:
+        try:
+            FACTS.parent.mkdir(parents=True, exist_ok=True)
+            FACTS.write_text(текст, encoding="utf-8")
+        except OSError as exc:
+            print(f"сбор не отработал: {FACTS} не записан — {exc}",
+                  file=sys.stderr)
+            return 2
+        print(f"факты собраны: {FACTS.relative_to(ROOT)}, "
+              f"разделов {len(факты)}")
+    # ПРОПУСК НАЗЫВАЕТСЯ, А НЕ МОЛЧИТ. «Ключа нет» — законное состояние, но
+    # только если известно, ПОЧЕМУ его нет: иначе оно неотличимо от забытого.
+    for п in пропуски:
+        print(f"  не измерено — {п}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
