@@ -114,8 +114,11 @@ def test_доли_правил_берутся_из_сводки_а_не_счит
     ]}))
     раздел, почему = bf.rules("свой/каталог")
     assert почему == ""
+    # ИЗВЕСТНЫЕ СТАТУСЫ ЕСТЬ ВСЕГДА, ВКЛЮЧАЯ НОЛЬ: раздел измерен целиком, и
+    # внутри него ноль — ответ, а не пропуск. Список берётся у check_bindings.
     assert раздел == {"total": 9, "gate": 3, "pipeline": 1, "document": 1,
-                      "none": 0, "not_applicable": 4, "rejected": 0}
+                      "none": 0, "not_applicable": 4, "rejected": 0,
+                      "unreviewed": 0}
     # Доли обязаны складываться в целое — иначе расхождение молчаливое (178).
     assert sum(v for k, v in раздел.items() if k != "total") == раздел["total"]
 
@@ -253,3 +256,62 @@ def test_хотя_бы_один_измеренный_раздел_публику
                           .read_text(encoding="utf-8"))
     assert записано["tests"] == {"functions": 1, "modules": 1}
     assert "rules" not in записано
+
+
+def test_непросмотренное_правило_не_ломает_сумму(monkeypatch, repo):
+    """Находка внешнего взгляда на #410: учтены были три статуса из четырёх.
+
+    `unreviewed` в доли не входил вовсе, а `new_rule.py` заводит КАЖДОЕ новое
+    правило именно им. Значит сумма разошлась бы снова, тем же способом, на
+    первом же непросмотренном правиле — а тест был зелён потому, что таких
+    записей сегодня ноль, а не потому, что инвариант общий (146).
+    """
+    дерево(repo)
+    подставить(monkeypatch, repo)
+    write(repo / "export/where.json", json.dumps({"consumers": [
+        {"repo": "свой/каталог", "answered": 14,
+         "by_status": {"active": 5, "not-applicable": 4, "rejected": 3,
+                       "unreviewed": 2},
+         "by_mechanism": {"gate": 2, "pipeline": 1, "document": 1, "none": 1}},
+    ]}))
+    раздел, почему = bf.rules("свой/каталог")
+    assert почему == ""
+    assert раздел["unreviewed"] == 2
+    assert sum(v for k, v in раздел.items() if k != "total") == раздел["total"]
+
+
+def test_новый_статус_попадает_в_доли_сам(monkeypatch, repo):
+    """Состав берётся у данных, а не у списка в коде.
+
+    Ради этого починка и переписана: перечисление чинило число инцидента, а не
+    его причину — статус, о котором забыли, молча выпадал из суммы.
+    """
+    дерево(repo)
+    подставить(monkeypatch, repo)
+    write(repo / "export/where.json", json.dumps({"consumers": [
+        {"repo": "свой/каталог", "answered": 8,
+         "by_status": {"active": 5, "выдуманный-статус": 3},
+         "by_mechanism": {"gate": 5}},
+    ]}))
+    раздел, почему = bf.rules("свой/каталог")
+    assert почему == ""
+    assert раздел["выдуманный_статус"] == 3
+    assert sum(v for k, v in раздел.items() if k != "total") == раздел["total"]
+
+
+def test_несходящееся_число_не_публикуется(monkeypatch, repo):
+    """Вторая сторона (140): сумма не сошлась — раздела нет, и сказано почему.
+
+    Молчаливая публикация несходящегося хуже пропуска: число выглядит
+    измеренным, а сложить его нельзя (075, 181).
+    """
+    дерево(repo)
+    подставить(monkeypatch, repo)
+    write(repo / "export/where.json", json.dumps({"consumers": [
+        {"repo": "свой/каталог", "answered": 10,
+         "by_status": {"active": 7, "rejected": 3},
+         "by_mechanism": {"gate": 2}},   # разбивка не покрывает active
+    ]}))
+    раздел, почему = bf.rules("свой/каталог")
+    assert раздел is None
+    assert "5" in почему and "10" in почему
