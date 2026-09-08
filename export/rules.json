@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T04:45:01+00:00",
+  "generated_at": "2026-09-08T04:51:54+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 185,
+  "count": 186,
   "rules": [
     {
       "id": "001",
@@ -6673,6 +6673,46 @@
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
       "portable": "yes"
+    },
+    {
+      "id": "187",
+      "slug": "a-neutral-check-run-satisfies-a-required-check",
+      "title": {
+        "ru": "Обязательную проверку удовлетворяет любая запись с её именем, включая пропущенную",
+        "en": "A required check is satisfied by any record bearing its name, skipped ones included"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "надёжность"
+        ],
+        "en": [
+          "pipeline",
+          "reliability"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/187-a-neutral-check-run-satisfies-a-required-check.md",
+        "en": "rules/en/187-a-neutral-check-run-satisfies-a-required-check.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "141"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": ".github/workflows/ci.yml"
+        }
+      ],
+      "origin": "ArtVsMark/ArtVsMark",
+      "portable": "partly"
     }
   ],
   "candidates": [
