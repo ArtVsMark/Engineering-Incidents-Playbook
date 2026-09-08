@@ -103,7 +103,12 @@ def test_zapis_odna_i_vtoroy_progon_molchit(monkeypatch, capsys):
     monkeypatch.setattr(lt.ghcli, "run", fake)
     monkeypatch.setattr(lt, "fetch_rules", lambda c, r: ([rule("005")], None))
     monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME, "--apply"])
-    assert lt.main() == 1                      # была задача без обратной ссылки
+    # БЫЛО 1, И ИМЕННО ЭТО ОКАЗАЛОСЬ ДЕФЕКТОМ. Случай закреплял поведение
+    # «нашёл и дописал — отвечаю как находкой»: `missing` считался до записи и
+    # после неё не очищался. Читающий не мог отличить удачную запись от
+    # неустранённой находки, и прогон по расписанию у потребителя красил
+    # успешную работу (109). Остаток после записи пуст — значит ноль.
+    assert lt.main() == 0                      # дописал всё, до чего дошёл
     assert written == [written[0]]             # ровно одна запись
     monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME, "--apply"])
     assert lt.main() == 0                      # второй прогон: ставить нечего
@@ -126,6 +131,25 @@ def test_suhoy_progon_ne_pishet(monkeypatch, capsys):
     assert lt.main() == 1
     assert written == []
     assert "--apply не задан" in capsys.readouterr().out
+
+
+def test_kod_ne_menyaet_smysla_mezhdu_rezhimami(monkeypatch, capsys):
+    """ГРАНИЦА МЕЖДУ ДВУМЯ СЛУЧАЯМИ ВЫШЕ, И ОНА ЖЕ ПРЕДМЕТ ПОЧИНКИ. Один вход,
+    два режима: сухой отвечает «есть находки», записывающий — «чисто». Пока
+    код был общим, читающему приходилось знать режим, чтобы понять ответ, —
+    а прогон по расписанию его не знал и красил удачную запись."""
+    def fake(*args):
+        return (0, "ok") if any(a.startswith("body=") for a in args) else (0, "0")
+
+    monkeypatch.setattr(lt.ghcli, "run", fake)
+    monkeypatch.setattr(lt, "fetch_rules", lambda c, r: ([rule("005")], None))
+
+    monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME])
+    сухой = lt.main()
+    monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME, "--apply"])
+    пишущий = lt.main()
+
+    assert (сухой, пишущий) == (1, 0), "один вход, разные ответы — по режиму"
 
 
 def test_eksport_ne_prochitan_eto_tretiy_ishod(monkeypatch, capsys):
