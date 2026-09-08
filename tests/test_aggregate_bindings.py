@@ -875,3 +875,94 @@ def test_adres_zapolnen_probu_ne_delayut():
     заполнен = [dict(ОБЪЯВЛЕН[0], bindings="https://пример/х.json")]
     assert ab.unconnected(заполнен, читатель({"rules": {"001": {}}})) == []
 
+
+
+# ── обрыв связи не то же самое, что ответ площадки (051) ───────────────────
+# Ночной прогон 8 сентября объявил двух потребителей недоступными по одному
+# сбросу соединения — и оба прочитались через четверть часа. Здесь предмет
+# ровно этот: что повторяется, что не повторяется и как об этом сказано.
+
+class ОтветЗаглушка:
+    """Тело ответа: `urlopen` отдаёт его как контекстный менеджер.
+
+    Источник подделки (правило 170): форма отказа снята с задачи #437, куда
+    дословно лёг вывод прогона 34255883521. Там `urlopen` поднял
+    `<urlopen error [Errno 104] Connection reset by peer>` на адресе
+    `https://raw.githubusercontent.com/ArtVsMark/Glossary-Python/main/.rules/bindings.json`
+    и на `ArtVsMark/Claude-Code_Usage-Token`, а прогон значков через четверть
+    часа прочитал оба. Коды 404 и 503 подделываются классом
+    `urllib.error.HTTPError` — тем самым, что поднимает сам `urlopen`.
+    """
+
+    def __init__(self, текст: str) -> None:
+        self._текст = текст
+
+    def __enter__(self) -> "ОтветЗаглушка":
+        return self
+
+    def __exit__(self, *_) -> bool:
+        return False
+
+    def read(self) -> bytes:
+        return self._текст.encode("utf-8")
+
+
+def _урл(monkeypatch, *исходы) -> list[int]:
+    """Подменяет urlopen списком исходов по порядку. Возвращает счётчик."""
+    попытки: list[int] = []
+    очередь = list(исходы)
+
+    def открыть(url, timeout=None):  # noqa: ARG001 — подпись как у urlopen
+        попытки.append(1)
+        исход = очередь.pop(0) if очередь else исходы[-1]
+        if isinstance(исход, Exception):
+            raise исход
+        return ОтветЗаглушка(исход)
+
+    monkeypatch.setattr(ab.urllib.request, "urlopen", открыть)
+    monkeypatch.setattr(ab, "ПАУЗА", 0)
+    return попытки
+
+
+def test_сброс_связи_переспрашивается_и_ответ_доезжает(monkeypatch):
+    попытки = _урл(monkeypatch,
+                   OSError(104, "Connection reset by peer"),
+                   '{"rules": {}}')
+    data, err = ab.fetch("https://example.org/bindings.json")
+    assert err is None and data == {"rules": {}}
+    assert len(попытки) == 2
+
+
+def test_обрыв_на_всех_попытках_называет_их_число(monkeypatch):
+    попытки = _урл(monkeypatch, ab.urllib.error.URLError("reset by peer"))
+    data, err = ab.fetch("https://example.org/bindings.json")
+    assert data is None
+    assert "3 раза подряд" in err
+    assert len(попытки) == ab.ПОПЫТОК
+
+
+def test_ответ_404_это_ответ_и_не_переспрашивается(monkeypatch):
+    """«Файла нет» — решение площадки, а не молчание провода."""
+    попытки = _урл(monkeypatch, ab.urllib.error.HTTPError(
+        "https://example.org/x", 404, "Not Found", {}, None))
+    data, err = ab.fetch("https://example.org/x")
+    assert data is None and "404" in err
+    assert len(попытки) == 1
+
+
+def test_ответ_503_переспрашивается_как_обрыв(monkeypatch):
+    """«Мне сейчас плохо» — состояние, а не отсутствие файла."""
+    попытки = _урл(monkeypatch,
+                   ab.urllib.error.HTTPError("https://example.org/x", 503,
+                                             "Service Unavailable", {}, None),
+                   '{"rules": {}}')
+    data, err = ab.fetch("https://example.org/x")
+    assert err is None and data == {"rules": {}}
+    assert len(попытки) == 2
+
+
+def test_нечитаемый_json_переспрашивать_незачем(monkeypatch):
+    попытки = _урл(monkeypatch, "не json вовсе")
+    data, err = ab.fetch("https://example.org/x")
+    assert data is None and "не разобран" in err
+    assert len(попытки) == 1

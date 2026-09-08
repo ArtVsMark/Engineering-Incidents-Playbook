@@ -65,11 +65,15 @@ import os
 import re
 import subprocess
 import sys
-import urllib.error
-import urllib.request
 from pathlib import Path
 
 import ghcli
+# ЧТЕНИЕ ОТВЕТА ПОТРЕБИТЕЛЯ ОДНО НА ДВА СБОРЩИКА. Своя копия здесь была, и
+# отличалась она ровно тем, чего не хватило: повтором при обрыве связи. Два
+# ответа на один вопрос расходятся молча (022), и разошлись — 8 сентября
+# сводка научилась переспрашивать, а предложения продолжали бы краснеть с
+# первого сброса, потому что живут в том же ночном прогоне.
+from aggregate_bindings import fetch  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -177,14 +181,6 @@ def check_verdicts(root: Path) -> int:
     return 0
 
 
-def fetch(url: str) -> tuple[dict | None, str | None]:
-    try:
-        with urllib.request.urlopen(url, timeout=30) as resp:
-            return json.loads(resp.read().decode("utf-8")), None
-    except (urllib.error.URLError, OSError, ValueError) as exc:
-        return None, str(exc)
-
-
 def gather(consumers: list[dict], verdicts: dict) -> tuple[list[dict], list[str]]:
     """Тянет предложения потребителей. Возвращает (не разобранные, проблемы)."""
     pending: list[dict] = []
@@ -200,7 +196,7 @@ def gather(consumers: list[dict], verdicts: dict) -> tuple[list[dict], list[str]
 
         data, err = fetch(source)
         if err:
-            problems.append(f"{repo}: ответ не прочитан — {err}")
+            problems.append(f"{repo}: предложения {err}")
             continue
 
         items = data.get("proposals") if isinstance(data, dict) else None
