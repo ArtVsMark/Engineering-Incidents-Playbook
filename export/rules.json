@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T15:23:57+00:00",
+  "generated_at": "2026-09-08T16:54:13+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.2"
   },
-  "count": 194,
+  "count": 195,
   "rules": [
     {
       "id": "001",
@@ -7011,6 +7011,46 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "196",
+      "slug": "a-link-to-a-derived-file-is-not-published-before-the-file",
+      "title": {
+        "ru": "Ссылка на производный артефакт не публикуется раньше самого артефакта",
+        "en": "A link to a derived artefact is not published before the artefact itself"
+      },
+      "areas": {
+        "ru": [
+          "витрины",
+          "конвейер"
+        ],
+        "en": [
+          "showcases",
+          "pipeline"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/196-a-link-to-a-derived-file-is-not-published-before-the-file.md",
+        "en": "rules/en/196-a-link-to-a-derived-file-is-not-published-before-the-file.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "145"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "147"
+        }
+      ],
+      "origin": "ArtVsMark/ArtVsMark",
       "portable": "yes"
     }
   ],
