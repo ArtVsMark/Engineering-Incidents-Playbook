@@ -92,8 +92,8 @@ See also: [160](160-derived-artifacts-live-off-the-branch.md) — it is what
 creates the subject: moving the derived file off the shared branch removes the
 guarantee everything rested on;
 [002](002-rule-without-mechanism.md) — knowledge in someone's head is not a
-mechanism, and here that was measured on the rule's own author on the day he
-wrote it;
+mechanism, and here that was measured on the rule's own author on the day the
+rule was written;
 [051](051-warn-on-likely-block-on-certain.md) — the obvious "file exists" gate
 would go red on correct work, which is why it is not here;
 [125](125-a-generated-file-is-not-a-store.md) — a derived file is not a store;
