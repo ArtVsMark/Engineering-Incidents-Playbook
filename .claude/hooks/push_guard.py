@@ -139,19 +139,38 @@ def without_heredocs(command: str) -> str:
 SWITCH = {"checkout", "switch"}
 #: Ключи `checkout`/`switch`, за которыми идёт имя новой ветки.
 SWITCH_WITH_NAME = {"-b", "-B", "-c", "-C"}
+#: Что git ветками не называет: `check-ref-format` запрещает компонент `.` и
+#: `..`, а путём они приходят регулярно.
+НЕ_ИМЯ_ВЕТКИ = {".", ".."}
 
 
 def switched_to(words: list[str]) -> str | None:
-    """Ветка, на которую переходит эта команда, если она переходит."""
+    """Ветка, на которую переходит эта команда, ЕСЛИ она переходит.
+
+    `checkout` решает две задачи разом, и различает их `--`: всё за ним —
+    ПУТИ, а не ссылки. `git checkout -- файл` и `git checkout main -- файл`
+    восстанавливают содержимое и никуда не переходят; прежний разбор возвращал
+    оттуда `файл` и `main` как имя ветки, после чего верный толчок в свою
+    ветку объявлялся чужим (инцидент 8 сентября,
+    `git checkout -- export/rules.json && git push -u origin своя`).
+
+    Различать `git checkout имя` без `--` сторож не берётся: `export/rules.json`
+    и `agent/тема` неразличимы текстом, и решает это сам git, глядя в дерево.
+    Достоверна здесь только форма с `--`, ею и ограничен ответ (051).
+    """
     вызов = подкоманда(words)
     if вызов is None or вызов[0] not in SWITCH:
         return None
     tail = вызов[1]
+    if "--" in tail:
+        return None
     for i, w in enumerate(tail):
         if w in SWITCH_WITH_NAME and i + 1 < len(tail):
             return tail[i + 1]
         if not w.startswith("-") and not REDIRECT.search(w):
-            return w
+            # `.` и `..` git именем ветки не принимает вовсе, а как путь они
+            # приходят постоянно: `git checkout .` — восстановление.
+            return None if w in НЕ_ИМЯ_ВЕТКИ else w
     return None
 
 
