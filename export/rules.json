@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-07T20:33:43+00:00",
+  "generated_at": "2026-09-08T04:45:01+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 184,
+  "count": 185,
   "rules": [
     {
       "id": "001",
@@ -6632,6 +6632,46 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes"
+    },
+    {
+      "id": "186",
+      "slug": "exit-code-flips-meaning-in-apply-mode",
+      "title": {
+        "ru": "Код возврата, переиспользованный между режимами, читается вместе с режимом",
+        "en": "An exit code reused across modes is read together with the mode"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "инструменты"
+        ],
+        "en": [
+          "gates",
+          "tooling"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/186-exit-code-flips-meaning-in-apply-mode.md",
+        "en": "rules/en/186-exit-code-flips-meaning-in-apply-mode.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "doc": ".github/workflows/rules-inbox.yml"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": "scripts/link_trails.py"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
       "portable": "yes"
     }
   ],
