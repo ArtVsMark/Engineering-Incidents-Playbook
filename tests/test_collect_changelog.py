@@ -460,3 +460,63 @@ def test_chuzhie_adresa_pri_pereezde_ne_trogayutsya():
     """Обратная сторона (140): внешняя ссылка, якорь и соседний файл — не цель."""
     for текст in ("[док](https://example/../y)", "[а](#б)", "[сосед](sibling.md)"):
         assert cc.retarget(текст) == текст, текст
+
+
+def ветка_с_фрагментом(repo: Path, имя: str, текст: str) -> str:
+    """Настоящий репозиторий: коммит-основание, затем ДОБАВЛЕННЫЙ фрагмент."""
+    git(repo, "init", "-q", "-b", "main")
+    git(repo, "config", "user.email", "t@example.com")
+    git(repo, "config", "user.name", "T")
+    write(repo / "changelog.d" / "older.added.md", "Было.\n")
+    git(repo, "add", "-A")
+    git(repo, "commit", "-qm", "основание")
+    основание = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
+                               check=True, capture_output=True, text=True,
+                               encoding="utf-8").stdout.strip()
+    write(repo / "changelog.d" / имя, текст)
+    git(repo, "add", "-A")
+    git(repo, "commit", "-qm", "починка")
+    return основание
+
+
+def test_добавленный_фрагмент_доезжает_до_проверки_вердикта(monkeypatch, repo):
+    """Инцидент 8 сентября: гейт вердикта стоял с заведения и не срабатывал.
+
+    `git diff -z` отдаёт имена через НОЛЬ, а разбор резал по пробелам — имя
+    приезжало с хвостовым `\\0`, такого файла нет ни на каком диске, и
+    `verdict_problems` пропускал его первой же строкой. Гейт печатал
+    «фрагменты в порядке», не спросив ни одного: из 38 починок 35 оказались
+    без разбираемого вердикта (146).
+    """
+    основание = ветка_с_фрагментом(repo, "we-fixed-it.fixed.md", "Починили.\n")
+    monkeypatch.setattr(cc, "ROOT", repo)
+    monkeypatch.setattr(cc, "FRAGMENTS", repo / "changelog.d")
+    пути, почему = cc.added_since(основание)
+    assert почему is None
+    assert [p.name for p in пути] == ["we-fixed-it.fixed.md"]
+    # ГЛАВНОЕ УТВЕРЖДЕНИЕ. Имя обязано быть НАСТОЯЩИМ путём: именно на
+    # `path.exists()` находка и терялась, а не на разборе вердикта.
+    assert all(p.exists() for p in пути)
+    assert cc.verdict_problems(пути), "починка без вердикта обязана быть находкой"
+
+
+def test_фрагмент_с_вердиктом_находкой_не_считается(monkeypatch, repo):
+    """Вторая сторона (140): из одних «обязан отвергнуть» ложный отказ не виден."""
+    основание = ветка_с_фрагментом(
+        repo, "we-fixed-it.fixed.md",
+        "Починили.\n\n> правило 146 — зелёный гейт не проверяет свою посылку\n")
+    monkeypatch.setattr(cc, "ROOT", repo)
+    monkeypatch.setattr(cc, "FRAGMENTS", repo / "changelog.d")
+    пути, почему = cc.added_since(основание)
+    assert [p.name for p in пути] == ["we-fixed-it.fixed.md"]
+    assert cc.verdict_problems(пути) == []
+
+
+def test_имя_с_пробелом_не_разъезжается(monkeypatch, repo):
+    """Ради чего `-z` и просили: разбор по пробелам ломал бы такое имя надвое."""
+    основание = ветка_с_фрагментом(repo, "two words.fixed.md", "Починили.\n")
+    monkeypatch.setattr(cc, "ROOT", repo)
+    monkeypatch.setattr(cc, "FRAGMENTS", repo / "changelog.d")
+    пути, _ = cc.added_since(основание)
+    assert [p.name for p in пути] == ["two words.fixed.md"]
+    assert all(p.exists() for p in пути)
