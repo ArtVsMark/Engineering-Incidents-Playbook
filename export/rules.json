@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T05:20:26+00:00",
+  "generated_at": "2026-09-08T05:31:26+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 190,
+  "count": 191,
   "rules": [
     {
       "id": "001",
@@ -6872,6 +6872,42 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
+      "portable": "yes"
+    },
+    {
+      "id": "192",
+      "slug": "changing-the-actor-invalidates-the-measurement",
+      "title": {
+        "ru": "Смена исполнителя действия обесценивает замер, снятый на прежнем",
+        "en": "Changing who performs an action invalidates a measurement taken on the previous performer"
+      },
+      "areas": {
+        "ru": [
+          "наблюдение",
+          "конвейер"
+        ],
+        "en": [
+          "observation",
+          "pipeline"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/192-changing-the-actor-invalidates-the-measurement.md",
+        "en": "rules/en/192-changing-the-actor-invalidates-the-measurement.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "doc": "scripts/merge_queue.py"
+        }
+      ],
+      "origin": "ArtVsMark/Claude-Code_Usage-Token",
       "portable": "yes"
     }
   ],
