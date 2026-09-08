@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T05:31:26+00:00",
+  "generated_at": "2026-09-08T05:38:30+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 191,
+  "count": 192,
   "rules": [
     {
       "id": "001",
@@ -6908,6 +6908,42 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
+      "portable": "yes"
+    },
+    {
+      "id": "193",
+      "slug": "repair-acceptance-stronger-than-defect",
+      "title": {
+        "ru": "Приёмка автоматической починки обязана быть строже чинимого дефекта",
+        "en": "The acceptance test for an automated repair must be stricter than the defect it repairs"
+      },
+      "areas": {
+        "ru": [
+          "данные",
+          "качество"
+        ],
+        "en": [
+          "data",
+          "quality"
+        ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/193-repair-acceptance-stronger-than-defect.md",
+        "en": "rules/en/193-repair-acceptance-stronger-than-defect.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1454"
+        }
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
       "portable": "yes"
     }
   ],
