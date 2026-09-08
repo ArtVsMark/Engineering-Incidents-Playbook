@@ -22,7 +22,7 @@ repair was written: after a line ending in a colon, indent by one; the result is
 accepted only if `ast.parse` accepts it.
 
 The acceptance looked strict — it is executable, not "by eye" — and 80 cards out
-of 90 passed it. Reading the diff showed the repair was wrong for ALL of them:
+of 90 passed it. Reading the diff showed the repair was wrong for 79 of those 80:
 the heuristic never leaves a block, so it folds the example into a ladder of
 nesting — a class definition inside a method inside a loop. A 60-line example
 drifted 14 levels deep.
@@ -32,8 +32,9 @@ definitions are never executed, so there is no error. Of the 80 "repaired" cards
 48 ran without raising anything.
 
 The outcome, measured: 1 card out of 90 is repairable automatically — the only
-one where there is exactly one block opener followed by exactly one line. The rest
-were done by hand.
+one where there is exactly one block opener followed by exactly one line, and the
+only one of the eighty accepted where the acceptance was not wrong. The rest were
+done by hand.
 
 **The danger is not the lost time.** A broken example is visible to anyone: it
 fails for the student. A "repaired" one looks like working code and silently
