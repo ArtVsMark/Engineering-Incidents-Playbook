@@ -217,13 +217,23 @@ def gather(consumers: list[dict], verdicts: dict) -> tuple[list[dict], list[str]
             if not SLUG_RE.match(slug):
                 problems.append(f"{repo}: слаг {slug!r} не годится в имя файла")
                 continue
+            # ВОЗРАЖЕНИЕ О ФОРМЕ СНИМАЕТСЯ ВЫНЕСЕННЫМ РЕШЕНИЕМ, И ПОРЯДОК
+            # ЗДЕСЬ НЕСУЩИЙ. Стояло наоборот, и разобранное предложение
+            # возражало вечно: чужой файл мы не правим, а вердикт у нас уже
+            # записан. Замер 8 сентября: `repair-acceptance-stronger-than-
+            # defect` грейдера принят правилом 193 — и всё равно печатался
+            # «не прочитано», то есть очередь показывала работу, которой нет
+            # (075). Форма важна ДО решения; после — оно и есть ответ.
+            if key_of(repo, slug) in verdicts:
+                continue                  # решение уже вынесено
             taken = [f for f in FORBIDDEN_IN_PROPOSAL if item.get(f)]
             if taken:
                 problems.append(
-                    f"{repo}:{slug}: предложение несёт {', '.join(taken)} — "
-                    f"номер присваивает каталог при приёме, не отправитель")
-            if key_of(repo, slug) in verdicts:
-                continue                  # решение уже вынесено
+                    f"{repo}:{slug}: предложение несёт {', '.join(taken)}. "
+                    "У нас эти поля означают присвоенное каталогом, и "
+                    "отправитель их не заполняет. Если в них ЛЕЖИТ ТЕКСТ, а не "
+                    "номер, — переименуйте: утверждение зовётся `claim`, "
+                    "инцидент `incident`, след `trail`")
             pending.append({
                 "repo": repo,
                 "slug": slug,
