@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 44 | 32 | 194 | 0 | 0 | 161 | 119 | 8 | 28 | 6 | 102 |  |
 | `Stepik-Python-Grader` | подключён | 175 | 131 | 181 | 13 | 0 | 178 | 76 | 37 | 65 | 0 | 142 |  |
-| `ArtVsMark` | подключён | 23 | 16 | 193 | 1 | 0 | 123 | 87 | 11 | 23 | 0 | 35 |  |
+| `ArtVsMark` | подключён | 23 | 16 | 193 | 1 | 0 | 124 | 88 | 11 | 23 | 0 | 37 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 13 | 0 | 152 | 95 | 9 | 46 | 2 | 86 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 181 | 13 | 0 | 117 | 60 | 12 | 29 | 16 | 78 |  |
 
@@ -183,24 +183,24 @@
 | `ArtVsMark` | `.github/workflows/metrics.yml` | 9 |
 | `ArtVsMark` | `scripts/check_page.py` | 9 |
 | `ArtVsMark` | `.rules/README.md` | 8 |
+| `ArtVsMark` | `HISTORY.md` | 8 |
 | `ArtVsMark` | `scripts/hold.py` | 8 |
 | `ArtVsMark` | `.rules/roles.md` | 7 |
-| `ArtVsMark` | `HISTORY.md` | 7 |
 | `ArtVsMark` | `scripts/gh_outcome.py` | 7 |
 | `ArtVsMark` | `.github/workflows/release-hold.yml` | 6 |
 | `ArtVsMark` | `.rules/bindings.json` | 6 |
 | `ArtVsMark` | `.github/workflows/main-red.yml` | 5 |
 | `ArtVsMark` | `.github/workflows/rules-inbox.yml` | 5 |
+| `ArtVsMark` | `scripts/check_journal.py` | 5 |
+| `ArtVsMark` | `pr-check.yml` | 4 |
 | `ArtVsMark` | `projects.json` | 4 |
-| `ArtVsMark` | `scripts/check_journal.py` | 4 |
 | `ArtVsMark` | `.github/workflows/attribution-history.yml` | 3 |
 | `ArtVsMark` | `.rules/proposals.json` | 3 |
 | `ArtVsMark` | `open-pr.yml` | 3 |
-| `ArtVsMark` | `pr-check.yml` | 3 |
 | `ArtVsMark` | `.github/workflows/snake.yml` | 2 |
 | `ArtVsMark` | `scripts/check_branch.py` | 2 |
 | `ArtVsMark` | `scripts/neighbours.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 3 механизмов по одному правилу; без названного адреса: 0 из 123 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 5 механизмов по одному правилу; без названного адреса: 0 из 124 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 34 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 30 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 15 |
@@ -324,7 +324,7 @@
 | 027 | действует | действует | действует | действует | действует |
 | 028 | действует | действует | нет предмета | действует | действует |
 | 029 | действует | действует | действует | действует | действует |
-| 030 | действует | действует | нет предмета | действует | действует |
+| 030 | действует | действует | действует | действует | действует |
 | 031 | отклонено | действует | нет предмета | нет предмета | нет предмета |
 | 032 | нет предмета | действует | действует | действует | действует |
 | 033 | действует | действует | нет предмета | действует | нет предмета |
