@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T04:57:46+00:00",
+  "generated_at": "2026-09-08T05:03:18+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 187,
+  "count": 188,
   "rules": [
     {
       "id": "001",
@@ -6745,6 +6745,46 @@
         {
           "repo": "ArtVsMark/ArtVsMark",
           "issue": "134"
+        }
+      ],
+      "origin": "ArtVsMark/ArtVsMark",
+      "portable": "yes"
+    },
+    {
+      "id": "189",
+      "slug": "a-branch-is-named-by-its-task-not-its-window",
+      "title": {
+        "ru": "Ветка называется задачей, а не окном, и живёт ровно столько, сколько задача",
+        "en": "A branch is named by its task, not its window, and lives exactly as long as the task"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "агентские сессии"
+        ],
+        "en": [
+          "process",
+          "agent sessions"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/189-a-branch-is-named-by-its-task-not-its-window.md",
+        "en": "rules/en/189-a-branch-is-named-by-its-task-not-its-window.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "doc": "scripts/check_branch.py"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": ".claude/hooks/push_guard.py"
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
