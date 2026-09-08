@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T05:37:10+00:00",
+  "generated_at": "2026-09-08T05:40:54+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,10 +10,10 @@
       "answers_to": "1.5",
       "state": "подключён",
       "read_at": "2026-09-08",
-      "answered": 191,
+      "answered": 192,
       "by_status": {
         "active": 160,
-        "not-applicable": 25,
+        "not-applicable": 26,
         "rejected": 6
       },
       "by_mechanism": {
@@ -213,7 +213,8 @@
         "189": "active",
         "190": "active",
         "191": "not-applicable",
-        "192": "active"
+        "192": "active",
+        "193": "not-applicable"
       },
       "holds": {
         "001": {
@@ -1774,8 +1775,8 @@
           "where": "scripts/check_rule_bindings.py (UNHELD_BUDGET = 0) — ответ «действует, но ничем» отвергается: правило либо держится механизмом, либо записывается документом с разрешимым адресом. Бюджет опускают починкой, а не правкой числа, поэтому отказ целиком невозможен по построению — половина, которую держит машина, обязана быть названа"
         }
       },
-      "trails": 174,
-      "born": 130
+      "trails": 175,
+      "born": 131
     },
     {
       "repo": "ArtVsMark/ArtVsMark",
