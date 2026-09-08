@@ -1,14 +1,15 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-07T21:33:47+00:00",
+  "generated_at": "2026-09-08T00:21:55+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
       "role": "каталог",
       "schema": "1.2",
+      "answers_to": "1.5",
       "state": "подключён",
-      "read_at": "2026-09-07",
+      "read_at": "2026-09-08",
       "answered": 184,
       "by_status": {
         "active": 151,
@@ -820,8 +821,9 @@
       "repo": "ArtVsMark/Stepik-Python-Grader",
       "role": "потребитель",
       "schema": "1.1",
+      "answers_to": "",
       "state": "подключён",
-      "read_at": "2026-09-07",
+      "read_at": "2026-09-08",
       "answered": 181,
       "by_status": {
         "active": 178,
@@ -1736,8 +1738,9 @@
       "repo": "ArtVsMark/ArtVsMark",
       "role": "потребитель",
       "schema": "1.1",
+      "answers_to": "",
       "state": "подключён",
-      "read_at": "2026-09-07",
+      "read_at": "2026-09-08",
       "answered": 182,
       "by_status": {
         "active": 109,
@@ -2379,8 +2382,9 @@
       "repo": "ArtVsMark/Claude-Code_Usage-Token",
       "role": "потребитель",
       "schema": "1.1",
+      "answers_to": "",
       "state": "подключён",
-      "read_at": "2026-09-07",
+      "read_at": "2026-09-08",
       "answered": 181,
       "by_status": {
         "active": 152,
@@ -3193,8 +3197,9 @@
       "repo": "ArtVsMark/Glossary-Python",
       "role": "потребитель",
       "schema": "1.1",
+      "answers_to": "",
       "state": "подключён",
-      "read_at": "2026-09-07",
+      "read_at": "2026-09-08",
       "answered": 181,
       "by_status": {
         "active": 117,
