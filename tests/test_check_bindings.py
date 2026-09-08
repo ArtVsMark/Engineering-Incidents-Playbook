@@ -757,3 +757,28 @@ def test_ступень_ноль_печатается_и_вместе_с_нас�
     out = capsys.readouterr()
     assert "разошлась с фактом" in out.err
     assert "ступень 0" in out.out
+
+
+def test_проекция_на_ветку_badges_декларацией_не_расходится(monkeypatch, repo):
+    """Инцидент 8 сентября: ответ по 174 назвал `.github/badges/facts.json`.
+
+    Файл там и лежит — на ветке `badges`, куда его уносит `badges.yml`. В общей
+    ветке содержимого этого каталога нет вовсе, и отсутствие пути говорит о
+    ВЕТКЕ, а не о декларации (160). Обязательная проверка на этом краснела.
+    """
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "pipeline",
+                               "where": "публикуем .github/badges/facts.json"}}},
+            export_of("001"))
+    assert not (repo / ".github" / "badges" / "facts.json").exists()
+    assert cb.main() == 0
+
+
+def test_за_пределами_проекции_имя_остаётся_находкой(monkeypatch, repo, capsys):
+    """Освобождён названный каталог, а не всё, что похоже на него (068)."""
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "pipeline",
+                               "where": "публикуем .github/badges-нет/facts.json"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "разошлась с фактом" in capsys.readouterr().err

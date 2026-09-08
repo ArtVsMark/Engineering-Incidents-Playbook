@@ -63,7 +63,7 @@ import sync_inbox
 # Какие пути в дереве отсутствуют ПО ЗАМЫСЛУ — канон один, и он в скрипте,
 # названном этим предметом: там же у каждой строки записана причина и владелец
 # (правила 068, 022). Своя копия здесь разошлась бы с ним молча.
-from check_derived import OWNED_BY_JOB
+from check_derived import OWNED_BY_JOB, PROJECTED_TO_BADGES
 
 ROOT = Path(__file__).resolve().parent.parent
 BINDINGS = ROOT / ".rules" / "bindings.json"
@@ -563,7 +563,7 @@ def main() -> int:
         # то, ради чего заведена (068, 146).
         claim = f"{rec.get('where', '')} {rec.get('why', '')}"
         for token in PATH_RE.findall(claim):
-            if token in OWNED_BY_JOB:
+            if token in OWNED_BY_JOB or token.startswith(PROJECTED_TO_BADGES):
                 continue
             if not (ROOT / token).exists():
                 problems.append(f"{rid}: заявлено «{token}», а такого файла нет — "
