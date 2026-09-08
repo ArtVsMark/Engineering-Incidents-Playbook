@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T04:51:54+00:00",
+  "generated_at": "2026-09-08T04:57:46+00:00",
   "contracts": {
     "export": "1.5",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.1"
   },
-  "count": 186,
+  "count": 187,
   "rules": [
     {
       "id": "001",
@@ -6713,6 +6713,42 @@
       ],
       "origin": "ArtVsMark/ArtVsMark",
       "portable": "partly"
+    },
+    {
+      "id": "188",
+      "slug": "published-is-not-delivered",
+      "title": {
+        "ru": "Опубликованное перечитывают: платформа вправе переписать текст, и код 201 этого не покажет",
+        "en": "Read back what you published: the platform may rewrite it, and a 201 will not show that"
+      },
+      "areas": {
+        "ru": [
+          "автоматика",
+          "надёжность"
+        ],
+        "en": [
+          "automation",
+          "reliability"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "added": "2026-09-08",
+      "files": {
+        "ru": "rules/ru/188-published-is-not-delivered.md",
+        "en": "rules/en/188-published-is-not-delivered.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "134"
+        }
+      ],
+      "origin": "ArtVsMark/ArtVsMark",
+      "portable": "yes"
     }
   ],
   "candidates": [
