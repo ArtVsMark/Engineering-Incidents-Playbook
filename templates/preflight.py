@@ -487,6 +487,67 @@ def check_mechanisms() -> Result:
                   time.monotonic() - t0)
 
 
+def check_findings() -> Result:
+    """Правило 142: находки каталога о МОЁМ ответе имеют адресата, и это я.
+
+    ПОЧЕМУ ЭТО ЧИТАЕТСЯ ЗДЕСЬ. Каталог видит расхождения в вашем ответе —
+    ответ о правиле, которого у него нет; ответ по устаревшей схеме; механизм,
+    названный без адреса, — но починить их отсюда он не может: файл ваш. До
+    этого шага находки печатались в логе ЕГО прогона, куда вы не смотрите и
+    смотреть не обязаны.
+
+    ПУБЛИКАЦИЯ, А НЕ РАССЫЛКА. Каталог кладёт находки в свою сводку рядом с
+    вашим срезом; вы читаете её тем же файлом, который и так лежит на диске.
+    Механизм, ждущий уведомления, ломается вместе с каналом уведомления.
+
+    ЗАМЕР 8 сентября: 8 живых находок по четырём потребителям, и ни одна не
+    доехала до того, кто её чинит.
+
+    НАХОДКА, А НЕ ОТКАЗ: чинится она правкой вашего ответа, и красное здесь
+    останавливало бы работу, к которой отношения не имеет. Пустая сводка —
+    третий исход: «не прочитали» и «чисто» разные ответы (039).
+    """
+    t0 = time.monotonic()
+    сводка = ROOT / ".rules" / "catalogue-where.json"
+    if not сводка.exists():
+        сводка = CATALOGUE_EXPORT.parent / "where.json"
+    if not сводка.exists():
+        return Result("findings", BROKEN,
+                      "сводки каталога нет рядом с выгрузкой — её кладёт сюда "
+                      "шаг синхронизации; без неё читать нечего",
+                      time.monotonic() - t0)
+    ответ = ROOT / ".rules" / "bindings.json"
+    if not ответ.exists():
+        return Result("findings", BROKEN,
+                      "нет .rules/bindings.json — своё имя берётся оттуда",
+                      time.monotonic() - t0)
+    try:
+        данные = json.loads(сводка.read_text(encoding="utf-8"))
+        моё = (json.loads(ответ.read_text(encoding="utf-8")).get("project") or "").strip()
+    except (OSError, ValueError) as exc:
+        return Result("findings", BROKEN, str(exc), time.monotonic() - t0)
+
+    срезы = данные.get("consumers") or []
+    мой = next((с for с in срезы if (с.get("repo") or "").strip() == моё), None)
+    if мой is None:
+        return Result("findings", BROKEN,
+                      f"в сводке каталога нет среза для «{моё}» — либо имя в "
+                      "вашем ответе разошлось с реестром каталога, либо сводка "
+                      "собрана до вашего подключения",
+                      time.monotonic() - t0)
+    находки = мой.get("findings") or []
+    if not находки:
+        return Result("findings", OK,
+                      f"каталог не имеет замечаний к ответу «{моё}»",
+                      time.monotonic() - t0)
+    return Result("findings", FINDINGS,
+                  f"каталог называет {len(находки)} расхождение(й) в вашем ответе",
+                  time.monotonic() - t0,
+                  list(находки) + ["Чинится правкой .rules/bindings.json на "
+                                   "вашей стороне: каталог видит расхождение, "
+                                   "но файл ваш (142)."])
+
+
 def run_step(step: Step) -> Result:
     t0 = time.monotonic()
     if step.requires_files and not any(ROOT.glob(p) for p in step.requires_files):
@@ -541,6 +602,7 @@ def main() -> int:
         results.append(check_transport())
         results.append(check_trails())
         results.append(check_mechanisms())
+        results.append(check_findings())
     results.extend(run_step(s) for s in STEPS if s.name in selected)
 
     print()
