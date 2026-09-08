@@ -604,15 +604,67 @@ def test_awaiting_pri_gotovom_mehanizme_eto_nahodka(monkeypatch, repo, capsys):
 def test_gate_ukazyvayushchiy_na_ispolnyaemoe_prohodit(monkeypatch, repo, адрес, что):
     """Все пять видов законны. Файл создаётся: соседняя проверка требует, чтобы
     заявленное СУЩЕСТВОВАЛО, и без этого случай проверял бы её, а не 139."""
+    # НОМЕР ПРАВИЛА СТОИТ И В НЕ-PYTHON АДРЕСЕ. Случай про 139 — «ответ
+    # gate указывает на исполняемое», — но рядом живёт проверка 183:
+    # названный механизм обязан о правиле упоминать. Без номера случай
+    # спотыкался бы о соседнюю проверку и краснел не по своему предмету.
     содержимое = ('"""Проба.\n\nРеализует правила каталога:\n'
                   '  001 — держит его целиком.\n"""\n'
-                  if адрес.endswith(".py") else "проба\n")
+                  if адрес.endswith(".py") else "# проба: держит правило 001\n")
     write(repo / адрес, содержимое)
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "gate",
                                "where": f"{адрес} — держит правило"}}},
             export_of("001"))
     assert cb.main() == 0, что
+
+
+# ── 183 ВНЕ scripts/: механизм, не знающий, что он чей-то ──────────────────
+#
+# ЗАМЕР 8 сентября: активных ответов с механизмом 155, и прежний образец
+# `scripts/*.py` сверял 110. Остальные 45 не проверялись ничем — прогон, набор
+# или хук могли не иметь к правилу никакого отношения. Ровно этот класс —
+# инцидент у соседа: ответ по 085 назвал механизмом tests/test_ai_grounding.py,
+# где 12 случаев и ни одного про недоверенный вход.
+
+@pytest.mark.parametrize("адрес", [
+    ".github/workflows/ci.yml",
+    "tests/test_probe.py",
+    ".claude/hooks/probe.py",
+])
+def test_mehanizm_vne_scripts_bez_upominaniya_otvergaetsya(monkeypatch, repo, адрес):
+    """РОВНО ПРЕДМЕТ ПРАВИЛА: файл назван механизмом и о правиле молчит."""
+    write(repo / адрес, "# проба без единого номера\n")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": f"{адрес} — держит правило"}}},
+            export_of("001"))
+
+    assert cb.main() == 1, адрес
+
+
+def test_mehanizm_vne_scripts_s_upominaniem_prohodit(monkeypatch, repo):
+    """Граница с другой стороны: гейт обязан УМЕТЬ промолчать. До расширения
+    он молчал на любом таком входе — и потому не проверял ничего (140)."""
+    write(repo / ".github/workflows/ci.yml", "# держит правило 001\n")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": ".github/workflows/ci.yml — держит"}}},
+            export_of("001"))
+
+    assert cb.main() == 0
+
+
+def test_nastroyka_bez_prozy_ne_predmet(monkeypatch, repo):
+    """.json исключён намеренно: в настройке прозы нет вовсе, и номер туда
+    писать некуда — требование было бы отказом на пустом месте (051)."""
+    write(repo / ".claude/settings.json", '{"hooks": {}}\n')
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": ".claude/settings.json — объявляет хук"}}},
+            export_of("001"))
+
+    assert cb.main() == 0
 
 
 @pytest.mark.parametrize("where, что", [
