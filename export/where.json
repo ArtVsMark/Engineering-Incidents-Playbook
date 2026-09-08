@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T11:42:50+00:00",
+  "generated_at": "2026-09-08T12:05:26+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -792,7 +792,7 @@
         },
         "174": {
           "mechanism": "gate",
-          "where": "scripts/build_rules_index.py — выгрузка export/rules.json собирается издателем и читается потребителями (витрина профиля берёт числа оттуда, а не считает их клоном); scripts/aggregate_bindings.py — то же для сводки export/where.json"
+          "where": "scripts/build_facts.py — сводные факты каталога о себе публикуются в .github/badges/facts.json на ветке `badges`, по контракту витрины: schema строкой, generated_at обязателен, неизмеренный раздел ОТСУТСТВУЕТ, а не выставлен в ноль; scripts/build_rules_index.py — выгрузка export/rules.json собирается издателем и читается потребителями (витрина берёт числа оттуда, а не считает их клоном); scripts/aggregate_bindings.py — то же для сводки export/where.json"
         },
         "175": {
           "mechanism": "gate",
