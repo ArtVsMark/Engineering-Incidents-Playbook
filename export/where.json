@@ -1,7 +1,7 @@
 {
   "schema": "1.1",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-08T05:02:45+00:00",
+  "generated_at": "2026-09-08T05:10:22+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,14 +10,14 @@
       "answers_to": "1.5",
       "state": "подключён",
       "read_at": "2026-09-08",
-      "answered": 187,
+      "answered": 188,
       "by_status": {
-        "active": 157,
+        "active": 158,
         "not-applicable": 24,
         "rejected": 6
       },
       "by_mechanism": {
-        "gate": 117,
+        "gate": 118,
         "document": 27,
         "pipeline": 8,
         "none": 5
@@ -209,7 +209,8 @@
         "185": "active",
         "186": "active",
         "187": "active",
-        "188": "not-applicable"
+        "188": "not-applicable",
+        "189": "active"
       },
       "holds": {
         "001": {
@@ -839,9 +840,13 @@
         "187": {
           "mechanism": "none",
           "where": ".github/workflows/ci.yml — у работы `catalogue`, единственной обязательной, условия нет вовсе, и запись она оставляет одну. Условие есть у .github/workflows/review.yml, но этот канал необязателен и слияние не держит (084). Машинного сторожа над этим нет, причина в why"
+        },
+        "189": {
+          "mechanism": "gate",
+          "where": ".claude/hooks/push_guard.py — сторож толчка сверяет имя ветки в команде с текущей, и ветка с чужим именем не уезжает; приставку `agent/` требует .github/workflows/agent-pr.yml, где она переключатель: без неё изменение не откроется вовсе (003). Слаг машинно не судится — половина названа в why"
         }
       },
-      "trails": 41,
+      "trails": 42,
       "born": 31
     },
     {
@@ -2402,8 +2407,8 @@
           "where": "scripts/check_mechanisms.py — двадцать две сверки объявленного с сделанным, и предмет у каждой свой: ::audit_gaps (вердикт без механизма назвал причину), ::audit_verdicts (набор судит все случаи, а не первые), ::own_output_readers (читатели своего вывода названы поимённо), ::check_run_readers, ::schedule_as_backup, ::foreign_why_links, ::cancellation_groups, ::prefix_matched_markers и прочие; scripts/check_bindings.py::audit проверяет, что каждый путь и якорь в поле «где» существует в дереве — вердикт, показывающий в пустоту, отвергается. ПРЕДМЕТ БЫЛ ЖИВОЙ В ДЕНЬ ПРИЁМА ПРАВИЛА: 7 сентября в .github/workflows/metrics.yml появилось `[ -e \"$card\" ] && cp`, тогда как комментарий рядом в .github/workflows/open-pr.yml объявляет обратный приём — «ветвление через if, а не через [ … ] && …, потому что список, закончившийся ложью, увёл бы шаг в отказ». Утверждение было верным, а соседний код ему противоречил; нашлось это прогоном на подделанном пустом шаблоне, а не чтением. ЧТО НЕ ДЕРЖИТСЯ: соответствие прозы СМЫСЛУ механизма машине не даётся — она проверяет, что названное существует и что объявленный класс правил соблюдён, но не то, что комментарий описывает именно этот вызов. Проверено перебором двух утверждений вида «через X, а не через Y»: оба верны — scripts/build_metrics.py::grader_facts действительно читает contents-API, а не raw; open-pr.yml действительно ветвится через if."
         }
       },
-      "trails": 18,
-      "born": 12
+      "trails": 19,
+      "born": 13
     },
     {
       "repo": "ArtVsMark/Claude-Code_Usage-Token",
