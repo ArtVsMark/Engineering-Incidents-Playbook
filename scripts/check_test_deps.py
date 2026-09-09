@@ -30,6 +30,7 @@ import ast
 import re
 import sys
 import sysconfig
+from collections.abc import Iterable
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -74,8 +75,8 @@ def imported(path: Path) -> set[str]:
 MODULE_RE = re.compile(r"#\s*модул\w*\s*:\s*([\w., ]+)", re.IGNORECASE)
 
 
-def declared(root: Path) -> tuple[set[str], str | None]:
-    """Объявленные имена: и пакетов, и модулей, которые они дают.
+def объявлено(lines: Iterable[str]) -> dict[str, set[str]]:
+    """Пакет → модули, которые он даёт, по строкам requirements.
 
     ИМЯ ПАКЕТА И ИМЯ МОДУЛЯ — РАЗНЫЕ ВЕЩИ: `pyyaml` даёт `yaml`, `pillow` даёт
     `PIL`. Первая версия этой проверки спрашивала метаданные УСТАНОВЛЕННОГО
@@ -83,26 +84,50 @@ def declared(root: Path) -> tuple[set[str], str | None]:
     ровно той болезнью, которую ловит. Замер: она прошла у автора и упала в
     конвейере, где библиотеки на момент проверки ещё нет.
 
-    Поэтому имя модуля ОБЪЯВЛЯЕТСЯ рядом с пакетом, а не выясняется. Проверка
+    Поэтому имя модуля ОБЪЯВЛЯЕТСЯ рядом с пакетом, а не выясняется. Разбор
     работает на голом дереве, без единой установки.
+
+    ОТВЕЧАЕТ ЗДЕСЬ, И ТОЛЬКО ЗДЕСЬ. Тот же вопрос задаёт `check_runtime_deps`:
+    «какой модуль даёт этот пакет». До задачи #444 он отвечал сам — зашитым
+    словарём рядом с собой, — и два ответа на один вопрос расходились бы молча
+    при первом же пакете, объявленном только в файле (022). Теперь он зовёт
+    ЭТУ функцию, а словаря у него нет.
+
+    Ключ приведён к одному виду: нижний регистр, дефис как подчерк — так он
+    сравним с именем в `import`. Пустое значение означает «аннотации нет»:
+    имя модуля тогда совпадает с именем пакета, и решает это ВЫЗЫВАЮЩИЙ, а не
+    разбор, — у двух гейтов на этот счёт разные умолчания.
     """
-    path = root / REQS
-    try:
-        lines = path.read_text(encoding="utf-8").splitlines()
-    except OSError as e:
-        return set(), f"{REQS} не прочитан — {e}"
-    names: set[str] = set()
+    карта: dict[str, set[str]] = {}
     for raw in lines:
+        модули = set()
         m = MODULE_RE.search(raw)
         if m:
-            names |= {n.strip().lower() for n in re.split(r"[,\s]+", m.group(1)) if n.strip()}
+            модули = {n.strip().lower()
+                      for n in re.split(r"[,\s]+", m.group(1)) if n.strip()}
         line = raw.split("#")[0].strip()
         if not line or line.startswith("-"):
             continue
         # Имя до любого указателя версии; регистр и дефисы к одному виду.
         for sep in ("==", ">=", "<=", "~=", ">", "<", "[", ";"):
             line = line.split(sep)[0]
-        names.add(line.strip().lower().replace("-", "_"))
+        имя = line.strip().lower().replace("-", "_")
+        if имя:
+            карта.setdefault(имя, set()).update(модули)
+    return карта
+
+
+def declared(root: Path) -> tuple[set[str], str | None]:
+    """Объявленные имена: и пакетов, и модулей, которые они дают."""
+    path = root / REQS
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as e:
+        return set(), f"{REQS} не прочитан — {e}"
+    карта = объявлено(lines)
+    names = set(карта)
+    for модули in карта.values():
+        names |= модули
     return names, None
 
 
