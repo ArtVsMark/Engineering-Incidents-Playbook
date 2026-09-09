@@ -66,3 +66,75 @@ def test_zhivoe_derevo_chisto():
     список, разобрано = m.находки(текст, m.ROOT)
     assert разобрано > 0, "вызовы скриптов не найдены — разбор работ сломан"
     assert список == []
+
+
+# ── имя модуля берётся из объявления, а не из словаря (022, задача #444) ────
+
+def файл_зависимостей(tmp_path, строки: str) -> str:
+    """Свой requirements рядом с деревом. Путь — относительный, как в прогоне."""
+    путь = m.ROOT / "_проба_requirements.txt"
+    путь.write_text(строки, encoding="utf-8")
+    return путь.name
+
+
+def test_модуль_из_аннотации_читается_этим_гейтом(tmp_path):
+    """Случай, ради которого словарь снят: пакет объявлен ТОЛЬКО в файле.
+
+    Такого имени не знал бы никакой зашитый список — и до задачи #444 гейт
+    назвал бы модуль непоставленным, хотя пакет ставится и объявлен как велит
+    сам файл.
+    """
+    имя = файл_зависимостей(tmp_path, "чудо-пакет  # модуль: диковина\n")
+    подопытный = m.ROOT / "scripts" / "_проба_зависимости.py"
+    подопытный.write_text("import диковина\n", encoding="utf-8")
+    try:
+        прогон = ("jobs:\n  catalogue:\n    steps:\n"
+                  f"      - run: python -m pip install -r {имя}\n"
+                  f"      - run: python scripts/{подопытный.name}\n")
+        assert m.находки(прогон, m.ROOT)[0] == []
+    finally:
+        подопытный.unlink(missing_ok=True)
+        (m.ROOT / имя).unlink(missing_ok=True)
+
+
+def test_пакет_без_аннотации_читается_своим_именем(tmp_path):
+    имя = файл_зависимостей(tmp_path, "диковина\n")
+    подопытный = m.ROOT / "scripts" / "_проба_зависимости.py"
+    подопытный.write_text("import диковина\n", encoding="utf-8")
+    try:
+        прогон = ("jobs:\n  catalogue:\n    steps:\n"
+                  f"      - run: python -m pip install -r {имя}\n"
+                  f"      - run: python scripts/{подопытный.name}\n")
+        assert m.находки(прогон, m.ROOT)[0] == []
+    finally:
+        подопытный.unlink(missing_ok=True)
+        (m.ROOT / имя).unlink(missing_ok=True)
+
+
+def test_аннотация_не_делает_доступным_чужое_имя(tmp_path):
+    """Обратный конец набора: объявлено одно, зовётся другое — находка."""
+    имя = файл_зависимостей(tmp_path, "чудо-пакет  # модуль: диковина\n")
+    подопытный = m.ROOT / "scripts" / "_проба_зависимости.py"
+    подопытный.write_text("import небылица\n", encoding="utf-8")
+    try:
+        прогон = ("jobs:\n  catalogue:\n    steps:\n"
+                  f"      - run: python -m pip install -r {имя}\n"
+                  f"      - run: python scripts/{подопытный.name}\n")
+        список, _ = m.находки(прогон, m.ROOT)
+        assert len(список) == 1 and "небылица" in список[0]
+    finally:
+        подопытный.unlink(missing_ok=True)
+        (m.ROOT / имя).unlink(missing_ok=True)
+
+
+def test_ответ_у_двух_гейтов_один(tmp_path):
+    """022 машинно: оба гейта зовут ОДИН разбор, и он даёт то же самое."""
+    import check_test_deps as t
+
+    строки = ["чудо-пакет  # модуль: диковина", "простой"]
+    карта = t.объявлено(строки)
+    assert карта == {"чудо_пакет": {"диковина"}, "простой": set()}
+    # `ставится` строит доступное из той же карты: объявленное — модулем,
+    # необъявленное — своим именем.
+    assert {м for имя, мод in карта.items() for м in (мод or {имя})} == {
+        "диковина", "простой"}
