@@ -13,6 +13,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 import check_test_deps as td
 from conftest import write
 
@@ -119,3 +121,34 @@ def test_нет_файла_зависимостей_это_третий_исхо
 def test_неразбираемый_тест_это_третий_исход(repo, capsys):
     assert run(tree(repo, "import (((\n")) == 2
     assert "не разобран" in capsys.readouterr().err
+
+
+# ── имя пакета отсекается от указателя версии (задача #444, гейт 195) ───────
+
+
+@pytest.mark.parametrize("строка", [
+    "pytest != 8.0",          # ЭТОТ случай терялся: «!=» не было в перечислении
+    "pytest!=8.0",
+    "pytest~=8.0",
+    "pytest>=8",
+    "pytest<=9",
+    "pytest==8.0",
+    "pytest===8.0",
+    "pytest[extra]",
+    "pytest; python_version<'3.13'",
+    "pytest",
+])
+def test_ukazatel_versii_ne_popadaet_v_imya(строка):
+    """Указатель версии, extras и маркер к имени пакета не принадлежат.
+
+    Потерю «!=» нашёл гейт 195 на изменении #447: прежний символьный класс
+    `[<>=!;]` уехал вместе со словарём имён, а перечисление, пришедшее ему на
+    смену, «!» не знало — и именем выходила вся строка.
+    """
+    assert set(td.объявлено([строка])) == {"pytest"}
+
+
+def test_defis_v_imeni_privoditsya_k_podcherku():
+    """Имя сравнивается с именем в `import`, а там дефиса не бывает."""
+    assert td.объявлено(["python-dateutil  # модуль: dateutil"]) == {
+        "python_dateutil": {"dateutil"}}
