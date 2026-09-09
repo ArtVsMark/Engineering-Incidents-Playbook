@@ -13,7 +13,7 @@
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 44 | 32 | 195 | 0 | 0 | 162 | 120 | 9 | 28 | 5 | 105 |  |
-| `Stepik-Python-Grader` | подключён | 175 | 131 | 181 | 14 | 0 | 178 | 76 | 37 | 65 | 0 | 142 |  |
+| `Stepik-Python-Grader` | подключён | 175 | 131 | 195 | 0 | 0 | 192 | 86 | 39 | 67 | 0 | 145 |  |
 | `ArtVsMark` | подключён | 25 | 17 | 195 | 0 | 0 | 139 | 94 | 12 | 23 | 0 | 42 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 14 | 0 | 152 | 95 | 9 | 46 | 2 | 86 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 181 | 14 | 0 | 117 | 60 | 12 | 29 | 16 | 78 |  |
@@ -49,7 +49,7 @@
 | 135 | `Engineering-Incidents-Playbook` — гейт: scripts/check_attribution.py — личность окна узнаётся ЗАПИСЬЮ и проверяется по ней: гейт сверяет поле автора коммитов ветки (при слиянии объединяющим коммитом в общую ветку едет именно оно) и трейлеры соавторства против разрешительного списка .github/authors.txt, а .github/workflows/attribution-history.yml спрашивает то же у первопредков main — там, где подмена и проявляется. ПРЕЖНИЙ ОТВЕТ БЫЛ НЕВЕРЕН: «проба делается ДО работы, а гейт стоит после неё» — но 135 и говорит, что личность узнаётся записью, а не опросом, и проверка записи это и есть проба. Живой случай в тот же корпус: 2 сентября окружение окна сменило подпись соавтора с «Claude» на «Claude Opus 5» молча, ни о чём не объявив; нашла это проверка по первопредкам, а не опрос токена и не память окна. ГРАНИЦА: ДО первой записи личность по-прежнему неизвестна — гейт узнаёт её постфактум, и пробным изменением остаётся первое же; `Stepik-Python-Grader` — документ: CLAUDE.md § Формат коммитов: автор PR — человек, соавторство — место вклада Claude; scripts/check_pr_ready.py и scripts/check_attribution.py --check-branch запускаются окном, а не прогоном; `ArtVsMark` — гейт: .rules/README.md § Из окна не пишут — личность этого окна установлена пробой того же класса, а не опросом токена, и результат годен только для него: следующее окно проверяет заново. scripts/check_author.py — то, что окно подписалось не тем именем, теперь выясняется записью и проверкой, а не памятью; `Claude-Code_Usage-Token` — документ: .github/workflows/merge-queue.yml. Проба сделана и её итог записан в самом файле: PR, открытые окном, числятся за владельцем, а не за ботом, — то есть личность на записи установлена ЗАПИСЬЮ, а не выведена из класса окружения. Второе подтверждение пришло само, на разборе правила 123: у коммитов в main автор — владелец, а committer — GitHub, и обе подписи проверены по конечной истории. Опрос учётных данных этого не показал бы: на чтении токен отвечает владельцем независимо от того, чем он подпишет запись. | `Glossary-Python` |
 | 142 | `Engineering-Incidents-Playbook` — гейт: .github/workflows/consumers-sync.yml — шаг «у находки есть адресат» заводит задачу при отказе; scripts/review_findings.py — заметки внешнего взгляда переживают слияние: они записываются в живую задачу с отпечатком и снимаются строкой «Разобрано: <отпечаток>» в теле изменения-починки. Замер 8 сентября: из 29 слитых изменений с прогоном ревью вердикт успел к слиянию у 10, и находки #392 не увидел никто; `Stepik-Python-Grader` — конвейер: scripts/nightly_checks.py — ночной обход ведёт одну задачу с меткой «ночной обход»: пока находки есть, она открыта и обновляется, стало чисто — закрывается; красным прогон при этом не становится, потому что красное на вкладке прогонов адресатом не является; `ArtVsMark` — конвейер: предметов ЧЕТЫРЕ, перебраны все — четвёртый добавлен 8 сентября вместе со сторожем застрявших изменений (.github/workflows/stuck-prs.yml и scripts/stuck_prs.py): изменение, готовое и не слитое, не краснеет НИГДЕ, и адресата у этого молчания не было вовсе. Прежде здесь стояло «предметов три», и это было верно ровно до появления четвёртого. .github/workflows/metrics.yml — отказ приезжает изменением, то есть в трекер и в почту владельцу; .github/workflows/rules-inbox.yml — очередь нерассмотренных правил ведёт задачу, а не красноту на вкладке прогонов. Третий предмет закрыт: .github/workflows/main-red.yml — дежурный по общей ветке спрашивает вкладку прогонов раз в сутки и ведёт ОДНУ задачу, пока там есть красное. Адресат один на ВСЕ прогоны, а не по одному на каждый: пробел был назван у attribution-history, но предмет оказался крупнее — красное на общей ветке не принадлежит никому у любого прогона. Логика взята у каталога ссылкой на закреплённую версию — дежурный каталога, вынесенный туда этим же окном (playbook#139, playbook#141); своей копии здесь нет. Исключений у витрины НЕТ, и это решение: у каталога attribution-history исключён, потому что его красное означало бы непочинимый долг прошлого, а здесь долг объявлен заново ключом --since, и каждое новое красное на нём означает новый дефект; .github/workflows/staleness.yml — у устаревшей витрины появился адресат: сторож ведёт ОДНУ задачу и не красит вкладку прогонов, потому что красное было бы вторым адресатом того же сообщения. Инцидент 28 августа: суточная сборка не запустилась ни разу, витрина сутки показывала вчерашнее, и заметил это владелец — у пропущенного прогона адресата не было вовсе, потому что самого прогона не было; `Claude-Code_Usage-Token` — конвейер: .github/workflows/schedule-alarm.yml и scripts/schedule_alarm.py. Отказ прогона по расписанию заводит ОДНУ задачу на этот прогон и закрывает её, как только тот снова зелёный. Повторные отказы её не комментируют — обновляют тело молча: очередь мержей ходит 48 раз в сутки, и комментарий на каждый был бы способом от задачи отписаться, а не адресатом. Сторож вынесен отдельным прогоном не из вкуса: шагу `if: failure()` внутри очереди понадобилось бы право писать задачи, и досталось бы оно всему остальному в том прогоне. ГРАНИЦА НАЗВАНА: прогон, умерший так, что события о завершении не пришло вовсе, сторож не ловит — отличить это от «не запускалось» можно только опросом по времени, то есть ещё одним прогоном по расписанию, у которого была бы та же беда. Связь сторожа со сторожимыми держит тест tests/test_schedule_alarm.py: переименование прогона иначе отключило бы сторожа молча. | `Glossary-Python` |
 | 149 | `Stepik-Python-Grader` — гейт: tests/conftest.py — фикстура _system_temp_inside_basetemp уводит системный temp внутрь pytest-basetemp на время прогона; правило родилось здесь, из ложного обвинения стороннего теста; `ArtVsMark` — гейт: предмет нашёлся при вынесении этого вердикта, а не был известен заранее: .github/workflows/open-pr.yml и .github/workflows/metrics.yml писали тело изменения в /tmp — общий каталог исполнителя, куда одинаково ходят и прогон, и всё остальное на машине. Переведены на $RUNNER_TEMP: площадка выдаёт его КАЖДОМУ прогону отдельно, то есть прогон площадку забирает себе, а не полагается на то, что сосед не помешает. Исключений по имени не заводилось ни одного, и это соответствует правилу: список исключений оставил бы площадку общей. Тот же выбор у каталога — его дежурный пишет в $RUNNER_TEMP. ПРОБЕЛ ЗАКРЫТ 28 августа: scripts/check_mechanisms.py::audit_runners разбирает прогоны и отвергает запись в общий /tmp. Гейт над прогонами завёлся не ради одной строки — вместе с ним закрылись 100, 104 и 022/073, то есть все утверждения вида «у ВСЕХ прогонов так», которые до того проверялись чтением восьми файлов глазами. Ровно этого и ждал вердикт: заводить гейт под один предмет было дорого, под четыре — дёшево. Прежняя запись о поведении automerge — 010, 063, 111, 126. Заводить его ради одной строки в scripts/check_page.py значило бы растянуть предмет чужого гейта: тот отвечает за ТЕКСТ витрины, а не за прогоны | `Engineering-Incidents-Playbook` |
-| 187 | `ArtVsMark` — гейт: scripts/check_mechanisms.py::required_job_conditions — у работы, чья запись держит слияние, не должно быть условия уровня работы: пропущенная работа оставляет запись «skipped», а защита ветки сверяет ИМЯ, а не исход, и нейтральное засчитывает. Правило родилось здесь: 7 сентября изменение #140 слилось при КРАСНОЙ обязательной проверке — на голове лежали три записи с именем PR check (failure, skipped, cancelled). Вторая половина держится там же: .github/workflows/pr-check.yml — одна группа отмены на голову, проверяется scripts/check_mechanisms.py::cancellation_groups. | `Engineering-Incidents-Playbook` |
+| 187 | `Stepik-Python-Grader` — гейт: scripts/ci_aggregate.py и .github/workflows/ci-complete.yml — один вердикт с постоянным именем, собранный ЧЕРЕЗ API, а не через needs: джоб на зависимостях при падении соседа пропускается, а пропущенное защита ветки засчитывает как пройденное; закреплено в CLAUDE.md § Гейты; `ArtVsMark` — гейт: scripts/check_mechanisms.py::required_job_conditions — у работы, чья запись держит слияние, не должно быть условия уровня работы: пропущенная работа оставляет запись «skipped», а защита ветки сверяет ИМЯ, а не исход, и нейтральное засчитывает. Правило родилось здесь: 7 сентября изменение #140 слилось при КРАСНОЙ обязательной проверке — на голове лежали три записи с именем PR check (failure, skipped, cancelled). Вторая половина держится там же: .github/workflows/pr-check.yml — одна группа отмены на голову, проверяется scripts/check_mechanisms.py::cancellation_groups. | `Engineering-Incidents-Playbook` |
 
 ## Сколько держит механизм · How much each mechanism holds
 
@@ -120,55 +120,63 @@
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
 | `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 45 механизмов по одному правилу; без названного адреса: 0 из 157 |
-| `Stepik-Python-Grader` | `CLAUDE.md` | 40 |
+| `Stepik-Python-Grader` | `CLAUDE.md` | 46 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
+| `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 14 |
 | `Stepik-Python-Grader` | `docs/agent/multiagent.md` | 12 |
-| `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 11 |
+| `Stepik-Python-Grader` | `.github/workflows/tracker-guardrails.yml` | 9 |
 | `Stepik-Python-Grader` | `docs/agent/preflight.md` | 9 |
-| `Stepik-Python-Grader` | `.github/workflows/tracker-guardrails.yml` | 8 |
+| `Stepik-Python-Grader` | `scripts/gh_rest.py` | 9 |
+| `Stepik-Python-Grader` | `scripts/check_pr_ready.py` | 8 |
+| `Stepik-Python-Grader` | `scripts/preflight.py` | 8 |
 | `Stepik-Python-Grader` | `docs/agent/environments.md` | 7 |
 | `Stepik-Python-Grader` | `scripts/check_docs_guardrails.py` | 7 |
-| `Stepik-Python-Grader` | `scripts/check_pr_ready.py` | 7 |
-| `Stepik-Python-Grader` | `scripts/gh_rest.py` | 7 |
-| `Stepik-Python-Grader` | `scripts/preflight.py` | 7 |
 | `Stepik-Python-Grader` | `docs/agent/roles.md` | 6 |
+| `Stepik-Python-Grader` | `scripts/check_workflow_guardrails.py` | 6 |
 | `Stepik-Python-Grader` | `.rules/bindings.json` | 5 |
-| `Stepik-Python-Grader` | `scripts/check_workflow_guardrails.py` | 5 |
 | `Stepik-Python-Grader` | `CHANGELOG.md` | 4 |
 | `Stepik-Python-Grader` | `scripts/check_adr_records.py` | 4 |
 | `Stepik-Python-Grader` | `scripts/check_attribution.py` | 4 |
 | `Stepik-Python-Grader` | `scripts/check_work_overlap.py` | 4 |
 | `Stepik-Python-Grader` | `.rules/proposals.json` | 3 |
+| `Stepik-Python-Grader` | `CONTRIBUTING.md` | 3 |
 | `Stepik-Python-Grader` | `HISTORY.md` | 3 |
 | `Stepik-Python-Grader` | `docs/agent/claude-handoff.md` | 3 |
 | `Stepik-Python-Grader` | `docs/agent/course-walkthrough.md` | 3 |
+| `Stepik-Python-Grader` | `scripts/check_declared_outcomes.py` | 3 |
 | `Stepik-Python-Grader` | `scripts/check_hidden_defaults.py` | 3 |
 | `Stepik-Python-Grader` | `scripts/rerun_flaky_checks.py` | 3 |
 | `Stepik-Python-Grader` | `src/stepik_grader/web/playground.py` | 3 |
+| `Stepik-Python-Grader` | `templates/bindings.json` | 3 |
 | `Stepik-Python-Grader` | `.claude/hooks/pre_tool_use.py` | 2 |
-| `Stepik-Python-Grader` | `CONTRIBUTING.md` | 2 |
+| `Stepik-Python-Grader` | `.github/workflows/agent-pr.yml` | 2 |
+| `Stepik-Python-Grader` | `.rules/sources_of_truth.json` | 2 |
 | `Stepik-Python-Grader` | `docs/dev/corpus.md` | 2 |
 | `Stepik-Python-Grader` | `docs/dev/glossary.md` | 2 |
+| `Stepik-Python-Grader` | `gh_rest.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_audit_registry.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_branch_protection.py` | 2 |
-| `Stepik-Python-Grader` | `scripts/check_declared_outcomes.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_gate_tests.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_generated_sources.py` | 2 |
+| `Stepik-Python-Grader` | `scripts/check_glossary_examples.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_locale_guardrails.py` | 2 |
+| `Stepik-Python-Grader` | `scripts/check_orphan_branches.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_raw_values.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_rules_digest.py` | 2 |
+| `Stepik-Python-Grader` | `scripts/check_sources_of_truth.py` | 2 |
+| `Stepik-Python-Grader` | `scripts/check_stale_repo_names.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_three_outcomes.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_version_consistency.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/generate_rules_digest.py` | 2 |
+| `Stepik-Python-Grader` | `scripts/link_rules_to_issues.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/move_merge_queue.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/nightly_checks.py` | 2 |
 | `Stepik-Python-Grader` | `src/stepik_grader/core/runner.py` | 2 |
 | `Stepik-Python-Grader` | `src/stepik_grader/web/runs.py` | 2 |
-| `Stepik-Python-Grader` | `templates/bindings.json` | 2 |
 | `Stepik-Python-Grader` | `tests/conftest.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
-| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 94 механизмов по одному правилу; без названного адреса: 0 из 178 |
+| `Stepik-Python-Grader` | _остальные_ · _the rest_ | 89 механизмов по одному правилу; без названного адреса: 0 из 192 |
 | `ArtVsMark` | `scripts/build_metrics.py` | 59 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 45 |
 | `ArtVsMark` | `CLAUDE.md` | 23 |
@@ -479,17 +487,17 @@
 | 180 | действует | действует | действует | действует | нет предмета |
 | 181 | действует | действует | действует | действует | действует |
 | 182 | действует | действует | действует | действует | действует |
-| 183 | действует | — | действует | — | — |
-| 184 | действует | — | действует | — | — |
-| 185 | действует | — | действует | — | — |
-| 186 | действует | — | действует | — | — |
-| 187 | действует | — | действует | — | — |
-| 188 | нет предмета | — | действует | — | — |
-| 189 | действует | — | действует | — | — |
-| 190 | действует | — | действует | — | — |
-| 191 | нет предмета | — | действует | — | — |
-| 192 | действует | — | действует | — | — |
-| 193 | нет предмета | — | действует | — | — |
-| 194 | нет предмета | — | действует | — | — |
-| 195 | действует | — | действует | — | — |
-| 196 | действует | — | действует | — | — |
+| 183 | действует | действует | действует | — | — |
+| 184 | действует | действует | действует | — | — |
+| 185 | действует | действует | действует | — | — |
+| 186 | действует | действует | действует | — | — |
+| 187 | действует | действует | действует | — | — |
+| 188 | нет предмета | действует | действует | — | — |
+| 189 | действует | действует | действует | — | — |
+| 190 | действует | действует | действует | — | — |
+| 191 | нет предмета | действует | действует | — | — |
+| 192 | действует | действует | действует | — | — |
+| 193 | нет предмета | действует | действует | — | — |
+| 194 | нет предмета | действует | действует | — | — |
+| 195 | действует | действует | действует | — | — |
+| 196 | действует | действует | действует | — | — |
