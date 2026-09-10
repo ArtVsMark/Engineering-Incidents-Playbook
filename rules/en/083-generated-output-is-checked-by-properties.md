@@ -69,7 +69,8 @@ is the correct check.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — ADR-0003, `core/ai_grounding.py`; the
-2026-08-10 audit (16 confirmed `high` out of 83). Related:
+ArtVsMark/Stepik-Python-Grader — `core/ai_grounding.py`, the 2026-08-10 audit
+(16 confirmed `high` out of 83).
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0003. Related:
 [060](060-debrief-every-wave-quality-first.md),
 [055](055-your-own-expectations-are-a-hypothesis.md).

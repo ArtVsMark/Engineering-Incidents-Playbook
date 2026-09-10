@@ -61,5 +61,5 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — ADR-0004 § Альтернативы (root-shim'ы отклонены
-явно). Смежное: [043](043-decisions-are-superseded-not-edited.md).
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0004, раздел
+«Альтернативы» (root-shim'ы отклонены явно). Смежное: [043](043-decisions-are-superseded-not-edited.md).

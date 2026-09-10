@@ -65,6 +65,7 @@ deleting a file.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — ADR-0011 § alternatives. Related:
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0011, section
+"alternatives". Related:
 [090](090-shared-helpers-move-up-not-sideways.md) — shared code without a shared
 file.

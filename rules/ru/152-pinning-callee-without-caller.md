@@ -74,7 +74,7 @@ code 2` на несуществующем файле. То есть механи
 
 ## След
 
-`ArtVsMark/ArtVsMark` — `.github/workflows/automerge.yml`: закрепление снято,
+ArtVsMark/ArtVsMark — `.github/workflows/automerge.yml`: закрепление снято,
 причина записана комментарием у шага, чтобы следующее окно не «вернуло
 безопасность» обратно.
 

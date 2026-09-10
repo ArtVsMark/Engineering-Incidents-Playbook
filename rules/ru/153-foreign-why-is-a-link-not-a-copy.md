@@ -71,7 +71,7 @@
 
 ## След
 
-`ArtVsMark/ArtVsMark` — `scripts/build_metrics.py`: обоснование того, почему
+ArtVsMark/ArtVsMark — `scripts/build_metrics.py`: обоснование того, почему
 значок каталога лежит там, где лежит, заменено ссылкой на каталог.
 
 Смежное: [022](022-one-canonical-document.md) — дублированное описание

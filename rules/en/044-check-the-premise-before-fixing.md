@@ -61,6 +61,6 @@ fixing is cheaper.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — ADR-0010 § context ("the premise is factually
-wrong"). Related: [026](026-rejected-findings-must-be-recorded.md),
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0010, section
+"Context" ("the premise is factually wrong"). Related: [026](026-rejected-findings-must-be-recorded.md),
 [037](037-finding-status-depends-on-window.md).

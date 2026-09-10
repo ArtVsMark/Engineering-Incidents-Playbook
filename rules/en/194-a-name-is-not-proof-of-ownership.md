@@ -78,7 +78,7 @@ resource, and a number taken from it is displayed beside it.
 
 ## Trace
 
-ArtVsMark/ArtVsMark — `owns_package` in `scripts/build_metrics.py`: package
+ArtVsMark/ArtVsMark — `scripts/build_metrics.py` § owns_package, package
 ownership is verified by a back-link, and the neighbour's answer now points at
 its own release
 

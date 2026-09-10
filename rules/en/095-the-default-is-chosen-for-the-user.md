@@ -66,5 +66,5 @@ to the person using it.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — ADR-0002 (history opt-in in the CLI, default-on
-in the web). Related: [045](045-no-silent-fallback.md).
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0002 (history
+opt-in in the CLI, default-on in the web). Related: [045](045-no-silent-fallback.md).

@@ -327,7 +327,30 @@ to the catalogue. Its address goes in the registry field `proposals`.
 | `slug` | короткое имя латиницей, `[a-z0-9-]` · short latin name | всегда · always |
 | `claim` | утверждение: что делать и чего не делать · the claim | всегда · always |
 | `incident` | что сломалось, с конкретикой · what broke, concretely | всегда · always |
-| `trail` | артефакт в этом репозитории, где поломка видна · the artefact where it shows | всегда · always |
+| `trail` | **разрешимый адрес** артефакта в этом репозитории, где поломка видна: путь к файлу, образец вида `.github/workflows/*.yml` или корневой документ по имени. Проза рядом — пожалуйста, вместо адреса — нет · a **resolvable address** of the artefact where it shows: a file path, a pattern like `.github/workflows/*.yml`, or a root document by name | всегда · always |
+
+**Требование к следу такое же, как к `where`, и предикат у них один.** До
+версии `1.1` у `trail` проверялось только «непусто» — ровно та асимметрия,
+которую этот же документ разбирает абзацем выше для `where`, только одним полем
+правее. Цену каталог заплатил у себя: 12 записей из 195 отдавались потребителю
+с пустым `trails`, хотя адрес в разделе «След» назван у одиннадцати. Формы, на
+которых разбор молчал: документ без расширения (`ADR-0010` — семь записей),
+репозиторий в обратных кавычках (три), артефакт не сразу за тире (одна), проза
+вместо адреса (одна). Собственная заготовка записи такие следы **пропускала**:
+она проверяла «известный репозиторий и хоть что-то после него», а в отказе
+обещала «названный артефакт».
+
+Предложение с прозой вместо адреса **не отбрасывается**: инцидент ценнее формы,
+и решение по нему принимает человек. Находка едет адресату — разделом «Не
+прочитано» в задаче-очереди, как и всё остальное о чужом файле.
+
+**The trail requirement matches `where`, and one predicate answers both.**
+Until `1.1` only non-emptiness was checked — the very asymmetry this document
+analyses one field earlier. The catalogue paid for it at home: 12 of its own 195
+records reached consumers with an empty `trails` while eleven of them named an
+address in the text. A proposal carrying prose instead of an address is **not
+dropped**: the incident matters more than the form, and a human decides. The
+finding goes to its addressee instead.
 
 **Номера у предложения нет и быть не может.** Его присваивает каталог при
 приёме. Не из вкуса: номера не переиспользуются, и если два проекта выберут
@@ -652,7 +675,7 @@ having no gate.
   "generated_at": "2026-09-03T09:24:00+00:00",
   "contracts": {
     "export": "1.4", "bindings": "1.1", "consumers": "1.1",
-    "proposals": "1.0", "showcase": "1.1", "where": "1.1"
+    "proposals": "1.1", "showcase": "1.1", "where": "1.2"
   }
 }
 ```

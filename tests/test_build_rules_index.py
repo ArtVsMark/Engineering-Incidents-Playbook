@@ -230,3 +230,86 @@ def test_vygruzka_neset_obe_storony_svyazi():
     assert "refines" not in по["002"]
     assert "002" in по["057"]["mentions"]
     assert "057" in по["002"]["mentioned_by"]
+
+
+# --- След: разобранный адрес, а не непустой раздел -------------------------
+#
+# Инцидент, замер 10 сентября. Выгрузка отдавала `trails: []` у 12 записей из
+# 195 — при непустом разделе «След» и названном адресе у одиннадцати. Формы, на
+# которых разбор молчал: документ без расширения (`ADR-0010`, семь записей),
+# репозиторий в обратных кавычках (три), артефакт не сразу за тире (одна),
+# проза вместо адреса (одна). Владелец прочитал это ровно так, как оно
+# выглядело: «почему они правила, а не гипотезы?» — то есть молчание разбора
+# читалось как отсутствие инцидента.
+
+
+def следы_живой(номер: str, lang: str = "ru"):
+    known, err = b.known_consumers()
+    assert err is None, err
+    следы, ошибка = b.trails_of(запись(номер, lang), lang, known)
+    assert ошибка is None, ошибка
+    return следы
+
+
+def test_u_kazhdoy_zapisi_est_razobrannyy_sled():
+    """Полнота: раздел есть у всех, и разбирается тоже у всех."""
+    found, _, _ = b.collect()
+    пусто = [n for n in sorted(found) if not следы_живой(n)]
+    assert пусто == [], f"след не разобран: {пусто}"
+
+
+def test_imya_razdela_konchaetsya_s_predlozheniem():
+    """Точка останавливала скобка и запятая, а сама точка — нет.
+
+    Затекало «Соглашения. Смежное:» у 043 и «Как это началось. Смежное:» у
+    107 — 2 имени из 71. И грязь была РАЗНОЙ по деревьям («Смежное» против
+    «Related»), из-за чего сверка деревьев краснела там, где следы совпадают.
+    """
+    (след,) = следы_живой("043")
+    assert след["section"] == "Соглашения"
+    assert следы_живой("107")[0]["section"] == "Как это началось"
+
+
+def test_rasshirenie_vnutri_imeni_razdela_ne_rezhetsya():
+    """Граница реза: точка С ПРОБЕЛОМ, иначе `CHANGELOG.md` терял бы хвост."""
+    m = b.DOC_TRAIL_RE.search(
+        "o/r — `CLAUDE.md` § Обновление CHANGELOG.md / HISTORY.md\n")
+    assert m and b.ТОЧКА_ПРЕДЛОЖЕНИЯ.split(m.group(3).strip())[0] == (
+        "Обновление CHANGELOG.md / HISTORY.md")
+
+
+def test_gate_lovit_nerazobrannyy_sled(tmp_path):
+    """Красная сторона: возвращаю те самые формы, на которых разбор молчал."""
+    found, _, _ = b.collect()
+    подделка: dict[str, dict[str, Path]] = {}
+    for номер, было, стало in (
+            ("094", "`docs/dev/adr/README.md` § ADR-0004, раздел\n«Альтернативы»",
+             "ADR-0004 § Альтернативы"),
+            ("152", "ArtVsMark/ArtVsMark — `.github",
+             "`ArtVsMark/ArtVsMark` — `.github")):
+        подделка[номер] = {}
+        for lang in b.LANGS:
+            каталог = tmp_path / lang
+            каталог.mkdir(exist_ok=True)
+            путь = каталог / found[номер][lang].name
+            текст = found[номер][lang].read_text(encoding="utf-8")
+            путь.write_text(текст.replace(было, стало), encoding="utf-8")
+            подделка[номер][lang] = путь
+    _, беды = b.check_trails(подделка)
+    нечего = [x for x in беды if "разобрать в нём нечего" in x]
+    assert {x[:3] for x in нечего} == {"094", "152"}, беды
+
+
+def test_stroka_smezhnykh_sledom_ne_schitaetsya(tmp_path):
+    """Граница: «Смежное:» ведёт в свой корпус и следом не является.
+
+    Иначе запись, где чужого адреса нет вовсе, считалась бы заявившей след — и
+    гейт молчал бы ровно там, где предмет.
+    """
+    путь = tmp_path / "900-подделка.md"
+    путь.write_text("# З\n\n## След\n\nСмежное: [002](002-x.md),\n[003](003-y.md).\n",
+                    encoding="utf-8")
+    assert b.заявленный_след(путь, "ru") is False
+    путь.write_text("# З\n\n## След\n\no/r — `scripts/x.py`\n\nСмежное: [002](002-x.md).\n",
+                    encoding="utf-8")
+    assert b.заявленный_след(путь, "ru") is True

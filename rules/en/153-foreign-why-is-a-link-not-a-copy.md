@@ -74,7 +74,7 @@ link to the other side.
 
 ## Trace
 
-`ArtVsMark/ArtVsMark` — `scripts/build_metrics.py`: the rationale for where the
+ArtVsMark/ArtVsMark — `scripts/build_metrics.py`: the rationale for where the
 catalogue's badge lives was replaced with a link to the catalogue.
 
 Related: [022](022-one-canonical-document.md) — duplicated description always

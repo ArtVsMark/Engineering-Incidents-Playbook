@@ -52,6 +52,10 @@ SLUG_RE = re.compile(r"^[a-z][a-z0-9-]*$")
 #: След обязан разрешаться: задача либо потребитель с названным артефактом.
 ISSUE_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+#\d+$")
 
+#: «Адрес или проза» — один предикат на каталог: тот же, что судит
+#: `where` в ответах потребителей (022).
+from check_bindings import addressed  # noqa: E402
+
 #: Каркас английской стороны. Заготовка в репозитории одна и русская; делать
 #: вторую значило бы завести два места для одной формы (правило 022), а формы
 #: расходятся молча. Английские заголовки берутся из канона audit_catalogue.
@@ -121,6 +125,19 @@ def словари(root: Path) -> tuple[dict[str, str], dict[int, dict], str | N
 
 
 def trail_resolves(trail: str, root: Path) -> bool:
+    """Задача либо потребитель с НАЗВАННЫМ артефактом, а не просто с текстом.
+
+    ЧТО ЗДЕСЬ БЫЛО СЛОМАНО, ЗАМЕР 10 сентября. Проверялось «известный
+    репозиторий и хоть что-то после него», и сообщение об отказе честно
+    обещало большее — «с названным артефактом, проза следом не считается».
+    Обещание не держалось ничем: `Owner/Repo — ADR-0010 § Контекст` проходило,
+    и семь записей корпуса родились именно так, законно, этим самым скриптом.
+    В выгрузке они отдавались потребителю с пустым `trails`, потому что
+    разобрать `ADR-0010` в адрес нельзя — по нему не пройти.
+
+    Адрес спрашивается у `addressed` — того же предиката, что судит `where` у
+    потребителей: два ответа на один вопрос разъезжаются молча (022).
+    """
     if ISSUE_RE.match(trail):
         return True
     try:
@@ -128,7 +145,10 @@ def trail_resolves(trail: str, root: Path) -> bool:
             (root / ".rules" / "consumers.json").read_text(encoding="utf-8"))["consumers"]}
     except (OSError, ValueError, KeyError, TypeError):
         return False
-    return any(trail.startswith(repo) and len(trail) > len(repo) for repo in known)
+    for repo in known:
+        if trail.startswith(repo) and addressed(trail[len(repo):]):
+            return True
+    return False
 
 
 def proposal(root: Path, key: str) -> tuple[dict, str | None]:

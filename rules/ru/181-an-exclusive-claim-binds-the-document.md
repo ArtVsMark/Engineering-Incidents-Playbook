@@ -97,9 +97,10 @@
 
 ## След
 
-`ArtVsMark/Stepik-Python-Grader` — `CLAUDE.md`, строки 845–846 и 1013–1014,
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md`, строки 845–846 и 1013–1014,
 цена посчитана там же в строках 1015–1018; сверено по HEAD `dbbbd47`
-4 сентября. У каталога — `scripts/check_exclusive.py`.
+4 сентября.
+ArtVsMark/Engineering-Incidents-Playbook — `scripts/check_exclusive.py`.
 
 Смежное: [022](022-one-canonical-document.md) — соседнее и НЕ то же:
 там тема разъезжается по двум документам, здесь документ один, а плоскостей

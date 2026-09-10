@@ -68,7 +68,11 @@
 
 ## След
 
-ArtVsMark/Engineering-Incidents-Playbook — этот каталог.
+ArtVsMark/Engineering-Incidents-Playbook — `export/README.md`
+§ Что отдаёт потребитель наверх · What the consumer sends upstream, —
+путь предложения из проекта в каталог.
+ArtVsMark/Engineering-Incidents-Playbook — `scripts/collect_proposals.py`:
+предложения собираются механизмом, а не просьбой.
 
 Смежное: [042](042-decision-records-its-alternatives.md) — решения,
 [043](043-decisions-are-superseded-not-edited.md) — пересмотр,
