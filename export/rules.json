@@ -1,9 +1,9 @@
 {
-  "schema": "1.6",
+  "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T16:29:50+00:00",
+  "generated_at": "2026-09-10T17:08:17+00:00",
   "contracts": {
-    "export": "1.6",
+    "export": "1.7",
     "bindings": "1.2",
     "consumers": "1.1",
     "proposals": "1.0",
@@ -57,7 +57,10 @@
           "issue": "1233"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "125"
+      ]
     },
     {
       "id": "002",
@@ -104,7 +107,34 @@
           "issue": "1329"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "refined_by": [
+        "057"
+      ],
+      "mentioned_by": [
+        "038",
+        "047",
+        "049",
+        "050",
+        "053",
+        "057",
+        "064",
+        "068",
+        "123",
+        "127",
+        "128",
+        "131",
+        "139",
+        "140",
+        "154",
+        "155",
+        "162",
+        "175",
+        "176",
+        "177",
+        "191",
+        "196"
+      ]
     },
     {
       "id": "003",
@@ -150,7 +180,11 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
-      "portable": "partly"
+      "portable": "partly",
+      "mentioned_by": [
+        "147",
+        "189"
+      ]
     },
     {
       "id": "004",
@@ -193,7 +227,14 @@
           "issue": "1313"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "053",
+        "133",
+        "136",
+        "148",
+        "190"
+      ]
     },
     {
       "id": "005",
@@ -238,7 +279,18 @@
           "issue": "8"
         }
       ],
-      "origin": "ArtVsMark/ArtVsMark"
+      "origin": "ArtVsMark/ArtVsMark",
+      "mentions": [
+        "127"
+      ],
+      "mentioned_by": [
+        "041",
+        "049",
+        "120",
+        "125",
+        "127",
+        "160"
+      ]
     },
     {
       "id": "006",
@@ -279,7 +331,17 @@
           "issue": "1283"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "047",
+        "138"
+      ],
+      "mentioned_by": [
+        "047",
+        "134",
+        "138",
+        "189"
+      ]
     },
     {
       "id": "007",
@@ -324,7 +386,10 @@
           "issue": "1321"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "063"
+      ]
     },
     {
       "id": "008",
@@ -369,7 +434,10 @@
           "issue": "10"
         }
       ],
-      "origin": "ArtVsMark/ArtVsMark"
+      "origin": "ArtVsMark/ArtVsMark",
+      "mentioned_by": [
+        "127"
+      ]
     },
     {
       "id": "009",
@@ -410,7 +478,12 @@
           "issue": "7"
         }
       ],
-      "origin": "ArtVsMark/ArtVsMark"
+      "origin": "ArtVsMark/ArtVsMark",
+      "mentioned_by": [
+        "116",
+        "124",
+        "128"
+      ]
     },
     {
       "id": "010",
@@ -451,7 +524,16 @@
           "issue": "1232"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "039",
+        "075",
+        "104",
+        "133",
+        "148",
+        "168",
+        "171"
+      ]
     },
     {
       "id": "011",
@@ -537,7 +619,10 @@
           "section": "Что гейты не ловят"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "063"
+      ]
     },
     {
       "id": "013",
@@ -579,7 +664,10 @@
           "section": "Что гейты не ловят"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "167"
+      ]
     },
     {
       "id": "014",
@@ -706,7 +794,10 @@
           "section": "Обрезать текст"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "116"
+      ]
     },
     {
       "id": "017",
@@ -750,7 +841,10 @@
           "section": "Диагностика — первым шагом"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "058"
+      ]
     },
     {
       "id": "018",
@@ -791,7 +885,11 @@
           "doc": "docs/agent/environments.md"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "038",
+        "191"
+      ]
     },
     {
       "id": "019",
@@ -833,7 +931,12 @@
           "section": "Аудит планируется"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "082",
+        "130",
+        "193"
+      ]
     },
     {
       "id": "020",
@@ -875,7 +978,11 @@
           "section": "Рестарт только"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "060",
+        "087"
+      ]
     },
     {
       "id": "021",
@@ -917,7 +1024,13 @@
           "section": "Документация"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "092",
+        "099",
+        "155",
+        "163"
+      ]
     },
     {
       "id": "022",
@@ -960,7 +1073,15 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
-      "portable": "yes"
+      "portable": "yes",
+      "mentioned_by": [
+        "089",
+        "153",
+        "155",
+        "163",
+        "164",
+        "181"
+      ]
     },
     {
       "id": "023",
@@ -1002,7 +1123,14 @@
           "section": "README как витрина"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "127"
+      ],
+      "mentioned_by": [
+        "050",
+        "127"
+      ]
     },
     {
       "id": "024",
@@ -1044,7 +1172,12 @@
           "section": "Чего в активном документе"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "043",
+        "108",
+        "161"
+      ]
     },
     {
       "id": "025",
@@ -1128,7 +1261,17 @@
           "section": "Комплексный issue ведёт чек-лист"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "044",
+        "087",
+        "129",
+        "130",
+        "136",
+        "146",
+        "154",
+        "195"
+      ]
     },
     {
       "id": "027",
@@ -1171,7 +1314,15 @@
           "doc": "docs/agent/claude-handoff.md"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "075",
+        "091",
+        "108",
+        "129",
+        "130",
+        "177"
+      ]
     },
     {
       "id": "028",
@@ -1213,7 +1364,12 @@
           "section": "Комплексный issue"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "092",
+        "121",
+        "173"
+      ]
     },
     {
       "id": "029",
@@ -1254,7 +1410,12 @@
           "doc": "CLAUDE.md"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "080",
+        "134",
+        "138"
+      ]
     },
     {
       "id": "030",
@@ -1296,7 +1457,13 @@
           "section": "Обновление CHANGELOG"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "043",
+        "133",
+        "160",
+        "161"
+      ]
     },
     {
       "id": "031",
@@ -1338,7 +1505,10 @@
           "section": "Главное правило"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "060"
+      ]
     },
     {
       "id": "032",
@@ -1382,7 +1552,11 @@
           "section": "Роль не заканчивается"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "082",
+        "088"
+      ]
     },
     {
       "id": "033",
@@ -1468,7 +1642,11 @@
           "section": "Роль дробится"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "061",
+        "117"
+      ]
     },
     {
       "id": "035",
@@ -1510,7 +1688,11 @@
           "section": "Версионирование"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "073",
+        "163"
+      ]
     },
     {
       "id": "036",
@@ -1554,7 +1736,10 @@
           "section": "Как проводить"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "106"
+      ]
     },
     {
       "id": "037",
@@ -1596,7 +1781,16 @@
           "section": "Статус находки"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "044",
+        "086",
+        "165",
+        "170",
+        "176",
+        "178",
+        "192"
+      ]
     },
     {
       "id": "038",
@@ -1638,7 +1832,11 @@
           "section": "Два окна"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "002",
+        "018"
+      ]
     },
     {
       "id": "039",
@@ -1683,7 +1881,24 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "010"
+      ],
+      "mentioned_by": [
+        "075",
+        "128",
+        "137",
+        "139",
+        "140",
+        "145",
+        "158",
+        "159",
+        "174",
+        "175",
+        "186",
+        "188"
+      ]
     },
     {
       "id": "040",
@@ -1767,7 +1982,13 @@
           "section": "Покрытие: почему бейджа"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "005"
+      ],
+      "mentioned_by": [
+        "164"
+      ]
     },
     {
       "id": "042",
@@ -1808,7 +2029,15 @@
           "doc": "docs/dev/adr/README.md"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "062",
+        "071",
+        "080",
+        "093",
+        "138",
+        "161"
+      ]
     },
     {
       "id": "043",
@@ -1850,7 +2079,18 @@
           "section": "Соглашения. Смежное:"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "024",
+        "030"
+      ],
+      "mentioned_by": [
+        "080",
+        "094",
+        "131",
+        "135",
+        "154"
+      ]
     },
     {
       "id": "044",
@@ -1886,7 +2126,18 @@
         "en": "rules/en/044-check-the-premise-before-fixing.md"
       },
       "trails": [],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "026",
+        "037"
+      ],
+      "mentioned_by": [
+        "086",
+        "105",
+        "136",
+        "146",
+        "195"
+      ]
     },
     {
       "id": "045",
@@ -1922,7 +2173,13 @@
         "en": "rules/en/045-no-silent-fallback.md"
       },
       "trails": [],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "067",
+        "070",
+        "084",
+        "095"
+      ]
     },
     {
       "id": "046",
@@ -1966,7 +2223,20 @@
           "section": "Гарантии по ОС"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "070",
+        "085",
+        "107",
+        "128",
+        "129",
+        "138",
+        "145",
+        "158",
+        "160",
+        "174",
+        "175"
+      ]
     },
     {
       "id": "047",
@@ -2007,7 +2277,17 @@
           "issue": "1283"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "002",
+        "006"
+      ],
+      "mentioned_by": [
+        "006",
+        "049",
+        "134",
+        "138"
+      ]
     },
     {
       "id": "048",
@@ -2098,7 +2378,31 @@
           "section": "Две линии работ"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "002",
+        "005",
+        "047",
+        "129"
+      ],
+      "mentioned_by": [
+        "091",
+        "120",
+        "125",
+        "128",
+        "129",
+        "138",
+        "142",
+        "148",
+        "153",
+        "157",
+        "166",
+        "171",
+        "172",
+        "188",
+        "190",
+        "194"
+      ]
     },
     {
       "id": "050",
@@ -2140,7 +2444,14 @@
           "section": "Ссылки на issue"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "002",
+        "023"
+      ],
+      "mentioned_by": [
+        "108"
+      ]
     },
     {
       "id": "051",
@@ -2182,7 +2493,23 @@
           "section": "Две линии работ"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "065",
+        "128",
+        "130",
+        "132",
+        "140",
+        "142",
+        "154",
+        "156",
+        "160",
+        "162",
+        "163",
+        "168",
+        "180",
+        "196"
+      ]
     },
     {
       "id": "052",
@@ -2224,7 +2551,13 @@
           "section": "Очередь мержа"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "053",
+        "124",
+        "126",
+        "179"
+      ]
     },
     {
       "id": "053",
@@ -2273,7 +2606,17 @@
           "issue": "1329"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "002",
+        "004",
+        "052"
+      ],
+      "mentioned_by": [
+        "064",
+        "154",
+        "187"
+      ]
     },
     {
       "id": "054",
@@ -2361,7 +2704,14 @@
           "section": "Косячные"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "083",
+        "097",
+        "107",
+        "146",
+        "169"
+      ]
     },
     {
       "id": "056",
@@ -2405,7 +2755,12 @@
           "section": "Что означает"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "078",
+        "110",
+        "113"
+      ]
     },
     {
       "id": "057",
@@ -2447,7 +2802,15 @@
           "section": "Что гейты не ловят"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "refines": "002",
+      "mentions": [
+        "002"
+      ],
+      "mentioned_by": [
+        "128",
+        "182"
+      ]
     },
     {
       "id": "058",
@@ -2489,7 +2852,14 @@
           "section": "Исчерпав квоту"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "017"
+      ],
+      "mentioned_by": [
+        "084",
+        "101"
+      ]
     },
     {
       "id": "059",
@@ -2575,7 +2945,15 @@
           "section": "Разбор после"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "020",
+        "031"
+      ],
+      "mentioned_by": [
+        "083",
+        "088"
+      ]
     },
     {
       "id": "061",
@@ -2617,7 +2995,13 @@
           "section": "Прогонным агентам"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "034"
+      ],
+      "mentioned_by": [
+        "117"
+      ]
     },
     {
       "id": "062",
@@ -2659,7 +3043,13 @@
           "section": "Критерий приёмки роли"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "042"
+      ],
+      "mentioned_by": [
+        "082"
+      ]
     },
     {
       "id": "063",
@@ -2701,7 +3091,11 @@
           "section": "Три состояния"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "007",
+        "012"
+      ]
     },
     {
       "id": "064",
@@ -2749,7 +3143,18 @@
           "section": "Метки при заведении issue"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "002",
+        "053",
+        "128"
+      ],
+      "mentioned_by": [
+        "068",
+        "128",
+        "154",
+        "173"
+      ]
     },
     {
       "id": "065",
@@ -2791,7 +3196,13 @@
           "section": "Метки при заведении issue"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "051"
+      ],
+      "mentioned_by": [
+        "077"
+      ]
     },
     {
       "id": "066",
@@ -2838,7 +3249,10 @@
           "doc": "src/stepik_grader/atomic_io.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "069"
+      ]
     },
     {
       "id": "067",
@@ -2885,7 +3299,13 @@
           "doc": "src/stepik_grader/atomic_io.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "045"
+      ],
+      "mentioned_by": [
+        "110"
+      ]
     },
     {
       "id": "068",
@@ -2938,7 +3358,17 @@
           "doc": "src/stepik_grader/web/statement_adapter.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "002",
+        "064",
+        "075",
+        "097"
+      ],
+      "mentioned_by": [
+        "081",
+        "102"
+      ]
     },
     {
       "id": "069",
@@ -2985,7 +3415,10 @@
           "doc": "src/stepik_grader/web/settings_adapter.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "066"
+      ]
     },
     {
       "id": "070",
@@ -3030,7 +3463,15 @@
           "doc": "src/stepik_grader/web/http_guards.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "045",
+        "046"
+      ],
+      "mentioned_by": [
+        "081",
+        "085"
+      ]
     },
     {
       "id": "071",
@@ -3077,7 +3518,13 @@
           "doc": "src/stepik_grader/web/auth_adapter.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "042"
+      ],
+      "mentioned_by": [
+        "090"
+      ]
     },
     {
       "id": "072",
@@ -3124,7 +3571,11 @@
           "doc": "scripts/check_test_isolation.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "103",
+        "149"
+      ]
     },
     {
       "id": "073",
@@ -3169,7 +3620,10 @@
           "doc": "scripts/check_ruff_pin.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "035"
+      ]
     },
     {
       "id": "074",
@@ -3216,7 +3670,10 @@
           "doc": "scripts/check_workflow_guardrails.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "123"
+      ]
     },
     {
       "id": "075",
@@ -3257,7 +3714,29 @@
           "doc": "scripts/check_workflow_guardrails.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "010",
+        "027",
+        "039"
+      ],
+      "mentioned_by": [
+        "068",
+        "104",
+        "125",
+        "127",
+        "129",
+        "137",
+        "140",
+        "142",
+        "147",
+        "150",
+        "158",
+        "159",
+        "165",
+        "167",
+        "175"
+      ]
     },
     {
       "id": "076",
@@ -3302,7 +3781,10 @@
           "doc": "scripts/check_locale_guardrails.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "111"
+      ]
     },
     {
       "id": "077",
@@ -3351,7 +3833,10 @@
           "doc": "scripts/check_locale_guardrails.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "065"
+      ]
     },
     {
       "id": "078",
@@ -3400,7 +3885,16 @@
           "doc": "src/stepik_grader/web/runs.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "056"
+      ],
+      "mentioned_by": [
+        "109",
+        "113",
+        "147",
+        "179"
+      ]
     },
     {
       "id": "079",
@@ -3451,7 +3945,10 @@
           "doc": "src/stepik_grader/web/runs.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "129"
+      ]
     },
     {
       "id": "080",
@@ -3489,7 +3986,17 @@
         "en": "rules/en/080-every-new-rule-goes-into-the-catalogue.md"
       },
       "trails": [],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "029",
+        "042",
+        "043"
+      ],
+      "mentioned_by": [
+        "120",
+        "129",
+        "131"
+      ]
     },
     {
       "id": "081",
@@ -3534,7 +4041,11 @@
           "doc": "src/stepik_grader/web/playground.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "068",
+        "070"
+      ]
     },
     {
       "id": "082",
@@ -3584,7 +4095,14 @@
           "section": "Матрица подключения"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "019",
+        "032",
+        "062",
+        "086",
+        "088"
+      ]
     },
     {
       "id": "083",
@@ -3622,7 +4140,11 @@
         "en": "rules/en/083-generated-output-is-checked-by-properties.md"
       },
       "trails": [],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "055",
+        "060"
+      ]
     },
     {
       "id": "084",
@@ -3664,7 +4186,15 @@
           "section": "AI-подсказки"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "045",
+        "058"
+      ],
+      "mentioned_by": [
+        "101",
+        "187"
+      ]
     },
     {
       "id": "085",
@@ -3712,7 +4242,14 @@
           "section": "AI-подсказки"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "046",
+        "070"
+      ],
+      "mentioned_by": [
+        "129"
+      ]
     },
     {
       "id": "086",
@@ -3754,7 +4291,16 @@
           "section": "Дополнительно для"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "037",
+        "044"
+      ],
+      "mentioned_by": [
+        "082",
+        "105",
+        "130"
+      ]
     },
     {
       "id": "087",
@@ -3796,7 +4342,14 @@
           "section": "Дополнительно для"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "020",
+        "026"
+      ],
+      "mentioned_by": [
+        "130"
+      ]
     },
     {
       "id": "088",
@@ -3840,7 +4393,14 @@
           "section": "У многофазного"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "032",
+        "060"
+      ],
+      "mentioned_by": [
+        "082"
+      ]
     },
     {
       "id": "089",
@@ -3882,7 +4442,10 @@
           "section": "Архитектурные инварианты"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "022"
+      ]
     },
     {
       "id": "090",
@@ -3924,7 +4487,17 @@
           "section": "Архитектурные инварианты"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "071"
+      ],
+      "mentioned_by": [
+        "096",
+        "129",
+        "162",
+        "163",
+        "174"
+      ]
     },
     {
       "id": "091",
@@ -3974,7 +4547,14 @@
           "section": "Открытая работа"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "027",
+        "049"
+      ],
+      "mentioned_by": [
+        "130"
+      ]
     },
     {
       "id": "092",
@@ -4018,7 +4598,11 @@
           "section": "Открытая работа"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "021",
+        "028"
+      ]
     },
     {
       "id": "093",
@@ -4054,7 +4638,10 @@
         "en": "rules/en/093-seam-early-generalisation-late.md"
       },
       "trails": [],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "042"
+      ]
     },
     {
       "id": "094",
@@ -4092,7 +4679,15 @@
         "en": "rules/en/094-a-compatibility-shim-makes-migration-permanent.md"
       },
       "trails": [],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "043"
+      ],
+      "mentioned_by": [
+        "114",
+        "129",
+        "172"
+      ]
     },
     {
       "id": "095",
@@ -4130,7 +4725,13 @@
         "en": "rules/en/095-the-default-is-chosen-for-the-user.md"
       },
       "trails": [],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "045"
+      ],
+      "mentioned_by": [
+        "112"
+      ]
     },
     {
       "id": "096",
@@ -4168,7 +4769,14 @@
         "en": "rules/en/096-storage-follows-lifecycle-not-convenience.md"
       },
       "trails": [],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "090"
+      ],
+      "mentioned_by": [
+        "112",
+        "118"
+      ]
     },
     {
       "id": "097",
@@ -4212,7 +4820,21 @@
           "section": "Зачем он"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "055"
+      ],
+      "mentioned_by": [
+        "068",
+        "102",
+        "128",
+        "130",
+        "140",
+        "141",
+        "144",
+        "145",
+        "152"
+      ]
     },
     {
       "id": "098",
@@ -4256,7 +4878,12 @@
           "section": "Одна концепция — одна"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "099",
+        "132",
+        "133"
+      ]
     },
     {
       "id": "099",
@@ -4298,7 +4925,11 @@
           "section": "Дубли двух поколений"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "021",
+        "098"
+      ]
     },
     {
       "id": "100",
@@ -4340,7 +4971,11 @@
           "section": "Дедлайн на сам"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentioned_by": [
+        "109",
+        "115"
+      ]
     },
     {
       "id": "101",
@@ -4384,7 +5019,11 @@
           "section": "Устойчивость к"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "058",
+        "084"
+      ]
     },
     {
       "id": "102",
@@ -4428,7 +5067,11 @@
           "section": "Что прощается / § Что не прощается"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "068",
+        "097"
+      ]
     },
     {
       "id": "103",
@@ -4479,7 +5122,19 @@
           "doc": "tests/conftest.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "072"
+      ],
+      "refined_by": [
+        "149"
+      ],
+      "mentioned_by": [
+        "119",
+        "124",
+        "141",
+        "149"
+      ]
     },
     {
       "id": "104",
@@ -4530,7 +5185,17 @@
           "doc": ".github/workflows/ci.yml"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "010",
+        "075",
+        "126"
+      ],
+      "mentioned_by": [
+        "126",
+        "142",
+        "169"
+      ]
     },
     {
       "id": "105",
@@ -4572,7 +5237,14 @@
           "section": "Как это началось"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "044",
+        "086"
+      ],
+      "mentioned_by": [
+        "162"
+      ]
     },
     {
       "id": "106",
@@ -4616,7 +5288,10 @@
           "section": "Как это началось"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "036"
+      ]
     },
     {
       "id": "107",
@@ -4658,7 +5333,16 @@
           "section": "Как это началось. Смежное:"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "046",
+        "055"
+      ],
+      "mentioned_by": [
+        "131",
+        "135",
+        "139"
+      ]
     },
     {
       "id": "108",
@@ -4700,7 +5384,16 @@
           "section": "Обновление CHANGELOG"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "024",
+        "027",
+        "050"
+      ],
+      "mentioned_by": [
+        "121",
+        "161"
+      ]
     },
     {
       "id": "109",
@@ -4747,7 +5440,15 @@
           "doc": "src/stepik_grader/launcher.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "078",
+        "100"
+      ],
+      "mentioned_by": [
+        "126",
+        "186"
+      ]
     },
     {
       "id": "110",
@@ -4798,7 +5499,11 @@
           "doc": "core/tracer.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "056",
+        "067"
+      ]
     },
     {
       "id": "111",
@@ -4843,7 +5548,10 @@
           "doc": "src/stepik_grader/launcher.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "076"
+      ]
     },
     {
       "id": "112",
@@ -4890,7 +5598,11 @@
           "doc": "cli/__init__.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "095",
+        "096"
+      ]
     },
     {
       "id": "113",
@@ -4932,7 +5644,16 @@
           "section": "Ожидания"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "056",
+        "078"
+      ],
+      "mentioned_by": [
+        "122",
+        "129",
+        "157"
+      ]
     },
     {
       "id": "114",
@@ -4983,7 +5704,15 @@
           "doc": "core/history.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "094"
+      ],
+      "mentioned_by": [
+        "129",
+        "157",
+        "172"
+      ]
     },
     {
       "id": "115",
@@ -5033,7 +5762,10 @@
           "section": "Почему поиск"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "100"
+      ]
     },
     {
       "id": "116",
@@ -5075,7 +5807,16 @@
           "section": "Ещё два урока —"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "009",
+        "016"
+      ],
+      "mentioned_by": [
+        "121",
+        "128",
+        "165"
+      ]
     },
     {
       "id": "117",
@@ -5116,7 +5857,11 @@
           "doc": "docs/archive/audit-2026-07-30-full-roles.md"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "034",
+        "061"
+      ]
     },
     {
       "id": "118",
@@ -5158,7 +5903,15 @@
           "section": "Про два файла"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "096"
+      ],
+      "mentioned_by": [
+        "122",
+        "125",
+        "153"
+      ]
     },
     {
       "id": "119",
@@ -5201,7 +5954,10 @@
           "doc": "core/submission_archive.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "103"
+      ]
     },
     {
       "id": "120",
@@ -5244,7 +6000,20 @@
           "issue": "1342"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "005",
+        "049",
+        "080",
+        "125",
+        "129"
+      ],
+      "mentioned_by": [
+        "125",
+        "129",
+        "134",
+        "154"
+      ]
     },
     {
       "id": "121",
@@ -5288,7 +6057,15 @@
           "section": "Работы вне"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "028",
+        "108",
+        "116"
+      ],
+      "mentioned_by": [
+        "138"
+      ]
     },
     {
       "id": "122",
@@ -5331,7 +6108,14 @@
           "doc": "docs/dev/api.md"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "113",
+        "118"
+      ],
+      "mentioned_by": [
+        "137"
+      ]
     },
     {
       "id": "123",
@@ -5375,7 +6159,16 @@
           "section": "Формат коммитов"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "002",
+        "074"
+      ],
+      "mentioned_by": [
+        "131",
+        "135",
+        "156"
+      ]
     },
     {
       "id": "124",
@@ -5426,7 +6219,15 @@
           "issue": "1344"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "009",
+        "052",
+        "103"
+      ],
+      "mentioned_by": [
+        "126"
+      ]
     },
     {
       "id": "125",
@@ -5469,7 +6270,22 @@
           "issue": "2"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "001",
+        "005",
+        "049",
+        "075",
+        "118",
+        "120"
+      ],
+      "mentioned_by": [
+        "120",
+        "127",
+        "160",
+        "181",
+        "196"
+      ]
     },
     {
       "id": "126",
@@ -5520,7 +6336,17 @@
           "issue": "1344"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "052",
+        "104",
+        "109",
+        "124"
+      ],
+      "mentioned_by": [
+        "104",
+        "154"
+      ]
     },
     {
       "id": "127",
@@ -5563,7 +6389,19 @@
           "issue": "12"
         }
       ],
-      "origin": "ArtVsMark/ArtVsMark"
+      "origin": "ArtVsMark/ArtVsMark",
+      "mentions": [
+        "002",
+        "005",
+        "008",
+        "023",
+        "075",
+        "125"
+      ],
+      "mentioned_by": [
+        "005",
+        "023"
+      ]
     },
     {
       "id": "128",
@@ -5614,7 +6452,24 @@
           "issue": "1329"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "002",
+        "009",
+        "039",
+        "046",
+        "049",
+        "051",
+        "057",
+        "064",
+        "097",
+        "116"
+      ],
+      "mentioned_by": [
+        "064",
+        "132",
+        "133"
+      ]
     },
     {
       "id": "129",
@@ -5665,7 +6520,31 @@
           "issue": "1351"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "026",
+        "027",
+        "046",
+        "049",
+        "075",
+        "079",
+        "080",
+        "085",
+        "090",
+        "094",
+        "113",
+        "114",
+        "120",
+        "130"
+      ],
+      "mentioned_by": [
+        "049",
+        "120",
+        "130",
+        "134",
+        "136",
+        "174"
+      ]
     },
     {
       "id": "130",
@@ -5716,7 +6595,21 @@
           "issue": "15"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "019",
+        "026",
+        "027",
+        "051",
+        "086",
+        "087",
+        "091",
+        "097",
+        "129"
+      ],
+      "mentioned_by": [
+        "129"
+      ]
     },
     {
       "id": "131",
@@ -5763,7 +6656,18 @@
           "issue": "20"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "002",
+        "043",
+        "080",
+        "107",
+        "123",
+        "135"
+      ],
+      "mentioned_by": [
+        "135"
+      ]
     },
     {
       "id": "132",
@@ -5818,7 +6722,17 @@
           "issue": "1350"
         }
       ],
-      "origin": "ArtVsMark/ArtVsMark"
+      "origin": "ArtVsMark/ArtVsMark",
+      "mentions": [
+        "051",
+        "098",
+        "128",
+        "133"
+      ],
+      "mentioned_by": [
+        "133",
+        "189"
+      ]
     },
     {
       "id": "133",
@@ -5865,7 +6779,18 @@
           "issue": "1350"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "004",
+        "010",
+        "030",
+        "098",
+        "128",
+        "132"
+      ],
+      "mentioned_by": [
+        "132"
+      ]
     },
     {
       "id": "134",
@@ -5912,7 +6837,17 @@
           "issue": "21"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "006",
+        "029",
+        "047",
+        "120",
+        "129"
+      ],
+      "mentioned_by": [
+        "138"
+      ]
     },
     {
       "id": "135",
@@ -5959,7 +6894,16 @@
           "issue": "36"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "043",
+        "107",
+        "123",
+        "131"
+      ],
+      "mentioned_by": [
+        "131"
+      ]
     },
     {
       "id": "136",
@@ -6002,7 +6946,16 @@
           "issue": "39"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "004",
+        "026",
+        "044",
+        "129"
+      ],
+      "mentioned_by": [
+        "159"
+      ]
     },
     {
       "id": "137",
@@ -6045,7 +6998,12 @@
           "issue": "40"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "039",
+        "075",
+        "122"
+      ]
     },
     {
       "id": "138",
@@ -6088,7 +7046,20 @@
           "issue": "35"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "006",
+        "029",
+        "042",
+        "046",
+        "047",
+        "049",
+        "121",
+        "134"
+      ],
+      "mentioned_by": [
+        "006"
+      ]
     },
     {
       "id": "139",
@@ -6135,7 +7106,24 @@
           "issue": "54"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "002",
+        "039",
+        "107",
+        "140"
+      ],
+      "mentioned_by": [
+        "140",
+        "145",
+        "146",
+        "151",
+        "152",
+        "169",
+        "170",
+        "173",
+        "179"
+      ]
     },
     {
       "id": "140",
@@ -6182,7 +7170,28 @@
           "issue": "72"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "002",
+        "039",
+        "051",
+        "075",
+        "097",
+        "139"
+      ],
+      "mentioned_by": [
+        "139",
+        "141",
+        "145",
+        "146",
+        "150",
+        "155",
+        "159",
+        "166",
+        "167",
+        "193",
+        "195"
+      ]
     },
     {
       "id": "141",
@@ -6225,7 +7234,17 @@
           "issue": "69"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "097",
+        "103",
+        "140"
+      ],
+      "mentioned_by": [
+        "144",
+        "156",
+        "180"
+      ]
     },
     {
       "id": "142",
@@ -6268,7 +7287,21 @@
           "issue": "77"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "049",
+        "051",
+        "075",
+        "104"
+      ],
+      "mentioned_by": [
+        "147",
+        "151",
+        "164",
+        "169",
+        "173",
+        "191"
+      ]
     },
     {
       "id": "144",
@@ -6311,7 +7344,11 @@
           "doc": "scripts/check_audit_registry.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "097",
+        "141"
+      ]
     },
     {
       "id": "145",
@@ -6354,7 +7391,18 @@
           "issue": "83"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "039",
+        "046",
+        "097",
+        "139",
+        "140"
+      ],
+      "mentioned_by": [
+        "170",
+        "186"
+      ]
     },
     {
       "id": "146",
@@ -6397,7 +7445,24 @@
           "issue": "88"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "026",
+        "044",
+        "055",
+        "139",
+        "140"
+      ],
+      "mentioned_by": [
+        "166",
+        "170",
+        "181",
+        "182",
+        "186",
+        "192",
+        "193",
+        "195"
+      ]
     },
     {
       "id": "147",
@@ -6440,7 +7505,13 @@
           "issue": "96"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "003",
+        "075",
+        "078",
+        "142"
+      ]
     },
     {
       "id": "148",
@@ -6483,7 +7554,12 @@
           "issue": "74"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "004",
+        "010",
+        "049"
+      ]
     },
     {
       "id": "149",
@@ -6526,7 +7602,12 @@
           "doc": "tests/conftest.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "refines": "103",
+      "mentions": [
+        "072",
+        "103"
+      ]
     },
     {
       "id": "150",
@@ -6569,7 +7650,14 @@
           "doc": "tests/test_preflight_basetemp.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "075",
+        "140"
+      ],
+      "mentioned_by": [
+        "151"
+      ]
     },
     {
       "id": "151",
@@ -6612,7 +7700,12 @@
           "doc": "scripts/report_failed_tests.py"
         }
       ],
-      "origin": "ArtVsMark/Stepik-Python-Grader"
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "mentions": [
+        "139",
+        "142",
+        "150"
+      ]
     },
     {
       "id": "152",
@@ -6651,7 +7744,11 @@
       },
       "trails": [],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "097",
+        "139"
+      ]
     },
     {
       "id": "153",
@@ -6690,7 +7787,17 @@
       },
       "trails": [],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "022",
+        "049",
+        "118"
+      ],
+      "mentioned_by": [
+        "155",
+        "162",
+        "194"
+      ]
     },
     {
       "id": "154",
@@ -6731,7 +7838,17 @@
           "issue": "197"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Incidents-Playbook"
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "mentions": [
+        "002",
+        "026",
+        "043",
+        "051",
+        "053",
+        "064",
+        "120",
+        "126"
+      ]
     },
     {
       "id": "155",
@@ -6775,7 +7892,17 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "021",
+        "022",
+        "140",
+        "153"
+      ],
+      "mentioned_by": [
+        "163"
+      ]
     },
     {
       "id": "156",
@@ -6819,7 +7946,12 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "051",
+        "123",
+        "141"
+      ]
     },
     {
       "id": "157",
@@ -6863,7 +7995,19 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "049",
+        "113",
+        "114"
+      ],
+      "mentioned_by": [
+        "164",
+        "170",
+        "177",
+        "186",
+        "192"
+      ]
     },
     {
       "id": "158",
@@ -6907,7 +8051,15 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "039",
+        "046",
+        "075"
+      ],
+      "mentioned_by": [
+        "174"
+      ]
     },
     {
       "id": "159",
@@ -6951,7 +8103,13 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "039",
+        "075",
+        "136",
+        "140"
+      ]
     },
     {
       "id": "160",
@@ -6993,7 +8151,18 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "005",
+        "030",
+        "046",
+        "051",
+        "125"
+      ],
+      "mentioned_by": [
+        "174",
+        "196"
+      ]
     },
     {
       "id": "161",
@@ -7035,7 +8204,14 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "024",
+        "030",
+        "042",
+        "108",
+        "162"
+      ]
     },
     {
       "id": "162",
@@ -7077,7 +8253,17 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "051",
+        "090",
+        "105",
+        "153"
+      ],
+      "mentioned_by": [
+        "161"
+      ]
     },
     {
       "id": "163",
@@ -7121,7 +8307,15 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "021",
+        "022",
+        "035",
+        "051",
+        "090",
+        "155"
+      ]
     },
     {
       "id": "164",
@@ -7165,7 +8359,16 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "022",
+        "041",
+        "142",
+        "157"
+      ],
+      "mentioned_by": [
+        "174"
+      ]
     },
     {
       "id": "165",
@@ -7213,7 +8416,12 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "037",
+        "075",
+        "116"
+      ]
     },
     {
       "id": "166",
@@ -7257,7 +8465,16 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "049",
+        "140",
+        "146"
+      ],
+      "mentioned_by": [
+        "172",
+        "180"
+      ]
     },
     {
       "id": "167",
@@ -7301,7 +8518,12 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "013",
+        "075",
+        "140"
+      ]
     },
     {
       "id": "168",
@@ -7345,7 +8567,16 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "partly"
+      "portable": "partly",
+      "mentions": [
+        "010",
+        "051",
+        "171"
+      ],
+      "mentioned_by": [
+        "171",
+        "179"
+      ]
     },
     {
       "id": "169",
@@ -7389,7 +8620,13 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "partly"
+      "portable": "partly",
+      "mentions": [
+        "055",
+        "104",
+        "139",
+        "142"
+      ]
     },
     {
       "id": "170",
@@ -7433,7 +8670,19 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "037",
+        "139",
+        "145",
+        "146",
+        "157"
+      ],
+      "mentioned_by": [
+        "176",
+        "178",
+        "194"
+      ]
     },
     {
       "id": "171",
@@ -7477,7 +8726,15 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "010",
+        "049",
+        "168"
+      ],
+      "mentioned_by": [
+        "168"
+      ]
     },
     {
       "id": "172",
@@ -7525,7 +8782,13 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "049",
+        "094",
+        "114",
+        "166"
+      ]
     },
     {
       "id": "173",
@@ -7569,7 +8832,13 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "028",
+        "064",
+        "139",
+        "142"
+      ]
     },
     {
       "id": "174",
@@ -7617,7 +8886,20 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "039",
+        "046",
+        "090",
+        "129",
+        "158",
+        "160",
+        "164"
+      ],
+      "mentioned_by": [
+        "178",
+        "190"
+      ]
     },
     {
       "id": "175",
@@ -7661,7 +8943,13 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "039",
+        "046",
+        "075"
+      ]
     },
     {
       "id": "176",
@@ -7709,7 +8997,12 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "037",
+        "170"
+      ]
     },
     {
       "id": "177",
@@ -7751,7 +9044,15 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "027",
+        "157"
+      ],
+      "mentioned_by": [
+        "182"
+      ]
     },
     {
       "id": "178",
@@ -7799,7 +9100,15 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "037",
+        "170",
+        "174"
+      ],
+      "mentioned_by": [
+        "182"
+      ]
     },
     {
       "id": "179",
@@ -7845,7 +9154,16 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "partly"
+      "portable": "partly",
+      "mentions": [
+        "052",
+        "078",
+        "139",
+        "168"
+      ],
+      "mentioned_by": [
+        "187"
+      ]
     },
     {
       "id": "180",
@@ -7889,7 +9207,12 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "051",
+        "141",
+        "166"
+      ]
     },
     {
       "id": "181",
@@ -7928,7 +9251,12 @@
       },
       "trails": [],
       "origin": "ArtVsMark/Stepik-Python-Grader",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "022",
+        "125",
+        "146"
+      ]
     },
     {
       "id": "182",
@@ -7972,7 +9300,13 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "057",
+        "146",
+        "177",
+        "178"
+      ]
     },
     {
       "id": "183",
@@ -8152,7 +9486,17 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "039",
+        "109",
+        "145",
+        "146",
+        "157"
+      ],
+      "mentioned_by": [
+        "188"
+      ]
     },
     {
       "id": "187",
@@ -8200,7 +9544,12 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "partly"
+      "portable": "partly",
+      "mentions": [
+        "053",
+        "084",
+        "179"
+      ]
     },
     {
       "id": "188",
@@ -8244,7 +9593,12 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "039",
+        "049",
+        "186"
+      ]
     },
     {
       "id": "189",
@@ -8292,7 +9646,12 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "003",
+        "006",
+        "132"
+      ]
     },
     {
       "id": "190",
@@ -8340,7 +9699,12 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "004",
+        "049",
+        "174"
+      ]
     },
     {
       "id": "191",
@@ -8392,7 +9756,12 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "018",
+        "142"
+      ]
     },
     {
       "id": "192",
@@ -8436,7 +9805,12 @@
         }
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "037",
+        "146",
+        "157"
+      ]
     },
     {
       "id": "193",
@@ -8480,7 +9854,15 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "019",
+        "140",
+        "146"
+      ],
+      "mentioned_by": [
+        "195"
+      ]
     },
     {
       "id": "194",
@@ -8519,7 +9901,15 @@
       },
       "trails": [],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "049",
+        "153",
+        "170"
+      ],
+      "mentioned_by": [
+        "196"
+      ]
     },
     {
       "id": "195",
@@ -8563,7 +9953,14 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "026",
+        "044",
+        "140",
+        "146",
+        "193"
+      ]
     },
     {
       "id": "196",
@@ -8611,7 +10008,14 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
-      "portable": "yes"
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "051",
+        "125",
+        "160",
+        "194"
+      ]
     }
   ],
   "candidates": [
