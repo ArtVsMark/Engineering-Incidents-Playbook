@@ -43,8 +43,9 @@ an automerge — merges the previous change. Between "I remember the PR being op
 and reality there is not a single event on the author's side.
 
 **Both halves can be mechanised, and they differ.** For the **pusher**: before
-pushing, ask the platform whether the branch is alive; "it is gone" with a
-non-empty local range means the work has merged. For the **pipeline**: before
+pushing, ask the platform whether the branch is alive — and tell "it was
+deleted" from "it was never there" by your own ref to it: present locally and
+absent on the platform means the work has merged. For the **pipeline**: before
 opening a change, ask whether a merged change already exists for this same head
 branch; if so, this is a resurrection rather than new work.
 
@@ -58,8 +59,17 @@ replaces the other.
 - what is checked is **the branch's existence on the platform**, not a PR's
   state in memory: state is derived from a live artefact
   ([049](049-derive-state-from-live-artifacts.md));
-- "the branch is gone" with an **empty** local range is an ordinary new topic,
-  not a resurrection: the non-empty range is what tells them apart;
+- the discriminator is **your own remote-tracking ref**: `refs/remotes/origin/<name>`
+  is created only by a push or a fetch, so its presence means "we put it there".
+  Present locally, absent on the platform — deleted on merge. A NEW topic has no
+  branch on the platform either, and this ref is what tells them apart;
+- a non-empty local range is deliberately NOT the discriminator, tempting as it
+  is: a new topic's range is non-empty too, so it separates nothing. Counting it
+  costs more and says less than asking for one ref;
+- **deleting a ref is not a content push**: `git push origin --delete`
+  resurrects nothing, and its subject is somebody else's branch rather than the
+  current one. The guard lets such commands through; otherwise it blocks the
+  very cleanup it asks for;
 - `git push` output is **not** a signal: `* [new branch]` prints in both cases;
 - the pipeline half's subject is **the head branch of an already merged change**,
   and it is asked of the platform rather than inferred from a name;

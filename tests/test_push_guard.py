@@ -471,3 +471,35 @@ def test_voskreshenie_ostanavlivaet_tolchok(окно, monkeypatch, capsys):
     ошибка = capsys.readouterr().err
     assert "удалила её при слиянии" in ошибка
     assert "checkout -B" in ошибка
+
+
+def test_udalenie_vetki_ne_schitaetsya_voskresheniem(окно, monkeypatch, capsys):
+    """Удаление ссылки ничего не воскрешает, и предмет там ЧУЖАЯ ветка.
+
+    Сценарий находки на #468: окно стоит на своей ветке, уже слитой и удалённой
+    площадкой, и убирает ПОСТОРОННЮЮ мёртвую ссылку. Без развилки сторож
+    объявлял воскрешение и советовал cherry-pick — то есть останавливал ровно
+    ту уборку, которую сам же в отказе и просит (051).
+    """
+    окно("git push origin --delete чужая/stale")
+    monkeypatch.setattr(pg, "ветка_воскресает", lambda b: True)
+    assert pg.main() == 0
+    assert capsys.readouterr().err == ""
+
+
+def test_udalenie_uznayotsya_vo_vsekh_zakonnykh_formakh():
+    """Три формы удаления и две формы обычного толчка — обе стороны (140)."""
+    for команда in ("git push origin --delete чужая/stale",
+                    "git push origin -d чужая/stale",
+                    "git push origin :чужая/stale"):
+        assert pg.удаляет_ветку(команда) is True, команда
+    for команда in ("git push -u origin agent/своя", "git push"):
+        assert pg.удаляет_ветку(команда) is False, команда
+
+
+def test_obychnyy_tolchok_v_voskresshuyu_vsyo_eshchyo_otvergaetsya(окно, monkeypatch, capsys):
+    """Вторая сторона: развилка не выключила сам сторож."""
+    окно("git push -u origin agent/своя")
+    monkeypatch.setattr(pg, "ветка_воскресает", lambda b: True)
+    assert pg.main() == 2
+    assert "удалила её при слиянии" in capsys.readouterr().err
