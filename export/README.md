@@ -233,7 +233,43 @@ fails the build.
 | `status` | `active` · `rejected` · `not-applicable` · `unreviewed` | всегда · always |
 | `mechanism` | `gate` · `pipeline` · `document` · `none` (устар. · deprecated: `process-step`) | при `active` · when `active` |
 | `where` | **разрешимый адрес** механизма: путь к файлу, образец вида `.github/workflows/*.yml` или корневой документ по имени. Проза рядом — пожалуйста, вместо адреса — нет · a **resolvable address**: a file path, a pattern like `.github/workflows/*.yml`, or a root document by name. Prose alongside is fine, prose instead of an address is not | при `active` и механизме не `none` · when `active` and the mechanism is not `none` |
-| `why` | причина решения · the reason for the decision | при `rejected` и `not-applicable` |
+| `why` | причина решения · the reason for the decision | при `rejected`, `not-applicable` и вместе с `document_reason` · with `rejected`, `not-applicable` and alongside `document_reason` |
+| `machine_half` | ЧТО именно следует из данных целиком и почему оно всё-таки не построено · WHAT exactly follows from the data in full, and why it is still not built | при `active` и `mechanism: none` · when `active` and `mechanism: none` |
+| `document_reason` | `impossible` — машинной половины нет вовсе, документ и есть предел · `not-yet` — половина есть и не построена | при `active` и `mechanism: document`, у новых и тронутых ответов · when `active` and `mechanism: document`, for new and touched answers |
+
+**Почему `document` разбирается надвое (контракт 1.3).** У `none` разбор
+спрашивался всегда, у `document` — ничего, при том что предмет ровно тот же:
+правило действует, машина его не держит. Разница между двумя ответами в наличии
+ТЕКСТА, а не машинной половины — документ не проверяет ничего так же, как и её
+отсутствие. Цена видна на счёте семьи: доля машинного соблюдения считается со
+знаменателем, где «законно документом» и «пока документом» сложены в одно число.
+Слово закрытое, потому что счётчику знаменатель надо РАЗДЕЛИТЬ, а прозу сложить
+нельзя; причина рядом обязательна, потому что значение из двух выбирается не
+думая, а причину не написать, не подумав.
+
+**Задним числом поле не проставляется.** Оно спрашивается у ответов **новых и
+тронутых** — так же, как заводился `machine_half`. Иначе подъём контракта
+превращается в десятки записей работы разом, и его начнут проставлять формально:
+ровно то, чего правило 146 не разрешает. Каталог свои 28 ответов разобрал
+целиком, потому что он издатель, а не потому, что это требуется от всех сразу
+(197).
+
+**Why `document` is split in two (contract 1.3).** `none` was always asked for a
+split; `document` was asked for nothing — even though the subject is identical:
+the rule is in force and no machine holds it. The difference between the two
+answers is the presence of TEXT, not of a machine half — a document checks
+nothing, exactly like its absence. The cost shows up in the family's tally: the
+share of machine-enforced rules is computed over a denominator where "document
+by necessity" and "document for now" are added into one number. The vocabulary
+is closed because a counter has to SPLIT that denominator, and prose does not
+add up; the reason next to it is required because a two-valued field gets picked
+without thinking, while a reason cannot be written without thinking.
+
+**The field is not backfilled.** It is asked of **new and touched** answers, the
+same way `machine_half` was introduced. Otherwise a contract bump turns into
+dozens of records of work at once, and it starts being filled in formally —
+exactly what rule 146 forbids. The catalogue answered all 28 of its own because
+it is the publisher, not because everyone is expected to do it at once (197).
 
 **Почему адрес обязателен.** «След» правила каталог требует разрешимым: задача
 `владелец/репозиторий#номер` либо названный потребитель, и проза следом не
@@ -677,7 +713,7 @@ having no gate.
 {
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
-    "export": "1.7", "bindings": "1.2", "consumers": "1.1",
+    "export": "1.7", "bindings": "1.3", "consumers": "1.1",
     "proposals": "1.1", "showcase": "1.1", "where": "1.2"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
