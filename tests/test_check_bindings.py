@@ -658,6 +658,45 @@ def test_chuzhoe_slovo_tozhe_bez_razbora(monkeypatch, repo, capsys):
     assert "без разбора: 1" in capsys.readouterr().out
 
 
+def test_slovo_bez_prichiny_tozhe_bez_razbora(monkeypatch, repo, capsys):
+    """Находка ревью #481: вторая половина того же расхождения.
+
+    Гейт отвергает запись двумя условиями, а счёт смотрел только на первое:
+    слово законное, причины нет — прогон отвергал её и тут же печатал
+    разобранной. Приёмка теперь одна на обоих (022).
+    """
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo, документом({"document_reason": "impossible"}),
+            export_of("001"))
+
+    assert cb.main() == 1
+    вышло = capsys.readouterr()
+    assert "`document_reason` есть, а причины нет" in вышло.err
+    assert "машинной половины нет у 0" in вышло.out
+    assert "без разбора: 1" in вышло.out
+
+
+def test_smeshannyy_sluchay_schitaetsya_po_zapisyam(monkeypatch, repo, capsys):
+    """Разобранная и неразобранная рядом: счёт по каждой, а не по остатку."""
+    write(repo / "AGENTS.md", "свод\n")
+    ответ = {"rules": {
+        "001": {"status": "active", "mechanism": "document",
+                "where": "AGENTS.md — сказано в своде",
+                "document_reason": "not-yet", "why": "построили бы счёт"},
+        "002": {"status": "active", "mechanism": "document",
+                "where": "AGENTS.md — сказано в своде",
+                "document_reason": "impossible"},
+    }}
+    prepare(monkeypatch, repo, ответ, export_of("001", "002"))
+
+    assert cb.main() == 1
+    вышло = capsys.readouterr().out
+    assert "держится документом: 2" in вышло
+    assert "машинной половины нет у 0" in вышло
+    assert "не построена у 1" in вышло
+    assert "без разбора: 1" in вышло
+
+
 # ── ОТЛОЖЕННОЕ ПРОТИВ ДОЛГА ───────────────────────────────────────────────
 # Поле `awaiting` выводит правило из ступени 0, а значит само становится
 # лазейкой: припиской «построим потом» долг обнулялся бы даром. Три машинных

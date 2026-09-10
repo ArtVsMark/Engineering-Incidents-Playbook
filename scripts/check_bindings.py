@@ -173,10 +173,11 @@ def tier_zero(answered: dict, rules: set[str], schema: str | None,
                   if rec.get("status") == "active"
                   and rec.get("mechanism") == "document"]
     невозможна = sorted(rid for rid in документом
-                        if answered[rid].get("document_reason") == "impossible")
+                        if разобран_документом(answered[rid]) == "impossible")
     не_построено = sorted(rid for rid in документом
-                          if answered[rid].get("document_reason") == "not-yet")
-    без_разбора = sorted(set(документом) - set(невозможна) - set(не_построено))
+                          if разобран_документом(answered[rid]) == "not-yet")
+    без_разбора = sorted(rid for rid in документом
+                         if разобран_документом(answered[rid]) is None)
     if документом:
         строки.append(
             f"  держится документом: {len(документом)} — машинной половины нет "
@@ -251,6 +252,28 @@ MECHANISMS = ("gate", "pipeline", "document", "none", "process-step")
 ДОКУМЕНТ_ПРИЧИНЫ = ("impossible", "not-yet")
 
 MECHANISM_ORDER = ("gate", "pipeline", "document", "none")
+
+def разобран_документом(rec: dict) -> str | None:
+    """Слово разбора, если ответ «документом» разобран ЦЕЛИКОМ; иначе None.
+
+    ОДИН ПРЕДИКАТ НА ГЕЙТ И НА СЧЁТ, И ЭТО ИЗМЕРЕНО. Гейт отвергает такую
+    запись двумя условиями — слова нет либо оно чужое; слово есть, а причины
+    нет, — а счёт ступени 0 смотрел только на первое. Запись с пустым `why`
+    печаталась РАЗОБРАННОЙ тем же прогоном, который её отверг: два ответа на
+    один вопрос разошлись молча (022, ревью #481). Приёмка теперь живёт здесь,
+    а гейт лишь выбирает, какими словами сказать об отказе.
+
+    Половинчатое выглядит заполненным хуже пустого (128): слово без причины —
+    это «не спрошено», а не «невозможно», и в счёт разобранного оно не идёт
+    (039).
+    """
+    выбор = (rec.get("document_reason") or "").strip()
+    if выбор not in ДОКУМЕНТ_ПРИЧИНЫ:
+        return None
+    if not (rec.get("why") or "").strip():
+        return None
+    return выбор
+
 
 #: Ревизор входит от списка деклараций и ищет расхождение с фактом. Ответ
 #: каталога — это список деклараций: «держится гейтом вот здесь». Проверять
@@ -730,7 +753,8 @@ def main() -> int:
         # РАЗДЕЛИТЬ, а прозу сложить нельзя. И почему слова мало: значение из
         # двух выбирается не думая, поэтому рядом обязательна причина — та же
         # связка, что у `none` (154).
-        if status == "active" and rec.get("mechanism") == "document":
+        if status == "active" and rec.get("mechanism") == "document" \
+                and разобран_документом(rec) is None:
             выбор = (rec.get("document_reason") or "").strip()
             if выбор not in ДОКУМЕНТ_ПРИЧИНЫ:
                 problems.append(
@@ -741,7 +765,7 @@ def main() -> int:
                     "него «законно документом» и «пока документом» "
                     "складываются в одно число, и счёт по семье врёт у всех "
                     "шестерых (182, 057)")
-            elif not (rec.get("why") or "").strip():
+            else:
                 problems.append(
                     f"{rid}: `document_reason` есть, а причины нет. Слово из "
                     "двух выбирается не думая — причину не написать, не "
