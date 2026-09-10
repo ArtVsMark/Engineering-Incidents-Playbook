@@ -535,6 +535,40 @@ def test_yavnyy_refspec_nazyvaet_svoyu_tsel():
     assert pg.везёт_содержимое("git push origin +agent/своя", свои) is True
 
 
+def test_vedushchiy_plyus_snimaetsya_do_razbora_ssylki():
+    """Находка ревью #477: `+:имя` — то же удаление, что `:имя`.
+
+    Плюс значит принудительность, а не адрес. Снятый ПОСЛЕ проверки ведущего
+    двоеточия, он оставлял принудительное удаление выглядеть толчком
+    содержимого — ложный отказ на команде, которая ничего не везёт (051).
+    """
+    свои = "agent/своя"
+    assert pg.везёт_содержимое("git push origin +:agent/своя", свои) is False
+    assert pg.везёт_содержимое("git push origin +agent/своя", свои) is True
+    assert pg.везёт_содержимое("git push origin +HEAD:другая", свои) is False
+    assert pg.везёт_содержимое("git push origin +HEAD:agent/своя", свои) is True
+
+
+def test_plyus_snimaetsya_i_dlya_chuzhoy_vetki():
+    """Вторая половина того же снятия, и она про ДРУГОЕ правило (012).
+
+    `targets` плюса не снимала вовсе: `+своя` уезжало в список чужих веток, и
+    принудительный толчок в СВОЮ получал отказ «окно стоит на другой». Обе
+    половины чинятся одним местом снятия, а не двумя правками (022).
+    """
+    свои = "agent/своя"
+    assert pg.targets("git push origin +agent/своя", свои) == []
+    assert pg.targets("git push origin +чужая", свои) == ["чужая"]
+
+
+def test_prinuditelnoe_udalenie_ne_ostanavlivaetsya_khukom(окно, monkeypatch, capsys):
+    """Та же находка целиком через хук: отказа быть НЕ должно."""
+    окно("git push origin +:agent/своя")
+    monkeypatch.setattr(pg, "ветка_воскресает", lambda b: True)
+    assert pg.main() == 0
+    assert capsys.readouterr().err == ""
+
+
 def test_podstanovka_obolochki_ne_schitaetsya_etoy_vetkoy():
     """«Неизвестно» и «эта ветка» — разные ответы, и путать их значит отвергать
     недостоверное (051). Стойка та же, что у `targets` двумя вопросами выше."""
