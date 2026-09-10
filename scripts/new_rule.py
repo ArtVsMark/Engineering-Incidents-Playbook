@@ -49,12 +49,9 @@ CHANGELOG_DIR = ROOT / "changelog.d"
 
 RULE_RE = re.compile(r"^(\d{3})-([a-z0-9-]+)\.md$")
 SLUG_RE = re.compile(r"^[a-z][a-z0-9-]*$")
-#: След обязан разрешаться: задача либо потребитель с названным артефактом.
-ISSUE_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+#\d+$")
-
-#: «Адрес или проза» — один предикат на каталог: тот же, что судит
-#: `where` в ответах потребителей (022).
-from check_bindings import addressed  # noqa: E402
+#: «Адрес или проза» — один предикат на каталог: тот же, что судит след
+#: предложения и половиной — `where` в ответах потребителей (022).
+from check_bindings import разрешимый_адрес, ЗАДАЧА_RE  # noqa: E402
 
 #: Каркас английской стороны. Заготовка в репозитории одна и русская; делать
 #: вторую значило бы завести два места для одной формы (правило 022), а формы
@@ -138,7 +135,7 @@ def trail_resolves(trail: str, root: Path) -> bool:
     Адрес спрашивается у `addressed` — того же предиката, что судит `where` у
     потребителей: два ответа на один вопрос разъезжаются молча (022).
     """
-    if ISSUE_RE.match(trail):
+    if ЗАДАЧА_RE.search(trail):
         return True
     try:
         known = {c["repo"] for c in json.loads(
@@ -146,7 +143,7 @@ def trail_resolves(trail: str, root: Path) -> bool:
     except (OSError, ValueError, KeyError, TypeError):
         return False
     for repo in known:
-        if trail.startswith(repo) and addressed(trail[len(repo):]):
+        if trail.startswith(repo) and разрешимый_адрес(trail[len(repo):]):
             return True
     return False
 
@@ -191,9 +188,32 @@ def proposal(root: Path, key: str) -> tuple[dict, str | None]:
     if not found.get("incident"):
         return {}, (f"предложение {key} без инцидента. Правило без инцидента — "
                     "предпочтение, и через месяц его нечем защитить")
-    return {"slug": slug, "trail": f"{repo} — {found.get('trail', '')}".strip(" —"),
+    return {"slug": slug, "trail": след_предложения(repo, found.get("trail", "")),
             "claim": found.get("claim", ""),
             "incident": found.get("incident", "")}, None
+
+
+def след_предложения(repo: str, свой: str) -> str:
+    """След предложения в форме каталога: репозиторий и артефакт в нём.
+
+    ПОЧЕМУ ПРИСТАВКА НЕ БЕЗУСЛОВНА. Потребитель называет артефакт в СВОИХ
+    координатах — `scripts/build_facts.py`, — и репозиторий к нему приписать
+    надо: без него адрес не разрешается. Но след бывает и задачей, и тогда он
+    УЖЕ полон: `владелец/репозиторий#номер`. Приставка в этом случае давала
+    `Owner/Repo — Owner/Repo#181 …` — форму, которой нет ни одной законной, и
+    сборка каркаса отказывала на ГОДНОМ предложении.
+
+    ЗАМЕР 10 сентября: поймано собственным гейтом следа в тот же день, когда
+    он завёлся. До гейта эта форма прошла бы молча и уехала бы в запись — то
+    есть дефект был старше проверки, а не создан ею.
+    """
+    свой = (свой or "").strip()
+    if not свой:
+        return repo
+    # Задача названа полностью — приписывать нечего.
+    if ЗАДАЧА_RE.match(свой):
+        return свой
+    return f"{repo} — {свой}"
 
 
 def neighbours(root: Path, path: Path) -> str:
