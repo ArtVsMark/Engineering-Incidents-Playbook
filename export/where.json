@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T18:29:26+00:00",
+  "generated_at": "2026-09-10T18:36:56+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,17 +10,17 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-10",
-      "answered": 196,
+      "answered": 199,
       "by_status": {
-        "active": 163,
-        "not-applicable": 27,
+        "active": 165,
+        "not-applicable": 28,
         "rejected": 6
       },
       "by_mechanism": {
         "gate": 121,
         "document": 28,
         "pipeline": 9,
-        "none": 5
+        "none": 7
       },
       "rules": {
         "001": "active",
@@ -218,7 +218,10 @@
         "194": "not-applicable",
         "195": "active",
         "196": "active",
-        "197": "active"
+        "197": "active",
+        "198": "not-applicable",
+        "199": "active",
+        "200": "active"
       },
       "holds": {
         "001": {
@@ -872,6 +875,14 @@
         "197": {
           "mechanism": "gate",
           "where": "tests/test_sync_inbox.py — каждый опубликованный номер контракта отнесён либо к сверяемым у потребителя (СВОИ_КОНТРАКТЫ в scripts/sync_inbox.py), либо к описывающим файлы каталога (ЧУЖОМУ_НЕ_НУЖНЫ); scripts/build_rules_index.py — номера контрактов в документе переписывает сборка, а не рука"
+        },
+        "199": {
+          "mechanism": "none",
+          "where": ".github/workflows/automerge.yml — шаг «состояние изменения» перечитывает состояние опросом (`gh api .../pulls/$PR` и `.../check-runs`), а не верит разбудившему событию; группа `automerge-<номер>` стоит с `cancel-in-progress: false`. Машинного сторожа над этим нет, причина в why"
+        },
+        "200": {
+          "mechanism": "none",
+          "where": ".github/badges/ — четыре значка, и каждый двигается: `rules-ru`/`rules-en` растут с каждой записью (196 на 10 сентября), `coverage` ходит в обе стороны (66%), `.github/badges/facts.json` несёт числа тестов и связей. Машинного сторожа над подписью значка нет, причина в why"
         }
       },
       "trails": 50,
@@ -5017,8 +5028,8 @@
           "where": "README.md — ссылка на значок уехала в общую ветку ОТДЕЛЬНЫМ изменением после первого прогона публикации, а не вместе с .github/workflows/badges.yml: пока прогона не было, витрина честно говорила, что значка нет. Порядок держит таблица пробелов в AGENTS.md — строка уходит оттуда после прогона (139), а проверкой «файл существует» это не лечится: на изменении артефакта и не должно быть"
         }
       },
-      "trails": 0,
-      "born": 0,
+      "trails": 3,
+      "born": 3,
       "findings": [
         "ответ построен на выгрузке 1.5, у нас 1.7 — записи валидны, а составленные по ним ответы отвечают на другой вопрос (157)"
       ]
