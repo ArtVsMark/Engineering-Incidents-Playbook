@@ -66,10 +66,14 @@ replaces the other.
 - a non-empty local range is deliberately NOT the discriminator, tempting as it
   is: a new topic's range is non-empty too, so it separates nothing. Counting it
   costs more and says less than asking for one ref;
-- **deleting a ref is not a content push**: `git push origin --delete`
-  resurrects nothing, and its subject is somebody else's branch rather than the
-  current one. The guard lets such commands through; otherwise it blocks the
-  very cleanup it asks for;
+- what resurrects is a **push of content**, not any push at all: deleting a ref
+  (`--delete`, `-d`, `:name`) moves no commits whatsoever. The guard lets such
+  commands through; otherwise it blocks the very cleanup it asks for;
+- and that is decided **per refspec, not by a marker anywhere in the command**:
+  `git push origin mine :stale` in one line both carries content into the
+  current branch and clears a foreign dead ref — `--delete` scopes over the
+  whole command, `:name` over a single ref. Collapsing the two into "the command
+  deletes" let the guard pass in silence the very resurrection it exists for;
 - `git push` output is **not** a signal: `* [new branch]` prints in both cases;
 - the pipeline half's subject is **the head branch of an already merged change**,
   and it is asked of the platform rather than inferred from a name;
