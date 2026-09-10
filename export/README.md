@@ -25,6 +25,10 @@ edited by hand.
   "schema": "1.2",                    // версия ФОРМАТА выгрузки, не выпуска
                                       // каталога · the EXPORT FORMAT version,
                                       // not the catalogue release
+                                      // ЗНАЧЕНИЕ ЗДЕСЬ — ПРИМЕР ФОРМЫ, а не
+                                      // живой номер: он ниже, § Номера
+                                      // контрактов, и его пишет сборка ·
+                                      // an EXAMPLE, not the live number
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
   "count": 130,                       // пример · example value
   "rules": [
@@ -669,16 +673,29 @@ having no gate.
 `contracts` — и отметку времени `generated_at`. Одним чтением видно, не
 сменился ли контракт, и когда выгрузка собрана в последний раз.
 
-```json
+```jsonc
 {
-  "schema": "1.4",
-  "generated_at": "2026-09-03T09:24:00+00:00",
+  <!--m:contracts-->"schema": "1.7",
   "contracts": {
-    "export": "1.4", "bindings": "1.1", "consumers": "1.1",
+    "export": "1.7", "bindings": "1.2", "consumers": "1.1",
     "proposals": "1.1", "showcase": "1.1", "where": "1.2"
-  }
+  },<!--/m:contracts-->
+  "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
+                                               // build time, example value
 }
 ```
+
+**Числа в примере выше переписывает сборка, а не рука.** Они стоят между
+маркерами `<!--m:contracts-->` и обновляются вместе с выгрузкой: число,
+вписанное руками, устаревает молча ([005](../rules/ru/005-hand-written-numbers-rot.md)),
+и это уже случилось — снимок нёс `export: 1.4` при живой `1.7`. Отметка
+времени под маркер НЕ взята намеренно: она меняется каждой сборкой, и держать
+её здесь значило бы трогать этот файл при каждом изменении.
+
+**The numbers above are rewritten by the build, not by hand.** They live
+between the `<!--m:contracts-->` markers. The timestamp is deliberately left
+outside: it changes on every build, and keeping it here would touch this file
+on every change.
 
 **Ключа нет — значит не прочитали.** Номер, которого нет в блоке, означает, что
 файл недоступен или не объявляет `schema`; нулём и пустой строкой отсутствие не
