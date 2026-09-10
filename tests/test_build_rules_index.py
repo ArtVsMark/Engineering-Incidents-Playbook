@@ -313,3 +313,55 @@ def test_stroka_smezhnykh_sledom_ne_schitaetsya(tmp_path):
     путь.write_text("# З\n\n## След\n\no/r — `scripts/x.py`\n\nСмежное: [002](002-x.md).\n",
                     encoding="utf-8")
     assert b.заявленный_след(путь, "ru") is True
+
+
+# --- Номера контрактов в контрактном документе -----------------------------
+#
+# Пример в `export/README.md` набирался руками и устарел ровно так, как
+# обещает 005: замер 10 сентября — снимок нёс `export: 1.4` при живой 1.7 и
+# `bindings: 1.1` при 1.2. Хуже отставания то, что подъём одного числа руками
+# сделал снимок ФИЗИЧЕСКИ невозможным моментом: `proposals: 1.1` не мог
+# существовать при `export: 1.4`. Нашла это не сборка, а ревью.
+
+
+def test_nomera_kontraktov_v_dokumente_zhivye():
+    """Первая сторона: в документе стоят те же номера, что в выгрузке."""
+    import json
+
+    живые = json.loads(Path("export/rules.json").read_text(encoding="utf-8"))["contracts"]
+    текст = b.CONTRACT_DOC.read_text(encoding="utf-8")
+    (блок,) = b.CONTRACTS_MARKER_RE.findall(текст) and [
+        b.CONTRACTS_MARKER_RE.search(текст).group(0)]
+    for имя, номер in живые.items():
+        assert f'"{имя}": "{номер}"' in блок, (имя, номер)
+
+
+def test_sborka_perepisyvaet_ustarevshie_nomera(tmp_path):
+    """Вторая сторона: подделка с прежними номерами чинится сборкой."""
+    подделка = tmp_path / "README.md"
+    подделка.write_text(
+        'до\n<!--m:contracts-->"schema": "1.4",\n  "contracts": {\n'
+        '    "export": "1.4", "bindings": "1.1"\n  },<!--/m:contracts-->\nпосле\n',
+        encoding="utf-8")
+    тело, пробел = b.contracts_marked(подделка, {"export": "1.7", "bindings": "1.2",
+                                                 "consumers": "1.1"})
+    assert пробел is None
+    assert '"export": "1.7"' in тело and '"bindings": "1.2"' in тело
+    assert '"1.4"' not in тело
+    assert тело.startswith("до\n") and тело.endswith("после\n")
+
+
+def test_propazha_markera_eto_nakhodka(tmp_path):
+    """Маркер, которого нет, — не «нечего переписывать», а находка (075)."""
+    голый = tmp_path / "README.md"
+    голый.write_text("номера контрактов прозой\n", encoding="utf-8")
+    _, пробел = b.contracts_marked(голый, {"export": "1.7"})
+    assert пробел and "m:contracts" in пробел
+
+
+def test_klyucha_net_znachit_ne_prochitali(tmp_path):
+    """Отсутствующий контракт не выдумывается: в примере его просто нет."""
+    подделка = tmp_path / "README.md"
+    подделка.write_text("<!--m:contracts-->старое<!--/m:contracts-->\n", encoding="utf-8")
+    тело, _ = b.contracts_marked(подделка, {"export": "1.7", "showcase": "1.1"})
+    assert '"consumers"' not in тело and '"showcase": "1.1"' in тело

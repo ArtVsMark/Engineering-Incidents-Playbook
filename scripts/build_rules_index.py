@@ -80,6 +80,25 @@ CATALOGUE_URL = "https://github.com/ArtVsMark/Engineering-Incidents-Playbook"
 MARKERS = (ROOT / "README.md", ROOT / "README.en.md")
 MARKER_RE = re.compile(r"(<!--m:rules-->)\d+(<!--/m:rules-->)")
 
+#: НОМЕРА КОНТРАКТОВ В КОНТРАКТНОМ ДОКУМЕНТЕ — ТОЖЕ ЧИСЛА В ДОКУМЕНТАЦИИ.
+#: Пример в `export/README.md` показывал блок `contracts` вручную набранными
+#: значениями и устарел ровно так, как обещает 005: замер 10 сентября — снимок
+#: нёс `export: 1.4` при живой 1.7 и `bindings: 1.1` при 1.2. Хуже отставания
+#: то, что подъём одного числа руками сделал снимок ФИЗИЧЕСКИ невозможным
+#: моментом: `proposals: 1.1` не мог существовать при `export: 1.4`, потому что
+#: первое случилось, когда второе было 1.7. Читатель контракта сверяет свои
+#: номера именно с этим примером.
+#:
+#: ОТМЕТКА ВРЕМЕНИ ПОД МАРКЕР НЕ ВЗЯТА. Она меняется каждой сборкой, и файл
+#: тогда правился бы при каждом изменении — гейт свежести стал бы конфликтом
+#: на каждом слиянии (051). Она и не утверждает ничего о контрактах.
+CONTRACT_DOC = ROOT / "export" / "README.md"
+CONTRACTS_MARKER_RE = re.compile(
+    r"(<!--m:contracts-->).*?(<!--/m:contracts-->)", re.S)
+#: Порядок ключей в примере — тот же, что в выгрузке: читатель сверяет глазами.
+CONTRACTS_ORDER = ("export", "bindings", "consumers", "proposals",
+                   "showcase", "where")
+
 BADGES = {
     "ru": (ROOT / ".github" / "badges" / "rules-ru.json", "правил в каталоге"),
     "en": (ROOT / ".github" / "badges" / "rules-en.json", "rules in the catalogue"),
@@ -1480,6 +1499,28 @@ def marked(path: Path, count: int) -> tuple[str, str | None]:
     return MARKER_RE.sub(rf"\g<1>{count}\g<2>", text), None
 
 
+def contracts_marked(path: Path, numbers: dict[str, str]) -> tuple[str, str | None]:
+    """Подставляет живые номера контрактов в маркер контрактного документа.
+
+    Ключа нет — значит не прочитали, и в примере это показывается так же, как
+    в самой выгрузке: ключ просто отсутствует. Выдумывать «—» здесь нельзя —
+    пример учит читать формат, а не украшает.
+    """
+    text = path.read_text(encoding="utf-8")
+    if not CONTRACTS_MARKER_RE.search(text):
+        return text, (f"{path.name}: маркера <!--m:contracts--> нет. Номера "
+                      "контрактов, которые некому переписать, устареют молча — "
+                      "а контрактный документ будет выглядеть свежим (005)")
+    пары = [f'"{k}": "{numbers[k]}"' for k in CONTRACTS_ORDER if k in numbers]
+    тело = ('<!--m:contracts-->"schema": "{}",\n'
+            '  "contracts": {{\n'
+            '    {},\n'
+            '    {}\n'
+            '  }},<!--/m:contracts-->').format(
+                numbers.get("export", ""), ", ".join(пары[:3]), ", ".join(пары[3:]))
+    return CONTRACTS_MARKER_RE.sub(lambda _: тело, text, count=1), None
+
+
 def area_stats(areas: dict[str, list[str]]) -> tuple[int, int]:
     """Сколько всего областей и сколько из них держат единственное правило.
 
@@ -1674,6 +1715,12 @@ def main() -> int:
             problems.append(gap)
         else:
             marks[path] = body
+    # Контрактный документ — та же механика и та же причина (005).
+    тело, пробел = contracts_marked(CONTRACT_DOC, contracts_now())
+    if пробел:
+        problems.append(пробел)
+    else:
+        marks[CONTRACT_DOC] = тело
     if problems:
         print("указатель не собран:", file=sys.stderr)
         for p in problems:
