@@ -336,6 +336,38 @@ def test_nomera_kontraktov_v_dokumente_zhivye():
         assert f'"{имя}": "{номер}"' in блок, (имя, номер)
 
 
+def разобрался(тело: str) -> dict:
+    """Блок между маркерами разбирается как JSON — форма, а не подстроки.
+
+    ПОЧЕМУ ЭТОГО НЕ БЫЛО СРАЗУ, И ЭТО ЗАМЕР. Прежние разборы спрашивали
+    вхождение подстрок («"export": "1.7" in тело») и потому не видели висящей
+    запятой с пустой строкой, которую сборка печатала при трёх и менее
+    известных контрактах, — при том, что подавали ровно такой вход. Подделка
+    была, вопрос ей задавался не тот (170). Поймало ревью.
+    """
+    import json
+
+    блок = тело.split("<!--m:contracts-->")[1].split("<!--/m:contracts-->")[0]
+    return json.loads("{" + блок.rstrip().rstrip(",") + "}")
+
+
+def test_blok_razbiraetsya_pri_lyubom_chisle_kontraktov(tmp_path):
+    """Ноль, один, два, три и шесть — форма остаётся валидной у всех пяти."""
+    подделка = tmp_path / "README.md"
+    все = {"export": "1.7", "bindings": "1.2", "consumers": "1.1",
+           "proposals": "1.1", "showcase": "1.1", "where": "1.2"}
+    for сколько in (0, 1, 2, 3, 6):
+        подделка.write_text("до\n<!--m:contracts-->старое<!--/m:contracts-->\nпосле\n",
+                            encoding="utf-8")
+        числа = dict(list(все.items())[:сколько])
+        тело, пробел = b.contracts_marked(подделка, числа)
+        assert пробел is None
+        разобран = разобрался(тело)
+        assert set(разобран["contracts"]) == set(числа), сколько
+        # Висящей запятой нет: она видна только форме, не подстроке.
+        assert ",\n\n" not in тело and ",\n  }" not in тело, сколько
+
+
 def test_sborka_perepisyvaet_ustarevshie_nomera(tmp_path):
     """Вторая сторона: подделка с прежними номерами чинится сборкой."""
     подделка = tmp_path / "README.md"
@@ -346,7 +378,8 @@ def test_sborka_perepisyvaet_ustarevshie_nomera(tmp_path):
     тело, пробел = b.contracts_marked(подделка, {"export": "1.7", "bindings": "1.2",
                                                  "consumers": "1.1"})
     assert пробел is None
-    assert '"export": "1.7"' in тело and '"bindings": "1.2"' in тело
+    assert разобрался(тело)["contracts"] == {"export": "1.7", "bindings": "1.2",
+                                             "consumers": "1.1"}
     assert '"1.4"' not in тело
     assert тело.startswith("до\n") and тело.endswith("после\n")
 
@@ -364,7 +397,7 @@ def test_klyucha_net_znachit_ne_prochitali(tmp_path):
     подделка = tmp_path / "README.md"
     подделка.write_text("<!--m:contracts-->старое<!--/m:contracts-->\n", encoding="utf-8")
     тело, _ = b.contracts_marked(подделка, {"export": "1.7", "showcase": "1.1"})
-    assert '"consumers"' not in тело and '"showcase": "1.1"' in тело
+    assert разобрался(тело)["contracts"] == {"export": "1.7", "showcase": "1.1"}
 
 
 def test_zagotovka_pokazyvaet_kazhduyu_pometku():
