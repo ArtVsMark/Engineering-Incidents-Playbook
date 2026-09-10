@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T18:59:44+00:00",
+  "generated_at": "2026-09-10T19:32:12+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.2"
   },
-  "count": 199,
+  "count": 202,
   "rules": [
     {
       "id": "001",
@@ -183,7 +183,8 @@
       "portable": "partly",
       "mentioned_by": [
         "147",
-        "189"
+        "189",
+        "202"
       ]
     },
     {
@@ -1086,7 +1087,9 @@
         "164",
         "181",
         "197",
-        "198"
+        "198",
+        "201",
+        "203"
       ]
     },
     {
@@ -1904,7 +1907,8 @@
         "175",
         "186",
         "188",
-        "198"
+        "198",
+        "203"
       ]
     },
     {
@@ -2426,7 +2430,9 @@
         "172",
         "188",
         "190",
-        "194"
+        "194",
+        "202",
+        "203"
       ]
     },
     {
@@ -2533,7 +2539,8 @@
         "163",
         "168",
         "180",
-        "196"
+        "196",
+        "203"
       ]
     },
     {
@@ -2581,7 +2588,8 @@
         "053",
         "124",
         "126",
-        "179"
+        "179",
+        "202"
       ]
     },
     {
@@ -8096,7 +8104,8 @@
         "170",
         "177",
         "186",
-        "192"
+        "192",
+        "201"
       ]
     },
     {
@@ -8457,7 +8466,8 @@
         "157"
       ],
       "mentioned_by": [
-        "174"
+        "174",
+        "201"
       ]
     },
     {
@@ -9813,7 +9823,8 @@
         "174"
       ],
       "mentioned_by": [
-        "198"
+        "198",
+        "201"
       ]
     },
     {
@@ -9920,6 +9931,9 @@
         "037",
         "146",
         "157"
+      ],
+      "mentioned_by": [
+        "203"
       ]
     },
     {
@@ -10346,6 +10360,164 @@
         "127",
         "146",
         "174"
+      ]
+    },
+    {
+      "id": "201",
+      "slug": "an-export-without-the-rule-text-is-read-by-its-title",
+      "title": {
+        "ru": "Выгрузка без текста правила читается по заголовку — и ошибка выглядит ответом",
+        "en": "An export without the rule's text gets read by its title — and the error looks like an answer"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "каталог"
+        ],
+        "en": [
+          "contracts",
+          "catalogue"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "claim": {
+        "ru": "Выгрузка каталога отдаёт потребителю **суть** записи, а не только её имя: как минимум букву требования — то, что оно предписывает. Потребитель, у которого есть лишь заголовок, прочитает правило по названию; ошибка при этом выглядит **добросовестным ответом** — механизм построен, адрес назван, гейты зелёные, — и отличить её от верного ответа нечем.",
+        "en": "A catalogue's export gives the consumer the **substance** of a record, not only its name: at minimum the rule itself — what it requires. A consumer holding only the title will read the rule by its name, and the error then looks like a **conscientious answer** — the mechanism is built, the address is named, the gates are green — with nothing to tell it from a correct one."
+      },
+      "applies": {
+        "ru": "**Работает** для любого каталога требований, публикуемого для чужого\nисполнения: правила, политики, контрольные вопросы, реестр решений.\n\n**Не работает** там, где потребитель — человек, который и так открывает\nисточник: тогда путь к файлу и есть нужное, а копия текста заводит второе место\nдля одного предмета. Признак разницы простой: отвечает ли по выгрузке **машина\nили окно**, у которых открытие файла — отдельное решение.\n\n**Не работает** и для записей, чья суть НЕ выражается абзацем: если букву\nнельзя отдать одним куском, предмет не в выгрузке, а в самой записи.\n\n**Признак нарушения:** потребитель отвечает по правилу, текста которого в\nвыгрузке нет, и его ответ проходит все ваши проверки.",
+        "en": "**Works** for any register of requirements published for others to act on:\nrules, policies, checklists, decision records.\n\n**Does not work** where the consumer is a human who opens the source anyway: the\npath is then all that is needed, and a copy of the text creates a second home for\none subject. The distinguishing sign is simple: is it a **machine or a session**\nanswering from the export, for which opening a file is a separate decision?\n\n**Does not work** for records whose substance does NOT fit a paragraph: if the\nrule cannot be handed over in one piece, the subject is the record, not the\nexport.\n\n**Sign of violation:** a consumer answers about a rule whose text is absent from\nthe export, and their answer passes every check you have."
+      },
+      "added": "2026-09-10",
+      "files": {
+        "ru": "rules/ru/201-an-export-without-the-rule-text-is-read-by-its-title.md",
+        "en": "rules/en/201-an-export-without-the-rule-text-is-read-by-its-title.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "454"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": ".rules/bindings.json"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "022",
+        "157",
+        "164",
+        "190"
+      ]
+    },
+    {
+      "id": "202",
+      "slug": "a-merged-branch-is-recreated-by-any-push",
+      "title": {
+        "ru": "Слитая ветка воскресает от любого пуша, и пуш об этом не скажет",
+        "en": "A merged branch is resurrected by any push, and the push will not say so"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "командная работа"
+        ],
+        "en": [
+          "pipeline",
+          "collaboration"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "claim": {
+        "ru": "Ветка, удалённая площадкой при слиянии, **воскресает от любого следующего пуша в неё** — вместе со всеми коммитами, которых нет в общей ветке. Поэтому продолжение работы после слияния идёт с **новой ветки от свежей общей**, а не дописыванием в старую, и проверяется это **до пуша** — существованием ветки на площадке, а не памятью о том, слился ли PR.",
+        "en": "A branch deleted by the platform on merge is **resurrected by the next push into it** — together with every commit missing from the shared branch. So work continued after a merge starts from a **new branch off fresh main**, never by appending to the old one, and that is checked **before the push** — by whether the branch still exists on the platform, not by memory of whether the PR merged."
+      },
+      "applies": {
+        "ru": "**Работает** там, где площадка удаляет ветку при слиянии, а открытие изменения\nподписано на пуш.\n\n**Не работает**, когда ветки не удаляются: тогда воскрешать нечего, и вся\nконструкция лишняя. **Не работает** и для веток, слитых **без** уплотнения:\nтам диапазон после слияния пуст, и обычная проверка «нечего пушить» закрывает\nслучай сама.\n\n**Признак нарушения:** в трекере есть изменение, открытое на работу, уже\nлежащую в общей ветке, и закрытое как дубль.",
+        "en": "**Works** wherever the platform deletes branches on merge and opening a change is\nsubscribed to a push.\n\n**Does not work** when branches are not deleted: there is nothing to resurrect\nand the whole construction is redundant. **Does not work** for branches merged\n**without** squashing either: the range after such a merge is empty, and the\nordinary \"nothing to push\" check covers the case by itself.\n\n**Sign of violation:** the tracker holds a change opened on work already present\nin the shared branch and closed as a duplicate."
+      },
+      "added": "2026-09-10",
+      "files": {
+        "ru": "rules/ru/202-a-merged-branch-is-recreated-by-any-push.md",
+        "en": "rules/en/202-a-merged-branch-is-recreated-by-any-push.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "181"
+        }
+      ],
+      "origin": "ArtVsMark/ArtVsMark",
+      "portable": "partly",
+      "mentions": [
+        "003",
+        "049",
+        "052"
+      ]
+    },
+    {
+      "id": "203",
+      "slug": "experimental-is-a-claim-about-someone-elses-calendar",
+      "title": {
+        "ru": "Пометка «предрелизная» — утверждение о чужом календаре: она устаревает сама",
+        "en": "\"Pre-release\" is a claim about somebody else's calendar: it goes stale on its own"
+      },
+      "areas": {
+        "ru": [
+          "CI",
+          "наблюдение"
+        ],
+        "en": [
+          "CI",
+          "observation"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "claim": {
+        "ru": "Пометка, означающая «эта версия ещё не выпущена», есть утверждение о **чужом календаре**: она перестаёт быть верной от события в другом проекте, а не от правки в вашем. Такие пометки сверяются с **живым источником** — тем же, из которого инструмент берёт предмет, — а не с памятью и не со своей таблицей дат. Сверка ставится **предупреждением**, а не отказом.",
+        "en": "A marker meaning \"this version is not released yet\" is a claim about **somebody else's calendar**: it stops being true because of an event in another project, not because of an edit in yours. Such markers are checked against a **live source** — the same one the tool takes the subject from — never against memory or a calendar table of your own. The check is a **warning**, not a rejection."
+      },
+      "applies": {
+        "ru": "**Работает** для любой пометки, чья верность зависит от чужого события:\nпредрелизная версия, бета-канал, «устарело с версии N», срок поддержки.\n\n**Не работает** для пометок о **своём** состоянии: «этот тест нестабилен у нас»,\n«этот шаг временный до нашей миграции». Там событие ваше, и заметить его есть\nкому — предмет в другом правиле.\n\n**Не работает** и там, где чужого машинно читаемого источника нет вовсе: тогда\nсверять не с чем, и честный ответ — назвать это, а не завести свою таблицу дат.\n\n**Признак нарушения:** в дереве есть флаг терпимости к версии, и на вопрос\n«когда он перестанет быть нужным» ответ звучит как «когда вспомним».",
+        "en": "**Works** for any marker whose truth depends on a foreign event: a pre-release\nversion, a beta channel, \"deprecated since N\", a support deadline.\n\n**Does not work** for markers about **your own** state: \"this test is flaky for\nus\", \"this step is temporary until our migration\". There the event is yours and\nthere is someone to notice it — a different rule's subject.\n\n**Does not work** where no machine-readable foreign source exists at all: there\nis then nothing to check against, and the honest answer is to say so rather than\nstart a calendar table of your own.\n\n**Sign of violation:** the tree carries a tolerance flag for a version, and the\nanswer to \"when will it stop being needed\" is \"when we remember\"."
+      },
+      "added": "2026-09-10",
+      "files": {
+        "ru": "rules/ru/203-experimental-is-a-claim-about-someone-elses-calendar.md",
+        "en": "rules/en/203-experimental-is-a-claim-about-someone-elses-calendar.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1529"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "scripts/check_experimental_python.py"
+        }
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "portable": "yes",
+      "mentions": [
+        "022",
+        "039",
+        "049",
+        "051",
+        "192"
       ]
     }
   ],
