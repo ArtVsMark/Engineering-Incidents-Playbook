@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T18:05:53+00:00",
+  "generated_at": "2026-09-10T18:16:11+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,14 +10,14 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-10",
-      "answered": 195,
+      "answered": 196,
       "by_status": {
-        "active": 162,
+        "active": 163,
         "not-applicable": 27,
         "rejected": 6
       },
       "by_mechanism": {
-        "gate": 120,
+        "gate": 121,
         "document": 28,
         "pipeline": 9,
         "none": 5
@@ -217,7 +217,8 @@
         "193": "not-applicable",
         "194": "not-applicable",
         "195": "active",
-        "196": "active"
+        "196": "active",
+        "197": "active"
       },
       "holds": {
         "001": {
@@ -867,10 +868,14 @@
         "196": {
           "mechanism": "pipeline",
           "where": ".github/workflows/badges.yml — шаг «ссылки витрины ведут в файлы, которые на ветке есть», и его скрипт scripts/check_badges_published.py. Проверка стоит ПОСЛЕ отрисовки и после публикации: оба предмета лежат на разных ветках, и прогон снимает `badges` в отдельный каталог, а документы читает в общей. Предмет живой и измерен по всему дереву С ДЕКОДИРОВАНИЕМ АДРЕСОВ: ДВАДЦАТЬ ОДНА ссылка на ветку badges в четырёх документах — README.md (9), README.en.md (9), export/README.md (2), docs/VERSIONING.md (1); столько же насчитывает и сам гейт. Число уточнялось ДВАЖДЫ, и оба раза внешним взглядом: сперва считали только README.md (5), затем четыре документа сырым поиском (13), и лишь третий счёт увидел бейджи `img.shields.io/endpoint?url=…`, где адрес URL-КОДИРОВАН и подстрокой не находится вовсе"
+        },
+        "197": {
+          "mechanism": "gate",
+          "where": "tests/test_sync_inbox.py — каждый опубликованный номер контракта отнесён либо к сверяемым у потребителя (СВОИ_КОНТРАКТЫ в scripts/sync_inbox.py), либо к описывающим файлы каталога (ЧУЖОМУ_НЕ_НУЖНЫ); scripts/build_rules_index.py — номера контрактов в документе переписывает сборка, а не рука"
         }
       },
-      "trails": 47,
-      "born": 32
+      "trails": 50,
+      "born": 33
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",

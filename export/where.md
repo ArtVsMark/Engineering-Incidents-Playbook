@@ -12,12 +12,12 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 47 | 32 | 195 | 0 | 0 | 162 | 120 | 9 | 28 | 5 | 105 |  |
-| `Stepik-Python-Grader` | подключён | 185 | 131 | 195 | 0 | 0 | 192 | 86 | 39 | 67 | 0 | 145 |  |
-| `ArtVsMark` | подключён | 28 | 17 | 195 | 0 | 0 | 139 | 94 | 12 | 23 | 0 | 42 |  |
-| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 14 | 0 | 152 | 95 | 9 | 46 | 2 | 86 |  |
-| `Glossary-Python` | подключён | 0 | 0 | 181 | 14 | 0 | 117 | 60 | 12 | 29 | 16 | 78 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 0 | 0 | 195 | 0 | 0 | 164 | 115 | 21 | 27 | 1 | 117 |  |
+| `Engineering-Incidents-Playbook` | подключён | 50 | 33 | 196 | 0 | 0 | 163 | 121 | 9 | 28 | 5 | 105 |  |
+| `Stepik-Python-Grader` | подключён | 185 | 131 | 195 | 1 | 0 | 192 | 86 | 39 | 67 | 0 | 145 |  |
+| `ArtVsMark` | подключён | 28 | 17 | 195 | 1 | 0 | 139 | 94 | 12 | 23 | 0 | 42 |  |
+| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 15 | 0 | 152 | 95 | 9 | 46 | 2 | 86 |  |
+| `Glossary-Python` | подключён | 0 | 0 | 181 | 15 | 0 | 117 | 60 | 12 | 29 | 16 | 78 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 0 | 0 | 195 | 1 | 0 | 164 | 115 | 21 | 27 | 1 | 117 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -61,7 +61,7 @@
 
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
-| `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 14 |
+| `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 15 |
 | `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 14 |
 | `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 12 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 11 |
@@ -87,6 +87,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/ghcli.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/main_red.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/refresh_derived.py` | 4 |
+| `Engineering-Incidents-Playbook` | `scripts/sync_inbox.py` | 4 |
 | `Engineering-Incidents-Playbook` | `.github/labels.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/badges.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.rules/transport.json` | 3 |
@@ -98,7 +99,6 @@
 | `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/history_metrics.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/merge_ready.py` | 3 |
-| `Engineering-Incidents-Playbook` | `scripts/sync_inbox.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/version.py` | 3 |
 | `Engineering-Incidents-Playbook` | `.claude/hooks/push_guard.py` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/attribution-history.yml` | 2 |
@@ -121,7 +121,8 @@
 | `Engineering-Incidents-Playbook` | `scripts/review_findings.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 45 механизмов по одному правилу; без названного адреса: 0 из 157 |
+| `Engineering-Incidents-Playbook` | `tests/test_sync_inbox.py` | 2 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 44 механизмов по одному правилу; без названного адреса: 0 из 158 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 46 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 14 |
@@ -574,3 +575,4 @@
 | 194 | нет предмета | действует | действует | — | — | нет предмета |
 | 195 | действует | действует | действует | — | — | действует |
 | 196 | действует | действует | действует | — | — | действует |
+| 197 | действует | — | — | — | — | — |
