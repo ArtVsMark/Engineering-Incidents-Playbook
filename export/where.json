@@ -1,13 +1,13 @@
 {
   "schema": "1.2",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T17:42:31+00:00",
+  "generated_at": "2026-09-10T17:49:38+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
       "role": "каталог",
       "schema": "1.2",
-      "answers_to": "1.5",
+      "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-10",
       "answered": 195,
@@ -870,10 +870,7 @@
         }
       },
       "trails": 47,
-      "born": 32,
-      "findings": [
-        "ответ построен на выгрузке 1.5, у нас 1.7 — записи валидны, а составленные по ним ответы отвечают на другой вопрос (157)"
-      ]
+      "born": 32
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
