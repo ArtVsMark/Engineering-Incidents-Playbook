@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T21:39:11+00:00",
+  "generated_at": "2026-09-10T21:53:24+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,15 +10,15 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-10",
-      "answered": 202,
+      "answered": 203,
       "by_status": {
-        "active": 167,
+        "active": 168,
         "not-applicable": 29,
         "rejected": 6
       },
       "by_mechanism": {
         "gate": 123,
-        "document": 28,
+        "document": 29,
         "pipeline": 9,
         "none": 7
       },
@@ -224,7 +224,8 @@
         "200": "active",
         "201": "active",
         "202": "active",
-        "203": "not-applicable"
+        "203": "not-applicable",
+        "204": "active"
       },
       "holds": {
         "001": {
@@ -894,10 +895,14 @@
         "202": {
           "mechanism": "gate",
           "where": ".claude/hooks/push_guard.py — `ветка_воскресает`: перед толчком сверяет свою ссылку `refs/remotes/origin/<ветка>` с ответом площадки, и толчок в удалённую при слиянии ветку не уезжает вовсе. Предмет проверки задаёт `везёт_содержимое`: чистое удаление ссылки (`--delete`, `-d`, `:имя`) коммитов не переносит и пропускается, смешанная форма `git push origin своя :чужая` остаётся толчком содержимого, а адресат явной ссылки разворачивается через `цель` — `HEAD:другая` текущей ветки не касается и отказа не получает (051). Строку разбирает одна функция `толчки`, её ответу задаются все три вопроса файла"
+        },
+        "204": {
+          "mechanism": "document",
+          "where": "AGENTS.md § Ссылка на правило — порядок назван прямо: открыть цитируемое правило, прочитать «Не работает», и только потом ставить номер; там же три законных ответа — основание, аналогия, «держится ничем»"
         }
       },
-      "trails": 51,
-      "born": 33
+      "trails": 52,
+      "born": 34
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
