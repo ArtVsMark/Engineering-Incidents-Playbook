@@ -45,6 +45,11 @@ def окно(monkeypatch):
                   tool: str = "Bash"):
         monkeypatch.setattr(pg, "current_branch", lambda: branch)
         monkeypatch.setattr(pg, "тело_не_проходит", lambda корень: None)
+        # ТРЕТИЙ ПРЕДМЕТ ХУКА ТОЖЕ ОТКЛЮЧЁН, И ПО ТОЙ ЖЕ ПРИЧИНЕ. Проверка
+        # воскрешения спрашивает ПЛОЩАДКУ; без подмены случаи про ветку и про
+        # тело зависели бы от сети и от того, жива ли рабочая ветка сейчас.
+        # Своими случаями она проверяется ниже (018).
+        monkeypatch.setattr(pg, "ветка_воскресает", lambda b: False)
         monkeypatch.setattr("sys.stdin", io.StringIO(событие(command, tool)))
     return настроить
 
@@ -414,3 +419,55 @@ def test_создающие_ключи_switch_не_задеты(окно):
                       "своя") == []
     assert pg.targets("git switch --orphan новая && git push origin новая",
                       "своя") == []
+
+
+# ── третий предмет: толчок в ветку, которую площадка удалила при слиянии ────
+#
+# Замер 10 сентября, свой: изменение #458 слилось, пока окно писало починку в
+# ту же ветку. Толчок воскресил её, конвейер честно открыл #460 на уже слитую
+# работу, и её закрывали руками. Сам толчок напечатал `* [new branch]` — строку
+# обычной новой темы: по выводу git случаи неразличимы (правило 202).
+
+
+def подменить_ссылки(monkeypatch, свой: str | None, там: str | None) -> None:
+    """Ответы двух вызовов git: своя ссылка на origin и ответ площадки."""
+    def вывод(argv):
+        return свой if "rev-parse" in argv else там
+    monkeypatch.setattr(pg, "_вывод", вывод)
+
+
+def test_slitaya_i_udalyonnaya_vetka_eto_voskreshenie(monkeypatch):
+    """Ссылка у себя есть, на площадке ветки нет — она удалена при слиянии."""
+    подменить_ссылки(monkeypatch, свой="abc123\n", там="")
+    assert pg.ветка_воскресает("agent/слитая") is True
+
+
+def test_novaya_tema_voskresheniem_ne_schitaetsya(monkeypatch):
+    """Вторая сторона набора: у НОВОЙ ветки на площадке её тоже нет.
+
+    Различает не отсутствие там, а наличие у себя: локальная ссылка на origin
+    заводится только толчком либо выборкой.
+    """
+    подменить_ссылки(monkeypatch, свой=None, там="")
+    assert pg.ветка_воскресает("agent/новая") is False
+
+
+def test_zhivaya_vetka_prohodit(monkeypatch):
+    подменить_ссылки(monkeypatch, свой="abc123\n", там="abc123\trefs/heads/agent/живая\n")
+    assert pg.ветка_воскресает("agent/живая") is False
+
+
+def test_set_ne_otvetila_hook_molchit(monkeypatch):
+    """Ложный отказ дороже пропуска: сеть молчит — сторож не мешает (051)."""
+    подменить_ссылки(monkeypatch, свой="abc123\n", там=None)
+    assert pg.ветка_воскресает("agent/слитая") is False
+
+
+def test_voskreshenie_ostanavlivaet_tolchok(окно, monkeypatch, capsys):
+    """Целиком через хук: отказ называет причину и следующий шаг."""
+    окно("git push -u origin agent/своя")
+    monkeypatch.setattr(pg, "ветка_воскресает", lambda b: True)
+    assert pg.main() == 2
+    ошибка = capsys.readouterr().err
+    assert "удалила её при слиянии" in ошибка
+    assert "checkout -B" in ошибка
