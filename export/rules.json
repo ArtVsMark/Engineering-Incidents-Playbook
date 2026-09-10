@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T21:45:25+00:00",
+  "generated_at": "2026-09-10T21:58:37+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.3",
@@ -10564,7 +10564,7 @@
         "ru": "**Работает** в своде, где у записи объявлены границы и где записи ссылаются друг\nна друга как на основание: каталог правил, реестр решений, свод стандартов.\n\n**Не работает** там, где правила границ не объявляют: сверять нечего, и\nтребование вырождается в «читайте внимательно», то есть в предпочтение.\n\n**Не работает** для упоминания и обратного указателя: они применимости не\nутверждают, и требовать от них сверки значит краснеть на верной работе\n([051](051-warn-on-likely-block-on-certain.md)).\n\n**Признак нарушения:** цитируемое правило, открытое на «Применимость», называет\nваш случай среди того, чего оно НЕ покрывает. Второй признак — ссылка в одном\nабзаце сменилась дважды подряд.",
         "en": "**Works** in a body of rules whose records state their limits and cite one\nanother as grounds: a rules catalogue, a decision register, a standards manual.\n\n**Does not work** where rules declare no limits: there is nothing to check\nagainst, and the requirement degenerates into \"read carefully\" — that is, into a\npreference.\n\n**Does not work** for mentions and back-references: they assert no applicability,\nand demanding a check of them means going red on correct work\n([051](051-warn-on-likely-block-on-certain.md)).\n\n**Sign of violation:** the cited rule, opened at its applicability section, names\nyour case among the things it does NOT cover. A second sign: the citation in one\nparagraph has changed twice in a row."
       },
-      "added": "2026-09-10",
+      "added": "2026-09-11",
       "files": {
         "ru": "rules/ru/204-a-citation-is-checked-by-applicability.md",
         "en": "rules/en/204-a-citation-is-checked-by-applicability.md"
