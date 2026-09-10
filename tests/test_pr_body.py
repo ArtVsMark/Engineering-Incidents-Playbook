@@ -12,6 +12,9 @@
 
 from __future__ import annotations
 
+import re
+from pathlib import Path
+
 import pytest
 
 import pr_body as pb
@@ -193,3 +196,19 @@ def test_forma_odna_u_geyta_i_u_uborshchika():
     """
     import review_findings as rf
     assert rf.РАЗОБРАНО is pb.РАЗОБРАНО
+
+
+def test_obyavlenie_kodov_nazyvaet_vse_istochniki():
+    """039/183 ЧИСЛОМ, а не глазом: объявление обязано назвать все отказы.
+
+    Инцидент #488: правка, чинившая неполноту объявления, назвала ДВА источника
+    кода 1 из трёх — пропущенным оказался «часть объявлена, остаток не назван»
+    (173). Дефект того же класса, что и чинимый, и глаз его пропустил дважды:
+    у автора и на первом ревью. Поэтому счёт теперь сверяется машиной.
+    """
+    исходник = Path(pb.__file__).read_text(encoding="utf-8")
+    отказов = len(re.findall(r"^\s*return 1\s*$", исходник, re.M))
+    докстрока = pb.__doc__ or ""
+    объявлено = len(re.findall(r"^\s*\d+\.\s+\S", докстрока, re.M))
+    assert отказов == объявлено, (
+        f"отказов с кодом 1 в коде {отказов}, названо в докстроке {объявлено}")
