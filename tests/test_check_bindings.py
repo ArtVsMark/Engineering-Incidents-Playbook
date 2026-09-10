@@ -631,6 +631,33 @@ def test_ne_postroennoe_pechataetsya_v_stupeni_nol(monkeypatch, repo, capsys):
     assert "не построена у 1" in вышло
 
 
+def test_nerazobrannoe_ne_zachislyaetsya_v_nevozmozhnoe(monkeypatch, repo, capsys):
+    """Находка ревью #478: запись без ответа уезжала в «половины нет».
+
+    Тот же прогон её ОТВЕРГАЕТ находкой — и тут же печатал число, в котором она
+    стоит разобранной. Две половины одного прогона говорили о ней разное, а
+    читают печатное (075). Не спрошенное не выдаётся за чистое (039).
+    """
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo, документом(), export_of("001"))
+
+    assert cb.main() == 1
+    вышло = capsys.readouterr().out
+    assert "машинной половины нет у 0" in вышло
+    assert "без разбора: 1" in вышло
+
+
+def test_chuzhoe_slovo_tozhe_bez_razbora(monkeypatch, repo, capsys):
+    """Слово вне словаря — тоже «не спрошено», а не «невозможно»."""
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo,
+            документом({"document_reason": "почти", "why": "так вышло"}),
+            export_of("001"))
+
+    assert cb.main() == 1
+    assert "без разбора: 1" in capsys.readouterr().out
+
+
 # ── ОТЛОЖЕННОЕ ПРОТИВ ДОЛГА ───────────────────────────────────────────────
 # Поле `awaiting` выводит правило из ступени 0, а значит само становится
 # лазейкой: припиской «построим потом» долг обнулялся бы даром. Три машинных
