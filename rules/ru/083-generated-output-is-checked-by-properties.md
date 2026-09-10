@@ -69,7 +69,8 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — ADR-0003, `core/ai_grounding.py`; аудит
-2026-08-10 (16 подтверждённых `high` из 83). Смежное:
+ArtVsMark/Stepik-Python-Grader — `core/ai_grounding.py`, аудит 2026-08-10
+(16 подтверждённых `high` из 83).
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0003. Смежное:
 [060](060-debrief-every-wave-quality-first.md),
 [055](055-your-own-expectations-are-a-hypothesis.md).

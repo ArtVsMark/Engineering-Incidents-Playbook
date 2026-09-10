@@ -60,5 +60,6 @@ actually used.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — ADR-0007 § fail-fast and fail-loud;
-`SECURITY.md` § `--sandbox`.
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0007, section
+"fail-fast and fail-loud".
+ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § `--sandbox`.

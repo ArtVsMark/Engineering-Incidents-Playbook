@@ -72,7 +72,11 @@ can say where it came from.
 
 ## Trace
 
-ArtVsMark/Engineering-Incidents-Playbook — this catalogue.
+ArtVsMark/Engineering-Incidents-Playbook — `export/README.md`
+§ Что отдаёт потребитель наверх · What the consumer sends upstream, —
+the path from a project into the catalogue, written as a contract.
+ArtVsMark/Engineering-Incidents-Playbook — `scripts/collect_proposals.py`:
+proposals are gathered by a mechanism, not by asking.
 
 Related: [042](042-decision-records-its-alternatives.md) — decisions;
 [043](043-decisions-are-superseded-not-edited.md) — revision;

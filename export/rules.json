@@ -1,12 +1,12 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T17:08:17+00:00",
+  "generated_at": "2026-09-10T17:30:38+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.2",
     "consumers": "1.1",
-    "proposals": "1.0",
+    "proposals": "1.1",
     "showcase": "1.1",
     "where": "1.2"
   },
@@ -2076,7 +2076,7 @@
         {
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "doc": "docs/dev/adr/README.md",
-          "section": "Соглашения. Смежное:"
+          "section": "Соглашения"
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
@@ -2125,7 +2125,13 @@
         "ru": "rules/ru/044-check-the-premise-before-fixing.md",
         "en": "rules/en/044-check-the-premise-before-fixing.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "docs/dev/adr/README.md",
+          "section": "ADR-0010"
+        }
+      ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentions": [
         "026",
@@ -2172,7 +2178,18 @@
         "ru": "rules/ru/045-no-silent-fallback.md",
         "en": "rules/en/045-no-silent-fallback.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "docs/dev/adr/README.md",
+          "section": "ADR-0007"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "SECURITY.md",
+          "section": "--sandbox"
+        }
+      ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentioned_by": [
         "067",
@@ -3985,7 +4002,17 @@
         "ru": "rules/ru/080-every-new-rule-goes-into-the-catalogue.md",
         "en": "rules/en/080-every-new-rule-goes-into-the-catalogue.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": "export/README.md",
+          "section": "Что отдаёт потребитель наверх · What the consumer sends upstream"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": "scripts/collect_proposals.py"
+        }
+      ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "mentions": [
         "029",
@@ -4139,7 +4166,17 @@
         "ru": "rules/ru/083-generated-output-is-checked-by-properties.md",
         "en": "rules/en/083-generated-output-is-checked-by-properties.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "core/ai_grounding.py"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "docs/dev/adr/README.md",
+          "section": "ADR-0003"
+        }
+      ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentions": [
         "055",
@@ -4637,7 +4674,13 @@
         "ru": "rules/ru/093-seam-early-generalisation-late.md",
         "en": "rules/en/093-seam-early-generalisation-late.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "docs/dev/adr/README.md",
+          "section": "ADR-0001"
+        }
+      ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentions": [
         "042"
@@ -4678,7 +4721,13 @@
         "ru": "rules/ru/094-a-compatibility-shim-makes-migration-permanent.md",
         "en": "rules/en/094-a-compatibility-shim-makes-migration-permanent.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "docs/dev/adr/README.md",
+          "section": "ADR-0004"
+        }
+      ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentions": [
         "043"
@@ -4724,7 +4773,13 @@
         "ru": "rules/ru/095-the-default-is-chosen-for-the-user.md",
         "en": "rules/en/095-the-default-is-chosen-for-the-user.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "docs/dev/adr/README.md",
+          "section": "ADR-0002"
+        }
+      ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentions": [
         "045"
@@ -4768,7 +4823,13 @@
         "ru": "rules/ru/096-storage-follows-lifecycle-not-convenience.md",
         "en": "rules/en/096-storage-follows-lifecycle-not-convenience.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "docs/dev/adr/README.md",
+          "section": "ADR-0011"
+        }
+      ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentions": [
         "090"
@@ -5330,7 +5391,7 @@
         {
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "doc": "HISTORY.md",
-          "section": "Как это началось. Смежное:"
+          "section": "Как это началось"
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
@@ -7742,7 +7803,12 @@
         "ru": "rules/ru/152-pinning-callee-without-caller.md",
         "en": "rules/en/152-pinning-callee-without-caller.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "doc": ".github/workflows/automerge.yml"
+        }
+      ],
       "origin": "ArtVsMark/ArtVsMark",
       "portable": "yes",
       "mentions": [
@@ -7785,7 +7851,12 @@
         "ru": "rules/ru/153-foreign-why-is-a-link-not-a-copy.md",
         "en": "rules/en/153-foreign-why-is-a-link-not-a-copy.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "doc": "scripts/build_metrics.py"
+        }
+      ],
       "origin": "ArtVsMark/ArtVsMark",
       "portable": "yes",
       "mentions": [
@@ -9249,7 +9320,16 @@
         "ru": "rules/ru/181-an-exclusive-claim-binds-the-document.md",
         "en": "rules/en/181-an-exclusive-claim-binds-the-document.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "CLAUDE.md"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": "scripts/check_exclusive.py"
+        }
+      ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "portable": "yes",
       "mentions": [
@@ -9899,7 +9979,13 @@
         "ru": "rules/ru/194-a-name-is-not-proof-of-ownership.md",
         "en": "rules/en/194-a-name-is-not-proof-of-ownership.md"
       },
-      "trails": [],
+      "trails": [
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "doc": "scripts/build_metrics.py",
+          "section": "owns_package"
+        }
+      ],
       "origin": "ArtVsMark/ArtVsMark",
       "portable": "yes",
       "mentions": [

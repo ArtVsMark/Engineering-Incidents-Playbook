@@ -65,6 +65,7 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — ADR-0001 (шов заранее), ADR-0006 (протокол, а
-не иерархия), ADR-0010 (обобщение отклонено до третьего случая). Смежное:
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0001, а также
+ADR-0006 и ADR-0010: шов заранее; протокол, а не иерархия; обобщение
+отклонено до третьего случая. Смежное:
 [042](042-decision-records-its-alternatives.md).

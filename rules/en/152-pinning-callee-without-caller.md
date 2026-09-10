@@ -77,7 +77,7 @@ the same repository as the workflow.
 
 ## Trace
 
-`ArtVsMark/ArtVsMark` — `.github/workflows/automerge.yml`: the pin was removed
+ArtVsMark/ArtVsMark — `.github/workflows/automerge.yml`: the pin was removed
 and the reason written in a comment beside the step, so the next session does
 not "restore the security" it looks like.
 

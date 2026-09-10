@@ -60,5 +60,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — ADR-0007 § Fail-fast и fail-loud; `SECURITY.md`
-§ `--sandbox`.
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0007, раздел
+«Fail-fast и fail-loud».
+ArtVsMark/Stepik-Python-Grader — `SECURITY.md` § `--sandbox`.

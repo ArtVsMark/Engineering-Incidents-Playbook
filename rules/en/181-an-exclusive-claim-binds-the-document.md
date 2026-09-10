@@ -100,9 +100,10 @@ apart.
 
 ## Trace
 
-`ArtVsMark/Stepik-Python-Grader` — `CLAUDE.md`, lines 845–846 and 1013–1014, the
+ArtVsMark/Stepik-Python-Grader — `CLAUDE.md`, lines 845–846 and 1013–1014, the
 cost counted in the same file at lines 1015–1018; verified against HEAD
-`dbbbd47` on 4 September. In the catalogue — `scripts/check_exclusive.py`.
+`dbbbd47` on 4 September.
+ArtVsMark/Engineering-Incidents-Playbook — `scripts/check_exclusive.py`.
 
 Related: [022](022-one-canonical-document.md) — adjacent and NOT the same: there
 a topic spreads across two documents, here the document is one and the planes are

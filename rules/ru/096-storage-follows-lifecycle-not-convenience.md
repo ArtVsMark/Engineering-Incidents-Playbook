@@ -61,5 +61,6 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader — ADR-0011 § Альтернативы. Смежное:
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0011, раздел
+«Альтернативы». Смежное:
 [090](090-shared-helpers-move-up-not-sideways.md) — общий код без общего файла.

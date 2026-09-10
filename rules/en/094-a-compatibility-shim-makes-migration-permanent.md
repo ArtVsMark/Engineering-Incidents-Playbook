@@ -63,5 +63,5 @@ introduced it.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader — ADR-0004 § alternatives (root shims explicitly
-rejected). Related: [043](043-decisions-are-superseded-not-edited.md).
+ArtVsMark/Stepik-Python-Grader — `docs/dev/adr/README.md` § ADR-0004, section
+"alternatives" (root shims explicitly rejected). Related: [043](043-decisions-are-superseded-not-edited.md).

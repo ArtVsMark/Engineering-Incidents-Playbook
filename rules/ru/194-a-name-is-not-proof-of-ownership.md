@@ -75,7 +75,7 @@
 
 ## След
 
-ArtVsMark/ArtVsMark — `owns_package` в `scripts/build_metrics.py`:
+ArtVsMark/ArtVsMark — `scripts/build_metrics.py` § owns_package,
 принадлежность пакета проверяется обратной ссылкой, ответ соседа переведён на
 его собственный выпуск
 
