@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T17:46:59+00:00",
+  "generated_at": "2026-09-10T18:08:49+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.2"
   },
-  "count": 195,
+  "count": 196,
   "rules": [
     {
       "id": "001",
@@ -289,7 +289,8 @@
         "120",
         "125",
         "127",
-        "160"
+        "160",
+        "197"
       ]
     },
     {
@@ -1080,7 +1081,8 @@
         "155",
         "163",
         "164",
-        "181"
+        "181",
+        "197"
       ]
     },
     {
@@ -2826,7 +2828,8 @@
       ],
       "mentioned_by": [
         "128",
-        "182"
+        "182",
+        "197"
       ]
     },
     {
@@ -7361,7 +7364,8 @@
         "164",
         "169",
         "173",
-        "191"
+        "191",
+        "197"
       ]
     },
     {
@@ -7964,6 +7968,7 @@
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes",
+      "refines": "197",
       "mentions": [
         "002",
         "021",
@@ -7972,7 +7977,8 @@
         "153"
       ],
       "mentioned_by": [
-        "163"
+        "163",
+        "197"
       ]
     },
     {
@@ -10101,6 +10107,71 @@
         "125",
         "160",
         "194"
+      ]
+    },
+    {
+      "id": "197",
+      "slug": "a-publisher-uses-what-it-publishes",
+      "title": {
+        "ru": "Опубликованное для чужого использования издатель использует сам",
+        "en": "A publisher uses what it publishes for others"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "процесс"
+        ],
+        "en": [
+          "contracts",
+          "process"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "claim": {
+        "ru": "Требование, форма или число, опубликованные для чужого использования, применяются и проверяются **у себя тем же механизмом** — либо названо, почему у себя иначе. Опубликованное и не используемое издателем расходится с практикой молча: на его стороне всё зелено, потому что проверять нечего, а расхождение первым замечает потребитель.",
+        "en": "A requirement, a form or a number published for somebody else's use is applied and checked **at home by the same mechanism** — or it is stated why home is different. Anything published and not used by its publisher drifts from practice silently: everything is green on the publisher's side because there is nothing there to check, and the consumer is the first to notice."
+      },
+      "applies": {
+        "ru": "**Работает** у любого, кто публикует наружу форму, требование или число для\nсверки: каталог правил, библиотека со схемой, сервис с контрактом API,\nвладелец общего конвейера.\n\n**Не работает** там, где предмет публикации у издателя не воспроизводим:\nтребование к среде, которой у него нет, к масштабу, которого он не достигает,\nк роли, которой в его проекте не существует. Там симметрия невозможна, и\nчестный ответ — назвать это, а не имитировать проверку на подделке.\n\n**Не работает** и для требований, у которых нет машинной формы вовсе:\nприменить у себя «код должен быть понятным» тем же механизмом нельзя, потому\nчто механизма нет ни у кого ([057](057-unmechanizable-rules-are-named-explicitly.md)).\n\n**Признак нарушения:** требование к потребителю сформулировано строже, чем\nпроверка того же предмета у себя. Быстрая проба — взять свой самый свежий\nконтракт и спросить, что случится, если издатель нарушит его сам.",
+        "en": "**Works** for anyone publishing a form, a requirement or a number for others\nto compare against: a rules catalogue, a library with a schema, a service with\nan API contract, the owner of a shared pipeline.\n\n**Does not work** where the published subject is not reproducible at the\npublisher: a requirement about an environment it does not have, a scale it\nnever reaches, a role its project does not contain. Symmetry is impossible\nthere, and the honest answer is to say so rather than fake a check against a\nforgery.\n\n**Does not work** for requirements that have no machine form at all: \"the code\nmust be readable\" cannot be applied at home by the same mechanism, because\nnobody has one ([057](057-unmechanizable-rules-are-named-explicitly.md)).\n\n**Sign of violation:** the requirement placed on a consumer is stricter than\nthe check of the same subject at home. A quick probe: take your most recent\ncontract and ask what happens if the publisher breaks it."
+      },
+      "added": "2026-09-10",
+      "files": {
+        "ru": "rules/ru/197-a-publisher-uses-what-it-publishes.md",
+        "en": "rules/en/197-a-publisher-uses-what-it-publishes.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": "scripts/check_reread.py",
+          "section": "Издатель освободил себя от требования"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": "scripts/sync_inbox.py",
+          "section": "СВОИ_КОНТРАКТЫ"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": "scripts/build_rules_index.py",
+          "section": "CONTRACTS_MARKER_RE"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes",
+      "mentions": [
+        "005",
+        "022",
+        "057",
+        "142",
+        "155"
+      ],
+      "refined_by": [
+        "155"
       ]
     }
   ],
