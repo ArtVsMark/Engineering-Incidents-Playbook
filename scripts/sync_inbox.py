@@ -180,6 +180,57 @@ def tier_of(rule: dict) -> int:
     return n if isinstance(n, int) and 1 <= n <= 5 else 5
 
 
+#: КАКИЕ НОМЕРА ВООБЩЕ КАСАЮТСЯ ПОТРЕБИТЕЛЯ. Каталог публикует шесть — весь
+#: блок `contracts`, — но три из них описывают ЕГО СОБСТВЕННЫЕ файлы
+#: (`consumers`, `showcase`, `where`): сверять их у потребителя нечем и незачем.
+#: Остаются три, и каждый описывает файл, который пишет ОН.
+#:
+#: ЗАМЕР 10 сентября, ради которого это заведено. Сверялся ОДИН из шести —
+#: `bindings`. Подъём `proposals` 1.0 → 1.1 в тот же день не доезжал до
+#: потребителя ничем: его файл объявляет 1.0, и сказать ему об этом было
+#: некому. Отставание `answers_to` печатал только ночной прогон КАТАЛОГА и в
+#: трекер КАТАЛОГА — то есть находка о чужом файле ехала не адресату (142).
+#: Номера публиковались «чтобы сравнивали», а сравнивал их один из трёх.
+СВОИ_КОНТРАКТЫ = (
+    ("bindings", "schema", "формат ответа `.rules/bindings.json`"),
+    ("proposals", "schema", "формат предложения `.rules/proposals.json`"),
+    ("export", "answers_to", "выгрузка, по которой построены ответы"),
+)
+
+
+def contract_gaps(объявлено: dict[str, str | None],
+                  ожидается: dict[str, str]) -> list[str]:
+    """Расхождения по КАЖДОМУ номеру, который описывает файл потребителя.
+
+    КЛЮЧ — ИМЯ КОНТРАКТА, А НЕ ИМЯ ПОЛЯ, и это не оформление. `bindings` и
+    `proposals` объявляют свой номер ОДИНАКОВЫМ полем `schema`, но в РАЗНЫХ
+    файлах; плоский словарь по имени поля сверял номер ответа с ожиданием для
+    предложения — поймано собственным прогоном на первой же пробе.
+
+    Значения: `None` — файла нет, канал не подключён, и это молчит намеренно
+    (проект, не шлющий предложений, не обязан объявлять их формат; требовать
+    номер от несуществующего файла значило бы учить заводить файл ради номера,
+    051). Пустая строка — файл ЕСТЬ, а номера в нём нет: находка, потому что
+    несверенное не считается сошедшимся (075).
+    """
+    out: list[str] = []
+    for контракт, поле, о_чём in СВОИ_КОНТРАКТЫ:
+        ждём = ожидается.get(контракт)
+        наш = объявлено.get(контракт)
+        if not ждём:
+            out.append(f"каталог не объявил номер `{контракт}` — {о_чём}: "
+                       "сверить нечем")
+        elif наш is None:
+            continue                      # файла нет — канал не подключён
+        elif not наш:
+            out.append(f"в `{поле}` номер не объявлен, а каталог ждёт {ждём} "
+                       f"({о_чём}) — несверенное не считается сошедшимся")
+        elif наш != ждём:
+            out.append(f"`{поле}` объявлен как {наш}, каталог ждёт {ждём} "
+                       f"({о_чём}) — ответы перечитываются под новый контракт")
+    return out
+
+
 def contract_gap(answered_schema: str | None, expected: str | None) -> str | None:
     """Разошлась ли своя схема ответа со схемой первоисточника.
 
@@ -315,7 +366,7 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
              candidates: list[dict] | None = None,
              started: list[dict] | None = None,
              nothing: list[str] | None = None,
-             contract: str | None = None) -> str:
+             contract: list[str] | str | None = None) -> str:
     lines = [
         MARKER,
         "",
@@ -355,8 +406,13 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
         "",
     ]
     if contract:
+        # СТРОКОЙ ИЛИ СПИСКОМ: сверяется больше одного номера, и каждый
+        # называется отдельно — слитые в одну фразу расхождения читаются как
+        # одно, а чинятся они порознь (158).
+        расхождения = [contract] if isinstance(contract, str) else list(contract)
+        lines += [f"⚠️ **Контракт разошёлся: {len(расхождения)}.**", ""]
+        lines += [f"- {x}" for x in расхождения]
         lines += [
-            f"⚠️ **Контракт разошёлся.** {contract}",
             "",
             "Это [правило 157](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/157-a-contract-bump-is-a-re-read.md): "
             "смена версии чужого контракта — повод перечитать ОТВЕТЫ, а не "
@@ -517,6 +573,8 @@ def main() -> int:
     ap.add_argument("--catalogue", default="ArtVsMark/Engineering-Incidents-Playbook")
     ap.add_argument("--ref", default="main")
     ap.add_argument("--bindings", default=".rules/bindings.json")
+    ap.add_argument("--proposals", default=".rules/proposals.json",
+                    help="файл предложений: его номер тоже сверяется, а отсутствие файла — не находка")
     # КТО Я — чтобы не показывать проекту его собственный механизм как
     # соседский. Умолчание берётся из окружения площадки: там это уже есть, и
     # требовать его руками значило бы завести второй источник того же факта.
@@ -555,7 +613,13 @@ def main() -> int:
         # заводилась только в удачной ветке, скрипт падал UnboundLocalError
         # вместо третьего исхода — поймано тестом отсутствия gh.
         answered = {}
-        своя_схема = None
+        свой_ответ = {}
+        # ФАЙЛ ОТВЕТА ОБЯЗАТЕЛЕН, ФАЙЛ ПРЕДЛОЖЕНИЙ — НЕТ, и пустая строка здесь
+        # против `None` у предложений именно это и означает: про ненайденный
+        # ответ сверка скажет «не объявлен», про ненайденные предложения
+        # промолчит. Об `answers_to` из того же файла второй находки не будет:
+        # факт один — файла нет, — и повторять его дважды значит шуметь (051).
+        своя_схема = ""
     except (OSError, ValueError) as e:
         print(f"проверка не отработала: {args.bindings} не разобран — {e}",
               file=sys.stderr)
@@ -597,8 +661,22 @@ def main() -> int:
     candidates = candidates_here(unreviewed, свои_задачи)
     начатое = started_here(свои_задачи)
     ничем = held_by_nothing(answered)
-    расхождение = contract_gap(
-        своя_схема, ((выгрузка or {}).get("contracts") or {}).get("bindings"))
+    # ФАЙЛА НЕТ — КАНАЛ НЕ ПОДКЛЮЧЁН, И ЭТО НЕ НАХОДКА. Отличие от «файл
+    # есть, номера нет» несущее: второе сверить нельзя, а притворяться
+    # сошедшимся оно не должно (075).
+    try:
+        with open(args.proposals, encoding="utf-8") as fh:
+            схема_предложений = json.load(fh).get("schema") or ""
+    except FileNotFoundError:
+        схема_предложений = None
+    except (OSError, ValueError):
+        схема_предложений = ""
+    ожидается = ((выгрузка or {}).get("contracts") or {})
+    расхождение = contract_gaps(
+        {"bindings": своя_схема,
+         "proposals": схема_предложений,
+         "export": свой_ответ.get("answers_to") if свой_ответ else None},
+        ожидается)
     решено = sum(1 for r in rules
                  if answered.get(r["id"], {}).get("status") not in (None, "unreviewed"))
     body = body_for(missing, unreviewed, args.catalogue, stale=stale,
