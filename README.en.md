@@ -101,6 +101,13 @@ Two separate indexes would not do this — each looks complete on its own.
 
 Drawn by a workflow from [`export/where.json`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.json) — the projects' own answers, not our assessment of them. One row per project, columns aligned: the eye can only compare what sits in the same place. Each pill names **how many rules** that mechanism holds — a share you have to measure by eye reads as nothing at all. The third number, “born”, answers a different question: not how the project consumes the catalogue, but how many rules **originated** there. The catalogue is shared, but it does not grow evenly. The full report, including "who already solved what a neighbour holds by nothing", is in [`export/where.md`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.md).
 
+**You are not in that summary — and the catalogue will not find out on its
+own.** The rules are public and taken without asking; but the other direction —
+your answer for every rule, and the rules born at your project — has no address
+to be read from until you give one. The catalogue neither writes outwards nor
+goes looking: only the project itself can speak up, with an
+[announcement](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/new?template=consumer-announce.yml).
+
 ## License
 
 Records, showcase and document templates — [CC BY 4.0](LICENSE): take it,
