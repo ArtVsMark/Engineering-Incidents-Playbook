@@ -41,6 +41,14 @@
       "access": "public",
       "proposals": "https://raw.githubusercontent.com/ArtVsMark/Glossary-Python/main/.rules/proposals.json",
       "since": "2026-08-22"
+    },
+    {
+      "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "role": "потребитель",
+      "bindings": "https://raw.githubusercontent.com/ArtVsMark/Engineering-Pipeline-Mechanisms/main/.rules/bindings.json",
+      "access": "public",
+      "proposals": "https://raw.githubusercontent.com/ArtVsMark/Engineering-Pipeline-Mechanisms/main/.rules/proposals.json",
+      "since": "2026-09-09"
     }
   ],
   "_since": "Дата, с которой репозиторий объявлен потребителем. От неё считается срок: объявленный и не подключившийся дольше срока перестаёт быть состоянием и становится находкой сетевого прогона, у которой есть адресат. Взята из истории этого файла, а не проставлена задним числом на глазок."
