@@ -24,7 +24,8 @@ mandatory, "unreviewed" is also an answer, and the denominator always equals the
 numerator. The caption promised the share held by mechanisms; the figure counted
 the share answered.
 
-For **six weeks** the badge stood on the showcase as a measure and was not one.
+For **a month and a half** the badge stood on the showcase as a measure and
+was not one.
 Neither a mechanism nor a review noticed: the owner did, asking why the
 statistics were not being collected in full.
 
