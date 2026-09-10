@@ -1,7 +1,7 @@
 {
   "schema": "1.2",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T19:42:47+00:00",
+  "generated_at": "2026-09-10T19:51:27+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -893,7 +893,7 @@
         },
         "202": {
           "mechanism": "gate",
-          "where": ".claude/hooks/push_guard.py — `ветка_воскресает`: перед толчком сверяет свою ссылку `refs/remotes/origin/<ветка>` с ответом площадки, и толчок в удалённую при слиянии ветку не уезжает вовсе"
+          "where": ".claude/hooks/push_guard.py — `ветка_воскресает`: перед толчком сверяет свою ссылку `refs/remotes/origin/<ветка>` с ответом площадки, и толчок в удалённую при слиянии ветку не уезжает вовсе; удаление ссылки (`--delete`, `-d`, `:имя`) сторож пропускает: оно ничего не воскрешает, и предмет там чужая ветка, а не текущая"
         }
       },
       "trails": 51,
