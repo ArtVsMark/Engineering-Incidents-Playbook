@@ -56,3 +56,11 @@ retry counts — there you want every record.
 ## Trace
 
 ArtVsMark/ArtVsMark#7
+
+See also:
+[178](178-a-source-mismatch-is-your-reader-until-proven-otherwise.md) — this
+record is the FIRST of its two cheap hypotheses: "we are counting the same
+quantity twice", tested by recounting on the identifier. 178 says in what ORDER
+to work through a mismatch between two numbers; 009 is what closes the first
+step of that order. There is deliberately no refinement marker between them:
+009 does not narrow 178's wording, it is contained in it.
