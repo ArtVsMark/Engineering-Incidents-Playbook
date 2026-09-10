@@ -112,4 +112,8 @@ from; [039](039-three-outcomes-not-two.md) — there the third outcome is "did n
 run", here it is "filled in part";
 [116](116-the-collector-script-is-a-source-of-loss.md) — reconciling counts as a
 mandatory step; [046](046-name-the-gaps-do-not-level-them.md) — a gap is named
-rather than levelled.
+rather than levelled;
+[136](136-a-verdict-comes-after-enumerating-every-subject.md) — the same
+principle "enumerate all, not the first" on a different subject: there the
+subjects of a RULE are enumerated before a verdict, here the subjects of a
+FIELD before a check.

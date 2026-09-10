@@ -106,4 +106,7 @@ ArtVsMark/Stepik-Python-Grader#1345 (пять задач в записях жу�
 [039](039-three-outcomes-not-two.md) — там третий исход «не отработала», здесь
 «заполнено частично»; [116](116-the-collector-script-is-a-source-of-loss.md) —
 сверка количеств как обязательный шаг;
-[046](046-name-the-gaps-do-not-level-them.md) — пробел называется поимённо.
+[046](046-name-the-gaps-do-not-level-them.md) — пробел называется поимённо;
+[136](136-a-verdict-comes-after-enumerating-every-subject.md) — тот же принцип
+«перечисли все, а не первый» на другом предмете: там перечисляются предметы
+ПРАВИЛА перед вердиктом, здесь — предметы ПОЛЯ перед проверкой.

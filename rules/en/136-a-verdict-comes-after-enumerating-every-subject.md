@@ -89,4 +89,7 @@ See also: [044](044-check-the-premise-before-fixing.md) — the same for a findi
 rather than a verdict: the premise is checked first;
 [129](129-a-catalogue-needs-a-consumption-contract.md) — the contract this field
 lives in; [026](026-rejected-findings-must-be-recorded.md) — a refusal is a
-decision, and it is recorded with its reason.
+decision, and it is recorded with its reason;
+[128](128-a-required-field-is-checked-for-completeness.md) — the same principle
+"enumerate all, not the first" on a different subject: there the subjects of a
+FIELD before a check, here the subjects of a RULE before a verdict.
