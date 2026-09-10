@@ -4,6 +4,8 @@
 
 **Tier.** 3 — gates and processes
 
+**Refines.** 103
+
 **The rule.** When a guard is noisy about a resource that the code under test and
 everything else on the machine reach the same way — the system temporary
 directory, the home folder, a shared cache, a fixed port — the fix is

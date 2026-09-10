@@ -4,6 +4,8 @@
 
 **Tier.** 3 — gates and processes
 
+**Refines.** 002
+
 **The rule.** If no mechanism exists for a rule, it is neither discarded nor
 treated as obvious — it is written into its own section, marked as having no
 gate and saying why.

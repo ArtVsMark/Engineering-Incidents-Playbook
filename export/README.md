@@ -38,13 +38,23 @@ edited by hand.
                                            // WHEN a rule is taken up, not what about
       "added": "2026-08-21",              // из истории файла · from file history
       "files": { "ru": "rules/ru/129-….md", "en": "rules/en/129-….md" },
+      "claim": { "ru": "…", "en": "…" },   // БУКВА требования одним абзацем
+                                           // the RULE ITSELF, one paragraph
+      "applies": { "ru": "…", "en": "…" }, // раздел о границе целиком, разметкой
+                                           // the boundary section, markup kept
       "trails": [                          // структурно, а не строкой · structured
         { "repo": "ArtVsMark/Engineering-Incidents-Playbook", "issue": "15" }
       ],
       "portable": "partly",                // ключа может НЕ БЫТЬ · key may be ABSENT
                                            // да · нет · частично → yes · no · partly
-      "superseded_by": "154"               // ключа может НЕ БЫТЬ · key may be ABSENT
+      "superseded_by": "154",              // ключа может НЕ БЫТЬ · key may be ABSENT
                                            // отсутствует = действует · absent = active
+      "refines": "002",                    // ОБЪЯВЛЕНО автором · DECLARED by the author
+                                           // ключа может НЕ БЫТЬ · key may be ABSENT
+      "refined_by": ["057"],               // собрано из пометок · assembled, not written
+      "mentions": ["072", "103"],          // ФАКТ: здесь стоит адрес той записи
+                                           // FACT: this record links to that one
+      "mentioned_by": ["119", "141"]       // обратная сторона · the other side
     }
   ],
   "candidates": [                          // ГИПОТЕЗЫ, А НЕ ПРАВИЛА · HYPOTHESES
@@ -85,6 +95,61 @@ record stays and stays readable: the reason for the transition lives in it. The
 key is absent while the rule is active; `null` would mean "we answered and do
 not know", and we did not answer at all. A consumer's answer about a superseded
 rule is a **state, not a finding**.
+
+**Связи записи отдаются двумя разными полями, и смешивать их нельзя.**
+`refines` — **суждение автора**: буква этой записи сужает букву той. `mentions`
+— **факт**: в тексте стоит адрес той записи. Первое отвечает на вопрос «в каком
+порядке читать», второе — «где ещё об этом говорят», и ответы не совпадают:
+057 и уточняет 002, и ссылается на неё; 149 уточняет 103, а ссылается ещё и на
+072.
+
+**Уточнение — это «читай вместе», а не «читай вместо».** Разница с
+`superseded_by` принципиальная: заменённая запись перестаёт быть ответом,
+уточнённая остаётся действующей целиком — у неё лишь появляется названная
+граница. Поэтому уточняемую запись **не правят ни на знак**: её `refined_by`
+собирает сборка из пометок, как обратный указатель строится из следов
+([120](../rules/ru/120-how-to-run-a-rule-catalogue.md)), а не редактированием
+чужой буквы ([043](../rules/ru/043-decisions-are-superseded-not-edited.md)).
+
+**Зачем это понадобилось.** Потребитель читает выгрузку по номерам сверху вниз
+и первым встречает **общую** букву. Ревизия корпуса
+([#456](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/456))
+показала цену: 002 требует «либо гейт, либо не пишите», 057 говорит «механизма
+нет — запиши это и назови почему», и практика идёт за 057 — 28 правил каталога
+держатся документом, 5 не держатся ничем с названной причиной. Про 057 сама 002
+не знала ничего. Теперь знает — полем, а не правкой.
+
+**Ссылкой считается адрес, а не число в прозе.** Замер: по любому трёхзначному
+числу выходило 222 «связи», из них 62 — фразы вроде «195 правил»; по адресу их
+426. Обратное тоже верно: 057 говорит о 002 словами дважды, и в карту это не
+попадает — **связь объявляется ссылкой или пометкой**, не упоминанием.
+
+**A record's relations come as two different fields, and they must not be
+merged.** `refines` is **the author's judgement**: this rule narrows that one.
+`mentions` is **a fact**: the text links to that record. The first answers "in
+what order to read", the second "where else this is discussed", and the answers
+differ.
+
+**A refinement means "read together", not "read instead".** Unlike
+`superseded_by`, a refined record stays valid in full — it merely gains a named
+boundary. So the refined record is **never edited**: its `refined_by` is
+assembled from the markers, the way a back-reference is derived from traces
+([120](../rules/en/120-how-to-run-a-rule-catalogue.md)), rather than by editing
+somebody else's wording ([043](../rules/en/043-decisions-are-superseded-not-edited.md)).
+
+**Why it was needed.** A consumer reads the export by number, top down, and
+meets the **general** wording first. The corpus review
+([#456](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/456))
+measured the cost: 002 demands "a gate or nothing", 057 says "no mechanism —
+write that down and say why", and practice follows 057: 28 of the catalogue's
+own rules are held by a document and 5 by nothing at all, each with a stated
+reason. 002 knew nothing about 057. Now it does — as a field, not as an edit.
+
+**A link is an address, not a number in prose.** Measured: counting any
+three-digit number gave 222 "relations", 62 of them phrases like "195 rules";
+counting addresses gives 426. The converse holds too: 057 discusses 002 twice
+in words, and that does not enter the map — **a relation is declared by a link
+or a marker**, never by a mention.
 
 **Кандидат — не правило, и в данных это сказано трижды.** `kind:
 "hypothesis"`, отдельный массив, и **отсутствие поля `id`** — ни пустого, ни
