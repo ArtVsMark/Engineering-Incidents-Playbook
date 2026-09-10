@@ -1,6 +1,6 @@
 {
   "schema": "1.2",
-  "answers_to": "1.5",
+  "answers_to": "1.7",
   "project": "ArtVsMark/Engineering-Incidents-Playbook",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
   "rules": {
