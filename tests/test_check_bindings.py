@@ -172,7 +172,9 @@ def test_образец_файлов_это_адрес(monkeypatch, repo):
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "document",
                                "where": ".github/workflows/*.yml — у всех есть "
-                                        "ручная кнопка"}}},
+                                        "ручная кнопка",
+                               "document_reason": "impossible",
+                               "why": "предмет не в дереве"}}},
             export_of("001"))
     assert cb.main() == 0
 
@@ -181,7 +183,9 @@ def test_корневой_документ_по_имени_это_адрес(mon
     """`CONTRIBUTING` без расширения называют в прозе, и это адрес."""
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "document",
-                               "where": "CONTRIBUTING — раздел про ревью"}}},
+                               "where": "CONTRIBUTING — раздел про ревью",
+                               "document_reason": "impossible",
+                               "why": "предмет не в дереве"}}},
             export_of("001"))
     assert cb.main() == 0
 
@@ -537,6 +541,96 @@ def test_mehanizm_est_razbor_ne_sprashivaetsya(monkeypatch, repo, capsys):
 
 
 
+# ── `document` РАЗБИРАЕТСЯ НАДВОЕ ─────────────────────────────────────────
+
+def документом(поля: dict | None = None) -> dict:
+    """Ответ «держится документом» с произвольными добавками."""
+    запись = {"status": "active", "mechanism": "document",
+              "where": "AGENTS.md — сказано в своде"}
+    запись.update(поля or {})
+    return {"rules": {"001": запись}}
+
+
+def test_document_bez_razbora_nadvoe_otkaz(monkeypatch, repo, capsys):
+    """ГЛАВНЫЙ СЛУЧАЙ контракта 1.3: предмет тот же, что у `none`.
+
+    Правило действует, машина его не держит — и до подъёма у `document` не
+    спрашивалось ничего, хотя у `none` разбор обязателен с 4 сентября.
+    """
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo, документом(), export_of("001"))
+
+    assert cb.main() == 1
+    assert "держится документом, а чем именно" in capsys.readouterr().err
+
+
+def test_document_chuzhoe_slovo_otkaz(monkeypatch, repo, capsys):
+    """Словарь ЗАКРЫТЫЙ: счётчику семьи знаменатель надо разделить, а «почти
+    невозможно» не складывается ни с чем."""
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo,
+            документом({"document_reason": "почти невозможно", "why": "так вышло"}),
+            export_of("001"))
+
+    assert cb.main() == 1
+    assert "держится документом, а чем именно" in capsys.readouterr().err
+
+
+def test_document_slovo_bez_prichiny_otkaz(monkeypatch, repo, capsys):
+    """Слово из двух выбирается не думая — причину не написать, не подумав (154).
+
+    Красная сторона показана подделкой: вердикт стоит, причины нет.
+    """
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo, документом({"document_reason": "not-yet"}),
+            export_of("001"))
+
+    assert cb.main() == 1
+    assert "`document_reason` есть, а причины нет" in capsys.readouterr().err
+
+
+def test_document_s_razborom_chisto(monkeypatch, repo):
+    """Зелёная сторона: оба слова законны и оба идут с причиной (140)."""
+    write(repo / "AGENTS.md", "свод\n")
+    for слово in ("impossible", "not-yet"):
+        prepare(monkeypatch, repo,
+                документом({"document_reason": слово,
+                            "why": "половина названа, а не выдана за отсутствие"}),
+                export_of("001"))
+        assert cb.main() == 0, слово
+
+
+def test_razbor_ne_sprashivaetsya_u_sosednih_mehanizmov(monkeypatch, repo):
+    """ГРАНИЦА: предмет поля — только `document`.
+
+    У `gate` и `pipeline` вопрос «что здесь машинно» отвечен самим механизмом,
+    и красное там было бы ложным отказом (051).
+    """
+    write(repo / ".github" / "workflows" / "ci.yml",
+          "# держит правило 001\non: push\n")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "pipeline",
+                               "where": ".github/workflows/ci.yml — прогон"}}},
+            export_of("001"))
+    assert cb.main() == 0
+
+
+def test_ne_postroennoe_pechataetsya_v_stupeni_nol(monkeypatch, repo, capsys):
+    """Число видно СО СТОРОНЫ, иначе счёт по семье врёт молча.
+
+    Печатается всегда — числа, видного лишь при поломке, здесь не бывает (027).
+    """
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo,
+            документом({"document_reason": "not-yet", "why": "построили бы счёт"}),
+            export_of("001"))
+
+    assert cb.main() == 0
+    вышло = capsys.readouterr().out
+    assert "держится документом: 1" in вышло
+    assert "не построена у 1" in вышло
+
+
 # ── ОТЛОЖЕННОЕ ПРОТИВ ДОЛГА ───────────────────────────────────────────────
 # Поле `awaiting` выводит правило из ступени 0, а значит само становится
 # лазейкой: припиской «построим потом» долг обнулялся бы даром. Три машинных
@@ -686,7 +780,9 @@ def test_document_s_prozoy_nahodkoy_ne_yavlyaetsya(monkeypatch, repo):
     write(repo / "AGENTS.md", "свод\n")
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "document",
-                               "where": "AGENTS.md — сказано в своде"}}},
+                               "where": "AGENTS.md — сказано в своде",
+                               "document_reason": "impossible",
+                               "why": "предмет не в дереве"}}},
             export_of("001"))
     assert cb.main() == 0
 
