@@ -37,6 +37,12 @@ concurrency:
 permissions:
   contents: read
   pull-requests: write
+  # `read`, А НЕ `write`, И ЭТО ВЫБОР. Записывать находки в трекер прогонному
+  # токену не даётся: шаги, которые правят задачу, ходят под токеном владельца
+  # (`MERGE_QUEUE_TOKEN`), у которого право проверено на #355. Поднять права
+  # прогона было альтернативой и отвергнуто владельцем 10 сентября: узкий
+  # прогонный токен ценнее одной сэкономленной строки. Чтение здесь нужно
+  # самому разбору — он ищет живую задачу с отпечатком, прежде чем писать.
   issues: read
   id-token: write
 
@@ -185,7 +191,19 @@ jobs:
         if: steps.token.outputs.present == 'yes' && github.event_name == 'pull_request'
         continue-on-error: true
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # ТОКЕН ВЛАДЕЛЬЦА, А НЕ ПРОГОННЫЙ, И ЭТО РЕШЕНИЕ ВЛАДЕЛЬЦА.
+          # Прогонному нужен `issues: write`, а поднятие прав прогона окно не
+          # делает. Замер по #423 (8 сентября): под `issues: read` запись
+          # задачи отвечает 403 «Resource not accessible by integration», и
+          # механизм адресата не отработал НИ РАЗУ с заведения — при том, что
+          # 142 требует, чтобы находка адресата ПЕРЕЖИЛА слияние, а комментарий
+          # под закрытым изменением им не является.
+          #
+          # Тот же токен и по той же причине стоит у соседа ниже («дежурный
+          # узнаёт, что вердикт готов»): право у него проверено на #355.
+          # Запасной путь на прогонный оставлен намеренно — в форке секрета
+          # нет, и шаг должен молчать, а не падать (084).
+          GH_TOKEN: ${{ secrets.MERGE_QUEUE_TOKEN || secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
@@ -210,7 +228,8 @@ jobs:
         if: steps.token.outputs.present == 'yes' && github.event_name == 'pull_request'
         continue-on-error: true
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Тот же токен, что у записи выше: уборка тоже правит задачу.
+          GH_TOKEN: ${{ secrets.MERGE_QUEUE_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           code=0
