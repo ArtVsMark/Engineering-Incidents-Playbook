@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-10T18:08:49+00:00",
+  "generated_at": "2026-09-10T18:29:17+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.2",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.2"
   },
-  "count": 196,
+  "count": 199,
   "rules": [
     {
       "id": "001",
@@ -1082,7 +1082,8 @@
         "163",
         "164",
         "181",
-        "197"
+        "197",
+        "198"
       ]
     },
     {
@@ -1899,7 +1900,8 @@
         "174",
         "175",
         "186",
-        "188"
+        "188",
+        "198"
       ]
     },
     {
@@ -2144,7 +2146,8 @@
         "105",
         "136",
         "146",
-        "195"
+        "195",
+        "199"
       ]
     },
     {
@@ -3755,7 +3758,8 @@
         "159",
         "165",
         "167",
-        "175"
+        "175",
+        "198"
       ]
     },
     {
@@ -6464,7 +6468,8 @@
       ],
       "mentioned_by": [
         "005",
-        "023"
+        "023",
+        "200"
       ]
     },
     {
@@ -7526,7 +7531,8 @@
         "186",
         "192",
         "193",
-        "195"
+        "195",
+        "200"
       ]
     },
     {
@@ -8550,7 +8556,8 @@
       ],
       "mentioned_by": [
         "172",
-        "180"
+        "180",
+        "198"
       ]
     },
     {
@@ -8975,7 +8982,8 @@
       ],
       "mentioned_by": [
         "178",
-        "190"
+        "190",
+        "200"
       ]
     },
     {
@@ -9184,7 +9192,8 @@
         "174"
       ],
       "mentioned_by": [
-        "182"
+        "182",
+        "199"
       ]
     },
     {
@@ -9239,7 +9248,8 @@
         "168"
       ],
       "mentioned_by": [
-        "187"
+        "187",
+        "199"
       ]
     },
     {
@@ -9524,7 +9534,10 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
-      "portable": "yes"
+      "portable": "yes",
+      "mentioned_by": [
+        "198"
+      ]
     },
     {
       "id": "186",
@@ -9790,6 +9803,9 @@
         "004",
         "049",
         "174"
+      ],
+      "mentioned_by": [
+        "198"
       ]
     },
     {
@@ -10172,6 +10188,156 @@
       ],
       "refined_by": [
         "155"
+      ]
+    },
+    {
+      "id": "198",
+      "slug": "a-link-to-a-foreign-rule-is-checked-by-a-gate",
+      "title": {
+        "ru": "Ссылка на чужое правило сверяется с его выгрузкой, а не пишется по памяти",
+        "en": "A link to a foreign rule is checked against its export, not written from memory"
+      },
+      "areas": {
+        "ru": [
+          "документация",
+          "гейты"
+        ],
+        "en": [
+          "documentation",
+          "gates"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Ссылка на правило чужого каталога проверяется гейтом против **выгрузки этого каталога**, а не по памяти автора. Номер и адрес сверяются **раздельно**: «такого правила нет» и «правило есть, адрес переврали» — разные находки, разные починки и разная цена ошибки.",
+        "en": "A link to a rule in somebody else's catalogue is checked by a gate against **that catalogue's export**, not against the author's memory. The number and the address are checked **separately**: \"no such rule\" and \"the rule exists, the address is wrong\" are different findings, different fixes and different costs."
+      },
+      "applies": {
+        "ru": "**Работает** там, где чужой каталог публикует машинно читаемую выгрузку с\nномерами и адресами записей.\n\n**Не работает**, когда выгрузки нет: тогда проверить можно только существование\nадреса запросом, а это уже сеть в гейте — цена другая, и решается отдельно.\n**Не работает** и для ссылок внутрь своего дерева: там предмет проверяет\nобычный обход ссылок, и заводить второй ответ на тот же вопрос не нужно\n([022](022-one-canonical-document.md)).\n\n**Признак нарушения:** в дереве есть ссылка на чужое правило, и ни один прогон\nне отвечает на вопрос «а она ведёт куда-нибудь».",
+        "en": "**Works** wherever the foreign catalogue publishes a machine-readable export\ncarrying the numbers and addresses of its records.\n\n**Does not work** when there is no export: then only the address's existence can\nbe probed by a request, which puts the network inside a gate — a different price,\ndecided separately. **Does not work** for links inside your own tree either:\nthere an ordinary link walk covers the subject, and a second answer to the same\nquestion is not needed ([022](022-one-canonical-document.md)).\n\n**Sign of violation:** the tree contains a link to a foreign rule and no run\nanswers the question \"does it lead anywhere\"."
+      },
+      "added": "2026-09-10",
+      "files": {
+        "ru": "rules/ru/198-a-link-to-a-foreign-rule-is-checked-by-a-gate.md",
+        "en": "rules/en/198-a-link-to-a-foreign-rule-is-checked-by-a-gate.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "scripts/check_rule_links.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "022",
+        "039",
+        "075",
+        "166",
+        "185",
+        "190"
+      ]
+    },
+    {
+      "id": "199",
+      "slug": "a-run-cancelled-while-queued-is-not-a-missing-event",
+      "title": {
+        "ru": "Заход, отменённый в очереди, — не потерянное событие",
+        "en": "A run cancelled while queued is not a missing event"
+      },
+      "areas": {
+        "ru": [
+          "конвейер",
+          "диагностика"
+        ],
+        "en": [
+          "pipeline",
+          "diagnostics"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "claim": {
+        "ru": "Механизм, который будится событием и работает в группе с `cancel-in-progress: false`, обязан иметь **второй источник доказательства** того, что условие снято, — опрос состояния внутри самого захода. Событие приходит, а заход до работы не доживает; снаружи это неотличимо от потерянного события, и лечится противоположным.",
+        "en": "A mechanism woken by an event and running in a group with `cancel-in-progress: false` must have a **second source of proof** that the condition is satisfied — a poll of the state inside the run itself. The event arrives, but the run does not survive to do the work; from outside that is indistinguishable from a lost event, and the two are fixed by opposite means."
+      },
+      "applies": {
+        "ru": "**Работает** там, где работу будит внешнее событие, а исполнение стоит в группе\nс вытеснением ожидающих: очередь слияния, реакция на завершение чужого прогона,\nобработчик вебхуков с ограничением параллелизма.\n\n**Не работает**, когда заход стартует сразу и очереди не образует: второй\nисточник там лишняя работа на каждом заходе. **Не работает** и как объяснение\nлюбого застоя: сначала считаются отменённые — если их нет, предмет другой, и\nопрос состояния его не закроет.\n\n**Признак нарушения:** механизм объявлен «реагирует на событие», а доля\nзаходов, умерших до начала работы, никем не считается.",
+        "en": "**Works** wherever work is woken by an external event and execution sits in a\ngroup that evicts waiters: a merge queue, a reaction to somebody else's run\nfinishing, a webhook handler with a concurrency limit.\n\n**Does not work** when runs start immediately and never queue: a second source\nis then extra work on every run. **Does not work** as an explanation for any\nstall either: count the cancellations first — if there are none, the subject is\nsomething else, and a state poll will not close it.\n\n**Sign of violation:** a mechanism is declared \"reacts to an event\" while the\nshare of runs that died before starting work is counted by nobody."
+      },
+      "added": "2026-09-10",
+      "files": {
+        "ru": "rules/ru/199-a-run-cancelled-while-queued-is-not-a-missing-event.md",
+        "en": "rules/en/199-a-run-cancelled-while-queued-is-not-a-missing-event.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "scripts/automerge.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "partly",
+      "mentions": [
+        "044",
+        "178",
+        "179"
+      ]
+    },
+    {
+      "id": "200",
+      "slug": "a-badge-that-cannot-move-is-not-a-measure",
+      "title": {
+        "ru": "Значок, который не может двинуться, — не мерило",
+        "en": "A badge that cannot move is not a measure"
+      },
+      "areas": {
+        "ru": [
+          "витрины",
+          "метрики"
+        ],
+        "en": [
+          "showcases",
+          "metrics"
+        ]
+      },
+      "tier": {
+        "n": 5,
+        "ru": "всё остальное",
+        "en": "everything else"
+      },
+      "claim": {
+        "ru": "Значок витрины показывает величину, которая **может измениться**. Число, равное знаменателю по построению, — украшение на месте мерила: оно не говорит ни где проект стоит, ни что он сдвинулся. Прежде чем вешать значок, называют, **при каком событии он покажет другое**.",
+        "en": "A showcase badge displays a quantity that **can change**. A number equal to its denominator by construction is decoration standing in a measure's place: it says neither where the project is nor that it moved. Before hanging a badge, name **the event after which it will show something else**."
+      },
+      "applies": {
+        "ru": "**Работает** для показателей прогресса и покрытия: доля правил с механизмом,\nдоля покрытого кода, доля разобранных находок.\n\n**Не работает** для значков **состояния**, у которых неподвижность и есть\nхорошая новость: «сборка зелёная», «уязвимостей нет», «лицензия MIT». Их\nпредмет — факт, а не движение, и требовать от них хода значит требовать\nполомок.\n\n**Не работает** и для счётчика, который растёт по построению и этим полезен:\nчисло правил в каталоге движется всегда в одну сторону, и это честное мерило\nроста, а не доля.\n\n**Признак нарушения:** на вопрос «при каком событии число станет другим» у\nзначка нет ответа — или ответ звучит как «этого не будет».",
+        "en": "**Works** for progress and coverage figures: the share of rules with a\nmechanism, the share of code covered, the share of findings resolved.\n\n**Does not work** for **state** badges, where motionlessness is the good news:\n\"build passing\", \"no vulnerabilities\", \"MIT licence\". Their subject is a fact,\nnot movement, and demanding motion from them is demanding breakage.\n\n**Does not work** for a counter that grows by construction and is useful for\nthat: the number of rules in a catalogue only ever moves one way, and that is an\nhonest measure of growth rather than a share.\n\n**Sign of violation:** the badge has no answer to \"what event would make this\nnumber different\" — or the answer sounds like \"that will not happen\"."
+      },
+      "added": "2026-09-10",
+      "files": {
+        "ru": "rules/ru/200-a-badge-that-cannot-move-is-not-a-measure.md",
+        "en": "rules/en/200-a-badge-that-cannot-move-is-not-a-measure.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "scripts/build_facts.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "127",
+        "146",
+        "174"
       ]
     }
   ],
