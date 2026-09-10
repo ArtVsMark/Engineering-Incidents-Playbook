@@ -487,14 +487,47 @@ def test_udalenie_vetki_ne_schitaetsya_voskresheniem(окно, monkeypatch, caps
     assert capsys.readouterr().err == ""
 
 
-def test_udalenie_uznayotsya_vo_vsekh_zakonnykh_formakh():
-    """Три формы удаления и две формы обычного толчка — обе стороны (140)."""
+def test_soderzhimoe_uznayotsya_vo_vsekh_zakonnykh_formakh():
+    """Три формы чистого удаления и три формы обычного толчка (140)."""
     for команда in ("git push origin --delete чужая/stale",
                     "git push origin -d чужая/stale",
                     "git push origin :чужая/stale"):
-        assert pg.удаляет_ветку(команда) is True, команда
-    for команда in ("git push -u origin agent/своя", "git push"):
-        assert pg.удаляет_ветку(команда) is False, команда
+        assert pg.везёт_содержимое(команда, "agent/своя") is False, команда
+    for команда in ("git push -u origin agent/своя", "git push",
+                    "git push origin"):
+        assert pg.везёт_содержимое(команда, "agent/своя") is True, команда
+
+
+def test_smeshannaya_forma_ne_gasit_voskreshenie():
+    """Ровно находка ревью #475: удаление в той же строке гасило проверку.
+
+    `git push origin своя :чужая` одной командой и толкает содержимое в
+    ТЕКУЩУЮ ветку, и убирает постороннюю мёртвую ссылку. Признак удаления
+    где-нибудь в строке сворачивал оба исхода в один флаг, и воскрешение
+    проходило молча — при том что `targets` ту же форму разбирает верно (022).
+    """
+    for команда in ("git push origin agent/своя :чужая/stale",
+                    "git push -u origin agent/своя && git push origin --delete чужая/stale",
+                    "git push origin --delete чужая/stale && git push -u origin agent/своя"):
+        assert pg.везёт_содержимое(команда, "agent/своя") is True, команда
+
+
+def test_smeshannaya_forma_ostanavlivaetsya_khukom(окно, monkeypatch, capsys):
+    """Та же находка целиком через хук: отказ обязан состояться."""
+    окно("git push origin agent/своя :чужая/stale")
+    monkeypatch.setattr(pg, "ветка_воскресает", lambda b: True)
+    assert pg.main() == 2
+    assert "удалила её при слиянии" in capsys.readouterr().err
+
+
+def test_perekhod_v_druguyu_vetku_snimaet_vopros():
+    """`git switch X && git push origin X` не воскрешает ветку, с которой ушли.
+
+    Ветка считается по ходу строки — тем же разбором, что у `targets` (051).
+    """
+    команда = "git switch другая && git push -u origin другая"
+    assert pg.везёт_содержимое(команда, "agent/своя") is False
+    assert pg.везёт_содержимое(команда) is True     # хоть куда-нибудь — да
 
 
 def test_obychnyy_tolchok_v_voskresshuyu_vsyo_eshchyo_otvergaetsya(окно, monkeypatch, capsys):
