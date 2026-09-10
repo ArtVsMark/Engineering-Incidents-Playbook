@@ -520,6 +520,36 @@ def test_smeshannaya_forma_ostanavlivaetsya_khukom(окно, monkeypatch, capsys
     assert "удалила её при слиянии" in capsys.readouterr().err
 
 
+def test_yavnyy_refspec_nazyvaet_svoyu_tsel():
+    """Находка ревью #476: адресат `src:dst` разворачивается, а не угадывается.
+
+    `git push origin HEAD:другая` текущей ветки не касается вовсе. Вторая
+    редакция смотрела лишь, начинается ли ссылка с `:`, и отвергала безопасную
+    команду на слитой ветке — ложный отказ дороже пропуска (051). Форма
+    `HEAD:<ветка>` объявлена законной в шапке самого сторожа.
+    """
+    свои = "agent/своя"
+    assert pg.везёт_содержимое("git push origin HEAD:другая-ветка", свои) is False
+    assert pg.везёт_содержимое("git push origin HEAD:agent/своя", свои) is True
+    assert pg.везёт_содержимое("git push origin refs/heads/agent/своя", свои) is True
+    assert pg.везёт_содержимое("git push origin +agent/своя", свои) is True
+
+
+def test_podstanovka_obolochki_ne_schitaetsya_etoy_vetkoy():
+    """«Неизвестно» и «эта ветка» — разные ответы, и путать их значит отвергать
+    недостоверное (051). Стойка та же, что у `targets` двумя вопросами выше."""
+    assert pg.везёт_содержимое("git push origin $b", "agent/своя") is False
+    assert pg.везёт_содержимое("git push origin $b") is True    # хоть куда-то — да
+
+
+def test_tolchok_v_druguyu_vetku_ne_ostanavlivaetsya_khukom(окно, monkeypatch, capsys):
+    """Та же находка целиком через хук: отказа быть НЕ должно."""
+    окно("git push origin HEAD:другая-ветка")
+    monkeypatch.setattr(pg, "ветка_воскресает", lambda b: True)
+    assert pg.main() == 0
+    assert capsys.readouterr().err == ""
+
+
 def test_perekhod_v_druguyu_vetku_snimaet_vopros():
     """`git switch X && git push origin X` не воскрешает ветку, с которой ушли.
 

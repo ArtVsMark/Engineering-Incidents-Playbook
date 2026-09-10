@@ -74,6 +74,12 @@ replaces the other.
   current branch and clears a foreign dead ref — `--delete` scopes over the
   whole command, `:name` over a single ref. Collapsing the two into "the command
   deletes" let the guard pass in silence the very resurrection it exists for;
+- and a ref's **destination is resolved**, not guessed from its shape:
+  `git push origin HEAD:other` does not touch the current branch at all, and
+  reading it as a push into that branch means refusing a safe command. The
+  `HEAD:<branch>` form is legitimate, and a shell substitution (`$b`) stays
+  "unknown" rather than counting as this branch: a false refusal costs more than
+  a miss ([051](051-warn-on-likely-block-on-certain.md));
 - `git push` output is **not** a signal: `* [new branch]` prints in both cases;
 - the pipeline half's subject is **the head branch of an already merged change**,
   and it is asked of the platform rather than inferred from a name;
