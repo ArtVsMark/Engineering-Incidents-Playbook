@@ -145,3 +145,51 @@ def test_sborka_ne_zakryvaet_chastichnoe(tmp_path):
     assert problem is None
     assert "Closes" not in out
 
+
+
+# ── снятие заметки внешнего взгляда: форма проверяется машинно ─────────────
+
+def test_snyatie_slovami_otvergaetsya(tmp_path, capsys):
+    """ГЛАВНЫЙ СЛУЧАЙ, и он про подделку, неотличимую при чтении (140).
+
+    Инцидент 10 сентября: в теле #475 стояло `Разобрано: 202-boundary`. Для
+    человека тело выглядело разобранным, для механизма находок не совпадало ни
+    с чем — и ни один гейт об этом не сказал.
+    """
+    f = tmp_path / "b.md"
+    f.write_text("Починка.\n\nРазобрано: 202-boundary\n\nCloses #1\n",
+                 encoding="utf-8")
+    assert pb.main(["--check", "--body-file", str(f)]) == 1
+    assert "ничего не снимет" in capsys.readouterr().err
+
+
+def test_otpechatok_prohodit(tmp_path):
+    """Зелёная сторона: семь шестнадцатеричных знаков и хвост при них."""
+    f = tmp_path / "b.md"
+    f.write_text("Починка.\n\nРазобрано: 8f60732 · #479 — заголовок находки\n"
+                 "\nCloses #1\n", encoding="utf-8")
+    assert pb.main(["--check", "--body-file", str(f)]) == 0
+
+
+def test_dlina_otpechatka_nesushchaya():
+    """Шесть знаков и восемь — не отпечаток: гейт принимает РОВНО то, что
+    примет уборщик, иначе он пропустит строку, которая ничего не снимет."""
+    assert pb.dead_marks("Разобрано: fdfddd\n")        # шесть
+    assert pb.dead_marks("Разобрано: fdfddd6a\n")      # восемь
+    assert not pb.dead_marks("Разобрано: fdfddd6\n")   # семь
+
+
+def test_telo_bez_snyatiy_ne_zadeto():
+    """ГРАНИЦА: предмет проверки — только строки снятия. Тело без них
+    проходит, и красное на нём было бы ложным отказом (051)."""
+    assert pb.dead_marks("Обычное тело.\n\nCloses #1\n") == []
+
+
+def test_forma_odna_u_geyta_i_u_uborshchika():
+    """022 замером: выражение у уборщика — то же самое, а не похожее.
+
+    Разойдясь, они молчали бы в разные стороны: гейт пропустил бы строку,
+    которую уборщик не примет, — ровно инцидент 10 сентября.
+    """
+    import review_findings as rf
+    assert rf.РАЗОБРАНО is pb.РАЗОБРАНО
