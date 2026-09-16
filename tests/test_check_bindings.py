@@ -1121,3 +1121,47 @@ def test_чужой_механизм_навык_назван_по_русски()
     текст = "\n".join(строки)
     assert "навык" in текст
     assert "— skill:" not in текст
+
+
+# ── СВЁРНУТОЕ ОПИСАНИЕ: ЗАГОЛОВОК БЛОКА — НЕ ЗНАЧЕНИЕ ───────────────────
+#
+# ПОЛОМКА, ИЗ КОТОРОЙ ЭТО ВЫРОСЛО (находка ревью на #497). Разбор брал `>-` за
+# непустое значение и продолжения не читал: навык с ПУСТЫМ свёрнутым описанием
+# гейт проходил, а навык с настоящим — проходил по неверной причине. Граница
+# «свёрнутые блоки принимаются по отступу следующей строки» стояла в
+# комментарии и не стояла в коде (183).
+#
+# Случаи взяты формами YAML, а не догадкой: `>` и `|`, с отсечкой и с отступом.
+
+def скилл(repo: Path, текст: str) -> None:
+    write(repo / ".claude" / "skills" / "probe" / "SKILL.md", текст)
+
+
+def ответ_на_навык(monkeypatch, repo: Path, capsys) -> str:
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "skill",
+                               "where": ".claude/skills/probe/SKILL.md — держит",
+                               "skill": ".claude/skills/probe"}}},
+            export_of("001"))
+    код = cb.main()
+    return "ПРИНЯТ" if код == 0 else capsys.readouterr().err
+
+
+@pytest.mark.parametrize("форма", [
+    "---\nname: probe\ndescription: >-\n  настоящее описание\n---\n",
+    "---\nname: probe\ndescription: |\n  настоящее описание\n---\n",
+    "---\nname: probe\ndescription: >2\n  настоящее описание\n---\n",
+], ids=["свёрнутый", "буквальный", "с отступом"])
+def test_свёрнутое_описание_с_текстом_принимается(monkeypatch, repo, capsys, форма):
+    скилл(repo, форма)
+    assert ответ_на_навык(monkeypatch, repo, capsys) == "ПРИНЯТ"
+
+
+@pytest.mark.parametrize("форма", [
+    "---\nname: probe\ndescription: >-\n---\n",
+    "---\nname: probe\ndescription: |\n---\n",
+], ids=["свёрнутый", "буквальный"])
+def test_свёрнутое_описание_без_текста_это_находка(monkeypatch, repo, capsys, форма):
+    """Заголовок блока без отступленных строк — пустое описание, а не значение."""
+    скилл(repo, форма)
+    assert "`description`" in ответ_на_навык(monkeypatch, repo, capsys)
