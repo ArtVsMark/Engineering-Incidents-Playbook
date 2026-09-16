@@ -10,14 +10,14 @@
 
 ## Потребители · Consumers
 
-| Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 52 | 34 | 203 | 0 | 0 | 168 | 123 | 9 | 29 | 7 | 107 |  |
-| `Stepik-Python-Grader` | подключён | 187 | 132 | 195 | 8 | 0 | 192 | 86 | 39 | 67 | 0 | 145 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 195 | 8 | 0 | 139 | 94 | 12 | 23 | 0 | 42 |  |
-| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 22 | 0 | 152 | 95 | 9 | 46 | 2 | 86 |  |
-| `Glossary-Python` | подключён | 0 | 0 | 181 | 22 | 0 | 117 | 60 | 12 | 29 | 16 | 78 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 4 | 4 | 203 | 0 | 0 | 174 | 142 | 24 | 8 | 0 | 146 |  |
+| Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `Engineering-Incidents-Playbook` | подключён | 52 | 34 | 203 | 0 | 0 | 168 | 123 | 9 | 0 | 29 | 7 | 107 |  |
+| `Stepik-Python-Grader` | подключён | 187 | 132 | 195 | 8 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
+| `ArtVsMark` | подключён | 29 | 18 | 195 | 8 | 0 | 139 | 94 | 12 | 0 | 23 | 0 | 42 |  |
+| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 22 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
+| `Glossary-Python` | подключён | 0 | 0 | 181 | 22 | 0 | 117 | 60 | 12 | 0 | 29 | 16 | 78 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 4 | 4 | 203 | 0 | 0 | 179 | 147 | 24 | 0 | 8 | 0 | 152 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -305,15 +305,15 @@
 | `Glossary-Python` | `tests/test_roles.py` | 2 |
 | `Glossary-Python` | `tests/test_rules_bindings.py` | 2 |
 | `Glossary-Python` | _остальные_ · _the rest_ | 40 механизмов по одному правилу; без названного адреса: 0 из 101 |
-| `Engineering-Pipeline-Mechanisms` | `tests/test_gates_reject.py` | 22 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_gates_reject.py` | 23 |
 | `Engineering-Pipeline-Mechanisms` | `AGENTS.md` | 17 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/ci_complete.py` | 17 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/agent_pr.py` | 16 |
 | `Engineering-Pipeline-Mechanisms` | `.pipeline.yml` | 12 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_version.py` | 12 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/review_findings.py` | 12 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_complete.py` | 12 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/ci.yml` | 11 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/review_findings.py` | 11 |
 | `Engineering-Pipeline-Mechanisms` | `docs/behaviour.md` | 10 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_journal.py` | 10 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/bindings.json` | 9 |
@@ -338,15 +338,17 @@
 | `Engineering-Pipeline-Mechanisms` | `facts.json` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/debt.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_automerge.py` | 5 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_docs_shape.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_facts.py` | 5 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_review_findings.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `.github/labels.yml` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/rules-inbox.yml` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/proposals.json` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/002-review-taken-from-two-neighbours.md` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/changerefs.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/labels.py` | 4 |
-| `Engineering-Pipeline-Mechanisms` | `tests/test_docs_shape.py` | 4 |
-| `Engineering-Pipeline-Mechanisms` | `tests/test_review_findings.py` | 4 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/main_red.py` | 4 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/unlooked.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_source_hygiene.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/badges.yml` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/001-attribution-of-merged-1.md` | 3 |
@@ -354,9 +356,9 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_required_context.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_rule_links.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/family.py` | 3 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/main_red.py` | 3 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/unlooked.py` | 3 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_decisions_format.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gaps_section.py` | 3 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_pipeline_checks.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_platform_shape.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `.claude/hooks/push_guard.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/automerge.yml` | 2 |
@@ -369,6 +371,7 @@
 | `Engineering-Pipeline-Mechanisms` | `claude.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/004-schedules-stay-service-observes.md` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/011-merging-is-handed-to-the-platform.md` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `docs/roles.md` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `main-red.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `rules-inbox.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_contract.py` | 2 |
@@ -376,17 +379,17 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_pipeline.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/findings.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/journal.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/paths.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/release.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/task_shape.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/version.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `task-items.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/fixtures/check-runs.shape.json` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_changerefs.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `tests/test_decisions_format.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_package_at_the_consumer.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `tests/test_pipeline_checks.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_schedules.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 65 механизмов по одному правилу; без названного адреса: 0 из 174 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 68 механизмов по одному правилу; без названного адреса: 0 из 179 |
 
 ## Правила · Rules
 
@@ -458,7 +461,7 @@
 | 064 | действует | действует | действует | действует | действует | действует |
 | 065 | действует | действует | нет предмета | действует | нет предмета | нет предмета |
 | 066 | нет предмета | действует | нет предмета | нет предмета | нет предмета | нет предмета |
-| 067 | действует | действует | действует | нет предмета | нет предмета | нет предмета |
+| 067 | действует | действует | действует | нет предмета | нет предмета | действует |
 | 068 | действует | действует | действует | действует | действует | действует |
 | 069 | нет предмета | действует | действует | действует | нет предмета | действует |
 | 070 | нет предмета | действует | действует | действует | нет предмета | действует |
@@ -473,13 +476,13 @@
 | 079 | действует | нет предмета | нет предмета | нет предмета | нет предмета | нет предмета |
 | 080 | действует | действует | действует | действует | действует | действует |
 | 081 | нет предмета | действует | нет предмета | действует | нет предмета | нет предмета |
-| 082 | действует | действует | действует | действует | действует | нет предмета |
-| 083 | нет предмета | действует | действует | нет предмета | нет предмета | нет предмета |
+| 082 | действует | действует | действует | действует | действует | действует |
+| 083 | нет предмета | действует | действует | нет предмета | нет предмета | действует |
 | 084 | действует | действует | действует | отклонено | нет предмета | действует |
 | 085 | действует | действует | нет предмета | нет предмета | нет предмета | действует |
 | 086 | действует | действует | нет предмета | действует | нет предмета | действует |
 | 087 | нет предмета | действует | нет предмета | действует | нет предмета | действует |
-| 088 | действует | действует | нет предмета | действует | нет предмета | нет предмета |
+| 088 | действует | действует | нет предмета | действует | нет предмета | действует |
 | 089 | действует | действует | действует | отклонено | действует | действует |
 | 090 | действует | действует | действует | действует | действует | действует |
 | 091 | действует | действует | действует | действует | нет предмета | действует |
@@ -487,7 +490,7 @@
 | 093 | действует | действует | действует | действует | действует | действует |
 | 094 | нет предмета | действует | действует | нет предмета | нет предмета | действует |
 | 095 | нет предмета | действует | нет предмета | действует | нет предмета | нет предмета |
-| 096 | действует | действует | нет предмета | действует | действует | нет предмета |
+| 096 | действует | действует | нет предмета | действует | действует | действует |
 | 097 | действует | действует | действует | действует | действует | действует |
 | 098 | действует | действует | нет предмета | действует | действует | действует |
 | 099 | действует | действует | нет предмета | действует | действует | действует |
