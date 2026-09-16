@@ -43,6 +43,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -73,6 +74,20 @@ DERIVED = (
     # потребителя — четыре за одну смену, при том что читают другую копию.
     # Рисует их badges.yml на каждый толчок в main и кладёт на свою ветку.
 )
+
+
+#: Ветка, на которой лежит ОПУБЛИКОВАННАЯ копия производных.
+#:
+#: ПОЧЕМУ НЕ `HEAD`. До 4 сентября сводка лежала в общей ветке, и «отличается
+#: от истории» означало «отличается от опубликованного» — одно и то же. В тот
+#: день #330 увёз её на отдельную ветку и записал оба файла в `.gitignore`
+#: (правило 160), и вопрос распался надвое: в `HEAD` их нет вовсе, а
+#: `git status` игнорируемых не показывает. Ответ «ничего не изменилось»
+#: стал приходить ВСЕГДА — 0 пробуждений публикации за 321 прогон.
+#:
+#: Тем же коммитом #330 был заведён шаг «разбудить публикацию»: механизм
+#: родился слепым, и отказ у него бесшумный — код 0, то есть зелёный (039).
+PUBLISHED_REF = os.environ.get("DERIVED_PUBLISHED_REF", "origin/badges")
 
 
 def run(args: list[str], cwd: Path) -> tuple[int, str]:
@@ -108,28 +123,37 @@ def changed(root: Path) -> tuple[list[str] | None, str]:
     return names, out
 
 
-def differ(root: Path) -> tuple[list[str] | None, str]:
-    """Производные, отличающиеся от того, что ЛЕЖИТ в истории.
+def опубликовано(root: Path, name: str) -> tuple[str | None, str, str | None]:
+    """Содержимое ОПУБЛИКОВАННОЙ копии производного: текст, откуда, жалоба.
 
-    Не «что изменил этот запуск». Разница видна на втором запуске подряд:
-    первый пересобрал и отличается от истории, второй ничего не менял — и
-    сказал бы «обновлять нечего» при грязных производных на диске. Замер:
-    ровно так и получилось при первой сборке этого скрипта.
+    ДВА МЕСТА, И ВЫБИРАЕТ МЕЖДУ НИМИ ФАКТ, А НЕ НАСТРОЙКА. Производное,
+    лежащее в общей ветке, сверяется с ней: скрипт ездит и к потребителям, где
+    сводка бывает закоммичена. Производное, которого в общей ветке НЕТ, — с
+    веткой публикации: спрашивать про него `HEAD` значит спрашивать про то,
+    чего там не было никогда, и получать «не изменилось» всегда.
+
+    ВЕТКА ПУБЛИКАЦИИ НЕДОСТУПНА — ЭТО ЖАЛОБА, А НЕ ТИШИНА. Считаем такое
+    изменением: лишнее пробуждение публикации безвредно, она сама решает,
+    коммитить ли, а пропущенное — та самая протухшая картинка. Ложный отказ
+    дороже пропуска наоборот (051), и потому здесь громко, но не смертельно.
     """
-    rc, out = run(["git", "-c", "core.quotePath=false", "diff", "--name-only",
-                   "HEAD", "--", *DERIVED], root)
+    rc, _ = run(["git", "cat-file", "-e", f"HEAD:{name}"], root)
+    if rc == 0:
+        rc, out = run(["git", "show", f"HEAD:{name}"], root)
+        return (out if rc == 0 else None), "HEAD", None
+
+    rc, _ = run(["git", "rev-parse", "--verify", "--quiet", PUBLISHED_REF], root)
     if rc != 0:
-        return None, out
-    names = {n.strip() for n in out.splitlines() if n.strip()}
-    # Файла может ещё не быть в истории — тогда он не в `diff`, а в untracked.
-    known, raw = changed(root)
-    if known is None:
-        return None, raw
-    names |= {n for n in known if n in DERIVED}
-    return sorted(n for n in names if not only_volatile(root, n)), out
+        return None, PUBLISHED_REF, (
+            f"{name}: в общей ветке файла нет, а ветка публикации "
+            f"{PUBLISHED_REF} недоступна — сверить не с чем, считаю изменением")
+
+    rc, out = run(["git", "show", f"{PUBLISHED_REF}:{name}"], root)
+    # Файла на ветке публикации ещё нет — это первая публикация, а не отказ.
+    return (out if rc == 0 else None), PUBLISHED_REF, None
 
 
-def only_volatile(root: Path, name: str) -> bool:
+def совпало_без_летучего(было: str, стало: str, name: str) -> bool:
     """Отличие свелось к полю, которое меняется само по себе.
 
     Дата последнего чтения меняется каждым прогоном независимо от данных. Файл
@@ -138,19 +162,22 @@ def only_volatile(root: Path, name: str) -> bool:
     глядя (051) — то есть механизм починил бы свежесть способом, который её
     ломает.
 
-    ГРАНИЦА. Работает только по JSON и только по верхнему уровню записи
-    потребителя. Нечитаемое сравнить нечем, и такое считается ОТЛИЧИЕМ:
-    промолчать о непонятном — худший из двух исходов.
+    ГРАНИЦА. Работает только по JSON и только по верхнему уровню документа и
+    записи потребителя. Нечитаемое сравнить нечем, и такое считается
+    ОТЛИЧИЕМ: промолчать о непонятном — худший из двух исходов.
     """
+    # ТЕКСТ СРАВНИВАЕТСЯ ПЕРВЫМ, И ЭТО НЕ ОПТИМИЗАЦИЯ. Раньше разбор JSON шёл
+    # после git, который уже установил отличие; теперь он ПЕРВИЧЕН, и на
+    # нечитаемом содержимом («исходное\n» в наборе самопроверки) отвечал
+    # «отличается» про два одинаковых файла. Поймано самопроверкой, а не глазом.
+    if было == стало:
+        return True
     if not name.endswith(".json"):
         return False
-    rc, head = run(["git", "show", f"HEAD:{name}"], root)
-    if rc != 0:
-        return False
     try:
-        was = json.loads(head)
-        now = json.loads((root / name).read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+        was = json.loads(было)
+        now = json.loads(стало)
+    except ValueError:
         return False
     for doc in (was, now):
         # ДВА УРОВНЯ, И ВТОРОЙ СТОИЛ ЦИКЛА. Летучее поле есть и внутри записи
@@ -165,6 +192,36 @@ def only_volatile(root: Path, name: str) -> bool:
             for key in VOLATILE:
                 entry.pop(key, None)
     return was == now
+
+
+def differ(root: Path) -> tuple[list[str] | None, str, list[str]]:
+    """Производные, отличающиеся от того, что ОПУБЛИКОВАНО. И жалобы по пути.
+
+    Не «что изменил этот запуск». Разница видна на втором запуске подряд:
+    первый пересобрал и отличается от опубликованного, второй ничего не менял
+    — и сказал бы «обновлять нечего» при свежих производных на диске.
+
+    Сравнивается СОДЕРЖИМОЕ, а не отчёт git о дереве. Отчёт о дереве молчит
+    про игнорируемые файлы, и на нём механизм и ослеп (#492).
+    """
+    вышло: list[str] = []
+    жалобы: list[str] = []
+    for name in DERIVED:
+        путь = root / name
+        if not путь.exists():
+            continue                    # сборщик его не делает — не наш предмет
+        try:
+            стало = путь.read_text(encoding="utf-8")
+        except OSError as e:
+            жалобы.append(f"{name}: не прочитан с диска — {e}")
+            вышло.append(name)
+            continue
+        было, откуда, беда = опубликовано(root, name)
+        if беда:
+            жалобы.append(беда)
+        if было is None or not совпало_без_летучего(было, стало, name):
+            вышло.append(name)
+    return sorted(вышло), "", жалобы
 
 
 def refresh(root: Path) -> tuple[int, list[str], list[str]]:
@@ -217,10 +274,10 @@ def refresh(root: Path) -> tuple[int, list[str], list[str]]:
                         + ", ".join(stray))
         return 2, [], problems
 
-    touched, raw = differ(root)
-    if touched is None:
-        problems.append(f"история не прочитана: {raw.strip()}")
-        return 2, [], problems
+    touched, _, жалобы = differ(root)
+    # ЖАЛОБА ЕДЕТ ВМЕСТЕ С ИСХОДОМ, А НЕ ВМЕСТО НЕГО. Недоступная ветка
+    # публикации не отказ: она названа вслух и считается изменением (051).
+    problems.extend(жалобы)
     return (1 if touched else 0), touched, problems
 
 
@@ -377,9 +434,64 @@ def selftest() -> int:
     if rc != 1 or names != ["export/where.json"]:
         bad.append(f"данные рядом со временем обязаны дать 1, дали {rc} {names}")
 
+    # ── #492: ПРОИЗВОДНОЕ ВНЕ ОБЩЕЙ ВЕТКИ. Ради этой границы всё и правлено.
+    #
+    # С 4 сентября сводка живёт на ветке публикации, а в общей ветке её нет и
+    # она в `.gitignore`. Прежний разбор спрашивал про неё `git status`, тот
+    # игнорируемых не показывает — и ответ «не изменилось» приходил ВСЕГДА.
+    # Отказ бесшумный: код 0, зелёный. Проверяется обеими сторонами (140).
+    def вне_общей(опубликованное: str, на_диске: str, с_веткой: bool = True) -> Path:
+        d = Path(tempfile.mkdtemp())
+        run(["git", "init", "-q"], d)
+        run(["git", "config", "user.email", "s@e"], d)
+        run(["git", "config", "user.name", "s"], d)
+        (d / "scripts").mkdir()
+        (d / "export").mkdir()
+        for script, _ in BUILDERS:
+            (d / script).write_text("pass\n", encoding="utf-8")
+        for name in DERIVED:
+            (d / name).write_text(опубликованное, encoding="utf-8")
+        run(["git", "add", "-A"], d)
+        run(["git", "commit", "-qm", "сводка ещё в общей ветке"], d)
+        if с_веткой:
+            run(["git", "branch", "публикация"], d)
+        # ...и уходит из неё, как это сделало #330.
+        run(["git", "rm", "-q", "--cached", *DERIVED], d)
+        (d / ".gitignore").write_text("\n".join(DERIVED) + "\n", encoding="utf-8")
+        run(["git", "add", "-A"], d)
+        run(["git", "commit", "-qm", "сводка ушла на ветку публикации"], d)
+        for name in DERIVED:
+            (d / name).write_text(на_диске, encoding="utf-8")
+        return d
+
+    global PUBLISHED_REF
+    прежняя_ветка = PUBLISHED_REF
+    PUBLISHED_REF = "публикация"
+    try:
+        # Опубликованное отличается от пересобранного — это работа.
+        rc, names, _ = refresh(вне_общей("опубликовано\n", "пересобрано\n"))
+        if rc != 1 or names != sorted(DERIVED):
+            bad.append(f"игнорируемое производное, отличное от опубликованного, "
+                       f"обязано дать 1 и оба имени, дало {rc} {names}")
+
+        # ...и обратная сторона: совпало — значит будить публикацию незачем.
+        rc, names, _ = refresh(вне_общей("одно и то же\n", "одно и то же\n"))
+        if rc != 0 or names:
+            bad.append(f"игнорируемое производное, равное опубликованному, "
+                       f"обязано дать 0, дало {rc} {names}")
+
+        # Ветки публикации нет — считаем изменением и ГОВОРИМ об этом (039, 051).
+        rc, names, problems = refresh(
+            вне_общей("всё равно\n", "всё равно\n", с_веткой=False))
+        if rc != 1 or not any("недоступна" in p for p in problems):
+            bad.append(f"недоступная ветка публикации обязана дать 1 и жалобу, "
+                       f"дала {rc} {problems}")
+    finally:
+        PUBLISHED_REF = прежняя_ветка
+
     for b in bad:
         print(f"  ✗ {b}", file=sys.stderr)
-    print(f"самопроверка обновления производных: случаев 13, провалов {len(bad)}",
+    print(f"самопроверка обновления производных: случаев 16, провалов {len(bad)}",
           file=sys.stderr if bad else sys.stdout)
     return 1 if bad else 0
 
