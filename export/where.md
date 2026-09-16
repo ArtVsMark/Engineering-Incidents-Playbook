@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 29 | 18 | 195 | 8 | 0 | 139 | 94 | 12 | 0 | 23 | 0 | 42 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 22 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 181 | 22 | 0 | 117 | 60 | 12 | 0 | 29 | 16 | 78 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 4 | 4 | 203 | 0 | 0 | 179 | 147 | 24 | 0 | 8 | 0 | 152 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 4 | 4 | 203 | 0 | 0 | 180 | 148 | 24 | 0 | 8 | 0 | 154 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -309,9 +309,9 @@
 | `Engineering-Pipeline-Mechanisms` | `AGENTS.md` | 17 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/ci_complete.py` | 17 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/agent_pr.py` | 16 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/review_findings.py` | 13 |
 | `Engineering-Pipeline-Mechanisms` | `.pipeline.yml` | 12 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_version.py` | 12 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/review_findings.py` | 12 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_complete.py` | 12 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/ci.yml` | 11 |
 | `Engineering-Pipeline-Mechanisms` | `docs/behaviour.md` | 10 |
@@ -389,7 +389,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_package_at_the_consumer.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_schedules.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 68 механизмов по одному правилу; без названного адреса: 0 из 179 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 70 механизмов по одному правилу; без названного адреса: 0 из 180 |
 
 ## Правила · Rules
 
@@ -496,7 +496,7 @@
 | 099 | действует | действует | нет предмета | действует | действует | действует |
 | 100 | действует | действует | действует | действует | действует | действует |
 | 101 | действует | действует | нет предмета | действует | нет предмета | действует |
-| 102 | действует | действует | нет предмета | действует | нет предмета | нет предмета |
+| 102 | действует | действует | нет предмета | действует | нет предмета | действует |
 | 103 | нет предмета | действует | нет предмета | нет предмета | нет предмета | нет предмета |
 | 104 | действует | действует | действует | действует | действует | действует |
 | 105 | действует | действует | действует | действует | нет предмета | действует |

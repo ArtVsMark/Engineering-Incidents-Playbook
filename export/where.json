@@ -1,7 +1,7 @@
 {
   "schema": "1.3",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-16T17:58:47+00:00",
+  "generated_at": "2026-09-16T18:06:25+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -4182,11 +4182,11 @@
       "read_at": "2026-09-16",
       "answered": 203,
       "by_status": {
-        "active": 179,
-        "not-applicable": 24
+        "active": 180,
+        "not-applicable": 23
       },
       "by_mechanism": {
-        "gate": 147,
+        "gate": 148,
         "pipeline": 24,
         "document": 8
       },
@@ -4292,7 +4292,7 @@
         "099": "active",
         "100": "active",
         "101": "active",
-        "102": "not-applicable",
+        "102": "active",
         "103": "not-applicable",
         "104": "active",
         "105": "active",
@@ -4735,6 +4735,10 @@
         "101": {
           "mechanism": "gate",
           "where": "packages/transport/ghrest.py — постоянный отказ отделён от временного и не повторяется: 404 — свой род, 401/403 без заголовков квоты — «причина другая», а не лимит. Исчерпанной квоте механизм не назначает своей паузы: срок берётся из retry-after либо x-ratelimit-reset площадки. Держат tests/test_ghrest.py: test_exhausted_quota_is_its_own_kind, test_forbidden_without_quota_headers_is_not_rate_limit, test_retry_after_alone_is_enough_for_rate_limit"
+        },
+        "102": {
+          "mechanism": "gate",
+          "where": ".rules/leniency.json — таблица послаблений: что именно прощается, где, почему и чем замерено; пять записей. Держит её tests/test_leniency.py: у каждой строки есть причина и замер с днём, имя из строки живёт по названному адресу (переименование расходится с таблицей молча), и всякое пословное сходство в scripts/ обязано быть объявлено — разбор ищет объемлющую ФУНКЦИЮ вызова, а не файл. Строгий режим — `scripts/review_findings.py --strict`: сверяет заголовки дословно и выключает и сходство, и совпадение адресов; проверяется он прогоном на замеренной паре (сходство 0.923 при пороге 0.85), а не наличием флага, и отдельно проверяется, что режим доходит до поиска записи в реестре. ПРЕДЕЛ НАЗВАН в самой таблице: полноты по нормализациям гейт не держит — предикат «это сравнение с послаблением» по дереву не отличим от обычного приведения регистра, и новая нормализация может не попасть в таблицу молча (046)"
         },
         "104": {
           "mechanism": "pipeline",
