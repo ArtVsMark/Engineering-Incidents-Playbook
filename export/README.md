@@ -231,11 +231,36 @@ fails the build.
 | Поле · Field | Значения · Values | Обязательно · Required |
 |---|---|---|
 | `status` | `active` · `rejected` · `not-applicable` · `unreviewed` | всегда · always |
-| `mechanism` | `gate` · `pipeline` · `document` · `none` (устар. · deprecated: `process-step`) | при `active` · when `active` |
+| `mechanism` | `gate` · `pipeline` · `skill` · `document` · `none` (устар. · deprecated: `process-step`) | при `active` · when `active` |
 | `where` | **разрешимый адрес** механизма: путь к файлу, образец вида `.github/workflows/*.yml` или корневой документ по имени. Проза рядом — пожалуйста, вместо адреса — нет · a **resolvable address**: a file path, a pattern like `.github/workflows/*.yml`, or a root document by name. Prose alongside is fine, prose instead of an address is not | при `active` и механизме не `none` · when `active` and the mechanism is not `none` |
 | `why` | причина решения · the reason for the decision | при `rejected`, `not-applicable` и вместе с `document_reason` · with `rejected`, `not-applicable` and alongside `document_reason` |
 | `machine_half` | ЧТО именно следует из данных целиком и почему оно всё-таки не построено · WHAT exactly follows from the data in full, and why it is still not built | при `active` и `mechanism: none` · when `active` and `mechanism: none` |
+| `skill` | адрес каталога навыка: `.claude/skills/<имя>`. Проверяется существование `SKILL.md`, непустые `name` и `description` и совпадение имени с каталогом · the address of a skill directory: `.claude/skills/<name>`. Checked for an existing `SKILL.md`, non-empty `name` and `description`, and a name matching the directory | при `mechanism: skill` — обязательно; рядом с `gate` или `pipeline` — когда навык держит ВТОРУЮ половину; при `none` запрещено · required with `mechanism: skill`; allowed alongside `gate` or `pipeline` when the skill holds the SECOND half; forbidden with `none` |
 | `document_reason` | `impossible` — машинной половины нет вовсе, документ и есть предел · `not-yet` — половина есть и не построена | при `active` и `mechanism: document`, у новых и тронутых ответов · when `active` and `mechanism: document`, for new and touched answers |
+
+**Почему появился `skill` (контракт 1.4).** Навык агента сильнее документа и
+слабее конвейера, и обе половины измеримы. Сильнее документа — потому что у
+документа нет МОМЕНТА: свод читается один раз, при старте окна, и правка
+`AGENTS.md` живому окну не видна вовсе; навык читается в момент вызова. Слабее
+гейта и конвейера — потому что **навык не краснеет**: он не отказывает, а его
+срабатывание есть суждение модели по описанию, а не машинное совпадение. Поэтому
+место ему в порядке между `pipeline` и `document`, а не рядом с гейтом.
+
+**Почему рядом со значением заведено ПОЛЕ.** Навык бывает единственным, что
+держит правило, и бывает второй половиной: гейт берёт то, что берётся машинно,
+навык — остаток, которого в дереве нет по построению. Одним значением второй
+случай не выразить: пришлось бы выбирать, какую половину спрятать. Оба первых
+ответа в экосистеме — вторые: проект механизмов держит так 047 и 082, объявляя
+при этом `gate`. Считается это двумя числами, а не одним, по той же причине.
+
+**Адрес, а не проза.** `mechanism: skill` — утверждение о механизме, и оно
+обязано проверяться механизмом. У навыка проверяемого ровно столько: он есть в
+дереве, у него непустое описание — без него площадка навык не позовёт, — и имя
+внутри совпадает с каталогом. Что навык СРАБОТАЛ, не проверяет никто, и это его
+названная граница, а не упущение.
+
+**Проверяет свой гейт проекта, а не каталог.** Каталог читает чужой ответ по
+HTTPS и чужого дерева не видит — та же граница, что у `where`.
 
 **Почему `document` разбирается надвое (контракт 1.3).** У `none` разбор
 спрашивался всегда, у `document` — ничего, при том что предмет ровно тот же:
@@ -253,6 +278,34 @@ fails the build.
 ровно то, чего правило 146 не разрешает. Каталог свои 28 ответов разобрал
 целиком, потому что он издатель, а не потому, что это требуется от всех сразу
 (197).
+
+**Why `skill` was added (contract 1.4).** An agent skill is stronger than a
+document and weaker than a pipeline, and both halves are measurable. Stronger
+than a document because a document has no MOMENT: the rulebook is read once, at
+session start, and an edit to `AGENTS.md` is invisible to a running session; a
+skill is read at the moment it is invoked. Weaker than a gate or a pipeline
+because **a skill does not go red**: it refuses nothing, and its triggering is a
+model's judgement over a description, not a mechanical match. Hence its place in
+the ordering is between `pipeline` and `document`, not next to the gate.
+
+**Why a FIELD alongside the value.** A skill is sometimes the only thing holding
+a rule, and sometimes the second half: the gate takes what can be taken
+mechanically, the skill takes the remainder whose subject is not in the tree by
+construction. One value cannot express the second case — you would have to
+choose which half to hide. Both first answers in this ecosystem are second
+halves: the mechanisms project holds 047 and 082 that way while declaring
+`gate`. It is counted as two numbers rather than one for the same reason.
+
+**An address, not prose.** `mechanism: skill` is a claim about a mechanism, and
+it must be checked by a mechanism. There is exactly this much to check: the
+skill exists in the tree, its description is non-empty — without one the
+platform will not surface it — and the name inside matches the directory. That
+the skill actually FIRED is checked by nobody, and that is its named boundary,
+not an omission.
+
+**The project's own gate checks it, not the catalogue.** The catalogue reads a
+consumer's answer over HTTPS and cannot see their tree — the same boundary as
+`where`.
 
 **Why `document` is split in two (contract 1.3).** `none` was always asked for a
 split; `document` was asked for nothing — even though the subject is identical:
@@ -713,8 +766,8 @@ having no gate.
 {
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
-    "export": "1.7", "bindings": "1.3", "consumers": "1.1",
-    "proposals": "1.1", "showcase": "1.1", "where": "1.2"
+    "export": "1.7", "bindings": "1.4", "consumers": "1.1",
+    "proposals": "1.1", "showcase": "1.1", "where": "1.3"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
                                                // build time, example value

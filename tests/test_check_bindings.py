@@ -944,3 +944,132 @@ def test_за_пределами_проекции_имя_остаётся_нах
             export_of("001"))
     assert cb.main() == 1
     assert "разошлась с фактом" in capsys.readouterr().err
+
+
+# ── навык: адрес, ревизия дерева и два числа ─────────────────────────────
+#
+# ПОЧЕМУ ЭТО ПРОВЕРЯЕТСЯ ТЕСТАМИ, А НЕ ЖИВЫМ ОТВЕТОМ. Навыков в дереве
+# каталога сегодня нет ни одного, и ни один его ответ поля `skill` не несёт —
+# то есть предмет здесь нулевой, и гейт на живых данных зеленел бы, ничего не
+# держа (146). Предмет у механизма при этом ЕСТЬ и он чужой: проект механизмов
+# держит навыком половину ответов на 047 и 082. Поэтому отказ прогоняется тем,
+# что он обязан отвергнуть (140, 145), а не ожиданием первой записи.
+
+def навык_в(repo: Path, имя: str, *, name: str | None = None,
+            description: str = "что делает и когда звать") -> None:
+    write(repo / ".claude" / "skills" / имя / "SKILL.md",
+          f"---\nname: {имя if name is None else name}\n"
+          f"description: {description}\n---\n\n# Навык\n")
+
+
+def test_навык_без_адреса_это_находка(monkeypatch, repo, capsys):
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "skill",
+                               "where": ".claude/skills/probe/SKILL.md — держит"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "каким — не сказано" in capsys.readouterr().err
+
+
+def test_проза_вместо_адреса_навыка_это_находка(monkeypatch, repo, capsys):
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "skill",
+                               "where": ".claude/skills/probe/SKILL.md — держит",
+                               "skill": "навык перечитывания свода"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "это не адрес" in capsys.readouterr().err
+
+
+def test_навык_при_механизме_ничем_это_противоречие(monkeypatch, repo, capsys):
+    навык_в(repo, "probe")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "none",
+                               "where": "CLAUDE.md — раздел про окна",
+                               "why": "требует суждения",
+                               "machine_half": "ничего не следует из данных",
+                               "skill": ".claude/skills/probe"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "оба утверждения" in capsys.readouterr().err
+
+
+def test_объявленного_навыка_может_не_быть_в_дереве(monkeypatch, repo, capsys):
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "skill",
+                               "where": ".claude/skills/probe/SKILL.md — держит",
+                               "skill": ".claude/skills/probe"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "SKILL.md нет" in capsys.readouterr().err
+
+
+def test_навык_без_описания_это_находка(monkeypatch, repo, capsys):
+    навык_в(repo, "probe", description="")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "skill",
+                               "where": ".claude/skills/probe/SKILL.md — держит",
+                               "skill": ".claude/skills/probe"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "`description`" in capsys.readouterr().err
+
+
+def test_имя_навыка_обязано_совпасть_с_каталогом(monkeypatch, repo, capsys):
+    навык_в(repo, "probe", name="совсем-другое")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "skill",
+                               "where": ".claude/skills/probe/SKILL.md — держит",
+                               "skill": ".claude/skills/probe"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "расходятся молча" in capsys.readouterr().err
+
+
+def test_целый_навык_проходит(monkeypatch, repo):
+    навык_в(repo, "probe")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "skill",
+                               "where": ".claude/skills/probe/SKILL.md — держит",
+                               "skill": ".claude/skills/probe"}}},
+            export_of("001"))
+    assert cb.main() == 0
+
+
+def test_навык_второй_половиной_при_гейте_законен(monkeypatch, repo, capsys):
+    # ГЛАВНЫЙ СЛУЧАЙ: гейт берёт машинную половину, навык — остаток. Оба
+    # объявлены, и ни один не спрятан. Именно так отвечает проект механизмов.
+    write(repo / "scripts/check_probe.py",
+          '"""Проба.\n\nРеализует правила каталога:\n  001 — держит половину.\n"""\n')
+    навык_в(repo, "probe")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "gate",
+                               "where": "scripts/check_probe.py — машинная половина",
+                               "skill": ".claude/skills/probe"}}},
+            export_of("001"))
+    assert cb.main() == 0
+    напечатано = capsys.readouterr().out
+    assert "держится навыком: 1" in напечатано
+    assert "второй половиной при другом механизме у 1" in напечатано
+
+
+def test_навык_целиком_и_половиной_считаются_порознь(monkeypatch, repo, capsys):
+    # Сложить их значило бы повторить `process-step`: одно число о двух
+    # разных состояниях — машинного отказа нет вовсе против «он есть и покрывает часть».
+    write(repo / "scripts/check_probe.py",
+          '"""Проба.\n\nРеализует правила каталога:\n  002 — держит половину.\n"""\n')
+    навык_в(repo, "alpha")
+    навык_в(repo, "beta")
+    prepare(monkeypatch, repo,
+            {"rules": {
+                "001": {"status": "active", "mechanism": "skill",
+                        "where": ".claude/skills/alpha/SKILL.md — держит целиком",
+                        "skill": ".claude/skills/alpha"},
+                "002": {"status": "active", "mechanism": "gate",
+                        "where": "scripts/check_probe.py — машинная половина",
+                        "skill": ".claude/skills/beta"}}},
+            export_of("001", "002"))
+    assert cb.main() == 0
+    напечатано = capsys.readouterr().out
+    assert "целиком у 1, второй половиной при другом механизме у 1" in напечатано
+    assert "навыком 1" in напечатано
