@@ -66,7 +66,7 @@ from check_bindings import MECHANISM_ORDER, addressed  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 CONSUMERS = ROOT / ".rules" / "consumers.json"
 EXPORT_JSON = ROOT / "export" / "where.json"
-SUMMARY_SCHEMA = "1.2"
+SUMMARY_SCHEMA = "1.3"
 
 EXPORT_MD = ROOT / "export" / "where.md"
 RULES = ROOT / "export" / "rules.json"
@@ -353,6 +353,7 @@ MECHANISM_COLUMNS = MECHANISM_ORDER
 MECHANISM_HEAD = {
     "gate": "Гейтом · Gate",
     "pipeline": "Конвейером · Pipeline",
+    "skill": "Навыком · Skill",
     "document": "Документом · Document",
     "none": "Ничем · Nothing",
     "process-step": "Шагом · Step",
@@ -1097,6 +1098,12 @@ def main() -> int:
         # читателя прежней версии не ломает — он его просто не видит, — но
         # номер двигается всё равно: состав полей изменился, и молчание об
         # этом сделало бы номер бесполезным (164).
+        #
+        # 1.3: в словарь механизмов добавлено `skill`. У СВОДКИ ключ приходит
+        # от данных и появляется, лишь когда им кто-то отвечает, — но у
+        # ПУБЛИКУЕМОЙ ТАБЛИЦЫ колонка берётся из MECHANISM_COLUMNS и встаёт
+        # сразу. Состав опубликованного изменился, значит номер двигается: то
+        # же основание, что у 1.2, и та же цена по 157 — перечитать ответы.
         "schema": SUMMARY_SCHEMA,
         "catalogue": registry.get("consumers", [{}])[0].get("repo", ""),
         # Без отметки времени свежесть не отличить от застоя, а застывшая
