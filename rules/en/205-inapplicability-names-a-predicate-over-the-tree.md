@@ -99,8 +99,10 @@ no app at all". A predicate there degenerates into an event ("an app appears"),
 and it is more honest to call it an event than to pass it off as a check. Such an
 answer is legitimate — but the boundary is named, not stepped around.
 
-**Sign of violation:** an answer of "not applicable" with no path, no name and no
-command in it — nothing that can be run to yield a yes or a no.
+**Sign of violation:** an answer of "not applicable" carrying NEITHER of the two
+legitimate forms — no path, name or command that can be run, and no named event
+with the reason the predicate degenerates there. A missing predicate alone is not
+the sign: an answer working under the boundary above legitimately has none.
 
 ## Trace
 
