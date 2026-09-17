@@ -77,7 +77,8 @@ commit it was passed on is not verifiable.
   `refs/pull/N/merge`, identical for every event of that change;
 - a group with `cancel-in-progress: false` is out of scope: it evicts nothing,
   and a head in its name would only fragment the very queue it exists to
-  assemble (that is how our `automerge` and `thaw` are built);
+  assemble (that is how our `automerge`, `badges`, `task-state` and `thaw` are
+  built);
 - revisit the decision if the platform starts ordering delivery by commit — the
   assumption "arrived later, therefore newer" would then be true.
 
