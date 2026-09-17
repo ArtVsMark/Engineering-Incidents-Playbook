@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 207 | 0 | 0 | 172 | 124 | 9 | 0 | 28 | 11 | 110 |  |
+| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 207 | 0 | 0 | 172 | 125 | 9 | 0 | 28 | 10 | 110 |  |
 | `Stepik-Python-Grader` | подключён | 187 | 132 | 195 | 12 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 203 | 4 | 0 | 146 | 95 | 12 | 0 | 25 | 1 | 42 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 26 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
@@ -54,7 +54,6 @@
 | 199 | `ArtVsMark` — code: предмет есть и перебран: событийных прогонов в группе с cancel-in-progress: false у витрины два. .github/workflows/agent-pr.yml — будится пушем и внутри захода СПРАШИВАЕТ состояние: открыто ли уже изменение (gh pr list) и разошлась ли ветка с main, вместо того чтобы верить событию. .github/workflows/release-hold.yml — будится завершением чужого прогона и читает состояние проверок изменения через scripts/hold.py, а не исход разбудившего события. Остальные группы отменяют предыдущий заход (cancel-in-progress: true) и предметом правила не являются.; `Engineering-Pipeline-Mechanisms` — гейт: scripts/automerge.py::hand_over — заход очереди больше не ждёт зелёного внутри себя, и потому его смерть в очереди ничего не теряет: взведение у площадки ПЕРЕЖИВАЕТ прогон, который его выдал, и слияние случится без нового события. Прежде здесь стоял опрос внутри захода, заведённый от замера 10.09.2026 — 45 из 120 заходов умерли, не начав работу, — но он лечил следствие: держал исполнителя и упирался в собственный предел. Решение docs/decisions/011-merging-is-handed-to-the-platform.md отдало ожидание площадке. Держит это tests/test_automerge.py | `Engineering-Incidents-Playbook` |
 | 200 | `ArtVsMark` — документ: projects.json — у каждого показателя проекта либо источник значения, либо отказ с причиной; scripts/build_metrics.py::verify_absence проверяет, что отказ не устарел. Числа самой витрины перебраны 17 сентября на «может ли оно стать другим»: тесты, покрытие, проверки на изменение, выпуски, версии Python, звёзды, подписанные коммиты — все ходят, знаменателя по построению нет ни у одного.; `Engineering-Pipeline-Mechanisms` — гейт: tests/test_facts.py — значок правил считает держащиеся МАШИНОЙ от действующих, а не `answered/total`: прежнее число было равно знаменателю по построению и не могло сдвинуться никогда. Гейт сверяет, что значок несёт то же число, что и факты. | `Engineering-Incidents-Playbook` |
 | 202 | `Engineering-Incidents-Playbook` — гейт: .claude/hooks/push_guard.py — `ветка_воскресает`: перед толчком сверяет свою ссылку `refs/remotes/origin/<ветка>` с ответом площадки, и толчок в удалённую при слиянии ветку не уезжает вовсе. Предмет проверки задаёт `везёт_содержимое`: чистое удаление ссылки (`--delete`, `-d`, `:имя`) коммитов не переносит и пропускается, смешанная форма `git push origin своя :чужая` остаётся толчком содержимого, а адресат явной ссылки разворачивается через `цель` — `HEAD:другая` текущей ветки не касается и отказа не получает (051). Строку разбирает одна функция `толчки`, её ответу задаются все три вопроса файла; `Engineering-Pipeline-Mechanisms` — гейт: .claude/hooks/push_guard.py — толчок мимо текущей головы отвергается ДО вызова git. Ветку, слитую и удалённую площадкой, воскрешает любой следующий пуш в неё; здесь это ловится тем же сторожем, что и промах именем ветки. | `ArtVsMark` |
-| 206 | `Engineering-Pipeline-Mechanisms` — гейт: Правило родилось здесь, и оба его требования держатся механизмами того же дня. ВСЕ ФОРМЫ: tests/test_citation_applicability.py читает цитату правила в ДВУХ формах — markdown-ссылкой и голым номером в скобках; до 17.09.2026 читалась одна, и замер показал, что невидимого больше видимого (1744 упоминания голым числом против 1007 ссылками, и 23 правила названы только голым числом). НАБОР ФОРМ БЕРЁТСЯ ЗАМЕРОМ: tests/test_steps_speak_outward.py::test_the_pattern_sees_every_annotation_in_the_tree сверяет разбор аннотаций с сырым поиском по дереву — 62 из 62, — и именно он нашёл две формы, которых образец не видел никогда. ДВУСМЫСЛЕННОЕ ОБЪЯВЛЕНО ВСЛУХ: у голой формы названа асимметрия — опечатка в номере уходит молча, потому что в скобках ходят и коды ответа площадки; граница записана рядом с образцом, а не умолчана | `Engineering-Incidents-Playbook` |
 
 ## Сколько держит механизм · How much each mechanism holds
 
@@ -81,6 +80,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/link_trails.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 5 |
+| `Engineering-Incidents-Playbook` | `.claude/hooks/push_guard.py` | 4 |
 | `Engineering-Incidents-Playbook` | `.rules/consumers.json` | 4 |
 | `Engineering-Incidents-Playbook` | `.rules/schedules.json` | 4 |
 | `Engineering-Incidents-Playbook` | `CLAUDE.md` | 4 |
@@ -91,7 +91,6 @@
 | `Engineering-Incidents-Playbook` | `scripts/main_red.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/refresh_derived.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_inbox.py` | 4 |
-| `Engineering-Incidents-Playbook` | `.claude/hooks/push_guard.py` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/labels.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.rules/transport.json` | 3 |
 | `Engineering-Incidents-Playbook` | `action.yml` | 3 |
@@ -125,7 +124,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/review_findings.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 49 механизмов по одному правилу; без названного адреса: 0 из 161 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 49 механизмов по одному правилу; без названного адреса: 0 из 162 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 46 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 14 |
