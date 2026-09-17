@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T07:53:11+00:00",
+  "generated_at": "2026-09-17T08:06:48+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -7959,7 +7959,7 @@
         },
         "068": {
           "mechanism": "gate",
-          "where": ".github/labels.yml — список разрешительный; scripts/check_pr_meta.py краснеет на метке, которой файл не объявляет",
+          "where": "Списки в проекте разрешительные ПОВСЮДУ, а не в одном месте: .github/labels.yml — метка, которой файл не объявляет, краснеет (scripts/check_pr_meta.py); .rules/rerun.json — перезапускается только объявленное имя, обязательных там нет и быть не может; .rules/leniency.json — послабления при сравнении перечислены; .rules/protection.json — обход защиты законен только названный с причиной; scripts/kinds.py — виды механизма перечислены, а не выведены вычитанием; scripts/check_version.py — места, где число версии законно, объявлены константой ALLOWED; .github/workflows/review.yml и claude.yml — `--allowedTools` у каждого запуска агента, и не перечисленное запрещено само",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -8407,7 +8407,7 @@
         },
         "129": {
           "mechanism": "gate",
-          "where": ".rules/bindings.json — ответ по каждой записи каталога; scripts/pipeline_checks.py повторяет ту же форму для классов проверок; tests/test_bindings.py держит полноту ответа",
+          "where": ".rules/bindings.json — ответ по каждой записи каталога; scripts/pipeline_checks.py повторяет ту же форму для классов проверок; tests/test_bindings.py держит полноту ответа. Контракт назван целиком, а не одной его частью: `.rules/bindings.json` несёт `schema` — версию формы ответа, `answers_to` — версию ВЫГРУЗКИ, по которой ответы построены, `project` и `catalogue` — обратную ссылку на источник. Все четыре сверяются с живым каталогом: scripts/drift.py::catalogue_moved печатает отставание по каждому номеру порознь, а scripts/drift.py::reader_is_behind — по номеру, под который написан наш читатель чужой сводки",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -8599,7 +8599,7 @@
         },
         "154": {
           "mechanism": "gate",
-          "where": "changelog.d/README.md — род internal обязан назвать причину, и scripts/check_journal.py требует фрагмент; .github/labels.yml — раздел «чего здесь нет намеренно» с причиной у каждой невзятой метки",
+          "where": ".rules/bindings.json — ПЕРВЫЙ ПРЕДМЕТ ПРАВИЛА ЭТО НАШ СОБСТВЕННЫЙ ОТВЕТ КАТАЛОГУ: у `mechanism: none` обязательны `why` и `machine_half` — что именно следует из данных целиком и почему всё-таки не построено. Держит tests/test_bindings.py::test_active_names_its_mechanism_and_address и ::test_negative_answers_name_the_reason: «не держится ничем» без причины отвергается. Тот же уговор за пределами ответа: changelog.d/README.md — род internal обязан назвать причину, и scripts/check_journal.py требует фрагмент; .github/labels.yml — раздел «чего здесь нет намеренно» с причиной у каждой невзятой метки",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -8799,7 +8799,7 @@
         },
         "179": {
           "mechanism": "pipeline",
-          "where": ".github/workflows/ci.yml, agent-pr.yml, labels-sync.yml — группа отмены называет голову, а не только номер изменения",
+          "where": ".github/workflows/ci.yml, agent-pr.yml, labels-sync.yml — группа отмены называет голову, а не только номер изменения. ОБРАТНАЯ ПОЛОВИНА ПРАВИЛА ТОЖЕ ИСПОЛНЕНА, и она про другой предмет: там, где проверяется не коммит, а СОСТОЯНИЕ, головы в группе нет и отмена выключена — automerge.yml (`group: automerge`), arm.yml (`group: arm`), джобы записи находок (`group: findings-write`), все с `cancel-in-progress: false`. Голова там вернула бы гонку за свежесть вместо дописывания в общий список",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -8847,7 +8847,7 @@
         },
         "185": {
           "mechanism": "gate",
-          "where": ".rules/proposals.json — след предложения ведёт в дерево каталога и номера здесь не присваиваются; tests/test_bindings.py::test_proposals_assign_no_numbers держит это гейтом: поля id, number и rule в предложении — ошибка, номер присваивает каталог при приёме",
+          "where": ".rules/proposals.json — след предложения ведёт в дерево каталога и номера здесь не присваиваются; tests/test_bindings.py::test_proposals_assign_no_numbers держит это гейтом: поля id, number и rule в предложении — ошибка, номер присваивает каталог при приёме. Вторая половина — АДРЕС, КОТОРЫЙ ОБЯЗАН РАЗРЕШАТЬСЯ: scripts/check_rule_links.py сверяет каждую нашу ссылку на правило каталога с живой выгрузкой — имя файла берётся у владельца дерева, а не пишется по памяти, и ссылка на несуществующий слаг краснеет. Ловит это регулярно: за одну смену 17.09.2026 гейт поймал пять выдуманных имён правил",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -8863,7 +8863,7 @@
         },
         "187": {
           "mechanism": "gate",
-          "where": "scripts/ci_complete.py — пропущенная, отменённая и отсутствующая записи считаются отказом; tests/test_gates_complete.py прогоняет каждый из этих случаев",
+          "where": "scripts/ci_complete.py — пропущенная, отменённая и отсутствующая записи считаются отказом; tests/test_gates_complete.py прогоняет каждый из этих случаев. Признак нарушения, названный самим правилом, проверяется отдельно: scripts/ci_complete.py отвергает голову, на которой больше ОДНОЙ живой записи с именем обязательной проверки, — вердикт по такой голове неоднозначен, и молчаливый выбор между записями был бы выбором наугад",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -8887,7 +8887,7 @@
         },
         "190": {
           "mechanism": "pipeline",
-          "where": ".rules/bindings.json и .rules/proposals.json собраны scripts/onboard_consumer.py каталога, .github/workflows/rules-inbox.yml подключён его действием — форма ответа спрошена у соседа, а не воспроизведена по памяти",
+          "where": ".rules/bindings.json и .rules/proposals.json собраны scripts/onboard_consumer.py каталога, .github/workflows/rules-inbox.yml подключён его действием — форма ответа спрошена у соседа, а не воспроизведена по памяти. ВИТРИНА ЧУЖИХ ЧИСЕЛ — scripts/family.py и scripts/build_facts.py: разрез по сводке каталога спрашивает источник, а не помнит его форму. Расхождение здесь НАХОДКА, А НЕ ОТКАЗ СБОРКИ: непрочитанная сводка даёт `read: false` с названной причиной, а не ноль (family.NotRun), разошедшаяся форма печатается рядом с числами и заводит запись дрейфа `family-schema` (scripts/drift.py::reader_is_behind). Право остановить наш конвейер правкой у себя сосед таким образом не получает",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
