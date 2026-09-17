@@ -243,13 +243,37 @@ def test_gruppa_bez_otmeny_pod_pravilo_ne_podpadaet(tmp_path):
 
 
 def test_predmet_sostoyanie_nazvan_spiskom(tmp_path):
-    """ГРАНИЦА ИЗ САМОГО ПРАВИЛА: у badges предмет — состояние ветки, а не
-    коммит, и голова вернула бы гонку двух писателей одного файла. Разрешение
-    объявлено списком с причиной, а не выведено из формы файла."""
+    """ГРАНИЦА ИЗ САМОГО ПРАВИЛА: у `off-prefix` предмет — состояние ветки, а не
+    коммит, и сообщение одинаково для любой головы. Разрешение объявлено
+    списком с причиной, а не выведено из формы файла."""
+    workflow(tmp_path, "off-prefix.yml", BUTTON
+             + "concurrency:\n  group: off-prefix-${{ github.ref }}\n"
+               "  cancel-in-progress: true\n"
+             + РАБОТА)
+    assert cw.main(["--root", str(tmp_path)]) == 0
+
+
+def test_badges_bolshe_ne_v_spiske_razresheniy(tmp_path):
+    """Обратная сторона списка (140): `badges` из него УШЁЛ, потому что больше
+    не отменяет, а ставит в очередь. Разрешение, пережившее свой предмет,
+    читалось бы как действующее — и им объяснили бы возврат отмены."""
     workflow(tmp_path, "badges.yml", BUTTON
              + "concurrency:\n  group: badges\n  cancel-in-progress: true\n"
              + РАБОТА)
-    assert cw.main(["--root", str(tmp_path)]) == 0
+    assert cw.main(["--root", str(tmp_path)]) == 1
+
+
+def test_zhivoy_badges_stoit_v_ocheredi_a_ne_otmenyaet():
+    """ЖИВОЙ ПРЕДМЕТ, а не выдумка: отменявшая группа убивала толчковый прогон
+    отправленным, и общая ветка краснела после КАЖДОГО слияния — 8dcaaff (#519),
+    366b038 (#521), 3a70d9e (#522), по одному `cancelled` из семи прогонов.
+    Значки при этом были свежи: убивали ровно тот проход, что потом повторяли
+    целиком. Случай держит саму починку в дереве, а не рассказ о ней."""
+    from pathlib import Path
+    текст = (Path(cw.ROOT) / ".github" / "workflows" / "badges.yml").read_text(
+        encoding="utf-8")
+
+    assert cw.cancelling_groups(текст) == [("badges", False)]
 
 
 def test_gruppa_vnutri_raboty_tozhe_razbiraetsya():
