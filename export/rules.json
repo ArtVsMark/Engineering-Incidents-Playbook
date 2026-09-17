@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T12:46:23+00:00",
+  "generated_at": "2026-09-17T13:20:11+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.5",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.4"
   },
-  "count": 206,
+  "count": 207,
   "rules": [
     {
       "id": "001",
@@ -133,7 +133,8 @@
         "176",
         "177",
         "191",
-        "196"
+        "196",
+        "208"
       ]
     },
     {
@@ -1909,7 +1910,8 @@
         "188",
         "198",
         "203",
-        "207"
+        "207",
+        "208"
       ]
     },
     {
@@ -2543,7 +2545,8 @@
         "196",
         "202",
         "203",
-        "204"
+        "204",
+        "208"
       ]
     },
     {
@@ -7557,7 +7560,8 @@
         "200",
         "205",
         "206",
-        "207"
+        "207",
+        "208"
       ]
     },
     {
@@ -7956,7 +7960,8 @@
         "126"
       ],
       "mentioned_by": [
-        "205"
+        "205",
+        "208"
       ]
     },
     {
@@ -10505,6 +10510,9 @@
         "049",
         "051",
         "052"
+      ],
+      "mentioned_by": [
+        "208"
       ]
     },
     {
@@ -10762,6 +10770,62 @@
         "146",
         "157",
         "177"
+      ],
+      "mentioned_by": [
+        "208"
+      ]
+    },
+    {
+      "id": "208",
+      "slug": "a-verdict-its-own-actor-reads-is-a-reminder",
+      "title": {
+        "ru": "Вердикт, который читает тот же, кто следом действует, — напоминание, а не механизм",
+        "en": "A verdict read by the same actor who then acts is a reminder, not a mechanism"
+      },
+      "areas": {
+        "ru": [
+          "гейты",
+          "процесс"
+        ],
+        "en": [
+          "gates",
+          "process"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Проверка, чей вердикт читает ТОТ ЖЕ, кто следом совершает действие, держит не больше, чем записка: между красным и действием нет ничего, кроме намерения. Чтобы вердикт держал, проверка и действие делаются **одним заходом** — тем же вызовом, который проверяет, — и красное до действия просто не доходит. Обход при этом обязан остаться возможным, но становится **отдельным, названным** действием, а не умолчанием ([051](051-warn-on-likely-block-on-certain.md)).",
+        "en": "A check whose verdict is read by THE SAME actor who then performs the action holds no more than a sticky note: between red and the action there is nothing but intent. For the verdict to hold, the check and the action are done by **one pass** — the same call that checks performs — and red simply never reaches the action. The bypass must stay possible, but it becomes a **separate, named** action rather than the default ([051](051-warn-on-likely-block-on-certain.md))."
+      },
+      "applies": {
+        "ru": "**Работает** там, где проверка и действие доступны одной программе: прогон и\nтолчок, сверка и выкладка, вычитка и отправка — всё, где обе половины можно\nпозвать из одного места.\n\n**Не работает** там, где действие принадлежит другой стороне: чужая площадка,\nдругой человек, ручная операция в интерфейсе. Там вердикт остаётся вердиктом, и\nего держат передачей с подтверждением, а не сцепкой.\n\n**Признак нарушения:** проверка печатает вердикт, а следующая строка инструкции\nначинается со слов «и теперь сделайте X» — то есть механизм кончился ровно там,\nгде начинается то, ради чего он заводился.",
+        "en": "**Works** where the check and the action are both available to one program: a run\nand a push, a comparison and a deploy, proofreading and sending — anything where\nboth halves can be called from one place.\n\n**Does not work** where the action belongs to another side: someone else's\nplatform, another person, a manual operation in an interface. There the verdict\nstays a verdict, and it is held by a handover with confirmation rather than by a\ncoupling.\n\n**Sign of violation:** a check prints a verdict and the next line of the\ninstruction begins with \"and now do X yourself\" — the mechanism ended exactly\nwhere the thing it was built for begins."
+      },
+      "added": "2026-09-17",
+      "files": {
+        "ru": "rules/ru/208-a-verdict-its-own-actor-reads-is-a-reminder.md",
+        "en": "rules/en/208-a-verdict-its-own-actor-reads-is-a-reminder.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "scripts/preflight.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "039",
+        "051",
+        "146",
+        "154",
+        "202",
+        "207"
       ]
     }
   ],
