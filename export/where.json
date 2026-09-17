@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T08:50:32+00:00",
+  "generated_at": "2026-09-17T08:51:02+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -7258,10 +7258,9 @@
         "not-applicable": 14
       },
       "by_mechanism": {
-        "gate": 154,
+        "gate": 155,
         "pipeline": 26,
-        "document": 8,
-        "none": 1
+        "document": 8
       },
       "rules": {
         "001": "active",
@@ -8318,8 +8317,8 @@
           "decided": ""
         },
         "117": {
-          "mechanism": "none",
-          "where": "",
+          "mechanism": "gate",
+          "where": ".github/workflows/review.yml и .github/workflows/claude.yml — в тексте каждого задания стоит блок «ТВОИ ЧИСЛА»: предел размера ответа и срок захода. Оба взяты у тех, кто ими владеет, а не вписаны рукой: предел находки — объявлен в scripts/findings.py константой `SAID_LIMIT` и подобран ЗАМЕРОМ по живому реестру (14 записей: медиана 138 знаков, девятый дециль 200, потолок 303 — предел поставлен по потолку, 300); срок — `timeout-minutes` того самого джоба, то есть число, которое площадка и так применит. Держит tests/test_review_safety.py::test_the_task_carries_its_numbers — сдвинутый срок джоба, сдвинутый канон предела и снятый блок чисел краснеют все три. Третий вопрос правила — список типов файлов, которые открывать нельзя, — закрыт разрешительным списком инструментов и его блоком «ГРАНИЦА ОКРУЖЕНИЯ» (061): перечисляется разрешённое, а не запрещённое (068)",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
