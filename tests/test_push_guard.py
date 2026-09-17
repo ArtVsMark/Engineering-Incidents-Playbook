@@ -600,3 +600,80 @@ def test_obychnyy_tolchok_v_voskresshuyu_vsyo_eshchyo_otvergaetsya(окно, mon
     monkeypatch.setattr(pg, "ветка_воскресает", lambda b: True)
     assert pg.main() == 2
     assert "удалила её при слиянии" in capsys.readouterr().err
+
+
+# ── толчок внутри конструкции оболочки (задача #533) ──────────────────────────
+#
+# Разбор по разделителям отдавал `do git push` целым куском, а `подкоманда`
+# требовала, чтобы кусок начинался с `git`. Внутри цикла он начинается с `do`,
+# внутри условия — с `then`, внутри группы — со скобки. ЗАМЕР: 17.09.2026
+# сторож не сработал ни разу из трёх, и слепая форма была не редкой, а
+# ПРЕДПИСАННОЙ — инструкция окна требует толкать с повтором, а повтор пишется
+# циклом. Набор двусторонний (140): видит обёрнутое, молчит на тексте.
+
+@pytest.mark.parametrize("команда", [
+    "for i in 1 2 3; do git push; done",
+    "while true; do git push -u origin своя; done",
+    "until git push; do sleep 2; done",
+    "if true; then git push; fi",
+    "( git push )",
+    "{ git push; }",
+    "! git push",
+])
+def test_tolchok_vnutri_konstruktsii_obolochki_viden(команда):
+    """Сторож видит толчок, обёрнутый конструкцией оболочки."""
+    assert pg.толкает(команда) is True
+
+
+@pytest.mark.parametrize("команда", [
+    "echo do git push",
+    "echo 'for i in 1; do git push; done'",
+    "printf 'then git push'",
+    "git stash push scripts/a.py scripts/b.py",
+])
+def test_tekst_pro_tolchok_ostayotsya_tekstom(команда):
+    """Обратная сторона: снимается только ВЕДУЩЕЕ слово оболочки.
+
+    `echo do git push` начинается с `echo`, снятие не начинается вовсе, и
+    команда остаётся текстом для другой программы. Ложный отказ здесь дороже
+    пропуска: его чинят отключением хука, а не исправлением команды (051).
+    """
+    assert pg.толкает(команда) is False
+
+
+def test_skobka_ne_stanovitsya_imenem_vetki():
+    """`( git push origin чужая )` — хвост конструкции не уезжает в ссылки.
+
+    Без снятия хвоста `)` встало бы позиционным словом, и сторож назвал бы
+    предметом отказа ветку с именем скобки (158) — ровно тот дефект, что уже
+    ловился на `2>&1`.
+    """
+    assert pg.targets("( git push origin чужая )", "своя") == ["чужая"]
+
+
+@pytest.mark.parametrize("команда", [
+    "echo 'for i in 1; do git push; done'",
+    "echo 'cd X && git push'",
+    "echo \'a; git push\'",
+])
+def test_razdeliteli_ne_rezhut_vnutri_kavychek(команда):
+    """Разрез уважает кавычки, и это защита НАМЕРЕННАЯ, а не случайная.
+
+    Прежде текст в кавычках спасала незакрытая кавычка в куске: `shlex`
+    спотыкался, и кусок отбрасывался. Случайность перестала защищать, как
+    только стали сниматься ведущие слова оболочки — `do git push` кавычек не
+    содержит вовсе.
+    """
+    assert pg.толкает(команда) is False
+
+
+def test_tsikl_s_povtorom_dokhodit_do_proverki_voskresheniya(окно, monkeypatch, capsys):
+    """Главная половина инцидента #533: цикл доходит до проверки воскрешения.
+
+    Прежде `main()` возвращал 0, не дойдя до `ветка_воскресает` вовсе — она
+    была исправна и просто не вызывалась.
+    """
+    окно("for i in 1 2 3 4; do git push -u origin agent/своя && break; sleep 2; done")
+    monkeypatch.setattr(pg, "ветка_воскресает", lambda b: True)
+    assert pg.main() == 2
+    assert "удалила её при слиянии" in capsys.readouterr().err

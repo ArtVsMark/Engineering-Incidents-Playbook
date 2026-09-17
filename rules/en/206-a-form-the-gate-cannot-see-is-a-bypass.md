@@ -57,6 +57,17 @@ instruction cannot, and so a set of forms gathered from the tree is incomplete B
 CONSTRUCTION here. That is why the miss is not a rare case but the norm. The
 repair is tracked as #533.
 
+**REPAIRED UNDER #533, AND THE COUNT CHANGED.** Leading shell words are stripped
+from a segment before parsing, and so are the tails of shell constructs: of the
+seven forms probed, zero are blind. Verified from both ends (140) — seven
+wrapped forms are seen, four textual ones stay text; a half-revert turns nine
+tests red. THE REPAIR BROUGHT ITS OWN FALSE POSITIVE, and that is part of the
+incident: stripping leading words revived splitting inside quotes, and
+`echo 'for i in 1; do git push; done'` began to read as a push. Before that,
+quoted text was saved by an ACCIDENT — an unclosed quote in the segment that the
+parser tripped over. The split was made quote-aware deliberately; a protection
+resting on an accident was never a protection.
+
 **Ours, before building rather than after breaking.** Citation forms measured
 across the whole tree: **775** mentions written as a link `rules/en/NNN-…`,
 **2052** written as a bare number — the invisible form is **2.6× more common**.
