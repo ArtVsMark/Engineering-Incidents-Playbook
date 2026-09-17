@@ -41,7 +41,7 @@ rule's requirement and our `where`+`why`:
 | band | answers | of them "not applicable" |
 |---|---|---|
 | 0–10% | 127 | 9 (7%) |
-| 10–20% | 63 | 15 (23%) |
+| 10–20% | 63 | 15 (24%) |
 | 20% and above | 15 | 5 (33%) |
 
 Here the suspect answers concentrate in the HIGH bands, not the low ones.
@@ -110,7 +110,7 @@ predicts nothing here.
 defects are not distributed in record order: a conformance map, a registry of
 answers to an external rulebook, a debt inventory.
 
-**Does not work** for small corpora — up to two or three dozen records — where a
+**Does not work** for small corpora — up to twenty or thirty records — where a
 full sweep is cheaper than measuring and sampling. There the ordering becomes a
 ritual: counting bands takes longer than reading everything. **Nor does it work**
 where the re-read is triggered by a pinpoint event ("one mechanism changed"): the
