@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T14:33:14+00:00",
+  "generated_at": "2026-09-17T14:48:17+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -12,15 +12,15 @@
       "read_at": "2026-09-17",
       "answered": 207,
       "by_status": {
-        "active": 172,
-        "not-applicable": 29,
+        "active": 176,
+        "not-applicable": 25,
         "rejected": 6
       },
       "by_mechanism": {
         "gate": 125,
-        "document": 28,
+        "document": 31,
         "pipeline": 9,
-        "none": 10
+        "none": 11
       },
       "rules": {
         "001": "active",
@@ -92,10 +92,10 @@
         "067": "active",
         "068": "active",
         "069": "not-applicable",
-        "070": "not-applicable",
+        "070": "active",
         "071": "active",
         "072": "active",
-        "073": "not-applicable",
+        "073": "active",
         "074": "active",
         "075": "active",
         "076": "not-applicable",
@@ -116,7 +116,7 @@
         "091": "active",
         "092": "active",
         "093": "active",
-        "094": "not-applicable",
+        "094": "active",
         "095": "not-applicable",
         "096": "active",
         "097": "active",
@@ -132,7 +132,7 @@
         "107": "active",
         "108": "active",
         "109": "active",
-        "110": "not-applicable",
+        "110": "active",
         "111": "active",
         "112": "not-applicable",
         "113": "active",
@@ -664,6 +664,14 @@
           "analysed": "2026-09-17",
           "decided": ""
         },
+        "070": {
+          "mechanism": "document",
+          "where": "scripts/check_locale.py — докстрока § ПОРОГИ НЕ ВЫДУМАНЫ, А ЗАМЕРЕНЫ: два порога (0.15 сверху для английского дерева, 0.50 снизу для русского), и остаточный риск назван там же: «нарушение даёт значение у другого края, а не рядом с порогом, поэтому пороги стоят с запасом в разы». Это и есть требование 070, исполненное.",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-09-17",
+          "decided": ""
+        },
         "071": {
           "mechanism": "pipeline",
           "where": "намеренный повтор подписывается комментарием с причиной — так помечено двойное построение тела коммита в .github/workflows/automerge.yml",
@@ -677,6 +685,14 @@
           "where": "scripts/check_gates.py ловит причину подделанным предметом, tests/ ловят факт фикстурой; обе нужны и обе стоят",
           "holdable": "",
           "awaiting": "",
+          "analysed": "2026-09-17",
+          "decided": ""
+        },
+        "073": {
+          "mechanism": "document",
+          "where": "requirements-test.txt — ОДИН источник версий на две работы — обязательную и значковую — и это половина правила, которая держится: до файла список был вписан в обе работы, и два списка одного набора разошлись бы молча (022). ВТОРАЯ ПОЛОВИНА НЕ ДЕРЖИТСЯ: верхней границы нет ни у одного из трёх — pytest, coverage, pyyaml стоят голыми именами.",
+          "holdable": "not-yet",
+          "awaiting": "верхняя граница у трёх имён в requirements-test.txt: сегодня их 0 из 3. Граница ставится отдельным изменением — эта запись даёт вердикт, а не правит зависимости (132)",
           "analysed": "2026-09-17",
           "decided": ""
         },
@@ -800,6 +816,14 @@
           "analysed": "2026-09-17",
           "decided": ""
         },
+        "094": {
+          "mechanism": "none",
+          "where": "механизма нет, предмет в scripts/check_bindings.py: ЛЕГАСИ_ПОЛЕ = \"document_reason\" и ЛЕГАСИ_СЛОВА = {\"impossible\": \"no\", \"not-yet\": \"not-yet\"}, плюс by_mech[\"process-step\"] под именем legacy. Это переходный слой со старого словаря реестра на новый.",
+          "holdable": "not-yet",
+          "awaiting": "условие снятия у переходного слоя: сегодня записей со старым полем `document_reason` в реестре 0, то есть слой уже пуст и держится только тем, что его никто не убрал",
+          "analysed": "2026-09-17",
+          "decided": ""
+        },
         "096": {
           "mechanism": "gate",
           "where": ".rules разведён по жизненному циклу, и у каждого файла свой сторож: .rules/bindings.json — scripts/check_bindings.py, .rules/neighbours.json — scripts/check_duplicates.py, .rules/proposals.json — scripts/collect_proposals.py, .rules/consumers.json — scripts/aggregate_bindings.py, .rules/showcase.json — scripts/check_showcase.py. Общего файла нет намеренно: слить их значило бы оставить все эти вопросы одному сторожу",
@@ -900,6 +924,14 @@
           "mechanism": "gate",
           "where": "scripts/check_gates.py прогоняет объявленные исходы по подделке: у каждого проверяемого им гейта есть предмет, который обязан пройти, и предмет, который обязан быть отвергнут; у scripts/main_red.py, scripts/link_trails.py и scripts/refresh_derived.py свои --selftest на все три исхода. ГРАНИЦА: «у каждого скрипта» машинно не проверяется — остальные держатся разбором при приёмке",
           "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-09-17",
+          "decided": ""
+        },
+        "110": {
+          "mechanism": "document",
+          "where": "scripts/link_trails.py — образец исполнения правила: временный каталог берётся ДО подмены (`with tempfile.TemporaryDirectory() as empty`), прежний PATH сохраняется, подмена идёт следом, восстановление стоит в `finally`. Всё, что может отказать, сделано до подмены — ровно требование 110.",
+          "holdable": "not-yet",
           "awaiting": "",
           "analysed": "2026-09-17",
           "decided": ""
