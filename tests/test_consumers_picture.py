@@ -63,9 +63,9 @@ def test_подключённый_рисуется_тремя_плашками(r
     svg = рисуй(срез(repo, [подключён("a", gate=5, none=2, **{"process-step": 3})]))
     t = cp.THEME[False]
 
-    for key in ("gate", "process-step", "none"):
+    for key in ("gate", "process-step", cp.UNVERIFIABLE):
         assert cp.LANG["ru"][key] in svg
-    for цвет in (t["gate"], t["process-step"], t["none"]):
+    for цвет in (t["gate"], t["process-step"], t[cp.UNVERIFIABLE]):
         assert цвет in svg
 
 
@@ -83,7 +83,8 @@ def test_канонический_механизм_показан_даже_ну�
                                       document=0, none=7,
                                       **{"process-step": 0})]))
 
-    for key in cp.MECHANISM_ORDER:
+    # `none` своей колонки не имеет: он слагаемое «не проверяется».
+    for key in [k for k in cp.MECHANISM_ORDER if k != "none"] + [cp.UNVERIFIABLE]:
         assert cp.LANG["ru"][key] in svg
 
 
@@ -102,7 +103,7 @@ def test_неподключённый_получает_одну_плашку_non
                              "trails": 0}]))
 
     assert "none" in svg and "не подключён" in svg
-    for key in ("gate", "process-step", "none"):
+    for key in ("gate", "process-step", cp.UNVERIFIABLE):
         assert cp.LANG["ru"][key] not in svg
 
 
@@ -493,26 +494,41 @@ def test_korotkie_imena_vysotu_ne_menyayut(repo):
     assert высота == cp.TOP + cp.ROW * 2 + cp.PAD - 8
 
 
-# ── «не применимо» видно на картинке ───────────────────────────────────────
+# ── два неизвестных — одна колонка ─────────────────────────────────────────
+#
+# Набор двусторонний (140): он требует, чтобы сумма была видна, И чтобы
+# слагаемые СВОИХ колонок не получали. Второе — тот самый откат прежнего
+# решения, и без случая на него картинку расщепили бы обратно молча.
 
-def test_kolonka_ne_primenimo_risuetsya():
-    """До этой правки читатель видел «ничем» и не мог отличить долг от
-    решения: правило без механизма и правило, к проекту не относящееся."""
-    doc = {"consumers": [{"repo": "o/r", "state": "подключён", "answered": 10,
-                          "rules": {"001": {}},
-                          "by_mechanism": {"gate": 7},
-                          "by_status": {"not-applicable": 3}}]}
-    строки = cp.rows(doc)
-    assert строки[0]["not-applicable"] == 3
-    assert "not-applicable" in cp.shown(строки)
+def срез_с(none=0, neprimenimo=0, gate=7):
+    return {"consumers": [{"repo": "o/r", "state": "подключён", "answered": 10,
+                           "rules": {"001": {}},
+                           "by_mechanism": {"gate": gate, "none": none},
+                           "by_status": {"not-applicable": neprimenimo}}]}
 
 
-def test_bez_neprimenimyh_kolonki_net():
-    """Колонка показывается, пока ею отвечают: вписанная навсегда пережила бы
-    последнего потребителя, и вычеркнуть её было бы некому (049)."""
-    doc = {"consumers": [{"repo": "o/r", "state": "подключён", "answered": 10,
-                          "rules": {"001": {}},
-                          "by_mechanism": {"gate": 10},
-                          "by_status": {"active": 10}}]}
-    assert "not-applicable" not in cp.shown(cp.rows(doc))
+def test_dva_neizvestnyh_skladyvayutsya_v_odnu_kolonku():
+    """«Механизма нет» и «к нам не относится» дают один ответ: свидетеля нет."""
+    строки = cp.rows(срез_с(none=2, neprimenimo=3))
+    assert строки[0][cp.UNVERIFIABLE] == 5
+    assert cp.UNVERIFIABLE in cp.shown(строки)
+
+
+def test_slagaemye_svoih_kolonok_ne_poluchayut():
+    """Порознь они обещают определённость, которой нет: 001, 037, 102 и 137
+    ушли из «не применимо» в машину — вердикт был опровергнут четырежды."""
+    строки = cp.rows(срез_с(none=2, neprimenimo=3))
+    колонки = cp.shown(строки)
+    assert "none" not in колонки and "not-applicable" not in колонки
+
+
+def test_kolonka_ne_proveryaetsya_stoit_dazhe_nulyom():
+    """Ноль здесь — ответ «слепых мест нет», пропуск читался бы иначе (027)."""
+    assert cp.UNVERIFIABLE in cp.shown(cp.rows(срез_с(none=0, neprimenimo=0)))
+
+
+def test_slagaemye_ostayutsya_v_stroke():
+    """Сложена ВИТРИНА, а не данные: различение живёт в сводке (021)."""
+    строка = cp.rows(срез_с(none=2, neprimenimo=3))[0]
+    assert строка["none"] == 2 and строка["not-applicable"] == 3
 
