@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T09:06:56+00:00",
+  "generated_at": "2026-09-17T09:19:23+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -7258,8 +7258,8 @@
         "not-applicable": 14
       },
       "by_mechanism": {
-        "gate": 155,
-        "pipeline": 26,
+        "gate": 156,
+        "pipeline": 25,
         "document": 8
       },
       "rules": {
@@ -8598,7 +8598,7 @@
         },
         "154": {
           "mechanism": "gate",
-          "where": ".rules/bindings.json — ПЕРВЫЙ ПРЕДМЕТ ПРАВИЛА ЭТО НАШ СОБСТВЕННЫЙ ОТВЕТ КАТАЛОГУ: у `mechanism: none` обязательны `why` и `machine_half` — что именно следует из данных целиком и почему всё-таки не построено. Держит tests/test_bindings.py::test_active_names_its_mechanism_and_address и ::test_negative_answers_name_the_reason: «не держится ничем» без причины отвергается. Тот же уговор за пределами ответа: changelog.d/README.md — род internal обязан назвать причину, и scripts/check_journal.py требует фрагмент; .github/labels.yml — раздел «чего здесь нет намеренно» с причиной у каждой невзятой метки",
+          "where": ".rules/bindings.json — ПЕРВЫЙ ПРЕДМЕТ ПРАВИЛА ЭТО НАШ СОБСТВЕННЫЙ ОТВЕТ КАТАЛОГУ: у `mechanism: none` обязательны `why` и `machine_half` — что именно следует из данных целиком и почему всё-таки не построено. Держит tests/test_bindings.py::test_active_names_its_mechanism_and_address — он требует ОБА поля, `why` и `machine_half`, — и ::test_negative_answers_name_the_reason: «не держится ничем» без причины отвергается. Тот же уговор за пределами ответа: changelog.d/README.md — род internal обязан назвать причину, и scripts/check_journal.py требует фрагмент; .github/labels.yml — раздел «чего здесь нет намеренно» с причиной у каждой невзятой метки",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -8797,8 +8797,8 @@
           "decided": ""
         },
         "179": {
-          "mechanism": "pipeline",
-          "where": ".github/workflows/ci.yml, agent-pr.yml, labels-sync.yml — группа отмены называет голову, а не только номер изменения. ОБРАТНАЯ ПОЛОВИНА ПРАВИЛА ТОЖЕ ИСПОЛНЕНА, и она про другой предмет: там, где проверяется не коммит, а СОСТОЯНИЕ, головы в группе нет и отмена выключена — automerge.yml (`group: automerge`), arm.yml (`group: arm`), джобы записи находок (`group: findings-write`), все с `cancel-in-progress: false`. Голова там вернула бы гонку за свежесть вместо дописывания в общий список",
+          "mechanism": "gate",
+          "where": "ЗАМЕР 17.09.2026 ПО ВСЕМ ПРОГОНАМ: отменяют предыдущий семь, и предмет правила — только они. Голову в группе называют три: .github/workflows/ci.yml, ci-complete.yml, review.yml. Четыре объявлены СОСТОЯНИЕМ и голову не называют намеренно — badges.yml (пересобирает витрину), drift.yml (сводит внешнее состояние), rules-inbox.yml (разбирает чужую выгрузку), attribution-history.yml (считает по истории общей ветки): это граница, названная самим правилом, и голова там вернула бы гонку за свежесть. Держит tests/test_gates_contract.py::test_a_cancelling_group_names_the_head_or_declares_why_not — отменяющий прогон либо называет голову, либо стоит в разрешительном списке состояний с причиной (068, 154); мёртвую запись списка отвергает сосед",
           "holdable": "",
           "awaiting": "",
           "analysed": "",

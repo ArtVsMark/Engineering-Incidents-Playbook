@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 29 | 18 | 195 | 8 | 0 | 139 | 94 | 12 | 0 | 23 | 0 | 42 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 22 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 181 | 22 | 0 | 117 | 60 | 12 | 0 | 29 | 16 | 78 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 4 | 4 | 203 | 0 | 0 | 189 | 155 | 26 | 0 | 8 | 0 | 164 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 4 | 4 | 203 | 0 | 0 | 189 | 156 | 25 | 0 | 8 | 0 | 166 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -323,11 +323,11 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/automerge.py` | 9 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/drift.py` | 9 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/unlooked.py` | 9 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_gates_contract.py` | 9 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_ghrest.py` | 9 |
 | `Engineering-Pipeline-Mechanisms` | `CLAUDE.md` | 8 |
 | `Engineering-Pipeline-Mechanisms` | `docs/release.md` | 8 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_bindings.py` | 8 |
-| `Engineering-Pipeline-Mechanisms` | `tests/test_gates_contract.py` | 8 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/agent-pr.yml` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `packages/transport/ghrest.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_pr_meta.py` | 7 |
@@ -355,9 +355,10 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_source_hygiene.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/badges.yml` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/claude.yml` | 3 |
+| `Engineering-Pipeline-Mechanisms` | `badges.yml` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `claude.yml` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/001-attribution-of-merged-1.md` | 3 |
-| `Engineering-Pipeline-Mechanisms` | `labels-sync.yml` | 3 |
+| `Engineering-Pipeline-Mechanisms` | `rules-inbox.yml` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_required_context.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/findings.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_decisions_format.py` | 3 |
@@ -370,16 +371,14 @@
 | `Engineering-Pipeline-Mechanisms` | `.rules/leniency.json` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/rerun.json` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/schedules.json` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `agent-pr.yml` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `automerge.yml` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `badges.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `build_changelog.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `changelog.d/README.md` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `ci.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/004-schedules-stay-service-observes.md` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/011-merging-is-handed-to-the-platform.md` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `labels-sync.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `main-red.yml` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `rules-inbox.yml` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `review.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/arm.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_contract.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_derived_refs.py` | 2 |
@@ -400,7 +399,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_schedules.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_unlooked.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 69 механизмов по одному правилу; без названного адреса: 0 из 189 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 72 механизмов по одному правилу; без названного адреса: 0 из 189 |
 
 ## Правила · Rules
 
