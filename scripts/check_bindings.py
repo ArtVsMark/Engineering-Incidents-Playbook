@@ -51,7 +51,6 @@ from __future__ import annotations
 
 import datetime as dt
 import json
-import datetime as _dt
 import re
 import sys
 from collections import Counter
@@ -347,13 +346,13 @@ MECHANISMS = ("gate", "pipeline", "skill", "document", "none", "process-step")
 ДАТА_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
-def дата(значение: object) -> _dt.date | None:
+def дата(значение: object) -> dt.date | None:
     """Дата из поля ответа. None — поля нет либо оно не ISO-дата."""
     если = (значение or "") if isinstance(значение, str) else ""
     if not ДАТА_RE.match(если.strip()):
         return None
     try:
-        return _dt.date.fromisoformat(если.strip())
+        return dt.date.fromisoformat(если.strip())
     except ValueError:
         return None
 
@@ -366,7 +365,7 @@ MECHANISM_ORDER = ("gate", "pipeline", "skill", "document", "none")
 
 #: Сегодня — берётся ОДИН раз на прогон: прогон через полночь сравнивал бы
 #: разные записи с разными «сегодня», и одна из них краснела бы через раз.
-СЕГОДНЯ = _dt.date.today()
+СЕГОДНЯ = dt.date.today()
 
 def держимость(rec: dict) -> str | None:
     """Слово разбора, если ответ «документом» разобран ЦЕЛИКОМ; иначе None.
