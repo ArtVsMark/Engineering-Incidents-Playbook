@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T11:30:54+00:00",
+  "generated_at": "2026-09-17T11:51:42+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.5",
@@ -10478,11 +10478,23 @@
       },
       "trails": [
         {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "529"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "531"
+        },
+        {
           "repo": "ArtVsMark/ArtVsMark",
           "issue": "181"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "CLAUDE.md"
         }
       ],
-      "origin": "ArtVsMark/ArtVsMark",
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
       "portable": "partly",
       "mentions": [
         "003",

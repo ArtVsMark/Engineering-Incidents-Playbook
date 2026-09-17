@@ -84,7 +84,20 @@ replaces the other.
 - the pipeline half's subject is **the head branch of an already merged change**,
   and it is asked of the platform rather than inferred from a name;
 - a resurrected branch is **deleted by whoever has the right**: a session will
-  not get past a 403, and leaving the cleanup to it accumulates dead refs.
+  not get past a 403, and leaving the cleanup to it accumulates dead refs;
+- **recreation is not the only consequence, and the other two are quieter.**
+  They arrived from the mechanisms project together with the proposal merged in
+  here, and both are confirmed by our own measurement of 2026-09-17:
+  - **the continuation rewrites the artefacts of the already-merged change** —
+    its journal entry, its fragments. That is editing after the fact what was
+    said THEN, and the diff against the shared branch shows it as a rollback of
+    someone else's lines rather than as your own work;
+  - **the conflict looks like a content conflict while it is a history
+    conflict.** The branch's merge base with the shared branch stays BEHIND the
+    squash, and the platform shows the diff from there — together with what is
+    already merged. Measured: two changes in one shift went `dirty`, and each
+    diff spanned four files instead of one; both were closed as duplicates and
+    the work was moved onto a fresh head as it was.
 
 ## Where it applies
 
@@ -100,6 +113,10 @@ ordinary "nothing to push" check covers the case by itself.
 in the shared branch and closed as a duplicate.
 
 ## Trace
+
+ArtVsMark/Engineering-Pipeline-Mechanisms — `CLAUDE.md`
+ArtVsMark/Engineering-Incidents-Playbook#529
+ArtVsMark/Engineering-Incidents-Playbook#531 — a history conflict, closed as duplicates
 
 ArtVsMark/ArtVsMark#181
 
