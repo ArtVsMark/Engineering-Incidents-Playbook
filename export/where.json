@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T11:29:57+00:00",
+  "generated_at": "2026-09-17T11:40:20+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,9 +10,9 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-17",
-      "answered": 204,
+      "answered": 205,
       "by_status": {
-        "active": 169,
+        "active": 170,
         "not-applicable": 29,
         "rejected": 6
       },
@@ -20,7 +20,7 @@
         "gate": 124,
         "document": 28,
         "pipeline": 9,
-        "none": 8
+        "none": 9
       },
       "rules": {
         "001": "active",
@@ -226,7 +226,8 @@
         "202": "active",
         "203": "not-applicable",
         "204": "active",
-        "205": "active"
+        "205": "active",
+        "206": "active"
       },
       "holds": {
         "001": {
@@ -1580,9 +1581,17 @@
           "awaiting": "24 записи «неприменимо» из 29 получат предикат по дереву (сегодня путь, имя или команду называют 5 из 29); после этого гейт формы краснеет на записи без предиката и не краснеет ни на одной законной",
           "analysed": "2026-09-17",
           "decided": "2026-09-17"
+        },
+        "206": {
+          "mechanism": "none",
+          "where": ".claude/hooks/push_guard.py — первый предмет правила в нашем дереве, и он СЛОМАН: разбор команды слеп к форме внутри конструкции оболочки. Машинного нет, и причина названа в why",
+          "holdable": "not-yet",
+          "awaiting": "починка push_guard по задаче #533: сейчас слепых форм четыре из семи проверенных",
+          "analysed": "2026-09-17",
+          "decided": "2026-09-17"
         }
       },
-      "trails": 52,
+      "trails": 53,
       "born": 34
     },
     {
@@ -9051,8 +9060,8 @@
           "decided": ""
         }
       },
-      "trails": 5,
-      "born": 5,
+      "trails": 6,
+      "born": 6,
       "findings": [
         "ответ по схеме 1.4, у контракта 1.5 — записи остаются валидными, означая уже другое"
       ]
