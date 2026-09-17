@@ -40,10 +40,22 @@ blind | ( git push )
 ```
 
 Inside any shell construct the segment begins with `do`, `then` or a bracket.
-**And the costliest part: the retry loop is the PRESCRIBED form.** This project's
-own instructions require pushing with retries and backoff, which is naturally
-written as a loop. The guard is blind to exactly the form it tells you to use, so
-the miss here is not a rare case but the norm. The repair is tracked as #533.
+
+**AND THE COSTLIEST PART: THE LOOP HERE IS A PRESCRIBED FORM, BUT IT IS NOT THE
+TREE THAT PRESCRIBES IT.** Pushing with retries and backoff is required by the
+WINDOW's own instructions — the ones delivered by the platform when the window
+opens — and the catalogue's tree holds no such requirement at all: `grep` across
+`AGENTS.md`, `CLAUDE.md`, `.claude/settings.json`, `templates/` and `docs/`
+returns ZERO mentions of a push retry. The first draft of this record attributed
+the prescription to the tree, and an outside look showed it could not be checked
+by a command — the record demanded of other people's claims exactly what it had
+not done itself.
+
+The correction makes the argument stronger, not weaker: the form came from
+somewhere the guard's author never looks. A tree can be re-read; a window's
+instruction cannot, and so a set of forms gathered from the tree is incomplete BY
+CONSTRUCTION here. That is why the miss is not a rare case but the norm. The
+repair is tracked as #533.
 
 **Ours, before building rather than after breaking.** Citation forms measured
 across the whole tree: **775** mentions written as a link `rules/en/NNN-…`,
