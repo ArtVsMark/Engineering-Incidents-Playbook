@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T11:14:57+00:00",
+  "generated_at": "2026-09-17T11:30:54+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.5",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.4"
   },
-  "count": 204,
+  "count": 205,
   "rules": [
     {
       "id": "001",
@@ -3773,7 +3773,8 @@
         "165",
         "167",
         "175",
-        "198"
+        "198",
+        "206"
       ]
     },
     {
@@ -7278,7 +7279,8 @@
         "166",
         "167",
         "193",
-        "195"
+        "195",
+        "206"
       ]
     },
     {
@@ -7552,7 +7554,8 @@
         "193",
         "195",
         "200",
-        "205"
+        "205",
+        "206"
       ]
     },
     {
@@ -9325,6 +9328,9 @@
         "051",
         "141",
         "166"
+      ],
+      "mentioned_by": [
+        "206"
       ]
     },
     {
@@ -10640,6 +10646,58 @@
         "154",
         "182",
         "184"
+      ]
+    },
+    {
+      "id": "206",
+      "slug": "a-form-the-gate-cannot-see-is-a-bypass",
+      "title": {
+        "ru": "Форма, которую гейт не видит, становится обходом",
+        "en": "A form the gate cannot see becomes a bypass"
+      },
+      "areas": {
+        "ru": [
+          "гейты"
+        ],
+        "en": [
+          "gates"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Гейт, ищущий предмет по **форме записи**, обязан читать ВСЕ формы, которыми этот предмет пишут в его дереве, и набор форм берётся **замером**, а не перечислением по памяти. Форма, которую гейт не видит, становится обходом — и обходом не злонамеренным: так пишут по привычке, и потому невидимая форма чаще всего оказывается самой частой. Если какая-то форма двусмысленна и читать её без ложных срабатываний нельзя, это объявляется вслух вместе с тем, что гейт проверяет **не всё**.",
+        "en": "A gate that looks for its subject by the **form it is written in** must read EVERY form that subject is written in across its tree, and the set of forms is obtained by **measurement**, not by listing from memory. A form the gate cannot see becomes a bypass — and not a malicious one: that is simply how people write out of habit, which is why the invisible form most often turns out to be the commonest. If some form is ambiguous and cannot be read without false positives, that is stated out loud together with the fact that the gate checks **not everything**."
+      },
+      "applies": {
+        "ru": "**Работает** для гейтов, чей предмет записывается человеком в свободной форме:\nкоманда оболочки, цитата, ссылка, маркер в прозе, образец в коде.\n\n**Не работает** там, где предмет задан ИМЕНЕМ в пространстве имён — там разрешать\nнадо по импортам, и это [180](180-a-gate-resolves-the-call-not-the-last-name-segment.md),\nа не перечень форм. Не работает и там, где форма ровно одна по построению:\nмашинно порождённый файл, строгая схема, поле реестра. Там перечень форм\nвыродится в единицу, и замер станет обрядом.\n\n**Признак нарушения:** перечень форм в гейте вписан руками, а рядом нет числа —\nсколько какой формы в дереве.",
+        "en": "**Works** for gates whose subject is written freehand by a person: a shell\ncommand, a citation, a link, a marker in prose, a pattern in code.\n\n**Does not work** where the subject is given by a NAME in a namespace — there it\nmust be resolved through imports, and that is\n[180](180-a-gate-resolves-the-call-not-the-last-name-segment.md), not a list of\nforms. Nor does it work where there is exactly one form by construction: a\nmachine-generated file, a strict schema, a registry field. There the list of forms\ndegenerates to one and the measurement becomes a ritual.\n\n**Sign of violation:** the list of forms in the gate is written by hand, and there\nis no number beside it saying how much of each form the tree holds."
+      },
+      "added": "2026-09-17",
+      "files": {
+        "ru": "rules/ru/206-a-form-the-gate-cannot-see-is-a-bypass.md",
+        "en": "rules/en/206-a-form-the-gate-cannot-see-is-a-bypass.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "533"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "tests/test_citation_applicability.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "075",
+        "140",
+        "146",
+        "180"
       ]
     }
   ],
