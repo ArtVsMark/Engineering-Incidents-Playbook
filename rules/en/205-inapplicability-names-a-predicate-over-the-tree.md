@@ -80,7 +80,12 @@ to re-read it before the others.
 - the predicate is phrased so that its firing makes the answer FALSE, not
   "worth a look": otherwise it is a reminder, not a check;
 - an answer with no predicate says so out loud and goes first in the re-reading
-  queue — silence here is the defect.
+  queue — silence here is the defect;
+- THERE ARE TWO LEGITIMATE FORMS, not one: a predicate over the tree, or — where
+  the boundary below applies — a NAMED event with the reason the predicate
+  degenerates there. An answer carrying neither is the violation. Demanding a
+  predicate of everything forces a fake path where the second answer is the
+  honest one — the very substitution this rule was written against.
 
 ## Where it applies
 
