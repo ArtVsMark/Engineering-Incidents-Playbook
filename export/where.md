@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 207 | 0 | 0 | 172 | 124 | 9 | 0 | 28 | 11 | 109 |  |
+| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 207 | 0 | 0 | 172 | 124 | 9 | 0 | 28 | 11 | 110 |  |
 | `Stepik-Python-Grader` | подключён | 187 | 132 | 195 | 12 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 203 | 4 | 0 | 146 | 95 | 12 | 0 | 25 | 1 | 42 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 26 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
@@ -66,8 +66,8 @@
 |---|---|---|
 | `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 16 |
 | `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 14 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 12 |
 | `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 12 |
-| `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 11 |
 | `Engineering-Incidents-Playbook` | `AGENTS.md` | 11 |
 | `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 10 |
 | `Engineering-Incidents-Playbook` | `export/README.md` | 9 |
@@ -103,6 +103,8 @@
 | `Engineering-Incidents-Playbook` | `scripts/history_metrics.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/merge_ready.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/version.py` | 3 |
+| `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 3 |
+| `Engineering-Incidents-Playbook` | `tests/test_sync_inbox.py` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/attribution-history.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/badges.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/consumers-sync.yml` | 2 |
@@ -123,9 +125,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/review_findings.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
-| `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 2 |
-| `Engineering-Incidents-Playbook` | `tests/test_sync_inbox.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 48 механизмов по одному правилу; без названного адреса: 0 из 161 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 49 механизмов по одному правилу; без названного адреса: 0 из 161 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 46 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 14 |
