@@ -236,7 +236,27 @@ fails the build.
 | `why` | причина решения · the reason for the decision | при `rejected`, `not-applicable` и вместе с `document_reason` · with `rejected`, `not-applicable` and alongside `document_reason` |
 | `machine_half` | ЧТО именно следует из данных целиком и почему оно всё-таки не построено · WHAT exactly follows from the data in full, and why it is still not built | при `active` и `mechanism: none` · when `active` and `mechanism: none` |
 | `skill` | адрес каталога навыка: `.claude/skills/<имя>`. Проверяется существование `SKILL.md`, непустые `name` и `description` и совпадение имени с каталогом · the address of a skill directory: `.claude/skills/<name>`. Checked for an existing `SKILL.md`, non-empty `name` and `description`, and a name matching the directory | при `mechanism: skill` — обязательно; рядом с `gate` или `pipeline` — когда навык держит ВТОРУЮ половину; при `none` запрещено · required with `mechanism: skill`; allowed alongside `gate` or `pipeline` when the skill holds the SECOND half; forbidden with `none` |
-| `document_reason` | `impossible` — машинной половины нет вовсе, документ и есть предел · `not-yet` — половина есть и не построена | при `active` и `mechanism: document`, у новых и тронутых ответов · when `active` and `mechanism: document`, for new and touched answers |
+| `holdable` | можно ли держать МАШИНОЙ: `no` — половины нет вовсе, текст и есть предел · `not-yet` — половина есть и не построена · `conditional` — станет возможна, когда появится названный предмет · whether a MACHINE can hold it: `no`, `not-yet`, `conditional` | при `active` и механизме, который не краснеет (`document`, `skill`, `none`) · when `active` and the mechanism does not redden |
+| `awaiting` | СОБЫТИЕ, при котором механизм строится, с замером отсутствия предмета · the EVENT that will make the mechanism buildable, with a measurement of the subject's absence | обязательно при `holdable: conditional`; запрещено при `gate` и `pipeline` · required with `holdable: conditional`; forbidden with `gate` and `pipeline` |
+| `analysed` | дата сверки записи с деревом, `ГГГГ-ММ-ДД` · the date the record was last checked against the tree | необязательно; отсутствие значит «не сверяли» и считается отдельно · optional; absence means "never checked" and is counted separately |
+| `decided` | дата, когда вынесен НЫНЕШНИЙ вердикт · the date the CURRENT verdict was made | необязательно; не позже `analysed` и не без него · optional; never later than `analysed`, never without it |
+| `document_reason` | устар. · deprecated: прежнее имя `holdable` со словами `impossible`/`not-yet`. Читается на входе, у себя не пишется · the former name of `holdable`; read on input, never written | — |
+
+**Почему две даты, а не одна (контракт 1.5).** `analysed` отвечает «когда на эту
+запись в последний раз смотрели», `decided` — «когда нынешний вердикт вынесен».
+Это разные вопросы: подъём версии контракта заставляет ПЕРЕЧИТАТЬ ответы (157),
+и перечитанная запись, чей вердикт подтверждён, двигает первую дату и не двигает
+вторую. Одной датой такое не выражается: либо теряется, что запись смотрели, либо
+вердикт выглядит принятым заново. Отсюда и порядок: `decided` не бывает позже
+`analysed` — решают, посмотрев.
+
+**Почему `holdable` вместо `document_reason` (контракт 1.5).** Вопрос «можно ли
+держать машиной» одинаков у документа, навыка и «ничем»: во всех трёх случаях
+исполнение правила не проверяется, и счёт, разделяющий знаменатель, нужен по всем
+трём. Поле спрашивалось только у `document`, а `none` и `skill` отвечали на тот же
+вопрос и оставались вне числа. Третье слово, `conditional`, отделяет долг от
+очереди с условием (146): «не построили» и «строить не на чем» — разные состояния,
+и второе называет предмет в `awaiting`.
 
 **Почему появился `skill` (контракт 1.4).** Навык агента сильнее документа и
 слабее конвейера, и обе половины измеримы. Сильнее документа — потому что у
@@ -278,6 +298,23 @@ HTTPS и чужого дерева не видит — та же граница,
 ровно то, чего правило 146 не разрешает. Каталог свои 28 ответов разобрал
 целиком, потому что он издатель, а не потому, что это требуется от всех сразу
 (197).
+
+**Why two dates, not one (contract 1.5).** `analysed` answers "when was this
+record last looked at", `decided` answers "when was the current verdict made".
+A contract bump forces a RE-READ of the answers (157), and a re-read record whose
+verdict is confirmed moves the first date and leaves the second alone. One date
+cannot express that: either the re-read disappears, or the verdict looks freshly
+taken. Hence the ordering: `decided` is never later than `analysed` — you decide
+after looking.
+
+**Why `holdable` replaced `document_reason` (contract 1.5).** "Can a machine hold
+this" is the same question for a document, a skill and nothing at all: in all
+three the rule's observance is not checked, and a denominator that splits is
+needed for all three. The field was asked only of `document`, so `none` and
+`skill` answered the same question and stayed outside the count. The third word,
+`conditional`, separates debt from a queue with a condition (146): "not built"
+and "nothing to build on" are different states, and the second names its subject
+in `awaiting`.
 
 **Why `skill` was added (contract 1.4).** An agent skill is stronger than a
 document and weaker than a pipeline, and both halves are measurable. Stronger
@@ -766,8 +803,8 @@ having no gate.
 {
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
-    "export": "1.7", "bindings": "1.4", "consumers": "1.1",
-    "proposals": "1.1", "showcase": "1.1", "where": "1.3"
+    "export": "1.7", "bindings": "1.5", "consumers": "1.1",
+    "proposals": "1.1", "showcase": "1.1", "where": "1.4"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
                                                // build time, example value
