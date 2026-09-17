@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T12:01:18+00:00",
+  "generated_at": "2026-09-17T12:25:36+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.5",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.4"
   },
-  "count": 205,
+  "count": 206,
   "rules": [
     {
       "id": "001",
@@ -1908,7 +1908,8 @@
         "186",
         "188",
         "198",
-        "203"
+        "203",
+        "207"
       ]
     },
     {
@@ -7555,7 +7556,8 @@
         "195",
         "200",
         "205",
-        "206"
+        "206",
+        "207"
       ]
     },
     {
@@ -8116,7 +8118,8 @@
         "177",
         "186",
         "192",
-        "201"
+        "201",
+        "207"
       ]
     },
     {
@@ -9164,7 +9167,8 @@
         "157"
       ],
       "mentioned_by": [
-        "182"
+        "182",
+        "207"
       ]
     },
     {
@@ -10710,6 +10714,54 @@
         "140",
         "146",
         "180"
+      ]
+    },
+    {
+      "id": "207",
+      "slug": "a-reread-pass-is-ordered-and-stopped-by-measurement",
+      "title": {
+        "ru": "Порядок перечитывания и момент остановки берутся замером, а не наитием",
+        "en": "A re-read pass is ordered and stopped by measurement, not by intuition"
+      },
+      "areas": {
+        "ru": [
+          "каталог"
+        ],
+        "en": [
+          "catalogue"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "claim": {
+        "ru": "Заход перечитывания ответов идёт в порядке, заданном **замером**, и кончается по **замеру отдачи** — доля правок на прочитанной полосе упала, и выборка из следующих полос этого не опровергла, — а не когда список исчерпан. Какой именно метрикой упорядочивать, решает проект и калибрует на своём корпусе: переносится требование измеримости, а не чужая формула. Непрочитанные ответы при этом объявляются **непрочитанными**, а не верными ([039](039-three-outcomes-not-two.md)).",
+        "en": "A pass of re-reading answers goes in an order set by **measurement**, and it ends on a **measured yield** — the share of edits on the band just read has dropped, and a sample from the following bands has not refuted that — rather than when the list runs out. Which metric to order by is the project's own decision, calibrated on its own corpus: what transfers is the requirement to measure, not someone else's formula. Answers left unread are declared **unread**, not correct ([039](039-three-outcomes-not-two.md))."
+      },
+      "applies": {
+        "ru": "**Работает** там, где корпус ответов велик, перечитывание дорого, а дефекты\nраспределены не по порядку записей: карта соответствия, реестр ответов на чужой\nсвод, инвентаризация долга.\n\n**Не работает** для малых корпусов — до двух-трёх десятков записей, — где полный\nобход дешевле замера и выборки. Там упорядочивание станет обрядом: считать\nполосы дольше, чем прочитать всё. **Не работает** и там, где перечитывание\nвызвано точечным событием («сменился один механизм»): предмет задан событием, и\nочередь из него следует прямо.\n\n**Признак нарушения:** заход перечитывания объявлен законченным, а числа рядом\nнет — ни сколько прочитано, ни сколько осталось, ни какой была отдача.",
+        "en": "**Works** where the corpus of answers is large, re-reading is expensive, and\ndefects are not distributed in record order: a conformance map, a registry of\nanswers to an external rulebook, a debt inventory.\n\n**Does not work** for small corpora — up to two or three dozen records — where a\nfull sweep is cheaper than measuring and sampling. There the ordering becomes a\nritual: counting bands takes longer than reading everything. **Nor does it work**\nwhere the re-read is triggered by a pinpoint event (\"one mechanism changed\"): the\nsubject is set by the event, and the queue follows from it directly.\n\n**Sign of violation:** a re-read pass is declared finished with no number beside\nit — neither how much was read, nor how much remains, nor what the yield was."
+      },
+      "added": "2026-09-17",
+      "files": {
+        "ru": "rules/ru/207-a-reread-pass-is-ordered-and-stopped-by-measurement.md",
+        "en": "rules/en/207-a-reread-pass-is-ordered-and-stopped-by-measurement.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "docs/decisions/030-the-answer-audit-stops-on-a-measured-yield.md"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "039",
+        "146",
+        "157",
+        "177"
       ]
     }
   ],
