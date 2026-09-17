@@ -1144,7 +1144,7 @@
     "179": {
       "status": "active",
       "mechanism": "gate",
-      "where": "scripts/check_workflows.py::cancelling_groups — у всякой группы concurrency с cancel-in-progress: true в имени обязана стоять голова; разбор по отступу, а не только по верхнему уровню, потому что группу объявляют и внутри работы. Разрешение объявлено списком CANCELS_BY_STATE с причиной у каждой строки: у .github/workflows/badges.yml и .github/workflows/off-prefix.yml предмет — состояние, а не коммит",
+      "where": "scripts/check_workflows.py::cancelling_groups — у всякой группы concurrency с cancel-in-progress: true в имени обязана стоять голова; разбор по отступу, а не только по верхнему уровню, потому что группу объявляют и внутри работы. Разрешение объявлено списком CANCELS_BY_STATE с причиной у каждой строки, и стоит в нём один .github/workflows/off-prefix.yml: у него предмет — состояние, а не коммит. СОСТАВ СПИСКА ДЕРЖИТ СЛУЧАЙ tests/test_check_workflows.py::test_zapis_o_spiske_sovpadaet_so_spiskom — прежде запись о списке пережила сам список и осталась зелёной: сверка адреса видит существование файла, а не строку в словаре",
       "why": "предмет был живой: .github/workflows/ci.yml держал группу ci-${{ github.ref }} с отменой, а github.ref на pull_request — refs/pull/N/merge, один и тот же для opened, synchronize и ready_for_review. То есть обязательная проверка каталога отменялась прогоном на устаревшем коммите ровно так, как описано в инциденте потребителя. Гейт нашёл один файл из двенадцати, и это был он",
       "analysed": "2026-09-17"
     },

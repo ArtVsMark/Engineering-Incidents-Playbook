@@ -263,6 +263,49 @@ def test_badges_bolshe_ne_v_spiske_razresheniy(tmp_path):
     assert cw.main(["--root", str(tmp_path)]) == 1
 
 
+# ── запись о списке не переживает сам список ───────────────────────────────
+#
+# ИНЦИДЕНТ, А НЕ ПРЕДОСТОРОЖНОСТЬ. Правка, снявшая `badges.yml` из
+# `CANCELS_BY_STATE`, оставила в `.rules/bindings.json` запись правила 179,
+# которая этот файл в списке НАЗЫВАЛА. Гейт записей остался зелёным: сверка
+# адреса видит, что `.github/workflows/badges.yml` существует на диске, а не
+# то, значится ли он строкой в словаре. Поймал внешний взгляд, а не прогон —
+# ровно та форма, о которой 183: утверждение о механизме стареет молча и
+# читается как исполненное решение.
+
+
+def прогоны_в_записи(текст: str) -> set[str]:
+    """Имена прогонов, названные в тексте записи. Ищется ПУТЬ, а не голое имя:
+    голое `badges` стоит в записях и как имя ветки, и как имя группы."""
+    import re
+    return {p.rsplit("/", 1)[1]
+            for p in re.findall(r"\.github/workflows/[\w.-]+\.yml", текст)}
+
+
+def запись_179() -> str:
+    import json
+    from pathlib import Path
+    реестр = json.loads(
+        (Path(cw.ROOT) / ".rules" / "bindings.json").read_text(encoding="utf-8"))
+    return реестр["rules"]["179"]["where"]
+
+
+def test_zapis_o_spiske_sovpadaet_so_spiskom():
+    """Живой предмет: что запись 179 называет разрешённым, то и разрешено."""
+    assert прогоны_в_записи(запись_179()) == set(cw.CANCELS_BY_STATE)
+
+
+def test_zapis_o_spiske_lovit_rashozhdenie():
+    """Обратная сторона (140): сверка обязана РАЗОЙТИСЬ на том самом тексте,
+    что стоял в записи до починки, — иначе она не держит ничего."""
+    было = ("Разрешение объявлено списком CANCELS_BY_STATE: у "
+            ".github/workflows/badges.yml и .github/workflows/off-prefix.yml "
+            "предмет — состояние, а не коммит")
+
+    assert прогоны_в_записи(было) == {"badges.yml", "off-prefix.yml"}
+    assert прогоны_в_записи(было) != set(cw.CANCELS_BY_STATE)
+
+
 def test_zhivoy_badges_stoit_v_ocheredi_a_ne_otmenyaet():
     """ЖИВОЙ ПРЕДМЕТ, а не выдумка: отменявшая группа убивала толчковый прогон
     отправленным, и общая ветка краснела после КАЖДОГО слияния — 8dcaaff (#519),
