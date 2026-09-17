@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T12:21:26+00:00",
+  "generated_at": "2026-09-17T12:36:33+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,9 +10,9 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-17",
-      "answered": 205,
+      "answered": 206,
       "by_status": {
-        "active": 170,
+        "active": 171,
         "not-applicable": 29,
         "rejected": 6
       },
@@ -20,7 +20,7 @@
         "gate": 124,
         "document": 28,
         "pipeline": 9,
-        "none": 9
+        "none": 10
       },
       "rules": {
         "001": "active",
@@ -227,7 +227,8 @@
         "203": "not-applicable",
         "204": "active",
         "205": "active",
-        "206": "active"
+        "206": "active",
+        "207": "active"
       },
       "holds": {
         "001": {
@@ -1587,6 +1588,14 @@
           "where": ".claude/hooks/push_guard.py — первый предмет правила в нашем дереве, и он СЛОМАН: разбор команды слеп к форме внутри конструкции оболочки. Машинного нет, и причина названа в why",
           "holdable": "not-yet",
           "awaiting": "починка push_guard по задаче #533: сейчас слепых форм четыре из семи проверенных",
+          "analysed": "2026-09-17",
+          "decided": "2026-09-17"
+        },
+        "207": {
+          "mechanism": "none",
+          "where": "заходы перечитывания этого же реестра — поле analysed у каждой записи. Машинного нет, и причина названа в why",
+          "holdable": "not-yet",
+          "awaiting": "заход перечитывания станет объектом с границами: сегодня их ноль, есть только 206 дат analysed у отдельных записей",
           "analysed": "2026-09-17",
           "decided": "2026-09-17"
         }
@@ -7331,15 +7340,16 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-17",
-      "answered": 203,
+      "answered": 205,
       "by_status": {
-        "active": 189,
+        "active": 191,
         "not-applicable": 14
       },
       "by_mechanism": {
-        "gate": 156,
+        "gate": 157,
         "pipeline": 25,
-        "document": 8
+        "document": 8,
+        "none": 1
       },
       "rules": {
         "001": "active",
@@ -7544,7 +7554,9 @@
         "201": "not-applicable",
         "202": "active",
         "203": "active",
-        "204": "active"
+        "204": "active",
+        "205": "active",
+        "206": "active"
       },
       "holds": {
         "001": {
@@ -9058,10 +9070,26 @@
           "awaiting": "",
           "analysed": "",
           "decided": ""
+        },
+        "205": {
+          "mechanism": "none",
+          "where": "",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "",
+          "decided": ""
+        },
+        "206": {
+          "mechanism": "gate",
+          "where": "Правило родилось здесь, и оба его требования держатся механизмами того же дня. ВСЕ ФОРМЫ: tests/test_citation_applicability.py читает цитату правила в ДВУХ формах — markdown-ссылкой и голым номером в скобках; до 17.09.2026 читалась одна, и замер показал, что невидимого больше видимого (1744 упоминания голым числом против 1007 ссылками, и 23 правила названы только голым числом). НАБОР ФОРМ БЕРЁТСЯ ЗАМЕРОМ: tests/test_steps_speak_outward.py::test_the_pattern_sees_every_annotation_in_the_tree сверяет разбор аннотаций с сырым поиском по дереву — 62 из 62, — и именно он нашёл две формы, которых образец не видел никогда. ДВУСМЫСЛЕННОЕ ОБЪЯВЛЕНО ВСЛУХ: у голой формы названа асимметрия — опечатка в номере уходит молча, потому что в скобках ходят и коды ответа площадки; граница записана рядом с образцом, а не умолчана",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "",
+          "decided": ""
         }
       },
-      "trails": 7,
-      "born": 6,
+      "trails": 8,
+      "born": 7,
       "findings": [
         "ответ по схеме 1.4, у контракта 1.5 — записи остаются валидными, означая уже другое"
       ]

@@ -15,14 +15,14 @@
 <text x="937" y="124" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" letter-spacing="0.3" text-anchor="middle">ничем</text>
 <text x="36" y="148" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Engineering-Incidents-</text>
 <text x="36" y="167" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Playbook</text>
-<text x="375" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">205</text>
+<text x="375" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">206</text>
 <text x="457" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">55</text>
 <text x="529" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">34</text>
 <text x="635" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">124</text>
 <text x="713" y="159" fill="#3FB950" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">9</text>
 <text x="788" y="159" fill="#D29922" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
 <text x="862" y="159" fill="#A371F7" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">28</text>
-<text x="937" y="159" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">38</text>
+<text x="937" y="159" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">39</text>
 <rect x="36" y="177" width="928" height="1" fill="#30363D" opacity="0.55"/>
 <text x="36" y="203" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Stepik-Python-Grader</text>
 <text x="375" y="205" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">195</text>
@@ -67,13 +67,13 @@
 <rect x="36" y="361" width="928" height="1" fill="#30363D" opacity="0.55"/>
 <text x="36" y="378" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Engineering-Pipeline-</text>
 <text x="36" y="397" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Mechanisms</text>
-<text x="375" y="389" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">203</text>
-<text x="457" y="389" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">7</text>
-<text x="529" y="389" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">6</text>
-<text x="635" y="389" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">156</text>
+<text x="375" y="389" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">205</text>
+<text x="457" y="389" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">8</text>
+<text x="529" y="389" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">7</text>
+<text x="635" y="389" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">157</text>
 <text x="713" y="389" fill="#3FB950" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">25</text>
 <text x="788" y="389" fill="#D29922" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
 <text x="862" y="389" fill="#A371F7" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">8</text>
-<text x="937" y="389" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">14</text>
-<text x="36" y="440" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="500">ответы самих проектов на каждое из 205 правил каталога — не наша оценка их</text>
+<text x="937" y="389" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">15</text>
+<text x="36" y="440" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="500">ответы самих проектов на каждое из 206 правил каталога — не наша оценка их</text>
 </svg>
