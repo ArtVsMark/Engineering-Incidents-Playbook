@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T12:04:25+00:00",
+  "generated_at": "2026-09-17T12:14:29+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -4749,7 +4749,7 @@
         }
       },
       "trails": 29,
-      "born": 17
+      "born": 18
     },
     {
       "repo": "ArtVsMark/Claude-Code_Usage-Token",
@@ -9061,7 +9061,7 @@
         }
       },
       "trails": 7,
-      "born": 7,
+      "born": 6,
       "findings": [
         "ответ по схеме 1.4, у контракта 1.5 — записи остаются валидными, означая уже другое"
       ]
