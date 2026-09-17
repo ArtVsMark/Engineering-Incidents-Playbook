@@ -12,6 +12,7 @@
 
 from __future__ import annotations
 
+import datetime as _dt
 import json
 import re
 from pathlib import Path
@@ -72,6 +73,7 @@ def test_пустой_ответ_это_третий_исход(monkeypatch, rep
 def test_правило_без_ответа_это_находка(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                                "where": "нигде"}}},
             export_of("001", "002"))
     assert cb.main() == 1
@@ -82,6 +84,7 @@ def test_правило_без_ответа_это_находка(monkeypatch, r
 def test_ответ_на_несуществующее_правило_это_находка(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                                "where": "нигде"},
                        "999": {"status": "unreviewed"}}},
             export_of("001"))
@@ -174,7 +177,7 @@ def test_образец_файлов_это_адрес(monkeypatch, repo):
             {"rules": {"001": {"status": "active", "mechanism": "document",
                                "where": ".github/workflows/*.yml — у всех есть "
                                         "ручная кнопка",
-                               "document_reason": "impossible",
+                               "holdable": "no",
                                "why": "предмет не в дереве"}}},
             export_of("001"))
     assert cb.main() == 0
@@ -185,7 +188,7 @@ def test_корневой_документ_по_имени_это_адрес(mon
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "document",
                                "where": "CONTRIBUTING — раздел про ревью",
-                               "document_reason": "impossible",
+                               "holdable": "no",
                                "why": "предмет не в дереве"}}},
             export_of("001"))
     assert cb.main() == 0
@@ -199,6 +202,7 @@ def test_у_отсутствия_механизма_адреса_не_требу
     """
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                                "where": "намерение, за которым пока ничего",
                                "why": "не дошли руки: предмет счётный",
                                "machine_half": "есть, но нашла бы пустоту (182)"}}},
@@ -216,6 +220,7 @@ def test_у_отсутствия_механизма_адреса_не_требу
 def test_ничем_без_причины_это_находка(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                                "where": "держится договорённостью"}}},
             export_of("001"))
     assert cb.main() == 1
@@ -227,6 +232,7 @@ def test_ничем_с_причиной_проходит(monkeypatch, repo):
     """Причина — обычная проза; замкнутый словарь был бы ярлыком вместо ответа."""
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                                "where": "держится договорённостью",
                                "why": "требует суждения: что считать решением, "
                                       "решает читатель",
@@ -295,6 +301,7 @@ def test_у_ничем_блока_не_спрашивают(monkeypatch, repo):
     гейт(repo, '"""Просто сторож."""\n')
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                                "where": "scripts/страж.py",
                                "why": "не дошли руки: предмет счётный",
                                "machine_half": "есть, но нашла бы пустоту (182)"}}},
@@ -371,8 +378,12 @@ def ничем(why: str = "требует суждения: пока так") ->
     """
     return {"project": "мой/каталог",
             "rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                               "where": "договорённостью, гейта нет",
                               "why": why,
+                              # Слово держимости спрашивается у ВСЯКОГО ответа,
+                              # которого не держит машина, — `none` в том числе.
+                              "holdable": "no",
                               "machine_half": "нет: препятствие одно на обе "
                                               "половины (182)"}}}
 
@@ -503,6 +514,7 @@ def test_bez_rashozhdeniya_lishnego_ne_pechataetsya(monkeypatch, repo, capsys):
 def без_разбора(why: str = "требует суждения: понимание, а не форма") -> dict:
     return {"project": "мой/каталог",
             "rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                               "where": "нигде", "why": why}}}
 
 
@@ -562,7 +574,7 @@ def test_document_bez_razbora_nadvoe_otkaz(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo, документом(), export_of("001"))
 
     assert cb.main() == 1
-    assert "держится документом, а чем именно" in capsys.readouterr().err
+    assert "машина этого не держит, а можно ли" in capsys.readouterr().err
 
 
 def test_document_chuzhoe_slovo_otkaz(monkeypatch, repo, capsys):
@@ -570,11 +582,11 @@ def test_document_chuzhoe_slovo_otkaz(monkeypatch, repo, capsys):
     невозможно» не складывается ни с чем."""
     write(repo / "AGENTS.md", "свод\n")
     prepare(monkeypatch, repo,
-            документом({"document_reason": "почти невозможно", "why": "так вышло"}),
+            документом({"holdable": "почти невозможно", "why": "так вышло"}),
             export_of("001"))
 
     assert cb.main() == 1
-    assert "держится документом, а чем именно" in capsys.readouterr().err
+    assert "машина этого не держит, а можно ли" in capsys.readouterr().err
 
 
 def test_document_slovo_bez_prichiny_otkaz(monkeypatch, repo, capsys):
@@ -583,19 +595,19 @@ def test_document_slovo_bez_prichiny_otkaz(monkeypatch, repo, capsys):
     Красная сторона показана подделкой: вердикт стоит, причины нет.
     """
     write(repo / "AGENTS.md", "свод\n")
-    prepare(monkeypatch, repo, документом({"document_reason": "not-yet"}),
+    prepare(monkeypatch, repo, документом({"holdable": "not-yet"}),
             export_of("001"))
 
     assert cb.main() == 1
-    assert "`document_reason` есть, а причины нет" in capsys.readouterr().err
+    assert "`holdable` есть, а причины нет" in capsys.readouterr().err
 
 
 def test_document_s_razborom_chisto(monkeypatch, repo):
     """Зелёная сторона: оба слова законны и оба идут с причиной (140)."""
     write(repo / "AGENTS.md", "свод\n")
-    for слово in ("impossible", "not-yet"):
+    for слово in ("no", "not-yet"):
         prepare(monkeypatch, repo,
-                документом({"document_reason": слово,
+                документом({"holdable": слово,
                             "why": "половина названа, а не выдана за отсутствие"}),
                 export_of("001"))
         assert cb.main() == 0, слово
@@ -616,6 +628,109 @@ def test_razbor_ne_sprashivaetsya_u_sosednih_mehanizmov(monkeypatch, repo):
     assert cb.main() == 0
 
 
+# ── ДВЕ ДАТЫ: ФОРМА И ПОРЯДОК ─────────────────────────────────────────────
+#
+# Набор двусторонний (140). `analysed` — когда запись сверяли с деревом;
+# `decided` — когда вынесен НЫНЕШНИЙ вердикт. Перечитали и подтвердили —
+# двигается первая и не двигается вторая; сменился вердикт — двигаются обе.
+# Отсюда и то, что гейт обязан отвергнуть: дату, которой не бывает, дату из
+# будущего и вердикт, вынесенный ПОЗЖЕ последнего взгляда на дерево.
+
+def датой(поля: dict) -> dict:
+    """Ответ «держится документом» с датами."""
+    return документом({"holdable": "no", "why": "половина названа", **поля})
+
+
+@pytest.mark.parametrize("значение", ["16.09.2026", "Sep 16 2026", "2026-9-16",
+                                      "вчера", "2026-13-40"])
+def test_data_ne_iso_otkaz(monkeypatch, repo, capsys, значение):
+    """Даты сравнивает машина, а «16.09» и «Sep 16» она сравнить не может."""
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo, датой({"analysed": значение}), export_of("001"))
+
+    assert cb.main() == 1
+    assert "не дата вида ГГГГ-ММ-ДД" in capsys.readouterr().err
+
+
+def test_data_iz_budushchego_otkaz(monkeypatch, repo, capsys):
+    """Сверка, которой ещё не было, записана как бывшая."""
+    write(repo / "AGENTS.md", "свод\n")
+    завтра = (_dt.date.today() + _dt.timedelta(days=1)).isoformat()
+    prepare(monkeypatch, repo, датой({"analysed": завтра}), export_of("001"))
+
+    assert cb.main() == 1
+    assert "в будущем" in capsys.readouterr().err
+
+
+def test_verdikt_bez_sverki_otkaz(monkeypatch, repo, capsys):
+    """Вынести вердикт, не посмотрев на дерево, нельзя."""
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo, датой({"decided": "2026-09-10"}), export_of("001"))
+
+    assert cb.main() == 1
+    assert "вердикт датирован, а сверка — нет" in capsys.readouterr().err
+
+
+def test_verdikt_novee_sverki_otkaz(monkeypatch, repo, capsys):
+    """Решают, посмотрев: `decided` не может быть позже `analysed`."""
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo,
+            датой({"analysed": "2026-09-10", "decided": "2026-09-16"}),
+            export_of("001"))
+
+    assert cb.main() == 1
+    assert "новее сверки" in capsys.readouterr().err
+
+
+def test_sverili_i_podtverdili_chisto(monkeypatch, repo):
+    """ГЛАВНЫЙ ЗЕЛЁНЫЙ СЛУЧАЙ: перечитали сегодня, вердикт стоит с прошлого раза.
+
+    Ровно это и разводит две даты: без них «сверено вчера» и «решено в августе
+    и с тех пор никто не смотрел» выглядят одинаково.
+    """
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo,
+            датой({"analysed": "2026-09-16", "decided": "2026-09-01"}),
+            export_of("001"))
+
+    assert cb.main() == 0
+
+
+def test_bez_dat_chisto_no_nazvano(monkeypatch, repo, capsys):
+    """Отсутствие даты — законный ответ «не сверяли», и он ПЕЧАТАЕТСЯ числом.
+
+    Пустое поле не выдаётся за свежее: не спрошенное не идёт в чистое (039).
+    """
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo, датой({}), export_of("001"))
+
+    assert cb.main() == 0
+    assert "дата есть у 0, нет у 1" in capsys.readouterr().out
+
+
+def test_pri_uslovii_bez_sobytiya_otkaz(monkeypatch, repo, capsys):
+    """«При условии» без предмета неотличимо от долга на «когда-нибудь» (146)."""
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo,
+            документом({"holdable": "conditional", "why": "предмета пока нет"}),
+            export_of("001"))
+
+    assert cb.main() == 1
+    assert "без события" in capsys.readouterr().err
+
+
+def test_pri_uslovii_s_sobytiem_chisto(monkeypatch, repo):
+    """Зелёная сторона: событие названо, и это очередь с условием, а не долг."""
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo,
+            документом({"holdable": "conditional",
+                        "why": "предмета пока нет: гейт зеленел бы вокруг пустоты",
+                        "awaiting": "проектов с этим предметом сейчас 1, на одном признак не отличить от совпадения"}),
+            export_of("001"))
+
+    assert cb.main() == 0
+
+
 def test_ne_postroennoe_pechataetsya_v_stupeni_nol(monkeypatch, repo, capsys):
     """Число видно СО СТОРОНЫ, иначе счёт по семье врёт молча.
 
@@ -623,13 +738,13 @@ def test_ne_postroennoe_pechataetsya_v_stupeni_nol(monkeypatch, repo, capsys):
     """
     write(repo / "AGENTS.md", "свод\n")
     prepare(monkeypatch, repo,
-            документом({"document_reason": "not-yet", "why": "построили бы счёт"}),
+            документом({"holdable": "not-yet", "why": "построили бы счёт"}),
             export_of("001"))
 
     assert cb.main() == 0
     вышло = capsys.readouterr().out
-    assert "держится документом: 1" in вышло
-    assert "не построена у 1" in вышло
+    assert "не держится машиной: 1" in вышло
+    assert "не построено у 1" in вышло
 
 
 def test_nerazobrannoe_ne_zachislyaetsya_v_nevozmozhnoe(monkeypatch, repo, capsys):
@@ -644,19 +759,19 @@ def test_nerazobrannoe_ne_zachislyaetsya_v_nevozmozhnoe(monkeypatch, repo, capsy
 
     assert cb.main() == 1
     вышло = capsys.readouterr().out
-    assert "машинной половины нет у 0" in вышло
-    assert "без разбора: 1" in вышло
+    assert "держать нельзя у 0" in вышло
+    assert "вердикт не разобран: 1" in вышло
 
 
 def test_chuzhoe_slovo_tozhe_bez_razbora(monkeypatch, repo, capsys):
     """Слово вне словаря — тоже «не спрошено», а не «невозможно»."""
     write(repo / "AGENTS.md", "свод\n")
     prepare(monkeypatch, repo,
-            документом({"document_reason": "почти", "why": "так вышло"}),
+            документом({"holdable": "почти", "why": "так вышло"}),
             export_of("001"))
 
     assert cb.main() == 1
-    assert "без разбора: 1" in capsys.readouterr().out
+    assert "вердикт не разобран: 1" in capsys.readouterr().out
 
 
 def test_slovo_bez_prichiny_tozhe_bez_razbora(monkeypatch, repo, capsys):
@@ -667,14 +782,14 @@ def test_slovo_bez_prichiny_tozhe_bez_razbora(monkeypatch, repo, capsys):
     разобранной. Приёмка теперь одна на обоих (022).
     """
     write(repo / "AGENTS.md", "свод\n")
-    prepare(monkeypatch, repo, документом({"document_reason": "impossible"}),
+    prepare(monkeypatch, repo, документом({"holdable": "no"}),
             export_of("001"))
 
     assert cb.main() == 1
     вышло = capsys.readouterr()
-    assert "`document_reason` есть, а причины нет" in вышло.err
-    assert "машинной половины нет у 0" in вышло.out
-    assert "без разбора: 1" in вышло.out
+    assert "`holdable` есть, а причины нет" in вышло.err
+    assert "держать нельзя у 0" in вышло.out
+    assert "вердикт не разобран: 1" in вышло.out
 
 
 def test_smeshannyy_sluchay_schitaetsya_po_zapisyam(monkeypatch, repo, capsys):
@@ -683,19 +798,19 @@ def test_smeshannyy_sluchay_schitaetsya_po_zapisyam(monkeypatch, repo, capsys):
     ответ = {"rules": {
         "001": {"status": "active", "mechanism": "document",
                 "where": "AGENTS.md — сказано в своде",
-                "document_reason": "not-yet", "why": "построили бы счёт"},
+                "holdable": "not-yet", "why": "построили бы счёт"},
         "002": {"status": "active", "mechanism": "document",
                 "where": "AGENTS.md — сказано в своде",
-                "document_reason": "impossible"},
+                "holdable": "no"},
     }}
     prepare(monkeypatch, repo, ответ, export_of("001", "002"))
 
     assert cb.main() == 1
     вышло = capsys.readouterr().out
-    assert "держится документом: 2" in вышло
-    assert "машинной половины нет у 0" in вышло
-    assert "не построена у 1" in вышло
-    assert "без разбора: 1" in вышло
+    assert "не держится машиной: 2" in вышло
+    assert "держать нельзя у 0" in вышло
+    assert "не построено у 1" in вышло
+    assert "вердикт не разобран: 1" in вышло
 
 
 # ── ОТЛОЖЕННОЕ ПРОТИВ ДОЛГА ───────────────────────────────────────────────
@@ -714,6 +829,7 @@ def test_otlozhennoe_vyvoditsya_iz_dolga(monkeypatch, repo, capsys):
     """Механизма нет, но событие названо и предмет измерен — это не долг."""
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                                "where": "строить не на чем",
                                "why": "предмета нет",
                                "machine_half": "есть, но нашла бы пустоту",
@@ -729,6 +845,7 @@ def test_otlozhennoe_bez_zamera_eto_nahodka(monkeypatch, repo, capsys):
     """«Построим потом» — обещание, а не замер: число обязательно."""
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                                "where": "строить не на чем",
                                "why": "предмета нет",
                                "machine_half": "есть, но нашла бы пустоту",
@@ -746,7 +863,7 @@ def test_awaiting_pri_gotovom_mehanizme_eto_nahodka(monkeypatch, repo, capsys):
                                "awaiting": ОТЛОЖЕНО}}},
             export_of("001"))
     assert cb.main() == 1
-    assert "механизм назван, а поле awaiting осталось" in capsys.readouterr().err
+    assert "механизм краснеет, а поле awaiting осталось" in capsys.readouterr().err
 
 
 # ── ОТВЕТ «ГЕЙТ» УКАЗЫВАЕТ НА ИСПОЛНЯЕМОЕ (139) ───────────────────────────
@@ -848,7 +965,7 @@ def test_document_s_prozoy_nahodkoy_ne_yavlyaetsya(monkeypatch, repo):
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "document",
                                "where": "AGENTS.md — сказано в своде",
-                               "document_reason": "impossible",
+                               "holdable": "no",
                                "why": "предмет не в дереве"}}},
             export_of("001"))
     assert cb.main() == 0
@@ -966,6 +1083,7 @@ def навык_в(repo: Path, имя: str, *, name: str | None = None,
 def test_навык_без_адреса_это_находка(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
                                "where": ".claude/skills/probe/SKILL.md — держит"}}},
             export_of("001"))
     assert cb.main() == 1
@@ -975,6 +1093,7 @@ def test_навык_без_адреса_это_находка(monkeypatch, repo,
 def test_проза_вместо_адреса_навыка_это_находка(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
                                "where": ".claude/skills/probe/SKILL.md — держит",
                                "skill": "навык перечитывания свода"}}},
             export_of("001"))
@@ -986,6 +1105,7 @@ def test_навык_при_механизме_ничем_это_противор
     навык_в(repo, "probe")
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "none",
+            "holdable": "no",
                                "where": "CLAUDE.md — раздел про окна",
                                "why": "требует суждения",
                                "machine_half": "ничего не следует из данных",
@@ -998,6 +1118,7 @@ def test_навык_при_механизме_ничем_это_противор
 def test_объявленного_навыка_может_не_быть_в_дереве(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
                                "where": ".claude/skills/probe/SKILL.md — держит",
                                "skill": ".claude/skills/probe"}}},
             export_of("001"))
@@ -1009,6 +1130,7 @@ def test_навык_без_описания_это_находка(monkeypatch, r
     навык_в(repo, "probe", description="")
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
                                "where": ".claude/skills/probe/SKILL.md — держит",
                                "skill": ".claude/skills/probe"}}},
             export_of("001"))
@@ -1020,6 +1142,7 @@ def test_имя_навыка_обязано_совпасть_с_каталого
     навык_в(repo, "probe", name="совсем-другое")
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
                                "where": ".claude/skills/probe/SKILL.md — держит",
                                "skill": ".claude/skills/probe"}}},
             export_of("001"))
@@ -1031,6 +1154,7 @@ def test_целый_навык_проходит(monkeypatch, repo):
     навык_в(repo, "probe")
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
                                "where": ".claude/skills/probe/SKILL.md — держит",
                                "skill": ".claude/skills/probe"}}},
             export_of("001"))
@@ -1064,6 +1188,7 @@ def test_навык_целиком_и_половиной_считаются_по
     prepare(monkeypatch, repo,
             {"rules": {
                 "001": {"status": "active", "mechanism": "skill",
+                "holdable": "no", "why": "навык не краснеет: машинной половины нет",
                         "where": ".claude/skills/alpha/SKILL.md — держит целиком",
                         "skill": ".claude/skills/alpha"},
                 "002": {"status": "active", "mechanism": "gate",
@@ -1117,6 +1242,7 @@ def test_чужой_механизм_навык_назван_по_русски()
     строки = ab._how_others_enforce(
         [{"repo": "чужой/проект", "holds": {
             "001": {"mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
                     "where": ".claude/skills/probe/SKILL.md"}}},
          {"repo": "другой/проект", "holds": {"001": {"mechanism": "none"}}}])
     текст = "\n".join(строки)
@@ -1157,6 +1283,7 @@ def скилл(repo: Path, текст: str) -> None:
 def ответ_на_навык(monkeypatch, repo: Path, capsys) -> str:
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
                                "where": ".claude/skills/probe/SKILL.md — держит",
                                "skill": ".claude/skills/probe"}}},
             export_of("001"))

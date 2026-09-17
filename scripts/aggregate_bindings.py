@@ -61,12 +61,32 @@ from pathlib import Path
 # Словарь механизмов живёт в одном месте (правило 022). Импорт, а не копия:
 # копия расходится молча, и первым это увидит потребитель, а не гейт.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_bindings import MECHANISM_ORDER, addressed  # noqa: E402
+from check_bindings import (MECHANISM_ORDER, addressed,  # noqa: E402
+                            слово_держимости)
 
 ROOT = Path(__file__).resolve().parent.parent
 CONSUMERS = ROOT / ".rules" / "consumers.json"
 EXPORT_JSON = ROOT / "export" / "where.json"
-SUMMARY_SCHEMA = "1.3"
+SUMMARY_SCHEMA = "1.4"
+
+#: Поля записи, которые сводка переносит НАРУЖУ. Собираются ОДНОЙ функцией
+#: потому, что таких мест два — сборка и сверка, — и они сравниваются на
+#: равенство: разойдясь на одно поле, они дали бы вечное «сводка отстала» без
+#: единой правки ответа (022).
+#:
+#: ОТСУТСТВИЕ ПЕРЕНОСИТСЯ ПУСТОЙ СТРОКОЙ, А НЕ ПРОПУСКОМ КЛЮЧА. Ключ, который
+#: то есть то нет, читатель сводки не отличит от «поля не бывает»; пустая
+#: строка — это ответ «не сказано», и он тоже ответ (027).
+def держание(rec: dict) -> dict:
+    """Что сводка публикует про одну запись чужого ответа."""
+    return {"mechanism": rec.get("mechanism") or "none",
+            "where": rec.get("where") or "",
+            # Слово переводится со старого имени поля на входе: ответ 1.3 не
+            # обязан знать про 1.5, и сводка не имеет права звать это пустотой.
+            "holdable": слово_держимости(rec),
+            "awaiting": (rec.get("awaiting") or ""),
+            "analysed": (rec.get("analysed") or ""),
+            "decided": (rec.get("decided") or "")}
 
 EXPORT_MD = ROOT / "export" / "where.md"
 RULES = ROOT / "export" / "rules.json"
@@ -213,7 +233,7 @@ def collect(consumers: list[dict]) -> tuple[list[dict], list[str]]:
             # Разводить их значило бы делать вид, что второе хуже первого.
             mech = rec.get("mechanism") or "none"
             by_mechanism[mech] = by_mechanism.get(mech, 0) + 1
-            holds[rid] = {"mechanism": mech, "where": rec.get("where") or ""}
+            holds[rid] = держание(rec)
         entry["schema"] = data.get("schema") or ""
         # ВТОРОЙ НОМЕР ПЕРЕНОСИТСЯ ЗДЕСЬ, И ЭТОГО НЕ БЫЛО. export_lag() ниже
         # объявлен сверкой ключа `answers_to`, а срез его не нёс вовсе:
@@ -940,8 +960,7 @@ def check_offline(consumers: list[dict], rule_ids: list[str],
         # ловить «правило перестало действовать» и пропускать «правило перестало
         # держаться гейтом»: второе — ровно та потеря, ради которой раздел «чем
         # держат другие» и заведён, и уехала бы она молча (146).
-        want_h = {rid: {"mechanism": rec.get("mechanism") or "none",
-                        "where": rec.get("where") or ""}
+        want_h = {rid: держание(rec)
                   for rid, rec in data.get("rules", {}).items()
                   if rec.get("status") == "active"}
         have_h = next((s.get("holds") or {} for s in slices
