@@ -70,6 +70,42 @@ suite. That does not make the model correct forever — the other side changes
   ([139](139-a-mechanism-is-confirmed-by-a-run.md)) neither replaces the forgery
   nor is replaced by it: they are two different checks.
 
+**THE COMPLETENESS OF A FAKE SET IS A HYPOTHESIS TOO, AND THAT IS THE SAME CLAIM
+AS THE TITLE.** This arrived as a proposal from the mechanisms project and was
+merged in here rather than given a new number: the rule's title is about green on
+a fake, and it does not matter whether the fake lied or was never there at all.
+
+- completeness is held by a **poisoned input**, not by a list: the real outward
+  channel — network, disk, clock — is replaced with one that fails with a clear
+  error. A list is hand-written knowledge about the mechanism and goes stale
+  SILENTLY; poison turns a miss into a loud refusal by whoever allowed it;
+- **completeness is not checked by counting**: the count matches by coincidence,
+  and one extra fake of something irrelevant covers a missing one. At the moment
+  of the neighbour's finding it matched 8 to 8 — by coincidence;
+- **identity of names is not enough either**: a source that touches a shared read
+  helper counts as fully faked, although it is not the one going out;
+- the poison is verified **from both ends**
+  ([140](140-a-gate-is-tested-by-what-it-must-reject.md)): with a failing stub
+  AND with a successful one. The first shows nobody calls the real thing; the
+  second shows whether green was resting on the ABSENCE of the real thing, and
+  those are different answers.
+
+**OUR OWN MEASUREMENT BY THE SAME METHOD, 2026-09-17, AND IT IS CLEAN — BUT CLEAN
+BY PROBE, NOT BY LIST.** The socket is poisoned both in the run itself and in
+EVERY child process (`sitecustomize` on the import path, or subprocesses never see
+the poison): not one test goes out. The platform channel was checked from both
+ends — there is no real `gh` in the window at all, and neither a failing stub in
+its place nor a successful one returning an empty answer changes a single test.
+The first poison, incidentally, did not separate the loopback from an external
+address and turned 17 tests red — it was itself cosmetic, exactly as the proposal
+warns.
+
+**THE WEAK SPOT IS NAMED, NOT CLOSED.** `scripts/check_forgeries.py` holds eleven
+seam names as a list, and its own docstring admits it: "a deny list will miss a
+new one tomorrow". Today the list matches the tree — `subprocess.run`, `urlopen`,
+`check_output` are covered — and it matches because it was verified by poison, not
+because a list can be trusted.
+
 ## Where it applies
 
 **Works** for forgeries of **external** interfaces: a platform, a payment
