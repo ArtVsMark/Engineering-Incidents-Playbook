@@ -86,10 +86,18 @@ commit it was passed on is not verifiable.
 **Works** for runs that cancel their predecessors where the subject under check
 is a specific commit: change gates, builds, the required check.
 
-**Does not work** where the subject is not a commit but **state**: a run
-rebuilding a showcase or a summary from the shared branch must suppress the
-whole older generation, and a head in the group would bring back a race between
-writers. Ours is `badges`.
+**Does not work** where the subject is not a commit but **state**: a run that
+says the same thing about any head would displace itself for nothing, and a head
+in the group would splinter it into meaningless slices. Ours is `off-prefix`.
+
+**And here is a boundary the rule itself does not cover.** The example above used
+to be `badges` — the single writer of its own branch — and on 2026-09-17 it left
+this place altogether: it did not gain a head in its group, it stopped
+CANCELLING (`cancel-in-progress: false`). A writer cancelled between its commit
+and its push leaves the branch stale in silence, and a queue is cheaper than a
+cancellation. So a run that WRITES has a third answer to "which head to name":
+none, because cancelling it is wrong in the first place. This is not a separate
+rule — the subject is the same, cancellation, and 022 applies.
 
 **Sign of violation:** the change's run list holds a `cancelled` on a head that
 **is the current one**, with a `completed` on the previous head beside it.

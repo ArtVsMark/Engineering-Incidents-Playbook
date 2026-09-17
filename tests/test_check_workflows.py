@@ -295,15 +295,101 @@ def test_zapis_o_spiske_sovpadaet_so_spiskom():
     assert прогоны_в_записи(запись_179()) == set(cw.CANCELS_BY_STATE)
 
 
+#: Текст записи 179 ДОСЛОВНО из коммита 3e05f4a — `git show 3e05f4a:.rules/
+#: bindings.json`. Пересказ здесь был бы тем же дефектом, что и чинится: первая
+#: редакция случая пропустила «с причиной у каждой строки», и внешний взгляд
+#: это назвал. Случай о дословности обязан быть дословным сам.
+БЫЛО_В_ЗАПИСИ = (
+    "Разрешение объявлено списком CANCELS_BY_STATE с причиной у каждой строки: "
+    "у .github/workflows/badges.yml и .github/workflows/off-prefix.yml предмет "
+    "— состояние, а не коммит")
+
+
 def test_zapis_o_spiske_lovit_rashozhdenie():
     """Обратная сторона (140): сверка обязана РАЗОЙТИСЬ на том самом тексте,
     что стоял в записи до починки, — иначе она не держит ничего."""
-    было = ("Разрешение объявлено списком CANCELS_BY_STATE: у "
-            ".github/workflows/badges.yml и .github/workflows/off-prefix.yml "
-            "предмет — состояние, а не коммит")
+    assert прогоны_в_записи(БЫЛО_В_ЗАПИСИ) == {"badges.yml", "off-prefix.yml"}
+    assert прогоны_в_записи(БЫЛО_В_ЗАПИСИ) != set(cw.CANCELS_BY_STATE)
 
-    assert прогоны_в_записи(было) == {"badges.yml", "off-prefix.yml"}
-    assert прогоны_в_записи(было) != set(cw.CANCELS_BY_STATE)
+
+def test_dosloznost_byla_svyorena_s_istoriey():
+    """И сама дословность сверена с историей, а не объявлена.
+
+    Без этого случая строка выше — просто ещё один пересказ, только с более
+    уверенной подписью. Прогон без истории (мелкий клон) случай не выполняет и
+    НЕ зеленеет молча: он говорит, чего ему не хватило.
+    """
+    import json
+    import subprocess
+    из_истории = subprocess.run(
+        ["git", "show", "3e05f4a:.rules/bindings.json"],
+        cwd=cw.ROOT, capture_output=True, text=True, encoding="utf-8")
+    if из_истории.returncode != 0:
+        import pytest
+        pytest.skip("истории нет: мелкий клон — сверять дословность не с чем")
+
+    было = json.loads(из_истории.stdout)["rules"]["179"]["where"]
+
+    assert БЫЛО_В_ЗАПИСИ in было, "цитата разошлась с тем, что стояло в записи"
+
+
+#: ВТОРОЙ ЖИВОЙ АДРЕС ТОГО ЖЕ УТВЕРЖДЕНИЯ. Запись в реестре — не единственное
+#: место, где сказано, кому позволено отменять по состоянию: то же самое стоит
+#: прозой в самом правиле, в разделе «Не работает». Первая редакция починки
+#: держала только реестр и назвала это границей; внешний взгляд показал, что
+#: граница проведена не там — у утверждения два адреса, а не один.
+РАЗДЕЛ = {"ru": "**Не работает**", "en": "**Does not work**"}
+
+
+def пример_в_тексте(текст: str, язык: str) -> set[str]:
+    """Кого раздел «Не работает» называет своим примером. Берётся ОДИН абзац:
+    соседние говорят о другом, и их имена примером не являются."""
+    import re
+    абзацы = текст.split("\n\n")
+    (нужный,) = [a for a in абзацы if a.lstrip().startswith(РАЗДЕЛ[язык])]
+    return set(re.findall(r"`([a-z][\w-]*)`", нужный))
+
+
+def правило_179(язык: str, ревизия: str | None = None) -> str | None:
+    """Текст правила — из дерева либо из истории. `None`, если истории нет."""
+    from pathlib import Path
+    (файл,) = (Path(cw.ROOT) / "rules" / язык).glob("179-*.md")
+    if ревизия is None:
+        return файл.read_text(encoding="utf-8")
+    import subprocess
+    путь = файл.relative_to(cw.ROOT).as_posix()
+    из_истории = subprocess.run(["git", "show", f"{ревизия}:{путь}"],
+                                cwd=cw.ROOT, capture_output=True, text=True,
+                                encoding="utf-8")
+    return из_истории.stdout if из_истории.returncode == 0 else None
+
+
+def позволено_отменять() -> set[str]:
+    return {k.removesuffix(".yml") for k in cw.CANCELS_BY_STATE}
+
+
+def test_primer_v_pravile_sovpadaet_so_spiskom():
+    """Оба дерева называют примером ровно тех, кому это и разрешено."""
+    for язык in ("ru", "en"):
+        assert пример_в_тексте(правило_179(язык), язык) == позволено_отменять(), \
+            f"{язык}: пример в правиле разошёлся со списком"
+
+
+def test_primer_v_pravile_lovit_ustarevshiy():
+    """Обратная сторона (140): на ТОМ САМОМ абзаце, что стоял до починки,
+    сверка обязана разойтись — иначе она не держит ничего.
+
+    Абзац берётся из истории, а не переписывается сюда: пересказ был бы тем же
+    дефектом, что и чинится.
+    """
+    for язык in ("ru", "en"):
+        было = правило_179(язык, "3e05f4a")
+        if было is None:
+            import pytest
+            pytest.skip("истории нет: мелкий клон — сверять не с чем")
+
+        assert пример_в_тексте(было, язык) == {"badges"}
+        assert пример_в_тексте(было, язык) != позволено_отменять()
 
 
 def test_zhivoy_badges_stoit_v_ocheredi_a_ne_otmenyaet():
