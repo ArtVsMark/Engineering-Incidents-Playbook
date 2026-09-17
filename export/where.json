@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T10:35:05+00:00",
+  "generated_at": "2026-09-17T11:29:28+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,9 +10,9 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-17",
-      "answered": 203,
+      "answered": 204,
       "by_status": {
-        "active": 168,
+        "active": 169,
         "not-applicable": 29,
         "rejected": 6
       },
@@ -20,7 +20,7 @@
         "gate": 124,
         "document": 28,
         "pipeline": 9,
-        "none": 7
+        "none": 8
       },
       "rules": {
         "001": "active",
@@ -225,7 +225,8 @@
         "201": "active",
         "202": "active",
         "203": "not-applicable",
-        "204": "active"
+        "204": "active",
+        "205": "active"
       },
       "holds": {
         "001": {
@@ -1571,6 +1572,14 @@
           "awaiting": "",
           "analysed": "2026-09-17",
           "decided": ""
+        },
+        "205": {
+          "mechanism": "none",
+          "where": "ответы «неприменимо» в этом же файле — поле why. Машинного нет, и причина названа в why",
+          "holdable": "conditional",
+          "awaiting": "24 записи «неприменимо» из 29 получат предикат по дереву (сегодня путь, имя или команду называют 5 из 29); после этого гейт формы краснеет на записи без предиката и не краснеет ни на одной законной",
+          "analysed": "2026-09-17",
+          "decided": "2026-09-17"
         }
       },
       "trails": 52,
@@ -9042,8 +9051,8 @@
           "decided": ""
         }
       },
-      "trails": 4,
-      "born": 4,
+      "trails": 5,
+      "born": 5,
       "findings": [
         "ответ по схеме 1.4, у контракта 1.5 — записи остаются валидными, означая уже другое"
       ]
