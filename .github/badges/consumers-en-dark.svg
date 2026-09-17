@@ -35,14 +35,14 @@
 <text x="937" y="205" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">3</text>
 <rect x="36" y="223" width="928" height="1" fill="#30363D" opacity="0.55"/>
 <text x="36" y="249" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">ArtVsMark</text>
-<text x="371" y="251" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">195</text>
+<text x="371" y="251" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">203</text>
 <text x="450" y="251" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">29</text>
 <text x="522" y="251" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">18</text>
-<text x="628" y="251" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">94</text>
+<text x="628" y="251" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">95</text>
 <text x="706" y="251" fill="#3FB950" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">12</text>
 <text x="781" y="251" fill="#D29922" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
-<text x="855" y="251" fill="#A371F7" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">23</text>
-<text x="937" y="251" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">55</text>
+<text x="855" y="251" fill="#A371F7" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">25</text>
+<text x="937" y="251" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">57</text>
 <rect x="36" y="269" width="928" height="1" fill="#30363D" opacity="0.55"/>
 <text x="36" y="286" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Claude-Code_Usage-</text>
 <text x="36" y="305" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Token</text>
