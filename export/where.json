@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T13:10:00+00:00",
+  "generated_at": "2026-09-17T13:27:05+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,9 +10,9 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-17",
-      "answered": 206,
+      "answered": 207,
       "by_status": {
-        "active": 171,
+        "active": 172,
         "not-applicable": 29,
         "rejected": 6
       },
@@ -20,7 +20,7 @@
         "gate": 124,
         "document": 28,
         "pipeline": 9,
-        "none": 10
+        "none": 11
       },
       "rules": {
         "001": "active",
@@ -228,7 +228,8 @@
         "204": "active",
         "205": "active",
         "206": "active",
-        "207": "active"
+        "207": "active",
+        "208": "active"
       },
       "holds": {
         "001": {
@@ -1596,6 +1597,14 @@
           "where": "заходы перечитывания этого же реестра — поле analysed у каждой записи. Машинного нет, и причина названа в why",
           "holdable": "not-yet",
           "awaiting": "заход перечитывания станет объектом с границами: сегодня их ноль, есть только 206 дат analysed у отдельных записей",
+          "analysed": "2026-09-17",
+          "decided": "2026-09-17"
+        },
+        "208": {
+          "mechanism": "none",
+          "where": "механизма нет, и предмет для него назван точно: у scripts/preflight.py должен появиться заход, который сам толкает ветку и зовётся ТОЛЬКО после зелёного. Сегодня `grep -c push scripts/preflight.py` даёт 0 — вердикт печатается, толчок набирается отдельной командой тем же окном. Причина отсутствия названа в why",
+          "holdable": "not-yet",
+          "awaiting": "заход `--push` у scripts/preflight.py: сегодня упоминаний толчка в нём 0, у соседа механизм стоит и проверен откатом с 2 концов",
           "analysed": "2026-09-17",
           "decided": "2026-09-17"
         }
@@ -9088,8 +9097,8 @@
           "decided": ""
         }
       },
-      "trails": 8,
-      "born": 7,
+      "trails": 9,
+      "born": 8,
       "findings": [
         "ответ по схеме 1.4, у контракта 1.5 — записи остаются валидными, означая уже другое"
       ]
