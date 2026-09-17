@@ -97,14 +97,22 @@ def test_устаревшее_слово_показано_пока_им_отве
     assert cp.LANG["ru"]["process-step"] not in перешли
 
 
-def test_неподключённый_получает_одну_плашку_none(repo):
-    """Данных нет — плашка называет СОСТОЯНИЕ, а не пустоту."""
+def test_nepodklyuchyonnyy_nazyvaet_sostoyanie_a_ne_nol(repo):
+    """Данных нет — строка называет СОСТОЯНИЕ, а не пустоту и не ноль.
+
+    Ноль здесь был бы ответом «держит ничем», которого мы не знаем: проект не
+    отвечал вовсе. Подписи колонок при этом стоят — они часть шапки, а не
+    строки, и их отсутствие читалось бы как «такого вопроса не задавали».
+    """
     svg = рисуй(срез(repo, [{"repo": "o/тихий", "state": "не подключён",
                              "trails": 0}]))
+    числа = [e for e in ET.fromstring(svg).iter()
+             if e.tag.endswith("text") and int(e.get("x")) >= cp.COL_PILLS
+             and e.get("font-size") == str(cp.SIZE["number"])]
 
-    assert "none" in svg and "не подключён" in svg
-    for key in ("gate", "process-step", cp.UNVERIFIABLE):
-        assert cp.LANG["ru"][key] not in svg
+    assert "не подключён" in svg
+    assert not числа, "у неотвечавшего проекта появились числа механизмов"
+    assert cp.LANG["ru"]["gate"] in svg, "подпись колонки исчезла вместе со строкой"
 
 
 def test_метрики_идут_до_плашек(repo):
@@ -125,12 +133,16 @@ def test_плашки_стоят_в_одних_колонках(repo):
     данные = [подключён("a", gate=5, **{"process-step": 3}, none=2),
               подключён("b", gate=148, **{"process-step": 99}, none=140)]
     svg = рисуй(срез(repo, данные))
-    xs = [(int(r.get("x")), int(r.get("y"))) for r in ET.fromstring(svg).iter()
-          if r.tag.endswith("rect") and r.get("height") == str(cp.PILL_H)]
-    первая = sorted(x for x, y in xs if y == min(y for _, y in xs))
-    вторая = sorted(x for x, y in xs if y == max(y for _, y in xs))
+    keys = cp.shown(cp.rows({"consumers": данные}))
+    # Числа группы стоят правее последней числовой колонки — по ним и считаем.
+    числа = [(int(e.get("x")), int(e.get("y"))) for e in ET.fromstring(svg).iter()
+             if e.tag.endswith("text") and int(e.get("x")) >= cp.COL_PILLS
+             and e.get("font-size") == str(cp.SIZE["number"])]
+    ряды = sorted({y for _, y in числа})
+    первая = sorted(x for x, y in числа if y == ряды[0])
+    вторая = sorted(x for x, y in числа if y == ряды[1])
 
-    assert len(первая) == len(cp.shown(cp.rows({"consumers": данные})))
+    assert len(первая) == len(keys)
     assert первая == вторая
 
 
@@ -141,7 +153,8 @@ def test_ширина_колонки_берётся_по_самой_широко
                                     подключён("b", gate=148)]})
     w = cp.widths(строки, t, cp.LANG["ru"])
 
-    assert w["gate"] == cp.pill(0, 0, cp.LANG["ru"]["gate"], "148", "#000", t)[1]
+    # Подпись «гейт» короткая, значит ширину задаёт самое широкое число.
+    assert w["gate"] == int(len("148") * cp.NUMBER_K)
 
 
 def test_у_колонок_есть_подписи(repo):
@@ -177,14 +190,20 @@ def test_измеренный_ноль_остаётся_нулём(repo):
     assert ячейки[cp.COL_ANSWERED] == "0"
 
 
-def test_ширина_плашки_растёт_с_текстом(repo):
-    """Шрифта у нас нет: ширина считается по знакам, и текст не должен
-    упираться в край."""
-    узкая, _ = cp.pill(0, 0, "гейт", "5", "#000", cp.THEME[False])
-    широкая, _ = cp.pill(0, 0, "шаг процесса", "148", "#000", cp.THEME[False])
-    ширина = lambda m: int(m.split('width="')[1].split('"')[0])
+def test_shirinu_zadayot_to_chto_shire(repo):
+    """Колонка шире и подписи, и числа: в край не упирается ни то ни другое.
 
-    assert ширина(широкая) > ширина(узкая)
+    Двусторонне (140): у короткой подписи ширину держит число, у длинной —
+    сама подпись. Одной стороной проверялось бы полмеханизма.
+    """
+    t, w = cp.THEME[False], cp.LANG["ru"]
+    строки = cp.rows({"consumers": [подключён("a", gate=148,
+                                              **{"process-step": 1})]})
+    кол = cp.widths(строки, t, w)
+
+    assert кол["gate"] == int(len("148") * cp.NUMBER_K)
+    assert кол["process-step"] == int(len(w["process-step"]) * cp.LABEL_K)
+    assert кол["process-step"] > кол["gate"]
 
 
 def test_состав_берётся_из_среза_а_не_из_кода(repo):
@@ -360,20 +379,22 @@ def test_подпись_для_чтения_с_экрана_на_языке_ви
     assert брать(рисуй(repo, lang="ru")) == cp.LANG["ru"]["title"]
 
 
-def test_подпись_плашек_стоит_по_центру_группы(repo):
-    """Она называет три колонки сразу; у левого края читается как подпись
-    только первой."""
-    svg = рисуй(срез(repo, [подключён("a", gate=5, none=2, **{"process-step": 3})]))
-    шапка = [e for e in ET.fromstring(svg).iter()
-             if e.tag.endswith("text") and e.text == cp.LANG["ru"]["held"]][0]
-    плашки = [(int(r.get("x")), int(r.get("width")))
-              for r in ET.fromstring(svg).iter()
-              if r.tag.endswith("rect") and r.get("height") == str(cp.PILL_H)]
-    слева = min(x for x, _ in плашки)
-    справа = max(x + w for x, w in плашки)
+def test_u_kazhdogo_mehanizma_svoya_podpis_svoim_tsvetom(repo):
+    """Подпись стоит НАД своей колонкой и цветом связана со своим числом.
 
-    assert шапка.get("text-anchor") == "middle"
-    assert abs(int(шапка.get("x")) - (слева + справа) // 2) <= 6
+    Прежде слово жило внутри плашки и повторялось в каждой строке. Убрав
+    повтор, связь «подпись — значение» держит цвет: без него шапка читалась бы
+    как подпись только первой колонки.
+    """
+    данные = [подключён("a", gate=5, none=2, **{"process-step": 3})]
+    svg = рисуй(срез(repo, данные))
+    t, w = cp.THEME[False], cp.LANG["ru"]
+    тексты = [e for e in ET.fromstring(svg).iter() if e.tag.endswith("text")]
+
+    for key in cp.shown(cp.rows({"consumers": данные})):
+        подписи = [e for e in тексты if e.text == w[key]]
+        assert len(подписи) == 1, f"подпись «{w[key]}» встречается {len(подписи)} раз"
+        assert подписи[0].get("fill") == t[key]
 
 
 # ── третье число: сколько правил родилось у проекта (задача #192) ──────────
@@ -410,12 +431,13 @@ def test_kolonka_rodil_ne_naezzhaet_na_plashki(repo):
     """Колонка вставлена ПЕРЕД плашками, и место ей отведено, а не отнято у
     соседа: иначе первая плашка легла бы поверх числа."""
     svg = рисуй(срез(repo, [подключён("a", born=127)]))
-    p = ET.fromstring(svg)
-    плашки = [float(e.get("x")) for e in p.iter()
-              if e.tag.endswith("rect") and e.get("rx") == "12"]
+    держится = [int(e.get("x")) for e in ET.fromstring(svg).iter()
+                if e.tag.endswith("text") and int(e.get("x")) >= cp.COL_PILLS]
 
-    assert плашки, "плашек не нашлось — случай проверяет не то"
-    assert min(плашки) >= cp.COL_BORN + 40
+    assert держится, "группы «чем держится» не нашлось — случай проверяет не то"
+    # Трёхзначное «родил» занимает три знака кегля 24; после него обязан
+    # остаться просвет, иначе первое число группы ляжет вплотную.
+    assert min(держится) >= cp.COL_BORN + int(3 * cp.NUMBER_K)
 
 
 # ── длинное имя переносится, а не растягивает картинку ───────────────────
@@ -532,3 +554,39 @@ def test_slagaemye_ostayutsya_v_stroke():
     строка = cp.rows(срез_с(none=2, neprimenimo=3))[0]
     assert строка["none"] == 2 and строка["not-applicable"] == 3
 
+
+
+# ── проекты разделены линией ───────────────────────────────────────────────
+#
+# Набор двусторонний (140): линий обязано быть ровно на одну меньше, чем
+# проектов, — и ни одной, когда проект один. Черта под нижним рядом читается
+# как край таблицы, которого нет: карточка уже обведена рамкой.
+
+def линии(svg: str) -> list[int]:
+    """Разделители: тонкие прямоугольники во всю ширину карточки."""
+    return [int(r.get("y")) for r in ET.fromstring(svg).iter()
+            if r.tag.endswith("rect") and r.get("height") == "1"]
+
+
+def test_proekty_razdeleny_liniey(repo):
+    """Строк много — между ними черта, и она одна на пару соседей."""
+    данные = [подключён("a"), подключён("b"), подключён("c")]
+
+    assert len(линии(рисуй(срез(repo, данные)))) == len(данные) - 1
+
+
+def test_pod_poslednim_proektom_linii_net(repo):
+    """Один проект — ни одной черты: делить нечего."""
+    assert линии(рисуй(срез(repo, [подключён("a")]))) == []
+
+
+def test_liniya_idyot_mezhdu_ryadami_a_ne_poperyok_teksta(repo):
+    """Черта лежит В ПРОСВЕТЕ между строками, а не по их числам."""
+    данные = [подключён("a"), подключён("b")]
+    svg = рисуй(срез(repo, данные))
+    ряды = sorted({int(e.get("y")) for e in ET.fromstring(svg).iter()
+                   if e.tag.endswith("text")
+                   and e.get("font-size") == str(cp.SIZE["number"])})
+
+    (черта,) = линии(svg)
+    assert ряды[0] < черта < ряды[1], f"черта {черта} вне просвета {ряды}"
