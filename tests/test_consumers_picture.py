@@ -50,6 +50,22 @@ def подключён(name, trails=0, born=0, answered=2, **механизмы)
             "by_mechanism": mech}
 
 
+def полоса(consumers, lang="ru"):
+    """Полоса колонок того же среза, что рисует картинка.
+
+    КООРДИНАТЫ БЕРУТСЯ У СКРИПТА, А НЕ ВПИСЫВАЮТСЯ СЮДА: вписанное число
+    протухает при первой же правке размеров — ровно то, о чём 005. Раньше
+    случаи знали `COL_ANSWERED` и `COL_PILLS` в лицо; колонки теперь считаются
+    по содержимому, и лицо у них меняется от среза к срезу.
+    """
+    return cp.полоса(cp.rows({"consumers": consumers}), cp.LANG[lang])
+
+
+def середина(consumers, key, lang="ru"):
+    """Середина колонки: по ней стоят и подпись, и число."""
+    return cp.середина(полоса(consumers, lang)[key])
+
+
 def рисуй(repo, dark=False, lang="ru"):
     out = repo / "svg"
     assert cp.main(["--root", str(repo), "--out-dir", str(out)]) == 0
@@ -104,10 +120,11 @@ def test_nepodklyuchyonnyy_nazyvaet_sostoyanie_a_ne_nol(repo):
     отвечал вовсе. Подписи колонок при этом стоят — они часть шапки, а не
     строки, и их отсутствие читалось бы как «такого вопроса не задавали».
     """
-    svg = рисуй(срез(repo, [{"repo": "o/тихий", "state": "не подключён",
-                             "trails": 0}]))
+    тихий = [{"repo": "o/тихий", "state": "не подключён", "trails": 0}]
+    svg = рисуй(срез(repo, тихий))
+    левый = cp.край(полоса(тихий), cp.shown(cp.rows({"consumers": тихий})))[0]
     числа = [e for e in ET.fromstring(svg).iter()
-             if e.tag.endswith("text") and int(e.get("x")) >= cp.COL_PILLS
+             if e.tag.endswith("text") and int(e.get("x")) >= левый
              and e.get("font-size") == str(cp.SIZE["number"])]
 
     assert "не подключён" in svg
@@ -134,9 +151,10 @@ def test_плашки_стоят_в_одних_колонках(repo):
               подключён("b", gate=148, **{"process-step": 99}, none=140)]
     svg = рисуй(срез(repo, данные))
     keys = cp.shown(cp.rows({"consumers": данные}))
-    # Числа группы стоят правее последней числовой колонки — по ним и считаем.
+    левый = cp.край(полоса(данные), keys)[0]
+    # Числа блока стоят правее его левого края — по ним и считаем.
     числа = [(int(e.get("x")), int(e.get("y"))) for e in ET.fromstring(svg).iter()
-             if e.tag.endswith("text") and int(e.get("x")) >= cp.COL_PILLS
+             if e.tag.endswith("text") and int(e.get("x")) >= левый
              and e.get("font-size") == str(cp.SIZE["number"])]
     ряды = sorted({y for _, y in числа})
     первая = sorted(x for x, y in числа if y == ряды[0])
@@ -148,13 +166,10 @@ def test_плашки_стоят_в_одних_колонках(repo):
 
 def test_ширина_колонки_берётся_по_самой_широкой_строке(repo):
     """Иначе колонка дышала бы от строки к строке."""
-    t = cp.THEME[False]
-    строки = cp.rows({"consumers": [подключён("a", gate=5),
-                                    подключён("b", gate=148)]})
-    w = cp.widths(строки, t, cp.LANG["ru"])
+    данные = [подключён("a", gate=5), подключён("b", gate=148)]
 
     # Подпись «гейт» короткая, значит ширину задаёт самое широкое число.
-    assert w["gate"] == int(len("148") * cp.NUMBER_K)
+    assert полоса(данные)["gate"][1] == int(len("148") * cp.NUMBER_K)
 
 
 def test_у_колонок_есть_подписи(repo):
@@ -170,24 +185,24 @@ def test_нечего_показать_рисуется_прочерком_а_н
     Проверяется САМА ячейка, а не документ: тире есть и в подзаголовке, и
     поиск по всему тексту проходил бы при любой поломке.
     """
-    svg = рисуй(срез(repo, [{"repo": "o/тихий", "state": "не подключён",
-                             "trails": 0}]))
+    тихий = [{"repo": "o/тихий", "state": "не подключён", "trails": 0}]
+    svg = рисуй(срез(repo, тихий))
     ячейки = {int(e.get("x")): (e.text or "") for e in ET.fromstring(svg).iter()
               if e.tag.endswith("text") and e.get("font-size") == str(cp.SIZE["number"])}
 
-    assert ячейки[cp.COL_ANSWERED] == "—"
-    assert ячейки[cp.COL_TRAILS] == "—"
+    assert ячейки[середина(тихий, "answered")] == "—"
+    assert ячейки[середина(тихий, "trails")] == "—"
 
 
 def test_измеренный_ноль_остаётся_нулём(repo):
     """Обратная сторона: у подключённого ноль — это ответ, а не пустота."""
-    svg = рисуй(срез(repo, [подключён("a", gate=0, none=0, answered=0,
-                             **{"process-step": 0},
-                                      trails=0)]))
+    данные = [подключён("a", gate=0, none=0, answered=0,
+                        **{"process-step": 0}, trails=0)]
+    svg = рисуй(срез(repo, данные))
     ячейки = {int(e.get("x")): (e.text or "") for e in ET.fromstring(svg).iter()
               if e.tag.endswith("text") and e.get("font-size") == str(cp.SIZE["number"])}
 
-    assert ячейки[cp.COL_ANSWERED] == "0"
+    assert ячейки[середина(данные, "answered")] == "0"
 
 
 def test_shirinu_zadayot_to_chto_shire(repo):
@@ -196,10 +211,9 @@ def test_shirinu_zadayot_to_chto_shire(repo):
     Двусторонне (140): у короткой подписи ширину держит число, у длинной —
     сама подпись. Одной стороной проверялось бы полмеханизма.
     """
-    t, w = cp.THEME[False], cp.LANG["ru"]
-    строки = cp.rows({"consumers": [подключён("a", gate=148,
-                                              **{"process-step": 1})]})
-    кол = cp.widths(строки, t, w)
+    w = cp.LANG["ru"]
+    кол = {k: v[1] for k, v in
+           полоса([подключён("a", gate=148, **{"process-step": 1})]).items()}
 
     assert кол["gate"] == int(len("148") * cp.NUMBER_K)
     assert кол["process-step"] == int(len(w["process-step"]) * cp.LABEL_K)
@@ -407,37 +421,35 @@ def ячейки_чисел(svg):
 def test_rodil_stoit_v_svoey_kolonke(repo):
     """Три числа отвечают на разные вопросы, и путать их колонками нельзя:
     два первых про то, как проект каталог ПОТРЕБЛЯЕТ, третье — чем наполнил."""
-    svg = рисуй(срез(repo, [подключён("a", answered=140, trails=9, born=41)]))
-    ячейки = ячейки_чисел(svg)
+    данные = [подключён("a", answered=140, trails=9, born=41)]
+    ячейки = ячейки_чисел(рисуй(срез(repo, данные)))
 
-    assert ячейки[cp.COL_ANSWERED] == "140"
-    assert ячейки[cp.COL_TRAILS] == "9"
-    assert ячейки[cp.COL_BORN] == "41"
+    assert ячейки[середина(данные, "answered")] == "140"
+    assert ячейки[середина(данные, "trails")] == "9"
+    assert ячейки[середина(данные, "born")] == "41"
 
 
 def test_rodil_vidno_i_u_nepodklyuchyonnogo(repo):
     """Происхождение записи не зависит от того, ответил ли проект каталогу:
     оно считается по НАШЕМУ корпусу. Прочерк здесь означал бы «не знаем»
     про то, что знаем точно."""
-    svg = рисуй(срез(repo, [{"repo": "o/тихий", "state": "не подключён",
-                             "trails": 0, "born": 3}]))
-    ячейки = ячейки_чисел(svg)
+    тихий = [{"repo": "o/тихий", "state": "не подключён", "trails": 0, "born": 3}]
+    ячейки = ячейки_чисел(рисуй(срез(repo, тихий)))
 
-    assert ячейки[cp.COL_ANSWERED] == "—"
-    assert ячейки[cp.COL_BORN] == "3"
+    assert ячейки[середина(тихий, "answered")] == "—"
+    assert ячейки[середина(тихий, "born")] == "3"
 
 
-def test_kolonka_rodil_ne_naezzhaet_na_plashki(repo):
-    """Колонка вставлена ПЕРЕД плашками, и место ей отведено, а не отнято у
-    соседа: иначе первая плашка легла бы поверх числа."""
-    svg = рисуй(срез(repo, [подключён("a", born=127)]))
-    держится = [int(e.get("x")) for e in ET.fromstring(svg).iter()
-                if e.tag.endswith("text") and int(e.get("x")) >= cp.COL_PILLS]
+def test_kolonka_rodil_ne_naezzhaet_na_sosedniy_blok(repo):
+    """«Родил» закрывает первый блок, и место второму отведено, а не отнято у
+    соседа: иначе первое число «чем держится» легло бы поверх трёхзначного."""
+    данные = [подключён("a", born=127)]
+    band = полоса(данные)
+    x, ш = band["born"]
+    левый = cp.край(band, cp.shown(cp.rows({"consumers": данные})))[0]
 
-    assert держится, "группы «чем держится» не нашлось — случай проверяет не то"
-    # Трёхзначное «родил» занимает три знака кегля 24; после него обязан
-    # остаться просвет, иначе первое число группы ляжет вплотную.
-    assert min(держится) >= cp.COL_BORN + int(3 * cp.NUMBER_K)
+    assert ш >= int(3 * cp.NUMBER_K), "трёхзначное «родил» не поместилось"
+    assert левый - (x + ш) == cp.COL_BETWEEN
 
 
 # ── длинное имя переносится, а не растягивает картинку ───────────────────
@@ -474,7 +486,8 @@ def test_kolonka_ne_dvigaetsya_ot_dliny_imeni(repo):
     короткие = первая_колонка(рисуй(срез(repo, [подключён("a")])))
     длинные = первая_колонка(рисуй(срез(repo, [подключён("a" * 40)])))
 
-    assert короткие == длинные == cp.COL_MIN
+    assert короткие == длинные == середина([подключён("a")], "answered")
+    assert полоса([подключён("a")])["answered"][0] == cp.COL_MIN
 
 
 def test_razryv_ishchetsya_po_defisu(repo):
@@ -513,7 +526,7 @@ def test_korotkie_imena_vysotu_ne_menyayut(repo):
     svg = рисуй(срез(repo, [подключён("a"), подключён("b")]))
     высота = int(re.search(r'height="(\d+)"', svg).group(1))
 
-    assert высота == cp.TOP + cp.ROW * 2 + cp.PAD - 8
+    assert высота == cp.TOP + cp.ROW * 2 + cp.FOOT
 
 
 # ── два неизвестных — одна колонка ─────────────────────────────────────────
@@ -544,7 +557,7 @@ def test_slagaemye_svoih_kolonok_ne_poluchayut():
     assert "none" not in колонки and "not-applicable" not in колонки
 
 
-def test_kolonka_ne_proveryaetsya_stoit_dazhe_nulyom():
+def test_kolonka_nichem_stoit_dazhe_nulyom():
     """Ноль здесь — ответ «слепых мест нет», пропуск читался бы иначе (027)."""
     assert cp.UNVERIFIABLE in cp.shown(cp.rows(срез_с(none=0, neprimenimo=0)))
 
@@ -590,3 +603,122 @@ def test_liniya_idyot_mezhdu_ryadami_a_ne_poperyok_teksta(repo):
 
     (черта,) = линии(svg)
     assert ряды[0] < черта < ряды[1], f"черта {черта} вне просвета {ряды}"
+
+
+# ── два блока: правила и чем держится ──────────────────────────────────────
+#
+# У картинки два вопроса, и разные: сколько у проекта ПРАВИЛ и ЧЕМ он их
+# держит. Прежде оба ряда чисел стояли сплошняком, и граница между вопросами
+# была видна только тому, кто её уже знает. Набор двусторонний (140): блок
+# обязан быть НАЗВАН подписью и ОТДЕЛЁН просветом — и просвет между блоками
+# обязан быть заметно больше внутреннего, иначе делить нечем.
+
+def подписи(svg: str, size) -> list[str]:
+    return [e.text or "" for e in ET.fromstring(svg).iter()
+            if e.tag.endswith("text") and e.get("font-size") == str(size)]
+
+
+def test_dva_bloka_nazvany_svoimi_podpisyami(repo):
+    """Подпись блока стоит над подписями его колонок и ровно один раз."""
+    svg = рисуй(срез(repo, [подключён("a"), подключён("b")]))
+    w = cp.LANG["ru"]
+
+    assert подписи(svg, cp.SIZE["group"]) == [w["group_rules"], w["group_held"]]
+
+
+def test_prosvet_mezhdu_blokami_bolshe_chem_vnutri(repo):
+    """Блоки разделены ПРОСВЕТОМ, и это он, а не комментарий о нём.
+
+    Обратная сторона тут же: внутри блока просвет ровный и меньший — иначе
+    три колонки «правил» читались бы как три одиночки, а не как блок.
+    """
+    данные = [подключён("a")]
+    band = полоса(данные)
+    зазор = lambda a, b: band[b][0] - (band[a][0] + band[a][1])
+    первый_держится = cp.shown(cp.rows({"consumers": данные}))[0]
+
+    assert зазор("born", первый_держится) == cp.COL_BETWEEN
+    assert зазор("answered", "trails") == зазор("trails", "born") == cp.COL_IN
+    assert cp.COL_BETWEEN > cp.COL_IN
+
+
+def test_vtoroy_blok_vydelen_podlozhkoy(repo):
+    """«Чем держится» выделен подложкой: она накрывает блок целиком и НЕ
+    залезает на соседний — иначе выделяла бы не то, что названа выделять."""
+    данные = [подключён("a")]
+    svg = рисуй(срез(repo, данные))
+    band = полоса(данные)
+    слева, справа = cp.край(band, cp.shown(cp.rows({"consumers": данные})))
+    подложка = [r for r in ET.fromstring(svg).iter()
+                if r.tag.endswith("rect") and r.get("fill") == cp.THEME[False]["tint"]]
+
+    assert len(подложка) == 1, "подложка блока не одна"
+    x, ш = int(подложка[0].get("x")), int(подложка[0].get("width"))
+    assert x < слева and x + ш > справа, "подложка не накрыла блок целиком"
+    born = band["born"]
+    assert x > born[0] + born[1], "подложка залезла на блок «правила»"
+
+
+def test_chislo_stoit_po_seredine_svoey_kolonki(repo):
+    """Число и подпись стоят по одной оси — по середине колонки.
+
+    Выключка влево разводила «9» и «154» на два знака вправо, и глаз читал
+    это как сдвиг самой колонки.
+    """
+    данные = [подключён("a", answered=140)]
+    svg = рисуй(срез(repo, данные))
+    x = середина(данные, "answered")
+    по_оси = [e for e in ET.fromstring(svg).iter()
+              if e.tag.endswith("text") and e.get("x") == str(x)]
+
+    assert {e.text for e in по_оси} == {"разобрано", "140"}
+    assert all(e.get("text-anchor") == "middle" for e in по_оси)
+
+
+def test_raznaya_dlina_chisla_kolonku_ne_dvigaet(repo):
+    """Обратная сторона середины: однозначное и трёхзначное стоят на одной оси."""
+    одно = рисуй(срез(repo, [подключён("a", answered=9)]))
+    три = рисуй(срез(repo, [подключён("a", answered=140)]))
+    ось = lambda s, t: [int(e.get("x")) for e in ET.fromstring(s).iter()
+                        if e.tag.endswith("text") and e.text == t][0]
+
+    assert ось(одно, "разобрано") == ось(одно, "9")
+    assert ось(три, "разобрано") == ось(три, "140")
+
+
+# ── подзаголовок стоит под таблицей, а не над ней ──────────────────────────
+#
+# Он картинку не представляет, а ОГОВАРИВАЕТ: числа — ответы самих проектов,
+# не наша оценка их. Место в шапке он занимал у подписей блоков — у того, без
+# чего таблица не читается. Двусторонне (140): оговорка ушла ВНИЗ, заголовок
+# остался НАВЕРХУ — уехали бы оба, картинка осталась бы без имени.
+
+def нижняя_линия(svg: str, size) -> int:
+    return max(int(e.get("y")) for e in ET.fromstring(svg).iter()
+               if e.tag.endswith("text") and e.get("font-size") == str(size))
+
+
+def test_podzagolovok_stoit_pod_poslednim_proektom(repo):
+    svg = рисуй(срез(repo, [подключён("a"), подключён("b")]))
+    оговорка = [int(e.get("y")) for e in ET.fromstring(svg).iter()
+                if e.tag.endswith("text") and (e.text or "").startswith("ответы самих")]
+
+    assert len(оговорка) == 1, "оговорки не нашлось — случай проверяет не то"
+    assert оговорка[0] > нижняя_линия(svg, cp.SIZE["number"])
+
+
+def test_zagolovok_ostalsya_nad_tablitsey(repo):
+    svg = рисуй(срез(repo, [подключён("a")]))
+    заголовок = [int(e.get("y")) for e in ET.fromstring(svg).iter()
+                 if e.tag.endswith("text") and e.text == cp.LANG["ru"]["title"]]
+
+    assert заголовок and заголовок[0] < cp.TOP
+
+
+# ── «ничем», а не «не проверяется» ─────────────────────────────────────────
+
+def test_slozhennaya_kolonka_nazyvaetsya_nichem():
+    """«Не проверяется» обещало проверку, которой нет вовсе: механизма нет —
+    значит нечему и краснеть. Слово взято у самого механизма `none`."""
+    for язык in ("ru", "en"):
+        assert cp.LANG[язык][cp.UNVERIFIABLE] == cp.LANG[язык]["none"]
