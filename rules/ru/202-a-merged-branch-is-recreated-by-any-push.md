@@ -110,11 +110,11 @@
 
 ## След
 
-ArtVsMark/Engineering-Pipeline-Mechanisms — `CLAUDE.md`
+ArtVsMark/ArtVsMark#181
+
+ArtVsMark/Engineering-Pipeline-Mechanisms — `CLAUDE.md`, предложение слито сюда
 ArtVsMark/Engineering-Incidents-Playbook#529
 ArtVsMark/Engineering-Incidents-Playbook#531 — конфликт истории, закрыты дублями
-
-ArtVsMark/ArtVsMark#181
 
 Смежное: [049](049-derive-state-from-live-artifacts.md) — состояние выводится
 из живого артефакта, а не из памяти о нём;

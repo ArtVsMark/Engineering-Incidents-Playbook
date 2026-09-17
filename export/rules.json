@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T11:51:42+00:00",
+  "generated_at": "2026-09-17T12:01:18+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.5",
@@ -10478,6 +10478,10 @@
       },
       "trails": [
         {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "181"
+        },
+        {
           "repo": "ArtVsMark/Engineering-Incidents-Playbook",
           "issue": "529"
         },
@@ -10486,15 +10490,11 @@
           "issue": "531"
         },
         {
-          "repo": "ArtVsMark/ArtVsMark",
-          "issue": "181"
-        },
-        {
           "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "doc": "CLAUDE.md"
         }
       ],
-      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "origin": "ArtVsMark/ArtVsMark",
       "portable": "partly",
       "mentions": [
         "003",
@@ -10637,8 +10637,8 @@
         "en": "An answer of \"not applicable\" names a **predicate over the tree**: what exactly would have to appear in it for the answer to become false — and that predicate must be **checkable by a command today**. A named event is not enough: an event guards against going stale, it does not guard against a misreading, and a misreading is the most common kind of wrong \"not applicable\". A predicate you cannot write is itself a finding: it means the inapplicability rests on reasoning rather than on the tree."
       },
       "applies": {
-        "ru": "**Работает** там, где свод принимают частично и по каждому правилу фиксируют\nответ, а дерево проекта доступно для чтения командой: каталог и его потребители,\nчужой стандарт с картой соответствия.\n\n**Не работает** там, где неприменимость следует из ПРИРОДЫ проекта, а не из\nсостояния его дерева: «правило о мобильном приложении, а приложения нет вовсе».\nПредикат там выродится в событие («появится приложение»), и честнее назвать его\nсобытием, чем выдавать за проверку. Такой ответ законен — но граница названа, а\nне обойдена.\n\n**Признак нарушения:** ответ «неприменимо», в котором нет ни одного пути, имени\nили команды — ничего, что можно прогнать и получить «да» или «нет».",
-        "en": "**Works** where a body of rules is adopted in part with an answer recorded per\nrule, and the project's tree can be read by a command: the catalogue and its\nconsumers, someone else's standard with a conformance map.\n\n**Does not work** where the inapplicability follows from the project's NATURE\nrather than from the state of its tree: \"a rule about a mobile app, and there is\nno app at all\". A predicate there degenerates into an event (\"an app appears\"),\nand it is more honest to call it an event than to pass it off as a check. Such an\nanswer is legitimate — but the boundary is named, not stepped around.\n\n**Sign of violation:** an answer of \"not applicable\" with no path, no name and no\ncommand in it — nothing that can be run to yield a yes or a no."
+        "ru": "**Работает** там, где свод принимают частично и по каждому правилу фиксируют\nответ, а дерево проекта доступно для чтения командой: каталог и его потребители,\nчужой стандарт с картой соответствия.\n\n**Не работает** там, где неприменимость следует из ПРИРОДЫ проекта, а не из\nсостояния его дерева: «правило о мобильном приложении, а приложения нет вовсе».\nПредикат там выродится в событие («появится приложение»), и честнее назвать его\nсобытием, чем выдавать за проверку. Такой ответ законен — но граница названа, а\nне обойдена.\n\n**Признак нарушения:** ответ «неприменимо», не несущий НИ ОДНОЙ из двух законных\nформ — ни пути, имени или команды, которые можно прогнать, ни названного события\nс причиной, почему предикат здесь вырождается. Отсутствие одного лишь предиката\nпризнаком не является: у ответа, работающего по границе выше, его законно нет.",
+        "en": "**Works** where a body of rules is adopted in part with an answer recorded per\nrule, and the project's tree can be read by a command: the catalogue and its\nconsumers, someone else's standard with a conformance map.\n\n**Does not work** where the inapplicability follows from the project's NATURE\nrather than from the state of its tree: \"a rule about a mobile app, and there is\nno app at all\". A predicate there degenerates into an event (\"an app appears\"),\nand it is more honest to call it an event than to pass it off as a check. Such an\nanswer is legitimate — but the boundary is named, not stepped around.\n\n**Sign of violation:** an answer of \"not applicable\" carrying NEITHER of the two\nlegitimate forms — no path, name or command that can be run, and no named event\nwith the reason the predicate degenerates there. A missing predicate alone is not\nthe sign: an answer working under the boundary above legitimately has none."
       },
       "added": "2026-09-17",
       "files": {

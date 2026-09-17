@@ -114,11 +114,11 @@ in the shared branch and closed as a duplicate.
 
 ## Trace
 
-ArtVsMark/Engineering-Pipeline-Mechanisms — `CLAUDE.md`
+ArtVsMark/ArtVsMark#181
+
+ArtVsMark/Engineering-Pipeline-Mechanisms — `CLAUDE.md`, the proposal merged in here
 ArtVsMark/Engineering-Incidents-Playbook#529
 ArtVsMark/Engineering-Incidents-Playbook#531 — a history conflict, closed as duplicates
-
-ArtVsMark/ArtVsMark#181
 
 Related: [049](049-derive-state-from-live-artifacts.md) — state is derived from
 a live artefact rather than from memory of it;
