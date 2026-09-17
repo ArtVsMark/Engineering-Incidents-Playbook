@@ -82,8 +82,13 @@ a fake, and it does not matter whether the fake lied or was never there at all.
 - **completeness is not checked by counting**: the count matches by coincidence,
   and one extra fake of something irrelevant covers a missing one. At the moment
   of the neighbour's finding it matched 8 to 8 — by coincidence;
-- **identity of names is not enough either**: a source that touches a shared read
-  helper counts as fully faked, although it is not the one going out;
+- **identity of names is not enough either**, and this is the neighbour's
+  measurement rather than a general thought: matching NAMES instead of counting
+  was their second attempt, and it missed the same source — what was faked was
+  the version parser, while the outward call is the manifest read, which sits as
+  an ARGUMENT and is evaluated before the call. By names the source counted as
+  fully faked. Only the third solution worked — poison the transport — and it
+  also showed the first repair had been cosmetic;
 - the poison is verified **from both ends**
   ([140](140-a-gate-is-tested-by-what-it-must-reject.md)): with a failing stub
   AND with a successful one. The first shows nobody calls the real thing; the
@@ -99,6 +104,16 @@ its place nor a successful one returning an empty answer changes a single test.
 The first poison, incidentally, did not separate the loopback from an external
 address and turned 17 tests red — it was itself cosmetic, exactly as the proposal
 warns.
+
+**THE MEASUREMENT IS REPRODUCIBLE, NOT RETOLD**
+([139](139-a-mechanism-is-confirmed-by-a-run.md)). The tool lives in the tree:
+`scripts/measure_fake_coverage.py` sets up all three passes and prints a verdict.
+It is deliberately NOT wired into the run — poison as a permanent step changes how
+the suite is built, and the cost of a mistake inside the poison would fall on
+every change at once. It can go red, and that was verified by a half-revert:
+remove the loopback exclusion from it and the socket pass fails on
+`tests/test_ghcli.py` and `tests/test_sync_inbox.py`, and the verdict becomes
+"the fakes are incomplete".
 
 **THE WEAK SPOT IS NAMED, NOT CLOSED.** `scripts/check_forgeries.py` holds eleven
 seam names as a list, and its own docstring admits it: "a deny list will miss a
