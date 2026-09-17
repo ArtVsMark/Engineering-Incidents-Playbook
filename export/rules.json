@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T12:25:36+00:00",
+  "generated_at": "2026-09-17T12:46:23+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.5",
@@ -10742,7 +10742,7 @@
       },
       "applies": {
         "ru": "**Работает** там, где корпус ответов велик, перечитывание дорого, а дефекты\nраспределены не по порядку записей: карта соответствия, реестр ответов на чужой\nсвод, инвентаризация долга.\n\n**Не работает** для малых корпусов — до двух-трёх десятков записей, — где полный\nобход дешевле замера и выборки. Там упорядочивание станет обрядом: считать\nполосы дольше, чем прочитать всё. **Не работает** и там, где перечитывание\nвызвано точечным событием («сменился один механизм»): предмет задан событием, и\nочередь из него следует прямо.\n\n**Признак нарушения:** заход перечитывания объявлен законченным, а числа рядом\nнет — ни сколько прочитано, ни сколько осталось, ни какой была отдача.",
-        "en": "**Works** where the corpus of answers is large, re-reading is expensive, and\ndefects are not distributed in record order: a conformance map, a registry of\nanswers to an external rulebook, a debt inventory.\n\n**Does not work** for small corpora — up to two or three dozen records — where a\nfull sweep is cheaper than measuring and sampling. There the ordering becomes a\nritual: counting bands takes longer than reading everything. **Nor does it work**\nwhere the re-read is triggered by a pinpoint event (\"one mechanism changed\"): the\nsubject is set by the event, and the queue follows from it directly.\n\n**Sign of violation:** a re-read pass is declared finished with no number beside\nit — neither how much was read, nor how much remains, nor what the yield was."
+        "en": "**Works** where the corpus of answers is large, re-reading is expensive, and\ndefects are not distributed in record order: a conformance map, a registry of\nanswers to an external rulebook, a debt inventory.\n\n**Does not work** for small corpora — up to twenty or thirty records — where a\nfull sweep is cheaper than measuring and sampling. There the ordering becomes a\nritual: counting bands takes longer than reading everything. **Nor does it work**\nwhere the re-read is triggered by a pinpoint event (\"one mechanism changed\"): the\nsubject is set by the event, and the queue follows from it directly.\n\n**Sign of violation:** a re-read pass is declared finished with no number beside\nit — neither how much was read, nor how much remains, nor what the yield was."
       },
       "added": "2026-09-17",
       "files": {
