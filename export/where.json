@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-17T08:42:29+00:00",
+  "generated_at": "2026-09-17T08:50:32+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -1414,7 +1414,7 @@
         },
         "179": {
           "mechanism": "gate",
-          "where": "scripts/check_workflows.py::cancelling_groups — у всякой группы concurrency с cancel-in-progress: true в имени обязана стоять голова; разбор по отступу, а не только по верхнему уровню, потому что группу объявляют и внутри работы. Разрешение объявлено списком CANCELS_BY_STATE с причиной у каждой строки: у .github/workflows/badges.yml и .github/workflows/off-prefix.yml предмет — состояние, а не коммит",
+          "where": "scripts/check_workflows.py::cancelling_groups — у всякой группы concurrency с cancel-in-progress: true в имени обязана стоять голова; разбор по отступу, а не только по верхнему уровню, потому что группу объявляют и внутри работы. Разрешение объявлено списком CANCELS_BY_STATE с причиной у каждой строки, и стоит в нём один .github/workflows/off-prefix.yml: у него предмет — состояние, а не коммит. СОСТАВ СПИСКА ДЕРЖИТ СЛУЧАЙ tests/test_check_workflows.py::test_zapis_o_spiske_sovpadaet_so_spiskom — прежде запись о списке пережила сам список и осталась зелёной: сверка адреса видит существование файла, а не строку в словаре",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-09-17",
