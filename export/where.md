@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 29 | 18 | 203 | 4 | 0 | 146 | 95 | 12 | 0 | 25 | 1 | 42 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 26 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 181 | 26 | 0 | 117 | 60 | 12 | 0 | 29 | 16 | 78 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 9 | 8 | 205 | 2 | 0 | 191 | 157 | 25 | 0 | 8 | 1 | 167 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 9 | 8 | 207 | 0 | 0 | 193 | 157 | 25 | 0 | 9 | 2 | 171 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -54,7 +54,9 @@
 | 187 | `Stepik-Python-Grader` — гейт: scripts/ci_aggregate.py и .github/workflows/ci-complete.yml — один вердикт с постоянным именем, собранный ЧЕРЕЗ API, а не через needs: джоб на зависимостях при падении соседа пропускается, а пропущенное защита ветки засчитывает как пройденное; закреплено в CLAUDE.md § Гейты; `ArtVsMark` — гейт: scripts/check_mechanisms.py::required_job_conditions — у работы, чья запись держит слияние, не должно быть условия уровня работы: пропущенная работа оставляет запись «skipped», а защита ветки сверяет ИМЯ, а не исход, и нейтральное засчитывает. Правило родилось здесь: 7 сентября изменение #140 слилось при КРАСНОЙ обязательной проверке — на голове лежали три записи с именем PR check (failure, skipped, cancelled). Вторая половина держится там же: .github/workflows/pr-check.yml — одна группа отмены на голову, проверяется scripts/check_mechanisms.py::cancellation_groups.; `Engineering-Pipeline-Mechanisms` — гейт: scripts/ci_complete.py — пропущенная, отменённая и отсутствующая записи считаются отказом; tests/test_gates_complete.py прогоняет каждый из этих случаев. Признак нарушения, названный самим правилом, проверяется отдельно: scripts/ci_complete.py отвергает голову, на которой больше ОДНОЙ живой записи с именем обязательной проверки, — вердикт по такой голове неоднозначен, и молчаливый выбор между записями был бы выбором наугад | `Engineering-Incidents-Playbook` |
 | 199 | `ArtVsMark` — code: предмет есть и перебран: событийных прогонов в группе с cancel-in-progress: false у витрины два. .github/workflows/agent-pr.yml — будится пушем и внутри захода СПРАШИВАЕТ состояние: открыто ли уже изменение (gh pr list) и разошлась ли ветка с main, вместо того чтобы верить событию. .github/workflows/release-hold.yml — будится завершением чужого прогона и читает состояние проверок изменения через scripts/hold.py, а не исход разбудившего события. Остальные группы отменяют предыдущий заход (cancel-in-progress: true) и предметом правила не являются.; `Engineering-Pipeline-Mechanisms` — гейт: scripts/automerge.py::hand_over — заход очереди больше не ждёт зелёного внутри себя, и потому его смерть в очереди ничего не теряет: взведение у площадки ПЕРЕЖИВАЕТ прогон, который его выдал, и слияние случится без нового события. Прежде здесь стоял опрос внутри захода, заведённый от замера 10.09.2026 — 45 из 120 заходов умерли, не начав работу, — но он лечил следствие: держал исполнителя и упирался в собственный предел. Решение docs/decisions/011-merging-is-handed-to-the-platform.md отдало ожидание площадке. Держит это tests/test_automerge.py | `Engineering-Incidents-Playbook` |
 | 200 | `ArtVsMark` — документ: projects.json — у каждого показателя проекта либо источник значения, либо отказ с причиной; scripts/build_metrics.py::verify_absence проверяет, что отказ не устарел. Числа самой витрины перебраны 17 сентября на «может ли оно стать другим»: тесты, покрытие, проверки на изменение, выпуски, версии Python, звёзды, подписанные коммиты — все ходят, знаменателя по построению нет ни у одного.; `Engineering-Pipeline-Mechanisms` — гейт: tests/test_facts.py — значок правил считает держащиеся МАШИНОЙ от действующих, а не `answered/total`: прежнее число было равно знаменателю по построению и не могло сдвинуться никогда. Гейт сверяет, что значок несёт то же число, что и факты. | `Engineering-Incidents-Playbook` |
-| 202 | `Engineering-Incidents-Playbook` — гейт: .claude/hooks/push_guard.py — `ветка_воскресает`: перед толчком сверяет свою ссылку `refs/remotes/origin/<ветка>` с ответом площадки, и толчок в удалённую при слиянии ветку не уезжает вовсе. Предмет проверки задаёт `везёт_содержимое`: чистое удаление ссылки (`--delete`, `-d`, `:имя`) коммитов не переносит и пропускается, смешанная форма `git push origin своя :чужая` остаётся толчком содержимого, а адресат явной ссылки разворачивается через `цель` — `HEAD:другая` текущей ветки не касается и отказа не получает (051). Строку разбирает одна функция `толчки`, её ответу задаются все три вопроса файла; `Engineering-Pipeline-Mechanisms` — гейт: .claude/hooks/push_guard.py — толчок мимо текущей головы отвергается ДО вызова git. Ветку, слитую и удалённую площадкой, воскрешает любой следующий пуш в неё; здесь это ловится тем же сторожем, что и промах именем ветки. | `ArtVsMark` |
+| 202 | `Engineering-Incidents-Playbook` — гейт: .claude/hooks/push_guard.py — `ветка_воскресает`: перед толчком сверяет свою ссылку `refs/remotes/origin/<ветка>` с ответом площадки, и толчок в удалённую при слиянии ветку не уезжает вовсе. Предмет проверки задаёт `везёт_содержимое`: чистое удаление ссылки (`--delete`, `-d`, `:имя`) коммитов не переносит и пропускается, смешанная форма `git push origin своя :чужая` остаётся толчком содержимого, а адресат явной ссылки разворачивается через `цель` — `HEAD:другая` текущей ветки не касается и отказа не получает (051). Строку разбирает одна функция `толчки`, её ответу задаются все три вопроса файла | `ArtVsMark`, `Engineering-Pipeline-Mechanisms` |
+| 207 | `Engineering-Pipeline-Mechanisms` — документ: docs/decisions/030-the-answer-audit-stops-on-a-measured-yield.md — у захода перечитывания названы ОБА числа, которых требует буква: порядок и момент остановки. Порядок задан метрикой (пересечение основ слов между буквой правила и текстом ответа), остановка — замером отдачи по полосам: 0–10 % пересечения дали 19 правок из 29 прочитанных (66 %), 10–20 % — одну из шести, 20 % и выше — ноль из пяти. Заход объявлен законченным по падению отдачи, а не по исчерпанию списка, и оставшиеся 64 ответа объявлены НЕПРОЧИТАННЫМИ, а не верными (039). | `Engineering-Incidents-Playbook` |
+| 208 | `Engineering-Pipeline-Mechanisms` — гейт: scripts/preflight.py — заход `--push` толкает ветку ТЕМ ЖЕ вызовом, который проверяет, и красное до толчка не доходит: `push_branch` зовётся из `main` только после зелёного вердикта. Обход остался возможным и стал отдельным названным действием — заход без `--push` печатает вердикт и не толкает, а `git push` руками проект не запрещает. Держат tests/test_window_preflight.py (толчок на красном, толчок без просьбы, ветка без приставки agent/) и .claude/hooks/push_guard.py со стороны цели толчка. | `Engineering-Incidents-Playbook` |
 
 ## Сколько держит механизм · How much each mechanism holds
 
@@ -309,7 +311,7 @@
 | `Glossary-Python` | `tests/test_rules_bindings.py` | 2 |
 | `Glossary-Python` | _остальные_ · _the rest_ | 40 механизмов по одному правилу; без названного адреса: 0 из 101 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_reject.py` | 23 |
-| `Engineering-Pipeline-Mechanisms` | `AGENTS.md` | 18 |
+| `Engineering-Pipeline-Mechanisms` | `AGENTS.md` | 17 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/agent_pr.py` | 17 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/ci_complete.py` | 17 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/review_findings.py` | 17 |
@@ -385,11 +387,13 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/arm.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_contract.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_derived_refs.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/check_new_is_tested.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_own_name.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_pipeline.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/items.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/journal.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/paths.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/preflight.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/release.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/task_shape.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/version.py` | 2 |
@@ -403,7 +407,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_schedules.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_unlooked.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 72 механизмов по одному правилу; без названного адреса: 0 из 190 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 74 механизмов по одному правилу; без названного адреса: 0 из 191 |
 
 ## Правила · Rules
 
@@ -614,5 +618,5 @@
 | 204 | действует | — | действует | — | — | действует |
 | 205 | действует | — | — | — | — | действует |
 | 206 | действует | — | — | — | — | действует |
-| 207 | действует | — | — | — | — | — |
-| 208 | действует | — | — | — | — | — |
+| 207 | действует | — | — | — | — | действует |
+| 208 | действует | — | — | — | — | действует |
