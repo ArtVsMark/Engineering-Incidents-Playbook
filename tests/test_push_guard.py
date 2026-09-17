@@ -677,3 +677,43 @@ def test_tsikl_s_povtorom_dokhodit_do_proverki_voskresheniya(окно, monkeypat
     monkeypatch.setattr(pg, "ветка_воскресает", lambda b: True)
     assert pg.main() == 2
     assert "удалила её при слиянии" in capsys.readouterr().err
+
+
+# ── формы, слепые у ПЕРВОЙ починки #533 (находки обзора на #553) ──────────────
+#
+# Свой разрез строки — `re.split` плюс свой учёт кавычек — сам открыл слепое
+# место на самой обычной форме: экранированный апостроф `\'` читался открытием
+# кавычки, чётность сбивалась, `&&` переставал резать. Разбор передан `shlex`
+# с punctuation_chars: он знает и кавычки, и экранирование, и отделяет
+# операторы словами. Своим остаётся только перечень ведущих слов оболочки.
+
+@pytest.mark.parametrize("команда", [
+    r"""git commit -m 'Don'\''t forget' && git push origin agent/чужая""",
+    r"""echo Don\'t forget && git push origin agent/чужая""",
+    r'''git commit -m "he said \"no\"" && git push''',
+    "case $x in a) git push ;; esac",
+    "case $x in a) git push origin чужая ;; b) git push ;; esac",
+    "echo x\ngit push",
+])
+def test_formy_slepye_u_pervoy_pochinki_teper_vidny(команда):
+    """Шесть форм, невидимых после первой починки, видны после второй."""
+    assert pg.толкает(команда) is True
+
+
+def test_vetka_case_otdayot_svoyu_ssylku():
+    """`case … in a) git push origin чужая` — ссылка читается, `)` в неё не уходит."""
+    assert pg.targets("case $x in a) git push origin чужая ;; esac", "своя") == ["чужая"]
+
+
+def test_kavychki_vokrug_vetki_snimayutsya():
+    """`shlex` в этом режиме кавычки сохраняет — имя ветки берётся без них."""
+    assert pg.targets('git push origin "чужая"', "своя") == ["чужая"]
+
+
+def test_nomer_potoka_ne_stanovitsya_vetkoy():
+    """`2>&1` библиотека режет на три слова, и `2` не должно уехать в ссылки.
+
+    Прежний разбор ловил `2>&1` одним словом регулярным выражением; слово стало
+    другим, а предмет тот же (158).
+    """
+    assert pg.targets("git push -u origin своя 2>&1 | tail -3", "своя") == []
