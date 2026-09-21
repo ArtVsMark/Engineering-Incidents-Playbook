@@ -343,12 +343,12 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_docs_shape.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `CHANGELOG.md` | 6 |
 | `Engineering-Pipeline-Mechanisms` | `README.md` | 6 |
+| `Engineering-Pipeline-Mechanisms` | `docs/roles.md` | 6 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/build_changelog.py` | 6 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/main_red.py` | 6 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_automerge.py` | 6 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_drift.py` | 6 |
 | `Engineering-Pipeline-Mechanisms` | `docs/pipeline.md` | 5 |
-| `Engineering-Pipeline-Mechanisms` | `docs/roles.md` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_required_context.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/debt.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/family.py` | 5 |
