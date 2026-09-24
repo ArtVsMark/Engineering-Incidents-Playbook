@@ -32,3 +32,20 @@ def write(path: Path, text: str) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
     return path
+
+
+def замер(data: Path, source: Path, lines: list[int]) -> Path:
+    """Данные покрытия без трассировки: строки файла, «исполненные» по замеру.
+
+    Трассировку в тесте не запускают: набор сам может идти под `coverage run`,
+    и второй трассировщик сбил бы первый. Пишется только файл данных — ровно
+    то, что читает `coverage_badge.measured()`. Читать его тест обязан из
+    своего временного каталога (`monkeypatch.chdir`): конфигурацию `coverage`
+    берёт из текущего, и у корня репозитория она своя (правило 149).
+    """
+    from coverage import CoverageData
+
+    данные = CoverageData(basename=str(data))
+    данные.add_lines({str(source): lines})
+    данные.write()
+    return data
