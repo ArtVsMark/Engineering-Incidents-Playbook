@@ -58,8 +58,13 @@ CONSTRUCTION here. That is why the miss is not a rare case but the norm. The
 repair is tracked as #533.
 
 **REPAIRED UNDER #533, AND THE COUNT CHANGED.** Leading shell words are stripped
-from a segment before parsing, and so are the tails of shell constructs: of the
-seven forms probed, zero are blind. Verified from both ends (140) — seven
+from a segment before parsing, and so are the tails of shell constructs. THE
+FIRST REPAIR DECLARED "of the seven forms probed, zero are blind" — AND THE
+REVIEW IMMEDIATELY FOUND AN EIGHTH AND A NINTH: the `case` branch and, more
+expensively, the escaped apostrophe, on which the hand-rolled quote scanner lost
+parity and stopped splitting on `&&`. Parsing was handed to a library that knows
+the grammar; only the list of leading shell words stayed ours. Measured after the
+second repair: 13 forms probed, zero blind. Verified from both ends (140) — seven
 wrapped forms are seen, four textual ones stay text; a half-revert turns nine
 tests red. THE REPAIR BROUGHT ITS OWN FALSE POSITIVE, and that is part of the
 incident: stripping leading words revived splitting inside quotes, and
