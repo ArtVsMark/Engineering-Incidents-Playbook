@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 
 import build_facts as bf
-from conftest import write
+from conftest import write, замер
 
 
 ПРОГОН = """\
@@ -54,7 +54,15 @@ def дерево(repo: Path) -> None:
 
 
 def подставить(monkeypatch, repo: Path) -> None:
+    """Всё, что сборка читает с диска, — из поддельного дерева.
+
+    Включая данные покрытия: `coverage_badge.DATA` смотрит в корень НАСТОЯЩЕГО
+    репозитория, а `.coverage` игнорируется git и переживает смену ветки.
+    Пока он не подменялся, два теста ниже краснели на данных с соседней ветки
+    — замер 24 сентября, `NoSource` на `scripts/check_skills.py` (правило 149).
+    """
     monkeypatch.setattr(bf, "ROOT", repo)
+    monkeypatch.setattr(bf.coverage_badge, "DATA", repo / ".coverage")
     monkeypatch.setattr(bf, "WORKFLOWS", repo / ".github/workflows")
     monkeypatch.setattr(bf, "WHERE", repo / "export/where.json")
     monkeypatch.setattr(bf, "FACTS", repo / ".github/badges/facts.json")
@@ -154,6 +162,25 @@ def test_покрытие_без_замера_это_пропуск_а_не_но
     assert беда == ""
     assert "coverage_percent" not in факты
     assert any(п.startswith("coverage_percent:") for п in пропуски)
+
+
+def test_замер_с_чужого_дерева_это_пропуск_с_причиной_а_не_падение(
+        monkeypatch, repo):
+    """Данные покрытия есть, но ссылаются на файл, которого нет: сборка фактов
+    не падает, а пропускает раздел и называет, что не разобралось (158)."""
+    дерево(repo)
+    подставить(monkeypatch, repo)
+    monkeypatch.chdir(repo)
+    исходник = write(repo / "ушедший.py", "x = 1\n")
+    замер(repo / ".coverage", исходник, [1])
+    исходник.unlink()
+    monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
+    monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
+    факты, пропуски, беда = bf.build()
+    assert беда == ""
+    assert "coverage_percent" not in факты
+    причина = next(п for п in пропуски if п.startswith("coverage_percent:"))
+    assert "не разобран" in причина and "ушедший.py" in причина
 
 
 def test_покрытие_берётся_замером_а_не_округлённым_значком(monkeypatch, repo):

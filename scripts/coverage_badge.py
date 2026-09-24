@@ -5,7 +5,9 @@
   005 — число в артефакте ставит сборка, а не автор: вписанное рукой устаревает
         молча, и заметить это некому;
   039 — у проверки три исхода, а не два;
-  075 — не нашёл предмета замера — падает, а не зеленеет.
+  075 — не нашёл предмета замера — падает, а не зеленеет;
+  158 — данные замера есть, а не разбираются: отказ называет файл и то, чего
+        в дереве не нашлось, а не пролетает чужим исключением.
 
 ПОЧЕМУ ЗНАЧОК ЛЕЖИТ В ВЕТКЕ, А НЕ В ОТДЕЛЬНОЙ `badges`. У каталога уже есть
 `.github/badges/rules-*.json`: их кладёт автор той же командой, что собирает
@@ -22,7 +24,7 @@
 Исходы:
   0 — чисто (значок пересобран или совпал);
   1 — значок устарел: замер разошёлся с тем, что лежит в ветке;
-  2 — замер не отработал: нет данных покрытия.
+  2 — замер не отработал: нет данных покрытия либо они не разбираются.
 
 Запуск:  python scripts/coverage_badge.py           # пересобрать
          python scripts/coverage_badge.py --check    # проверить, не устарел ли
@@ -47,8 +49,21 @@ COLORS = ((90, "brightgreen"), (75, "green"), (50, "yellow"),
           (25, "orange"), (0, "red"))
 
 
+class Unreadable(Exception):
+    """Данные замера есть, а разобрать их нельзя. Сообщение называет файл и причину."""
+
+
 def measured() -> float | None:
-    """Процент покрытия из данных замера. None — замера не было."""
+    """Процент покрытия из данных замера. None — замера не было.
+
+    ДАННЫЕ ЕСТЬ, НО НЕ РАЗБИРАЮТСЯ — это не «замера не было», а отдельный
+    исход, и он поднимается как `Unreadable` с названным предметом. Чаще всего
+    это данные прогона на ДРУГОМ дереве: `.coverage` игнорируется git и
+    переживает смену ветки, а замер ссылается на файлы, которых здесь нет.
+    Замер 24 сентября: `report()` бросал `NoSource` на `scripts/check_skills.py`
+    с соседней ветки, исключение пролетало сквозь `build_facts`, и два его теста
+    краснели на изменении, не трогавшем ни покрытия, ни фактов.
+    """
     try:
         import coverage
     except ImportError:
@@ -56,10 +71,13 @@ def measured() -> float | None:
     if not DATA.exists():
         return None
     cov = coverage.Coverage(data_file=str(DATA))
-    cov.load()
-    # report() печатает таблицу; вывод глушим — здесь нужно только число.
-    with open("/dev/null", "w", encoding="utf-8") as quiet:
-        return cov.report(file=quiet)
+    try:
+        cov.load()
+        # report() печатает таблицу; вывод глушим — здесь нужно только число.
+        with open("/dev/null", "w", encoding="utf-8") as quiet:
+            return cov.report(file=quiet)
+    except coverage.exceptions.CoverageException as отказ:
+        raise Unreadable(f"{DATA} не разбирается: {str(отказ).rstrip('.')}") from отказ
 
 
 def color(percent: float) -> str:
@@ -84,7 +102,13 @@ def main() -> int:
                     help="только проверить, не устарел ли значок")
     args = ap.parse_args()
 
-    percent = measured()
+    try:
+        percent = measured()
+    except Unreadable as отказ:
+        print(f"замер не отработал: {отказ}. Данные ссылаются на то, чего в "
+              "дереве нет, либо повреждены — пересобрать: "
+              "`coverage run -m pytest`", file=sys.stderr)
+        return 2
     if percent is None:
         print(f"замер не отработал: {DATA} не прочитан — сначала "
               "`coverage run -m pytest`", file=sys.stderr)

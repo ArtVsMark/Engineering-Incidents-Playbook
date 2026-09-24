@@ -18,6 +18,7 @@ from __future__ import annotations
 import pytest
 
 import coverage_badge as cb
+from conftest import write, замер
 
 
 # ── порог цвета: граница проверяется с обеих сторон ────────────────────────
@@ -84,3 +85,29 @@ def test_сборка_кладёт_значок_рядом_с_недостающ
     monkeypatch.setattr("sys.argv", ["coverage_badge.py"])
     assert cb.main() == 0
     assert '"message": "77%"' in badge.read_text(encoding="utf-8")
+
+
+# ── данные замера: с чужого дерева и свежие ────────────────────────────────
+
+def test_данные_с_чужого_дерева_это_третий_исход_с_названным_файлом(
+        monkeypatch, repo, capsys):
+    """Ровно инцидент 24 сентября: `.coverage` пережил смену ветки и ссылается
+    на файл, которого в дереве нет. Отказ называет его, а не пролетает
+    исключением `NoSource` сквозь всех, кто зовёт замер (158)."""
+    monkeypatch.chdir(repo)
+    исходник = write(repo / "ушедший.py", "x = 1\ny = 2\n")
+    monkeypatch.setattr(cb, "DATA", замер(repo / ".coverage", исходник, [1, 2]))
+    исходник.unlink()
+    monkeypatch.setattr("sys.argv", ["coverage_badge.py", "--check"])
+    assert cb.main() == 2
+    err = capsys.readouterr().err
+    assert "замер не отработал" in err and "ушедший.py" in err
+
+
+def test_свежие_данные_дают_число(monkeypatch, repo):
+    """Вторая сторона (140): те же данные при живом исходнике — число, а не
+    отказ. Иначе починка могла бы глушить всё подряд и выглядеть верной."""
+    monkeypatch.chdir(repo)
+    исходник = write(repo / "живой.py", "x = 1\ny = 2\n")
+    monkeypatch.setattr(cb, "DATA", замер(repo / ".coverage", исходник, [1]))
+    assert cb.measured() == 50.0
