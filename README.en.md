@@ -51,6 +51,10 @@ travel beyond the stack they came from.
 **Want to contribute** — [`CONTRIBUTING.md`](CONTRIBUTING.md): what is accepted
 here, in what shape, and why a rule without an incident is not.
 
+**Handling an incident in a Claude Code session right here** — the window's
+skills in [`.claude/skills/`](.claude/skills/README.md): `/incident-triage` runs
+the first pass by the catalogue's rules rather than from memory.
+
 **Do not copy the catalogue wholesale.** Every rule has an "Applicability"
 section stating plainly **where it does not work**. Half of what is here is
 shaped by agent sessions, GitHub and rate limits; on a different stack it is
