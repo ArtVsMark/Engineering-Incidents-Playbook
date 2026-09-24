@@ -52,8 +52,9 @@ travel beyond the stack they came from.
 here, in what shape, and why a rule without an incident is not.
 
 **Handling an incident in a Claude Code session right here** — the window's
-skills in [`.claude/skills/`](.claude/skills/README.md): `/incident-triage` runs
-the first pass by the catalogue's rules rather than from memory.
+skills in [`.claude/skills/`](.claude/skills/README.md): from the first pass
+(`/incident-triage`) to the write-up after the fix (`/postmortem`), every step by
+the catalogue's rules rather than from memory.
 
 **Do not copy the catalogue wholesale.** Every rule has an "Applicability"
 section stating plainly **where it does not work**. Half of what is here is
