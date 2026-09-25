@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T15:24:52+00:00",
+  "generated_at": "2026-09-25T15:38:14+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.6",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.4"
   },
-  "count": 212,
+  "count": 213,
   "rules": [
     {
       "id": "001",
@@ -1096,7 +1096,8 @@
         "198",
         "201",
         "203",
-        "209"
+        "209",
+        "214"
       ]
     },
     {
@@ -3572,7 +3573,8 @@
       ],
       "mentioned_by": [
         "090",
-        "209"
+        "209",
+        "214"
       ]
     },
     {
@@ -9515,7 +9517,8 @@
       "portable": "yes",
       "mentioned_by": [
         "204",
-        "209"
+        "209",
+        "214"
       ]
     },
     {
@@ -10148,7 +10151,8 @@
         "193"
       ],
       "mentioned_by": [
-        "210"
+        "210",
+        "214"
       ]
     },
     {
@@ -10647,7 +10651,8 @@
         "184"
       ],
       "mentioned_by": [
-        "209"
+        "209",
+        "214"
       ]
     },
     {
@@ -10910,7 +10915,8 @@
         "204"
       ],
       "mentioned_by": [
-        "211"
+        "211",
+        "214"
       ]
     },
     {
@@ -11009,6 +11015,9 @@
         "139",
         "145",
         "209"
+      ],
+      "mentioned_by": [
+        "214"
       ]
     },
     {
@@ -11108,6 +11117,57 @@
         "146",
         "177",
         "182"
+      ]
+    },
+    {
+      "id": "214",
+      "slug": "one-territory-one-parse",
+      "title": {
+        "ru": "Один предмет разбирает одна реализация: второй разбор расходится с первым молча",
+        "en": "One subject is parsed by one implementation: a second parse drifts from the first silently"
+      },
+      "areas": {
+        "ru": [
+          "код"
+        ],
+        "en": [
+          "code"
+        ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
+      "claim": {
+        "ru": "Вопрос, который код задаёт одному и тому же предмету, — что считать задачей в следе, толчком в команде, разобранной записью, — отвечается одной реализацией, а остальные места её спрашивают. Вторая реализация, даже совпадающая сегодня буква в букву, расходится с первой при первой правке одной из них, и расходится молча: каждая по отдельности исправна и покрыта своим набором. Копия, оставленная намеренно, подписывается по [071](071-deliberate-duplication-is-signed.md), и совпадение держит проверка.",
+        "en": "A question the code asks about one and the same subject — what counts as an issue in a trail, a push in a command, an analysed record — is answered by one implementation, and every other place asks it. A second implementation, even one that matches the first letter for letter today, drifts from it at the first edit to either, and drifts silently: each is sound on its own and covered by its own suite. A copy kept on purpose is signed under [071](071-deliberate-duplication-is-signed.md), and a check holds the two equal."
+      },
+      "applies": {
+        "ru": "**Работает** для кода, где один предмет разбирают несколько мест: гейты,\nсторожа, сборщики и отчёты над одним деревом.\n\n**Не работает** для общей грамматики, не принадлежащей предмету: заголовок\nmarkdown, разделитель таблицы — одинаковый разбор не делает предмет одним. **Не\nработает** и между процессами без общего кода — скрипт и шаг оболочки: там\nкопия неизбежна и подписывается по 071.\n\n**Признак нарушения:** второе место в коде отвечает на вопрос, на который уже\nотвечает первое, — своей формулировкой.",
+        "en": "**Works** for code where several places parse one subject: gates, guards,\nbuilders and reports over one tree.\n\n**Does not work** for generic grammar that belongs to no subject: a markdown\nheading, a table separator — the same parse does not make the subject one.\n**Does not work** either across processes with no shared code — a script and a\nshell step: there a copy is unavoidable and is signed under 071.\n\n**Sign of a violation:** a second place in the code answers a question the\nfirst already answers — in its own wording."
+      },
+      "added": "2026-09-25",
+      "files": {
+        "ru": "rules/ru/214-one-territory-one-parse.md",
+        "en": "rules/en/214-one-territory-one-parse.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "475"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes",
+      "mentions": [
+        "022",
+        "071",
+        "183",
+        "195",
+        "204",
+        "209",
+        "211"
       ]
     }
   ],

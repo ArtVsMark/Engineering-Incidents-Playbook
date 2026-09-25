@@ -294,6 +294,7 @@ python scripts/check_workflows.py
 python scripts/check_transport.py
 python scripts/check_paging.py
 python scripts/check_orphans.py
+python scripts/check_copies.py
 python scripts/check_untrusted_prompt.py
 python scripts/check_runtime_deps.py
 python scripts/check_reread.py
