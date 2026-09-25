@@ -25,6 +25,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 import link_trails as lt
 
 ME = "ArtVsMark/ArtVsMark"
@@ -172,6 +174,22 @@ def test_trekery_nedostupen_eto_tozhe_tretiy_ishod(monkeypatch, capsys):
     monkeypatch.setattr(lt.ghcli, "run", lambda *a: (lt.ghcli.NO_GH, "нет gh"))
     monkeypatch.setattr(lt, "fetch_rules", lambda c, r: ([rule("005")], None))
     monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME])
+    assert lt.main() == 2
+    assert "не прочитана" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("код, ответ", [(1, "HTTP 502: Bad Gateway"), (0, "{не json")])
+def test_otkaz_chteniya_kommentariev_tretiy_ishod(monkeypatch, capsys, код, ответ):
+    """Находка обзора на #598: отказ площадки (код 1) и неразобранный ответ
+    (код 2 от ghcli.список) уходили в «ссылка уже стоит» — задача выпадала
+    из работы молча, а прогон отвечал нулём (039)."""
+    def fake(*args):
+        if "--paginate" in args:
+            return код, ответ
+        return 0, "gh version 2"
+    monkeypatch.setattr(lt.ghcli, "run", fake)
+    monkeypatch.setattr(lt, "fetch_rules", lambda c, r: ([rule("005")], None))
+    monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME, "--apply"])
     assert lt.main() == 2
     assert "не прочитана" in capsys.readouterr().err
 
