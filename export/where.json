@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T10:12:23+00:00",
+  "generated_at": "2026-09-25T10:17:55+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -747,7 +747,7 @@
         },
         "076": {
           "mechanism": "none",
-          "where": "механизма нет; предмет в нашем дереве: scripts/sync_inbox.py — раздел «У соседей это уже решено» печатает where соседа голым путём его дерева в задачу ТРЕКЕРА ПОТРЕБИТЕЛЯ; templates/CLAUDE.md, templates/executor-brief.md, templates/session-opening.md, templates/skill-template.md — относительные ссылки ](../rules/…), живые только внутри каталога; scripts/onboard_consumer.py кладёт в .rules/proposals.json потребителя строку «Контракт: export/README.md каталога» — путь, а не адрес",
+          "where": "механизма нет; предмет в нашем дереве: scripts/sync_inbox.py — раздел «У соседей это уже решено» печатает where соседа голым путём его дерева в задачу ТРЕКЕРА ПОТРЕБИТЕЛЯ; templates/CLAUDE.md, templates/executor-brief.md, templates/session-opening.md, templates/skill-template.md — относительные ссылки ](../…): на записи правил у всех четырёх и на export/ у заготовки навыка, — живые только внутри каталога; scripts/onboard_consumer.py кладёт в .rules/proposals.json потребителя строку «Контракт: export/README.md каталога» — путь, а не адрес",
           "holdable": "not-yet",
           "awaiting": "",
           "analysed": "2026-09-25",
