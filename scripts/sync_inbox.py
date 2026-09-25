@@ -79,11 +79,6 @@ def fetch_export(catalogue: str, ref: str) -> tuple[dict | None, str | None]:
         return None, f"{url} — {e}"
 
 
-def fetch_rules(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None]:
-    doc, err = fetch_export(catalogue, ref)
-    return (None, err) if doc is None else (doc.get("rules", []), None)
-
-
 def fetch_where(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None]:
     """Сводка «чем держат другие» — чтобы соседский механизм доехал сюда.
 

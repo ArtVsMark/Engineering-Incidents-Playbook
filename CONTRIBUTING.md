@@ -150,13 +150,18 @@ fails the index build, and that is the mechanism keeping the trees together.
 строки покрытыми. Появился механизм, делающий то же и больше, — прежний в той
 же правке либо переводится на него, либо уходит вместе со своим набором. Имя,
 до которого рабочий путь не доходит по построению, — закрытая роспись для
-набора, предел для человека — несёт причину у себя.
+набора, предел для человека — несёт причину у себя и названо в
+`.rules/orphans.json`. Держит это `scripts/check_orphans.py`: имя рабочего
+кода, до которого не доходит цепочка от корня, краснеет, сколько бы
+утверждений набора его ни звали.
 
 **A defect counts as fixed** only when the suite has been made red by a
 *partial* revert: remove the behaviour, keep the names. A full revert breaks
 the import and the red proves nothing. Nor does a green suite prove that a
 mechanism works: it calls the function directly and stays green when no
-working path reaches it any more.
+working path reaches it any more. `scripts/check_orphans.py` fails on a name
+of working code that no chain from a root reaches; a legitimate neighbour is
+named in `.rules/orphans.json` with its reason.
 
 ## Своё ожидание — тоже гипотеза · Your own expectation is a hypothesis
 
@@ -288,6 +293,7 @@ python scripts/check_test_deps.py
 python scripts/check_workflows.py
 python scripts/check_transport.py
 python scripts/check_paging.py
+python scripts/check_orphans.py
 python scripts/check_untrusted_prompt.py
 python scripts/check_runtime_deps.py
 python scripts/check_reread.py
