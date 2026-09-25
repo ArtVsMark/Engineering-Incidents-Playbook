@@ -71,28 +71,27 @@ inputs:
     required: false
     default: origin/main
   catalogue:
-    description: "Репозиторий каталога, откуда берётся сам гейт"
+    description: >-
+      Устарел и не читается: код гейта берётся из каталога, закреплённого
+      строкой uses:.
     required: false
     default: ArtVsMark/Engineering-Incidents-Playbook
   catalogue-ref:
     description: >-
-      Версия каталога. Закрепите тегом: подключаться к движущейся ветке значит
-      получить чужую правку гейта в свой красный прогон.
+      Устарел и не читается: версию гейта закрепляет тег в строке uses:.
+      Заданное значение объявляется в прогоне, а не глотается молча.
     required: false
     default: main
 
 runs:
   using: composite
   steps:
-    # Каталог кладётся рядом, а не поверх: рабочий каталог проекта — это и есть
-    # то, чью историю проверяют.
-    - uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.catalogue }}
-        ref: ${{ inputs.catalogue-ref }}
-        path: .attribution-gate
-        fetch-depth: 1
-
+    # Гейт исполняется из каталога, который площадка уже положила на тег из
+    # строки uses: — в GITHUB_ACTION_PATH, три уровня выше лежат scripts/.
+    # Прежняя редакция выкачивала каталог ещё раз по входу `catalogue-ref`
+    # (по умолчанию main): тег в uses: закреплял этот файл, а сам гейт
+    # приходил из подвижной main, и закрепить его можно было, только зная
+    # второй вход (095, замер 25.09).
     - uses: actions/setup-python@v5
       with:
         python-version: "3.12"
@@ -117,4 +116,7 @@ runs:
         elif [ -n "${{ inputs.range }}" ]; then
           args+=(--range "${{ inputs.range }}")
         fi
-        python .attribution-gate/scripts/check_attribution.py "${args[@]}"
+        if [ "${{ inputs.catalogue-ref }}" != "main" ]; then
+          echo "::notice::вход catalogue-ref больше не читается: версию гейта закрепляет тег в строке uses:"
+        fi
+        python "$GITHUB_ACTION_PATH/../../../scripts/check_attribution.py" "${args[@]}"
