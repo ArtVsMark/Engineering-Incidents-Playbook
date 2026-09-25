@@ -84,6 +84,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 6 |
 | `Engineering-Incidents-Playbook` | `.rules/consumers.json` | 5 |
+| `Engineering-Incidents-Playbook` | `scripts/audit_catalogue.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/check_attribution.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/main_red.py` | 5 |
@@ -95,8 +96,8 @@
 | `Engineering-Incidents-Playbook` | `README.md` | 4 |
 | `Engineering-Incidents-Playbook` | `action.yml` | 4 |
 | `Engineering-Incidents-Playbook` | `docs/HISTORY.md` | 4 |
-| `Engineering-Incidents-Playbook` | `scripts/audit_catalogue.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/check_transport.py` | 4 |
+| `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/ghcli.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/refresh_derived.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/review_findings.py` | 4 |
@@ -108,7 +109,6 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_links.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_locale.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_schedules.py` | 3 |
-| `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/history_metrics.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/merge_ready.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 3 |
