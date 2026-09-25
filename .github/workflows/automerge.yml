@@ -189,6 +189,8 @@ jobs:
           skip() { echo "SKIP=1" >> "$GITHUB_ENV"; exit 0; }
 
           rc=0
+          # ПРЕДЕЛ НАМЕРЕННЫЙ (212): свежие 40 прогонов, как у main_red.py, —
+          # нужен последний вердикт у каждой работы. Назван в .rules/limits.json.
           gh run list --branch "$BASE" --limit 40 \
             --json name,status,conclusion,createdAt > base-runs.json || rc=$?
           if [ "$rc" -ne 0 ]; then
@@ -423,8 +425,20 @@ jobs:
           #
           # РЕШЕНИЕ ПРИНИМАЕТ СКРИПТ, А НЕ УСЛОВИЕ В ОБОЛОЧКЕ — по той же
           # причине, что и ниже: у условия здесь нет отвергаемого предмета.
+          #
+          # ВСЕ СТРАНИЦЫ (212) И ЧТЕНИЕ ОТДЕЛЬНО ОТ РАЗБОРА (039) — как у
+          # слияния выше. Этот вызов читал страницу по умолчанию в тридцать
+          # проверок, и перевод на обход его не задел: нашёл его гейт
+          # scripts/check_paging.py. В одной трубе отказ площадки давал
+          # пустой вход, и «не прочитано» взводило автомерж, не дождавшись
+          # вердикта; теперь не взводит — перевзведёт разморозка.
           wrc=0
-          gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" \
+          if ! runs=$(gh api --paginate "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs?per_page=100" \
+                        --jq '.check_runs[]'); then
+            echo "::warning::Изменение #$PR: проверки головы не прочитаны — ждать ли вердикта, неизвестно; автомерж не взвожу. Перевзведёт разморозка."
+            exit 0
+          fi
+          printf '%s\n' "$runs" | jq -s . \
             | python3 scripts/merge_ready.py --required catalogue --await review || wrc=$?
           if [ "$wrc" -eq 1 ]; then
             echo "::warning::Изменение #$PR: жду вердикта внешнего взгляда — автомерж не взвожу. Перевзведёт прогон по завершении ревью либо разморозка."

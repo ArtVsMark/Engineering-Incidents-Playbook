@@ -277,6 +277,9 @@ def main() -> int:
         print(f"дежурный не отработал: шаблон не прочитан — {e}", file=sys.stderr)
         return 2
 
+    # ПРЕДЕЛ НАМЕРЕННЫЙ (212): свежие прогоны от новых к старым, и свёртке
+    # нужен последний с вердиктом у каждой работы, а не история. Назван в
+    # .rules/limits.json; обхода страниц у `gh run list` нет вовсе.
     code, out = gh("run", "list", "--branch", args.branch, "--limit", str(args.limit),
                    "--json", "name,status,conclusion,createdAt")
     if code != 0:

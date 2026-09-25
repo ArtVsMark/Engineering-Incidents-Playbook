@@ -287,6 +287,7 @@ python scripts/check_showcase.py
 python scripts/check_test_deps.py
 python scripts/check_workflows.py
 python scripts/check_transport.py
+python scripts/check_paging.py
 python scripts/check_untrusted_prompt.py
 python scripts/check_runtime_deps.py
 python scripts/check_reread.py
