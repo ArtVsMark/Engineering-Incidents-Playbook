@@ -53,8 +53,10 @@ A finding here also includes a false refusal hit while working: it names one
 form in the same way. Counting review findings alone, the first chain drops
 out — review gave one there (#424). In the second, the second review finding
 was closed one form at a time, and two more about the same parser followed
-(#477, #479), plus one about its docstring (#480). In the third, the second was
-closed with a list, and the next finding was about another place.
+(#477, #479). A third (#480) was about the docstring — prose, where there is
+nothing to list — and by the record's own applicability that is another place,
+just like #573 in the third chain. In the third, the second was closed with a
+list, and the next finding was about another place.
 
 **AND TODAY, 25.09, IN ANOTHER PLACE.** The parser of `python` calls in
 `scripts/check_workflows.py` got a finding on #583: its pattern was blind to a
