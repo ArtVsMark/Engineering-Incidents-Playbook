@@ -2,11 +2,11 @@
   "schema": "1.1",
   "schema_of": "формат ЭТОГО файла — факты каталога для витрины профиля. Не версия каталога, не номер выпуска и не схема выгрузки правил: ключ `schema` в этой экосистеме носят четыре разных предмета (выгрузка, ответ потребителя, сводка, факты) — правило 164",
   "repo": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T20:04:56+00:00",
-  "commit": "1d4b748baa8a5e7c0d0f5a73cf46b2c164a157c5",
+  "generated_at": "2026-09-25T20:11:20+00:00",
+  "commit": "9106d846d63f1c0cbcbf8209b895aa575634ce2c",
   "tests": {
-    "functions": 1231,
-    "modules": 58
+    "functions": 1248,
+    "modules": 59
   },
   "checks_per_pr": {
     "count": 3,
@@ -26,7 +26,7 @@
       "ubuntu-latest"
     ]
   },
-  "coverage_percent": 70.9,
+  "coverage_percent": 71.2,
   "rules": {
     "total": 213,
     "gate": 144,
