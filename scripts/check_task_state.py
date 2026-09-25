@@ -151,15 +151,14 @@ def pulls_for(sha: str) -> tuple[list[dict] | None, str]:
     """Изменения, содержащие коммит, по REST. Вторая строка — причина отказа."""
     # ПО REST И ПУТЁМ, А НЕ ПОДКОМАНДОЙ — по той же причине, что и в issue():
     # `gh pr list --search` уходит в GraphQL, у которого своя узкая квота (001).
-    code, out = gh("api", f"repos/{{owner}}/{{repo}}/commits/{sha}/pulls",
-                   "--jq", "[.[] | {number, body, merged_at, merge_commit_sha}]")
+    # ВСЕ СТРАНИЦЫ (212): без обхода площадка отдаёт тридцать изменений, и
+    # нашёл это гейт scripts/check_paging.py, а не перечень глазами.
+    code, значение, out = ghcli.список(
+        f"repos/{{owner}}/{{repo}}/commits/{sha}/pulls",
+        ".[] | {number, body, merged_at, merge_commit_sha}", вызов=gh)
     if code != 0:
         return None, out
-    try:
-        значение = json.loads(out or "[]")
-    except ValueError as e:
-        return None, f"ответ не разобран: {e}"
-    return (значение if isinstance(значение, list) else []), ""
+    return значение, ""
 
 
 def тот_же(a: str | None, b: str | None) -> bool:
