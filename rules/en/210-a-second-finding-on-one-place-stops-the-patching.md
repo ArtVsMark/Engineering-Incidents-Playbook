@@ -41,15 +41,20 @@ run through one place, the command parser in `.claude/hooks/push_guard.py`:
    62 minutes. The first was a review finding on rule 202 (#468), and each
    later one a review finding on the one before. The body of #479 says so:
    "the third in a row on one guard". 195 was already in place.
-3. **17.09–25.09** — #553 → #556 → #569 → #573, with both 195 and
+3. **17.09–25.09** — #553 → #556 → #569, with both 195 and
    [206](206-a-form-the-gate-cannot-see-is-a-bypass.md) in place. The body of
-   #556: "the first fix introduced blindness where there had been none". At the
-   third step (#569) the window measured the forms all at once for the first
-   time, and five were blind instead of the one named. One more finding
-   followed, and it was no longer about the parser but about the rollback
-   boundary in the test suite (#573).
+   #556: "the first fix introduced blindness where there had been none". To the
+   review findings on #556 — the second on this place — the window answered
+   differently from before (#569): it measured the forms all at once, and five
+   were blind instead of the one named. The finding on #569 was already about
+   another place — the rollback boundary in the test suite (#573).
 
-In none of the three chains was the second finding the last.
+A finding here also includes a false refusal hit while working: it names one
+form in the same way. Counting review findings alone, the first chain drops
+out — review gave one there (#424). In the second, the second review finding
+was closed one form at a time, and two more about the same parser followed
+(#477, #479), plus one about its docstring (#480). In the third, the second was
+closed with a list, and the next finding was about another place.
 
 **AND TODAY, 25.09, IN ANOTHER PLACE.** The parser of `python` calls in
 `scripts/check_workflows.py` got a finding on #583: its pattern was blind to a
@@ -74,8 +79,10 @@ new fix lands where the review will look next time.
 is ordinary work. The second shows that the model the fix followed is
 incomplete: the fix went from the finding's form, not from a list. At the
 neighbour's, 13 of the 21 places with two changes reached a third. Here the
-second finding was never the last, in three chains out of three. A second
-finding on code is more often the start of a chain than its end.
+second finding closed one form at a time was followed by two more on the same
+place, and the one closed with a list by none. A second finding on code is
+more often the start of a chain than its end, if it is closed one form at a
+time.
 
 **The costs are asymmetric.** A list costs one window pass. A chain costs a
 platform cycle per form: push, run, review, merge. On 10.09 that was five
