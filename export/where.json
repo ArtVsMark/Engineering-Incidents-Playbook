@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T10:24:36+00:00",
+  "generated_at": "2026-09-25T11:36:53+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -17,11 +17,11 @@
         "rejected": 6
       },
       "by_mechanism": {
-        "gate": 137,
+        "gate": 138,
         "document": 25,
         "skill": 1,
         "pipeline": 10,
-        "none": 14
+        "none": 13
       },
       "rules": {
         "001": "active",
@@ -458,9 +458,9 @@
           "decided": ""
         },
         "032": {
-          "mechanism": "none",
-          "where": "механизма нет; предмет — .github/workflows/review.yml: роль внешнего взгляда разбирает изменение скриптов и гейтов, и прогон ей разрешён ключом --allowedTools «Bash(python -m pytest:*),Bash(python scripts/preflight.py:*)». Разрешение выдано одному имени интерпретатора, а в работе нет ни actions/setup-python, ни установки requirements-test.txt",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/check_workflows.py — если список разрешений агенту (--allowedTools) даёт интерпретатор Python, в том же прогоне стоит actions/setup-python; если даёт pytest — ставятся проверки из requirements-test.txt; и каждая команда разрешена обоим именам интерпретатора. Предмет — .github/workflows/review.yml: роль внешнего взгляда разбирает изменение скриптов и гейтов, и прогон ей теперь не только разрешён, но и возможен. ГРАНИЦА: прогнала ли роль продукт на деле, а не только могла, — её собственный отчёт (182); изменение, правящее сам файл ревью, ревью не получает (152)",
+          "holdable": "",
           "awaiting": "",
           "analysed": "2026-09-25",
           "decided": "2026-09-25"
