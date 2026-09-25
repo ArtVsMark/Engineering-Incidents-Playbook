@@ -740,3 +740,50 @@ def test_zhivoy_fayl_prohodit_i_otkat_krasneet(tmp_path):
     откат = живой.replace("uses: actions/setup-python@", "uses: actions/other@")
     workflow(tmp_path, "review.yml", откат)
     assert cw.main(["--root", str(tmp_path)]) == 1
+
+
+# ── код составного действия — из его пути (095) ────────────────────────────
+#
+# Замер 25.09: оба действия каталога выкачивали каталог ещё раз по входу с
+# умолчанием main и исполняли скрипт оттуда — тег в строке uses: закреплял
+# только разметку. Набор двусторонний (140).
+
+ДЕЙСТВИЕ = ("runs:\n  using: composite\n  steps:\n    - name: шаг\n      shell: bash\n"
+            "      run: |\n        {строка}\n")
+
+
+@pytest.mark.parametrize("строка", [
+    "python .rules-sync/scripts/sync_inbox.py --ref main",
+    'python3 ".attribution-gate/scripts/check_attribution.py" "${args[@]}"',
+])
+def test_kod_iz_vykachannogo_kataloga_nahodka(строка):
+    assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=строка))
+
+
+@pytest.mark.parametrize("строка", [
+    'python "$GITHUB_ACTION_PATH/scripts/sync_inbox.py" --ref main',
+    'python "$GITHUB_ACTION_PATH/../../../scripts/check_attribution.py" "${args[@]}"',
+    'python "${{ github.action_path }}/scripts/x.py"',
+    "echo без питона",
+])
+def test_kod_iz_svoego_puti_ne_nahodka(строка):
+    assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=строка)) == []
+
+
+def test_upominanie_v_opisanii_ne_nahodka():
+    """Проза описания входа — не шаг оболочки."""
+    действие = ("inputs:\n  ref:\n    description: >-\n"
+                "      python legacy/x.py больше не зовётся\n"
+                + ДЕЙСТВИЕ.format(строка="echo ok"))
+    assert cw.code_not_from_action_path(действие) == []
+
+
+def test_zhivye_deystviya_prohodyat_i_otkat_krasneet(tmp_path):
+    """Оба живых действия проходят; прежняя форма — отказ всего гейта."""
+    корень = Path(__file__).resolve().parent.parent
+    for путь in ("action.yml", ".github/actions/attribution/action.yml"):
+        assert cw.code_not_from_action_path((корень / путь).read_text(encoding="utf-8")) == []
+    workflow(tmp_path, "w.yml", "on:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n")
+    (tmp_path / "action.yml").write_text(
+        ДЕЙСТВИЕ.format(строка="python .rules-sync/scripts/sync_inbox.py"), encoding="utf-8")
+    assert cw.main(["--root", str(tmp_path)]) == 1

@@ -21,7 +21,9 @@ inputs:
     required: false
     default: ArtVsMark/Engineering-Incidents-Playbook
   ref:
-    description: "Ветка или тег каталога"
+    description: >-
+      Ветка или тег, откуда берётся ВЫГРУЗКА правил. Код действия отсюда не
+      берётся: его закрепляет строка uses: — тегом, который вы в ней поставили.
     required: false
     default: main
   bindings:
@@ -43,14 +45,13 @@ runs:
   using: composite
   steps:
     # Экспорт каталога тянется обычным HTTPS, поэтому клонировать его незачем;
-    # нужен только сам скрипт, который лежит рядом с этим файлом.
-    - uses: actions/checkout@v4
-      with:
-        repository: ${{ inputs.catalogue }}
-        ref: ${{ inputs.ref }}
-        path: .rules-sync
-        fetch-depth: 1
-
+    # нужен только сам скрипт, который лежит рядом с этим файлом, — и берётся
+    # он ОТТУДА ЖЕ: площадка уже положила каталог на тег из строки uses: в
+    # GITHUB_ACTION_PATH. Прежняя редакция выкачивала каталог ещё раз по входу
+    # `ref` (по умолчанию main) и исполняла скрипт оттуда: тег в uses:
+    # закреплял этот файл, а код у потребителя приходил из подвижной main.
+    # Заготовка подключения обещала «тег закреплён» — и держала это только
+    # для десятка строк разметки (095, замер 25.09).
     - uses: actions/setup-python@v5
       with:
         python-version: "3.12"
@@ -67,7 +68,7 @@ runs:
         # стоит за строкой, до которой управление не доходит, и «очередь»
         # роняет прогон потребителя наравне с поломкой (задача #82).
         rc=0
-        python .rules-sync/scripts/sync_inbox.py \
+        python "$GITHUB_ACTION_PATH/scripts/sync_inbox.py" \
           --catalogue "${{ inputs.catalogue }}" \
           --ref "${{ inputs.ref }}" \
           --bindings "${{ inputs.bindings }}" \
