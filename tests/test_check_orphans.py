@@ -58,6 +58,15 @@ def test_sirota_s_zelenym_naborom_otkaz(дерево: Path,
     assert "scripts/проба.py::g" in capsys.readouterr().err
 
 
+def test_vyzov_v_znachenii_prisvaivaniya_zhivoy(дерево: Path) -> None:
+    # `X = f()` исполняет f при импорте, даже если X не читает никто: f живая,
+    # сирота здесь — X (находка обзора на #611)
+    код(дерево, "def f(): return 1\nX = f()\n" + ГЛАВНЫЙ.replace("f()", "pass"))
+    соседи(дерево, [])
+    найдено = {имя for _, имя in co.сироты(co.модули(дерево)[0], дерево)}
+    assert найдено == {"X"}
+
+
 def test_nazvannyy_sosed_prokhodit(дерево: Path) -> None:
     код(дерево, "РОСПИСЬ = ('a', 'b')\ndef f(): pass\n" + ГЛАВНЫЙ)
     соседи(дерево, [СОСЕД])
