@@ -239,3 +239,41 @@ def test_вердикт_принят_называет_навык_каталог�
     файл.parent.mkdir(parents=True)
     файл.write_text(ТЕКСТ, encoding="utf-8")
     assert cp.check_verdicts(tmp_path) == 0
+
+
+def вердикты_навыкам(tmp_path, вердикты: dict) -> int:
+    """Дерево с одним навыком каталога и данными вердиктами; исход гейта."""
+    import json
+    (tmp_path / "rules" / "ru").mkdir(parents=True, exist_ok=True)
+    (tmp_path / ".rules").mkdir(exist_ok=True)
+    файл = tmp_path / ".claude" / "skills" / "answer-a-rule" / "SKILL.md"
+    файл.parent.mkdir(parents=True, exist_ok=True)
+    файл.write_text(ТЕКСТ, encoding="utf-8")
+    (tmp_path / ".rules" / "proposals.json").write_text(
+        json.dumps({"verdicts": вердикты}), encoding="utf-8")
+    return cp.check_verdicts(tmp_path)
+
+
+def test_принятый_навык_без_поля_skill_находка(tmp_path, capsys):
+    assert вердикты_навыкам(tmp_path, {
+        "o/r:skill/answer-a-rule": {"status": "admitted"}}) == 1
+    assert "в поле skill" in capsys.readouterr().err
+
+
+def test_отказ_навыку_без_причины_находка(tmp_path, capsys):
+    assert вердикты_навыкам(tmp_path, {
+        "o/r:skill/answer-a-rule": {"status": "rejected"}}) == 1
+    assert "обязан назвать причину" in capsys.readouterr().err
+
+
+def test_два_принятых_в_один_навык_находка(tmp_path, capsys):
+    """Второе предложение, влитое в принятый навык, — merged-into, а не «принят»."""
+    принят = {"status": "admitted", "skill": "answer-a-rule"}
+    assert вердикты_навыкам(tmp_path, {
+        "o/r:skill/answer-a-rule": принят,
+        "o/q:skill/answer-rules": принят}) == 1
+    assert "уже занят" in capsys.readouterr().err
+    assert вердикты_навыкам(tmp_path, {
+        "o/r:skill/answer-a-rule": принят,
+        "o/q:skill/answer-rules": {"status": "merged-into", "skill": "answer-a-rule",
+                                   "why": "та же работа, взята правка шага 3"}}) == 0
