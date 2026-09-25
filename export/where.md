@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 29 | 18 | 203 | 9 | 0 | 146 | 95 | 12 | 0 | 25 | 1 | 44 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 31 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 181 | 31 | 0 | 117 | 60 | 12 | 0 | 29 | 16 | 78 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 14 | 13 | 207 | 5 | 0 | 194 | 166 | 19 | 1 | 8 | 0 | 216 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 14 | 13 | 208 | 4 | 0 | 195 | 166 | 19 | 1 | 9 | 0 | 218 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -58,6 +58,7 @@
 | 205 | `Engineering-Pipeline-Mechanisms` — гейт: tests/test_bindings.py::test_every_inapplicable_answer_names_a_predicate_over_the_tree — у каждого ответа «неприменимо» требуется признак опровержимости: путь, каталог, команда или число. Одного СОБЫТИЯ не хватает, и это второй конец проверки: test_an_event_alone_is_not_a_predicate отвергает «правило вступит вместе с первым подагентом». | `Engineering-Incidents-Playbook` |
 | 207 | `Engineering-Pipeline-Mechanisms` — гейт: scripts/audit_profile.py — ПОРЯДОК прохода считается механизмом, а не выбирается: подозрение есть доля корней притязания правила, встреченных в тексте ответа, и заход печатает полосы, остаток и следующую пачку. Сверенность берётся из самого ответа (поле analysed), а не из списка рядом, который надо не забыть обновить (049). Процедуру держит навык .claude/skills/audit-the-answers/SKILL.md: пачка, замер по дереву вместо чтения, отметка в ответе, отдача числом и решение идти дальше. tests/test_audit_profile.py проверяет отказом — пустая выгрузка, пустые ответы, несошедшиеся номера и правило без притязания дают третий исход, а не пустой профиль, который читался бы как «всё сверено». docs/decisions/030-the-answer-audit-stops-on-a-measured-yield.md — первый заход и его числа | `Engineering-Incidents-Playbook` |
 | 208 | `Engineering-Pipeline-Mechanisms` — гейт: scripts/preflight.py — заход `--push` толкает ветку ТЕМ ЖЕ вызовом, который проверяет, и красное до толчка не доходит: `push_branch` зовётся из `main` только после зелёного вердикта. Обход остался возможным и стал отдельным названным действием — заход без `--push` печатает вердикт и не толкает, а `git push` руками проект не запрещает. Держат tests/test_window_preflight.py (толчок на красном, толчок без просьбы, ветка без приставки agent/) и .claude/hooks/push_guard.py со стороны цели толчка. | `Engineering-Incidents-Playbook` |
+| 209 | `Engineering-Pipeline-Mechanisms` — документ: scripts/findings.py — PLAN_MARKER: метка плана живёт рядом с метками прочих живых задач, и узнающий её счёт пунктов берёт её импортом (scripts/items_left.py::measure), а не буквами; scripts/work_plan.py — MARKER берётся из findings.PLAN_MARKER. Держит tests/test_items_left.py::test_the_plan_is_skipped_by_its_imported_marker | `Engineering-Incidents-Playbook` |
 
 ## Сколько держит механизм · How much each mechanism holds
 
@@ -358,6 +359,7 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_required_context.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/debt.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/family.py` | 5 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/findings.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_review_findings.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_showcase.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `.claude/hooks/push_guard.py` | 4 |
@@ -367,9 +369,9 @@
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/002-review-taken-from-two-neighbours.md` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/changerefs.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_rule_links.py` | 4 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/findings.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/labels.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/preflight.py` | 4 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/work_plan.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `tests/outcomes.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_source_hygiene.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/automerge.yml` | 3 |
@@ -383,7 +385,6 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/arm.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_derived_refs.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_pipeline.py` | 3 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/work_plan.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/conftest.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_decisions_format.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_directions_map.py` | 3 |
@@ -441,7 +442,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_steps_speak_outward.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_window_preflight.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 92 механизмов по одному правилу; без названного адреса: 0 из 194 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 94 механизмов по одному правилу; без названного адреса: 0 из 195 |
 
 ## Правила · Rules
 
@@ -654,7 +655,7 @@
 | 206 | действует | — | — | — | — | действует |
 | 207 | действует | — | — | — | — | действует |
 | 208 | действует | — | — | — | — | действует |
-| 209 | действует | — | — | — | — | — |
+| 209 | действует | — | — | — | — | действует |
 | 210 | действует | — | — | — | — | — |
 | 211 | действует | — | — | — | — | — |
 | 212 | действует | — | — | — | — | — |

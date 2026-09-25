@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T14:07:02+00:00",
+  "generated_at": "2026-09-25T14:14:09+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -7526,15 +7526,15 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-25",
-      "answered": 207,
+      "answered": 208,
       "by_status": {
-        "active": 194,
+        "active": 195,
         "not-applicable": 13
       },
       "by_mechanism": {
         "gate": 166,
         "pipeline": 19,
-        "document": 8,
+        "document": 9,
         "skill": 1
       },
       "rules": {
@@ -7744,7 +7744,8 @@
         "205": "active",
         "206": "active",
         "207": "active",
-        "208": "active"
+        "208": "active",
+        "209": "active"
       },
       "holds": {
         "001": {
@@ -9298,6 +9299,14 @@
           "awaiting": "",
           "analysed": "2026-09-17",
           "decided": "2026-09-17"
+        },
+        "209": {
+          "mechanism": "document",
+          "where": "scripts/findings.py — PLAN_MARKER: метка плана живёт рядом с метками прочих живых задач, и узнающий её счёт пунктов берёт её импортом (scripts/items_left.py::measure), а не буквами; scripts/work_plan.py — MARKER берётся из findings.PLAN_MARKER. Держит tests/test_items_left.py::test_the_plan_is_skipped_by_its_imported_marker",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
         }
       },
       "trails": 14,
