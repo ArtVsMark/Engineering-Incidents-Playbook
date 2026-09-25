@@ -41,11 +41,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LANGS = ("ru", "en")
-TEMPLATE = ROOT / "templates" / "rule-template.md"
-BINDINGS = ROOT / ".rules" / "bindings.json"
-CONSUMERS = ROOT / ".rules" / "consumers.json"
-NEIGHBOURS = ROOT / ".rules" / "neighbours.json"
-CHANGELOG_DIR = ROOT / "changelog.d"
 
 RULE_RE = re.compile(r"^(\d{3})-([a-z0-9-]+)\.md$")
 SLUG_RE = re.compile(r"^[a-z][a-z0-9-]*$")
@@ -346,10 +341,11 @@ def main(argv: list[str] | None = None) -> int:
                             encoding="utf-8")
         made.append(str(path.relative_to(root)))
 
-    # Пути считаются ОТ КОРНЯ, а не берутся из констант модуля: константы
-    # указывают на сам каталог, и с ключом --root скрипт писал бы предмет в
-    # одно место, а ответ о нём — в другое. Поймано первым же прогоном на
-    # копии дерева (правило 139).
+    # Пути считаются ОТ КОРНЯ, а не от ROOT модуля: ROOT указывает на сам
+    # каталог, и с ключом --root скрипт писал бы предмет в одно место, а ответ
+    # о нём — в другое. Поймано первым же прогоном на копии дерева (правило
+    # 139). Констант путей от ROOT поэтому нет: пять таких лежали в модуле с
+    # того же дня и не читались ничем (211).
     bindings = root / ".rules" / "bindings.json"
     doc = json.loads(bindings.read_text(encoding="utf-8"))
     doc["rules"][num] = {"status": "unreviewed"}

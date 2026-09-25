@@ -74,9 +74,6 @@ def _value(chunk: str) -> str:
     return chunk.strip().strip('"').strip("'")
 
 
-NO_GH = ghcli.NO_GH
-
-
 #: Вызов gh живёт в одном месте на весь каталог (правила 090, 022).
 gh_json = ghcli.run
 

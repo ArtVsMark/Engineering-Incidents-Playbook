@@ -49,8 +49,6 @@ from pathlib import Path
 import ghcli
 import pr_body
 
-ROOT = Path(__file__).resolve().parent.parent
-
 gh = ghcli.run
 
 #: Непроставленная галочка. Остаток, названный прозой, состоянием не является

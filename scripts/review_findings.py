@@ -87,8 +87,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import ghcli
 import pr_body  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent.parent
-
 #: Скрытый маркер живой задачи. По нему она находится снова — заголовок правят
 #: руками, и тогда прогон завёл бы вторую вместо обновления (тот же приём, что
 #: у дежурного по общей ветке).
