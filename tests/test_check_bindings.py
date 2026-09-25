@@ -730,6 +730,38 @@ def test_pri_uslovii_s_sobytiem_chisto(monkeypatch, repo):
     assert cb.main() == 0
 
 
+# ── отказ по замеру — четвёртое слово (213, контракт 1.6) ─────────────────
+
+def test_otkaz_bez_zamera_otkaz(monkeypatch, repo, capsys):
+    """«Отказались» без замера неотличимо от «не смотрели» (213)."""
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo,
+            документом({"holdable": "refused",
+                        "why": "решение 008 разрешает хвост мелких правок"}),
+            export_of("001"))
+
+    assert cb.main() == 1
+    assert "без замера" in capsys.readouterr().err
+
+
+def test_otkaz_s_zamerom_chisto_i_ne_dolg(monkeypatch, repo, capsys):
+    """Зелёная сторона: замер назван, и отказ считается СВОИМ числом —
+    не долгом «не построено» и не «держать нельзя»."""
+    write(repo / "AGENTS.md", "свод\n")
+    prepare(monkeypatch, repo,
+            документом({"holdable": "refused",
+                        "why": "решение 008 разрешает хвост мелких правок одним изменением",
+                        "machine_half": "компоненты связности по коммитам ветки: по 25 "
+                                        "слитым распались 6, и каждое шестое разрешено 008"}),
+            export_of("001"))
+
+    assert cb.main() == 0
+    вышло = capsys.readouterr().out
+    assert "отказано по замеру у 1" in вышло
+    assert "не построено у 0" in вышло
+    assert "держать нельзя у 0" in вышло
+
+
 def test_ne_postroennoe_pechataetsya_v_stupeni_nol(monkeypatch, repo, capsys):
     """Число видно СО СТОРОНЫ, иначе счёт по семье врёт молча.
 

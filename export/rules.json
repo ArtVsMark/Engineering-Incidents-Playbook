@@ -1,16 +1,16 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T12:55:30+00:00",
+  "generated_at": "2026-09-25T13:09:52+00:00",
   "contracts": {
     "export": "1.7",
-    "bindings": "1.5",
+    "bindings": "1.6",
     "consumers": "1.1",
     "proposals": "1.1",
     "showcase": "1.1",
     "where": "1.4"
   },
-  "count": 211,
+  "count": 212,
   "rules": [
     {
       "id": "001",
@@ -2552,7 +2552,8 @@
         "202",
         "203",
         "204",
-        "208"
+        "208",
+        "213"
       ]
     },
     {
@@ -7573,7 +7574,8 @@
         "205",
         "206",
         "207",
-        "208"
+        "208",
+        "213"
       ]
     },
     {
@@ -9189,7 +9191,8 @@
       ],
       "mentioned_by": [
         "182",
-        "207"
+        "207",
+        "213"
       ]
     },
     {
@@ -9463,7 +9466,8 @@
       "mentioned_by": [
         "014",
         "204",
-        "205"
+        "205",
+        "213"
       ]
     },
     {
@@ -11054,6 +11058,56 @@
         "001",
         "075",
         "169"
+      ]
+    },
+    {
+      "id": "213",
+      "slug": "a-refusal-measured-and-chosen-is-not-a-debt",
+      "title": {
+        "ru": "Отказ строить механизм, замеренный и выбранный, — не долг и не «нельзя», и у него своё слово",
+        "en": "A refusal to build a mechanism, measured and chosen, is neither a debt nor \"impossible\", and it has its own word"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "метрики"
+        ],
+        "en": [
+          "contracts",
+          "metrics"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Словарь «можно ли держать машиной» различает не три состояния, а четыре. Четвёртое: машинная половина **есть и замерена**, а строить её **отказались**, потому что сигнал бил бы по тому, что решение проекта прямо разрешает, — и не только запретом, но и предупреждением. Такой ответ — не `no`: половина считается командой. Не `not-yet`: строить её не собираются, и долг завышался бы. Не `conditional`: предмет есть, и сигнал краснел бы, а не зеленел. Слово `refused` законно только с замером в `machine_half` и только после [051](051-warn-on-likely-block-on-certain.md): сперва сигнал понижают до предупреждения, и лишь отказ от предупреждения — отказ.",
+        "en": "The vocabulary of \"can a machine hold this\" distinguishes four states, not three. The fourth: the machine half **exists and is measured**, and building it was **refused**, because the signal would fire on what a project decision explicitly allows — not only as a block but as a warning too. Such an answer is not `no`: the half is computed by a command. It is not `not-yet`: nobody intends to build it, and the debt would be inflated. It is not `conditional`: the subject exists, and the signal would turn red, not stay green. The word `refused` is legitimate only with a measurement in `machine_half` and only after [051](051-warn-on-likely-block-on-certain.md): first the signal is lowered to a warning, and only refusing the warning is a refusal."
+      },
+      "applies": {
+        "ru": "**Работает** для реестров ответов на свод правил, где считают долю машинного\nсоблюдения: карта соответствия, ответ проекта каталогу.\n\n**Не работает** там, где сигнал можно понизить до предупреждения и никто от\nэтого не отказывался: это механизм по 051, а не отказ. **Не работает** и без\nзамера: отказ, за которым нет числа, неотличим от «не смотрели».\n\n**Признак нарушения:** ответ `not-yet` или `no`, чей `why` описывает\nработающую половину и решение её не строить.",
+        "en": "**Works** for registries of answers to a rulebook where the share of\nmachine-held compliance is counted: a compliance map, a project's answer to\nthe catalogue.\n\n**Does not work** where the signal can be lowered to a warning and nobody\nrefused that: it is a mechanism under 051, not a refusal. **Does not work**\neither without a measurement: a refusal with no number behind it is\nindistinguishable from \"never looked\".\n\n**Sign of a violation:** a `not-yet` or `no` answer whose `why` describes a\nworking half and the decision not to build it."
+      },
+      "added": "2026-09-25",
+      "files": {
+        "ru": "rules/ru/213-a-refusal-measured-and-chosen-is-not-a-debt.md",
+        "en": "rules/en/213-a-refusal-measured-and-chosen-is-not-a-debt.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": ".rules/bindings.json"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "051",
+        "146",
+        "177",
+        "182"
       ]
     }
   ],
