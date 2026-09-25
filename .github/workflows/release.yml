@@ -75,11 +75,11 @@ jobs:
       # было», — а тег на коммите без закрытого раздела отвергают гейты
       # журнала. Проба это показала до толчка. Операция атомарна по существу, и
       # конвейер изменений её не выражает.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.MERGE_QUEUE_TOKEN }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 

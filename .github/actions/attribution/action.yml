@@ -92,7 +92,7 @@ runs:
     # (по умолчанию main): тег в uses: закреплял этот файл, а сам гейт
     # приходил из подвижной main, и закрепить его можно было, только зная
     # второй вход (095, замер 25.09).
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v6
       with:
         python-version: "3.12"
 

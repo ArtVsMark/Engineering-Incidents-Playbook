@@ -79,7 +79,7 @@ jobs:
             echo "present=yes" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: steps.token.outputs.present == 'yes'
         with:
           fetch-depth: 1
@@ -91,7 +91,7 @@ jobs:
       # его `python3` отклонялся. Версия та же, что у остальных прогонов: её
       # сверяет check_python_version.py, а возможность разрешённого —
       # check_workflows.py.
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         if: steps.token.outputs.present == 'yes'
         with:
           python-version: "3.12"
