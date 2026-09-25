@@ -88,7 +88,9 @@ jobs:
           set -uo pipefail
           # ПО REST, А НЕ ЧЕРЕЗ GraphQL: у второго своя узкая квота, и 2
           # сентября она кончилась — конвейер встал целиком при зелёном коде.
-          if ! pulls=$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100"); then
+          # ВСЕ СТРАНИЦЫ (212): страницы приходят отдельными массивами подряд,
+          # и `jq` ниже разбирает их потоком — каждый по очереди.
+          if ! pulls=$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100"); then
             echo "::warning::Список открытых изменений не прочитан — не размораживаю."
             exit 0
           fi
