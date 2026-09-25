@@ -67,6 +67,18 @@ someone else's edit of a skill into your session with no change on your side.
 The plugin appeared after `v1.2.0`; that tag and earlier ones have no
 marketplace.
 
+## Как назвать навык плагина в ответе · Naming a plugin skill in your answer
+
+Правило, которое у проекта держит навык этого плагина, отвечает полем `skill`
+так же, как навык зовётся: `"skill": "catalogue:answer-a-rule"` (контракт
+ответа с 1.7). Адрес `.claude/skills/<имя>` здесь солгал бы: в дереве проекта
+навыка нет, он приходит плагином. Такой адрес указывает на дерево каталога, и
+каталог сверяет его сам.
+
+A rule held by a skill of this plugin answers `"skill": "catalogue:answer-a-rule"`
+— the way it is invoked (answer contract 1.7). The address points into the
+catalogue's tree, so the catalogue can check it.
+
 ## Версия плагина · The plugin version
 
 Поля `version` у плагина нет намеренно, и `claude plugin validate` об этом

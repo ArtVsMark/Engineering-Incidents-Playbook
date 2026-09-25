@@ -1192,6 +1192,49 @@ def test_целый_навык_проходит(monkeypatch, repo):
     assert cb.main() == 0
 
 
+def навык_плагина_в(repo: Path, плагин: str, имя: str) -> None:
+    write(repo / "plugins" / плагин / "skills" / имя / "SKILL.md",
+          f"---\nname: {имя}\ndescription: что делает и когда звать\n---\n\n# Навык\n")
+
+
+def test_навык_плагина_каталога_проходит(monkeypatch, repo):
+    """Контракт 1.7: навык называется так же, как зовётся, — `<плагин>:<имя>`."""
+    навык_плагина_в(repo, "catalogue", "probe")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
+                               "where": "plugins/catalogue/skills/probe/SKILL.md — держит",
+                               "skill": "catalogue:probe"}}},
+            export_of("001"))
+    assert cb.main() == 0
+
+
+def test_навыка_плагина_нет_в_дереве_каталога(monkeypatch, repo, capsys):
+    """Плагинный навык сверяется с деревом каталога: названный и отсутствующий —
+    обещание, а не механизм, как и навык окна."""
+    навык_плагина_в(repo, "catalogue", "probe")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
+                               "where": "plugins/catalogue/skills/probe/SKILL.md — держит",
+                               "skill": "catalogue:missing"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "plugins/catalogue/skills/missing/SKILL.md нет" in capsys.readouterr().err
+
+
+def test_плагина_нет_вовсе(monkeypatch, repo, capsys):
+    навык_плагина_в(repo, "catalogue", "probe")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "active", "mechanism": "skill",
+            "holdable": "no", "why": "навык не краснеет: машинной половины нет",
+                               "where": "plugins/catalogue/skills/probe/SKILL.md — держит",
+                               "skill": "elsewhere:probe"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "plugins/elsewhere/skills/probe/SKILL.md нет" in capsys.readouterr().err
+
+
 def test_навык_второй_половиной_при_гейте_законен(monkeypatch, repo, capsys):
     # ГЛАВНЫЙ СЛУЧАЙ: гейт берёт машинную половину, навык — остаток. Оба
     # объявлены, и ни один не спрятан. Именно так отвечает проект механизмов.
