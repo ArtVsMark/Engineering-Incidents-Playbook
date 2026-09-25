@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T11:37:24+00:00",
+  "generated_at": "2026-09-25T11:46:19+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -17,11 +17,11 @@
         "rejected": 6
       },
       "by_mechanism": {
-        "gate": 138,
+        "gate": 139,
         "document": 25,
         "skill": 1,
         "pipeline": 10,
-        "none": 13
+        "none": 12
       },
       "rules": {
         "001": "active",
@@ -746,9 +746,9 @@
           "decided": ""
         },
         "076": {
-          "mechanism": "none",
-          "where": "механизма нет; предмет в нашем дереве: scripts/sync_inbox.py — раздел «У соседей это уже решено» печатает where соседа голым путём его дерева в задачу ТРЕКЕРА ПОТРЕБИТЕЛЯ; templates/CLAUDE.md, templates/executor-brief.md, templates/session-opening.md, templates/skill-template.md — относительные ссылки ](../…): на записи правил у всех четырёх и на export/ у заготовки навыка, — живые только внутри каталога; scripts/onboard_consumer.py кладёт в .rules/proposals.json потребителя строку «Контракт: export/README.md каталога» — путь, а не адрес",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/check_links.py — заготовка, уходящая к потребителю (templates/*, кроме оглавления), не ссылается относительным путём в наше дерево: у получателя такого пути нет; ссылки на каталог в ней абсолютные, и абсолютная ссылка на СВОЙ репозиторий проверяется как локальная — иначе умирала бы молча. scripts/sync_inbox.py — раздел «У соседей это уже решено» в задаче получателя ведёт адресом в дерево соседа, а не голым путём; держит набор скрипта. ГРАНИЦА: что считать уходящим за пределы команды — список поверхностей (019), и путь законен там, где исходники у получателя есть (граница 076)",
+          "holdable": "",
           "awaiting": "",
           "analysed": "2026-09-25",
           "decided": "2026-09-25"
