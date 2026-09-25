@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T10:09:28+00:00",
+  "generated_at": "2026-09-25T10:10:31+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -12,15 +12,16 @@
       "read_at": "2026-09-25",
       "answered": 207,
       "by_status": {
-        "active": 184,
-        "not-applicable": 17,
+        "active": 187,
+        "not-applicable": 14,
         "rejected": 6
       },
       "by_mechanism": {
-        "gate": 131,
+        "gate": 132,
         "document": 31,
+        "skill": 1,
         "pipeline": 9,
-        "none": 13
+        "none": 14
       },
       "rules": {
         "001": "active",
@@ -29,7 +30,7 @@
         "004": "active",
         "005": "active",
         "006": "active",
-        "007": "not-applicable",
+        "007": "active",
         "008": "active",
         "009": "active",
         "010": "active",
@@ -117,7 +118,7 @@
         "092": "active",
         "093": "active",
         "094": "active",
-        "095": "not-applicable",
+        "095": "active",
         "096": "active",
         "097": "active",
         "098": "active",
@@ -209,7 +210,7 @@
         "185": "active",
         "186": "active",
         "187": "active",
-        "188": "not-applicable",
+        "188": "active",
         "189": "active",
         "190": "active",
         "191": "active",
@@ -279,6 +280,14 @@
           "awaiting": "",
           "analysed": "2026-09-16",
           "decided": "2026-09-16"
+        },
+        "007": {
+          "mechanism": "skill",
+          "where": ".claude/skills/incident-triage/SKILL.md — «Отнести к классу и задать его первый вопрос», строка «окно молчит»: ждёт ли оно разрешения, снаружи это неотличимо от работы",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
         },
         "008": {
           "mechanism": "gate",
@@ -879,6 +888,14 @@
           "awaiting": "условие снятия у переходного слоя: сегодня записей со старым полем `document_reason` в реестре 0, то есть слой уже пуст и держится только тем, что его никто не убрал",
           "analysed": "2026-09-17",
           "decided": ""
+        },
+        "095": {
+          "mechanism": "none",
+          "where": "action.yml — умолчания входов, прежде всего `ref: main`; машинного механизма нет, и почему — сказано в why и machine_half",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
         },
         "096": {
           "mechanism": "gate",
@@ -1575,6 +1592,14 @@
           "awaiting": "вторая обязательная проверка либо превращение review в обязательную. Замер 8 сентября: обязательная проверка 1 (catalogue), условий у работ в 13 прогонах — 2, и оба у необязательных каналов; записей с именем catalogue на голове по 1 у каждого из 4 последних изменений. Предмета сейчас нет, и гейт был бы зелёным с первого дня. Строить тем же изменением, которым меняется список обязательных проверок",
           "analysed": "2026-09-17",
           "decided": ""
+        },
+        "188": {
+          "mechanism": "gate",
+          "where": ".github/workflows/ci.yml — шаг «изменение связано с задачей или освобождено с причиной»: тело изменения берётся ЖИВЫМ (`gh api …/pulls/$PR --jq .body`), и scripts/pr_body.py --check спрашивает в ОПУБЛИКОВАННОМ строку-триггер (либо освобождение с причиной) и форму строк «Разобрано: <отпечаток>»",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
         },
         "189": {
           "mechanism": "gate",
