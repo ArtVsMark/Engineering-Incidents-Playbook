@@ -344,8 +344,20 @@ jobs:
             # Что она держит сверх прежнего: пустой список проверок больше не
             # считается зеленью (правило 010), а обязательная проверка
             # спрашивается ПОИМЁННО — «что-то зелёное» ею не является (068).
+            #
+            # ВСЕ СТРАНИЦЫ (212). Без размера страницы площадка отдаёт тридцать
+            # проверок, и проверка за краем не видна ни здесь, ни ниже. Страницы
+            # склеиваются в один список (`jq -s`): merge_ready принимает и его.
+            # ЧТЕНИЕ ОТДЕЛЕНО ОТ РАЗБОРА: в одной трубе отказ площадки дал бы
+            # пустой вход, `jq -s` сделал бы из него `[]`, и третий исход
+            # «не прочитано» стал бы находкой «проверок нет» (039).
+            if ! runs=$(gh api --paginate "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs?per_page=100" \
+                          --jq '.check_runs[]'); then
+              echo "::warning::Изменение #$PR: состояние проверок не прочитано — не сливаю."
+              return 0
+            fi
             rc=0
-            gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" \
+            printf '%s\n' "$runs" | jq -s . \
               | python3 scripts/merge_ready.py --required catalogue || rc=$?
             if [ "$rc" -eq 2 ]; then
               echo "::warning::Изменение #$PR: состояние проверок не прочитано — не сливаю."
@@ -357,14 +369,18 @@ jobs:
             fi
             # Обязательная проверка должна быть среди прошедших поимённо, а не
             # «что-то зелёное». Иначе достаточно любой посторонней работы.
-            ok=$(gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" \
-                   --jq '[.check_runs[] | select(.name == "catalogue" and .conclusion == "success")] | length')
+            # СЧИТАЕТСЯ ПО ТОМУ ЖЕ СПИСКУ, ЧТО ПРОЧИТАН ВЫШЕ: второе и третье
+            # чтение с обходом страниц отдало бы на отказе площадки пустоту, а
+            # `wc -l` сделал бы из неё «0» — и «незелёных нет» пропустило бы
+            # слияние там, где прежде стоял отказ.
+            ok=$(printf '%s\n' "$runs" | jq -s \
+                   '[.[] | select(.name == "catalogue" and .conclusion == "success")] | length')
             if [ "${ok:-0}" = "0" ]; then
               echo "::warning::Изменение #$PR: обязательная проверка «catalogue» не зелена на этой голове — не сливаю."
               return 0
             fi
-            bad=$(gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" \
-                    --jq '[.check_runs[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled")] | length')
+            bad=$(printf '%s\n' "$runs" | jq -s \
+                    '[.[] | select(.conclusion == "failure" or .conclusion == "timed_out" or .conclusion == "cancelled")] | length')
             if [ "${bad:-1}" != "0" ]; then
               echo "::warning::Изменение #$PR: ждать нечего, но есть незелёные проверки — не сливаю."
               return 0

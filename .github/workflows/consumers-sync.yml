@@ -209,9 +209,13 @@ jobs:
           # из часовых 5000 против одного запроса. У REST в /issues лежат И
           # изменения тоже, поэтому они отсеиваются явно: без этого одноимённое
           # ИЗМЕНЕНИЕ считалось бы уже открытой задачей.
-          open=$(gh api "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" \
-                   --jq '[.[] | select(.pull_request == null) | select(.title == env.TITLE)] | length')
-          if [ "$open" != "0" ]; then
+          # ВСЕ СТРАНИЦЫ (212): изменения лежат в том же списке и съедают
+          # сотню. `--jq` применяется к каждой странице, поэтому считаются
+          # строки-совпадения, а не длина массива одной страницы.
+          open=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" \
+                   --jq '.[] | select(.pull_request == null) | select(.title == env.TITLE) | .number' \
+                 | wc -l)
+          if [ "$open" -ne 0 ]; then
             echo "задача уже открыта — второй раз не завожу"
             exit 0
           fi
@@ -256,9 +260,13 @@ jobs:
           # из часовых 5000 против одного запроса. У REST в /issues лежат И
           # изменения тоже, поэтому они отсеиваются явно: без этого одноимённое
           # ИЗМЕНЕНИЕ считалось бы уже открытой задачей.
-          open=$(gh api "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" \
-                   --jq '[.[] | select(.pull_request == null) | select(.title == env.TITLE)] | length')
-          if [ "$open" != "0" ]; then
+          # ВСЕ СТРАНИЦЫ (212): изменения лежат в том же списке и съедают
+          # сотню. `--jq` применяется к каждой странице, поэтому считаются
+          # строки-совпадения, а не длина массива одной страницы.
+          open=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues?state=open&per_page=100" \
+                   --jq '.[] | select(.pull_request == null) | select(.title == env.TITLE) | .number' \
+                 | wc -l)
+          if [ "$open" -ne 0 ]; then
             echo "задача уже открыта — второй раз не завожу"
             exit 0
           fi
