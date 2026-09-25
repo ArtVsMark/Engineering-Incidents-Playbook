@@ -119,4 +119,7 @@ runs:
         if [ "${{ inputs.catalogue-ref }}" != "main" ]; then
           echo "::notice::вход catalogue-ref больше не читается: версию гейта закрепляет тег в строке uses:"
         fi
+        if [ "${{ inputs.catalogue }}" != "ArtVsMark/Engineering-Incidents-Playbook" ]; then
+          echo "::notice::вход catalogue больше не читается: гейт берётся из каталога, закреплённого строкой uses:"
+        fi
         python "$GITHUB_ACTION_PATH/../../../scripts/check_attribution.py" "${args[@]}"

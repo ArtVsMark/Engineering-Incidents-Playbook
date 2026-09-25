@@ -62,6 +62,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -474,9 +475,36 @@ def cancelling_groups(text: str) -> list[tuple[str, bool]]:
 
 
 #: Вызов питона со скриптом в строке оболочки: `python путь.py`, `python3 "…/x.py"`.
-ВЫЗОВ_СКРИПТА_RE = re.compile(r"^\s*python3?\s+\"?([^\s\"]+\.py)", re.M)
-#: Путь, которым составное действие обязано звать свой код.
-СВОЙ_ПУТЬ = ("$GITHUB_ACTION_PATH", "${{ github.action_path }}")
+ВЫЗОВ_ПИТОНА_RE = re.compile(r"^\s*python3?\s+(.+)$", re.M)
+#: Путь, которым составное действие обязано звать свой код. Выражение площадки
+#: сравнивается после приведения пробелов: `${{github.action_path}}` и
+#: `${{ github.action_path }}` — одно и то же.
+СВОЙ_ПУТЬ = ("$GITHUB_ACTION_PATH", "${GITHUB_ACTION_PATH}", "${{ github.action_path }}")
+ВЫРАЖЕНИЕ_RE = re.compile(r"\$\{\{\s*(.*?)\s*\}\}")
+
+
+def скрипт_вызова(хвост: str) -> str | None:
+    """Путь скрипта в строке `python …`. None — вызов не скрипта (`-m`, `-c`).
+
+    РАЗБОРОМ ОБОЛОЧКИ, А НЕ ОБРАЗЦОМ «до пробела». Первая редакция брала путь
+    до первого пробела и не видела `"${{ выражение }}/x.py"` вовсе: вызов через
+    выражение с пробелами не распознавался, и законная форма «проходила» потому,
+    что её не нашли, а незаконная — тем же путём. Нашёл внешний взгляд (#583).
+    """
+    хвост = хвост.rstrip()
+    if хвост.endswith("\\"):
+        хвост = хвост[:-1]          # продолжение строки оболочки — не часть аргумента
+    try:
+        слова = shlex.split(ВЫРАЖЕНИЕ_RE.sub(lambda m: "${{ " + m.group(1) + " }}", хвост))
+    except ValueError:
+        return хвост.strip()        # не разбирается — называется целиком, а не пропускается
+    for слово in слова:
+        if слово in ("-m", "-c"):
+            return None
+        if слово.startswith("-"):
+            continue
+        return слово if слово.endswith(".py") else None
+    return None
 
 
 def code_not_from_action_path(text: str) -> list[str]:
@@ -489,8 +517,12 @@ def code_not_from_action_path(text: str) -> list[str]:
     Площадка уже кладёт каталог на теге из uses: в GITHUB_ACTION_PATH, и
     исполнять надо оттуда.
     """
-    return [m.group(1) for m in ВЫЗОВ_СКРИПТА_RE.finditer(без_чужого_текста(text))
-            if not m.group(1).startswith(СВОЙ_ПУТЬ)]
+    найдено: list[str] = []
+    for m in ВЫЗОВ_ПИТОНА_RE.finditer(без_чужого_текста(text)):
+        скрипт = скрипт_вызова(m.group(1))
+        if скрипт is not None and not скрипт.startswith(СВОЙ_ПУТЬ):
+            найдено.append(скрипт)
+    return найдено
 
 
 def impossible_permissions(text: str) -> list[str]:
