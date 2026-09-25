@@ -234,13 +234,22 @@ fails the build.
 | `mechanism` | `gate` · `pipeline` · `skill` · `document` · `none` (устар. · deprecated: `process-step`) | при `active` · when `active` |
 | `where` | **разрешимый адрес** механизма: путь к файлу, образец вида `.github/workflows/*.yml` или корневой документ по имени. Проза рядом — пожалуйста, вместо адреса — нет · a **resolvable address**: a file path, a pattern like `.github/workflows/*.yml`, or a root document by name. Prose alongside is fine, prose instead of an address is not | при `active` и механизме не `none` · when `active` and the mechanism is not `none` |
 | `why` | причина решения · the reason for the decision | при `rejected`, `not-applicable` и вместе с `holdable` · with `rejected`, `not-applicable` and alongside `holdable` |
-| `machine_half` | ЧТО именно следует из данных целиком и почему оно всё-таки не построено · WHAT exactly follows from the data in full, and why it is still not built | при `active` и `mechanism: none` · when `active` and `mechanism: none` |
+| `machine_half` | ЧТО именно следует из данных целиком и почему оно всё-таки не построено · WHAT exactly follows from the data in full, and why it is still not built | при `active` и `mechanism: none`, а также при `holdable: refused` — там это замер отказа · when `active` and `mechanism: none`, and with `holdable: refused` — there it is the measurement behind the refusal |
 | `skill` | адрес каталога навыка: `.claude/skills/<имя>`. Проверяется существование `SKILL.md`, непустые `name` и `description` и совпадение имени с каталогом · the address of a skill directory: `.claude/skills/<name>`. Checked for an existing `SKILL.md`, non-empty `name` and `description`, and a name matching the directory | при `mechanism: skill` — обязательно; рядом с `gate` или `pipeline` — когда навык держит ВТОРУЮ половину; при `none` запрещено · required with `mechanism: skill`; allowed alongside `gate` or `pipeline` when the skill holds the SECOND half; forbidden with `none` |
-| `holdable` | можно ли держать МАШИНОЙ: `no` — половины нет вовсе, текст и есть предел · `not-yet` — половина есть и не построена · `conditional` — станет возможна, когда появится названный предмет · whether a MACHINE can hold it: `no`, `not-yet`, `conditional` | при `active` и механизме, который не краснеет (`document`, `skill`, `none`) · when `active` and the mechanism does not redden |
+| `holdable` | можно ли держать МАШИНОЙ: `no` — половины нет вовсе, текст и есть предел · `not-yet` — половина есть и не построена · `conditional` — станет возможна, когда появится названный предмет · `refused` — половина есть, замерена, и строить её отказались: сигнал бил бы по тому, что решение проекта разрешает, и даже предупреждение отвергнуто · whether a MACHINE can hold it: `no`, `not-yet`, `conditional`, `refused` | при `active` и механизме, который не краснеет (`document`, `skill`, `none`) · when `active` and the mechanism does not redden |
 | `awaiting` | СОБЫТИЕ, при котором механизм строится, с замером отсутствия предмета · the EVENT that will make the mechanism buildable, with a measurement of the subject's absence | обязательно при `holdable: conditional`; запрещено при `gate` и `pipeline` · required with `holdable: conditional`; forbidden with `gate` and `pipeline` |
 | `analysed` | дата сверки записи с деревом, `ГГГГ-ММ-ДД` · the date the record was last checked against the tree | необязательно; отсутствие значит «не сверяли» и считается отдельно · optional; absence means "never checked" and is counted separately |
 | `decided` | дата, когда вынесен НЫНЕШНИЙ вердикт · the date the CURRENT verdict was made | необязательно; не позже `analysed` и не без него · optional; never later than `analysed`, never without it |
 | `document_reason` | устар. · deprecated: прежнее имя `holdable` со словами `impossible`/`not-yet`. Читается на входе, у себя не пишется · the former name of `holdable`; read on input, never written | — |
+
+**Почему `refused` (контракт 1.6).** Три слова заставляли лгать в одну из
+сторон. Половина, которую замерили и решили не строить, — не «нельзя»: она
+считается командой. Не «не построено»: строить её не собираются, и долг
+завышался бы ровно там, где разбор был глубже всего. Не «при условии»: предмет
+есть, и сигнал краснел бы на законном, а не зеленел вокруг пустоты. Слово
+законно только с замером в `machine_half` и только после 051: сперва сигнал
+понижают до предупреждения, и лишь отказ от предупреждения — отказ
+([213](../rules/ru/213-a-refusal-measured-and-chosen-is-not-a-debt.md)).
 
 **Почему две даты, а не одна (контракт 1.5).** `analysed` отвечает «когда на эту
 запись в последний раз смотрели», `decided` — «когда нынешний вердикт вынесен».
@@ -298,6 +307,16 @@ HTTPS и чужого дерева не видит — та же граница,
 ровно то, чего правило 146 не разрешает. Каталог свои 28 ответов разобрал
 целиком, потому что он издатель, а не потому, что это требуется от всех сразу
 (197).
+
+**Why `refused` (contract 1.6).** Three words forced a lie in one direction or
+another. A half that was measured and deliberately not built is not
+"impossible": a command computes it. It is not "not built": nobody intends to
+build it, and the debt would be inflated exactly where the analysis went
+deepest. It is not "conditional": the subject exists, and the signal would turn
+red on the legitimate rather than stay green around emptiness. The word is
+legitimate only with a measurement in `machine_half` and only after 051: the
+signal is first lowered to a warning, and only refusing the warning is a
+refusal.
 
 **Why two dates, not one (contract 1.5).** `analysed` answers "when was this
 record last looked at", `decided` answers "when was the current verdict made".
@@ -803,7 +822,7 @@ having no gate.
 {
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
-    "export": "1.7", "bindings": "1.5", "consumers": "1.1",
+    "export": "1.7", "bindings": "1.6", "consumers": "1.1",
     "proposals": "1.1", "showcase": "1.1", "where": "1.4"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
