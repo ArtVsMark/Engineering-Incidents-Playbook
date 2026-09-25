@@ -12,12 +12,12 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 211 | 0 | 0 | 192 | 140 | 10 | 2 | 28 | 12 | 113 |  |
-| `Stepik-Python-Grader` | подключён | 187 | 132 | 195 | 16 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 203 | 8 | 0 | 146 | 95 | 12 | 0 | 25 | 1 | 44 |  |
-| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 30 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
-| `Glossary-Python` | подключён | 0 | 0 | 181 | 30 | 0 | 117 | 60 | 12 | 0 | 29 | 16 | 78 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 13 | 12 | 207 | 4 | 0 | 194 | 166 | 19 | 1 | 8 | 0 | 216 |  |
+| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 212 | 0 | 0 | 193 | 141 | 10 | 2 | 28 | 12 | 113 |  |
+| `Stepik-Python-Grader` | подключён | 187 | 132 | 195 | 17 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
+| `ArtVsMark` | подключён | 29 | 18 | 203 | 9 | 0 | 146 | 95 | 12 | 0 | 25 | 1 | 44 |  |
+| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 31 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
+| `Glossary-Python` | подключён | 0 | 0 | 181 | 31 | 0 | 117 | 60 | 12 | 0 | 29 | 16 | 78 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 14 | 13 | 207 | 5 | 0 | 194 | 166 | 19 | 1 | 8 | 0 | 216 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -68,14 +68,14 @@
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
 | `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 16 |
-| `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 15 |
+| `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 16 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 13 |
 | `Engineering-Incidents-Playbook` | `AGENTS.md` | 13 |
 | `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 13 |
 | `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 12 |
+| `Engineering-Incidents-Playbook` | `export/README.md` | 9 |
 | `Engineering-Incidents-Playbook` | `scripts/check_workflows.py` | 9 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/automerge.yml` | 8 |
-| `Engineering-Incidents-Playbook` | `export/README.md` | 8 |
 | `Engineering-Incidents-Playbook` | `scripts/check_charter.py` | 8 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/agent-pr.yml` | 7 |
 | `Engineering-Incidents-Playbook` | `CONTRIBUTING.md` | 7 |
@@ -105,6 +105,7 @@
 | `Engineering-Incidents-Playbook` | `.github/workflows/attribution-history.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/consumers-sync.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/review.yml` | 3 |
+| `Engineering-Incidents-Playbook` | `.rules/bindings.json` | 3 |
 | `Engineering-Incidents-Playbook` | `docs/VERSIONING.md` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_links.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_locale.py` | 3 |
@@ -118,7 +119,6 @@
 | `Engineering-Incidents-Playbook` | `.github/workflows/badges.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/main-red.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/off-prefix.yml` | 2 |
-| `Engineering-Incidents-Playbook` | `.rules/bindings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/exclusives.json` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/neighbours.json` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/proposals.json` | 2 |
@@ -133,7 +133,8 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_skips.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_verdict_order.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 47 механизмов по одному правилу; без названного адреса: 1 из 180 |
+| `Engineering-Incidents-Playbook` | `templates/bindings.json` | 2 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 46 механизмов по одному правилу; без названного адреса: 1 из 181 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 46 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 14 |
@@ -657,3 +658,4 @@
 | 210 | действует | — | — | — | — | — |
 | 211 | действует | — | — | — | — | — |
 | 212 | действует | — | — | — | — | — |
+| 213 | действует | — | — | — | — | — |
