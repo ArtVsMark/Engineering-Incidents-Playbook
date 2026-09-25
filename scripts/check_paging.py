@@ -63,7 +63,6 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ТАБЛИЦА = ROOT / ".rules" / "limits.json"
 
 #: Коллекции площадки, которые отдаются страницами. Имя — последнее буквальное
 #: звено пути; взято из справочника REST (у адреса есть `per_page`/`page`).
