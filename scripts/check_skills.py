@@ -67,7 +67,7 @@ from pathlib import Path
 # Разбор заголовка навыка один на каталог — у гейта ответа. Своя копия
 # разошлась бы с ним молча, и первым на блочном скаляре: его чинили трижды
 # (ревью #497, #500, #501), и каждая починка шла бы теперь в двух местах.
-from check_bindings import навык_в_дереве
+from check_bindings import НАВЫКИ_ОКНА, навык_в_дереве
 # Строка читателя и словарь — тоже чужие: читателей закрытый список, и второй
 # словарь разошёлся бы с первым на первом же новом читателе.
 from check_readers import EN, HEAD, LINE_RE, READERS, reader_of
@@ -76,7 +76,7 @@ from check_plugins import PLUGINS
 
 ROOT = Path(__file__).resolve().parent.parent
 
-SKILLS = Path(".claude") / "skills"
+SKILLS = НАВЫКИ_ОКНА
 LIST = SKILLS / "README.md"
 TEMPLATE = Path("templates") / "skill-template.md"
 

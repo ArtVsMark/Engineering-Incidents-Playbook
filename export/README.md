@@ -235,12 +235,30 @@ fails the build.
 | `where` | **разрешимый адрес** механизма: путь к файлу, образец вида `.github/workflows/*.yml` или корневой документ по имени. Проза рядом — пожалуйста, вместо адреса — нет · a **resolvable address**: a file path, a pattern like `.github/workflows/*.yml`, or a root document by name. Prose alongside is fine, prose instead of an address is not | при `active` и механизме не `none` · when `active` and the mechanism is not `none` |
 | `why` | причина решения · the reason for the decision | при `rejected`, `not-applicable` и вместе с `holdable` · with `rejected`, `not-applicable` and alongside `holdable` |
 | `machine_half` | ЧТО именно следует из данных целиком и почему оно всё-таки не построено · WHAT exactly follows from the data in full, and why it is still not built | при `active` и `mechanism: none`, а также при `holdable: refused` — там это замер отказа · when `active` and `mechanism: none`, and with `holdable: refused` — there it is the measurement behind the refusal |
-| `skill` | адрес каталога навыка: `.claude/skills/<имя>`. Проверяется существование `SKILL.md`, непустые `name` и `description` и совпадение имени с каталогом · the address of a skill directory: `.claude/skills/<name>`. Checked for an existing `SKILL.md`, non-empty `name` and `description`, and a name matching the directory | при `mechanism: skill` — обязательно; рядом с `gate` или `pipeline` — когда навык держит ВТОРУЮ половину; при `none` запрещено · required with `mechanism: skill`; allowed alongside `gate` or `pipeline` when the skill holds the SECOND half; forbidden with `none` |
+| `skill` | адрес каталога навыка: `.claude/skills/<имя>` — навык в своём дереве, или `<плагин>:<имя>` — навык плагина каталога, так же, как он зовётся (с 1.7). Проверяется существование `SKILL.md`, непустые `name` и `description` и совпадение имени с каталогом · the address of a skill directory: `.claude/skills/<name>` in your own tree, or `<plugin>:<name>` for a catalogue plugin skill, as it is invoked (since 1.7). Checked for an existing `SKILL.md`, non-empty `name` and `description`, and a name matching the directory | при `mechanism: skill` — обязательно; рядом с `gate` или `pipeline` — когда навык держит ВТОРУЮ половину; при `none` запрещено · required with `mechanism: skill`; allowed alongside `gate` or `pipeline` when the skill holds the SECOND half; forbidden with `none` |
 | `holdable` | можно ли держать МАШИНОЙ: `no` — половины нет вовсе, текст и есть предел · `not-yet` — половина есть и не построена · `conditional` — станет возможна, когда появится названный предмет · `refused` — половина есть, замерена, и строить её отказались: сигнал бил бы по тому, что решение проекта разрешает, и даже предупреждение отвергнуто · whether a MACHINE can hold it: `no`, `not-yet`, `conditional`, `refused` | при `active` и механизме, который не краснеет (`document`, `skill`, `none`) · when `active` and the mechanism does not redden |
 | `awaiting` | СОБЫТИЕ, при котором механизм строится, с замером отсутствия предмета · the EVENT that will make the mechanism buildable, with a measurement of the subject's absence | обязательно при `holdable: conditional`; запрещено при `gate` и `pipeline` · required with `holdable: conditional`; forbidden with `gate` and `pipeline` |
 | `analysed` | дата сверки записи с деревом, `ГГГГ-ММ-ДД` · the date the record was last checked against the tree | необязательно; отсутствие значит «не сверяли» и считается отдельно · optional; absence means "never checked" and is counted separately |
 | `decided` | дата, когда вынесен НЫНЕШНИЙ вердикт · the date the CURRENT verdict was made | необязательно; не позже `analysed` и не без него · optional; never later than `analysed`, never without it |
 | `document_reason` | устар. · deprecated: прежнее имя `holdable` со словами `impossible`/`not-yet`. Читается на входе, у себя не пишется · the former name of `holdable`; read on input, never written | — |
+
+**Почему навык плагина (контракт 1.7).** Навык работы с каталогом проект
+ставит плагином `catalogue`, и в своём дереве его не держит: адрес
+`.claude/skills/<имя>` о нём солгал бы, а прозу поле не принимает. Форма
+`<плагин>:<имя>` — та же, что вызов `/catalogue:answer-a-rule`, и указывает на
+дерево КАТАЛОГА: `plugins/<плагин>/skills/<имя>/SKILL.md`. Поэтому такой адрес
+может сверить сам каталог, а не только гейт проекта: в своём ответе его
+сверяет `scripts/check_bindings.py`, а по чужим ответам сводка этой сверки пока
+не ведёт — поле `skill` она наружу не переносит. Что плагин у проекта
+поставлен, отсюда не видно вовсе: это граница, та же, что у `where`.
+
+**Why a plugin skill (contract 1.7).** A project installs the catalogue's
+skills as the `catalogue` plugin and does not keep them in its tree, so
+`.claude/skills/<name>` would lie about them. The `<plugin>:<name>` form is how
+the skill is invoked and points into the CATALOGUE's tree, so the catalogue can
+check it itself — its own answer is checked today; the summary does not yet
+carry `skill` from consumers' answers. Whether the project actually installed
+the plugin is not visible from here.
 
 **Почему `refused` (контракт 1.6).** Три слова заставляли лгать в одну из
 сторон. Половина, которую замерили и решили не строить, — не «нельзя»: она
@@ -883,7 +901,7 @@ repository settings.
 {
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
-    "export": "1.7", "bindings": "1.6", "consumers": "1.1",
+    "export": "1.7", "bindings": "1.7", "consumers": "1.1",
     "proposals": "1.2", "showcase": "1.1", "where": "1.4"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
