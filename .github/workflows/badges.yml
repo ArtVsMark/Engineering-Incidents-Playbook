@@ -99,10 +99,10 @@ jobs:
     steps:
       # Счётчик считает по всей истории и по тегам: мелкий клон даст неверное
       # число МОЛЧА, а значок будет выглядеть свежим.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 

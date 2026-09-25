@@ -63,7 +63,7 @@ jobs:
           echo "SKIP=1" >> "$GITHUB_ENV"
 
       # Заголовок и тело берутся из коммитов ветки, значит нужна история.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: env.SKIP != '1'
         with:
           fetch-depth: 0

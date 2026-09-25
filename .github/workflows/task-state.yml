@@ -42,7 +42,7 @@ jobs:
           echo "::warning::MERGE_QUEUE_TOKEN не задан — состояние задач не проверяется. Нужен токен владельца с правами issues:read (прочитать состояние задачи), issues:write (оставить в ней замечание) и pull-requests:read (обещание живёт в теле ИЗМЕНЕНИЯ, а не слияния — по коммиту спрашивается слитое им изменение). Право на задачи нужно ЕДИНСТВЕННОМУ прогону каталога — этому: у agent-pr и automerge предмет pulls, у consumers-sync contents, у thaw actions — их зелень об этом праве не говорит ничего."
           echo "SKIP=1" >> "$GITHUB_ENV"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: env.SKIP != '1'
         with:
           fetch-depth: 1
