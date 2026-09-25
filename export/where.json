@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T15:29:59+00:00",
+  "generated_at": "2026-09-25T15:46:28+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,14 +10,14 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-25",
-      "answered": 212,
+      "answered": 213,
       "by_status": {
-        "active": 193,
+        "active": 194,
         "not-applicable": 13,
         "rejected": 6
       },
       "by_mechanism": {
-        "gate": 143,
+        "gate": 144,
         "document": 26,
         "skill": 2,
         "pipeline": 10,
@@ -235,7 +235,8 @@
         "210": "active",
         "211": "active",
         "212": "active",
-        "213": "active"
+        "213": "active",
+        "214": "active"
       },
       "holds": {
         "001": {
@@ -1781,10 +1782,18 @@
           "awaiting": "",
           "analysed": "2026-09-25",
           "decided": "2026-09-25"
+        },
+        "214": {
+          "mechanism": "gate",
+          "where": "scripts/check_copies.py с .rules/copies.json — вызов `re.compile` со строкой-образцом в модулях рабочего кода (scripts/, .claude/hooks/): один образец в двух модулях и более — находка, пока совпадение не названо поимённо с причиной, а запись без предмета — тоже отказ. ГРАНИЦА: машинно видна литеральная копия; почти копия (другая группа захвата, другой порядок) и дубль предиката, написанного кодом, гейту не видны — их держит буква правила",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
         }
       },
-      "trails": 55,
-      "born": 34
+      "trails": 56,
+      "born": 35
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
