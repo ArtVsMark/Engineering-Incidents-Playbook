@@ -17,7 +17,8 @@ import json
 import onboard_consumer as oc
 from conftest import write
 
-EXPORT = {"rules": [{"id": "001"}, {"id": "002"}]}
+EXPORT = {"rules": [{"id": "001"}, {"id": "002"}],
+          "contracts": {"bindings": "1.6", "proposals": "1.2"}}
 CONTRACT = "текст\n\n`uses: X@<!--m:ref-->v1.2.0<!--/m:ref-->`\n"
 
 
@@ -45,7 +46,23 @@ def test_ответ_собран_по_каждому_правилу(repo):
 def test_предложения_пусты_но_это_валидный_файл(repo):
     assert run(repo) == 0
     d = json.loads((repo / "out" / ".rules" / "proposals.json").read_text(encoding="utf-8"))
-    assert d["proposals"] == [] and d["schema"] == "1.0"
+    assert d["proposals"] == [] and d["schema"] == EXPORT["contracts"]["proposals"]
+
+
+def test_номер_формата_ответа_берётся_из_выгрузки(repo):
+    """Здесь стояло «1.0» при контракте 1.6: новый потребитель начинал с отставания."""
+    assert run(repo) == 0
+    d = json.loads((repo / "out" / ".rules" / "bindings.json").read_text(encoding="utf-8"))
+    assert d["schema"] == EXPORT["contracts"]["bindings"]
+
+
+def test_без_номеров_контрактов_третий_исход(repo):
+    """Выгрузка без contracts — отказ, а не набор с выдуманным номером (039)."""
+    write(repo / "export" / "rules.json", json.dumps({"rules": EXPORT["rules"]}))
+    write(repo / "export" / "README.md", CONTRACT)
+    assert oc.main(["--repo", "owner/name", "--out", str(repo / "out"),
+                    "--export", str(repo / "export" / "rules.json"),
+                    "--contract", str(repo / "export" / "README.md")]) == 2
 
 
 def test_в_предложениях_нет_поля_номера(repo):
@@ -94,7 +111,8 @@ def test_контракт_без_маркера_это_третий_исход(r
 
 
 def test_пустой_экспорт_это_находка(repo, capsys):
-    e = write(repo / "export" / "rules.json", json.dumps({"rules": []}))
+    e = write(repo / "export" / "rules.json",
+              json.dumps({"rules": [], "contracts": EXPORT["contracts"]}))
     c = write(repo / "export" / "README.md", CONTRACT)
     assert oc.main(["--repo", "o/n", "--out", str(repo / "out"),
                     "--export", str(e), "--contract", str(c)]) == 1

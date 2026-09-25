@@ -542,6 +542,50 @@ both language trees, the neighbours answer and a resolvable trail live here.
 **The catalogue pulls; the consumer does not push.** A push upstream would need
 write rights into the catalogue. Plain HTTPS from a raw link needs none.
 
+### Навык вместо правила · A skill instead of a rule
+
+С формата `1.2` тем же файлом предлагают **навык** — `SKILL.md`, сделанный или
+доработанный у себя. Вид задаёт поле `kind`; без него предложение — правило, и
+так читается каждый файл формата `1.1`.
+
+From `1.2` the same file offers a **skill** — a `SKILL.md` written or improved
+at home. The `kind` field says which; without it a proposal is a rule, exactly
+as every `1.1` file reads.
+
+| Поле · Field | Что значит · Meaning | Обязательно · Required |
+|---|---|---|
+| `kind` | `skill` | для навыка · for a skill |
+| `slug` | имя навыка, оно же имя папки · the skill name, which is also its folder | всегда · always |
+| `path` | путь к `SKILL.md` у себя, кончается на `<slug>/SKILL.md` · path in your repository, ending in `<slug>/SKILL.md` | всегда · always |
+| `sha` | полный коммит, 40 знаков, на котором читать текст · the full commit to read it at | всегда · always |
+| `holds` | номера правил каталога, которые навык держит: `["157"]` · the catalogue rules it holds | всегда · always |
+| `measurement` | замер в работе: сколько раз звали и что навык нашёл · what it did in real work | всегда · always |
+| `amends` | имя навыка каталога, который предложение дорабатывает · the catalogue skill it improves | если дорабатывает · when improving |
+
+**Текст читается на коммите, а не на ветке** —
+`raw.githubusercontent.com/<repo>/<sha>/<path>`. Ветка двигается, и принятый
+текст разошёлся бы с тем, что прочитал владелец, выносивший вердикт. **Вместо
+инцидента — замер:** правило рождается из поломки, навык — из работы, и без
+замера у автора он раздавался бы всем непроверенным. Имя в заголовке
+`SKILL.md` обязано совпасть со слагом и с папкой: два имени одного навыка
+расходятся молча.
+
+**Ответ навыку** — ключ `владелец/репозиторий:skill/слаг`. У навыка своё
+пространство имён: правило и навык с одним слагом решаются порознь. `admitted`
+и `merged-into` называют навык каталога полем `skill`, и он обязан лежать в
+`.claude/skills/<skill>/SKILL.md` с тем же именем в заголовке; `rejected` и
+`merged-into` несут причину `why`. Как принятый навык доезжает до проектов —
+отдельная часть контракта, и в этой версии её нет.
+
+**The text is read at the commit, not the branch:** a branch moves, and the
+admitted text would drift from what the owner read. **A measurement replaces
+the incident:** a rule is born from a failure, a skill from work, and an
+unmeasured skill would reach everyone untested. The verdict key is
+`owner/repo:skill/slug` — a rule and a skill sharing a slug are decided
+separately. `admitted` and `merged-into` name the catalogue skill in `skill`;
+it must exist under `.claude/skills/<skill>/SKILL.md`. How an admitted skill
+reaches projects is a separate part of the contract, absent from this version.
+
 ## Набор вопросов витрины · The showcase question set
 
 Отдельно от экспорта каталог публикует
@@ -823,7 +867,7 @@ having no gate.
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
     "export": "1.7", "bindings": "1.6", "consumers": "1.1",
-    "proposals": "1.1", "showcase": "1.1", "where": "1.4"
+    "proposals": "1.2", "showcase": "1.1", "where": "1.4"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
                                                // build time, example value
