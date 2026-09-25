@@ -1,14 +1,14 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T20:08:31+00:00",
+  "generated_at": "2026-09-25T20:14:37+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.7",
     "consumers": "1.1",
     "proposals": "1.2",
     "showcase": "1.1",
-    "where": "1.4"
+    "where": "1.5"
   },
   "count": 213,
   "rules": [

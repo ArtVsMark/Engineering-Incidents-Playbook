@@ -966,3 +966,47 @@ def test_нечитаемый_json_переспрашивать_незачем(m
     data, err = ab.fetch("https://example.org/x")
     assert data is None and "не разобран" in err
     assert len(попытки) == 1
+
+
+# ── навык плагина каталога в чужом ответе (ответ 1.7, сводка 1.5) ────────
+#
+# Единственный чужой механизм, который отсюда видно: адрес `<плагин>:<имя>`
+# ведёт в дерево КАТАЛОГА. Набор двусторонний: существующий навык плагина —
+# не находка, отсутствующий — находка, навык в дереве потребителя не
+# проверяется вовсе, потому что его дерева у нас нет.
+
+def test_сводка_переносит_адрес_навыка():
+    вышло = ab.держание({"mechanism": "skill", "where": "x.md",
+                         "skill": "catalogue:answer-a-rule"})
+    assert вышло["skill"] == "catalogue:answer-a-rule"
+    assert ab.держание({"mechanism": "gate", "where": "x.py"})["skill"] == ""
+
+
+def срез_с_навыком(адрес: str) -> dict:
+    return {"repo": "o/a", "rules": {"001": "active"},
+            "holds": {"001": ab.держание({"mechanism": "skill", "where": "x.md",
+                                          "skill": адрес})}}
+
+
+def test_навык_плагина_который_есть_у_каталога_не_находка():
+    assert ab.навыки_плагина(срез_с_навыком("catalogue:answer-a-rule")) == []
+
+
+def test_навык_плагина_которого_нет_у_каталога_находка():
+    вышло = ab.навыки_плагина(срез_с_навыком("catalogue:no-such-skill"))
+    assert len(вышло) == 1
+    assert "001 → catalogue:no-such-skill" in вышло[0]
+    assert вышло[0].startswith("o/a: ")          # адресат — сам потребитель
+
+
+def test_навык_в_дереве_потребителя_отсюда_не_проверяется():
+    """Его дерева у нас нет: утверждать о нём нечем."""
+    assert ab.навыки_плагина(срез_с_навыком(".claude/skills/whatever")) == []
+
+
+def test_счёт_называет_кто_держит_навыком_плагина():
+    строки = ab.census([срез_с_навыком("catalogue:answer-a-rule")], ["001"])
+    assert any("навыком плагина каталога держит 1 — 001 (catalogue:answer-a-rule)"
+               in с for с in строки)
+    assert not any("навыком плагина" in с
+                   for с in ab.census([срез_с_навыком(".claude/skills/x")], ["001"]))

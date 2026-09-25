@@ -248,17 +248,18 @@ fails the build.
 `<плагин>:<имя>` — та же, что вызов `/catalogue:answer-a-rule`, и указывает на
 дерево КАТАЛОГА: `plugins/<плагин>/skills/<имя>/SKILL.md`. Поэтому такой адрес
 может сверить сам каталог, а не только гейт проекта: в своём ответе его
-сверяет `scripts/check_bindings.py`, а по чужим ответам сводка этой сверки пока
-не ведёт — поле `skill` она наружу не переносит. Что плагин у проекта
-поставлен, отсюда не видно вовсе: это граница, та же, что у `where`.
+сверяет `scripts/check_bindings.py`, в чужих — сводка (с формата `1.5` она
+переносит `skill` наружу): навыка, которого у каталога нет, находка едет
+адресату, а кто держит правила навыком плагина, печатается счётом. Что плагин
+у проекта поставлен, отсюда не видно вовсе: это граница, та же, что у `where`.
 
 **Why a plugin skill (contract 1.7).** A project installs the catalogue's
 skills as the `catalogue` plugin and does not keep them in its tree, so
 `.claude/skills/<name>` would lie about them. The `<plugin>:<name>` form is how
 the skill is invoked and points into the CATALOGUE's tree, so the catalogue can
-check it itself — its own answer is checked today; the summary does not yet
-carry `skill` from consumers' answers. Whether the project actually installed
-the plugin is not visible from here.
+check it itself — in its own answer by the gate, in consumers' answers by the
+summary, which carries `skill` since format `1.5`. Whether the project actually
+installed the plugin is not visible from here.
 
 **Почему `refused` (контракт 1.6).** Три слова заставляли лгать в одну из
 сторон. Половина, которую замерили и решили не строить, — не «нельзя»: она
@@ -902,7 +903,7 @@ repository settings.
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
     "export": "1.7", "bindings": "1.7", "consumers": "1.1",
-    "proposals": "1.2", "showcase": "1.1", "where": "1.4"
+    "proposals": "1.2", "showcase": "1.1", "where": "1.5"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
                                                // build time, example value
