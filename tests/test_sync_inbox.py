@@ -160,7 +160,14 @@ def test_lishniy_otvet_tozhe_derzhit_zadachu_otkrytoy(monkeypatch, capsys):
 
 
 def test_treker_ne_otvetil_eto_tretiy_ishod(monkeypatch, capsys):
-    monkeypatch.setattr(si, "fetch_rules", lambda c, r: (RULES, None))
+    # ПОДМЕНЯЕТСЯ ШОВ, КОТОРЫЙ ЗОВЁТ main. Здесь стояла подмена fetch_rules —
+    # функции, которую рабочий путь не звал с тех пор, как main перешёл на
+    # выгрузку целиком. Тест ходил в сеть за настоящей выгрузкой, а без сети
+    # проходил по чужой причине: код 2 давал отказ выгрузки, а не трекера.
+    # Нашёл это гейт сирот (211): подменённое имя было сиротой.
+    monkeypatch.setattr(si, "fetch_export",
+                        lambda c, r: ({"rules": RULES,
+                                       "contracts": {"bindings": "1.1"}}, None))
     monkeypatch.setattr(si, "gh", lambda *a: (1, "HTTP 403"))
     monkeypatch.setenv("GH_TOKEN", "x")
     import json, pathlib, tempfile
@@ -168,7 +175,7 @@ def test_treker_ne_otvetil_eto_tretiy_ishod(monkeypatch, capsys):
     path.write_text(json.dumps({"rules": ANSWERED_ALL}), encoding="utf-8")
     monkeypatch.setattr("sys.argv", ["sync_inbox.py", "--bindings", str(path)])
     assert si.main() == 2
-    assert "не отработала" in capsys.readouterr().err
+    assert "трекер не ответил — HTTP 403" in capsys.readouterr().err
 
 
 # ── «у соседей это уже решено» (доставка сводки во входящие) ────────────────
