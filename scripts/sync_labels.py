@@ -74,7 +74,7 @@ def _value(chunk: str) -> str:
     return chunk.strip().strip('"').strip("'")
 
 
-#: Вызов gh живёт в одном месте на весь каталог (правила 090, 022).
+#: Вызов gh живёт в одном месте на весь каталог (правила 090).
 gh_json = ghcli.run
 
 def main() -> int:
