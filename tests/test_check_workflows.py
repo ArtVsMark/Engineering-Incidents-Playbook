@@ -787,3 +787,36 @@ def test_zhivye_deystviya_prohodyat_i_otkat_krasneet(tmp_path):
     (tmp_path / "action.yml").write_text(
         ДЕЙСТВИЕ.format(строка="python .rules-sync/scripts/sync_inbox.py"), encoding="utf-8")
     assert cw.main(["--root", str(tmp_path)]) == 1
+
+
+# ── вызов разбирается оболочкой, а не «до пробела» (находка обзора на #583) ─
+#
+# Первая редакция брала путь до первого пробела и не видела `${{ … }}` с
+# пробелами ВОВСЕ: законная форма «проходила» потому, что вызов не найден, а
+# незаконная — тем же путём. Здесь каждая форма сначала распознаётся.
+
+@pytest.mark.parametrize("строка", [
+    'python "${{ inputs.path }}/x.py"',
+    "python -u .rules-sync/scripts/x.py",
+    "python3 '.gate/scripts/x.py' --flag",
+])
+def test_nezakonnyy_vyzov_raspoznayotsya(строка):
+    assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=строка))
+
+
+@pytest.mark.parametrize("хвост, скрипт", [
+    ('"${{github.action_path}}/scripts/x.py"', "${{ github.action_path }}/scripts/x.py"),
+    ('"${{ github.action_path }}/scripts/x.py" --a', "${{ github.action_path }}/scripts/x.py"),
+    ('"${GITHUB_ACTION_PATH}/s.py"', "${GITHUB_ACTION_PATH}/s.py"),
+    ('"$GITHUB_ACTION_PATH/scripts/sync_inbox.py" \\', "$GITHUB_ACTION_PATH/scripts/sync_inbox.py"),
+])
+def test_zakonnaya_forma_raspoznana_a_ne_propushchena(хвост, скрипт):
+    """Законный вызов проходит, потому что его путь — свой, а не потому что
+    разбор его не увидел: скрипт извлечён, и он тот самый."""
+    assert cw.скрипт_вызова(хвост) == скрипт
+    assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=f"python {хвост}")) == []
+
+
+@pytest.mark.parametrize("хвост", ["-m pytest -q", "-c 'print(1)'"])
+def test_ne_skript_ne_predmet(хвост):
+    assert cw.скрипт_вызова(хвост) is None
