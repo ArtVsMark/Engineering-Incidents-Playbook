@@ -1,0 +1,9 @@
+{
+  "name": "catalogue",
+  "description": "Навыки работы с каталогом правил Engineering-Incidents-Playbook: ответить по правилу в .rules/bindings.json",
+  "author": {
+    "name": "ArtVsMark"
+  },
+  "homepage": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook/tree/main/plugins/catalogue",
+  "repository": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook"
+}

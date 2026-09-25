@@ -860,6 +860,19 @@ having no gate.
 Версию каталога стоит закрепить тегом: подключаться к движущейся ветке значит
 получать чужую правку гейта в свой красный прогон.
 
+**Навыки — плагином.** Витрина `incidents-playbook` в корне репозитория отдаёт
+плагин `catalogue`: навыки, которые окно проекта зовёт, отвечая каталогу, —
+первый из них `answer-a-rule`, ответ по одному правилу в `.rules/bindings.json`.
+Как поставить, закрепить тегом и предложить свой —
+[`plugins/catalogue/README.md`](../plugins/catalogue/README.md). В облачных
+окнах плагин из настроек репозитория не загружается.
+
+**Skills ship as a plugin.** The `incidents-playbook` marketplace at the
+repository root offers the `catalogue` plugin: skills a project's session calls
+while answering the catalogue. Installing, pinning by tag and proposing your
+own are described in the plugin's README. Cloud sessions do not load it from
+repository settings.
+
 ## Номера контрактов и свежесть · Contract numbers and freshness
 
 `export/rules.json` несёт **все** номера форматов каталога разом — блок

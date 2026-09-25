@@ -1,0 +1,16 @@
+{
+  "name": "incidents-playbook",
+  "owner": {
+    "name": "ArtVsMark"
+  },
+  "metadata": {
+    "description": "Навыки для проектов, которые подключены к каталогу правил Engineering-Incidents-Playbook"
+  },
+  "plugins": [
+    {
+      "name": "catalogue",
+      "source": "./plugins/catalogue",
+      "description": "Навыки работы с каталогом: ответить по правилу в .rules/bindings.json"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Навыки окна названы списком, и каждый несёт форму, по которой его позовут.
+"""Навыки окна и плагина названы списком, и каждый несёт форму, по которой его позовут.
 
 ЗАЧЕМ ОТДЕЛЬНЫЙ ГЕЙТ, ЕСЛИ НАВЫК УЖЕ ПРОВЕРЯЕТ `check_bindings.py`. Тот
 спрашивает навык только тогда, когда его НАЗВАЛ ответ каталога — полем `skill`
@@ -13,8 +13,13 @@
 
 ЧТО ПРОВЕРЯЕТСЯ.
 
-  • список навыков один — таблица в `.claude/skills/README.md`, — и он сходится
-    с деревом в обе стороны: названный навык существует, существующий назван.
+  • у каждого места навыков один список — навыки окна названы таблицей в
+    `.claude/skills/README.md`, навыки плагина — в `plugins/<имя>/README.md`,
+    — и он сходится с деревом в обе стороны: названный навык существует,
+    существующий назван. Места два, потому что читателей два: навыки плагина
+    уходят к потребителю и не ссылаются на пути нашего дерева (076); форма у
+    них одна, и сверяет её этот гейт, а не второй (214). Плагин без списка
+    или без навыков — находка.
     Строка списка повторяться не может: два упоминания одного имени — это
     уже два списка;
   • у списка назван читатель из закрытого словаря `check_readers.py`: сам тот
@@ -66,6 +71,8 @@ from check_bindings import навык_в_дереве
 # Строка читателя и словарь — тоже чужие: читателей закрытый список, и второй
 # словарь разошёлся бы с первым на первом же новом читателе.
 from check_readers import EN, HEAD, LINE_RE, READERS, reader_of
+# Где лежат плагины, знает гейт витрины: папка плагина — его имя там же (035).
+from check_plugins import PLUGINS
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -114,6 +121,91 @@ def body_reader(text: str) -> str | None:
     return None
 
 
+def места(root: Path) -> list[tuple[Path, Path]]:
+    """Где лежат навыки и какой список их называет — пути от корня.
+
+    ДВА ЧИТАТЕЛЯ, ОДНА ФОРМА. Навыки окна зовёт окно этого репозитория, навыки
+    плагина — окно проекта, поставившего плагин. Лежат они порознь, потому что
+    вторые уходят к потребителю и не могут ссылаться на пути нашего дерева
+    (076), а форма у них одна — заготовка, которую каталог раздаёт, — и
+    сверяет их один гейт, а не два (214).
+    """
+    вышло = [(SKILLS, LIST)]
+    плагины = root / PLUGINS
+    if плагины.is_dir():
+        for плагин in sorted(п for п in плагины.iterdir() if п.is_dir()):
+            имя = плагин.relative_to(root)
+            вышло.append((имя / "skills", имя / "README.md"))
+    return вышло
+
+
+def сверить_место(root: Path, папка: Path, список: Path,
+                  required: list[str]) -> tuple[int, int, list[str]]:
+    """Список против дерева и форма каждого навыка одного места.
+
+    Возвращает: сколько названо в списке, сколько лежит в дереве, находки.
+    """
+    problems: list[str] = []
+    folder, index = root / папка, root / список
+    tree = sorted(p.name for p in folder.iterdir() if p.is_dir()) \
+        if folder.is_dir() else []
+    if not index.is_file():
+        problems.append(f"{список.as_posix()} нет — навыки в {папка.as_posix()} "
+                        "не названы списком, и сверять дерево не с чем")
+        return 0, len(tree), problems
+    if not tree:
+        problems.append(f"{папка.as_posix()}: навыков нет — место, которое "
+                        "ничего не отдаёт, выглядит механизмом, не будучи им")
+    names = listed(index.read_text(encoding="utf-8"))
+
+    reader, question = reader_of(index)
+    if reader not in READERS or not question:
+        problems.append(
+            f"{список.as_posix()}: не назван читатель из словаря {sorted(READERS)} "
+            "с вопросом. check_readers.py скрытые папки не обходит, и спросить "
+            "это, кроме здесь, некому")
+
+    seen: set[str] = set()
+    for name in names:
+        if name in seen:
+            problems.append(
+                f"{список.as_posix()}: «{name}» назван дважды — две строки одного "
+                "навыка расходятся при первой правке")
+        seen.add(name)
+        if name not in tree:
+            problems.append(
+                f"{список.as_posix()} называет «{name}», а каталога "
+                f"{(папка / name).as_posix()} нет. За названным навыком придут "
+                "и не найдут ничего")
+
+    for name in tree:
+        if name not in seen:
+            problems.append(
+                f"{(папка / name).as_posix()} есть, а в {список.as_posix()} не "
+                "назван. Навык, о котором молчит список, человек не позовёт — "
+                "а окно позовёт, не сказав никому")
+        missing = навык_в_дереве(name, root, папка)
+        if missing:
+            problems.append(f"{(папка / name).as_posix()}: {missing}")
+            continue
+        text = (folder / name / "SKILL.md").read_text(encoding="utf-8")
+        who = body_reader(text)
+        if who not in READERS:
+            problems.append(
+                f"{(папка / name).as_posix()}/SKILL.md: под заголовком нет "
+                "строки «> **Читатель:** <кто> — <когда зовут>» с читателем из "
+                f"словаря {sorted(READERS)}")
+        present = set(SECTION_RE.findall(text))
+        for section in required:
+            if section not in present:
+                problems.append(
+                    f"{(папка / name).as_posix()}/SKILL.md: нет раздела "
+                    f"«{section}» — его требует {TEMPLATE.as_posix()}, "
+                    "заготовка, которую каталог раздаёт и обязан держать у "
+                    "себя сам (155)")
+    return len(names), len(tree), problems
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--root", type=Path, default=ROOT,
@@ -150,63 +242,23 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     problems: list[str] = []
-    tree = sorted(p.name for p in folder.iterdir() if p.is_dir())
-
-    reader, question = reader_of(index)
-    if reader not in READERS or not question:
-        problems.append(
-            f"{LIST.as_posix()}: не назван читатель из словаря {sorted(READERS)} "
-            "с вопросом. check_readers.py скрытые папки не обходит, и спросить "
-            "это, кроме здесь, некому")
-
-    seen: set[str] = set()
-    for name in names:
-        if name in seen:
-            problems.append(
-                f"{LIST.as_posix()}: «{name}» назван дважды — две строки одного "
-                "навыка расходятся при первой правке")
-        seen.add(name)
-        if name not in tree:
-            problems.append(
-                f"{LIST.as_posix()} называет «{name}», а каталога "
-                f"{(SKILLS / name).as_posix()} нет. За названным навыком придут "
-                "и не найдут ничего")
-
-    for name in tree:
-        if name not in seen:
-            problems.append(
-                f"{(SKILLS / name).as_posix()} есть, а в {LIST.as_posix()} не "
-                "назван. Навык, о котором молчит список, человек не позовёт — "
-                "а окно позовёт, не сказав никому")
-        missing = навык_в_дереве(name, root)
-        if missing:
-            problems.append(f"{(SKILLS / name).as_posix()}: {missing}")
-            continue
-        text = (folder / name / "SKILL.md").read_text(encoding="utf-8")
-        who = body_reader(text)
-        if who not in READERS:
-            problems.append(
-                f"{(SKILLS / name).as_posix()}/SKILL.md: под заголовком нет "
-                "строки «> **Читатель:** <кто> — <когда зовут>» с читателем из "
-                f"словаря {sorted(READERS)}")
-        present = set(SECTION_RE.findall(text))
-        for section in required:
-            if section not in present:
-                problems.append(
-                    f"{(SKILLS / name).as_posix()}/SKILL.md: нет раздела "
-                    f"«{section}» — его требует {TEMPLATE.as_posix()}, "
-                    "заготовка, которую каталог раздаёт и обязан держать у "
-                    "себя сам (155)")
+    всего_в_списках = всего_в_дереве = 0
+    for папка, список in места(root):
+        названо, в_дереве, найдено = сверить_место(root, папка, список, required)
+        problems += найдено
+        всего_в_списках += названо
+        всего_в_дереве += в_дереве
 
     if problems:
-        print("навыки окна разошлись со списком или с заготовкой:",
+        print("навыки разошлись со списком или с заготовкой:",
               file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
-    print(f"навыки в порядке: в списке {len(names)}, в дереве {len(tree)}, у "
-          f"каждого заголовок, читатель и разделов заготовки {len(required)}")
+    print(f"навыки в порядке: мест {len(места(root))}, в списках "
+          f"{всего_в_списках}, в дереве {всего_в_дереве}, у каждого заголовок, "
+          f"читатель и разделов заготовки {len(required)}")
     return 0
 
 
