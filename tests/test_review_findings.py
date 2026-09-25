@@ -347,3 +347,44 @@ def test_звёздочка_без_пробела_буллетом_не_счит
         == ["жирное остаётся жирным"]
     assert rf.findings_of(записи("НАХОДКА: **kwargs в начале заголовка")) \
         == ["**kwargs в начале заголовка"]
+
+
+# ── вердикт сверяется со строками своего захода (083, 142) ─────────────────
+#
+# Проба 25.09: «ВЕРДИКТ: находок 0» при строке «НАХОДКА:» давало исход 0, и
+# находка терялась без адресата; «находок 3» при одной строке принималось
+# молча. У соседа это свойство держит тест «вердикт, расходящийся со своим
+# списком, объявляется». Сверка — со строками ТОГО ЖЕ захода: на повторном
+# ревью находки прежних заходов в ленте остаются законно.
+
+def test_nol_pri_stroke_nahodki_ne_teryaet_eyo(monkeypatch, capsys):
+    monkeypatch.setattr(rf.ghcli, "run", подделка(
+        [отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 0")]))
+    assert rf.main(["--repo", "o/r", "--pr", "1"]) == 1
+    out = capsys.readouterr().out
+    assert "::warning::вердикт называет 0 находок" in out and ЗАМЕТКА in out
+
+
+def test_chislo_ne_sovpalo_so_strokami_obyavleno(monkeypatch, capsys):
+    monkeypatch.setattr(rf.ghcli, "run", подделка(
+        [отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 3")]))
+    assert rf.main(["--repo", "o/r", "--pr", "1"]) == 1
+    assert "называет 3 находок, а строк «НАХОДКА: …» в том же заходе 1" in capsys.readouterr().out
+
+
+def test_nahodka_net_nahodkoy_ne_schitaetsya(monkeypatch, capsys):
+    """Живые #515 и #547: «НАХОДКА: нет» рядом с «находок 0» — это чисто."""
+    monkeypatch.setattr(rf.ghcli, "run", подделка(
+        [отзыв("НАХОДКА: нет\n\nВЕРДИКТ: находок 0")]))
+    assert rf.main(["--repo", "o/r", "--pr", "1"]) == 0
+    assert "::warning::" not in capsys.readouterr().out
+
+
+def test_povtornoe_revyu_ne_krasneet_na_proshlyh_nahodkah(monkeypatch, capsys):
+    """Два захода: находка первого остаётся в ленте, вердикт второго сверен со
+    своими строками — расхождения нет, предупреждения нет."""
+    monkeypatch.setattr(rf.ghcli, "run", подделка(
+        [отзыв("НАХОДКА: первая\n\nВЕРДИКТ: находок 1"),
+         отзыв("НАХОДКА: вторая\n\nВЕРДИКТ: находок 1")]))
+    assert rf.main(["--repo", "o/r", "--pr", "1"]) == 1
+    assert "::warning::" not in capsys.readouterr().out
