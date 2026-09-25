@@ -98,6 +98,26 @@ def test_zagotovka_so_ssylkoy_iz_templates_nahodka(monkeypatch, repo, capsys):
     assert "уходит к потребителю" in capsys.readouterr().err
 
 
+def test_navyk_plagina_so_ssylkoy_v_derevo_nahodka(monkeypatch, repo, capsys):
+    """Плагин ставится папкой: ссылка из неё в наше дерево у потребителя мертва (076)."""
+    write(repo / "plugins" / "p" / "skills" / "s" / "SKILL.md",
+          "см. [правило](../../../../rules/ru/001-x.md)\n")
+    write(repo / "rules" / "ru" / "001-x.md", "# X\n")
+    prepare(monkeypatch, repo)
+    assert cl.main() == 1
+    assert "уходит к потребителю" in capsys.readouterr().err
+
+
+def test_ssylka_vnutri_plagina_i_oglavlenie_ne_nahodka(monkeypatch, repo):
+    """Внутри папки плагина ссылка жива; оглавление плагина читают здесь."""
+    write(repo / "plugins" / "p" / "skills" / "s" / "SKILL.md", "см. [соседа](../t/SKILL.md)\n")
+    write(repo / "plugins" / "p" / "skills" / "t" / "SKILL.md", "# T\n")
+    write(repo / "plugins" / "p" / "README.md", "см. [правило](../../rules/ru/001-x.md)\n")
+    write(repo / "rules" / "ru" / "001-x.md", "# X\n")
+    prepare(monkeypatch, repo)
+    assert cl.main() == 0
+
+
 def test_ogla_vlenie_zagotovok_chitaetsya_zdes(monkeypatch, repo):
     """templates/README.md читают в каталоге: относительная ссылка у него жива."""
     write(repo / "templates" / "README.md", "см. [правило](../rules/ru/001-x.md)\n")

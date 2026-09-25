@@ -80,7 +80,42 @@ def прогон(repo: Path) -> int:
 
 def test_vsyo_na_meste(repo, capsys):
     assert прогон(подделка(repo)) == 0
-    assert "в списке 1, в дереве 1" in capsys.readouterr().out
+    assert "в списках 1, в дереве 1" in capsys.readouterr().out
+
+
+def плагин(repo: Path, список: str | None = None, навык: str = НАВЫК) -> Path:
+    """Плагин `p` с одним навыком `triage` рядом с навыками окна."""
+    if список is not None:
+        write(repo / "plugins" / "p" / "README.md", список)
+    write(repo / "plugins" / "p" / "skills" / "triage" / "SKILL.md", навык)
+    return repo
+
+
+def test_navyki_plagina_sveryayutsya_toy_zhe_formoy(repo, capsys):
+    """Навыки плагина — второе место с той же формой: гейт один, мест два (214)."""
+    плагин(подделка(repo), список=СПИСОК)
+    assert прогон(repo) == 0
+    assert "мест 2, в списках 2, в дереве 2" in capsys.readouterr().out
+
+
+def test_plagin_bez_spiska_eto_otkaz(repo, capsys):
+    плагин(подделка(repo))
+    assert прогон(repo) == 1
+    assert "plugins/p/README.md нет" in capsys.readouterr().err
+
+
+def test_navyk_plagina_bez_razdela_zagotovki_eto_otkaz(repo, capsys):
+    плагин(подделка(repo), список=СПИСОК,
+           навык=НАВЫК.replace("## Чего навык НЕ делает", "## Прочее"))
+    assert прогон(repo) == 1
+    assert "plugins/p/skills/triage/SKILL.md: нет раздела" in capsys.readouterr().err
+
+
+def test_plagin_bez_navykov_eto_otkaz(repo, capsys):
+    подделка(repo)
+    write(repo / "plugins" / "p" / "README.md", СПИСОК.replace("| `triage` | когда что-то покраснело |\n", ""))
+    assert прогон(repo) == 1
+    assert "навыков нет" in capsys.readouterr().err
 
 
 def test_nazvan_a_kataloga_net_eto_otkaz(repo, capsys):
