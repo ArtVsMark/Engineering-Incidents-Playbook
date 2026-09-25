@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-24T13:35:51+00:00",
+  "generated_at": "2026-09-25T12:07:16+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.5",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.4"
   },
-  "count": 207,
+  "count": 208,
   "rules": [
     {
       "id": "001",
@@ -1094,7 +1094,8 @@
         "197",
         "198",
         "201",
-        "203"
+        "203",
+        "209"
       ]
     },
     {
@@ -3568,7 +3569,8 @@
         "042"
       ],
       "mentioned_by": [
-        "090"
+        "090",
+        "209"
       ]
     },
     {
@@ -9501,7 +9503,8 @@
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes",
       "mentioned_by": [
-        "204"
+        "204",
+        "209"
       ]
     },
     {
@@ -10628,6 +10631,9 @@
         "182",
         "183",
         "184"
+      ],
+      "mentioned_by": [
+        "209"
       ]
     },
     {
@@ -10834,6 +10840,56 @@
         "154",
         "202",
         "207"
+      ]
+    },
+    {
+      "id": "209",
+      "slug": "a-constant-is-quoted-by-reference-not-respelled",
+      "title": {
+        "ru": "Текст, который механизм печатает или узнаёт, цитируют ссылкой на константу, а не переписанными буквами",
+        "en": "Text a mechanism prints or recognises is quoted by reference to the constant, not respelled by hand"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "гейты"
+        ],
+        "en": [
+          "code",
+          "gates"
+        ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
+      "claim": {
+        "ru": "Текст, который механизм печатает или узнаёт по константе — маркер живой задачи, хвост записи, фраза отказа, заглушка заготовки, — везде, где его цитируют, берётся **из самой константы**: в соседнем модуле импортом, в регулярном выражении экранированием, в теле реестра той же функцией. Рукописная копия букв расходится с константой молча при первой её правке, и тест, сверяющий с той же копией, этого не увидит.",
+        "en": "Text that a mechanism prints or recognises by a constant — a live issue's marker, a record's tail, a refusal phrase, a template placeholder — is taken **from the constant itself** wherever it is quoted: by import in a neighbouring module, by escaping in a regular expression, by the same function in a registry body. A hand-typed copy of the letters drifts from the constant silently on the constant's first edit, and a test that checks against that same copy will not see it."
+      },
+      "applies": {
+        "ru": "**Работает** для текста, который одна часть механизма печатает, а другая\nузнаёт побуквенно: маркеры, хвосты записей, фразы отказа, заглушки заготовок,\nзаголовки строк для машины.\n\n**Не работает** для текста, который читает только человек: там расхождение\nсмысловое, и это предмет [022](022-one-canonical-document.md). **Не работает** и\nдля копии, оставленной сознательно ради границы слоёв или направления\nзависимостей: это [071](071-deliberate-duplication-is-signed.md), и такая копия\nподписывается, а не устраняется.\n\n**Признак нарушения:** одна и та же строка стоит в двух рабочих файлах, и один\nеё печатает, а другой узнаёт.",
+        "en": "**Works** for text that one part of a mechanism prints and another recognises\nletter by letter: markers, record tails, refusal phrases, template placeholders,\nheaders of lines meant for a machine.\n\n**Does not work** for text only a human reads: there the drift is one of\nmeaning, and that is the subject of [022](022-one-canonical-document.md). **Does\nnot work** either for a copy kept deliberately to guard a layer boundary or a\ndependency direction: that is [071](071-deliberate-duplication-is-signed.md),\nand such a copy is signed, not removed.\n\n**Sign of a violation:** one and the same string sits in two working files, and\none of them prints it while the other recognises it."
+      },
+      "added": "2026-09-25",
+      "files": {
+        "ru": "rules/ru/209-a-constant-is-quoted-by-reference-not-respelled.md",
+        "en": "rules/en/209-a-constant-is-quoted-by-reference-not-respelled.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": ".rules/finding-kinds.json"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "022",
+        "071",
+        "183",
+        "204"
       ]
     }
   ],
