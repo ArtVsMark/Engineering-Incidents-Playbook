@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T12:05:49+00:00",
+  "generated_at": "2026-09-25T12:16:18+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,9 +10,9 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-25",
-      "answered": 207,
+      "answered": 208,
       "by_status": {
-        "active": 188,
+        "active": 189,
         "not-applicable": 13,
         "rejected": 6
       },
@@ -21,7 +21,7 @@
         "document": 25,
         "skill": 2,
         "pipeline": 10,
-        "none": 11
+        "none": 12
       },
       "rules": {
         "001": "active",
@@ -230,7 +230,8 @@
         "205": "active",
         "206": "active",
         "207": "active",
-        "208": "active"
+        "208": "active",
+        "209": "active"
       },
       "holds": {
         "001": {
@@ -1736,6 +1737,14 @@
           "awaiting": "заход `--push` у scripts/preflight.py: сегодня упоминаний толчка в нём 0, у соседа механизм стоит и проверен откатом с 2 концов",
           "analysed": "2026-09-17",
           "decided": "2026-09-17"
+        },
+        "209": {
+          "mechanism": "none",
+          "where": "механизма нет; приём исполняется там, где текст узнаёт машина: scripts/review_findings.py берёт выражение строки снятия импортом из scripts/pr_body.py, генератор записи берёт заглушку фрагмента из константы гейта журнала. Общего гейта нет по построению — названо в why",
+          "holdable": "conditional",
+          "awaiting": "первая рукописная копия текста, который механизм узнаёт по константе из закрытого набора, — маркера живой задачи (`MARKER`/`МАРКЕР` в scripts/) — в другом рабочем файле. ЗАМЕР 25.09: маркеров 6, копий их текста в рабочих файлах 0. Гейт на закрытом наборе строится с первой копией; сегодня он зеленел бы на пустоте (146)",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
         }
       },
       "trails": 55,
@@ -9252,8 +9261,8 @@
           "decided": "2026-09-17"
         }
       },
-      "trails": 9,
-      "born": 8
+      "trails": 10,
+      "born": 9
     }
   ]
 }
