@@ -52,6 +52,7 @@ SLUG_RE = re.compile(r"^[a-z][a-z0-9-]*$")
 #: «Адрес или проза» — один предикат на каталог: тот же, что судит след
 #: предложения и половиной — `where` в ответах потребителей (022).
 from check_bindings import разрешимый_адрес, ЗАДАЧА_RE  # noqa: E402
+from collect_changelog import ЗАГЛУШКА_ФРАГМЕНТА  # noqa: E402
 
 #: Каркас английской стороны. Заготовка в репозитории одна и русская; делать
 #: вторую значило бы завести два места для одной формы (правило 022), а формы
@@ -64,6 +65,8 @@ EN_SKELETON = """# <One-line rule: a claim, not a topic>
 
 **The rule.** <Two or three sentences. What to do and what not to do.>
 
+**Portable beyond Claude Code.** <yes · no · partly> — <the reason; drop the whole line if you do not answer it now.>
+
 ## The incident
 
 <What broke, with numbers and dates.>
@@ -73,6 +76,12 @@ EN_SKELETON = """# <One-line rule: a claim, not a topic>
 ## Why
 
 <The mechanism of the failure, not the moral.>
+
+## In practice
+
+- <what to do literally>;
+- <what is easy to miss>;
+- <the condition under which the decision is revisited>.
 
 ## Where it applies
 
@@ -348,7 +357,7 @@ def main(argv: list[str] | None = None) -> int:
                         encoding="utf-8")
 
     frag = root / "changelog.d" / f"rule-{num}-{args.slug}.added.md"
-    frag.write_text(f"Правило {num}: <утверждение одной фразой> ({args.trail}).\n",
+    frag.write_text(f"Правило {num}: {ЗАГЛУШКА_ФРАГМЕНТА} ({args.trail}).\n",
                     encoding="utf-8")
 
     for p in made:
