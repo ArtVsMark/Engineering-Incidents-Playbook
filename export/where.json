@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T11:46:54+00:00",
+  "generated_at": "2026-09-25T11:49:15+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -17,11 +17,11 @@
         "rejected": 6
       },
       "by_mechanism": {
-        "gate": 139,
+        "gate": 140,
         "document": 25,
         "skill": 1,
         "pipeline": 10,
-        "none": 12
+        "none": 11
       },
       "rules": {
         "001": "active",
@@ -890,9 +890,9 @@
           "decided": ""
         },
         "095": {
-          "mechanism": "none",
-          "where": "action.yml — умолчания входов, прежде всего `ref: main`; машинного механизма нет, и почему — сказано в why и machine_half",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/check_workflows.py — составное действие, которое каталог отдаёт потребителям, исполняет свой код из GITHUB_ACTION_PATH, то есть из каталога на теге, поставленном потребителем в строку uses:, а не из каталога, выкачанного ещё раз по входу с умолчанием main. Предмет — action.yml и .github/actions/attribution/action.yml. ГРАНИЦА: умолчание `ref: main` осталось для ВЫГРУЗКИ правил, и это выбор в пользу потребителя — входящие обязаны видеть новые правила, не дожидаясь, пока он поднимет тег; исходящие адреса исполняемого у потребителя сверяются чтением, сегодня это только площадка",
+          "holdable": "",
           "awaiting": "",
           "analysed": "2026-09-25",
           "decided": "2026-09-25"
