@@ -665,3 +665,78 @@ def test_posle_bloka_razmetka_chitaetsya_snova():
               "        run: echo ок\n")
 
     assert "ЗНАЧЕНИЕ" in cw.non_ascii_names(прогон)
+
+
+# ── разрешённый агенту прогон исполним (032) ───────────────────────────────
+#
+# Замер 25.09: ревьюеру был разрешён `python -m pytest`, а в работе не было ни
+# интерпретатора, ни проверок, и `python3` отклонялся. Набор двусторонний
+# (140): каждая из трёх форм невозможного разрешения — находка, исполнимое
+# разрешение и прогон без агента — нет.
+
+def агент(разрешено: str, *, python: bool = True, проверки: bool = True) -> str:
+    """Прогон с агентом: разрешения и, по выбору, шаги, делающие их исполнимыми."""
+    шаги = "    steps:\n      - uses: actions/checkout@v4\n"
+    if python:
+        шаги += "      - uses: actions/setup-python@v5\n        with:\n          python-version: \"3.12\"\n"
+    if проверки:
+        шаги += "      - name: обвязка\n        run: python -m pip install --quiet -r requirements-test.txt\n"
+    шаги += ("      - uses: anthropics/claude-code-action@v1\n        with:\n"
+             "          claude_args: >-\n            --allowedTools\n"
+             f"            \"{разрешено}\"\n")
+    return "jobs:\n  review:\n    timeout-minutes: 20\n" + шаги
+
+
+ОБА = "Bash(python -m pytest:*),Bash(python3 -m pytest:*),Bash(git diff:*)"
+
+
+def test_ispolnimoe_razreshenie_ne_nahodka():
+    assert cw.impossible_permissions(агент(ОБА)) == []
+
+
+def test_bez_agenta_nahodok_net():
+    """Прогон, где разрешений агенту нет вовсе, — не предмет."""
+    assert cw.impossible_permissions("jobs:\n  a:\n    steps:\n      - run: echo\n") == []
+
+
+def test_razreshenie_bez_pitona_ne_kasaetsya_ustanovok():
+    """Агенту разрешён только git — ставить интерпретатор незачем."""
+    assert cw.impossible_permissions(
+        агент("Bash(git diff:*),Bash(git log:*)", python=False, проверки=False)) == []
+
+
+def test_net_ustanovki_interpretatora_nahodka():
+    находки = cw.impossible_permissions(агент(ОБА, python=False))
+    assert any("setup-python" in н for н in находки)
+
+
+def test_pytest_bez_proverok_nahodka():
+    находки = cw.impossible_permissions(агент(ОБА, проверки=False))
+    assert any("requirements-test" in н for н in находки)
+
+
+def test_proverki_v_kommentarii_ne_schitayutsya():
+    """Установка, упомянутая комментарием, проверок не ставит."""
+    прогон = агент(ОБА, проверки=False).replace(
+        "    steps:\n", "    # python -m pip install -r requirements-test.txt\n    steps:\n")
+    assert any("requirements-test" in н for н in cw.impossible_permissions(прогон))
+
+
+@pytest.mark.parametrize("разрешено, нет", [
+    ("Bash(python -m pytest:*)", "python3 -m pytest"),
+    ("Bash(python3 scripts/preflight.py:*)", "python scripts/preflight.py"),
+])
+def test_odno_imya_interpretatora_nahodka(разрешено, нет):
+    """Живой случай 25.09: разрешено одно имя, агент зовёт другое."""
+    находки = cw.impossible_permissions(агент(разрешено))
+    assert any(f"«{нет}» — нет" in н for н in находки)
+
+
+def test_zhivoy_fayl_prohodit_i_otkat_krasneet(tmp_path):
+    """Живой review.yml проходит; он же без установки интерпретатора — отказ."""
+    живой = (Path(__file__).resolve().parent.parent / ".github" / "workflows"
+             / "review.yml").read_text(encoding="utf-8")
+    assert cw.impossible_permissions(живой) == []
+    откат = живой.replace("uses: actions/setup-python@", "uses: actions/other@")
+    workflow(tmp_path, "review.yml", откат)
+    assert cw.main(["--root", str(tmp_path)]) == 1
