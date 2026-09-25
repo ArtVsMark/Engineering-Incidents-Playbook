@@ -103,7 +103,9 @@ ROW_RE = re.compile(r"^\|\s*(v?\d+\.\d+\.\d+)\s*\|")
 #: между находкой и третьим исходом.
 HEADER_RE = re.compile(r"^\|\s*-{3,}")
 RULE_PATH_RE = re.compile(r"^rules/ru/\d{3}-[a-z0-9-]+\.md$")
-AREA_RE = re.compile(r"^\*\*Область\.\*\*\s*(.+?)\s*$", re.M)
+#: Строка «Область» разбирается там, где её разбирает указатель каталога (214).
+from build_rules_index import AREA_RE as _AREA_RE  # noqa: E402
+AREA_RE = _AREA_RE["ru"]
 #: Ячейка «Ключевое» со ссылкой — см. заголовок: строка сверяется по дереву,
 #: в котором сама и лежит.
 CELL_LINK_RE = re.compile(r"\[[^\]]*\]\(")
