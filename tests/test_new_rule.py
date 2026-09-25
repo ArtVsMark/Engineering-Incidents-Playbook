@@ -227,3 +227,27 @@ def test_след_задачей_с_описанием_разрешается(re
     tree(repo)
     assert nr.trail_resolves("o/one#181 — описание поломки", repo) is True
     assert nr.trail_resolves("o/one — где-то в дереве", repo) is False
+
+
+# ── две заготовки одного каркаса не расходятся (191) ──────────────────────
+#
+# Проба 25.09: английской заготовке генератора не хватало раздела и поля
+# переносимости, и каждый свежий каркас краснел в гейте полноты за «разделов
+# в ru 5, в en 4» — стоп-кран читался как поломка генератора.
+
+def test_anglijskaya_zagotovka_povtoryaet_razdely_russkoy():
+    from pathlib import Path
+    корень = Path(__file__).resolve().parent.parent
+    ru = (корень / "templates" / "rule-template.md").read_text(encoding="utf-8")
+    разделы = lambda t: [s for s in t.splitlines() if s.startswith("## ")]
+    assert len(разделы(ru)) == len(разделы(nr.EN_SKELETON))
+    assert ("**Переносится вне Claude Code.**" in ru) == \
+        ("**Portable beyond Claude Code.**" in nr.EN_SKELETON)
+
+
+def test_zaglushka_fragmenta_beryotsya_u_geyta(repo):
+    """Фрагмент несёт ровно ту заглушку, которую отвергает гейт журнала."""
+    import collect_changelog as cc
+    assert run(tree(repo), *OK) == 0
+    фрагмент = (repo / "changelog.d" / "rule-003-a-new-thing.added.md").read_text(encoding="utf-8")
+    assert cc.ЗАГЛУШКА_ФРАГМЕНТА in фрагмент

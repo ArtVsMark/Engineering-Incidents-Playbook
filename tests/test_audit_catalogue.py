@@ -221,3 +221,41 @@ def test_находка_называет_куда_переносить(repo):
 def test_предел_выражен_числом_а_не_наречием():
     """Само требование 108: предел ЧИСЛОМ. «Много» проверить нельзя."""
     assert isinstance(ac.HISTORY_WINDOW, int) and ac.HISTORY_WINDOW > 0
+
+
+# ── каркас — не запись: заглушки заготовки (191) ──────────────────────────
+#
+# Проба 25.09: свежий каркас краснел здесь за «разделов в ru 5, в en 4» — не
+# за незаполненное, — а при выровненной структуре проходил из одних заглушек.
+# Набор заглушек закрытый и берётся из самих заготовок: широкий образец «любые
+# угловые скобки» краснел бы на законном `<отпечаток>` в прозе правил.
+
+def test_zaglushki_berutsya_iz_zagotovok(repo):
+    """Без русской заготовки в дереве набор всё равно есть — из английской."""
+    assert "<What broke, with numbers and dates." in ac.placeholders(repo)
+
+
+def test_svezhiy_karkas_krasneet_za_zaglushki(repo):
+    каркас = ac.EN_SKELETON.format(area_en="process", tier_n=3,
+                                   tier_en="gates and processes", trail="o/r#1")
+    assert ac.unfilled(каркас, ac.placeholders(repo))
+
+
+def test_zapolnennaya_zapis_ne_nahodka(repo):
+    assert ac.unfilled(EN.format(f=P_EN), ac.placeholders(repo)) == []
+
+
+def test_uglovye_skobki_v_proze_ne_zaglushka(repo):
+    """`Разобрано: <отпечаток>` законно стоит в прозе правил — это не место
+    из заготовки, и ложный отказ на нём дороже пропуска (051)."""
+    текст = RU.format(f="Строка `Разобрано: <отпечаток>` снимает запись.\n\n")
+    assert ac.unfilled(текст, ac.placeholders(repo)) == []
+
+
+def test_zhivoy_korpus_bez_zaglushek():
+    """Замер 25.09: в живом корпусе набор не находит ничего — гейт на нём
+    зелёный, и краснеть он обязан только на каркасе."""
+    корень = Path(__file__).resolve().parent.parent
+    заглушки = ac.placeholders(корень)
+    for путь in sorted((корень / "rules").glob("*/*.md")):
+        assert ac.unfilled(путь.read_text(encoding="utf-8"), заглушки) == [], путь

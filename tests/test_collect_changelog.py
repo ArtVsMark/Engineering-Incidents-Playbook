@@ -520,3 +520,12 @@ def test_имя_с_пробелом_не_разъезжается(monkeypatch, r
     пути, _ = cc.added_since(основание)
     assert [p.name for p in пути] == ["two words.fixed.md"]
     assert all(p.exists() for p in пути)
+
+
+def test_zaglushka_karkasa_eto_nahodka(monkeypatch, repo):
+    """Каркас записи несёт во фрагменте заглушку; незаполненной она ушла бы в
+    выпуск — так 02.09 ушла строка «Правило 164: <…>» (191)."""
+    prepare(monkeypatch, repo, {
+        "rule-209-x.added.md": f"Правило 209: {cc.ЗАГЛУШКА_ФРАГМЕНТА} (o/r#1).\n"})
+    _, problems = cc.validate()
+    assert len(problems) == 1 and "заглушка каркаса" in problems[0]
