@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 212 | 0 | 0 | 193 | 142 | 10 | 2 | 27 | 12 | 115 |  |
+| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 212 | 0 | 0 | 193 | 143 | 10 | 2 | 26 | 12 | 117 |  |
 | `Stepik-Python-Grader` | подключён | 187 | 132 | 195 | 17 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 203 | 9 | 0 | 146 | 95 | 12 | 0 | 25 | 1 | 44 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 31 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
@@ -79,8 +79,8 @@
 | `Engineering-Incidents-Playbook` | `.github/workflows/automerge.yml` | 8 |
 | `Engineering-Incidents-Playbook` | `scripts/check_charter.py` | 8 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/agent-pr.yml` | 7 |
-| `Engineering-Incidents-Playbook` | `CONTRIBUTING.md` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/link_trails.py` | 7 |
+| `Engineering-Incidents-Playbook` | `CONTRIBUTING.md` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_prose.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 6 |
@@ -135,7 +135,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_verdict_order.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `templates/bindings.json` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 48 механизмов по одному правилу; без названного адреса: 1 из 181 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 50 механизмов по одному правилу; без названного адреса: 1 из 181 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 46 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 14 |
