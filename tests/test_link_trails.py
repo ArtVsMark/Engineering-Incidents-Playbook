@@ -96,10 +96,13 @@ def test_zapis_odna_i_vtoroy_progon_molchit(monkeypatch, capsys):
     # GET по тому же адресу читает, POST с телом пишет. Подделка, глядящая на
     # первое слово, считала бы чтение записью — и «сухой прогон» зеленел бы,
     # ничего не проверив (146).
+    # Чтение комментариев идёт постранично и по элементу (212): совпавший
+    # комментарий — строка с его номером, отсутствие — пустой вывод.
     def fake(*args):
         пишет = any(a.startswith("body=") for a in args)
         if not пишет:
-            return 0, str(state["exists"])
+            assert "--paginate" in args
+            return 0, "101\n" if state["exists"] else ""
         written.append(args[-1]); state["exists"] = 1
         return 0, "ok"
 
@@ -124,7 +127,7 @@ def test_suhoy_progon_ne_pishet(monkeypatch, capsys):
 
     def fake(*args):
         if not any(a.startswith("body=") for a in args):
-            return 0, "0"                      # чтение — не запись
+            return 0, ""                       # чтение — не запись
         written.append(args[1])
         return 0, ""
 
@@ -142,7 +145,7 @@ def test_kod_ne_menyaet_smysla_mezhdu_rezhimami(monkeypatch, capsys):
     код был общим, читающему приходилось знать режим, чтобы понять ответ, —
     а прогон по расписанию его не знал и красил удачную запись."""
     def fake(*args):
-        return (0, "ok") if any(a.startswith("body=") for a in args) else (0, "0")
+        return (0, "ok") if any(a.startswith("body=") for a in args) else (0, "")
 
     monkeypatch.setattr(lt.ghcli, "run", fake)
     monkeypatch.setattr(lt, "fetch_rules", lambda c, r: ([rule("005")], None))

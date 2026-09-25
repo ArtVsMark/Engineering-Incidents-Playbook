@@ -104,3 +104,28 @@ def test_след_без_расширения_не_считается_адрес
     подменить(monkeypatch, [{**ГОДНОЕ, "trail": "ADR-0010 § Контекст"}])
     _, problems = cp.gather(ПОТРЕБИТЕЛЬ, {})
     assert problems and "не называет адреса" in problems[0]
+
+
+# ── задача-«входящие снизу» ищется по всем страницам (212) ─────────────────
+
+def test_zadacha_ishchetsya_po_vsem_stranitsam(monkeypatch, capsys):
+    """Поиск идёт с --paginate, и найденная — где бы она ни лежала — правится,
+    а не заводится вторая."""
+    вызовы: list[tuple[str, ...]] = []
+
+    def gh(*args: str) -> tuple[int, str]:
+        вызовы.append(args)
+        if any("issues?state=open" in a for a in args):
+            assert "--paginate" in args
+            return 0, "7\n"                   # совпадение — строкой на элемент
+        return 0, "ok"
+
+    monkeypatch.setattr(cp, "read_json", lambda p: {"consumers": ["o/r"], "verdicts": {}})
+    monkeypatch.setattr(cp, "gather", lambda c, v: (["o/r:slug"], []))
+    monkeypatch.setattr(cp, "body_for", lambda p, q: "тело")
+    monkeypatch.setattr(cp, "gh", gh)
+    monkeypatch.setenv("GH_TOKEN", "x")
+
+    assert cp.main([]) == 1
+    assert "задача #7 обновлена" in capsys.readouterr().out
+    assert not any(any(a.startswith("title=") for a in c) for c in вызовы)

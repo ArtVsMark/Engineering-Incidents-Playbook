@@ -24,15 +24,17 @@ def подделка(комментарии=(), задачи=(), слитые=()
     """Подделка `ghcli.run`.
 
     ИСТОЧНИК ФОРМ — сами вызовы скрипта, и каждый назван адресом (170):
-    `gh api repos/{repo}/issues/{pr}/comments --jq "[.[] | {login, body}]"`,
-    `gh api repos/{repo}/issues?state=open --jq "[.[] | select(.pull_request ==
-    null) | {number, body}]"` и
+    `gh api --paginate repos/{repo}/issues/{pr}/comments --jq ".[] | {login,
+    body} | tojson"`, `gh api --paginate repos/{repo}/issues?state=open --jq
+    ".[] | select(.pull_request == null) | {number, body} | tojson"` и
     `gh api repos/{repo}/pulls?state=closed --jq "[.[] | select(.merged_at !=
     null) | .body]"`. Живой ответ площадки на них снят в этой же смене при
-    разборе изменения #392.
+    разборе изменения #392. Первые два списка читаются до конца (212) и
+    отдаются по элементу — строкой JSON на элемент; третий — намеренный
+    предел, одним массивом.
     """
     def run(*args):
-        адрес = args[1] if len(args) > 1 else ""
+        адрес = next((a for a in args if a.startswith("repos/")), "")
         пишущий = "--method" in args or any(
             a.startswith("title=") or a.startswith("body=") for a in args)
         if пишущий:
@@ -40,13 +42,20 @@ def подделка(комментарии=(), задачи=(), слитые=()
                 пишет.append(args)
             return 0, '{"number": 500}'
         if "/comments" in адрес:
-            return 0, json.dumps(list(комментарии), ensure_ascii=False)
+            assert "--paginate" in args
+            return 0, построчно(комментарии)
         if "/issues?" in адрес:
-            return 0, json.dumps(list(задачи), ensure_ascii=False)
+            assert "--paginate" in args
+            return 0, построчно(задачи)
         if "/pulls?" in адрес:
             return 0, json.dumps(list(слитые), ensure_ascii=False)
         return 0, "[]"
     return run
+
+
+def построчно(элементы) -> str:
+    """Ответ постраничного чтения: строка JSON на элемент (ghcli.список)."""
+    return "".join(json.dumps(э, ensure_ascii=False) + "\n" for э in элементы)
 
 
 def отзыв(текст: str, кто: str = rf.РЕВЬЮЕР) -> dict:
@@ -152,13 +161,12 @@ def test_posledniy_verdikt_perekryvaet_promezhutochnyy(monkeypatch):
 def test_treker_ne_prinyal_eto_tretiy_ishod(monkeypatch, capsys):
     """Отказ записи — не «находки есть», а «механизм не отработал» (039)."""
     def run(*args):
-        адрес = args[1] if len(args) > 1 else ""
+        адрес = next((a for a in args if a.startswith("repos/")), "")
         if "/comments" in адрес:
-            return 0, json.dumps(
-                [отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 1")],
-                ensure_ascii=False)
+            return 0, построчно(
+                [отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 1")])
         if "/issues?" in адрес:
-            return 0, "[]"
+            return 0, ""
         return 1, "403 Forbidden"
     monkeypatch.setattr(rf.ghcli, "run", run)
 

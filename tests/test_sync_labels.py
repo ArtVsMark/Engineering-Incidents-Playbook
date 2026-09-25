@@ -46,8 +46,12 @@ def cli(monkeypatch, *argv: str) -> None:
 
 
 def fake_gh(monkeypatch, have: list[dict], code: int = 0) -> None:
-    monkeypatch.setattr(sl, "gh_json",
-                        lambda *a: (code, json.dumps(have) if code == 0 else "нет"))
+    # Метки читаются постранично и по элементу (212): строка JSON на метку.
+    def gh(*args: str) -> tuple[int, str]:
+        if "-X" not in args:                 # чтение, а не запись метки
+            assert "--paginate" in args
+        return code, ("".join(json.dumps(m) + "\n" for m in have) if code == 0 else "нет")
+    monkeypatch.setattr(sl, "gh_json", gh)
 
 
 # ── разбор файла ───────────────────────────────────────────────────────────

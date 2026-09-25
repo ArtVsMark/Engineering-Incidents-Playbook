@@ -680,14 +680,12 @@ def main() -> int:
     # ПО REST (001): `gh issue list` идёт через GraphQL — ~300 points из
     # часовых 5000 против одного запроса. Изменения отсеиваются явно: REST
     # кладёт их в тот же список.
-    code_i, out_i = gh("api", "repos/{owner}/{repo}/issues?state=open&per_page=100",
-                       "--jq", "[.[] | select(.pull_request == null) | {number, title}]")
+    # ВСЕ СТРАНИЦЫ (212): изменения лежат в том же списке и съедают сотню.
+    code_i, открытые, _ = ghcli.список(
+        "repos/{owner}/{repo}/issues?state=open&per_page=100",
+        ".[] | select(.pull_request == null) | {number, title}", вызов=gh)
     if code_i == 0:
-        try:
-            свои_задачи = [i for i in json.loads(out_i)
-                           if MARKER not in (i.get("title") or "")]
-        except ValueError:
-            свои_задачи = []
+        свои_задачи = [i for i in открытые if MARKER not in (i.get("title") or "")]
     else:
         print("задачи проекта не спрошены — раздела кандидатов не будет",
               file=sys.stderr)
@@ -732,15 +730,22 @@ def main() -> int:
     # иначе он бы раздвоился.
     # ПО REST (001) — см. отбор открытых задач выше. Состояние REST отдаёт
     # строчными («open»/«closed»), а разбор ниже ждёт их же.
-    code, found = gh("api", "repos/{owner}/{repo}/issues?state=all&per_page=100",
-                     "--jq", f'[.[] | select(.pull_request == null) '
-                             f'| select(.body // "" | contains("{MARKER}"))][0] '
-                             f'// empty | "\\(.number) \\(.state)"')
+    #
+    # ВСЕ СТРАНИЦЫ, А НЕ ПЕРВАЯ СОТНЯ (212). Список идёт от новых к старым, и в
+    # сотню входят изменения: как только после «входящих» их заведено сто,
+    # задача уходит со страницы, прогон её не находит и заводит вторую. У
+    # проекта механизмов сотня номеров набиралась за трое суток. Берётся
+    # первое совпадение — самое свежее, как и прежде.
+    code, найдено, почему = ghcli.список(
+        "repos/{owner}/{repo}/issues?state=all&per_page=100",
+        f'.[] | select(.pull_request == null) '
+        f'| select(.body // "" | contains("{MARKER}")) | "\\(.number) \\(.state)"',
+        вызов=gh)
     if code != 0:
-        print(f"проверка не отработала: трекер не ответил — {found}", file=sys.stderr)
+        print(f"проверка не отработала: трекер не ответил — {почему}", file=sys.stderr)
         return 2
 
-    number, state = found_issue(found)
+    number, state = found_issue(найдено[0] if найдено else "")
     pending = bool(missing or unreviewed or stale)
 
     if number:

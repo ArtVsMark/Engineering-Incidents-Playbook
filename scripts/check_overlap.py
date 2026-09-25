@@ -77,16 +77,17 @@ def open_changes() -> tuple[list[dict] | None, str | None]:
 
 
 def files_of(number: int) -> tuple[set[str] | None, str | None]:
-    """Файлы одного изменения по REST. Вторым — причина отказа с адресом."""
-    code, out = ghcli.run(
-        "api", f"repos/{{owner}}/{{repo}}/pulls/{number}/files?per_page=100",
-        "--jq", "[.[].filename]")
+    """Файлы одного изменения по REST. Вторым — причина отказа с адресом.
+
+    ВСЕ СТРАНИЦЫ, А НЕ ПЕРВАЯ СОТНЯ (212). Тот же список `ci.yml` обходит
+    постранично с 07.09, а здесь он читался одной страницей: у изменения на
+    358 файлов (#327) пересечение считалось бы по первой сотне.
+    """
+    code, файлы, почему = ghcli.список(
+        f"repos/{{owner}}/{{repo}}/pulls/{number}/files?per_page=100", ".[].filename")
     if code != 0:
-        return None, f"gh api pulls/{number}/files — {out.strip()[:160] or f'код {code}'}"
-    try:
-        return set(json.loads(out or "[]")), None
-    except ValueError as e:
-        return None, f"ответ gh api pulls/{number}/files не разобран — {e}"
+        return None, f"gh api pulls/{number}/files — {почему.strip()[:160] or f'код {code}'}"
+    return set(файлы), None
 
 
 def main(argv: list[str] | None = None) -> int:
