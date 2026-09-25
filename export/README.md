@@ -561,6 +561,7 @@ as every `1.1` file reads.
 | `holds` | номера правил каталога, которые навык держит: `["157"]` · the catalogue rules it holds | всегда · always |
 | `measurement` | замер в работе: сколько раз звали и что навык нашёл · what it did in real work | всегда · always |
 | `amends` | имя навыка каталога, который предложение дорабатывает · the catalogue skill it improves | если дорабатывает · when improving |
+| `base` | тег каталога вида `v1.2.0`, от которого шла доработка · the catalogue tag the improvement started from | вместе с `amends` · with `amends` |
 
 **Текст читается на коммите, а не на ветке** —
 `raw.githubusercontent.com/<repo>/<sha>/<path>`. Ветка двигается, и принятый
@@ -568,7 +569,9 @@ as every `1.1` file reads.
 инцидента — замер:** правило рождается из поломки, навык — из работы, и без
 замера у автора он раздавался бы всем непроверенным. Имя в заголовке
 `SKILL.md` обязано совпасть со слагом и с папкой: два имени одного навыка
-расходятся молча.
+расходятся молча. **Доработка называет версию**, от которой шла: без неё
+владелец сравнивает присланное с нынешним навыком и принимает за предложение
+то, что каталог поменял после, а две доработки от разных версий неотличимы.
 
 **Ответ навыку** — ключ `владелец/репозиторий:skill/слаг`. У навыка своё
 пространство имён: правило и навык с одним слагом решаются порознь. `admitted`
@@ -580,7 +583,8 @@ as every `1.1` file reads.
 **The text is read at the commit, not the branch:** a branch moves, and the
 admitted text would drift from what the owner read. **A measurement replaces
 the incident:** a rule is born from a failure, a skill from work, and an
-unmeasured skill would reach everyone untested. The verdict key is
+unmeasured skill would reach everyone untested. An improvement names the tag
+it started from, or later catalogue changes read as the proposal. The verdict key is
 `owner/repo:skill/slug` — a rule and a skill sharing a slug are decided
 separately. `admitted` and `merged-into` name the catalogue skill in `skill`;
 it must exist under `.claude/skills/<skill>/SKILL.md`. How an admitted skill

@@ -92,6 +92,8 @@ from check_bindings import разрешимый_адрес  # noqa: E402
 from check_bindings import поля_навыка  # noqa: E402
 #: И принятый навык у каталога проверяется тем же, чем навык в ответе (214).
 from check_bindings import навык_в_дереве  # noqa: E402
+#: Версия каталога — его релизный тег, и форма тега одна на каталог (214).
+from version import TAG_RE  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -340,6 +342,7 @@ def разобрать_навык(repo: str, slug: str, item: dict,
     держит = item.get("holds")
     замер = str(item.get("measurement") or "").strip()
     дорабатывает = str(item.get("amends") or "").strip()
+    от = str(item.get("base") or "").strip()
     м = ПУТЬ_НАВЫКА_RE.match(путь)
     if not м or м.group("slug") != slug:
         возражения.append(
@@ -370,6 +373,17 @@ def разобрать_навык(repo: str, slug: str, item: dict,
     if дорабатывает and not SLUG_RE.match(дорабатывает):
         возражения.append(f"{repo}:skill/{slug}: amends {дорабатывает!r} не "
                           f"похоже на имя навыка")
+    # ДОРАБОТКА НАЗЫВАЕТ, ОТ ЧЕГО ОНА ШЛА. Без версии владелец сравнивает
+    # присланное с нынешним навыком и принимает за предложение то, что
+    # каталог успел поменять после — а две доработки одного навыка от разных
+    # версий неотличимы.
+    if дорабатывает and not TAG_RE.match(от):
+        возражения.append(
+            f"{repo}:skill/{slug}: доработка {дорабатывает} не называет base — "
+            f"тег каталога вида v1.2.0, от которого она шла")
+    elif от and not дорабатывает:
+        возражения.append(f"{repo}:skill/{slug}: base {от!r} без amends — "
+                          f"версия есть, а дорабатываемого навыка нет")
     адрес = (f"https://raw.githubusercontent.com/{repo}/{sha}/{путь}"
              if м and SHA_RE.match(sha) else "")
     описание = ""
@@ -388,7 +402,7 @@ def разобрать_навык(repo: str, slug: str, item: dict,
                         f"{repo}:skill/{slug}: в SKILL.md имя «{поля['name']}» "
                         f"— два имени у одного навыка расходятся молча")
     return {"kind": "skill", "repo": repo, "slug": slug, "holds": держит,
-            "measurement": замер, "amends": дорабатывает, "sha": sha,
+            "measurement": замер, "amends": дорабатывает, "base": от, "sha": sha,
             "url": адрес, "description": описание}, возражения
 
 
@@ -417,7 +431,8 @@ def body_for(pending: list[dict], problems: list[str]) -> str:
                 out.append(f"**Замер в работе.** {quote(p['measurement'])}")
                 out.append("")
                 if p["amends"]:
-                    out.append(f"**Дорабатывает.** `{p['amends']}`")
+                    out.append(f"**Дорабатывает.** `{p['amends']}` от "
+                               f"`{p['base'] or 'версия не названа'}`")
                     out.append("")
                 out.append(f"**Описание.** {quote(p['description'])}")
                 out.append("")

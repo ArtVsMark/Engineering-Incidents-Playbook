@@ -197,6 +197,22 @@ def test_текст_навыка_не_прочитан_это_возражени
     assert len(pending) == 1 and any("404" in p for p in problems)
 
 
+def test_доработка_называет_версию_от_которой_шла(monkeypatch):
+    подменить_с_навыком(monkeypatch, [{**НАВЫК, "amends": "answer-bindings"}])
+    _, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, {"157"})
+    assert any("base" in p for p in problems)
+    подменить_с_навыком(monkeypatch, [{**НАВЫК, "amends": "answer-bindings", "base": "v1.2.0"}])
+    pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, {"157"})
+    assert problems == [] and pending[0]["base"] == "v1.2.0"
+    assert "`answer-bindings` от `v1.2.0`" in cp.body_for(pending, problems)
+
+
+def test_версия_без_доработки_возражает(monkeypatch):
+    подменить_с_навыком(monkeypatch, [{**НАВЫК, "base": "v1.2.0"}])
+    _, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, {"157"})
+    assert any("без amends" in p for p in problems)
+
+
 def test_неизвестный_вид_пропускается_с_возражением(monkeypatch):
     подменить(monkeypatch, [{**ГОДНОЕ, "kind": "hook"}])
     pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {})
