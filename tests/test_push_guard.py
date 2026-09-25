@@ -717,3 +717,35 @@ def test_nomer_potoka_ne_stanovitsya_vetkoy():
     другим, а предмет тот же (158).
     """
     assert pg.targets("git push -u origin своя 2>&1 | tail -3", "своя") == []
+
+
+# ── формы, слепые у ВТОРОЙ починки (находки обзора на #556) ──────────────────
+#
+# Без posix `shlex` сохраняет кавычки, но не склеивает куски слова, как это
+# делает оболочка: `p''ush` оставался шестью знаками, а `echo a";"b` не
+# разбирался вовсе, и строка с настоящим толчком выбрасывалась. Строка теперь
+# берётся posix-разбором, а к разбору с кавычками откатывается, только если в
+# ней стоит закавыченный разделитель. Набор двусторонний (140).
+
+@pytest.mark.parametrize("команда", [
+    "git p''ush origin agent/чужая",
+    'git "p"ush origin agent/чужая',
+    r"git pu\sh origin agent/чужая",
+    "g''it push origin agent/чужая",
+    'echo a";"b && git push origin agent/чужая',
+])
+def test_formy_slepye_u_vtoroy_pochinki_teper_vidny(команда):
+    """Пять форм, невидимых после второй починки: оболочка склеивает куски слова."""
+    assert pg.targets(команда, "своя") == ["agent/чужая"]
+
+
+@pytest.mark.parametrize("команда", [
+    "echo '&&' git push origin agent/чужая",
+    'echo ";" git push origin agent/чужая',
+    "printf '%s' '|' git push origin agent/чужая",
+])
+def test_zakavychennyy_razdelitel_ostayotsya_tekstom(команда):
+    """Обратная сторона: posix-разбор снимает кавычки ДО сверки с разделителями,
+    и без отката текст `'&&'` стал бы настоящим `&&`, а хвост — толчком.
+    Ложный отказ здесь дороже пропуска (051)."""
+    assert pg.толкает(команда) is False
