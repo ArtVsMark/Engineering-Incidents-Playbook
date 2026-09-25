@@ -40,7 +40,7 @@ def test_имя_не_по_форме_это_находка(monkeypatch, repo):
     prepare(monkeypatch, repo, {"gate.wontfix.md": "текст"})
     _, problems = cc.validate()
     assert len(problems) == 1
-    # Отказ обязан называть предмет, а не только факт (правило 083).
+    # Отказ обязан называть предмет, а не только факт: какой файл и что с ним.
     assert "gate.wontfix.md" in problems[0]
     assert "added" in problems[0]
 
