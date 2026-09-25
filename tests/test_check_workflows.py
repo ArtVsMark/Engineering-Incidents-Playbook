@@ -817,6 +817,46 @@ def test_zakonnaya_forma_raspoznana_a_ne_propushchena(хвост, скрипт):
     assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=f"python {хвост}")) == []
 
 
-@pytest.mark.parametrize("хвост", ["-m pytest -q", "-c 'print(1)'"])
+@pytest.mark.parametrize("хвост", [
+    "-m pytest -q", "-c 'print(1)'", "-uc 'print(1)'", "-Wignore -m pytest",
+    "- < x.py",
+])
 def test_ne_skript_ne_predmet(хвост):
     assert cw.скрипт_вызова(хвост) is None
+
+
+# ── находки обзора на #587: апостроф вне пути и ключ со значением ─────────
+
+@pytest.mark.parametrize("хвост, скрипт", [
+    ("-W ignore .rules-sync/evil.py", ".rules-sync/evil.py"),
+    ("-X dev .rules-sync/evil.py", ".rules-sync/evil.py"),
+    ("-uW ignore .rules-sync/evil.py", ".rules-sync/evil.py"),
+    ("-Wignore .rules-sync/evil.py", ".rules-sync/evil.py"),
+    ("--check-hash-based-pycs never .rules-sync/evil.py", ".rules-sync/evil.py"),
+    ("-- .rules-sync/evil.py", ".rules-sync/evil.py"),
+    ('-W ignore "$GITHUB_ACTION_PATH/s.py"', "$GITHUB_ACTION_PATH/s.py"),
+])
+def test_klyuch_so_znacheniem_ne_pryachet_skript(хвост, скрипт):
+    """Значение ключа — не скрипт: путь за ним извлечён и судится."""
+    assert cw.скрипт_вызова(хвост) == скрипт
+
+
+def test_klyuch_so_znacheniem_pered_chuzhim_putyom_nahodka():
+    строка = 'python -W ignore "$OTHER_PATH/evil.py"'
+    assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=строка)) == [
+        "$OTHER_PATH/evil.py"]
+
+
+@pytest.mark.parametrize("строка, находки", [
+    ("""python "$GITHUB_ACTION_PATH/s.py" --msg 'it's broken'""", []),
+    ("""python .rules-sync/s.py --msg 'it's broken'""", [".rules-sync/s.py"]),
+])
+def test_apostrof_vne_puti_ne_lomaet_razbor(строка, находки):
+    """Неразбираемый хвост после пути не делает путь нечитаемым: свой — проходит,
+    чужой — находка, и в обоих случаях названо имя скрипта, а не сырой хвост."""
+    assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=строка)) == находки
+
+
+def test_razorvannaya_kavychka_v_samom_puti_ne_suditsya():
+    """До пути разбор не дошёл — запрещается достоверное (051)."""
+    assert cw.скрипт_вызова('"$GITHUB_ACTION_PATH/s.py') is None
