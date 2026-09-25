@@ -1,10 +1,10 @@
 # Задание параллельному исполнителю
 
-Заготовка. Реализует правила: [`034`](../rules/ru/034-small-zone-per-executor.md)
-— маленькая зона, [`117`](../rules/ru/117-numeric-limits-belong-in-the-task-spec.md)
-— числовые границы, [`061`](../rules/ru/061-environment-bans-belong-in-the-task.md)
+Заготовка. Реализует правила: [`034`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/034-small-zone-per-executor.md)
+— маленькая зона, [`117`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/117-numeric-limits-belong-in-the-task-spec.md)
+— числовые границы, [`061`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/061-environment-bans-belong-in-the-task.md)
 — запреты окружения в тексте задания,
-[`016`](../rules/ru/016-no-silent-truncation.md) — маркер обрыва.
+[`016`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/016-no-silent-truncation.md) — маркер обрыва.
 
 Исполнителю доступен **текст задания**, а не контекст хоста. Всё, что здесь не
 написано, для него не существует.
@@ -26,7 +26,7 @@
 ## Что вернуть
 
 Структурированный результат, **не правки файлов**
-([`015`](../rules/ru/015-agents-return-data-host-writes-files.md)).
+([`015`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/015-agents-return-data-host-writes-files.md)).
 
 | Поле | Предел |
 |---|---|
@@ -69,6 +69,6 @@
 - **свойства** — проверяются машинно у каждого ответа: форма, длина, отсутствие
   запрещённого, заземление на входные данные;
 - **выборка** — часть результатов читается целиком и сверяется с этим заданием
-  по пунктам ([`083`](../rules/ru/083-generated-output-is-checked-by-properties.md)).
+  по пунктам ([`083`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/083-generated-output-is-checked-by-properties.md)).
 
 Успешное завершение — свойство процесса, а не результата.

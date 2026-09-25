@@ -78,3 +78,69 @@ def test_документы_без_локальных_ссылок_это_тре
     # зелёное здесь означало бы, что гейт проспал пустой каталог (правило 075).
     assert cl.main() == 2
     assert "подозрителен" in capsys.readouterr().err
+
+
+# ── заготовка уходит к потребителю (076) ───────────────────────────────────
+#
+# Замер 25.09: в 4 заготовках 37 ссылок `](../…)`, и гейт их принимал —
+# внутри каталога они разрешаются, а у получателя, в чужом дереве, мертвы.
+# Признак 076 дословно: «подсказка выглядит идеально при чтении в репозитории».
+
+def свой(monkeypatch, slug: str = "o/cat") -> None:
+    monkeypatch.setattr(cl, "own_slug", lambda root: (slug, ""))
+
+
+def test_zagotovka_so_ssylkoy_iz_templates_nahodka(monkeypatch, repo, capsys):
+    write(repo / "templates" / "CLAUDE.md", "см. [правило](../rules/ru/001-x.md)\n")
+    write(repo / "rules" / "ru" / "001-x.md", "# X\n")
+    prepare(monkeypatch, repo)
+    assert cl.main() == 1
+    assert "уходит к потребителю" in capsys.readouterr().err
+
+
+def test_ogla_vlenie_zagotovok_chitaetsya_zdes(monkeypatch, repo):
+    """templates/README.md читают в каталоге: относительная ссылка у него жива."""
+    write(repo / "templates" / "README.md", "см. [правило](../rules/ru/001-x.md)\n")
+    write(repo / "rules" / "ru" / "001-x.md", "# X\n")
+    prepare(monkeypatch, repo)
+    assert cl.main() == 0
+
+
+def test_ssylka_vnutri_templates_ne_nahodka(monkeypatch, repo):
+    """Соседняя заготовка лежит там же — у получателя она рядом."""
+    write(repo / "templates" / "a.md", "см. [b](b.md)\n")
+    write(repo / "templates" / "b.md", "# B\n")
+    prepare(monkeypatch, repo)
+    assert cl.main() == 0
+
+
+def test_svoya_absolyutnaya_ssylka_proveryaetsya_kak_lokalnaya(monkeypatch, repo, capsys):
+    write(repo / "templates" / "CLAUDE.md",
+          "см. [жива](https://github.com/o/cat/blob/main/rules/ru/001-x.md) "
+          "и [мертва](https://github.com/o/cat/blob/main/rules/ru/999-y.md)\n"
+          "и [локальная](b.md)\n")
+    write(repo / "templates" / "b.md", "# B\n")
+    write(repo / "rules" / "ru" / "001-x.md", "# X\n")
+    prepare(monkeypatch, repo)
+    свой(monkeypatch)
+    assert cl.main() == 1
+    err = capsys.readouterr().err
+    assert "999-y.md" in err and "001-x.md" not in err
+
+
+def test_chuzhaya_absolyutnaya_ssylka_ne_proveryaetsya(monkeypatch, repo):
+    write(repo / "a.md", "[чужое](https://github.com/o/other/blob/main/net.md) и [b](b.md)\n")
+    write(repo / "b.md", "# B\n")
+    prepare(monkeypatch, repo)
+    свой(monkeypatch)
+    assert cl.main() == 0
+
+
+def test_bez_svoego_imeni_svoi_ssylki_ne_provereny_vsluh(monkeypatch, repo, capsys):
+    """Нет origin — свои абсолютные не проверены, и это сказано, а не пропущено (045)."""
+    write(repo / "a.md", "[b](b.md)\n")
+    write(repo / "b.md", "# B\n")
+    prepare(monkeypatch, repo)
+    monkeypatch.setattr(cl, "own_slug", lambda root: ("", "адреса origin нет"))
+    assert cl.main() == 0
+    assert "НЕ проверены: адреса origin нет" in capsys.readouterr().out

@@ -1,8 +1,8 @@
 # Стартовое сообщение нового окна
 
-Заготовка. Реализует правила: [`006`](../rules/ru/006-window-lifetime.md) —
-контекст передаётся ссылками, [`038`](../rules/ru/038-window-name-declares-its-environment.md)
-— имя окна начинается с окружения, [`047`](../rules/ru/047-rule-change-restarts-the-windows.md)
+Заготовка. Реализует правила: [`006`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/006-window-lifetime.md) —
+контекст передаётся ссылками, [`038`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/038-window-name-declares-its-environment.md)
+— имя окна начинается с окружения, [`047`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/047-rule-change-restarts-the-windows.md)
 — изменившееся правило называется прямо.
 
 **Имя окна присваивается здесь же, а не потом:** `[WEB] …` · `[LOCAL] …` ·
@@ -26,7 +26,7 @@
 `<одна-две фразы: что доделано, что в работе, что стоит>`
 
 Открытая работа — сверху вниз, первый непустой источник и есть план
-([`091`](../rules/ru/091-work-sources-are-ordered-first-non-empty-wins.md)):
+([`091`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/091-work-sources-are-ordered-first-non-empty-wins.md)):
 
 1. трекер: `<ссылка на фильтр открытых задач>`
 2. незакрытые аудиты: `<путь или «пусто, дата»>`
@@ -38,7 +38,7 @@
 
 Сюда идёт только то, что окно **не должно переоткрывать**: отвергнутые варианты,
 принятые компромиссы, границы. Каждое — ссылкой
-([`042`](../rules/ru/042-decision-records-its-alternatives.md)).
+([`042`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/042-decision-records-its-alternatives.md)).
 
 ## 4. Ссылки на задачи
 
@@ -50,7 +50,7 @@
 
 - **пересказа документации** — только ссылки;
 - **списка открытых задач** — он устареет за спринт и начнёт врать
-  ([`024`](../rules/ru/024-no-worklog-in-active-docs.md));
+  ([`024`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/024-no-worklog-in-active-docs.md));
 - **отчёта о том, что сделано прошлым окном** — это журнал изменений;
 - **«разберись сам»** — если источник неизвестен, окно начнёт с обхода
   репозитория и потратит контекст на то, что можно было дать ссылкой.

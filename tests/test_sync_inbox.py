@@ -26,6 +26,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 import sync_inbox as si
 
 
@@ -221,7 +223,22 @@ def test_razdel_pechataetsya_v_tele_zadachi():
                                   "where": "s/g.py — что делает"}]}])
 
     assert "У соседей это уже решено" in body
-    assert "s/g.py" in body and "grader" in body
+    # Путь чужого дерева — ссылкой в ЕГО репозиторий, а не голым текстом: в
+    # трекере получателя голый путь читается как путь его собственного файла (076).
+    assert "[`s/g.py`](https://github.com/o/grader/blob/HEAD/s/g.py) — что делает" in body
+
+
+@pytest.mark.parametrize("где, ожидаем", [
+    (".github/workflows/*.yml — прогоны",
+     "[`.github/workflows/*.yml`](https://github.com/o/n/tree/HEAD/.github/workflows) — прогоны"),
+    ("CLAUDE.md § Режим ответов",
+     "[`CLAUDE.md`](https://github.com/o/n/blob/HEAD/CLAUDE.md) § Режим ответов"),
+    ("механизм в конвейере", "[o/n](https://github.com/o/n): механизм в конвейере"),
+])
+def test_adres_soseda_vsegda_vedyot_v_ego_derevo(где, ожидаем):
+    """Образец ведёт в свою папку, документ — в файл, проза без адреса — в сам
+    репозиторий соседа: голого пути чужого дерева в задаче не остаётся ни в одной форме."""
+    assert si.адрес_у_соседа("o/n", где) == ожидаем
 
 
 def test_pustoy_razdel_ne_pechataetsya():
