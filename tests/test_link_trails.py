@@ -194,6 +194,28 @@ def test_otkaz_chteniya_kommentariev_tretiy_ishod(monkeypatch, capsys, код, �
     assert "не прочитана" in capsys.readouterr().err
 
 
+@pytest.mark.parametrize("отказывает, слово", [
+    ("body=", "запись в #7 не принята"),
+    ("labels[]=", "метка на #7 не поставлена"),
+])
+def test_otkaz_zapisi_tretiy_ishod(monkeypatch, capsys, отказывает, слово):
+    """Находка обзора на #601: отказ записи комментария с кодом 1 читался
+    записью (проверялся только `failed`), а ответ на метку не читался вовсе.
+    Правило 210: перечислены все вызовы площадки в файле, у каждого — случай."""
+    def fake(*args):
+        if "--paginate" in args:
+            return 0, ""                             # ссылки ещё нет
+        if any(a.startswith(отказывает) for a in args):
+            return 1, "HTTP 403: Resource not accessible by integration"
+        return 0, "ok"
+    monkeypatch.setattr(lt.ghcli, "run", fake)
+    monkeypatch.setattr(lt, "fetch_rules", lambda c, r: ([rule("005")], None))
+    monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME, "--apply",
+                                     "--label", "rules"])
+    assert lt.main() == 2
+    assert слово in capsys.readouterr().err
+
+
 def test_repo_ne_zadan(monkeypatch, capsys):
     monkeypatch.delenv("GITHUB_REPOSITORY", raising=False)
     monkeypatch.setattr("sys.argv", ["link_trails.py"])

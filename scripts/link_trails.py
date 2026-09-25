@@ -250,16 +250,28 @@ def main() -> int:
         if not args.apply:
             continue
         # ПО REST (001) — см. чтение комментариев выше.
+        # ОТКАЗ ЗАПИСИ — ТОЖЕ ЛЮБОЙ НЕНУЛЕВОЙ КОД, как у чтения выше. Здесь
+        # стоял `ghcli.failed`, и отказ площадки с кодом 1 читался записью:
+        # остаток после --apply выходил пустым при недописанной ссылке. Все
+        # вызовы площадки в этом файле перечислены по правилу 210 — чтение,
+        # запись, метка и два вызова самопроверки, где `failed` и есть предмет
+        # (находка обзора на #601).
         code, out = ghcli.run("api", f"repos/{args.repo}/issues/{issue}/comments",
                               "-f", f"body={comment_for(rr, args.catalogue)}")
-        if ghcli.failed(code):
+        if code != 0:
             print(f"не отработал: запись в #{issue} не принята — {out}", file=sys.stderr)
             return 2
         if args.label:
             # ПО REST (001). У меток свой адрес, и POST по нему ДОБАВЛЯЕТ
             # метку, а не заменяет набор — как и `--add-label` до правки.
-            ghcli.run("api", f"repos/{args.repo}/issues/{issue}/labels",
-                      "-f", f"labels[]={args.label}")
+            # Ответ прежде не читался вовсе: метка, не поставленная площадкой,
+            # проходила молча.
+            code, out = ghcli.run("api", f"repos/{args.repo}/issues/{issue}/labels",
+                                  "-f", f"labels[]={args.label}")
+            if code != 0:
+                print(f"не отработал: метка на #{issue} не поставлена — {out}",
+                      file=sys.stderr)
+                return 2
 
     # ОСТАТОК, А НЕ НАХОДКА. Сухой прогон ничего не писал — остаток равен
     # находке; с --apply дописано всё, до чего дошли, и остаток пуст. Один и
