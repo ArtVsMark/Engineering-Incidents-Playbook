@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T12:42:04+00:00",
+  "generated_at": "2026-09-25T12:55:30+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.5",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.4"
   },
-  "count": 210,
+  "count": 211,
   "rules": [
     {
       "id": "001",
@@ -59,7 +59,8 @@
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentioned_by": [
-        "125"
+        "125",
+        "212"
       ]
     },
     {
@@ -3784,7 +3785,8 @@
         "167",
         "175",
         "198",
-        "206"
+        "206",
+        "212"
       ]
     },
     {
@@ -8756,6 +8758,9 @@
         "104",
         "139",
         "142"
+      ],
+      "mentioned_by": [
+        "212"
       ]
     },
     {
@@ -11000,6 +11005,55 @@
         "139",
         "145",
         "209"
+      ]
+    },
+    {
+      "id": "212",
+      "slug": "a-platform-list-is-read-to-its-end",
+      "title": {
+        "ru": "Список, который площадка отдаёт страницами, читают до конца, а не первой страницей",
+        "en": "A list the platform returns in pages is read to its end, not by its first page"
+      },
+      "areas": {
+        "ru": [
+          "API",
+          "надёжность"
+        ],
+        "en": [
+          "API",
+          "reliability"
+        ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
+      "claim": {
+        "ru": "Список, который площадка отдаёт страницами, — файлы изменения, задачи, комментарии, метки, проверки, — механизм читает **до конца**. Пока список короче страницы, разницы не видно ничем: прогон зелёный, запрос в коде исправен. Перешагнул список край — хвост пропадает без единой строки, и пропадает то, ради чего список читали. Одиночный запрос законен только как **намеренный предел** («свежие N»), и тогда предел назван рядом с запросом.",
+        "en": "A list the platform returns in pages — a change's files, issues, comments, labels, checks — is read by a mechanism **to its end**. While the list is shorter than a page, nothing shows the difference: the run is green and the request in the code is sound. Once the list crosses the edge, the tail disappears without a single line, and what disappears is what the list was read for. A single request is legitimate only as a **deliberate limit** (\"the latest N\"), and then the limit is named next to the request."
+      },
+      "applies": {
+        "ru": "**Работает** для списков площадки, которые отдаются страницами: файлы и\nкомментарии изменения, задачи, метки, проверки, аннотации, прогоны.\n\n**Не работает** для запросов с намеренным пределом, названным рядом: «свежие\nN прогонов», «последние 30 слитых изменений». Там предел — решение, а не\nзабытый край. **Не работает** и для одиночных объектов: изменение, задача,\nфайл по пути — страниц у них нет.\n\n**Признак нарушения:** запрос к списку без обхода страниц и без названного\nпредела рядом.",
+        "en": "**Works** for platform lists returned in pages: a change's files and comments,\nissues, labels, checks, annotations, runs.\n\n**Does not work** for requests with a deliberate limit named next to them: \"the\nlatest N runs\", \"the last 30 merged changes\". There the limit is a decision,\nnot a forgotten edge. **Does not work** either for single objects: a change, an\nissue, a file by path have no pages.\n\n**Sign of a violation:** a request for a list with no paging and no named limit\nnext to it."
+      },
+      "added": "2026-09-25",
+      "files": {
+        "ru": "rules/ru/212-a-platform-list-is-read-to-its-end.md",
+        "en": "rules/en/212-a-platform-list-is-read-to-its-end.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "tests/test_lists_are_read_to_the_end.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "001",
+        "075",
+        "169"
       ]
     }
   ],
