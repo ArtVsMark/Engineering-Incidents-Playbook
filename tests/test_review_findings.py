@@ -388,3 +388,15 @@ def test_povtornoe_revyu_ne_krasneet_na_proshlyh_nahodkah(monkeypatch, capsys):
          отзыв("НАХОДКА: вторая\n\nВЕРДИКТ: находок 1")]))
     assert rf.main(["--repo", "o/r", "--pr", "1"]) == 1
     assert "::warning::" not in capsys.readouterr().out
+
+
+def test_chislo_bez_strok_svoego_zahoda_eto_otkaz(monkeypatch, capsys):
+    """Находка обзора на #584: последний заход назвал число и не дал строк, а
+    строки прежнего захода подставились бы за него молча. Судится свой заход."""
+    monkeypatch.setattr(rf.ghcli, "run", подделка(
+        [отзыв("НАХОДКА: старая\n\nВЕРДИКТ: находок 1"),
+         отзыв("ВЕРДИКТ: находок 2")]))
+    assert rf.main(["--repo", "o/r", "--pr", "1"]) == 2
+    captured = capsys.readouterr()
+    assert "в том же заходе ревьюера нет" in captured.err
+    assert "старая" not in captured.out
