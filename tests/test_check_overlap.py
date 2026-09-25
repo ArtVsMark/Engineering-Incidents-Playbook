@@ -36,10 +36,12 @@ def площадка(monkeypatch, изменения: list[dict], code: int = 0)
     def подделка(*args: str) -> tuple[int, str]:
         if code != 0:
             return code, "gh сказал нет"
-        путь = args[1] if len(args) > 1 else ""
+        путь = next((a for a in args if a.startswith("repos/")), "")
         if "/files" in путь:
+            # файлы читаются постранично, по элементу — строкой JSON на файл
+            assert "--paginate" in args
             номер = int(путь.split("/pulls/")[1].split("/")[0])
-            return 0, json.dumps(файлы.get(номер, []))
+            return 0, "".join(json.dumps(ф) + "\n" for ф in файлы.get(номер, []))
         return 0, json.dumps(изменения)
     monkeypatch.setattr(co.ghcli, "run", подделка)
 
@@ -87,3 +89,14 @@ def test_otvet_ne_razobran_eto_tretiy_ishod(monkeypatch, capsys):
 
     assert co.main(["--branch", МОЙ]) == 2
     assert "не разобран" in capsys.readouterr().err
+
+
+def test_peresechenie_za_sotym_faylom_vidno(monkeypatch, capsys):
+    """Файлы изменения читаются до конца (212): у #327 их было 358, и общий
+    файл за первой сотней прежде не находился вовсе."""
+    хвост = [f"docs/f{i:03}.md" for i in range(149)] + ["scripts/a.py"]
+    площадка(monkeypatch, [изменение(1, МОЙ, "scripts/a.py"),
+                           изменение(2, "agent/чужая", *хвост)])
+
+    assert co.main(["--branch", МОЙ]) == 1
+    assert "scripts/a.py" in capsys.readouterr().out

@@ -162,14 +162,12 @@ def find_issue(title_marker: str = MARKER) -> tuple[int | None, str | None]:
     # часовых 5000 против одного запроса. В /issues REST кладёт И изменения,
     # поэтому они отсеиваются явно: иначе одноимённое ИЗМЕНЕНИЕ считалось бы
     # задачей дежурного.
-    code, out = gh("api", "repos/{owner}/{repo}/issues?state=open&per_page=100",
-                   "--jq", "[.[] | select(.pull_request == null) | {number, body}]")
+    # ВСЕ СТРАНИЦЫ (212): изменения лежат в том же списке и съедают сотню.
+    code, found, почему = ghcli.список(
+        "repos/{owner}/{repo}/issues?state=open&per_page=100",
+        ".[] | select(.pull_request == null) | {number, body}", вызов=gh)
     if code != 0:
-        return None, out
-    try:
-        found = json.loads(out or "[]")
-    except ValueError as e:
-        return None, f"ответ не разобран: {e}"
+        return None, почему
     for issue in found:
         if MARKER in (issue.get("body") or ""):
             return issue["number"], None

@@ -157,17 +157,18 @@ def без_оформления(строка: str) -> str:
 
 
 def comments(repo: str, pr: int) -> tuple[list[dict] | None, str | None]:
-    """Комментарии изменения по REST. Вторым — причина отказа с адресом."""
-    code, out = ghcli.run(
-        "api", f"repos/{repo}/issues/{pr}/comments?per_page=100",
-        "--jq", "[.[] | {login: .user.login, body}]")
+    """Комментарии изменения по REST. Вторым — причина отказа с адресом.
+
+    ВСЕ СТРАНИЦЫ (212). Комментарии идут от старых к новым, и за край сотни
+    ушёл бы как раз последний заход ревьюера — ради которого их и читают.
+    """
+    code, записи, почему = ghcli.список(
+        f"repos/{repo}/issues/{pr}/comments?per_page=100",
+        ".[] | {login: .user.login, body}")
     if code != 0:
         return None, (f"gh api issues/{pr}/comments — "
-                      f"{out.strip()[:160] or f'код {code}'}")
-    try:
-        return json.loads(out or "[]"), None
-    except ValueError as e:
-        return None, f"ответ gh api issues/{pr}/comments не разобран — {e}"
+                      f"{почему.strip()[:160] or f'код {code}'}")
+    return записи, None
 
 
 def отпечаток(заголовок: str) -> str:
@@ -246,15 +247,11 @@ def live_issue(repo: str) -> tuple[int | None, str | None, str | None]:
     вместо одной. Изменения отсеиваются явно — REST кладёт их в /issues
     наравне с задачами.
     """
-    code, out = ghcli.run(
-        "api", f"repos/{repo}/issues?state=open&per_page=100",
-        "--jq", "[.[] | select(.pull_request == null) | {number, body}]")
+    code, задачи, почему = ghcli.список(
+        f"repos/{repo}/issues?state=open&per_page=100",
+        ".[] | select(.pull_request == null) | {number, body}")
     if code != 0:
-        return None, None, (f"gh api issues — {out.strip()[:160] or f'код {code}'}")
-    try:
-        задачи = json.loads(out or "[]")
-    except ValueError as e:
-        return None, None, f"ответ gh api issues не разобран — {e}"
+        return None, None, (f"gh api issues — {почему.strip()[:160] or f'код {code}'}")
     for з in задачи:
         if МАРКЕР in (з.get("body") or ""):
             return з["number"], з.get("body") or "", None

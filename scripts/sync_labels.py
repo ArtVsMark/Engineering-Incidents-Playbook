@@ -99,13 +99,15 @@ def main() -> int:
               file=sys.stderr)
         return 2
 
-    code, out = gh_json("api", f"repos/{args.repo}/labels?per_page=100",
-                        "--jq", "[.[] | {name, color, description}]")
+    # ВСЕ СТРАНИЦЫ (212): меток у каталога 14, но край страницы — не
+    # решение, а забытое место, и метка за ним считалась бы отсутствующей.
+    code, метки, почему = ghcli.список(f"repos/{args.repo}/labels?per_page=100",
+                                       ".[] | {name, color, description}", вызов=gh_json)
     if code != 0:
-        print(f"проверка не отработала: список меток не прочитан — {out}",
+        print(f"проверка не отработала: список меток не прочитан — {почему}",
               file=sys.stderr)
         return 2
-    have = {l["name"]: l for l in json.loads(out)}
+    have = {l["name"]: l for l in метки}
 
     created, fixed = [], []
     for label in want:

@@ -207,3 +207,34 @@ def test_forma_ischerpaniya_uznayotsya(ответ):
 ])
 def test_chuzhoy_otkaz_za_ischerpanie_ne_prinimaetsya(ответ):
     assert not ghcli.ИСЧЕРПАНИЕ_RE.search(ответ)
+
+
+# ── список читается до конца (212) ─────────────────────────────────────────
+
+def test_spisok_obhodit_stranitsy_i_razbiraet_po_elementu(monkeypatch):
+    """Запрос идёт с --paginate, выражение отдаёт элементы строками JSON."""
+    спрошено: list[tuple[str, ...]] = []
+
+    def подделка(*args: str) -> tuple[int, str]:
+        спрошено.append(args)
+        # две «страницы» — две порции строк; строка-значение в кавычках
+        return 0, '"a.py"\n"b.py"\n"c.py"\n'
+    monkeypatch.setattr(ghcli, "run", подделка)
+
+    assert ghcli.список("repos/o/r/pulls/1/files?per_page=100", ".[].filename") == (
+        0, ["a.py", "b.py", "c.py"], "")
+    (args,) = спрошено
+    assert "--paginate" in args
+    assert args[args.index("--jq") + 1] == ".[].filename | tojson"
+
+
+def test_spisok_otkaz_ploshchadki_ne_pustoy_spisok(monkeypatch):
+    """Отказ — это отказ с причиной, а не «элементов ноль»."""
+    monkeypatch.setattr(ghcli, "run", lambda *a: (1, "HTTP 404"))
+    assert ghcli.список("repos/o/r/issues") == (1, [], "HTTP 404")
+
+
+def test_spisok_nerazobrannyy_otvet_tretiy_iskhod(monkeypatch):
+    monkeypatch.setattr(ghcli, "run", lambda *a: (0, "{не json"))
+    код, элементы, почему = ghcli.список("repos/o/r/issues")
+    assert код == 2 and элементы == [] and "не разобран" in почему

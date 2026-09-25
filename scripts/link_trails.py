@@ -231,12 +231,15 @@ def main() -> int:
         # points из часовых 5000 против одного запроса, а этот цикл идёт по
         # ВСЕМ задачам со следом. У комментариев в REST свой адрес, и берётся
         # сразу он: читать задачу целиком ради них незачем.
-        code, out = ghcli.run("api", f"repos/{args.repo}/issues/{issue}/comments?per_page=100",
-                              "--jq", f'[.[] | select(.body // "" | contains("{MARKER}"))] | length')
+        # ВСЕ СТРАНИЦЫ (212): комментарии идут от старых к новым, и ссылка,
+        # оставленная после сотого, иначе не находилась бы — и ставилась снова.
+        code, совпало, почему = ghcli.список(
+            f"repos/{args.repo}/issues/{issue}/comments?per_page=100",
+            f'.[] | select(.body // "" | contains("{MARKER}")) | .id')
         if ghcli.failed(code):
-            print(f"не отработал: задача #{issue} не прочитана — {out}", file=sys.stderr)
+            print(f"не отработал: задача #{issue} не прочитана — {почему}", file=sys.stderr)
             return 2
-        if out.strip() not in ("0", ""):
+        if code != 0 or совпало:
             continue                       # обратная ссылка уже стоит
         missing.append(issue)
         if not args.apply:

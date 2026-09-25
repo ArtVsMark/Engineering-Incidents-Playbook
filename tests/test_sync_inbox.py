@@ -26,6 +26,8 @@
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 import sync_inbox as si
@@ -40,16 +42,18 @@ def arm(monkeypatch, rules, answered, issue=None):
         # ПОСЛЕ ПЕРЕВОДА НА REST (001) ВСЕ ВЫЗОВЫ — `gh api`, и различает их
         # адрес, а не подкоманда. Подделка, глядящая на первое слово, отвечала
         # бы одинаково на поиск задачи и на её создание.
-        путь = args[1] if len(args) > 1 else ""
+        путь = next((a for a in args if a.startswith("repos/")), "")
         if "state=all" in путь:
             # ПОДДЕЛКА ОТДАЁТ ТО, ЧТО ОТДАЁТ ПЛОЩАДКА, А НЕ ТО, ЧТО ЗАДУМАНО.
-            # Раньше здесь стояла пустая строка — и четыре теста «задачи нет»
-            # гонялись на значении, которого `gh --jq` не возвращает никогда:
-            # индексация пустого набора печатается словом «null null». Тесты
-            # были зелёными, а механизм не мог завести первую задачу вовсе.
-            return 0, (f"{issue[0]} {issue[1]}" if issue else "null null")
+            # Список читается постранично и по элементу (212): совпадение —
+            # строка JSON, отсутствие совпадений — пустой вывод. Прежняя форма,
+            # индексация пустого набора, печаталась словом «null null», и
+            # разбор его по-прежнему переживает (found_issue).
+            assert "--paginate" in args
+            return 0, (json.dumps(f"{issue[0]} {issue[1]}") + "\n" if issue else "")
         if "state=open" in путь:
-            return 0, "[]"
+            assert "--paginate" in args
+            return 0, ""
         if путь.endswith("/issues") and any(a.startswith("title=") for a in args):
             return 0, "https://example/issues/99"
         return 0, ""
@@ -112,8 +116,8 @@ def test_zakrytaya_zadacha_nahoditsya_i_ne_dublitsya(monkeypatch, capsys):
     # задачи-«входящих». Берётся ВТОРОЙ по признаку, а не по порядку: порядок
     # вызовов — не предмет случая, и привязка к нему ломает его на первой же
     # вставке (141).
-    listing = next(c for c in calls if "state=all" in c[1])
-    assert "state=all" in listing[1]
+    listing = next(c for c in calls if any("state=all" in a for a in c))
+    assert "--paginate" in listing
 
 
 def test_poyavilos_nerassmotrennoe_zadacha_otkryvaetsya_zanovo(monkeypatch, capsys):

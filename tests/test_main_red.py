@@ -127,9 +127,20 @@ def test_zelyonaya_vetka_eto_nol(tmp_path, monkeypatch, capsys):
         calls["n"] += 1
         if args[0] == "run":
             return 0, json.dumps([run("ci", "success")])
-        return 0, "[]"
+        return 0, ""                         # открытых задач нет: пустой вывод
 
     monkeypatch.setattr(main_red, "gh", fake)
     monkeypatch.setattr("sys.argv", ["main_red.py", "--body-file", str(template)])
     assert main_red.main() == 0
     assert "зелёная" in capsys.readouterr().out
+
+
+def test_zadacha_dezhurnogo_ishchetsya_po_vsem_stranitsam(monkeypatch):
+    """Открытые задачи читаются до конца (212): изменения лежат в том же
+    списке и съедают сотню, а задача дежурного — не самая свежая."""
+    def fake(*args):
+        assert "--paginate" in args
+        return 0, (json.dumps({"number": 3, "body": "чужая"}) + "\n"
+                   + json.dumps({"number": 9, "body": main_red.MARKER}) + "\n")
+    monkeypatch.setattr(main_red, "gh", fake)
+    assert main_red.find_issue() == (9, None)

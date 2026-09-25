@@ -356,14 +356,17 @@ def main(argv: list[str] | None = None) -> int:
     # часовых 5000 против одного запроса. Изменения из /issues отсеиваются
     # явно: REST кладёт их в тот же список, и изменение с маркером в теле
     # сошло бы за задачу.
-    code, found = gh("api", "repos/{owner}/{repo}/issues?state=open&per_page=100",
-                     "--jq",
-                     f'[.[] | select(.pull_request == null) '
-                     f'| select(.body // "" | contains("{MARKER}"))][0].number // empty')
+    # ВСЕ СТРАНИЦЫ (212): изменения лежат в том же списке и съедают сотню;
+    # берётся первое совпадение, как и прежде.
+    code, номера, почему = ghcli.список(
+        "repos/{owner}/{repo}/issues?state=open&per_page=100",
+        f'.[] | select(.pull_request == null) '
+        f'| select(.body // "" | contains("{MARKER}")) | .number', вызов=gh)
     if code != 0:
-        print(f"проверка не отработала: трекер не ответил — {found}",
+        print(f"проверка не отработала: трекер не ответил — {почему}",
               file=sys.stderr)
         return 2
+    found = str(номера[0]) if номера else ""
 
     if found:
         # ПО REST (001) — см. отбор задач выше.
