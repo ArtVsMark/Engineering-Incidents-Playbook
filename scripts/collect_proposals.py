@@ -169,7 +169,7 @@ def check_verdicts(root: Path) -> int:
         return 2
 
     findings: list[str] = []
-    claimed: dict[str, str] = {}
+    claimed: dict[tuple[str, str], str] = {}
 
     for key, v in sorted(verdicts.items()):
         if not isinstance(v, dict):
@@ -184,41 +184,39 @@ def check_verdicts(root: Path) -> int:
         num = v.get("rule")
         why = (v.get("why") or "").strip()
 
-        if ":skill/" in key:
-            # ВЕРДИКТ НАВЫКУ НАЗЫВАЕТ НАВЫК, А НЕ НОМЕР. Принятый навык лежит у
-            # каталога рядом с его собственными; «принят» без него — решение,
-            # которому нечего показать.
-            имя = str(v.get("skill") or "")
-            if status in NEEDS_RULE:
-                if not имя:
-                    findings.append(f"{key}: статус «{status}» обязан назвать "
-                                    f"навык каталога в поле skill")
-                elif (чего := навык_в_дереве(имя, root)) is not None:
-                    findings.append(f"{key}: назван навык {имя}, а {чего}")
-            if status in NEEDS_WHY and not why:
-                findings.append(f"{key}: статус «{status}» обязан назвать "
-                                f"причину — иначе отправитель не узнает, что "
-                                f"решено и почему")
-            continue
-
+        # ВЕРДИКТ НАВЫКУ НАЗЫВАЕТ НАВЫК, А НЕ НОМЕР. Принятый навык лежит у
+        # каталога рядом с его собственными; «принят» без него — решение,
+        # которому нечего показать. Остальное у двух видов общее, и
+        # спрашивается одним кодом: второй ответ на тот же вопрос уже
+        # разошёлся бы с первым — у навыка не ловился повтор принятого (214).
+        навык = ":skill/" in key
+        цель = str(v.get("skill") or "") if навык else num
         if status in NEEDS_RULE:
-            if not num:
-                findings.append(f"{key}: статус «{status}» обязан назвать номер "
-                                f"принятого правила")
-            elif num not in numbers:
+            if not цель:
                 findings.append(
-                    f"{key}: назван номер {num}, а правила с таким номером в "
+                    f"{key}: статус «{status}» обязан назвать "
+                    + ("навык каталога в поле skill" if навык
+                       else "номер принятого правила"))
+            elif навык and (чего := навык_в_дереве(цель, root)) is not None:
+                findings.append(f"{key}: назван навык {цель}, а {чего}")
+            elif not навык and цель not in numbers:
+                findings.append(
+                    f"{key}: назван номер {цель}, а правила с таким номером в "
                     f"{RULES_RU} нет")
             elif status == "admitted":
                 # Два предложения, принятые под одним номером, — это молча
                 # потерянное предложение (правило 075: страж, который ничего
-                # не может найти, бесполезен).
-                if num in claimed:
+                # не может найти, бесполезен). У навыка так же: второе
+                # предложение, влитое в уже принятый навык, — merged-into с
+                # причиной, а не второй «принят».
+                место = ("skill" if навык else "rule", цель)
+                if место in claimed:
                     findings.append(
-                        f"{key}: номер {num} уже занят предложением "
-                        f"{claimed[num]} — номер не переиспользуется")
+                        f"{key}: {'навык' if навык else 'номер'} {цель} уже "
+                        f"занят предложением {claimed[место]} — второе, "
+                        f"влитое в него, отвечается merged-into с причиной")
                 else:
-                    claimed[num] = key
+                    claimed[место] = key
         if status in NEEDS_WHY and not why:
             findings.append(f"{key}: статус «{status}» обязан назвать причину — "
                             f"иначе отправитель не узнает, что решено и почему")
