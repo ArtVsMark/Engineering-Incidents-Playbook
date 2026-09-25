@@ -57,6 +57,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from typing import Any, Callable
 
 # Словарь механизмов живёт в одном месте (правило 209). Импорт, а не копия:
 # копия расходится молча, и первым это увидит потребитель, а не гейт.
@@ -149,9 +150,14 @@ STATUS_RU = {
 #: секунды на потребителя и 4.4 минуты на все восемь чтений — то есть примерно
 #: столько же, сколько стоила ОДНА прежняя попытка в 20 секунд, только теперь
 #: их три. Найдено внешним взглядом на этом же изменении (183).
-def fetch(url: str, timeout: int = 10,
-          попыток: int = ПОПЫТОК) -> tuple[dict | None, str | None]:
+def fetch(url: str, timeout: int = 10, попыток: int = ПОПЫТОК,
+          разобрать: Callable[[str], Any] = json.loads) -> tuple[Any, str | None]:
     """Ответ потребителя по обычному HTTPS: без API, без токена, без клона.
+
+    РАЗБОР — ПАРАМЕТР, А НЕ ВТОРАЯ ФУНКЦИЯ. Ответ по умолчанию JSON; навык,
+    предложенный снизу, читается текстом `SKILL.md`. Своё чтение для текста
+    завело бы вторую копию повторов и различения «ответил» от «молчит» — ровно
+    то, что разошлось у сводки и предложений 8 сентября (214).
 
     ОТВЕТ ПЛОЩАДКИ И МОЛЧАНИЕ ПРОВОДА — РАЗНЫЕ СОСТОЯНИЯ, и повторять стоит
     только второе. HTTP-код это ОТВЕТ: 404 говорит «файла нет», 403 — «не
@@ -164,7 +170,7 @@ def fetch(url: str, timeout: int = 10,
     for попытка in range(1, попыток + 1):
         try:
             with urllib.request.urlopen(url, timeout=timeout) as resp:
-                return json.loads(resp.read().decode("utf-8")), None
+                return разобрать(resp.read().decode("utf-8")), None
         except urllib.error.HTTPError as e:
             # Порядок ветвей значим: HTTPError — потомок URLError, и внизу он
             # был бы съеден общей веткой вместе со своим кодом.

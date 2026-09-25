@@ -96,7 +96,6 @@ PROPOSALS = {
                    "областей, ответ о соседях и разрешимый след живут в каталоге."),
     "_пусто": ("Пустой список — законное состояние и означает «предлагать пока "
                "нечего». Отсутствие файла означает другое: «канал не подключён»."),
-    "schema": "1.0",
     "proposals": [],
 }
 
@@ -114,10 +113,17 @@ def pinned_ref(contract: Path) -> tuple[str | None, str | None]:
     return m.group(1).strip(), None
 
 
-def build(repo: str, ids: list[str], ref: str) -> dict[str, str]:
-    """Пути и содержимое набора. Ключ — путь внутри репозитория проекта."""
+def build(repo: str, ids: list[str], ref: str,
+          контракты: dict[str, str]) -> dict[str, str]:
+    """Пути и содержимое набора. Ключ — путь внутри репозитория проекта.
+
+    НОМЕРА ФОРМАТОВ БЕРУТСЯ ИЗ ВЫГРУЗКИ, А НЕ ВПИСАНЫ. Здесь стояло «1.0» у
+    обоих файлов при контрактах 1.6 и 1.1 — новый потребитель начинал с
+    отставания, о котором ему же сообщали входящие первым прогоном. Тот же
+    приём, что у тега: число живёт в одном месте (035).
+    """
     bindings = {
-        "schema": "1.0",
+        "schema": контракты["bindings"],
         "project": repo,
         "catalogue": f"https://github.com/{CATALOGUE}",
         "_": ("Ответ ЭТОГО проекта по каждому правилу каталога. Статус — active, "
@@ -129,7 +135,8 @@ def build(repo: str, ids: list[str], ref: str) -> dict[str, str]:
     }
     return {
         ".rules/bindings.json": json.dumps(bindings, ensure_ascii=False, indent=2) + "\n",
-        ".rules/proposals.json": json.dumps(PROPOSALS, ensure_ascii=False, indent=2) + "\n",
+        ".rules/proposals.json": json.dumps({**PROPOSALS, "schema": контракты["proposals"]},
+                                            ensure_ascii=False, indent=2) + "\n",
         ".github/workflows/rules-inbox.yml": WORKFLOW.format(catalogue=CATALOGUE, ref=ref),
     }
 
@@ -151,6 +158,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         doc = json.loads(args.export.read_text(encoding="utf-8"))
         ids = [r["id"] for r in doc["rules"]]
+        контракты = {к: str(doc["contracts"][к]) for к in ("bindings", "proposals")}
     except (OSError, ValueError, KeyError, TypeError) as e:
         print(f"проверка не отработала: экспорт каталога не разобран — {e}",
               file=sys.stderr)
@@ -167,7 +175,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     # ── исход 0 ────────────────────────────────────────────────────────────
-    for rel, body in build(args.repo, ids, ref).items():
+    for rel, body in build(args.repo, ids, ref, контракты).items():
         path = args.out / rel
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(body, encoding="utf-8")

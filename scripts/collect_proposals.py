@@ -33,6 +33,14 @@
 отправителя значило бы разносить сюда же и знание о том, как их делать
 (правило 090).
 
+НАВЫК ЕДЕТ ТЕМ ЖЕ КАНАЛОМ (формат 1.2, `kind: skill`). Любой проект может
+сделать или доработать навык работы с каталогом, а принимает его каталог —
+тот же порядок, что у правила: без прав в чужом репозитории и без номера,
+присвоенного снаружи. Вместо инцидента у навыка — замер в работе, вместо
+следа — путь и полный коммит: текст читается на коммите, а не на ветке, иначе
+принятое разошлось бы с прочитанным владельцем. Ключ вердикта навыку —
+`repo:skill/слаг`, и он называет навык каталога, а не номер правила.
+
 Реализует правила каталога:
   080 — правило, родившееся в проекте, записывается в общий каталог;
   086 — оценку находке ставит НЕ нашедший: проект шлёт предложение без
@@ -80,6 +88,12 @@ from aggregate_bindings import fetch
 #: разошлась бы молча, а разойтись ей есть куда: корневые документы без
 #: расширения, образцы со звездой, задача как вторая законная форма.
 from check_bindings import разрешимый_адрес  # noqa: E402
+#: Заголовок `SKILL.md` разбирается там же, где навык в своём дереве (214).
+from check_bindings import поля_навыка  # noqa: E402
+#: И принятый навык у каталога проверяется тем же, чем навык в ответе (214).
+from check_bindings import навык_в_дереве  # noqa: E402
+#: Версия каталога — его релизный тег, и форма тега одна на каталог (214).
+from version import TAG_RE  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -105,10 +119,26 @@ FORBIDDEN_IN_PROPOSAL = ("id", "number", "rule")
 
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]{2,80}$")
 
+#: Виды предложения (формат 1.2). Без поля — правило: так читается каждый файл
+#: формата 1.1, и подъём ничего у отправителя не ломает.
+ВИДЫ = ("rule", "skill")
 
-def key_of(repo: str, slug: str) -> str:
-    """Ключ вердикта. Слаг не уникален между проектами — репозиторий обязателен."""
-    return f"{repo}:{slug}"
+#: НАВЫК ЧИТАЕТСЯ НА НАЗВАННОМ КОММИТЕ, А НЕ НА ВЕТКЕ. Ветка двигается, и
+#: принятый текст разошёлся бы с тем, что читал владелец, выносивший вердикт.
+SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+#: Путь навыка у отправителя: `.claude/skills/<слаг>/SKILL.md`. Имя папки и
+#: есть имя навыка, и расхождение пути со слагом — два имени одного навыка.
+ПУТЬ_НАВЫКА_RE = re.compile(r"^[\w./-]+/(?P<slug>[a-z0-9][a-z0-9-]{2,80})/SKILL\.md$")
+НОМЕР_RE = re.compile(r"^\d{3}$")
+
+
+def key_of(repo: str, slug: str, kind: str = "rule") -> str:
+    """Ключ вердикта. Слаг не уникален между проектами — репозиторий обязателен.
+
+    У навыка своё пространство имён: `repo:skill/слаг`. Проект может предложить
+    правило и навык с одним слагом, и вердикт одного не должен снимать другое.
+    """
+    return f"{repo}:skill/{slug}" if kind == "skill" else f"{repo}:{slug}"
 
 
 def rule_numbers(root: Path) -> set[str]:
@@ -154,6 +184,23 @@ def check_verdicts(root: Path) -> int:
         num = v.get("rule")
         why = (v.get("why") or "").strip()
 
+        if ":skill/" in key:
+            # ВЕРДИКТ НАВЫКУ НАЗЫВАЕТ НАВЫК, А НЕ НОМЕР. Принятый навык лежит у
+            # каталога рядом с его собственными; «принят» без него — решение,
+            # которому нечего показать.
+            имя = str(v.get("skill") or "")
+            if status in NEEDS_RULE:
+                if not имя:
+                    findings.append(f"{key}: статус «{status}» обязан назвать "
+                                    f"навык каталога в поле skill")
+                elif (чего := навык_в_дереве(имя, root)) is not None:
+                    findings.append(f"{key}: назван навык {имя}, а {чего}")
+            if status in NEEDS_WHY and not why:
+                findings.append(f"{key}: статус «{status}» обязан назвать "
+                                f"причину — иначе отправитель не узнает, что "
+                                f"решено и почему")
+            continue
+
         if status in NEEDS_RULE:
             if not num:
                 findings.append(f"{key}: статус «{status}» обязан назвать номер "
@@ -187,8 +234,13 @@ def check_verdicts(root: Path) -> int:
     return 0
 
 
-def gather(consumers: list[dict], verdicts: dict) -> tuple[list[dict], list[str]]:
-    """Тянет предложения потребителей. Возвращает (не разобранные, проблемы)."""
+def gather(consumers: list[dict], verdicts: dict,
+           номера: set[str] | None = None) -> tuple[list[dict], list[str]]:
+    """Тянет предложения потребителей. Возвращает (не разобранные, проблемы).
+
+    `номера` — правила каталога, по которым сверяется `holds` навыка; без них
+    сверяется только форма номера.
+    """
     pending: list[dict] = []
     problems: list[str] = []
 
@@ -218,6 +270,19 @@ def gather(consumers: list[dict], verdicts: dict) -> tuple[list[dict], list[str]
             slug = str(item.get("slug") or "")
             if not SLUG_RE.match(slug):
                 problems.append(f"{repo}: слаг {slug!r} не годится в имя файла")
+                continue
+            вид = item.get("kind") or "rule"
+            if вид not in ВИДЫ:
+                problems.append(f"{repo}:{slug}: вид {вид!r} не из набора "
+                                f"{', '.join(ВИДЫ)} — предложение пропущено, "
+                                f"а не прочитано наугад")
+                continue
+            if вид == "skill":
+                if key_of(repo, slug, "skill") in verdicts:
+                    continue              # решение уже вынесено
+                навык, возражения = разобрать_навык(repo, slug, item, номера)
+                problems += возражения
+                pending.append(навык)
                 continue
             # ВОЗРАЖЕНИЕ О ФОРМЕ СНИМАЕТСЯ ВЫНЕСЕННЫМ РЕШЕНИЕМ, И ПОРЯДОК
             # ЗДЕСЬ НЕСУЩИЙ. Стояло наоборот, и разобранное предложение
@@ -263,6 +328,84 @@ def gather(consumers: list[dict], verdicts: dict) -> tuple[list[dict], list[str]
     return pending, problems
 
 
+def разобрать_навык(repo: str, slug: str, item: dict,
+                    номера: set[str] | None) -> tuple[dict, list[str]]:
+    """Навык, предложенный снизу: форма и текст на названном коммите.
+
+    НАВЫК НЕ ОТБРАСЫВАЕТСЯ ЗА ФОРМУ, как и правило: решение принимает человек,
+    а возражения едут рядом. Но прочитать текст без пути и коммита нечем, и
+    тогда очередь говорит «не прочитан», а не показывает пустоту.
+    """
+    возражения: list[str] = []
+    путь = str(item.get("path") or "").strip()
+    sha = str(item.get("sha") or "").strip()
+    держит = item.get("holds")
+    замер = str(item.get("measurement") or "").strip()
+    дорабатывает = str(item.get("amends") or "").strip()
+    от = str(item.get("base") or "").strip()
+    м = ПУТЬ_НАВЫКА_RE.match(путь)
+    if not м or м.group("slug") != slug:
+        возражения.append(
+            f"{repo}:skill/{slug}: путь {путь!r} не называет "
+            f"`.../{slug}/SKILL.md` — имя папки и есть имя навыка, и два "
+            f"имени у одного навыка расходятся молча")
+    if not SHA_RE.match(sha):
+        возражения.append(
+            f"{repo}:skill/{slug}: коммит {sha!r} — не полный sha из 40 знаков. "
+            f"Навык читается на коммите, а не на ветке: ветка двигается, и "
+            f"принятый текст разошёлся бы с прочитанным")
+    if not (isinstance(держит, list) and держит
+            and all(isinstance(н, str) and НОМЕР_RE.match(н) for н in держит)):
+        возражения.append(
+            f"{repo}:skill/{slug}: holds — список номеров правил каталога "
+            f"вида \"157\"; навык каталога держит его правила")
+        держит = []
+    elif номера is not None:
+        чужие = [н for н in держит if н not in номера]
+        if чужие:
+            возражения.append(f"{repo}:skill/{slug}: в holds нет таких правил "
+                              f"каталога — {', '.join(чужие)}")
+    if not замер:
+        возражения.append(
+            f"{repo}:skill/{slug}: measurement пуст. У навыка вместо инцидента "
+            f"— замер в работе: сколько раз звали и что он нашёл. Навык, не "
+            f"проверенный у автора, раздавался бы всем непроверенным")
+    if дорабатывает and not SLUG_RE.match(дорабатывает):
+        возражения.append(f"{repo}:skill/{slug}: amends {дорабатывает!r} не "
+                          f"похоже на имя навыка")
+    # ДОРАБОТКА НАЗЫВАЕТ, ОТ ЧЕГО ОНА ШЛА. Без версии владелец сравнивает
+    # присланное с нынешним навыком и принимает за предложение то, что
+    # каталог успел поменять после — а две доработки одного навыка от разных
+    # версий неотличимы.
+    if дорабатывает and not TAG_RE.match(от):
+        возражения.append(
+            f"{repo}:skill/{slug}: доработка {дорабатывает} не называет base — "
+            f"тег каталога вида v1.2.0, от которого она шла")
+    elif от and not дорабатывает:
+        возражения.append(f"{repo}:skill/{slug}: base {от!r} без amends — "
+                          f"версия есть, а дорабатываемого навыка нет")
+    адрес = (f"https://raw.githubusercontent.com/{repo}/{sha}/{путь}"
+             if м and SHA_RE.match(sha) else "")
+    описание = ""
+    if адрес:
+        текст, err = fetch(адрес, разобрать=str)
+        if err:
+            возражения.append(f"{repo}:skill/{slug}: текст навыка {err}")
+        else:
+            поля, чего = поля_навыка(текст)
+            if поля is None:
+                возражения.append(f"{repo}:skill/{slug}: SKILL.md {чего}")
+            else:
+                описание = поля["description"]
+                if поля["name"] != slug:
+                    возражения.append(
+                        f"{repo}:skill/{slug}: в SKILL.md имя «{поля['name']}» "
+                        f"— два имени у одного навыка расходятся молча")
+    return {"kind": "skill", "repo": repo, "slug": slug, "holds": держит,
+            "measurement": замер, "amends": дорабатывает, "base": от, "sha": sha,
+            "url": адрес, "description": описание}, возражения
+
+
 def quote(s: str, limit: int = 400) -> str:
     """Чужой текст входит цитатой, а не командой (правило 085)."""
     s = " ".join(s.split())
@@ -280,6 +423,22 @@ def body_for(pending: list[dict], problems: list[str]) -> str:
         out.append(f"## Не разобрано: {len(pending)}")
         out.append("")
         for p in pending:
+            if p.get("kind") == "skill":
+                out.append(f"### `{p['repo']}` · навык `{p['slug']}`")
+                out.append("")
+                out.append(f"**Держит правила.** {', '.join(p['holds']) or '—'}")
+                out.append("")
+                out.append(f"**Замер в работе.** {quote(p['measurement'])}")
+                out.append("")
+                if p["amends"]:
+                    out.append(f"**Дорабатывает.** `{p['amends']}` от "
+                               f"`{p['base'] or 'версия не названа'}`")
+                    out.append("")
+                out.append(f"**Описание.** {quote(p['description'])}")
+                out.append("")
+                out.append(f"**Текст.** {p['url'] or 'не прочитан — см. ниже'}")
+                out.append("")
+                continue
             out.append(f"### `{p['repo']}` · `{p['slug']}`")
             out.append("")
             out.append(f"**Утверждение.** {quote(p['claim'])}")
@@ -337,7 +496,13 @@ def main(argv: list[str] | None = None) -> int:
               f"потребителя", file=sys.stderr)
         return 2
 
-    pending, problems = gather(consumers, verdicts)
+    try:
+        номера = rule_numbers(args.root)
+    except OSError as exc:
+        print(f"проверка не отработала: правила каталога не прочитаны — {exc}",
+              file=sys.stderr)
+        return 2
+    pending, problems = gather(consumers, verdicts, номера)
     body = body_for(pending, problems)
 
     if args.dry_run:
