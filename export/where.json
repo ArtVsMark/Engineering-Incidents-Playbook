@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T14:50:05+00:00",
+  "generated_at": "2026-09-25T14:55:38+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -1760,7 +1760,7 @@
         },
         "211": {
           "mechanism": "gate",
-          "where": "scripts/check_orphans.py с .rules/orphans.json — имена верхнего уровня рабочего кода (scripts/, .claude/hooks/) разбираются ast, и живо только то, до чего доходит цепочка от корня: операторов верхнего уровня, `if __name__ == \"__main__\"`, декораторов, умолчаний и вызовов в значении присваивания (`X = f()` исполняет f, `X = f` лишь ссылается) — дальше по телам достигнутых имён, через `import модуль` и `from модуль import`. Набор (tests/) в счёт не идёт. Законный сосед — закрытая роспись для набора, граница для человека — назван поимённо с причиной, и запись без предмета — тоже отказ. ГРАНИЦА: обращение по строке (getattr, globals()) разбором не видно, методы класса не разбираются, и модуль целиком, которого не запускает ни прогон, ни хук, ни команда свода, гейт не ищет — корни каждого модуля он считает исполняемыми",
+          "where": "scripts/check_orphans.py с .rules/orphans.json — имена верхнего уровня рабочего кода (scripts/, .claude/hooks/) разбираются ast, и живо только то, до чего доходит цепочка от корня: операторов верхнего уровня, `if __name__ == \"__main__\"`, декораторов, умолчаний, вызовов в значении присваивания (`X = f()` исполняет f, `X = f` лишь ссылается) и тела класса; тело lambda и генератора ленивы — дальше по телам достигнутых имён, через `import модуль` и `from модуль import`. Набор (tests/) в счёт не идёт. Законный сосед — закрытая роспись для набора, граница для человека — назван поимённо с причиной, и запись без предмета — тоже отказ. ГРАНИЦА: обращение по строке (getattr, globals()) разбором не видно, методы класса не разбираются, и модуль целиком, которого не запускает ни прогон, ни хук, ни команда свода, гейт не ищет — корни каждого модуля он считает исполняемыми",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-09-25",
@@ -7526,16 +7526,16 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-09-25",
-      "answered": 208,
+      "answered": 210,
       "by_status": {
-        "active": 195,
+        "active": 197,
         "not-applicable": 13
       },
       "by_mechanism": {
-        "gate": 166,
+        "gate": 167,
         "pipeline": 19,
         "document": 9,
-        "skill": 1
+        "skill": 2
       },
       "rules": {
         "001": "active",
@@ -7745,7 +7745,9 @@
         "206": "active",
         "207": "active",
         "208": "active",
-        "209": "active"
+        "209": "active",
+        "210": "active",
+        "211": "active"
       },
       "holds": {
         "001": {
@@ -9302,8 +9304,24 @@
         },
         "209": {
           "mechanism": "document",
-          "where": "scripts/findings.py — PLAN_MARKER: метка плана живёт рядом с метками прочих живых задач, и узнающий её счёт пунктов берёт её импортом (scripts/items_left.py::measure), а не буквами; scripts/work_plan.py — MARKER берётся из findings.PLAN_MARKER. Держит tests/test_items_left.py::test_the_plan_is_skipped_by_its_imported_marker",
+          "where": "scripts/findings.py — PLAN_MARKER и один признак плана is_plan: оба читателя метки, сборщик плана (scripts/work_plan.py) и счёт пунктов (scripts/items_left.py::measure), узнают план им, а не буквами. Держит tests/test_items_left.py::test_the_plan_is_skipped_by_its_imported_marker — он подменяет метку другой строкой, и счёт, узнающий план буквами, краснеет",
           "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
+        },
+        "210": {
+          "mechanism": "skill",
+          "where": ".claude/skills/build-a-gate — шаг 3а «Взгляд раз за разом находит новый обход того же гейта — ужесточить правило, а не расширять разбор»: вторая находка по одному месту останавливает починку по одной форме. Перечень форм даёт замер scripts/finding_chains.py: он печатает места, получавшие находки на трёх и более изменениях, «читать поимённо». Раскладку работы по месту держит .claude/skills/close-a-finding, шаг 3",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
+        },
+        "211": {
+          "mechanism": "gate",
+          "where": "scripts/check_reached_by_work.py — добавленное изменением имя обязано достигаться рабочим путём, а не только прогоном набора; зовётся шагом .github/workflows/step-journal.yml. Закрытые росписи для набора и пределы для человека гейт не судит и называет законными соседями. Держит tests/test_reached_by_work.py",
+          "holdable": "",
           "awaiting": "",
           "analysed": "2026-09-25",
           "decided": "2026-09-25"
