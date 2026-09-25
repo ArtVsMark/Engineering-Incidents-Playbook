@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T12:07:16+00:00",
+  "generated_at": "2026-09-25T12:22:34+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.5",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.4"
   },
-  "count": 208,
+  "count": 209,
   "rules": [
     {
       "id": "001",
@@ -10135,6 +10135,9 @@
         "140",
         "146",
         "193"
+      ],
+      "mentioned_by": [
+        "210"
       ]
     },
     {
@@ -10736,6 +10739,9 @@
         "140",
         "146",
         "180"
+      ],
+      "mentioned_by": [
+        "210"
       ]
     },
     {
@@ -10786,7 +10792,8 @@
         "177"
       ],
       "mentioned_by": [
-        "208"
+        "208",
+        "210"
       ]
     },
     {
@@ -10890,6 +10897,55 @@
         "071",
         "183",
         "204"
+      ]
+    },
+    {
+      "id": "210",
+      "slug": "a-second-finding-on-one-place-stops-the-patching",
+      "title": {
+        "ru": "Вторая находка по одному месту останавливает починку по одной форме",
+        "en": "A second finding on one place stops the one-form-at-a-time patching"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "качество"
+        ],
+        "en": [
+          "code",
+          "quality"
+        ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
+      "claim": {
+        "ru": "Когда одно и то же место — предикат, разбор команды, порядок ветвления — получает **вторую** находку, починка по одной форме прекращается. Следующая правка этого места начинается с **перечня форм**: он замерен, прочитан поимённо, и на каждую форму стоит проверка. Только после этого место правят. Иначе перечень форм составляет ревьюер, по одной форме за заход, и каждый заход стоит цикла площадки.",
+        "en": "When one and the same place — a predicate, a command parser, a branch order — receives its **second** finding, patching it one form at a time stops. The next edit of that place starts with a **list of forms**: measured, read by name, with a check for each form. Only then is the place edited. Otherwise the reviewer ends up writing the list of forms, one form per pass, and each pass costs a platform cycle."
+      },
+      "applies": {
+        "ru": "**Работает** для мест, которые решают по форме записи: предикат, регулярное\nвыражение, разбор команды, порядок ветвления, распознаватель в наборе. То есть\nвезде, где находка называет форму.\n\n**Не работает** для прозы — фрагментов журнала, текста навыков, документации:\nперечислять там нечего. У соседа восемь мест, остановившихся на второй находке,\nбыли в основном такими. **Не работает** и для второй находки о другом вопросе в\nтом же файле: это другое место.\n\n**Признак нарушения:** третье изменение подряд правит одно место, а его тело\nназывает одну форму — из находки — без перечня и без числа форм.",
+        "en": "**Works** for places that decide by the form of what is written: a predicate,\na regular expression, a command parser, a branch order, a recogniser in a test\nsuite. That is, wherever a finding names a form.\n\n**Does not work** for prose — changelog fragments, skill text, documentation:\nthere is nothing to list there. At the neighbour's, the eight places that\nstopped at the second finding were mostly of this kind. **Does not work**\neither for a second finding about a different question in the same file: that\nis a different place.\n\n**Sign of a violation:** a third change in a row edits one place, and its body\nnames one form — the finding's — with no list and no count of forms."
+      },
+      "added": "2026-09-25",
+      "files": {
+        "ru": "rules/ru/210-a-second-finding-on-one-place-stops-the-patching.md",
+        "en": "rules/en/210-a-second-finding-on-one-place-stops-the-patching.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": ".rules/finding-kinds.json"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "195",
+        "206",
+        "207"
       ]
     }
   ],
