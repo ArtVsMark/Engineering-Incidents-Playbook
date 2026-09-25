@@ -143,9 +143,20 @@ fails the index build, and that is the mechanism keeping the trees together.
 другого может только понимающий предмет, и это граница: гейт здесь не судья,
 судит приёмка.
 
+**Зелёный набор не доказывает и того, что механизм работает**
+([211](rules/ru/211-a-mechanism-is-alive-only-if-a-working-path-reaches-it.md)).
+Набор зовёт функцию напрямую и остаётся зелёным, когда рабочий путь до неё —
+прогон, хук, команда из свода — оборвался; замер покрытия при этом числит её
+строки покрытыми. Появился механизм, делающий то же и больше, — прежний в той
+же правке либо переводится на него, либо уходит вместе со своим набором. Имя,
+до которого рабочий путь не доходит по построению, — закрытая роспись для
+набора, предел для человека — несёт причину у себя.
+
 **A defect counts as fixed** only when the suite has been made red by a
 *partial* revert: remove the behaviour, keep the names. A full revert breaks
-the import and the red proves nothing.
+the import and the red proves nothing. Nor does a green suite prove that a
+mechanism works: it calls the function directly and stays green when no
+working path reaches it any more.
 
 ## Своё ожидание — тоже гипотеза · Your own expectation is a hypothesis
 

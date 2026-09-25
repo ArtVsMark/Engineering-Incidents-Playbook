@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T12:29:53+00:00",
+  "generated_at": "2026-09-25T12:42:04+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.5",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.4"
   },
-  "count": 209,
+  "count": 210,
   "rules": [
     {
       "id": "001",
@@ -7221,7 +7221,8 @@
         "169",
         "170",
         "173",
-        "179"
+        "179",
+        "211"
       ]
     },
     {
@@ -7503,7 +7504,8 @@
       ],
       "mentioned_by": [
         "170",
-        "186"
+        "186",
+        "211"
       ]
     },
     {
@@ -10897,6 +10899,9 @@
         "071",
         "183",
         "204"
+      ],
+      "mentioned_by": [
+        "211"
       ]
     },
     {
@@ -10946,6 +10951,55 @@
         "195",
         "206",
         "207"
+      ]
+    },
+    {
+      "id": "211",
+      "slug": "a-mechanism-is-alive-only-if-a-working-path-reaches-it",
+      "title": {
+        "ru": "Механизм жив, пока до него доходит рабочий путь, а зелёный прогон этого не доказывает",
+        "en": "A mechanism is alive while a working path reaches it, and a green suite does not prove that"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "тесты"
+        ],
+        "en": [
+          "code",
+          "tests"
+        ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
+      "claim": {
+        "ru": "Механизм считается работающим, когда до него доходит **рабочий путь**: вход, который исполняет площадка или человек, — прогон, хук, команда из свода, — и дальше до читателя вердикта. Зелёный набор этого не доказывает: он зовёт механизм напрямую и остаётся зелёным, когда рабочий путь до механизма оборвался. Предикат «объявлено в рабочем коде и рабочим кодом не достигается» называет своих законных соседей: закрытые росписи, заведённые для набора, и пределы, адресованные человеку, рабочим путём не достигаются по построению.",
+        "en": "A mechanism counts as working when a **working path** reaches it: an entry point the platform or a person executes — a workflow, a hook, a command from the rulebook — and on to whoever reads the verdict. A green suite does not prove this: it calls the mechanism directly and stays green when the working path to the mechanism has broken. The predicate \"declared in working code and not reached by working code\" names its legitimate neighbours: closed rosters kept for the suite and limits addressed to a human are, by construction, not reached by a working path."
+      },
+      "applies": {
+        "ru": "**Работает** для рабочего кода с набором проверок: скрипты, хуки, действия,\nбиблиотечные модули, которые зовут прогоны.\n\n**Не работает** для закрытых росписей, заведённых ради набора, — перечней\nклассов, состояний, путей, полноту которых проверяет набор, — и для пределов,\nадресованных человеку. Их рабочий путь не достигает по построению, и это\nназывается у имени. **Не работает** и для публичного API, который зовут\nснаружи дерева: там рабочий путь лежит у потребителя, и замер по своему дереву\nничего не скажет.\n\n**Признак нарушения:** имя в рабочем коде зовёт только набор, а у самого имени\nне сказано, почему рабочий путь до него не доходит.",
+        "en": "**Works** for working code with a test suite: scripts, hooks, actions, library\nmodules that workflows call.\n\n**Does not work** for closed rosters kept for the suite — lists of classes,\nstates, paths whose completeness the suite checks — nor for limits addressed to\na human. A working path does not reach them by construction, and that is said\nby the name. **Does not work** either for a public API called from outside the\ntree: there the working path lives with the consumer, and measuring one's own\ntree says nothing.\n\n**Sign of a violation:** a name in working code is called only by the suite,\nand nothing by the name says why no working path reaches it."
+      },
+      "added": "2026-09-25",
+      "files": {
+        "ru": "rules/ru/211-a-mechanism-is-alive-only-if-a-working-path-reaches-it.md",
+        "en": "rules/en/211-a-mechanism-is-alive-only-if-a-working-path-reaches-it.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "scripts/runs_series.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "139",
+        "145",
+        "209"
       ]
     }
   ],
