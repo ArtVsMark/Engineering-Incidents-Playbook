@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 207 | 0 | 0 | 187 | 140 | 10 | 1 | 25 | 11 | 112 |  |
+| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 207 | 0 | 0 | 188 | 140 | 10 | 2 | 25 | 11 | 113 |  |
 | `Stepik-Python-Grader` | подключён | 187 | 132 | 195 | 12 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 203 | 4 | 0 | 146 | 95 | 12 | 0 | 25 | 1 | 44 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 26 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
@@ -133,7 +133,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_skips.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_verdict_order.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 46 механизмов по одному правилу; без названного адреса: 1 из 176 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 47 механизмов по одному правилу; без названного адреса: 1 из 177 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 46 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 14 |
@@ -647,7 +647,7 @@
 | 200 | действует | — | действует | — | — | действует |
 | 201 | действует | — | нет предмета | — | — | нет предмета |
 | 202 | действует | — | действует | — | — | действует |
-| 203 | нет предмета | — | действует | — | — | действует |
+| 203 | действует | — | действует | — | — | действует |
 | 204 | действует | — | действует | — | — | действует |
 | 205 | действует | — | — | — | — | действует |
 | 206 | действует | — | — | — | — | действует |

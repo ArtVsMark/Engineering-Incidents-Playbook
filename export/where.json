@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T11:54:13+00:00",
+  "generated_at": "2026-09-25T11:58:48+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -12,14 +12,14 @@
       "read_at": "2026-09-25",
       "answered": 207,
       "by_status": {
-        "active": 187,
-        "not-applicable": 14,
+        "active": 188,
+        "not-applicable": 13,
         "rejected": 6
       },
       "by_mechanism": {
         "gate": 140,
         "document": 25,
-        "skill": 1,
+        "skill": 2,
         "pipeline": 10,
         "none": 11
       },
@@ -225,7 +225,7 @@
         "200": "active",
         "201": "active",
         "202": "active",
-        "203": "not-applicable",
+        "203": "active",
         "204": "active",
         "205": "active",
         "206": "active",
@@ -1688,6 +1688,14 @@
           "awaiting": "",
           "analysed": "2026-09-17",
           "decided": ""
+        },
+        "203": {
+          "mechanism": "skill",
+          "where": ".claude/skills/incident-communications/SKILL.md — «Срок — только с источником»: срок, зависящий от чужого события — релиз, площадка, сосед, — сверяется с живым источником, а своих сроков сообщение не обещает. ГРАНИЦА: пометок о чужом календаре в самом дереве нет — ни предрелизных версий, ни матрицы, ни «устарело с версии N»",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
         },
         "204": {
           "mechanism": "document",
