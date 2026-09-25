@@ -3,8 +3,8 @@
 > Заготовка. Каждый раздел — **компактный триггер и ссылка на канон**, а не
 > пересказ: этот файл читается при старте **каждого** окна и попадает в контекст
 > целиком. Пересказ здесь стоит дороже, чем кажется.
-> → [`029`](../rules/ru/029-triggers-and-canon.md),
-> [`022`](../rules/ru/022-one-canonical-document.md)
+> → [`029`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/029-triggers-and-canon.md),
+> [`022`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/022-one-canonical-document.md)
 
 ## 🚦 Критические запреты (читать первым)
 
@@ -21,7 +21,7 @@
 
 Три из этих запретов **машинно не проверяются** — гейт видит совпадение имени
 ветки, но не намерение. Они записаны явно именно поэтому, а не потому что «и так
-понятно». → [`057`](../rules/ru/057-unmechanizable-rules-are-named-explicitly.md)
+понятно». → [`057`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/057-unmechanizable-rules-are-named-explicitly.md)
 
 ## 🪟 Два окна: `<облачное>` и `<локальное>`
 
@@ -31,15 +31,15 @@
 **Имя окна начинается с окружения:** `[WEB] задача` · `[LOCAL] задача` ·
 `[CLI] задача`. Имя присваивается при открытии, а не когда окно понадобилось
 найти. `[CLI]` машинно не проверяется — окна нет в реестре, до него снаружи не
-дотянуться. → [`038`](../rules/ru/038-window-name-declares-its-environment.md)
+дотянуться. → [`038`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/038-window-name-declares-its-environment.md)
 
 **Срок жизни окна — три-пять дней.** Дальше эстафета ссылками, не пересказом.
 Заготовка стартового сообщения — [`session-opening.md`](session-opening.md).
-→ [`006`](../rules/ru/006-window-lifetime.md)
+→ [`006`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/006-window-lifetime.md)
 
 **Сменились правила работы — окна перезапускаются.** Свод читается один раз, при
 старте; правка этого файла на уже запущенные окна **не действует**.
-→ [`047`](../rules/ru/047-rule-change-restarts-the-windows.md)
+→ [`047`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/047-rule-change-restarts-the-windows.md)
 
 ## 🛡 Гейты
 
@@ -51,7 +51,7 @@
 
 Три исхода у каждой проверки, а не два: чисто · есть находки · **проверка не
 отработала**. Третий не молчит.
-→ [`039`](../rules/ru/039-three-outcomes-not-two.md)
+→ [`039`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/039-three-outcomes-not-two.md)
 
 ## 🔀 Очередь мержа
 
@@ -59,19 +59,19 @@
 зелёной основной ветки**.
 
 - из основной ветки обновляется **только голова**; остальные стоят неподвижно и
-  проверки не перезапускают → [`052`](../rules/ru/052-only-the-head-of-the-queue-moves.md);
+  проверки не перезапускают → [`052`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/052-only-the-head-of-the-queue-moves.md);
 - порядок задаётся **правилом, а не готовностью**: красная основная ветка
   замораживает всех, помеченное блокирующим идёт вперёд, стоп-метка сильнее
-  любого приоритета → [`053`](../rules/ru/053-queue-order-is-a-rule-not-arrival.md);
+  любого приоритета → [`053`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/053-queue-order-is-a-rule-not-arrival.md);
 - состояние очереди **вычисляется**, а не хранится реестром
-  → [`049`](../rules/ru/049-derive-state-from-live-artifacts.md).
+  → [`049`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/049-derive-state-from-live-artifacts.md).
 
 ## 🏷️ Метки
 
 Метки обязательны и делятся на два класса, которые нельзя смешивать:
 **содержание** ставит автор (зона, тип, связь с задачей), **конвейер** — автоматика.
 Заготовка — [`labels.yml`](labels.yml).
-→ [`064`](../rules/ru/064-labels-are-machine-input-not-decoration.md)
+→ [`064`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/064-labels-are-machine-input-not-decoration.md)
 
 Изменение без связи с задачей не закроет её при мерже, и приоритет очереди
 наследовать будет неоткуда.
@@ -86,18 +86,18 @@
 Волнами фиксированного размера, зона одного исполнителя маленькая, в задании —
 **числа и запреты окружения**. Заготовка —
 [`executor-brief.md`](executor-brief.md).
-→ [`031`](../rules/ru/031-waves-not-salvos.md),
-[`117`](../rules/ru/117-numeric-limits-belong-in-the-task-spec.md)
+→ [`031`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/031-waves-not-salvos.md),
+[`117`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/117-numeric-limits-belong-in-the-task-spec.md)
 
 Разбор после **каждой** волны, и качество важнее механики: пять «успешно
 завершившихся» исполнителей способны выдать связный мусор.
-→ [`060`](../rules/ru/060-debrief-every-wave-quality-first.md)
+→ [`060`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/060-debrief-every-wave-quality-first.md)
 
 ## 📝 Журнал изменений
 
 Запись **файлом-фрагментом**, а не строкой в общий файл: два файла с разными
 именами не конфликтуют никогда, и очередь мержа перестаёт зависеть от порядка.
-→ [`030`](../rules/ru/030-changelog-from-fragments.md)
+→ [`030`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/030-changelog-from-fragments.md)
 
 ## 📚 Источники истины (не дублировать)
 
@@ -107,7 +107,7 @@
 
 Новый документ создаётся **внутри направления**, а не в корне. Направления
 делятся по читателю, а не по теме.
-→ [`021`](../rules/ru/021-split-docs-by-reader.md)
+→ [`021`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/021-split-docs-by-reader.md)
 
 ## 🎯 Открытая работа
 
@@ -118,7 +118,7 @@
 3. очередь работ — если она непуста; пустая очередь нормальна;
 4. журнал изменений — что уже сделано, чтобы не переизобретать.
 
-→ [`091`](../rules/ru/091-work-sources-are-ordered-first-non-empty-wins.md)
+→ [`091`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/091-work-sources-are-ordered-first-non-empty-wins.md)
 
 ## 📓 Новое правило — в общий каталог
 
@@ -127,7 +127,7 @@
 инцидент, доводы и границы применимости живут там.
 
 Не идёт в каталог то, у чего не нашлось инцидента: это предпочтение, а не
-правило. → [`080`](../rules/ru/080-every-new-rule-goes-into-the-catalogue.md)
+правило. → [`080`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/080-every-new-rule-goes-into-the-catalogue.md)
 
 ## ✅ Перед толчком
 
@@ -138,10 +138,10 @@ python preflight.py
 Один запуск вместо чек-листа: то, что надо помнить, пропускают под давлением
 задачи, и это измерено — девять инцидентов из одиннадцати были не незнанием
 правила, а его пропуском.
-→ [`002`](../rules/ru/002-rule-without-mechanism.md)
+→ [`002`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/002-rule-without-mechanism.md)
 
 Чего прогон проверить не может — метки, связь с задачей, атрибуцию диапазона —
 живёт на изменении и проверяется там. Такие шаги он обязан **называть**: иначе
 «чисто» читается шире, чем есть.
-→ [`075`](../rules/ru/075-a-guard-that-finds-nothing-must-fail.md),
-[`155`](../rules/ru/155-a-template-you-dont-use-drifts.md)
+→ [`075`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/075-a-guard-that-finds-nothing-must-fail.md),
+[`155`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/155-a-template-you-dont-use-drifts.md)

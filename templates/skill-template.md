@@ -1,14 +1,14 @@
 # Навык, держащий правило
 
 Заготовка. Реализует правила:
-[`002`](../rules/ru/002-rule-without-mechanism.md) — правило без механизма,
-[`183`](../rules/ru/183-a-claim-about-the-mechanism-is-checked-against-it.md)
+[`002`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/002-rule-without-mechanism.md) — правило без механизма,
+[`183`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/183-a-claim-about-the-mechanism-is-checked-against-it.md)
 — утверждение о механизме проверяется механизмом,
-[`022`](../rules/ru/022-one-canonical-document.md) — два имени у одного
+[`022`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/022-one-canonical-document.md) — два имени у одного
 предмета расходятся молча.
 
 **Зачем это отдельная форма.** С контракта `bindings` 1.4 навык — объявленный
-механизм наравне с гейтом и конвейером ([`export/README.md`](../export/README.md)).
+механизм наравне с гейтом и конвейером ([`export/README.md`](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/export/README.md)).
 Значит у него есть проверяемая часть, и написать навык «как получится» больше
 нельзя: ответ проекта назовёт его адресом, а гейт этот адрес откроет.
 
