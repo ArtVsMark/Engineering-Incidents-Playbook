@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 207 | 0 | 0 | 181 | 128 | 9 | 0 | 31 | 13 | 110 |  |
+| `Engineering-Incidents-Playbook` | подключён | 55 | 34 | 207 | 0 | 0 | 184 | 131 | 9 | 0 | 31 | 13 | 110 |  |
 | `Stepik-Python-Grader` | подключён | 187 | 132 | 195 | 12 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 203 | 4 | 0 | 146 | 95 | 12 | 0 | 25 | 1 | 44 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 26 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
@@ -83,8 +83,8 @@
 | `Engineering-Incidents-Playbook` | `CONTRIBUTING.md` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_prose.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 6 |
+| `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 5 |
-| `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/main_red.py` | 5 |
 | `Engineering-Incidents-Playbook` | `.claude/hooks/push_guard.py` | 4 |
 | `Engineering-Incidents-Playbook` | `.rules/consumers.json` | 4 |
@@ -107,6 +107,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/history_metrics.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/merge_ready.py` | 3 |
+| `Engineering-Incidents-Playbook` | `scripts/review_findings.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/version.py` | 3 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 3 |
 | `Engineering-Incidents-Playbook` | `tests/test_sync_inbox.py` | 3 |
@@ -118,9 +119,12 @@
 | `Engineering-Incidents-Playbook` | `.github/workflows/review.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/bindings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/exclusives.json` | 2 |
+| `Engineering-Incidents-Playbook` | `.rules/neighbours.json` | 2 |
+| `Engineering-Incidents-Playbook` | `.rules/proposals.json` | 2 |
 | `Engineering-Incidents-Playbook` | `docs/VERSIONING.md` | 2 |
 | `Engineering-Incidents-Playbook` | `export/where.json` | 2 |
 | `Engineering-Incidents-Playbook` | `rules/README.md` | 2 |
+| `Engineering-Incidents-Playbook` | `scripts/check_duplicates.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_links.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_own_name.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_python_version.py` | 2 |
@@ -128,9 +132,8 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_skips.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_verdict_order.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 2 |
-| `Engineering-Incidents-Playbook` | `scripts/review_findings.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 48 механизмов по одному правилу; без названного адреса: 1 из 168 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 45 механизмов по одному правилу; без названного адреса: 1 из 171 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 46 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 14 |
@@ -525,11 +528,11 @@
 | 080 | действует | действует | действует | действует | действует | действует |
 | 081 | нет предмета | действует | нет предмета | действует | нет предмета | нет предмета |
 | 082 | действует | действует | действует | действует | действует | действует |
-| 083 | нет предмета | действует | действует | нет предмета | нет предмета | действует |
+| 083 | действует | действует | действует | нет предмета | нет предмета | действует |
 | 084 | действует | действует | действует | отклонено | нет предмета | действует |
 | 085 | действует | действует | нет предмета | нет предмета | нет предмета | действует |
 | 086 | действует | действует | нет предмета | действует | нет предмета | действует |
-| 087 | нет предмета | действует | нет предмета | действует | нет предмета | действует |
+| 087 | действует | действует | нет предмета | действует | нет предмета | действует |
 | 088 | действует | действует | нет предмета | действует | нет предмета | действует |
 | 089 | действует | действует | действует | отклонено | действует | действует |
 | 090 | действует | действует | действует | действует | действует | действует |
@@ -632,7 +635,7 @@
 | 188 | нет предмета | действует | действует | — | — | действует |
 | 189 | действует | действует | действует | — | — | действует |
 | 190 | действует | действует | действует | — | — | действует |
-| 191 | нет предмета | действует | действует | — | — | действует |
+| 191 | действует | действует | действует | — | — | действует |
 | 192 | действует | действует | действует | — | — | действует |
 | 193 | нет предмета | действует | действует | — | — | нет предмета |
 | 194 | нет предмета | действует | действует | — | — | нет предмета |

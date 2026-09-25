@@ -1,7 +1,7 @@
 {
   "schema": "1.4",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-09-25T10:07:06+00:00",
+  "generated_at": "2026-09-25T10:08:49+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -12,12 +12,12 @@
       "read_at": "2026-09-25",
       "answered": 207,
       "by_status": {
-        "active": 181,
-        "not-applicable": 20,
+        "active": 184,
+        "not-applicable": 17,
         "rejected": 6
       },
       "by_mechanism": {
-        "gate": 128,
+        "gate": 131,
         "document": 31,
         "pipeline": 9,
         "none": 13
@@ -105,11 +105,11 @@
         "080": "active",
         "081": "not-applicable",
         "082": "active",
-        "083": "not-applicable",
+        "083": "active",
         "084": "active",
         "085": "active",
         "086": "active",
-        "087": "not-applicable",
+        "087": "active",
         "088": "active",
         "089": "active",
         "090": "active",
@@ -212,7 +212,7 @@
         "188": "not-applicable",
         "189": "active",
         "190": "active",
-        "191": "not-applicable",
+        "191": "active",
         "192": "active",
         "193": "not-applicable",
         "194": "not-applicable",
@@ -784,6 +784,14 @@
           "analysed": "2026-09-16",
           "decided": "2026-09-16"
         },
+        "083": {
+          "mechanism": "gate",
+          "where": "scripts/review_findings.py — вывод ревьюера-модели принимается СВОЙСТВАМИ, а не сверкой с эталоном: считается только комментарий учётной записи ревьюера, вердикт — строка «ВЕРДИКТ: находок N», находки — строки «НАХОДКА:», число без строк — третий исход, разметка модели отпечатка не меняет. Держит набор этого скрипта в обязательной работе catalogue. ГРАНИЦА: равенство числа в вердикте числу строк не проверяется",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
+        },
         "084": {
           "mechanism": "gate",
           "where": "scripts/check_workflows.py — прогон, не объявленный основной работой, не просыпается на pull_request: его отказ не должен ни задерживать слияние, ни ронять его. Список тех, кому положено, разрешительный и короткий: .github/workflows/ci.yml и .github/workflows/automerge.yml",
@@ -807,6 +815,14 @@
           "awaiting": "",
           "analysed": "2026-09-17",
           "decided": ""
+        },
+        "087": {
+          "mechanism": "gate",
+          "where": "scripts/collect_proposals.py — повторный ночной опрос чужих предложений начинается с файла прошлых решений .rules/proposals.json, и решённое в очередь не возвращается («решение уже вынесено»); держит набор этого скрипта в обязательной работе catalogue",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
         },
         "088": {
           "mechanism": "document",
@@ -1575,6 +1591,14 @@
           "awaiting": "",
           "analysed": "2026-09-17",
           "decided": ""
+        },
+        "191": {
+          "mechanism": "gate",
+          "where": "scripts/check_duplicates.py — каркас новой записи, который генератор собирает вместо человека, держится красным в обязательной работе catalogue, пока в .rules/neighbours.json нет ответа о соседях, и отказ называет, ЧТО не заполнено и где. ГРАНИЦА: заглушки <…> в тексте записи и во фрагменте журнала не держит ничто",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-09-25",
+          "decided": "2026-09-25"
         },
         "192": {
           "mechanism": "document",
