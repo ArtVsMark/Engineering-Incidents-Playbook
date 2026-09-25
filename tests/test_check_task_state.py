@@ -3,6 +3,11 @@
 Держит правила каталога 212 и 039 на `check_task_state.pulls_for`: список
 читается постранично через общий шов, разбирается по элементу, а отказ
 площадки и неразобранный ответ — третий исход, а не «изменений нет».
+
+Источник формы ответа — адрес площадки
+https://docs.github.com/rest/commits/commits#list-pull-requests-associated-with-a-commit
+и вызов шва `gh api --paginate <путь> --jq '<элемент> | tojson'`: строка JSON
+на элемент со всех страниц.
 """
 
 from __future__ import annotations
