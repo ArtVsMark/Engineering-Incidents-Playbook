@@ -566,3 +566,78 @@ def test_тело_пустого_раздела_отказ(monkeypatch, repo, ca
     cli(monkeypatch, repo, {}, HEADER, "--notes", "v0.2.0")
     assert cc.main() == 1
     assert "пуст" in capsys.readouterr().err
+
+
+# ── дозавершение выпуска, упавшего после тега (--notes --closed) ──────────
+# 27 сентября повтор выпуска v1.3.0 отвергла первая же проверка — «тег уже
+# есть», — и страницу можно было завести только руками. Дозавершение берёт
+# тело из раздела, который выпуск уже закрыл: [Unreleased] к этому времени
+# пуст.
+
+ЗАКРЫТЫЙ = ("# Журнал\n\n## [Unreleased]\n\n" + cc.EMPTY_NOTE + "\n\n"
+            "## [0.2.0] — 2026-09-27\n\n### Добавлено · Added\n\n- новое\n- ещё\n\n"
+            "### Починено · Fixed\n\n- починка\n\n## [0.1.0]\n\n- старое\n")
+
+
+def test_дозавершение_берёт_закрытый_раздел(monkeypatch, repo, capsys):
+    cli(monkeypatch, repo, {}, ЗАКРЫТЫЙ, "--notes", "v0.2.0", "--closed",
+        "--key", "Ключевое", "--repo", "o/r")
+    assert cc.main() == 0
+    out = capsys.readouterr().out
+    assert out.startswith("# 0.2.0\n\n### Добавлено · Added")
+    assert "2026-09-27" not in out, "дата — строка заголовка, не тело"
+    assert "- починка" in out and "старое" not in out
+    assert cc.EMPTY_NOTE not in out
+
+
+def test_дозавершение_длинного_раздела_кратко(monkeypatch, repo, capsys):
+    """Счёт — по закрытому разделу: у [Unreleased] он был бы нулевым."""
+    cli(monkeypatch, repo, {}, ЗАКРЫТЫЙ, "--notes", "v0.2.0", "--closed",
+        "--key", "Ключевое", "--repo", "o/r")
+    monkeypatch.setattr(cc, "ПРЕДЕЛ_ТЕЛА", 40)
+    assert cc.main() == 0
+    assert "3 записей журнала: добавлено — 2, починено — 1." in capsys.readouterr().out
+
+
+def test_дозавершение_без_раздела_отказ(monkeypatch, repo, capsys):
+    """Раздела нет — тег поставил не выпуск, и дозавершать нечего."""
+    cli(monkeypatch, repo, {}, ЗАКРЫТЫЙ, "--notes", "v0.3.0", "--closed")
+    assert cc.main() == 1
+    assert "дозавершать нечего" in capsys.readouterr().err
+
+
+def test_дозавершение_читает_журнал_тега(monkeypatch, repo, capsys):
+    """Голова могла уйти дальше: раздел читается в дереве тега."""
+    write(repo / "at-tag" / "CHANGELOG.md", ЗАКРЫТЫЙ)
+    cli(monkeypatch, repo, {}, HEADER, "--notes", "v0.2.0", "--closed",
+        "--changelog", str(repo / "at-tag" / "CHANGELOG.md"))
+    assert cc.main() == 0
+    assert "- починка" in capsys.readouterr().out
+
+
+def test_журнал_тега_без_notes_отказ(monkeypatch, repo):
+    cli(monkeypatch, repo, {}, HEADER, "--closed")
+    try:
+        cc.main()
+    except SystemExit as exc:
+        assert exc.code == 2
+    else:
+        raise AssertionError("--closed без --notes прошёл молча")
+
+
+def test_выпуск_дозавершается_проверенными_режимами():
+    """release.yml зовёт именно те режимы, что держит этот набор (068).
+
+    Дозавершение не закрывает журнал второй раз и не толкает тег: оба шага
+    выпуска стоят за признаком `finish`.
+    """
+    wf = (Path(__file__).resolve().parent.parent
+          / ".github" / "workflows" / "release.yml").read_text(encoding="utf-8")
+    assert "--notes \"$WANT\" --closed" in wf
+    assert "--key-of \"$WANT\"" in wf
+    закрытие = wf.split("- name: раздел журнала, строка эволюции метрик")[1]
+    assert закрытие.lstrip().startswith("и закреплённый пример\n"
+                                         "        if: steps.form.outputs.finish != 'true'")
+    толчок = wf.split("- name: тег и релиз")[1]
+    assert толчок.index('if [ "$FINISH" = true ]') < толчок.index("git push origin")
+    assert "--verify-tag" in толчок

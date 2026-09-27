@@ -11,18 +11,30 @@
 # ПОЧЕМУ ПРОВЕРКИ ДО ПУБЛИКАЦИИ, А НЕ ПОСЛЕ. Тег в общей ветке не переписать, а
 # пустое тело релиза читается как «ничего не изменилось» — хуже, чем отсутствие
 # релиза (правило 075: страж, который ничего не нашёл, обязан краснеть).
+#
+# ДОЗАВЕРШЕНИЕ — ТОЙ ЖЕ КНОПКОЙ. Выпуск, упавший ПОСЛЕ тега, повтором не
+# чинился: 27 сентября v1.3.0 упал на странице (тело длиннее предела
+# площадки), а повтор отвергла первая же проверка — «тег уже есть». Путь
+# остался один — завести страницу руками, а с телефона его нет (126: выход
+# не должен проходить через остановленное действие). Тег, поставленный выпуском
+# (в журнале тега закрыт его раздел, в истории — его строка), без страницы
+# теперь означает: дозавершить. Тег, коммит и журнал не трогаются, заводится только
+# страница — из того, что выпуск уже записал.
 name: release
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Версия вида vX.Y.0 — только граница MINOR"
+        description: "Версия вида vX.Y.0 — только граница MINOR. Тег уже есть, а страницы нет — прогон дозавершит выпуск"
         required: true
         type: string
+      # Не обязательно для формы, но обязательно для нового выпуска — это
+      # проверяет первый шаг. Дозавершение берёт «Ключевое» из строки, которую
+      # выпуск уже записал: второй ввод разошёлся бы с первым молча (035).
       summary:
-        description: "Ключевое: что принёс выпуск, одной фразой без ссылок"
-        required: true
+        description: "Ключевое: что принёс выпуск, одной фразой без ссылок. При дозавершении не нужно"
+        required: false
         type: string
 
 permissions:
@@ -83,9 +95,17 @@ jobs:
         with:
           python-version: "3.12"
 
+      # ТЕГ ЕСТЬ — ЭТО ЕЩЁ НЕ ОТКАЗ. Страница на месте — выпуск состоялся, и
+      # номер не переиспользуется. Страницы нет — дозавершение, но только
+      # если тег поставил сам выпуск: это решают следующие шаги по дереву
+      # тега (раздел журнала, строка истории), а не имя тега. Страницу, которую
+      # не удалось прочитать, за «нет страницы» не принимаем (075).
       - name: форма тега и инкремент MINOR
+        id: form
         env:
+          GH_TOKEN: ${{ github.token }}
           WANT: ${{ inputs.version }}
+          KEY: ${{ inputs.summary }}
         run: |
           set -euo pipefail
           if ! printf '%s' "$WANT" | grep -qE '^v[0-9]+\.[0-9]+\.0$'; then
@@ -93,7 +113,20 @@ jobs:
             exit 1
           fi
           if git rev-parse -q --verify "refs/tags/$WANT" >/dev/null; then
-            echo "::error::тег $WANT уже есть. Номера не переиспользуются"
+            if page=$(gh release view "$WANT" --json tagName 2>&1); then
+              echo "::error::выпуск $WANT уже опубликован: тег и страница на месте. Номера не переиспользуются"
+              exit 1
+            fi
+            if ! printf '%s' "$page" | grep -q 'release not found'; then
+              echo "::error::страница выпуска $WANT не прочитана: $page"
+              exit 1
+            fi
+            echo "finish=true" >> "$GITHUB_OUTPUT"
+            echo "тег $WANT есть, страницы нет — дозавершаю: только страница"
+            exit 0
+          fi
+          if [ -z "${KEY// /}" ]; then
+            echo "::error::«Ключевое» пусто: у нового выпуска его вводит человек — машина не знает, что выпуск принёс"
             exit 1
           fi
           prev=$(git describe --tags --abbrev=0 --match 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null || true)
@@ -111,15 +144,30 @@ jobs:
       # длиннее 125 000 знаков — HTTP 422, когда тег и коммит выпуска уже ушли.
       # Решает сборщик журнала, тем же разбором раздела, что и закрытие: здесь
       # стояла вторая копия этого разбора (214).
+      #
+      # ДОЗАВЕРШЕНИЕ ЧИТАЕТ ДЕРЕВО ТЕГА, А НЕ ГОЛОВУ. Раздел [X.Y.Z] и строку
+      # истории выпуск записал в коммит, на котором стоит тег; голова могла
+      # уйти дальше. Скрипты — с головы: в дереве тега этого режима ещё нет.
+      # Раздела в теге нет — отказ сборщика: значит, тег поставил не выпуск.
       - name: раздел журнала под тег не пуст
         id: notes
         env:
           WANT: ${{ inputs.version }}
           KEY: ${{ inputs.summary }}
+          FINISH: ${{ steps.form.outputs.finish }}
         run: |
           set -euo pipefail
-          python scripts/collect_changelog.py --notes "$WANT" --key "$KEY" \
-            --repo "$GITHUB_REPOSITORY" > "$RUNNER_TEMP/notes.md"
+          if [ "$FINISH" = true ]; then
+            git worktree add -q --detach "$RUNNER_TEMP/at-tag" "$WANT"
+            KEY=$(python scripts/history_metrics.py --root "$RUNNER_TEMP/at-tag" \
+              --key-of "$WANT")
+            python scripts/collect_changelog.py --notes "$WANT" --closed \
+              --changelog "$RUNNER_TEMP/at-tag/CHANGELOG.md" --key "$KEY" \
+              --repo "$GITHUB_REPOSITORY" > "$RUNNER_TEMP/notes.md"
+          else
+            python scripts/collect_changelog.py --notes "$WANT" --key "$KEY" \
+              --repo "$GITHUB_REPOSITORY" > "$RUNNER_TEMP/notes.md"
+          fi
           echo "path=$RUNNER_TEMP/notes.md" >> "$GITHUB_OUTPUT"
           echo "тело релиза собрано, строк: $(wc -l < "$RUNNER_TEMP/notes.md")"
 
@@ -148,6 +196,7 @@ jobs:
       # считались по тому же дереву, на которое встанет тег. Человек вводит
       # только «Ключевое», которого машина не знает.
       - name: раздел журнала, строка эволюции метрик и закреплённый пример
+        if: steps.form.outputs.finish != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           WANT: ${{ inputs.version }}
@@ -216,13 +265,20 @@ jobs:
             git tag -f -a "$WANT" -m "$WANT"
           fi
 
+      # `--verify-tag`: страница встаёт только на тег, который уже есть в
+      # общей ветке, — площадка не заведёт его сама на голове `main`.
       - name: тег и релиз
         env:
           GH_TOKEN: ${{ github.token }}
           WANT: ${{ inputs.version }}
+          FINISH: ${{ steps.form.outputs.finish }}
         run: |
           set -euo pipefail
-          git push origin "refs/tags/$WANT"
-          gh release create "$WANT" --title "$WANT" \
+          if [ "$FINISH" = true ]; then
+            echo "тег $WANT уже в общей ветке — не толкаю и не переставляю"
+          else
+            git push origin "refs/tags/$WANT"
+          fi
+          gh release create "$WANT" --verify-tag --title "$WANT" \
             --notes-file "$RUNNER_TEMP/notes.md"
           echo "выпущено: $WANT"
