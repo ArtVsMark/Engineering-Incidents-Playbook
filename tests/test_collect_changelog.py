@@ -529,3 +529,40 @@ def test_zaglushka_karkasa_eto_nahodka(monkeypatch, repo):
         "rule-209-x.added.md": f"Правило 209: {cc.ЗАГЛУШКА_ФРАГМЕНТА} (o/r#1).\n"})
     _, problems = cc.validate()
     assert len(problems) == 1 and "заглушка каркаса" in problems[0]
+
+
+# ── тело страницы выпуска (--notes) ───────────────────────────────────────
+# 27 сентября выпуск v1.3.0 упал на последнем шаге: тело из 229 записей
+# длиннее предела площадки, 125 000 знаков, — HTTP 422 после того, как тег
+# уже ушёл. Длинный раздел идёт кратко со ссылкой, а не обрезкой.
+
+ОТКРЫТЫЙ = ("# Журнал\n\n## [Unreleased]\n\n### Добавлено · Added\n\n- новое\n- ещё\n\n"
+            "### Починено · Fixed\n\n- починка\n\n## [0.1.0]\n\n- старое\n")
+
+
+def test_тело_выпуска_целиком_пока_влезает(monkeypatch, repo, capsys):
+    cli(monkeypatch, repo, {}, ОТКРЫТЫЙ, "--notes", "v0.2.0",
+        "--key", "Ключевое", "--repo", "o/r")
+    assert cc.main() == 0
+    out = capsys.readouterr().out
+    assert out.startswith("# 0.2.0\n\n### Добавлено · Added")
+    assert "- починка" in out and "старое" not in out
+
+
+def test_длинное_тело_идёт_кратко_со_ссылкой(monkeypatch, repo, capsys):
+    """Не обрезка: обрезанный журнал читался бы полным, хвост пропал бы молча."""
+    cli(monkeypatch, repo, {}, ОТКРЫТЫЙ, "--notes", "v0.2.0",
+        "--key", "Ключевое", "--repo", "o/r")
+    monkeypatch.setattr(cc, "ПРЕДЕЛ_ТЕЛА", 40)
+    assert cc.main() == 0
+    out = capsys.readouterr().out
+    assert "Ключевое" in out
+    assert "3 записей журнала: добавлено — 2, починено — 1." in out
+    assert "https://github.com/o/r/blob/v0.2.0/CHANGELOG.md" in out
+    assert "- новое" not in out
+
+
+def test_тело_пустого_раздела_отказ(monkeypatch, repo, capsys):
+    cli(monkeypatch, repo, {}, HEADER, "--notes", "v0.2.0")
+    assert cc.main() == 1
+    assert "пуст" in capsys.readouterr().err

@@ -105,25 +105,21 @@ jobs:
 
       # Тело релиза — раздел журнала. Забытая запись роняет выпуск, а не отдаёт
       # пустоту: это единственный момент, когда её ещё можно дописать.
+      #
+      # ДЛИННЫЙ РАЗДЕЛ ИДЁТ КРАТКО, А НЕ ОБРЕЗКОЙ. 27 сентября выпуск v1.3.0 упал
+      # на последнем шаге: 229 записей весили 419 КБ, площадка принимает тело не
+      # длиннее 125 000 знаков — HTTP 422, когда тег и коммит выпуска уже ушли.
+      # Решает сборщик журнала, тем же разбором раздела, что и закрытие: здесь
+      # стояла вторая копия этого разбора (214).
       - name: раздел журнала под тег не пуст
         id: notes
         env:
           WANT: ${{ inputs.version }}
+          KEY: ${{ inputs.summary }}
         run: |
           set -euo pipefail
-          num="${WANT#v}"
-          python - "$num" <<'PY' > "$RUNNER_TEMP/notes.md"
-          import re, sys, pathlib
-          num = sys.argv[1]
-          text = pathlib.Path("CHANGELOG.md").read_text(encoding="utf-8")
-          m = re.search(r"^## \[Unreleased\]\s*\n(.*?)(?=^## \[)", text, re.M | re.S)
-          body = (m.group(1).strip() if m else "")
-          if not body:
-              sys.exit(f"раздел [Unreleased] пуст: соберите фрагменты — "
-                       f"python scripts/collect_changelog.py --collect")
-          print(f"# {num}\n")
-          print(body)
-          PY
+          python scripts/collect_changelog.py --notes "$WANT" --key "$KEY" \
+            --repo "$GITHUB_REPOSITORY" > "$RUNNER_TEMP/notes.md"
           echo "path=$RUNNER_TEMP/notes.md" >> "$GITHUB_OUTPUT"
           echo "тело релиза собрано, строк: $(wc -l < "$RUNNER_TEMP/notes.md")"
 
