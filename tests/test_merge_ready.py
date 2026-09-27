@@ -339,3 +339,64 @@ def test_bez_await_krasnyy_kanal_po_prezhnemu_derzhit(monkeypatch):
         прогон("catalogue"), прогон("review", исход="failure")]})))
 
     assert mr.main(["--required", "catalogue"]) == 1
+
+
+# ── выпуск — действие над веткой, а не вердикт о ней ─────────────────────
+# 27 сентября выпуск v1.3.0 упал трижды, и каждый провал замораживал очередь,
+# включая починку самого выпуска: свёртка берёт последний прогон работы, и
+# снять заморозку мог только успешный выпуск, а тег был уже занят. Исключение
+# принадлежит проекту, а не инструменту, — оно передаётся ключом из
+# automerge.yml, и набор читает его ОТТУДА: список в тесте разошёлся бы с
+# настоящим молча.
+
+def исключения_очереди() -> frozenset[str]:
+    import re
+    from pathlib import Path
+    yml = (Path(__file__).resolve().parent.parent / ".github" / "workflows"
+           / "automerge.yml").read_text(encoding="utf-8")
+    найдено = re.search(r"merge_ready\.py --freeze-only --base-exclude (\S+)", yml)
+    assert найдено, "automerge.yml не передаёт --base-exclude заморозке"
+    return frozenset(найдено.group(1).split(","))
+
+
+def прогон_ветки(name: str, conclusion: str, at: str) -> dict:
+    """Своё имя: `прогон` в этом файле объявлен дважды с разными полями."""
+    return {"name": name, "status": "completed", "conclusion": conclusion,
+            "createdAt": at}
+
+
+УПАВШИЙ_ВЫПУСК = [прогон_ветки("ci", "success", "2026-09-27T13:12:00Z"),
+                  прогон_ветки("release", "failure", "2026-09-27T13:13:43Z")]
+
+
+def test_упавший_выпуск_очередь_не_морозит():
+    assert mr.frozen(УПАВШИЙ_ВЫПУСК, labels=[], thaw="blocker",
+                     excluded=исключения_очереди())[0] == ""
+
+
+def test_без_исключения_упавший_выпуск_морозил_бы():
+    """Обратная сторона: без ключа свёртка честно видит release красным —
+    исключение снимает именно его, а не глушит свёртку целиком."""
+    why, _ = mr.frozen(УПАВШИЙ_ВЫПУСК, labels=[], thaw="blocker")
+    assert "release" in why
+
+
+def test_исключение_выпуска_не_глушит_настоящее_красное():
+    runs = УПАВШИЙ_ВЫПУСК + [прогон_ветки("ci", "failure", "2026-09-27T13:20:00Z")]
+    why, _ = mr.frozen(runs, labels=[], thaw="blocker",
+                       excluded=исключения_очереди())
+    assert "ci" in why and "release" not in why
+
+
+def test_дежурный_исключает_выпуск_тем_же_именем():
+    """Очередь и дежурный судят об одном основании: выпуск, исключённый в
+    одном месте и не исключённый в другом, дал бы «очередь идёт» при задаче
+    «работу не начинают» — два ответа на один вопрос (214)."""
+    import re
+    from pathlib import Path
+    yml = (Path(__file__).resolve().parent.parent / ".github" / "workflows"
+           / "main-red.yml").read_text(encoding="utf-8")
+    # Строка аргумента, а не проза: в комментарии рядом стоит снятое
+    # исключение прошлого, и оно исключением не является.
+    дежурный = frozenset(re.findall(r"(?m)^\s+--exclude (\S+) \\$", yml))
+    assert дежурный == исключения_очереди()
