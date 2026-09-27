@@ -296,3 +296,25 @@ def test_пересчёт_строки_без_тега_это_третий_ис�
 
     assert hm.main(["--root", str(repo), "--recount"]) == 2
     assert "тега такого нет" in capsys.readouterr().err
+
+
+# ── «Ключевое» для дозавершения выпуска (--key-of) ───────────────────────
+# 27 сентября черновик страницы v1.3.0 взял фразу из заголовка раздела
+# истории, а на кнопке было введено другое. Дозавершение берёт «Ключевое» из
+# строки, которую выпуск уже записал.
+
+def test_ключевое_берётся_из_строки_выпуска(repo, capsys):
+    assert hm.main(["--root", str(fake(repo)), "--key-of", "v1.0.0"]) == 0
+    assert capsys.readouterr().out == "Первый выпуск подделки\n"
+
+
+def test_ключевое_без_строки_отказ(repo, capsys):
+    """Строки нет — выпуск до неё не дошёл, и дозавершать нечего."""
+    assert hm.main(["--root", str(fake(repo)), "--key-of", "v2.0.0"]) == 1
+    assert "не дошёл" in capsys.readouterr().err
+
+
+def test_ключевое_без_истории_третий_исход(repo):
+    fake(repo)
+    (repo / "docs" / "HISTORY.md").unlink()
+    assert hm.main(["--root", str(repo), "--key-of", "v1.0.0"]) == 2

@@ -260,19 +260,22 @@ def existing(text: str) -> dict[str, list[str]]:
     собрали снова — и в теле выпуска встали ДВА «Добавлено» и ДВА
     «Изменено». Читателю это выглядит как две разные группы, хотя группа
     одна; а разделить их обратно нечем — порядок внутри уже перемешан.
+    """
+    return по_секциям(неразобранное(text)[1])
+
+
+def по_секциям(раздел: str) -> dict[str, list[str]]:
+    """Записи одного раздела журнала, разложенные по секциям.
 
     Разбор идёт по строкам, а не выражением через весь текст: заголовок
-    секции и запись различаются началом строки, и этого достаточно.
+    секции и запись различаются началом строки, и этого достаточно. Раздел
+    вырезают `неразобранное()` и `закрытый_раздел()`: границу раздела здесь
+    второй раз не ищут (214).
     """
     by_title = {TITLES[s]: s for s in SECTIONS}
     found: dict[str, list[str]] = {s: [] for s in SECTIONS}
-    head, _, tail = text.partition(UNRELEASED)
-    if not tail:
-        return found
     section = None
-    for line in tail.splitlines():
-        if line.startswith("## ["):        # начался следующий выпуск
-            break
+    for line in раздел.splitlines():
         if line.startswith("### "):
             section = by_title.get(line[4:].strip())
             continue
@@ -317,8 +320,26 @@ def неразобранное(text: str) -> tuple[str, str, str]:
     а стоял он прямо в release.yml (214).
     """
     head, _, tail = text.partition(UNRELEASED)
-    cut = tail.index("## [") if "## [" in tail else len(tail)
+    cut = конец_раздела(tail)
     return head, tail[:cut], tail[cut:]
+
+
+def конец_раздела(tail: str) -> int:
+    """Где кончается раздел, начатый с начала `tail`: у следующего «## [»."""
+    return tail.index("## [") if "## [" in tail else len(tail)
+
+
+def закрытый_раздел(text: str, num: str) -> str:
+    """Раздел выпуска [num] без строки заголовка; пусто, если раздела нет.
+
+    Нужен дозавершению: выпуск, упавший после тега, берёт тело страницы из
+    раздела, который сам уже закрыл, — [Unreleased] к этому времени пуст.
+    """
+    m = re.search(rf"(?m)^## \[{re.escape(num)}\][^\n]*\n?", text)
+    if not m:
+        return ""
+    tail = text[m.end():]
+    return tail[:конец_раздела(tail)]
 
 
 #: Предел тела выпуска у площадки — 125 000 знаков. Замер 27 сентября:
@@ -328,30 +349,41 @@ def неразобранное(text: str) -> tuple[str, str, str]:
 ПРЕДЕЛ_ТЕЛА = 125_000
 
 
-def тело_выпуска(text: str, tag: str, key: str, repo: str) -> tuple[str | None, str]:
+def тело_выпуска(text: str, tag: str, key: str, repo: str, *,
+                 закрытый: bool = False) -> tuple[str | None, str]:
     """Тело страницы выпуска: раздел журнала, а длинный — кратко со ссылкой.
 
     КОРОТКАЯ ФОРМА — НЕ ОБРЕЗКА. Обрезанный журнал читался бы как полный, и
     хвост пропал бы молча (016). Вместо него — «Ключевое», счёт записей по
     секциям и адрес раздела в самом теге: полный список там, где он и живёт.
     Вторая строка ответа — отказ.
+
+    `закрытый` берёт раздел [X.Y.Z], а не [Unreleased]: так дозавершается
+    выпуск, упавший после тега. Раздела нет — отказ: значит, выпуск до
+    закрытия журнала не дошёл, и тег поставил не он.
     """
-    _, раздел, _ = неразобранное(text)
-    if not раздел.strip():
-        return None, ("раздел [Unreleased] пуст: соберите фрагменты — "
-                      "python scripts/collect_changelog.py --collect")
     num = history_metrics.release(tag)
+    if закрытый:
+        раздел = закрытый_раздел(text, num)
+        if not раздел.strip():
+            return None, (f"раздела [{num}] в журнале нет или он пуст: выпуск "
+                          "до закрытия журнала не дошёл — дозавершать нечего")
+    else:
+        _, раздел, _ = неразобранное(text)
+        if not раздел.strip():
+            return None, ("раздел [Unreleased] пуст: соберите фрагменты — "
+                          "python scripts/collect_changelog.py --collect")
     полное = f"# {num}\n\n{раздел.strip()}\n"
     if len(полное) <= ПРЕДЕЛ_ТЕЛА:
         return полное, ""
-    счёт = existing(text)
+    счёт = по_секциям(раздел)
     всего = sum(len(v) for v in счёт.values())
-    по_секциям = ", ".join(
+    разбивка = ", ".join(
         f"{TITLES[s].split(' · ')[0].lower()} — {len(счёт[s])}"
         for s in SECTIONS if счёт[s])
     адрес = f"https://github.com/{repo}/blob/{tag}"
     return (f"# {num}\n\n{key.strip()}\n\n"
-            f"{всего} записей журнала: {по_секциям}.\n\n"
+            f"{всего} записей журнала: {разбивка}.\n\n"
             f"Полный список — раздел [{num}] в CHANGELOG.md: {адрес}/CHANGELOG.md\n"
             f"Решения выпуска — docs/HISTORY.md: {адрес}/docs/HISTORY.md\n"), ""
 
@@ -393,6 +425,13 @@ def main() -> int:
                       help="напечатать тело страницы выпуска: раздел "
                            "[Unreleased], а длиннее предела площадки — кратко "
                            "со ссылкой на раздел в теге")
+    ap.add_argument("--closed", action="store_true",
+                    help="с --notes: тело из закрытого раздела выпуска, а не "
+                         "из [Unreleased] — дозавершение выпуска, упавшего "
+                         "после тега")
+    ap.add_argument("--changelog", type=Path, metavar="ФАЙЛ",
+                    help="с --notes: читать журнал отсюда — дозавершение "
+                         "читает его в дереве тега")
     ap.add_argument("--key", default="",
                     help="«Ключевое» выпуска для краткой формы --notes")
     ap.add_argument("--repo", default="",
@@ -411,6 +450,8 @@ def main() -> int:
     ap.add_argument("--body-file", type=Path, metavar="ФАЙЛ",
                     help="тело изменения: в нём ищется освобождение")
     args = ap.parse_args()
+    if (args.closed or args.changelog) and not args.notes:
+        ap.error("--closed и --changelog задают только тело выпуска: нужен --notes")
 
     # ── запись едет вместе с изменением (правило 138) ──────────────────────
     if args.require_entry:
@@ -458,8 +499,15 @@ def main() -> int:
     if args.close:
         return close(args.close, args.date)
     if args.notes:
-        тело, отказ = тело_выпуска(CHANGELOG.read_text(encoding="utf-8"),
-                                   args.notes, args.key, args.repo)
+        путь = args.changelog or CHANGELOG
+        try:
+            журнал = путь.read_text(encoding="utf-8")
+        except OSError as exc:
+            print(f"проверка не отработала: журнал не прочитан — {exc}",
+                  file=sys.stderr)
+            return 2
+        тело, отказ = тело_выпуска(журнал, args.notes, args.key, args.repo,
+                                   закрытый=args.closed)
         if тело is None:
             print(отказ, file=sys.stderr)
             return 1

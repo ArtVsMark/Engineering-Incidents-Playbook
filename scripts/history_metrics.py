@@ -434,6 +434,34 @@ def add(root: Path, tag: str, key: str, at_tag: bool) -> int:
     return 0
 
 
+def key_of(root: Path, tag: str) -> int:
+    """Печатает «Ключевое» строки выпуска — то, что человек ввёл на кнопке.
+
+    Нужен дозавершению выпуска, упавшего после тега: страница берёт
+    «Ключевое» из строки, которую выпуск уже записал, а не просит ввести его
+    второй раз. Второй ввод разошёлся бы с первым молча (035): 27 сентября
+    черновик страницы v1.3.0 взял фразу из заголовка раздела истории, а на
+    кнопке было введено другое.
+    """
+    path = root / HISTORY
+    if not path.exists():
+        print(f"читать нечего: нет {path}", file=sys.stderr)
+        return 2
+    rows, _ = table(path.read_text(encoding="utf-8"))
+    if rows is None:
+        print(f"читать нечего: в {HISTORY} нет таблицы под заголовком "
+              f"«{SECTION}»", file=sys.stderr)
+        return 2
+    for row in rows:
+        c = cells(row)
+        if release(c[0]) == release(tag):
+            print(c[-1])
+            return 0
+    print(f"строки про {tag} нет: выпуск до строки метрик не дошёл",
+          file=sys.stderr)
+    return 1
+
+
 def recount(root: Path) -> int:
     """Пересчитать числа всех строк по их тегам, сохранив «Ключевое».
 
@@ -490,6 +518,9 @@ def main(argv: list[str] | None = None) -> int:
                              "при смене состава колонок, «Ключевое» сохраняется")
     parser.add_argument("--add", metavar="ТЕГ",
                         help="дописать строку выпуска, посчитав числа")
+    parser.add_argument("--key-of", metavar="ТЕГ",
+                        help="напечатать «Ключевое» строки выпуска: его берёт "
+                             "дозавершение, чтобы не спрашивать второй раз")
     parser.add_argument("--key", default="",
                         help="колонка «Ключевое»: что принёс выпуск, одной фразой")
     parser.add_argument("--at-tag", action="store_true",
@@ -499,11 +530,13 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.recount:
         return recount(args.root)
+    if args.key_of:
+        return key_of(args.root, args.key_of)
     if args.add:
         return add(args.root, args.add, args.key, args.at_tag)
     if args.check:
         return check(args.root)
-    parser.error("нужен --check или --add")
+    parser.error("нужен --check, --add или --key-of")
     return 2
 
 
