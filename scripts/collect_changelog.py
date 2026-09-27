@@ -309,6 +309,53 @@ def missing_releases() -> tuple[list[str], str | None]:
             if history_metrics.release(t) not in have], None
 
 
+def неразобранное(text: str) -> tuple[str, str, str]:
+    """Журнал, разрезанный вокруг [Unreleased]: до, сам раздел, после.
+
+    Раздел — от заголовка до следующего «## [». Один разрез на закрытие и на
+    тело выпуска: второй разбор того же раздела разошёлся бы с первым молча,
+    а стоял он прямо в release.yml (214).
+    """
+    head, _, tail = text.partition(UNRELEASED)
+    cut = tail.index("## [") if "## [" in tail else len(tail)
+    return head, tail[:cut], tail[cut:]
+
+
+#: Предел тела выпуска у площадки — 125 000 знаков. Замер 27 сентября:
+#: `gh release create` для v1.3.0 ответил HTTP 422 «body is too long
+#: (maximum is 125000 characters)», когда 229 записей раздела весили 419 КБ;
+#: тег и коммит выпуска уже ушли, страница выпуска не встала.
+ПРЕДЕЛ_ТЕЛА = 125_000
+
+
+def тело_выпуска(text: str, tag: str, key: str, repo: str) -> tuple[str | None, str]:
+    """Тело страницы выпуска: раздел журнала, а длинный — кратко со ссылкой.
+
+    КОРОТКАЯ ФОРМА — НЕ ОБРЕЗКА. Обрезанный журнал читался бы как полный, и
+    хвост пропал бы молча (016). Вместо него — «Ключевое», счёт записей по
+    секциям и адрес раздела в самом теге: полный список там, где он и живёт.
+    Вторая строка ответа — отказ.
+    """
+    _, раздел, _ = неразобранное(text)
+    if not раздел.strip():
+        return None, ("раздел [Unreleased] пуст: соберите фрагменты — "
+                      "python scripts/collect_changelog.py --collect")
+    num = history_metrics.release(tag)
+    полное = f"# {num}\n\n{раздел.strip()}\n"
+    if len(полное) <= ПРЕДЕЛ_ТЕЛА:
+        return полное, ""
+    счёт = existing(text)
+    всего = sum(len(v) for v in счёт.values())
+    по_секциям = ", ".join(
+        f"{TITLES[s].split(' · ')[0].lower()} — {len(счёт[s])}"
+        for s in SECTIONS if счёт[s])
+    адрес = f"https://github.com/{repo}/blob/{tag}"
+    return (f"# {num}\n\n{key.strip()}\n\n"
+            f"{всего} записей журнала: {по_секциям}.\n\n"
+            f"Полный список — раздел [{num}] в CHANGELOG.md: {адрес}/CHANGELOG.md\n"
+            f"Решения выпуска — docs/HISTORY.md: {адрес}/docs/HISTORY.md\n"), ""
+
+
 def close(tag: str, date: str) -> int:
     """Переименовывает [Unreleased] в раздел выпуска и заводит пустой заново."""
     text = CHANGELOG.read_text(encoding="utf-8")
@@ -321,9 +368,7 @@ def close(tag: str, date: str) -> int:
         print(f"раздел [{num}] уже есть — номера не переиспользуются",
               file=sys.stderr)
         return 1
-    head, _, tail = text.partition(UNRELEASED)
-    cut = tail.index("## [") if "## [" in tail else len(tail)
-    body, rest = tail[:cut], tail[cut:]
+    head, body, rest = неразобранное(text)
     if not body.strip():
         print("раздел [Unreleased] пуст: выпуск без записей читается как "
               "«ничего не изменилось» — хуже, чем отсутствие выпуска (075)",
@@ -344,6 +389,14 @@ def main() -> int:
     mode.add_argument("--collect", action="store_true", help="собрать в [Unreleased]")
     mode.add_argument("--close", metavar="ТЕГ",
                       help="закрыть [Unreleased] разделом выпуска")
+    mode.add_argument("--notes", metavar="ТЕГ",
+                      help="напечатать тело страницы выпуска: раздел "
+                           "[Unreleased], а длиннее предела площадки — кратко "
+                           "со ссылкой на раздел в теге")
+    ap.add_argument("--key", default="",
+                    help="«Ключевое» выпуска для краткой формы --notes")
+    ap.add_argument("--repo", default="",
+                    help="владелец/репозиторий для ссылок краткой формы --notes")
     ap.add_argument("--date", default=dt.date.today().isoformat(),
                     help="дата выпуска для --close; по умолчанию сегодня")
     ap.add_argument("--added-since", metavar="REF",
@@ -404,6 +457,14 @@ def main() -> int:
 
     if args.close:
         return close(args.close, args.date)
+    if args.notes:
+        тело, отказ = тело_выпуска(CHANGELOG.read_text(encoding="utf-8"),
+                                   args.notes, args.key, args.repo)
+        if тело is None:
+            print(отказ, file=sys.stderr)
+            return 1
+        print(тело, end="")
+        return 0
 
     found, problems = validate()
 
