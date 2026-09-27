@@ -386,3 +386,17 @@ def test_исключение_выпуска_не_глушит_настояще�
     why, _ = mr.frozen(runs, labels=[], thaw="blocker",
                        excluded=исключения_очереди())
     assert "ci" in why and "release" not in why
+
+
+def test_дежурный_исключает_выпуск_тем_же_именем():
+    """Очередь и дежурный судят об одном основании: выпуск, исключённый в
+    одном месте и не исключённый в другом, дал бы «очередь идёт» при задаче
+    «работу не начинают» — два ответа на один вопрос (214)."""
+    import re
+    from pathlib import Path
+    yml = (Path(__file__).resolve().parent.parent / ".github" / "workflows"
+           / "main-red.yml").read_text(encoding="utf-8")
+    # Строка аргумента, а не проза: в комментарии рядом стоит снятое
+    # исключение прошлого, и оно исключением не является.
+    дежурный = frozenset(re.findall(r"(?m)^\s+--exclude (\S+) \\$", yml))
+    assert дежурный == исключения_очереди()
