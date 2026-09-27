@@ -171,12 +171,20 @@ jobs:
           echo "path=$RUNNER_TEMP/notes.md" >> "$GITHUB_OUTPUT"
           echo "тело релиза собрано, строк: $(wc -l < "$RUNNER_TEMP/notes.md")"
 
+      # Предмет — дерево, на котором стоит или встанет тег. У нового выпуска
+      # это голова: тег ставится на неё. У дозавершения голова могла уйти
+      # дальше тега, и проверка головы сверяла бы не то, что получит
+      # закрепившийся на теге потребитель.
       - name: публичная поверхность на месте
+        env:
+          FINISH: ${{ steps.form.outputs.finish }}
         run: |
           set -euo pipefail
+          tree=.
+          if [ "$FINISH" = true ]; then tree="$RUNNER_TEMP/at-tag"; fi
           missing=0
           for p in export/rules.json action.yml .github/actions/attribution/action.yml; do
-            if [ ! -e "$p" ]; then echo "::error::нет $p"; missing=1; fi
+            if [ ! -e "$tree/$p" ]; then echo "::error::нет $p"; missing=1; fi
           done
           [ "$missing" = 0 ] || exit 1
           echo "потребитель, закрепившийся на этом теге, получит всё, к чему его зовут"

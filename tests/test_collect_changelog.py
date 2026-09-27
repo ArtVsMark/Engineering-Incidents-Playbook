@@ -629,7 +629,8 @@ def test_выпуск_дозавершается_проверенными_реж
     """release.yml зовёт именно те режимы, что держит этот набор (068).
 
     Дозавершение не закрывает журнал второй раз и не толкает тег: оба шага
-    выпуска стоят за признаком `finish`.
+    выпуска стоят за признаком `finish`. Публичную поверхность оно сверяет в
+    дереве тега, а не на голове, ушедшей дальше.
     """
     wf = (Path(__file__).resolve().parent.parent
           / ".github" / "workflows" / "release.yml").read_text(encoding="utf-8")
@@ -638,6 +639,9 @@ def test_выпуск_дозавершается_проверенными_реж
     закрытие = wf.split("- name: раздел журнала, строка эволюции метрик")[1]
     assert закрытие.lstrip().startswith("и закреплённый пример\n"
                                          "        if: steps.form.outputs.finish != 'true'")
+    поверхность = wf.split("- name: публичная поверхность на месте")[1].split("- name:")[0]
+    assert 'tree="$RUNNER_TEMP/at-tag"' in поверхность, "дозавершение сверяет дерево тега"
+    assert '[ ! -e "$tree/$p" ]' in поверхность
     толчок = wf.split("- name: тег и релиз")[1]
     assert толчок.index('if [ "$FINISH" = true ]') < толчок.index("git push origin")
     assert "--verify-tag" in толчок
