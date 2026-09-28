@@ -433,6 +433,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_contract_surface.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_declared_numbers.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_declared_versions.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_family_pinning.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_pass.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_journal_fragments.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_look_mode.py` | 2 |
@@ -446,7 +447,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_steps_speak_outward.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_window_preflight.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 112 механизмов по одному правилу; без названного адреса: 0 из 204 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 111 механизмов по одному правилу; без названного адреса: 0 из 204 |
 
 ## Правила · Rules
 
