@@ -14,10 +14,10 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 56 | 35 | 213 | 0 | 0 | 194 | 144 | 10 | 2 | 26 | 12 | 122 |  |
 | `Stepik-Python-Grader` | подключён | 187 | 132 | 195 | 18 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 203 | 10 | 0 | 146 | 95 | 12 | 0 | 25 | 1 | 44 |  |
+| `ArtVsMark` | подключён | 29 | 18 | 213 | 0 | 0 | 156 | 102 | 14 | 0 | 26 | 0 | 48 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 32 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 181 | 32 | 0 | 117 | 60 | 12 | 0 | 29 | 16 | 78 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 14 | 13 | 213 | 0 | 0 | 204 | 171 | 23 | 2 | 8 | 0 | 240 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 14 | 13 | 213 | 0 | 0 | 204 | 171 | 23 | 2 | 8 | 0 | 239 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -54,11 +54,10 @@
 | 187 | `Stepik-Python-Grader` — гейт: scripts/ci_aggregate.py и .github/workflows/ci-complete.yml — один вердикт с постоянным именем, собранный ЧЕРЕЗ API, а не через needs: джоб на зависимостях при падении соседа пропускается, а пропущенное защита ветки засчитывает как пройденное; закреплено в CLAUDE.md § Гейты; `ArtVsMark` — гейт: scripts/check_mechanisms.py::required_job_conditions — у работы, чья запись держит слияние, не должно быть условия уровня работы: пропущенная работа оставляет запись «skipped», а защита ветки сверяет ИМЯ, а не исход, и нейтральное засчитывает. Правило родилось здесь: 7 сентября изменение #140 слилось при КРАСНОЙ обязательной проверке — на голове лежали три записи с именем PR check (failure, skipped, cancelled). Вторая половина держится там же: .github/workflows/pr-check.yml — одна группа отмены на голову, проверяется scripts/check_mechanisms.py::cancellation_groups.; `Engineering-Pipeline-Mechanisms` — гейт: scripts/ci_complete.py — пропущенная, отменённая и отсутствующая записи считаются отказом; tests/test_gates_complete.py прогоняет каждый из этих случаев. Признак нарушения, названный самим правилом, проверяется отдельно: scripts/ci_complete.py отвергает голову, на которой больше ОДНОЙ живой записи с именем обязательной проверки, — вердикт по такой голове неоднозначен, и молчаливый выбор между записями был бы выбором наугад | `Engineering-Incidents-Playbook` |
 | 199 | `ArtVsMark` — code: предмет есть и перебран: событийных прогонов в группе с cancel-in-progress: false у витрины два. .github/workflows/agent-pr.yml — будится пушем и внутри захода СПРАШИВАЕТ состояние: открыто ли уже изменение (gh pr list) и разошлась ли ветка с main, вместо того чтобы верить событию. .github/workflows/release-hold.yml — будится завершением чужого прогона и читает состояние проверок изменения через scripts/hold.py, а не исход разбудившего события. Остальные группы отменяют предыдущий заход (cancel-in-progress: true) и предметом правила не являются.; `Engineering-Pipeline-Mechanisms` — гейт: scripts/automerge.py::hand_over — заход очереди больше не ждёт зелёного внутри себя, и потому его смерть в очереди ничего не теряет: взведение у площадки ПЕРЕЖИВАЕТ прогон, который его выдал, и слияние случится без нового события. Прежде здесь стоял опрос внутри захода, заведённый от замера 10.09.2026 — 45 из 120 заходов умерли, не начав работу, — но он лечил следствие: держал исполнителя и упирался в собственный предел. Решение docs/decisions/011-merging-is-handed-to-the-platform.md отдало ожидание площадке. Держит это tests/test_automerge.py | `Engineering-Incidents-Playbook` |
 | 200 | `ArtVsMark` — документ: projects.json — у каждого показателя проекта либо источник значения, либо отказ с причиной; scripts/build_metrics.py::verify_absence проверяет, что отказ не устарел. Числа самой витрины перебраны 17 сентября на «может ли оно стать другим»: тесты, покрытие, проверки на изменение, выпуски, версии Python, звёзды, подписанные коммиты — все ходят, знаменателя по построению нет ни у одного.; `Engineering-Pipeline-Mechanisms` — гейт: tests/test_facts.py — значок правил считает держащиеся МАШИНОЙ от действующих, а не `answered/total`: прежнее число было равно знаменателю по построению и не могло сдвинуться никогда. Гейт сверяет, что значок несёт то же число, что и факты. ВТОРАЯ ПОЛОВИНА ПРИТЯЗАНИЯ — «назовите ЗАРАНЕЕ, при каком событии значок покажет другое» — держится с 18.09.2026: .rules/showcase.json, раздел `moves`, объявляет событие по каждому значку инвентаря, а tests/test_showcase.py требует объявления у всех шести и отвергает отписку короче двадцати знаков; обратная половина там же — объявление не переживает свой значок. Предмет берётся из ИНВЕНТАРЯ СБОРКИ, а не из объявления: иначе забытый значок вышел бы из-под проверки вместе со своей записью | `Engineering-Incidents-Playbook` |
-| 202 | `Engineering-Incidents-Playbook` — гейт: .claude/hooks/push_guard.py — `ветка_воскресает`: перед толчком сверяет свою ссылку `refs/remotes/origin/<ветка>` с ответом площадки, и толчок в удалённую при слиянии ветку не уезжает вовсе. Предмет проверки задаёт `везёт_содержимое`: чистое удаление ссылки (`--delete`, `-d`, `:имя`) коммитов не переносит и пропускается, смешанная форма `git push origin своя :чужая` остаётся толчком содержимого, а адресат явной ссылки разворачивается через `цель` — `HEAD:другая` текущей ветки не касается и отказа не получает (051). Строку разбирает одна функция `толчки`, её ответу задаются все три вопроса файла; `Engineering-Pipeline-Mechanisms` — гейт: ДВА МЕХАНИЗМА, И ОНИ СПРАШИВАЮТ РАЗНОЕ. (1) .claude/hooks/push_guard.py::merged_away — перед вызовом git, ЛОКАЛЬНЫМИ ссылками: слежение за ОДНОИМЁННОЙ веткой (так его ставит push -u) при исчезнувшей ссылке origin/<имя>. Первое означает «ветку толкали», второе — «площадка её убрала». Предмет — ветка ЦЕЛИ толчка, а не голова: у формы `HEAD:имя` они разные. Держит tests/test_push_guard.py на живых репозиториях. ЗАМЕР 18.09.2026 ПО 147 ЖИВЫМ ВЕТКАМ: признак верно называет 145; предел — ветка, толкнутая БЕЗ -u, таких одна из 147. ВТОРОЙ ПРЕДЕЛ И ОКАЗАЛСЯ ДОРОГИМ: локальные ссылки устаревают до первого git fetch, и окно, не видевшее слияния, проходит. (2) scripts/check_branch_revival.py::look — вопрос ПЛОЩАДКЕ, зовётся из scripts/preflight.py::push_branch перед толчком. Признак: по этой ГОЛОВЕ уже есть СЛИТОЕ изменение (head=<владелец>:<ветка>, merged_at не пуст). Отсутствие ветки предметом не является: воскрешённая существует и от живой неотличима. Закрытое БЕЗ слияния предметом не является тоже — по такой ветке работают дальше (051). Отказ называет, что делать вместо толчка (104). ЗАМЕР 19.09.2026 ПО ВСЕМ ВЕТКАМ ПЛОЩАДКИ: их пять, ровно одна несёт слитое изменение — agent/an-empty-parametrisation-must-redden, изменение #509, та самая ветка из инцидента. Держит tests/test_branch_revival.py (девять прогонов, все четыре объявленных исхода) и tests/test_window_preflight.py — вшивка судится СОСТАВОМ вызовов git, а не кодом возврата. Названные пределы: толчок с чужой машины мимо предполётной, и отсутствие токена — тогда гейт говорит «не спросили», а не «чисто» (045). | `ArtVsMark` |
-| 205 | `Engineering-Pipeline-Mechanisms` — гейт: tests/test_bindings.py::test_every_inapplicable_answer_names_a_predicate_over_the_tree — у каждого ответа «неприменимо» требуется признак опровержимости: путь, каталог, команда или число. Одного СОБЫТИЯ не хватает, и это второй конец проверки: test_an_event_alone_is_not_a_predicate отвергает «правило вступит вместе с первым подагентом». | `Engineering-Incidents-Playbook` |
-| 207 | `Engineering-Pipeline-Mechanisms` — гейт: scripts/audit_profile.py — ПОРЯДОК прохода считается механизмом, а не выбирается: подозрение есть доля корней притязания правила, встреченных в тексте ответа, и заход печатает полосы, остаток и следующую пачку. Сверенность берётся из самого ответа (поле analysed), а не из списка рядом, который надо не забыть обновить (049). Процедуру держит навык .claude/skills/audit-the-answers/SKILL.md: пачка, замер по дереву вместо чтения, отметка в ответе, отдача числом и решение идти дальше. tests/test_audit_profile.py проверяет отказом — пустая выгрузка, пустые ответы, несошедшиеся номера и правило без притязания дают третий исход, а не пустой профиль, который читался бы как «всё сверено». docs/decisions/030-the-answer-audit-stops-on-a-measured-yield.md — первый заход и его числа. ПРОХОД БЫВАЕТ НЕ ПЕРВЫМ (157): ключ --since ГГГГ-ММ-ДД считает сверенным только ответ, прочитанный не раньше даты, — без него аудит #829 получил бы «проход закончен» на первом шаге; дата проверяется на входе (iso_day), навык велит ключ на непервом проходе. Держат tests/test_audit_profile.py::test_since_counts_only_a_fresh_reading и ::test_since_reaches_the_count_through_main | `Engineering-Incidents-Playbook` |
-| 208 | `Engineering-Pipeline-Mechanisms` — гейт: scripts/preflight.py — заход `--push` толкает ветку ТЕМ ЖЕ вызовом, который проверяет, и красное до толчка не доходит: `push_branch` зовётся из `main` только после зелёного вердикта. Обход остался возможным и стал отдельным названным действием — заход без `--push` печатает вердикт и не толкает, а `git push` руками проект не запрещает. Держат tests/test_window_preflight.py (толчок на красном, толчок без просьбы, ветка без приставки agent/) и .claude/hooks/push_guard.py со стороны цели толчка. | `Engineering-Incidents-Playbook` |
-| 209 | `Engineering-Pipeline-Mechanisms` — документ: scripts/findings.py — PLAN_MARKER и один признак плана is_plan: оба читателя метки, сборщик плана (scripts/work_plan.py) и счёт пунктов (scripts/items_left.py::measure), узнают план им, а не буквами. Держит tests/test_items_left.py::test_the_plan_is_skipped_by_its_imported_marker — он подменяет метку другой строкой, и счёт, узнающий план буквами, краснеет | `Engineering-Incidents-Playbook` |
+| 205 | `ArtVsMark` — гейт: scripts/check_bindings.py::refuted — первая из двух законных форм держится гейтом: ответ «неприменимо» называет полем refuted_by образец пути, появление которого делает ответ ложным, и появление краснит изменение. Так отвечают 26 из 56. Остальные 30 держатся прозой, и это объявлено вслух, как правило и требует: scripts/check_bindings.py::unchecked печатает их очередью на перечитывание (`python scripts/check_bindings.py --queue`, CLAUDE.md § Откуда правила) с числом «держится прозой 30». ВТОРАЯ ФОРМА НЕ ТРЕБУЕТСЯ НИЧЕМ: названного события с причиной, почему предикат вырождается, от прозаических ответов не спрашивает ни одна проверка.; `Engineering-Pipeline-Mechanisms` — гейт: tests/test_bindings.py::test_every_inapplicable_answer_names_a_predicate_over_the_tree — у каждого ответа «неприменимо» требуется признак опровержимости: путь, каталог, команда или число. Одного СОБЫТИЯ не хватает, и это второй конец проверки: test_an_event_alone_is_not_a_predicate отвергает «правило вступит вместе с первым подагентом». | `Engineering-Incidents-Playbook` |
+| 207 | `ArtVsMark` — code: Порядок задан замером, а не наитием: scripts/check_bindings.py::unchecked ставит первыми ответы «неприменимо», которые держатся одной прозой, — класс выбран замером 3 сентября (из трёх наугад перечитанных неверны три), — и печатает остаток числом («держится прозой 30»). Заходы перечитывания записаны итогами в HISTORY.md: классами слепоты, с числом исправленных (#179, #186). ОСТАНОВКИ ПО ОТДАЧЕ НЕТ: доля правок на прочитанной полосе нигде не записывается, заход кончается, когда кончился класс, и выборки из следующих полос не делалось.; `Engineering-Pipeline-Mechanisms` — гейт: scripts/audit_profile.py — ПОРЯДОК прохода считается механизмом, а не выбирается: подозрение есть доля корней притязания правила, встреченных в тексте ответа, и заход печатает полосы, остаток и следующую пачку. Сверенность берётся из самого ответа (поле analysed), а не из списка рядом, который надо не забыть обновить (049). Процедуру держит навык .claude/skills/audit-the-answers/SKILL.md: пачка, замер по дереву вместо чтения, отметка в ответе, отдача числом и решение идти дальше. tests/test_audit_profile.py проверяет отказом — пустая выгрузка, пустые ответы, несошедшиеся номера и правило без притязания дают третий исход, а не пустой профиль, который читался бы как «всё сверено». docs/decisions/030-the-answer-audit-stops-on-a-measured-yield.md — первый заход и его числа. ПРОХОД БЫВАЕТ НЕ ПЕРВЫМ (157): ключ --since ГГГГ-ММ-ДД считает сверенным только ответ, прочитанный не раньше даты, — без него аудит #829 получил бы «проход закончен» на первом шаге; дата проверяется на входе (iso_day), навык велит ключ на непервом проходе. Держат tests/test_audit_profile.py::test_since_counts_only_a_fresh_reading и ::test_since_reaches_the_count_through_main | `Engineering-Incidents-Playbook` |
+| 208 | `ArtVsMark` — конвейер: Действие, ради которого проверка заведена, — слияние в main, и совершает его не окно: .github/workflows/automerge.yml вооружает автомерж площадки, а площадка сливает только при зелёной обязательной проверке PR check из .github/workflows/pr-check.yml. Красное до слияния не доходит, и намерение читающего между ними не стоит: слияния на красном нет ни у одного прогона. ПРОВЕРКА ПЕРЕД ТОЛЧКОМ — НАПОМИНАНИЕ, И ТАК И НАЗВАНА: `python scripts/build_metrics.py --check` из CLAUDE.md § Гейты окно читает само и само же толкает; держит не она, а обязательная проверка на изменении, которая прогоняет то же самое. Толчок сам по себе вреда не несёт — он открывает изменение, а не сливает его.; `Engineering-Pipeline-Mechanisms` — гейт: scripts/preflight.py — заход `--push` толкает ветку ТЕМ ЖЕ вызовом, который проверяет, и красное до толчка не доходит: `push_branch` зовётся из `main` только после зелёного вердикта. Обход остался возможным и стал отдельным названным действием — заход без `--push` печатает вердикт и не толкает, а `git push` руками проект не запрещает. Держат tests/test_window_preflight.py (толчок на красном, толчок без просьбы, ветка без приставки agent/) и .claude/hooks/push_guard.py со стороны цели толчка. | `Engineering-Incidents-Playbook` |
+| 209 | `ArtVsMark` — гейт: scripts/check_mechanisms.py::marker_copies — живой маркер, по которому механизм находит своё, не пишется буквами вне своего владельца ни в другом модуле, ни в прогоне: закрытый набор scripts/check_mechanisms.py::LIVE_MARKERS (заготовка тела scripts/hold.py::TEMPLATE_MARKER, задачи сторожей scripts/stuck_prs.py::MARKER и scripts/staleness.py::marker). Ровно та граница, которую ставит правило: общего гейта «цитата константы» нет и не будет. ОСТАЛЬНОЕ ДЕРЖИТСЯ КОДОМ: слова, которые одна часть печатает, а другая узнаёт, берутся у узнающего — ключи строк ответа гейтам (scripts/check_journal.py::WAIVER_KEY, scripts/check_neighbours.py::KEY) печатает scripts/reauthor_deps.py из них; метка scripts/checks.py::HOLD_LABEL, ключ трейлера scripts/checks.py::COAUTHOR, имена машинных веток и ботов — по одной константе вместо двух-трёх. КОПИИ ЧЕРЕЗ ГРАНИЦУ ЯЗЫКА ПОДПИСАНЫ у каждого вхождения (071): слова исходов scripts/gh_outcome.py::classify и scripts/hold.py::decide в `case` прогонов, `chore/metrics`, имя соавтора прогона и подпись «data as of» в .github/workflows/metrics.yml, имя «PR check» в .github/workflows/release-hold.yml. Замер 28 сентября: из 22 текстов рукописных копий без подписи было 12 — сведены или подписаны изменениями #236 и #239.; `Engineering-Pipeline-Mechanisms` — документ: scripts/findings.py — PLAN_MARKER и один признак плана is_plan: оба читателя метки, сборщик плана (scripts/work_plan.py) и счёт пунктов (scripts/items_left.py::measure), узнают план им, а не буквами. Держит tests/test_items_left.py::test_the_plan_is_skipped_by_its_imported_marker — он подменяет метку другой строкой, и счёт, узнающий план буквами, краснеет | `Engineering-Incidents-Playbook` |
 
 ## Сколько держит механизм · How much each mechanism holds
 
@@ -193,42 +192,46 @@
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 89 механизмов по одному правилу; без названного адреса: 0 из 192 |
-| `ArtVsMark` | `scripts/build_metrics.py` | 64 |
-| `ArtVsMark` | `scripts/check_mechanisms.py` | 45 |
-| `ArtVsMark` | `CLAUDE.md` | 23 |
-| `ArtVsMark` | `.github/workflows/pr-check.yml` | 17 |
-| `ArtVsMark` | `.github/workflows/automerge.yml` | 15 |
-| `ArtVsMark` | `scripts/check_bindings.py` | 15 |
-| `ArtVsMark` | `scripts/check_labels.py` | 15 |
-| `ArtVsMark` | `.github/workflows/agent-pr.yml` | 14 |
-| `ArtVsMark` | `scripts/checks.py` | 14 |
+| `ArtVsMark` | `scripts/build_metrics.py` | 67 |
+| `ArtVsMark` | `scripts/check_mechanisms.py` | 51 |
+| `ArtVsMark` | `CLAUDE.md` | 26 |
+| `ArtVsMark` | `scripts/check_bindings.py` | 20 |
+| `ArtVsMark` | `scripts/checks.py` | 19 |
+| `ArtVsMark` | `.github/workflows/pr-check.yml` | 18 |
+| `ArtVsMark` | `.github/workflows/automerge.yml` | 16 |
+| `ArtVsMark` | `scripts/check_labels.py` | 16 |
+| `ArtVsMark` | `.github/workflows/agent-pr.yml` | 15 |
 | `ArtVsMark` | `README.md` | 13 |
+| `ArtVsMark` | `scripts/check_author.py` | 13 |
+| `ArtVsMark` | `scripts/check_page.py` | 13 |
 | `ArtVsMark` | `scripts/check_roles.py` | 13 |
-| `ArtVsMark` | `scripts/check_author.py` | 11 |
-| `ArtVsMark` | `scripts/check_page.py` | 11 |
-| `ArtVsMark` | `.github/workflows/metrics.yml` | 10 |
+| `ArtVsMark` | `scripts/hold.py` | 13 |
+| `ArtVsMark` | `scripts/gh_outcome.py` | 12 |
+| `ArtVsMark` | `.github/workflows/metrics.yml` | 11 |
+| `ArtVsMark` | `.github/workflows/release-hold.yml` | 10 |
 | `ArtVsMark` | `.rules/README.md` | 10 |
 | `ArtVsMark` | `.rules/roles.md` | 10 |
-| `ArtVsMark` | `scripts/hold.py` | 10 |
-| `ArtVsMark` | `.github/workflows/release-hold.yml` | 9 |
-| `ArtVsMark` | `HISTORY.md` | 9 |
-| `ArtVsMark` | `scripts/gh_outcome.py` | 9 |
+| `ArtVsMark` | `HISTORY.md` | 10 |
 | `ArtVsMark` | `.rules/bindings.json` | 8 |
+| `ArtVsMark` | `scripts/check_journal.py` | 8 |
 | `ArtVsMark` | `projects.json` | 6 |
-| `ArtVsMark` | `scripts/check_journal.py` | 6 |
 | `ArtVsMark` | `.github/workflows/main-red.yml` | 5 |
 | `ArtVsMark` | `.github/workflows/rules-inbox.yml` | 5 |
-| `ArtVsMark` | `pr-check.yml` | 4 |
+| `ArtVsMark` | `pr-check.yml` | 5 |
+| `ArtVsMark` | `scripts/collect_changelog.py` | 5 |
+| `ArtVsMark` | `.rules/proposals.json` | 4 |
 | `ArtVsMark` | `scripts/neighbours.py` | 4 |
 | `ArtVsMark` | `.github/workflows/attribution-history.yml` | 3 |
-| `ArtVsMark` | `.rules/proposals.json` | 3 |
 | `ArtVsMark` | `agent-pr.yml` | 3 |
+| `ArtVsMark` | `scripts/check_neighbours.py` | 3 |
 | `ArtVsMark` | `.github/workflows/snake.yml` | 2 |
 | `ArtVsMark` | `.rules/facts-contract.md` | 2 |
 | `ArtVsMark` | `CHANGELOG.md` | 2 |
+| `ArtVsMark` | `automerge.yml` | 2 |
 | `ArtVsMark` | `scripts/check_branch.py` | 2 |
-| `ArtVsMark` | `scripts/collect_changelog.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 9 механизмов по одному правилу; без названного адреса: 0 из 145 |
+| `ArtVsMark` | `scripts/reauthor_deps.py` | 2 |
+| `ArtVsMark` | `scripts/stuck_prs.py` | 2 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 9 механизмов по одному правилу; без названного адреса: 0 из 156 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 34 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 30 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 15 |
@@ -369,6 +372,7 @@
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/claude.yml` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/rules-inbox.yml` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/schedules.json` | 4 |
+| `Engineering-Pipeline-Mechanisms` | `claude.yml` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/002-review-taken-from-two-neighbours.md` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/changerefs.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_rule_links.py` | 4 |
@@ -378,11 +382,9 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_schedules.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_source_hygiene.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_unlooked.py` | 4 |
-| `Engineering-Pipeline-Mechanisms` | `.github/workflows/automerge.yml` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/proposals.json` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/protection.json` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/showcase.json` | 3 |
-| `Engineering-Pipeline-Mechanisms` | `claude.yml` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `docs/agent/roles.md` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/001-attribution-of-merged-1.md` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/arm.py` | 3 |
@@ -399,6 +401,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_pipeline_checks.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_platform_shape.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_third_outcome.py` | 3 |
+| `Engineering-Pipeline-Mechanisms` | `.github/workflows/automerge.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/leniency.json` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/outcomes.json` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/rerun.json` | 2 |
@@ -412,7 +415,6 @@
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/011-merging-is-handed-to-the-platform.md` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `packages/transport/report.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `review.yml` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `rules-inbox.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_branch_revival.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_contract.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_decisions_edit.py` | 2 |
@@ -656,13 +658,13 @@
 | 202 | действует | — | действует | — | — | действует |
 | 203 | действует | — | действует | — | — | действует |
 | 204 | действует | — | действует | — | — | действует |
-| 205 | действует | — | — | — | — | действует |
-| 206 | действует | — | — | — | — | действует |
-| 207 | действует | — | — | — | — | действует |
-| 208 | действует | — | — | — | — | действует |
-| 209 | действует | — | — | — | — | действует |
-| 210 | действует | — | — | — | — | действует |
-| 211 | действует | — | — | — | — | действует |
-| 212 | действует | — | — | — | — | действует |
-| 213 | действует | — | — | — | — | действует |
-| 214 | действует | — | — | — | — | действует |
+| 205 | действует | — | действует | — | — | действует |
+| 206 | действует | — | действует | — | — | действует |
+| 207 | действует | — | действует | — | — | действует |
+| 208 | действует | — | действует | — | — | действует |
+| 209 | действует | — | действует | — | — | действует |
+| 210 | действует | — | действует | — | — | действует |
+| 211 | действует | — | действует | — | — | действует |
+| 212 | действует | — | действует | — | — | действует |
+| 213 | действует | — | действует | — | — | действует |
+| 214 | действует | — | действует | — | — | действует |
