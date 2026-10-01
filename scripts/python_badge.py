@@ -23,7 +23,9 @@
     и пропускается к предыдущему (039) — отмена ничего не проверила.
 
 ВЕРСИИ БЕРУТСЯ У ПРОГОНОВ, А НЕ ПИШУТСЯ ЗДЕСЬ (005). Основная — версия
-`python-version` в основном прогоне (`build_facts.CI_WORKFLOW`), следующие —
+`python-version` в основном прогоне (`build_facts.CI_WORKFLOW` у каталога,
+`--ci` у потребителя), а если версия там идёт матрицей — планка из
+`requires-python`, которую гейт версий держит равной прогонам; следующие —
 прогоны с `allow-prereleases: true`, которые узнаёт check_python_version.py.
 Сдвинется планка — подпись сдвинется сама, без правки значка.
 
@@ -81,10 +83,16 @@ class НеОтветила(Exception):
     """Площадка не ответила о прогонах — третий исход, а не серый цвет."""
 
 
-def версии(root: Path = ROOT) -> list[tuple[str, str]]:
+def версии(root: Path = ROOT, ci: str = build_facts.CI_WORKFLOW
+           ) -> list[tuple[str, str]]:
     """(подпись версии, файл прогона): основная первой, следующие за ней."""
-    основные = [(f"{a}.{b}", f) for f, (a, b) in cv.in_workflows(root)
-                if f == build_facts.CI_WORKFLOW]
+    основные = [(f"{a}.{b}", f) for f, (a, b) in cv.in_workflows(root) if f == ci]
+    манифест = root / "pyproject.toml"
+    if not основные and (root / ".github" / "workflows" / ci).is_file() \
+            and манифест.is_file():
+        планка = cv.floor(манифест.read_text(encoding="utf-8"))
+        if планка:
+            основные = [(f"{планка[0]}.{планка[1]}", ci)]
     следующие = [(f"{a}.{b}", f) for f, (a, b) in cv.in_workflows(root, preview=True)]
     return основные[:1] + sorted(set(следующие))
 
@@ -191,12 +199,14 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--out", type=Path, default=OUT)
+    ap.add_argument("--ci", default=build_facts.CI_WORKFLOW,
+                    help="файл основного CI в .github/workflows")
     args = ap.parse_args(argv)
 
-    пары = версии(args.root)
+    пары = версии(args.root, args.ci)
     if not пары:
         print(f"значок не собран: в {args.root}/.github/workflows нет ни "
-              f"{build_facts.CI_WORKFLOW} с python-version, ни предварительного "
+              f"{args.ci} с python-version, ни предварительного "
               "прогона — подписывать нечего (075)", file=sys.stderr)
         return 2
     части: list[tuple[str, str]] = []
@@ -206,7 +216,7 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
         try:
             runs = прогоны(файл)
             части.append((подпись, состояние(runs)))
-            if файл == build_facts.CI_WORKFLOW:
+            if файл == args.ci:
                 общий = состояние(runs)
                 run = решающий(runs)
                 if run is not None:

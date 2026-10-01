@@ -145,3 +145,17 @@ def test_ос_берутся_у_решающего_прогона(tmp_path):
     assert спрошено == [7]  # отменённый 8 ничего не проверил
     картинка = out.read_text(encoding="utf-8")
     assert ">linux<" in картинка and ">windows<" in картинка and ">mac<" in картинка
+
+
+# ── у потребителя: свой файл CI и версия матрицей ──────────────────────────
+
+def test_версия_матрицей_берётся_у_планки(tmp_path):
+    """`python-version: ${{ matrix.python }}` числа не несёт; подпись тогда
+    — планка из requires-python, которую гейт версий держит равной прогонам."""
+    wf = tmp_path / ".github" / "workflows"
+    wf.mkdir(parents=True)
+    (wf / "tests.yml").write_text(
+        "          python-version: ${{ matrix.python }}\n", encoding="utf-8")
+    (tmp_path / "pyproject.toml").write_text(
+        'requires-python = ">=3.14"\n', encoding="utf-8")
+    assert pb.версии(tmp_path, "tests.yml") == [("3.14", "tests.yml")]
