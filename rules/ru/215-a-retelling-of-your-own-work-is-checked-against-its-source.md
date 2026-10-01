@@ -29,10 +29,17 @@ ArtVsMark/Engineering-Pipeline-Mechanisms#966, а отпечаток каждо�
 правке.
 
 **У нас этот род — у трети изменений с находками.** Замер 01.10 по комментариям
-внешнего взгляда на изменениях с 10 по 27 сентября: строки «НАХОДКА:» стоят на
-92 изменениях. Команда:
+внешнего взгляда на изменениях с 10 по 27 сентября: хотя бы одна находка —
+не «НАХОДКА: нет» — стоит на 92 изменениях. Команда считает изменения, а не
+комментарии, берёт только комментарии ревьюера, созданные до 28.09, и даёт 92:
 
-`gh api --paginate 'repos/ArtVsMark/Engineering-Incidents-Playbook/issues/comments?since=2026-09-10T00:00:00Z&per_page=100' --jq '.[] | select(.body | test("НАХОДКА:")) | .issue_url'`
+```bash
+gh api --paginate 'repos/ArtVsMark/Engineering-Incidents-Playbook/issues/comments?since=2026-09-10T00:00:00Z&per_page=100' \
+  --jq '.[] | select(.user.login == "claude[bot]" and .created_at < "2026-09-28")
+        | select([.body | scan("НАХОДКА:[^\n]*")]
+                 | map(select(test("^НАХОДКА:\\s*нет\\W*$") | not)) | length > 0)
+        | .issue_url' | sort -u | wc -l
+```
 
 У **34** из них хотя бы одна находка — текст о работе этого же изменения,
 который опровергается самим изменением. Отнесение к роду — ручное чтение, и

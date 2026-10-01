@@ -32,9 +32,17 @@ edit.
 
 **Here this kind sits on a third of the changes with findings.** Measured on
 01.10 over the outside reviewer's comments on changes from 10 to 27 September:
-`НАХОДКА:` lines sit on 92 changes. The command:
+at least one finding other than `НАХОДКА: нет` sits on 92 changes. The command
+counts changes, not comments, takes only the reviewer's comments created
+before 28.09, and returns 92:
 
-`gh api --paginate 'repos/ArtVsMark/Engineering-Incidents-Playbook/issues/comments?since=2026-09-10T00:00:00Z&per_page=100' --jq '.[] | select(.body | test("НАХОДКА:")) | .issue_url'`
+```bash
+gh api --paginate 'repos/ArtVsMark/Engineering-Incidents-Playbook/issues/comments?since=2026-09-10T00:00:00Z&per_page=100' \
+  --jq '.[] | select(.user.login == "claude[bot]" and .created_at < "2026-09-28")
+        | select([.body | scan("НАХОДКА:[^\n]*")]
+                 | map(select(test("^НАХОДКА:\\s*нет\\W*$") | not)) | length > 0)
+        | .issue_url' | sort -u | wc -l
+```
 
 On **34** of them at least one finding is text about that same change's work
 which the change itself refutes. The classification is a manual reading, and
