@@ -104,10 +104,11 @@ CONTRACTS_MARKER_RE = re.compile(
 CONTRACTS_ORDER = ("export", "bindings", "consumers", "proposals",
                    "showcase", "where")
 
-BADGES = {
-    "ru": (ROOT / ".github" / "badges" / "rules-ru.json", "правил в каталоге"),
-    "en": (ROOT / ".github" / "badges" / "rules-en.json", "rules in the catalogue"),
-}
+#: ЗНАЧКА С ЧИСЛОМ ПРАВИЛ БОЛЬШЕ НЕТ, и это решение владельца 1 октября, а
+#: не пропажа. Первая строка обоих README несёт то же число маркером
+#: `<!--m:rules-->`, который ставит эта же сборка, а полный перечень правил
+#: потребители берут выгрузкой. Значок повторял текст строкой ниже и стоил
+#: файла на ветке `badges` и его сборки.
 
 #: Пути правил, заполняется в main() — из него строятся ссылки навигации.
 FILES: dict[str, dict[str, Path]] = {}
@@ -1557,18 +1558,6 @@ def area_stats(areas: dict[str, list[str]]) -> tuple[int, int]:
     return len(buckets), sum(1 for n in buckets.values() if n == 1)
 
 
-def render_badge(label: str, count: int) -> str:
-    """Значок shields.io в формате endpoint. Число — из этой же сборки."""
-    return (
-        "{\n"
-        '  "schemaVersion": 1,\n'
-        f'  "label": "{label}",\n'
-        f'  "message": "{count}",\n'
-        '  "color": "blue"\n'
-        "}\n"
-    )
-
-
 def render(found: dict[str, dict[str, Path]], gaps: list[int],
            areas: dict[str, list[str]]) -> str:
     rows = []
@@ -1749,16 +1738,8 @@ def main() -> int:
             print(f"  • {p}", file=sys.stderr)
         return 1
     total_areas, singles = area_stats(areas)
-    badges = {p: render_badge(label, len(found)) for p, label in BADGES.values()}
 
     if args.check:
-        # ЗНАЧКИ В СВЕРКЕ НЕ УЧАСТВУЮТ. Они живут на отдельной ветке `badges` и
-        # в дереве общей ветки их нет вовсе — сверять здесь нечего и не с чем.
-        # Держать их в `main` под гейтом значило бы требовать пересборки
-        # значка от КАЖДОГО изменения: конфликт на каждом слиянии и красная
-        # общая ветка после каждого — то есть проверка, которую приучаются
-        # пропускать (051). Свежесть значков держит работа badges.yml, которая
-        # запускается на каждый толчок в main.
         stale = [OUT] if (OUT.read_text(encoding="utf-8") if OUT.exists() else "") != text else []
         # ОТМЕТКА ВРЕМЕНИ — НЕ СОДЕРЖАНИЕ. Сравнивать выгрузку побайтно после
         # того, как в ней появилось `generated_at`, значит объявлять её
@@ -1778,9 +1759,6 @@ def main() -> int:
         return 0
 
     OUT.write_text(text, encoding="utf-8")
-    for path, want in badges.items():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(want, encoding="utf-8")
     EXPORT.parent.mkdir(parents=True, exist_ok=True)
     EXPORT.write_text(export, encoding="utf-8")
     for path, body in marks.items():
