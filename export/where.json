@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-01T14:50:09+00:00",
+  "generated_at": "2026-10-01T15:01:25+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -1853,9 +1853,9 @@
         },
         "200": {
           "mechanism": "none",
-          "where": ".github/badges/ — четыре значка, и каждый двигается: `rules-ru`/`rules-en` растут с каждой записью (196 на 10 сентября), `coverage` ходит в обе стороны (66%), `.github/badges/facts.json` несёт числа тестов и связей. Машинного сторожа над подписью значка нет, причина в why",
+          "where": ".github/badges/ — три значка, и каждый двигается: `coverage` ходит в обе стороны, `python.svg` перекрашивает исход прогонов `ci` и `python-next` на main, `.github/badges/facts.json` несёт числа тестов и связей. `rules-ru`/`rules-en` сняты 1 октября: число правил стоит маркером в первой строке обоих README, и значок его повторял. Машинного сторожа над подписью значка нет, причина в why",
           "holdable": "conditional",
-          "awaiting": "первый значок, у которого предмет движения назвать не удастся. Замер 10 сентября: значков 4, у всех четырёх событие движения называется вслух — rules-ru и rules-en двигает новая запись (196 на сегодня, +2 за смену), coverage двигает прогон тестов (66%), `.github/badges/facts.json` — числа тестов и связей. Дефекта 0 из 4, и гейт держал бы пустоту (146). Строить тем же изменением, которым заводится пятый значок",
+          "awaiting": "первый значок, у которого предмет движения назвать не удастся. Замер 10 сентября: значков 4, у всех четырёх событие движения называется вслух — rules-ru и rules-en двигает новая запись (196 на сегодня, +2 за смену), coverage двигает прогон тестов (66%), `.github/badges/facts.json` — числа тестов и связей. Дефекта 0 из 4, и гейт держал бы пустоту (146). Строить тем же изменением, которым заводится пятый значок. Пересчёт 1 октября: снято два значка (rules-ru, rules-en — дубль числа в README), заведён один (python.svg, предмет движения назван — исход прогонов на main); значков 3, дефекта 0 из 3",
           "analysed": "2026-09-17",
           "decided": "",
           "skill": ""
@@ -8449,9 +8449,9 @@
         "not-applicable": 9
       },
       "by_mechanism": {
-        "gate": 172,
+        "gate": 173,
         "pipeline": 23,
-        "document": 8,
+        "document": 7,
         "skill": 2
       },
       "rules": {
@@ -10454,11 +10454,11 @@
           "skill": ""
         },
         "209": {
-          "mechanism": "document",
-          "where": "scripts/findings.py — PLAN_MARKER и один признак плана is_plan: оба читателя метки, сборщик плана (scripts/work_plan.py) и счёт пунктов (scripts/items_left.py::measure), узнают план им, а не буквами. Держит tests/test_items_left.py::test_the_plan_is_skipped_by_its_imported_marker — он подменяет метку другой строкой, и счёт, узнающий план буквами, краснеет",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "tests/test_marker_by_reference.py — метка, по которой механизм находит свою запись, берётся у константы: начало метки буквами в строке (код, данные, докстрока, прогон) и вызов marker(\"<имя>\") с объявленным именем вне определения краснеют в scripts/, tests/, во всём .github/ и в .pipeline.yml; начало метки — открытие и имя, а не всё до двоеточия. Набор меток выводится из дерева: константы *MARKER уровня модуля в scripts/, строкой или вызовом findings.marker; законно только определение. Внутри набора — прежний держатель: scripts/findings.py — PLAN_MARKER и один признак плана is_plan, оба читателя метки (scripts/work_plan.py, scripts/items_left.py::measure) узнают план им; tests/test_items_left.py::test_the_plan_is_skipped_by_its_imported_marker подменяет метку и краснеет на счёте буквами",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-26",
+          "analysed": "2026-10-01",
           "decided": "2026-09-25",
           "skill": ""
         },
