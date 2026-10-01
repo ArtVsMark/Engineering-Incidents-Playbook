@@ -114,7 +114,12 @@ def состояние(runs: list[dict]) -> str:
 
 
 def по_ос(jobs: list[dict]) -> list[tuple[str, str]]:
-    """(ОС, состояние) для всех трёх ОС; без работ на ОС — серый."""
+    """(ОС, состояние) для всех трёх ОС; без работ на ОС — серый.
+
+    Приоритет fail > pass > none и от порядка работ не зависит: пропущенная
+    работа (условный шаг, деплой) не делает серой ОС, на которой проверки
+    прошли."""
+    вес = {"none": 0, "pass": 1, "fail": 2}
     итог: dict[str, str] = {}
     for job in jobs:
         метки = job.get("labels") or []
@@ -123,13 +128,14 @@ def по_ос(jobs: list[dict]) -> list[tuple[str, str]]:
         if ос is None:
             continue
         исход = job.get("conclusion")
-        if исход in УПАЛ:
-            итог[ос] = "fail"
-        elif исход in ПРОШЁЛ:
-            итог.setdefault(ос, "pass")
-        else:
-            итог.setdefault(ос, "none")
+        сост = "fail" if исход in УПАЛ else "pass" if исход in ПРОШЁЛ else "none"
+        if вес[сост] >= вес[итог.get(ос, "none")]:
+            итог[ос] = сост
     return [(имя, итог.get(имя, "none")) for имя in ОС.values()]
+
+
+#: Сколько прогонов спрашивается одной страницей (.rules/limits.json).
+ПРЕДЕЛ = 30
 
 
 def прогоны_площадки(файл: str) -> list[dict]:
@@ -137,7 +143,7 @@ def прогоны_площадки(файл: str) -> list[dict]:
     предел объявлен в .rules/limits.json."""
     код, вывод = ghcli.run(
         "api", f"repos/{{owner}}/{{repo}}/actions/workflows/{файл}/runs"
-        "?branch=main&status=completed&per_page=30")
+        f"?branch=main&status=completed&per_page={ПРЕДЕЛ}")
     if код != 0:
         raise НеОтветила(вывод)
     return json.loads(вывод).get("workflow_runs", [])
@@ -215,6 +221,12 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
     for подпись, файл in пары:
         try:
             runs = прогоны(файл)
+            if решающий(runs) is None and len(runs) >= ПРЕДЕЛ:
+                # Страница полна, а вердикта на ней нет: за краем он может
+                # быть. Серый здесь сказал бы «не проводилась» о том, чего
+                # не спросили, — это третий исход, а не цвет (075).
+                raise НеОтветила(f"в последних {ПРЕДЕЛ} прогонах нет вердикта, "
+                                 "а глубже не спрашивали")
             части.append((подпись, состояние(runs)))
             if файл == args.ci:
                 общий = состояние(runs)

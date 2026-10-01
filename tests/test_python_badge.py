@@ -159,3 +159,26 @@ def test_версия_матрицей_берётся_у_планки(tmp_path):
     (tmp_path / "pyproject.toml").write_text(
         'requires-python = ">=3.14"\n', encoding="utf-8")
     assert pb.версии(tmp_path, "tests.yml") == [("3.14", "tests.yml")]
+
+
+def test_пропущенная_работа_не_делает_ос_серой():
+    """Находка обзора #649: порядок работ не решает цвет — fail > pass > none."""
+    assert pb.по_ос([работа("skipped", "ubuntu-latest"),
+                     работа("success", "ubuntu-latest")])[0] == ("linux", "pass")
+    assert pb.по_ос([работа("success", "ubuntu-latest"),
+                     работа("failure", "ubuntu-latest"),
+                     работа("skipped", "ubuntu-latest")])[0] == ("linux", "fail")
+
+
+def test_полная_страница_без_вердикта_это_третий_исход(tmp_path):
+    """Находка обзора #649: за краем страницы вердикт может быть, и серый
+    «не проводилась» о неспрошенном был бы ложью (075)."""
+    out = tmp_path / "python.svg"
+    без_вердикта = [прогон("cancelled", f"2026-10-01T{i:02d}:00Z", i)
+                    for i in range(pb.ПРЕДЕЛ)]
+    исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z")],
+              "python-next.yml": без_вердикта}
+    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out)],
+                   прогоны=исходы.__getitem__,
+                   работы=lambda run_id: []) == 2
+    assert not out.exists()
