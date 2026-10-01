@@ -99,11 +99,45 @@ gate rejects one.
 **В облачных окнах (claude.ai/code) плагин из настроек репозитория не
 загружается** — облачная сессия не читает ни плагинов, поставленных на своей
 машине, ни включённых в `.claude/settings.json`. Там навык доступен только
-плагином, который раздаёт организация. Окна самого каталога читают свои навыки
+плагином, который раздаёт организация, — либо копией в дереве проекта (раздел
+ниже). Окна самого каталога читают свои навыки
 с диска и плагина не ставят.
 
 **Cloud sessions (claude.ai/code) do not load it** from repository settings or
 from a local install; only organisation-managed plugins reach them.
+
+## В облачном окне — закреплённой копией · In a cloud session — a pinned copy
+
+Раз плагин в облачное окно не доезжает, навык кладут в `.claude/skills/<имя>/`
+проекта **копией** — и копию держит проверка, а не договорённость. Замер
+1 октября: `answer-a-rule` жил двумя копиями — здесь и в дереве проекта
+механизмов, — и описания у них уже разошлись.
+
+1. Положить копию из клона каталога на нужном теге:
+   `python scripts/check_skill_copies.py --repo <проект> --apply answer-a-rule`.
+2. Держать её в прогоне проекта на изменении — тот же тег, что у остальных
+   действий каталога:
+
+   ```yaml
+   - uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/skills@vX.Y.Z
+   ```
+
+   Эталон — навыки плагина в дереве каталога **на этом теге**: площадка
+   кладёт его рядом с действием, сеть проверке не нужна. Подъём тега делает
+   копию устаревшей, и проверка краснеет, пока копию не обновят тем же
+   `--apply`.
+
+Копией считается папка, чьё имя совпадает с навыком каталога: навык зовётся по
+имени, и одноимённый «свой» навык неотличим от копии ни для окна, ни для
+читателя. **Копию не правят у себя** — это расхождение, которое проверка
+ловит. Доработка едет сюда предложением (ниже) и возвращается следующим тегом.
+
+Since the plugin does not reach a cloud session, the skill is put into the
+project's `.claude/skills/<name>/` as a **copy**, held by a check rather than
+by agreement: `check_skill_copies.py --apply <name>` writes it, and the
+`skills` action compares it with the plugin skill at the very tag in `uses:`.
+A folder named like a catalogue skill is a copy; improvements travel back as a
+proposal, never as an edit of the copy.
 
 ## Как предложить или доработать навык · How to propose or improve a skill
 
