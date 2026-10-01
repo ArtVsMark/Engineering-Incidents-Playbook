@@ -400,3 +400,23 @@ def test_дежурный_исключает_выпуск_тем_же_имене
     # исключение прошлого, и оно исключением не является.
     дежурный = frozenset(re.findall(r"(?m)^\s+--exclude (\S+) \\$", yml))
     assert дежурный == исключения_очереди()
+
+
+def test_предварительный_прогон_исключён_и_очередью_и_дежурным():
+    """Исключение выводится из той же пометки, по которой гейт версий узнаёт
+    предварительный прогон, а не держится согласием двух списков между собой:
+    иначе снять `python-next` из обоих или переименовать прогон можно при
+    зелёном наборе, и красный 3.15 заморозит очередь (140, 146)."""
+    import re
+    from pathlib import Path
+    import check_python_version as cv
+    корень = Path(__file__).resolve().parent.parent
+    yml = (корень / ".github" / "workflows" / "main-red.yml").read_text(encoding="utf-8")
+    дежурный = frozenset(re.findall(r"(?m)^\s+--exclude (\S+) \\$", yml))
+    файлы = {имя for имя, _ in cv.in_workflows(корень, preview=True)}
+    assert файлы, "предварительного прогона нет — проверять нечего (075)"
+    for файл in файлы:
+        текст = (корень / ".github" / "workflows" / файл).read_text(encoding="utf-8")
+        имя = re.search(r"(?m)^name:\s*(\S+)", текст).group(1)
+        assert имя in дежурный, f"{файл}: «{имя}» не исключён в main-red.yml"
+        assert имя in исключения_очереди(), f"{файл}: «{имя}» не исключён в automerge.yml"

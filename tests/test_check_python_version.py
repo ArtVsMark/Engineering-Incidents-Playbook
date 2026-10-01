@@ -66,7 +66,54 @@ def test_progony_razoshlis_mezhdu_soboy_nahodka():
     assert any("разные версии" in n for n in найдено)
 
 
+def test_predvaritelnyy_ne_vyshe_progonov_nahodka():
+    """Предварительный прогон на версии прочих ничего не спрашивает о
+    следующей, а выглядит так, будто спрашивает (051)."""
+    найдено = cv.findings(ПЛАНКА, [("ci.yml", (3, 12))], (3, 12),
+                          [("next.yml", (3, 12))])
+    assert найдено and "предварительный" in найдено[0]
+
+
 # ── что гейт обязан пропустить ─────────────────────────────────────────────
+def test_predvaritelnyy_vyshe_ne_schitaetsya_raznoy_versiey():
+    """Предварительный прогон — вопрос о следующей версии, а не прогон,
+    закрывающий изменение: «все на одной версии» его не касается."""
+    assert cv.findings(ПЛАНКА, [("ci.yml", (3, 12))], (3, 12),
+                       [("next.yml", (3, 13))]) == []
+
+
+def test_pometka_chitaetsya_tolko_v_svoyom_with(tmp_path):
+    """Пометка относится к своему `with:`: соседняя работа без неё остаётся
+    обычным прогоном, а помеченная уходит в предварительные."""
+    (tmp_path / ".github" / "workflows").mkdir(parents=True)
+    (tmp_path / ".github" / "workflows" / "a.yml").write_text(
+        "      - uses: actions/setup-python@v6\n"
+        "        with:\n"
+        '          python-version: "3.15"\n'
+        "          allow-prereleases: true\n"
+        "      - uses: actions/setup-python@v6\n"
+        "        with:\n"
+        '          python-version: "3.14"\n', encoding="utf-8")
+    assert cv.in_workflows(tmp_path) == [("a.yml", (3, 14))]
+    assert cv.in_workflows(tmp_path, preview=True) == [("a.yml", (3, 15))]
+
+
+def test_pometka_vyshe_versii_tozhe_chitaetsya(tmp_path):
+    """Порядок ключей в `with:` значения не имеет: пометка над версией
+    обязана читаться так же, как под ней."""
+    (tmp_path / ".github" / "workflows").mkdir(parents=True)
+    (tmp_path / ".github" / "workflows" / "a.yml").write_text(
+        "      - uses: actions/setup-python@v6\n"
+        "        with:\n"
+        "          allow-prereleases: true\n"
+        '          python-version: "3.15"\n'
+        "      - uses: actions/setup-python@v6\n"
+        "        with:\n"
+        '          python-version: "3.14"\n', encoding="utf-8")
+    assert cv.in_workflows(tmp_path) == [("a.yml", (3, 14))]
+    assert cv.in_workflows(tmp_path, preview=True) == [("a.yml", (3, 15))]
+
+
 
 def test_vsyo_shoditsya_chisto():
     assert cv.findings(ПЛАНКА, [("ci.yml", (3, 12))], (3, 12)) == []

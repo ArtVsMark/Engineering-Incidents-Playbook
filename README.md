@@ -6,6 +6,8 @@
 [![Версия](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](docs/VERSIONING.md)
 [![Правил в каталоге](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Frules-ru.json)](rules/README.md)
 [![Покрытие](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
+[![Python 3.14](https://img.shields.io/github/actions/workflow/status/ArtVsMark/Engineering-Incidents-Playbook/ci.yml?branch=main&event=push&label=Python%203.14)](.github/workflows/ci.yml)
+[![Python 3.15 — предварительно](https://img.shields.io/github/actions/workflow/status/ArtVsMark/Engineering-Incidents-Playbook/python-next.yml?branch=main&label=Python%203.15%20%28%D0%BF%D1%80%D0%B5%D0%B4.%29)](.github/workflows/python-next.yml)
 
 **Каталог из <!--m:rules-->214<!--/m:rules--> правил для Claude Code и GitHub,
 где каждое выросло из реальной поломки.** Работа с агентскими окнами и сводом проекта (`CLAUDE.md`),

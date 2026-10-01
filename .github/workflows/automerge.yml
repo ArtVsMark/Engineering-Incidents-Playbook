@@ -211,8 +211,12 @@ jobs:
           # Дежурный (main-red.yml) исключает выпуск тем же именем, и набор
           # сверяет два списка между собой: иначе «очередь идёт» стояло бы рядом
           # с задачей «работу не начинают» — два ответа на один вопрос (214).
+          #
+          # `python-next` исключён по той же причине с другой стороны: он
+          # спрашивает о следующей версии Python, а не судит ветку на текущей,
+          # и его красное на 3.15 не основание держать слияния на 3.14 (051).
           rc=0
-          python3 scripts/merge_ready.py --freeze-only --base-exclude release \
+          python3 scripts/merge_ready.py --freeze-only --base-exclude release,python-next \
             --base-runs base-runs.json --labels "$LABELS" </dev/null || rc=$?
           rm -f base-runs.json
           if [ "$rc" -eq 2 ]; then
