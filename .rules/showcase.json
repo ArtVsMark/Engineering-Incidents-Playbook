@@ -7,34 +7,40 @@
       "id": "ci",
       "ask": "зелены ли обязательные проверки на общей ветке",
       "for": "visitor",
-      "absent": "значка нет: состояние прогонов отдаёт сама площадка вкладкой, и второй источник того же расходится с первым молча (022). Заведём, когда появится, что показывать сверх неё"
+      "badge": ".github/badges/python.svg",
+      "branch": "badges",
+      "zone": "Python",
+      "why": "прежний отказ стоял на 022 — второй источник того же расходится с первым молча. Зона «Python» не второй источник: она рисуется из ответа той же площадки о тех же прогонах (actions/workflows/*/runs) и показывает больше вкладки — версии и ОС одной строкой. Решение владельца 1 октября"
     },
     {
       "id": "release",
       "ask": "какой выпуск последний",
       "for": "visitor",
-      "badge": ".github/badges/release.json",
-      "branch": "badges"
+      "badge": ".github/badges/python.svg",
+      "branch": "badges",
+      "zone": "release / PyPI"
     },
     {
       "id": "version",
       "ask": "какая версия у текущей головы",
       "for": "visitor",
-      "badge": ".github/badges/version.json",
-      "branch": "badges"
+      "badge": ".github/badges/python.svg",
+      "branch": "badges",
+      "zone": "version"
     },
     {
       "id": "coverage",
       "ask": "какая доля кода покрыта тестами",
       "for": "visitor",
-      "badge": ".github/badges/coverage.json",
-      "branch": "badges"
+      "badge": ".github/badges/python.svg",
+      "branch": "badges",
+      "zone": "coverage"
     },
     {
       "id": "pypi",
       "ask": "какая версия опубликована в PyPI",
       "for": "visitor",
-      "absent": "предмета нет: каталог не пакет и в PyPI не публикуется. Значок здесь означал бы вопрос, на который нечего отвечать"
+      "absent": "предмета нет: каталог не пакет и в PyPI не публикуется. Зона «release / PyPI» единого значка поэтому серая — показывает номер выпуска без сверки с PyPI"
     },
     {
       "id": "tests",

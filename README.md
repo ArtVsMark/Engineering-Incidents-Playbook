@@ -2,10 +2,7 @@
 
 > **Читатель:** посетитель — что это такое и стоит ли брать.
 
-[![Релиз](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Frelease.json&cacheSeconds=300)](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/releases)
-[![Версия](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](docs/VERSIONING.md)
-[![Покрытие](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
-[![Python: основной CI, версии 3.14 и 3.15 (предварительно), ОС linux, windows, mac](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/python.svg)](.github/workflows/python-next.yml)
+[![Состояние: Python и версии, ОС linux / windows / mac, покрытие, выпуск и PyPI, версия](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/python.svg)](.github/workflows/python-next.yml)
 
 **Каталог из <!--m:rules-->214<!--/m:rules--> правил для Claude Code и GitHub,
 где каждое выросло из реальной поломки.** Работа с агентскими окнами и сводом проекта (`CLAUDE.md`),
