@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-01T14:44:00+00:00",
+  "generated_at": "2026-10-01T14:49:24+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -8449,9 +8449,9 @@
         "not-applicable": 9
       },
       "by_mechanism": {
-        "gate": 172,
+        "gate": 173,
         "pipeline": 23,
-        "document": 8,
+        "document": 7,
         "skill": 2
       },
       "rules": {
@@ -10454,11 +10454,11 @@
           "skill": ""
         },
         "209": {
-          "mechanism": "document",
-          "where": "scripts/findings.py — PLAN_MARKER и один признак плана is_plan: оба читателя метки, сборщик плана (scripts/work_plan.py) и счёт пунктов (scripts/items_left.py::measure), узнают план им, а не буквами. Держит tests/test_items_left.py::test_the_plan_is_skipped_by_its_imported_marker — он подменяет метку другой строкой, и счёт, узнающий план буквами, краснеет",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "tests/test_marker_by_reference.py — метка, по которой механизм находит свою запись, берётся у константы: начало метки буквами в строке (код, данные, докстрока, прогон) и вызов marker(\"<имя>\") с объявленным именем вне определения краснеют в scripts/, tests/, во всём .github/ и в .pipeline.yml; начало метки — открытие и имя, а не всё до двоеточия. Набор меток выводится из дерева: константы *MARKER уровня модуля в scripts/, строкой или вызовом findings.marker; законно только определение. Внутри набора — прежний держатель: scripts/findings.py — PLAN_MARKER и один признак плана is_plan, оба читателя метки (scripts/work_plan.py, scripts/items_left.py::measure) узнают план им; tests/test_items_left.py::test_the_plan_is_skipped_by_its_imported_marker подменяет метку и краснеет на счёте буквами",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-26",
+          "analysed": "2026-10-01",
           "decided": "2026-09-25",
           "skill": ""
         },
