@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 29 | 18 | 214 | 0 | 0 | 156 | 101 | 14 | 0 | 27 | 0 | 50 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 181 | 33 | 0 | 152 | 95 | 9 | 0 | 46 | 2 | 86 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 181 | 33 | 0 | 117 | 60 | 12 | 0 | 29 | 16 | 78 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 15 | 14 | 213 | 1 | 0 | 204 | 172 | 23 | 2 | 7 | 0 | 241 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 15 | 14 | 214 | 0 | 0 | 205 | 172 | 23 | 2 | 8 | 0 | 243 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -324,7 +324,7 @@
 | `Glossary-Python` | `tests/test_rules_bindings.py` | 2 |
 | `Glossary-Python` | _остальные_ · _the rest_ | 40 механизмов по одному правилу; без названного адреса: 0 из 101 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_reject.py` | 25 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/agent_pr.py` | 18 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/agent_pr.py` | 19 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/ci_complete.py` | 18 |
 | `Engineering-Pipeline-Mechanisms` | `.pipeline.yml` | 17 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/review.yml` | 16 |
@@ -347,12 +347,12 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_contract.py` | 9 |
 | `Engineering-Pipeline-Mechanisms` | `docs/dev/release.md` | 8 |
 | `Engineering-Pipeline-Mechanisms` | `packages/transport/ghrest.py` | 8 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/check_pr_meta.py` | 8 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/main_red.py` | 8 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_facts.py` | 8 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/agent-pr.yml` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `facts.json` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/build_changelog.py` | 7 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/check_pr_meta.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/pipeline_checks.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_docs_shape.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `CHANGELOG.md` | 6 |
@@ -451,7 +451,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_steps_speak_outward.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_window_preflight.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 113 механизмов по одному правилу; без названного адреса: 0 из 204 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 115 механизмов по одному правилу; без названного адреса: 0 из 205 |
 
 ## Правила · Rules
 
@@ -670,4 +670,4 @@
 | 212 | действует | — | действует | — | — | действует |
 | 213 | действует | — | действует | — | — | действует |
 | 214 | действует | — | действует | — | — | действует |
-| 215 | действует | — | действует | — | — | — |
+| 215 | действует | — | действует | — | — | действует |

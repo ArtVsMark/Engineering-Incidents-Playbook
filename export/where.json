@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-01T13:50:09+00:00",
+  "generated_at": "2026-10-01T14:11:38+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -8443,15 +8443,15 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-01",
-      "answered": 213,
+      "answered": 214,
       "by_status": {
-        "active": 204,
+        "active": 205,
         "not-applicable": 9
       },
       "by_mechanism": {
         "gate": 172,
         "pipeline": 23,
-        "document": 7,
+        "document": 8,
         "skill": 2
       },
       "rules": {
@@ -8667,7 +8667,8 @@
         "211": "active",
         "212": "active",
         "213": "active",
-        "214": "active"
+        "214": "active",
+        "215": "active"
       },
       "holds": {
         "001": {
@@ -10504,6 +10505,15 @@
           "awaiting": "",
           "analysed": "2026-09-26",
           "decided": "2026-09-26",
+          "skill": ""
+        },
+        "215": {
+          "mechanism": "document",
+          "where": "Держится по частям, и каждая названа. Тело изменения не пересказывается, а собирается из тел коммитов: scripts/agent_pr.py::describe_from — одна сборка на открытие и на гейт разметки scripts/check_pr_meta.py, и строка «Закрывает пункт» сверяется с текстом пункта задачи дословно. Число «Правил на документах» во фрагменте сверяется с деревом: tests/test_counted_numbers.py. Остальной пересказ — числа, перечни и «что тронуто» во фрагменте, теле и поле why — держит приём, записанный в роде находок «пересказ своей работы не сверен с источником» (.rules/finding-kinds.json): перед фрагментом — git diff --stat origin/main и реестр по отпечатку, у перечня с каноном — ссылка, у числа — датированный замер с командой",
+          "holdable": "conditional",
+          "awaiting": "решение владельца в ArtVsMark/Engineering-Pipeline-Mechanisms#1010 и предмет варианта 1 — шапка «Потребителю безразлично» фрагментов internal. Замер 01.10.2026 командой find changelog.d -name '*.internal.md' | wc -l: 81 фрагмент рода internal, все 81 с шапкой (27 до выпуска, 54 в changelog.d/released), — сверять шапку с составом изменения есть на чём",
+          "analysed": "2026-10-01",
+          "decided": "2026-10-01",
           "skill": ""
         }
       },
