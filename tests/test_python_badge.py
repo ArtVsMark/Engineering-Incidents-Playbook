@@ -323,3 +323,17 @@ def test_нет_пакета_на_pypi_узнаётся_по_коду_а_не_п
     assert pb.НЕТ_ПАКЕТА.search(отказ)
     assert not pb.НЕТ_ПАКЕТА.search("не прочитан: <urlopen error [Errno 111] host:4040>")
     assert not pb.НЕТ_ПАКЕТА.search("не прочитан: HTTP Error 503: Service Unavailable")
+
+
+def test_файл_значка_без_числа_это_третий_исход(tmp_path):
+    """Находка обзора #653: файл есть, а message пуст или не число —
+    это не «не измерено», а непрочитанный ответ (075)."""
+    исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z")], "python-next.yml": []}
+    out = tmp_path / "p.svg"
+    корень = дерево(tmp_path)
+    for имя, тело, ключ in (("c.json", '{"message": "n/a"}', "--coverage-json"),
+                            ("v.json", '{"message": ""}', "--version-json")):
+        (tmp_path / имя).write_text(тело, encoding="utf-8")
+        assert pb.main(["--root", str(корень), "--out", str(out), ключ, str(tmp_path / имя)],
+                       прогоны=исходы.__getitem__, работы=lambda r: []) == 2
+    assert not out.exists()

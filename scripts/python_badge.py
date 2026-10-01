@@ -80,7 +80,7 @@ OUT = ROOT / ".github" / "badges" / "python.svg"
 #: площадка рисует свои ✓ и ✗ у проверок. Замер контраста белого текста
 #: (WCAG): прежний зелёный shields #4c1 — 2,1:1, новый #2da44e — 3,2:1,
 #: серый #9f9f9f → #8c959f — 2,7:1 → 3,0:1, красный #e05d44 → #cf222e —
-#: 3,6:1 → 5,4:1. Порога 4,5:1 для мелкого текста зелёный и серый не
+#: 3,6:1 → 5,4:1. Порога 4,5:1 для мелкого текста зелёный, серый и жёлтый не
 #: достигают — как и значки shields; выбран вид, а не порог, и это
 #: решение, а не недосмотр.
 СОСТОЯНИЯ: dict[str, tuple[str, str]] = {
@@ -268,9 +268,12 @@ def из_значка(путь: Path | None) -> str | None:
     if путь is None:
         return None
     try:
-        return str(json.loads(путь.read_text(encoding="utf-8")).get("message") or "") or None
+        сообщение = str(json.loads(путь.read_text(encoding="utf-8")).get("message") or "")
     except (OSError, ValueError, AttributeError) as e:
         raise НеОтветила(f"файл значка {путь} не прочитан — {e}") from e
+    if not сообщение.strip():
+        raise НеОтветила(f"в файле значка {путь} пустой message — ответа нет")
+    return сообщение
 
 
 def _процент(сообщение: str | None) -> str | None:
@@ -427,6 +430,12 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
         покрытие = из_значка(args.coverage_json)
         покрытие_всех = из_значка(args.coverage_all_json)
         версия = из_значка(args.version_json)
+        for путь, сообщение in ((args.coverage_json, покрытие),
+                                (args.coverage_all_json, покрытие_всех)):
+            if сообщение is not None and _процент(сообщение) is None:
+                # «n/a» или «unknown» — замер не дал числа; серый сказал бы
+                # «не измерено» о том, что измерить пытались (075).
+                raise НеОтветила(f"в файле значка {путь} нет числа покрытия — «{сообщение}»")
     except НеОтветила as e:
         print(f"значок не собран: {e}. Серым это не рисуется (075)", file=sys.stderr)
         return 2
