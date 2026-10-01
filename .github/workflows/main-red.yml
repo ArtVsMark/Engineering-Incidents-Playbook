@@ -87,7 +87,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       # attribution-history исключён осознанно и по имени: его красное означало
       # бы долг прошлой истории. Сейчас он зелёный, потому что долг объявлен

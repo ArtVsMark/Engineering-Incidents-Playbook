@@ -93,7 +93,7 @@ jobs:
           token: ${{ secrets.MERGE_QUEUE_TOKEN }}
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       # ТЕГ ЕСТЬ — ЭТО ЕЩЁ НЕ ОТКАЗ. Страница на месте — выпуск состоялся, и
       # номер не переиспользуется. Страницы нет — дозавершение, но только

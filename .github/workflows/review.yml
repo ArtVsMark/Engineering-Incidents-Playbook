@@ -94,7 +94,7 @@ jobs:
       - uses: actions/setup-python@v6
         if: steps.token.outputs.present == 'yes'
         with:
-          python-version: "3.12"
+          python-version: "3.14"
 
       - name: обвязка тестов для ревьюера
         if: steps.token.outputs.present == 'yes'

@@ -39,7 +39,7 @@
 name = "engineering-incidents-playbook"
 version = "0.0.0"
 description = "Каталог правил: обвязка тестов. Пакетом не публикуется."
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
