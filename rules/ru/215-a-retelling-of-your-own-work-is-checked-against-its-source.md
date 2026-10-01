@@ -31,11 +31,11 @@ ArtVsMark/Engineering-Pipeline-Mechanisms#966, а отпечаток каждо�
 **У нас этот род — у трети изменений с находками.** Замер 01.10 по комментариям
 внешнего взгляда на изменениях с 10 по 27 сентября: хотя бы одна находка —
 не «НАХОДКА: нет» — стоит на 92 изменениях. Команда считает изменения, а не
-комментарии, берёт только комментарии ревьюера, созданные до 28.09, и даёт 92:
+комментарии, берёт только комментарии ревьюера, созданные с 10.09 по 27.09, и даёт 92:
 
 ```bash
 gh api --paginate 'repos/ArtVsMark/Engineering-Incidents-Playbook/issues/comments?since=2026-09-10T00:00:00Z&per_page=100' \
-  --jq '.[] | select(.user.login == "claude[bot]" and .created_at < "2026-09-28")
+  --jq '.[] | select(.user.login == "claude[bot]" and .created_at >= "2026-09-10" and .created_at < "2026-09-28")
         | select([.body | scan("НАХОДКА:[^\n]*")]
                  | map(select(test("^НАХОДКА:\\s*нет\\W*$") | not)) | length > 0)
         | .issue_url' | sort -u | wc -l

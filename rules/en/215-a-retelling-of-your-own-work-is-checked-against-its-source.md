@@ -34,11 +34,11 @@ edit.
 01.10 over the outside reviewer's comments on changes from 10 to 27 September:
 at least one finding other than `НАХОДКА: нет` sits on 92 changes. The command
 counts changes, not comments, takes only the reviewer's comments created
-before 28.09, and returns 92:
+from 10.09 to 27.09, and returns 92:
 
 ```bash
 gh api --paginate 'repos/ArtVsMark/Engineering-Incidents-Playbook/issues/comments?since=2026-09-10T00:00:00Z&per_page=100' \
-  --jq '.[] | select(.user.login == "claude[bot]" and .created_at < "2026-09-28")
+  --jq '.[] | select(.user.login == "claude[bot]" and .created_at >= "2026-09-10" and .created_at < "2026-09-28")
         | select([.body | scan("НАХОДКА:[^\n]*")]
                  | map(select(test("^НАХОДКА:\\s*нет\\W*$") | not)) | length > 0)
         | .issue_url' | sort -u | wc -l
