@@ -66,6 +66,10 @@ def подставить(monkeypatch, repo: Path) -> None:
     monkeypatch.setattr(bf, "WORKFLOWS", repo / ".github/workflows")
     monkeypatch.setattr(bf, "WHERE", repo / "export/where.json")
     monkeypatch.setattr(bf, "FACTS", repo / ".github/badges/facts.json")
+    # Тегов у поддельного дерева нет: `version.py` спрашивает git НАСТОЯЩЕГО
+    # репозитория, и без подмены ответ зависел бы от глубины клона (149).
+    monkeypatch.setattr(bf.version, "version", lambda: None)
+    monkeypatch.setattr(bf.version, "latest_tag", lambda: None)
 
 
 def test_считает_функции_и_модули_набора(monkeypatch, repo):
@@ -196,10 +200,11 @@ def test_обязательный_минимум_есть_всегда(monkeypat
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     факты, _, беда = bf.build()
     assert беда == ""
-    assert факты["schema"] == "1.1" and isinstance(факты["schema"], str)
+    assert факты["schema"] == "1.2" and isinstance(факты["schema"], str)
     assert факты["repo"] == "своё/имя"
     assert факты["generated_at"].endswith("+00:00")
     assert факты["commit"] == "deadbeef"
+    assert факты["ci"] == {"workflow": "ci.yml"}
 
 
 def test_без_имени_репозитория_файл_не_пишется(monkeypatch, repo, capsys):
@@ -222,7 +227,7 @@ def test_записанный_файл_разбирается_и_несёт_об
     assert bf.main([]) == 0
     записано = json.loads((repo / ".github/badges/facts.json")
                           .read_text(encoding="utf-8"))
-    assert записано["schema"] == "1.1"
+    assert записано["schema"] == "1.2"
     # Номер схемы обязан сказать, ЧЕГО он: ключ `schema` носят четыре предмета.
     assert "164" in записано["schema_of"]
 
@@ -267,7 +272,8 @@ def test_измерять_нечего_это_исход_один_и_он_дос
     err = capsys.readouterr().err
     assert "измерять нечего" in err
     # Причина каждого пропуска названа, а не подразумевается (075).
-    assert err.count("не измерено —") == len(bf.ИЗМЕРЯЕМОЕ)
+    for ключ in bf.ИЗМЕРЯЕМОЕ:
+        assert f"не измерено — {ключ}:" in err
     assert not (repo / ".github/badges/facts.json").exists()
 
 
@@ -275,6 +281,10 @@ def test_хотя_бы_один_измеренный_раздел_публику
     """Вторая сторона (140): один собравшийся раздел — уже повод публиковать."""
     подставить(monkeypatch, repo)
     write(repo / "tests/test_a.py", "def test_one():\n    pass\n")
+    # Прогон CI — обязательное поле договора 1.2, а не измерение: без него
+    # файл не пишется вовсе. Он здесь только толчковый, чтобы не измерить
+    # заодно проверки на изменении.
+    write(repo / ".github/workflows/ci.yml", ТОЛЬКО_ТОЛЧОК)
     monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     monkeypatch.setattr(bf.coverage_badge, "measured", lambda: None)
@@ -342,3 +352,76 @@ def test_несходящееся_число_не_публикуется(monkeyp
     раздел, почему = bf.rules("свой/каталог")
     assert раздел is None
     assert "5" in почему and "10" in почему
+
+
+# ── договор фактов 1.2: значение либо причина, третьего нет (#632) ───────────
+
+def собрать(monkeypatch, repo: Path) -> dict:
+    дерево(repo)
+    подставить(monkeypatch, repo)
+    monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
+    monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
+    факты, _, беда = bf.build()
+    assert беда == ""
+    return факты
+
+
+def test_версия_и_выпуск_берутся_у_тега(monkeypatch, repo):
+    """Тот же источник, что у значков: второй разбор тега разошёлся бы молча."""
+    дерево(repo)
+    подставить(monkeypatch, repo)
+    monkeypatch.setattr(bf.version, "version", lambda: ("1.3", "1.3.5"))
+    monkeypatch.setattr(bf.version, "latest_tag", lambda: "v1.3.0")
+    monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
+    monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
+    факты, _, _ = bf.build()
+    assert факты["version"] == "1.3.5"
+    assert факты["release"] == "v1.3.0"
+    assert "version" not in факты.get("none", {})
+
+
+def test_без_тега_причина_лежит_в_самом_файле(monkeypatch, repo):
+    """До 1.2 причина уходила только в журнал, и файл молчал о ней."""
+    факты = собрать(monkeypatch, repo)
+    assert "version" not in факты and "release" not in факты
+    assert "тега" in факты["none"]["version"]
+    assert "тега" in факты["none"]["release"]
+
+
+def test_пропуск_договорного_показателя_называет_причину(monkeypatch, repo):
+    monkeypatch.setattr(bf.coverage_badge, "measured", lambda: None)
+    факты = собрать(monkeypatch, repo)
+    assert "coverage_percent" not in факты
+    assert факты["none"]["coverage_percent"]
+
+
+def test_причина_вне_договора_в_none_не_идёт(monkeypatch, repo):
+    """Схема 1.2 отвергает ключи `none` вне своего списка: `rules` туда нельзя."""
+    факты = собрать(monkeypatch, repo)
+    assert "rules" not in факты
+    assert "rules" not in факты["none"]
+    assert set(факты["none"]) <= set(bf.ДОГОВОРНЫЕ)
+
+
+def test_без_прогона_ci_файл_не_пишется(monkeypatch, repo, capsys):
+    """Находка ревью #634: без обязательного `ci` файл писался невалидным."""
+    дерево(repo)
+    (repo / ".github/workflows/ci.yml").unlink()
+    подставить(monkeypatch, repo)
+    monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
+    monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
+    assert bf.main([]) == 2
+    err = capsys.readouterr().err
+    assert "обязательных полей" in err and "ci" in err
+    assert "не измерено — ci:" in err
+    assert not (repo / ".github/badges/facts.json").exists()
+
+
+def test_без_коммита_файл_не_пишется(monkeypatch, repo, capsys):
+    дерево(repo)
+    подставить(monkeypatch, repo)
+    monkeypatch.setattr(bf, "git", lambda *a: (128, "not a git repository"))
+    monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
+    assert bf.main([]) == 2
+    assert "commit" in capsys.readouterr().err
+    assert not (repo / ".github/badges/facts.json").exists()
