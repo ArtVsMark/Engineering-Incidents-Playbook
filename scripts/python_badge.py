@@ -70,6 +70,10 @@ OUT = ROOT / ".github" / "badges" / "python.svg"
 #: Исходы прогона, которые вердикт. Прочие (cancelled, skipped, neutral,
 #: stale, action_required) ничего не проверили и пропускаются к предыдущему.
 ПРОШЁЛ = {"success"}
+#: События, прогон по которым говорит об ОБЩЕЙ ветке. `branch=main` у
+#: площадки — это `head_branch`, а он равен `main` и у изменения из форка с
+#: веткой `main`: его исход задаёт автор чужого изменения, а не общая ветка.
+СВОИ_СОБЫТИЯ = {"push", "schedule", "workflow_dispatch"}
 УПАЛ = {"failure", "timed_out", "startup_failure"}
 
 #: Префикс метки раннера → имя ОС на значке. Порядок — порядок частей.
@@ -100,6 +104,8 @@ def версии(root: Path = ROOT, ci: str = build_facts.CI_WORKFLOW
 def решающий(runs: list[dict]) -> dict | None:
     """Последний прогон С ВЕРДИКТОМ; отменённые и пропущенные — мимо (039)."""
     for run in sorted(runs, key=lambda r: r.get("created_at") or "", reverse=True):
+        if run.get("event", "push") not in СВОИ_СОБЫТИЯ:
+            continue
         if run.get("conclusion") in ПРОШЁЛ | УПАЛ:
             return run
     return None
