@@ -305,3 +305,23 @@ def test_адрес_навыка_не_той_формы_находка(tmp_path,
         "o/r:skill/answer-a-rule": {"status": "admitted",
                                     "skill": "plugins/catalogue:answer-a-rule"}}) == 1
     assert "не адрес навыка" in capsys.readouterr().err
+
+
+def test_форма_ответа_для_навыка_окна_принимается(tmp_path):
+    """Находка ревью #639: форма окна у ответа — `.claude/skills/<имя>`."""
+    assert вердикты_навыкам(tmp_path, {
+        "o/r:skill/answer-a-rule": {"status": "admitted",
+                                    "skill": ".claude/skills/answer-a-rule"}}) == 0
+
+
+def test_повтор_навыка_ловится_и_при_пробеле_и_в_другой_форме(tmp_path, capsys):
+    """Находка ревью #639: повтор искали по сырой строке вердикта.
+
+    Голое имя и `.claude/skills/<имя>` называют одно место, пробел вокруг
+    адреса — тоже. Второй «принят» на то же место — повтор.
+    """
+    assert вердикты_навыкам(tmp_path, {
+        "o/r:skill/answer-a-rule": {"status": "admitted", "skill": "answer-a-rule"},
+        "o/q:skill/answer-rules": {"status": "admitted",
+                                   "skill": " .claude/skills/answer-a-rule "}}) == 1
+    assert "уже занят" in capsys.readouterr().err
