@@ -191,3 +191,18 @@ def test_прогон_изменения_из_форка_не_красит_зн�
     свой = {**прогон("success", "2026-10-01T10:00Z"), "event": "push"}
     assert pb.состояние([свой, чужой]) == "pass"
     assert pb.состояние([чужой]) == "none"
+
+
+def test_без_версии_основного_ci_это_третий_исход(tmp_path):
+    """Находка обзора #649: если у основного CI нет версии (нет числа и нет
+    pyproject), его не спрашивают — и серый «Python» был бы ложью (075)."""
+    wf = tmp_path / ".github" / "workflows"
+    wf.mkdir(parents=True)
+    (wf / "pr-check.yml").write_text("    runs-on: ubuntu-latest\n", encoding="utf-8")
+    (wf / "python-next.yml").write_text(
+        '          python-version: "3.15"\n          allow-prereleases: true\n',
+        encoding="utf-8")
+    out = tmp_path / "python.svg"
+    assert pb.main(["--root", str(tmp_path), "--ci", "pr-check.yml", "--out", str(out)],
+                   прогоны=lambda f: [], работы=lambda r: []) == 2
+    assert not out.exists()
