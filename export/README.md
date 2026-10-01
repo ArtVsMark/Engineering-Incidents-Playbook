@@ -765,7 +765,10 @@ on:
   workflow_dispatch:            # ручная кнопка · a manual button (104)
 permissions:
   contents: read
-  issues: write
+  issues: write                 # действие пишет только «входящие» · the action writes only the inbox
+  # link_trails.py отдельным шагом, если следы ведут на изменения, —
+  # ещё pull-requests: write · a link_trails.py step whose trails point
+  # at pull requests also needs pull-requests: write
 jobs:
   inbox:
     runs-on: ubuntu-latest
