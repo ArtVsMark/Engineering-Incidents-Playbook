@@ -1,4 +1,4 @@
-# Значок «Python │ 3.14 │ 3.15 │ linux │ windows │ mac» у потребителя.
+# Единый значок «Python │ ОС │ coverage │ release / PyPI │ version» у потребителя.
 #
 # Скрипт исполняется из каталога на теге из строки uses: (GITHUB_ACTION_PATH),
 # а не копией в проекте: копия разошлась бы с каталогом при первой правке
@@ -11,8 +11,9 @@
 # рисуется, и прежний значок публикацией лучше не трогать.
 name: Значок Python каталога
 description: >-
-  Рисует значок «Python │ версии │ ОС»: «Python» и ОС — исходом основного CI
-  на main, каждая версия — исходом своего прогона; серый — не проверялось.
+  Рисует единый значок «Python │ версии │ ОС │ coverage │ release / PyPI │
+  version»: проверки — исходами прогонов на main, покрытие и версия — из
+  файлов значков проекта, выпуск — сверкой с PyPI; серый — не проверялось.
 
 inputs:
   ci-workflow:
@@ -25,6 +26,24 @@ inputs:
     description: Куда положить SVG, относительно корня проекта.
     required: false
     default: .github/badges/python.svg
+  coverage-json:
+    description: >-
+      Файл значка покрытия проекта (shields endpoint) — из него берётся
+      message. Пусто — зона покрытия серая «—».
+    required: false
+    default: ""
+  version-json:
+    description: >-
+      Файл значка версии проекта (shields endpoint). Пусто — зона версии серая.
+    required: false
+    default: ""
+  pypi:
+    description: >-
+      Имя пакета на PyPI. Пусто — проект на PyPI не публикуется, и зона
+      «release / PyPI» серая. Иначе зелёная — номер на PyPI совпадает с
+      последним выпуском, красная — расходится.
+    required: false
+    default: ""
   token:
     description: Токен для чтения прогонов (нужно право actions read).
     required: false
@@ -43,7 +62,13 @@ runs:
         GH_TOKEN: ${{ inputs.token }}
         CI_WORKFLOW: ${{ inputs.ci-workflow }}
         OUT: ${{ inputs.out }}
+        COVERAGE_JSON: ${{ inputs.coverage-json }}
+        VERSION_JSON: ${{ inputs.version-json }}
+        PYPI: ${{ inputs.pypi }}
       run: |
         set -euo pipefail
-        python "$GITHUB_ACTION_PATH/../../../scripts/python_badge.py" \
-          --root "$GITHUB_WORKSPACE" --ci "$CI_WORKFLOW" --out "$GITHUB_WORKSPACE/$OUT"
+        args=(--root "$GITHUB_WORKSPACE" --ci "$CI_WORKFLOW" --out "$GITHUB_WORKSPACE/$OUT")
+        [ -n "$COVERAGE_JSON" ] && args+=(--coverage-json "$GITHUB_WORKSPACE/$COVERAGE_JSON")
+        [ -n "$VERSION_JSON" ] && args+=(--version-json "$GITHUB_WORKSPACE/$VERSION_JSON")
+        [ -n "$PYPI" ] && args+=(--pypi "$PYPI")
+        python "$GITHUB_ACTION_PATH/../../../scripts/python_badge.py" "${args[@]}"

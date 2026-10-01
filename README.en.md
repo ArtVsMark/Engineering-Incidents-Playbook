@@ -2,10 +2,7 @@
 
 > **Reader:** visitor — what this is and whether to take it.
 
-[![Release](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Frelease.json&cacheSeconds=300)](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/releases)
-[![Version](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fversion.json&cacheSeconds=300)](docs/VERSIONING.md)
-[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FArtVsMark%2FEngineering-Incidents-Playbook%2Fbadges%2F.github%2Fbadges%2Fcoverage.json)](pyproject.toml)
-[![Python: main CI, versions 3.14 and 3.15 (preview), OS linux, windows, mac](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/python.svg)](.github/workflows/python-next.yml)
+[![Status: Python and versions, OS linux / windows / mac, coverage, release and PyPI, version](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/python.svg)](.github/workflows/python-next.yml)
 
 **A catalogue of <!--m:rules-->214<!--/m:rules--> rules for Claude Code and GitHub,
 where every one grew out of a real failure.** Agent sessions and the project rulebook (`CLAUDE.md`), the

@@ -8,6 +8,14 @@
 from __future__ import annotations
 
 import python_badge as pb
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def без_площадки(monkeypatch):
+    """Выпуск и PyPI в наборе не спрашиваются у сети: выпусков нет."""
+    monkeypatch.setattr(pb, "релиз_площадки", lambda: None)
+    monkeypatch.setattr(pb, "версия_pypi", lambda пакет: None)
 
 
 def прогон(conclusion: str, когда: str, id_: int = 1) -> dict:
@@ -68,7 +76,7 @@ def test_сдвиг_планки_сдвигает_подпись(tmp_path):
 # ── картинка ───────────────────────────────────────────────────────────────
 
 def test_три_части_и_python_цветом_основного_ci():
-    картинка = pb.svg([("3.14", "pass"), ("3.15", "fail")], "pass")
+    картинка = pb.рисунок(pb.зоны_проверок([("3.14", "pass"), ("3.15", "fail")], "pass"))
     assert картинка.count("<rect x=") >= 3
     assert ">Python<" in картинка and ">3.14<" in картинка and ">3.15<" in картинка
     зелёный, красный = pb.СОСТОЯНИЯ["pass"][0], pb.СОСТОЯНИЯ["fail"][0]
@@ -206,3 +214,60 @@ def test_без_версии_основного_ci_это_третий_исхо�
     assert pb.main(["--root", str(tmp_path), "--ci", "pr-check.yml", "--out", str(out)],
                    прогоны=lambda f: [], работы=lambda r: []) == 2
     assert not out.exists()
+
+
+# ── зоны выпуска: покрытие, release / PyPI, версия ─────────────────────────
+
+def test_выпуск_совпадает_с_pypi_зелёный_и_коротко():
+    часть = pb.зона_выпуска("v1.5.0", "1.5.0", True)[1]
+    assert часть[0] == "1.5" and часть[1] == pb.СОСТОЯНИЯ["pass"][0]
+
+
+def test_выпуск_расходится_с_pypi_красный_и_оба_номера():
+    часть = pb.зона_выпуска("v2.8.0", "2.7.0", True)[1]
+    assert часть[0] == "2.8 / 2.7" and часть[1] == pb.СОСТОЯНИЯ["fail"][0]
+
+
+def test_pypi_не_объявлен_серый_с_номером_выпуска():
+    часть = pb.зона_выпуска("v1.5.0", None, False)[1]
+    assert часть[0] == "1.5" and часть[1] == pb.СОСТОЯНИЯ["none"][0]
+
+
+def test_объявлен_но_пакета_на_pypi_нет_красный():
+    часть = pb.зона_выпуска("v1.5.0", None, True)[1]
+    assert часть[0] == "1.5 / —" and часть[1] == pb.СОСТОЯНИЯ["fail"][0]
+
+
+def test_покрытие_по_порогам_coverage_badge():
+    assert pb.зона_покрытия("72%")[1][:2] == ("72%", pb.ЦВЕТ_ПОКРЫТИЯ["yellow"])
+    assert pb.зона_покрытия("95%")[1][1] == pb.ЦВЕТ_ПОКРЫТИЯ["brightgreen"]
+    assert pb.зона_покрытия(None)[1][1] == pb.СОСТОЯНИЯ["none"][0]
+
+
+def test_порядок_зон_версия_последней(tmp_path):
+    """Решение владельца: проверки, ОС, покрытие, выпуск, версия — последней."""
+    out = tmp_path / "python.svg"
+    (tmp_path / "v.json").write_text('{"message": "1.5.3"}', encoding="utf-8")
+    (tmp_path / "c.json").write_text('{"message": "72%"}', encoding="utf-8")
+    исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z")],
+              "python-next.yml": [прогон("success", "2026-10-01T10:00Z")]}
+    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out),
+                    "--coverage-json", str(tmp_path / "c.json"),
+                    "--version-json", str(tmp_path / "v.json")],
+                   прогоны=исходы.__getitem__,
+                   работы=lambda r: [работа("success", "ubuntu-latest")],
+                   релиз=lambda: "v1.5.0") == 0
+    картинка = out.read_text(encoding="utf-8")
+    порядок = [картинка.index(f">{т}<") for т in
+               ("Python", "linux", "coverage", "release / PyPI", "version")]
+    assert порядок == sorted(порядок)
+
+
+def test_молчание_pypi_это_третий_исход(tmp_path):
+    def молчит(пакет: str) -> str | None:
+        raise pb.НеОтветила("PyPI: timeout")
+    исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z")], "python-next.yml": []}
+    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(tmp_path / "p.svg"),
+                    "--pypi", "stepik-python-grader"],
+                   прогоны=исходы.__getitem__, работы=lambda r: [],
+                   релиз=lambda: "v2.8.0", pypi=молчит) == 2

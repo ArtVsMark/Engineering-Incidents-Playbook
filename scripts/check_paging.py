@@ -76,7 +76,7 @@ ROOT = Path(__file__).resolve().parent.parent
 #: Буквальные окончания адресов, которые отдают ОДИН объект или являются
 #: действием. Страниц у них нет.
 ОДИНОЧНЫЕ = frozenset({
-    "dispatches", "merge", "protection", "rate_limit", "status",
+    "dispatches", "latest", "merge", "protection", "rate_limit", "status",
 })
 
 #: Флаги `gh api`, за которыми идёт значение: их значение — не путь.

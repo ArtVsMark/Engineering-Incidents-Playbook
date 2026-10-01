@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
-"""Значок «Python │ 3.14 │ 3.15 │ linux │ windows │ mac»: цвет каждой части — свой прогон.
+"""Единый значок «Python 3.14 3.15 │ linux windows mac │ coverage │ release / PyPI │ version».
+
+ЗОНЫ ВЫПУСКА (решение владельца 1 октября). Покрытие и версия берутся из
+файлов значков, которые проект уже собирает (`--coverage-json`,
+`--version-json`), а не меряются второй раз (214); цвет покрытия — порогами
+coverage_badge.COLORS. «release / PyPI» показывает старшие два числа выпуска:
+зелёный — номер на PyPI совпадает с последним выпуском, красный — расходится
+(тогда видны оба: `2.8 / 2.7`), серый — проект на PyPI не публикуется (`--pypi`
+пуст) или выпусков нет. Версия — последней, синим: это счётчик, не проверка.
+
+ЧАСТИ ПРОВЕРОК — у каждой свой цвет и свой прогон.
 
 ЗАЧЕМ ОДНА КАРТИНКА ИЗ ТРЁХ ЧАСТЕЙ, А НЕ ДВА ЗНАЧКА. Решение владельца
 1 октября: подпись «Python» одна, версии стоят рядом, и каждая окрашена
@@ -45,7 +55,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import re
 import sys
 from collections.abc import Callable
 from pathlib import Path
@@ -56,7 +68,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import build_facts  # noqa: E402
 import check_python_version as cv  # noqa: E402
+import coverage_badge  # noqa: E402
 import ghcli  # noqa: E402
+from aggregate_bindings import fetch  # noqa: E402
 
 OUT = ROOT / ".github" / "badges" / "python.svg"
 
@@ -169,50 +183,151 @@ def _ширина(текст: str) -> int:
     return round(len(текст) * 7.2) + 14
 
 
-def svg(части: list[tuple[str, str]], общий: str) -> str:
-    """Картинка: «Python» цветом основного CI и по сегменту на версию."""
-    сегменты = [("Python", СОСТОЯНИЯ[общий][0], СОСТОЯНИЯ[общий][1])] + [
-        (подпись, СОСТОЯНИЯ[сост][0], СОСТОЯНИЯ[сост][1]) for подпись, сост in части]
-    подсказка = f"Python — {СОСТОЯНИЯ[общий][1]}; " + "; ".join(
-        f"{подпись}: {СОСТОЯНИЯ[сост][1]}" for подпись, сост in части)
+#: Часть значка: надпись, цвет, слово для подсказки.
+Часть = tuple[str, str, str]
+
+ПОДПИСЬ = "#555"
+СИНИЙ = "#007ec6"
+#: Имена цветов shields у порогов покрытия → цвет на картинке. Пороги берутся
+#: у coverage_badge.COLORS, а не набираются второй раз (209).
+ЦВЕТ_ПОКРЫТИЯ = {"brightgreen": "#4c1", "green": "#97ca00", "yellow": "#dfb317",
+                 "orange": "#fe7d37", "red": "#e05d44"}
+#: Зазор между зонами: внутри зоны части разделены тонкой линией, а зоны —
+#: просветом, чтобы «проверки», «покрытие» и «выпуск» читались порознь.
+ЗАЗОР = 4
+
+
+def рисунок(зоны: list[list[Часть]]) -> str:
+    """Картинка из зон: каждая зона — скруглённая полоса своих частей."""
+    подсказка = "; ".join(f"{т}: {слово}" for зона in зоны for т, _, слово in зона if слово)
+    # Имена обрезок уникальны для содержимого: две картинки на одной странице
+    # (вставленные в HTML, а не через <img>) иначе делят id и режут друг друга.
+    метка = hashlib.sha1(repr(зоны).encode("utf-8")).hexdigest()[:8]
     x = 0
-    прямоугольники, надписи = [], []
-    for текст, цвет, _ in сегменты:
-        w = _ширина(текст)
-        прямоугольники.append(f'<rect x="{x}" width="{w}" height="20" fill="{цвет}"/>')
-        центр = x + w / 2
-        надписи.append(
-            f'<text x="{центр}" y="15" fill="#010101" fill-opacity=".3">{escape(текст)}</text>'
-            f'<text x="{центр}" y="14">{escape(текст)}</text>')
-        x += w
-    # Разделитель между частями: при трёх зелёных цвет их не различает, а
-    # «Python │ 3.14 │ 3.15» должно читаться тремя ответами, а не одним.
-    границы = []
-    край = 0
-    for текст, _, _ in сегменты[:-1]:
-        край += _ширина(текст)
-        границы.append(f'<rect x="{край - 1}" width="1" height="20" fill="#fff" fill-opacity=".7"/>')
+    обрезки, прямоугольники, границы, надписи = [], [], [], []
+    for н, зона in enumerate(зоны):
+        начало = x
+        for к, (текст, цвет, _) in enumerate(зона):
+            w = _ширина(текст)
+            прямоугольники.append(
+                f'<rect x="{x}" width="{w}" height="20" fill="{цвет}" clip-path="url(#z{метка}{н})"/>')
+            if к:
+                # Разделитель частей: при трёх зелёных цвет их не различает.
+                границы.append(f'<rect x="{x - 1}" width="1" height="20" fill="#fff" fill-opacity=".7"/>')
+            центр = x + w / 2
+            надписи.append(
+                f'<text x="{центр}" y="15" fill="#010101" fill-opacity=".3">{escape(текст)}</text>'
+                f'<text x="{центр}" y="14">{escape(текст)}</text>')
+            x += w
+        обрезки.append(f'<clipPath id="z{метка}{н}"><rect width="{x - начало}" height="20" '
+                       f'rx="3" x="{начало}"/></clipPath>')
+        x += ЗАЗОР
+    ширина = x - ЗАЗОР
     return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{x}" height="20" '
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{ширина}" height="20" '
         f'role="img" aria-label="{escape(подсказка)}">'
-        f"<title>{escape(подсказка)}</title>"
-        '<linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" '
-        'stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient>'
-        f'<clipPath id="r"><rect width="{x}" height="20" rx="3" fill="#fff"/></clipPath>'
-        f'<g clip-path="url(#r)">{"".join(прямоугольники)}'
-        f'{"".join(границы)}<rect width="{x}" height="20" fill="url(#s)"/></g>'
+        f"<title>{escape(подсказка)}</title>{''.join(обрезки)}"
+        f'<g>{"".join(прямоугольники)}{"".join(границы)}</g>'
         '<g fill="#fff" text-anchor="middle" '
         'font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">'
         f'{"".join(надписи)}</g></svg>\n')
 
 
+def зоны_проверок(части: list[tuple[str, str]], общий: str) -> list[list[Часть]]:
+    """Зона «Python и версии» и зона ОС."""
+    def часть(подпись: str, сост: str) -> Часть:
+        return (подпись, СОСТОЯНИЯ[сост][0], СОСТОЯНИЯ[сост][1])
+    версии_ = [часть(п, с) for п, с in части if п not in ОС.values()]
+    платформы = [часть(п, с) for п, с in части if п in ОС.values()]
+    зоны = [[часть("Python", общий)] + версии_]
+    if платформы:
+        зоны.append(платформы)
+    return зоны
+
+
+# ── зоны выпуска: покрытие, релиз / PyPI, версия ───────────────────────────
+
+def из_значка(путь: Path | None) -> str | None:
+    """`message` из файла значка shields (endpoint): None — файла нет.
+
+    Покрытие и версию проект уже считает своими значками; второй замер здесь
+    разошёлся бы с ними (214)."""
+    if путь is None or not путь.is_file():
+        return None
+    return str(json.loads(путь.read_text(encoding="utf-8")).get("message") or "") or None
+
+
+def зона_покрытия(сообщение: str | None) -> list[Часть]:
+    if сообщение is None or not (m := re.match(r"\s*(\d+(?:\.\d+)?)", сообщение)):
+        return [("coverage", ПОДПИСЬ, ""), ("—", СОСТОЯНИЯ["none"][0], "покрытие не измерено")]
+    процент = float(m.group(1))
+    имя = next(цвет for порог, цвет in coverage_badge.COLORS if процент >= порог)
+    return [("coverage", ПОДПИСЬ, ""), (f"{m.group(1)}%", ЦВЕТ_ПОКРЫТИЯ[имя], f"покрытие {m.group(1)}%")]
+
+
+def зона_версии(версия: str | None) -> list[Часть]:
+    if not версия:
+        return [("version", ПОДПИСЬ, ""), ("—", СОСТОЯНИЯ["none"][0], "версия не собрана")]
+    return [("version", ПОДПИСЬ, ""), (версия, СИНИЙ, f"версия {версия}")]
+
+
+def коротко(версия: str) -> str:
+    """`v1.5.0` → `1.5`: на значке хватает старших двух чисел."""
+    m = re.match(r"v?(\d+)\.(\d+)", версия)
+    return f"{m.group(1)}.{m.group(2)}" if m else версия.lstrip("v")
+
+
+def зона_выпуска(релиз: str | None, pypi: str | None, объявлен: bool) -> list[Часть]:
+    """«release / PyPI»: зелёный — номера совпадают, красный — расходятся,
+    серый — PyPI у проекта нет (или нет ни одного выпуска)."""
+    серый = СОСТОЯНИЯ["none"][0]
+    подпись = ("release / PyPI", ПОДПИСЬ, "")
+    if релиз is None:
+        return [подпись, ("—", серый, "выпусков нет")]
+    if not объявлен:
+        return [подпись, (коротко(релиз), серый, f"выпуск {релиз}, на PyPI не публикуется")]
+    if pypi is not None and релиз.lstrip("v") == pypi.lstrip("v"):
+        return [подпись, (коротко(релиз), СОСТОЯНИЯ["pass"][0], f"выпуск {релиз} совпадает с PyPI")]
+    на_pypi = коротко(pypi) if pypi else "—"
+    return [подпись, (f"{коротко(релиз)} / {на_pypi}", СОСТОЯНИЯ["fail"][0],
+                      f"выпуск {релиз}, на PyPI {pypi or 'пакета нет'}")]
+
+
+def релиз_площадки() -> str | None:
+    """Тег последнего выпуска; None — выпусков нет (404 — ответ, а не молчание)."""
+    код, вывод = ghcli.run("api", "repos/{owner}/{repo}/releases/latest", "--jq", ".tag_name")
+    if код == 0:
+        return вывод.strip() or None
+    if "HTTP 404" in вывод:
+        return None
+    raise НеОтветила(вывод)
+
+
+def версия_pypi(пакет: str) -> str | None:
+    """Последняя версия пакета на PyPI; None — пакета там нет."""
+    данные, ошибка = fetch(f"https://pypi.org/pypi/{пакет}/json")
+    if ошибка is None:
+        return str((данные or {}).get("info", {}).get("version") or "") or None
+    if "404" in ошибка:
+        return None
+    raise НеОтветила(f"PyPI: {ошибка}")
+
+
 def main(argv: list[str] | None = None, прогоны: Прогоны = прогоны_площадки,
-         работы: Работы = работы_площадки) -> int:
+         работы: Работы = работы_площадки,
+         релиз: Callable[[], str | None] | None = None,
+         pypi: Callable[[str], str | None] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--out", type=Path, default=OUT)
     ap.add_argument("--ci", default=build_facts.CI_WORKFLOW,
                     help="файл основного CI в .github/workflows")
+    ap.add_argument("--coverage-json", type=Path,
+                    help="файл значка покрытия (shields endpoint) — его message")
+    ap.add_argument("--version-json", type=Path,
+                    help="файл значка версии (shields endpoint) — его message")
+    ap.add_argument("--pypi", default="",
+                    help="имя пакета на PyPI; пусто — проект на PyPI не публикуется")
     args = ap.parse_args(argv)
 
     пары = версии(args.root, args.ci)
@@ -253,9 +368,24 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
                   "проводилась» (075)", file=sys.stderr)
             return 2
     части += платформы
+    релиз = релиз or релиз_площадки
+    pypi = pypi or версия_pypi
+    try:
+        тег = релиз()
+        на_pypi = pypi(args.pypi) if args.pypi and тег else None
+    except НеОтветила as e:
+        print(f"значок не собран: {e}. Серым это не рисуется (075)", file=sys.stderr)
+        return 2
+    # Порядок зон — решение владельца 1 октября: проверки, ОС, покрытие,
+    # выпуск, и версия последней.
+    зоны = зоны_проверок(части, общий) + [
+        зона_покрытия(из_значка(args.coverage_json)),
+        зона_выпуска(тег, на_pypi, bool(args.pypi)),
+        зона_версии(из_значка(args.version_json)),
+    ]
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(svg(части, общий), encoding="utf-8")
-    print(f"значок Python: основной CI — {СОСТОЯНИЯ[общий][1]}; " + ", ".join(f"{п} — {СОСТОЯНИЯ[с][1]}" for п, с in части))
+    args.out.write_text(рисунок(зоны), encoding="utf-8")
+    print("значок: " + "; ".join(f"{т} — {слово}" for зона in зоны for т, _, слово in зона if слово))
     return 0
 
 
