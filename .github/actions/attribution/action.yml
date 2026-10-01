@@ -94,7 +94,7 @@ runs:
     # второй вход (095, замер 25.09).
     - uses: actions/setup-python@v6
       with:
-        python-version: "3.12"
+        python-version: "3.14"
 
     - name: сверить атрибуцию
       shell: bash
