@@ -84,6 +84,8 @@ python scripts/onboard_consumer.py --repo владелец/имя --out ПАПК
 | `scripts/link_trails.py` | обратная сторона следа: задача узнаёт, что породила правило. Токену нужен `issues: write`, а если следы ведут на изменения — ещё `pull-requests: write` | в репозитории потребителя |
 | `scripts/main_red.py` | дежурный по общей ветке: одна задача, пока `main` красная | в репозитории потребителя |
 | `uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/attribution@<!--m:ref-->v1.3.0<!--/m:ref-->` | сверяет авторство коммитов со списком согласованных имён | в репозитории потребителя |
+| `uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/skills@<!--m:ref-->v1.3.0<!--/m:ref-->` | сверяет копии навыков каталога в `.claude/skills/` с навыками плагина на том же теге: в облачном окне плагин не загружается, и навык доезжает копией ([`plugins/catalogue`](plugins/catalogue/README.md)) | в репозитории потребителя |
+| `scripts/check_skill_copies.py` | то же самое напрямую; с `--apply` кладёт или обновляет копию навыка | в репозитории потребителя, из клона каталога на нужном теге |
 
 Версия в примерах закреплена тегом и подставляется сборкой, а не вписывается
 руками ([035](rules/ru/035-version-is-never-edited-by-hand.md)): смотреть на неё надо в

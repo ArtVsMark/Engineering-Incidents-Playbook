@@ -1,0 +1,43 @@
+# Копии навыков каталога у потребителя: сверка с навыками на закреплённом теге.
+#
+# Плагин каталога в облачном окне не загружается, и навык доезжает до проекта
+# файлом в его .claude/skills/ (plugins/catalogue/README.md). Копия держится
+# этой проверкой, а не договорённостью: тот же приём, что у 214 — намеренная
+# копия подписана, совпадение держит проверка.
+#
+# ЭТАЛОН — ДЕРЕВО КАТАЛОГА НА ТЕГЕ ИЗ СТРОКИ uses:. Площадка кладёт его в
+# GITHUB_ACTION_PATH, навыки плагина лежат там же, и сеть проверке не нужна.
+# Один тег закрепляет и проверку, и эталон.
+name: Копии навыков каталога
+description: >-
+  Сверяет копии навыков каталога в .claude/skills/ проекта с навыками плагина
+  каталога на закреплённом теге.
+
+inputs:
+  skills:
+    description: >-
+      Какие копии сверять, через пробел. Пусто — все папки в .claude/skills/,
+      чьё имя совпадает с навыком каталога. Названная копия, которой нет, —
+      находка, а не пропуск.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+
+    - name: сверить копии навыков
+      shell: bash
+      env:
+        SKILLS: ${{ inputs.skills }}
+      run: |
+        set -euo pipefail
+        args=(--repo "$GITHUB_WORKSPACE")
+        if [ -n "$SKILLS" ]; then
+          read -ra names <<< "$SKILLS"
+          args+=(--skills "${names[@]}")
+        fi
+        python "$GITHUB_ACTION_PATH/../../../scripts/check_skill_copies.py" "${args[@]}"

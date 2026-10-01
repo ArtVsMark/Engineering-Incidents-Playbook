@@ -596,8 +596,11 @@ as every `1.1` file reads.
 пространство имён: правило и навык с одним слагом решаются порознь. `admitted`
 и `merged-into` называют навык каталога полем `skill`, и он обязан лежать в
 `.claude/skills/<skill>/SKILL.md` с тем же именем в заголовке; `rejected` и
-`merged-into` несут причину `why`. Как принятый навык доезжает до проектов —
-отдельная часть контракта, и в этой версии её нет.
+`merged-into` несут причину `why`. Принятый навык доезжает до проектов плагином
+`catalogue`, а в облачное окно, где плагин не загружается, — копией в
+`.claude/skills/`, совпадение которой с тегом держит действие `skills`
+([`plugins/catalogue/README.md`](../plugins/catalogue/README.md), «В облачном
+окне — закреплённой копией»).
 
 **The text is read at the commit, not the branch:** a branch moves, and the
 admitted text would drift from what the owner read. **A measurement replaces
@@ -606,8 +609,10 @@ unmeasured skill would reach everyone untested. An improvement names the tag
 it started from, or later catalogue changes read as the proposal. The verdict key is
 `owner/repo:skill/slug` — a rule and a skill sharing a slug are decided
 separately. `admitted` and `merged-into` name the catalogue skill in `skill`;
-it must exist under `.claude/skills/<skill>/SKILL.md`. How an admitted skill
-reaches projects is a separate part of the contract, absent from this version.
+it must exist under `.claude/skills/<skill>/SKILL.md`. An admitted skill
+reaches projects through the `catalogue` plugin, and a cloud session, which
+does not load plugins, gets a copy in `.claude/skills/` held against the tag by
+the `skills` action.
 
 ## Набор вопросов витрины · The showcase question set
 
