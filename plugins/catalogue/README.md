@@ -120,6 +120,8 @@ from a local install; only organisation-managed plugins reach them.
 
    ```yaml
    - uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/skills@vX.Y.Z
+     with:
+       skills: answer-a-rule
    ```
 
    Эталон — навыки плагина в дереве каталога **на этом теге**: площадка
@@ -127,17 +129,19 @@ from a local install; only organisation-managed plugins reach them.
    копию устаревшей, и проверка краснеет, пока копию не обновят тем же
    `--apply`.
 
-Копией считается папка, чьё имя совпадает с навыком каталога: навык зовётся по
-имени, и одноимённый «свой» навык неотличим от копии ни для окна, ни для
-читателя. **Копию не правят у себя** — это расхождение, которое проверка
+Копии объявляет список `skills`, а не присутствие папки: по папке удалённая
+копия неотличима от необъявленной. Названной копии нет — находка; названного
+навыка нет у каталога — третий исход, и это сигнал, что навык удалён или
+переименован. **Копию не правят у себя** — это расхождение, которое проверка
 ловит. Доработка едет сюда предложением (ниже) и возвращается следующим тегом.
 
 Since the plugin does not reach a cloud session, the skill is put into the
 project's `.claude/skills/<name>/` as a **copy**, held by a check rather than
 by agreement: `check_skill_copies.py --apply <name>` writes it, and the
 `skills` action compares it with the plugin skill at the very tag in `uses:`.
-A folder named like a catalogue skill is a copy; improvements travel back as a
-proposal, never as an edit of the copy.
+The `skills` list declares the copies — not the presence of a folder, by which
+a deleted copy would look undeclared. Improvements travel back as a proposal,
+never as an edit of the copy.
 
 ## Как предложить или доработать навык · How to propose or improve a skill
 
