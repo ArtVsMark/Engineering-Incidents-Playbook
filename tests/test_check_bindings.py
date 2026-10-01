@@ -416,8 +416,13 @@ def test_nelzya_protiv_mashiny_soseda_nazvano_poimyonno(monkeypatch, repo, capsy
     assert "001 — грейдер" in out
 
 
-def test_prochitannaya_para_ne_shumit(monkeypatch, repo, capsys):
-    """Причина, назвавшая соседа, — вопрос задан; пара уходит в число."""
+def test_nazvannyy_sosed_uhodit_v_chislo(monkeypatch, repo, capsys):
+    """Причина, назвавшая соседа, — вопрос задан; пара уходит в число.
+
+    ГРАНИЦА ЗАКРЕПЛЕНА ЭТИМ ЖЕ СЛУЧАЕМ: причина ниже не разбирает механизм
+    соседа, а лишь упоминает его, и засчитывается всё равно. Метрика меряет,
+    задан ли вопрос, а не верен ли ответ (находка ревью #635).
+    """
     с_соседями(monkeypatch, repo, нельзя("строить нечего: гейт у грейдер про другое"))
     write(repo / "AGENTS.md", "# Свод\n")
 
