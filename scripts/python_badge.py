@@ -257,12 +257,27 @@ def из_значка(путь: Path | None) -> str | None:
     return str(json.loads(путь.read_text(encoding="utf-8")).get("message") or "") or None
 
 
-def зона_покрытия(сообщение: str | None) -> list[Часть]:
-    if сообщение is None or not (m := re.match(r"\s*(\d+(?:\.\d+)?)", сообщение)):
+def _процент(сообщение: str | None) -> str | None:
+    m = re.match(r"\s*(\d+(?:\.\d+)?)", сообщение or "")
+    return m.group(1) if m else None
+
+
+def зона_покрытия(сообщение: str | None, по_всем: str | None = None) -> list[Часть]:
+    """Покрытие основного замера и — если проект его отдаёт — второе число:
+    покрытие, сведённое по всем ОС (`72% / 85%`), как расхождение у PyPI.
+
+    Второе число нужно проекту, у которого часть кода исполняется только на
+    своей ОС: на одном Linux её не покрыть, и полный охват виден лишь по
+    сумме ОС. Цвет — по основному замеру: он и есть обещание проекта."""
+    основное = _процент(сообщение)
+    if основное is None:
         return [("coverage", ПОДПИСЬ, ""), ("—", СОСТОЯНИЯ["none"][0], "покрытие не измерено")]
-    процент = float(m.group(1))
-    имя = next(цвет for порог, цвет in coverage_badge.COLORS if процент >= порог)
-    return [("coverage", ПОДПИСЬ, ""), (f"{m.group(1)}%", ЦВЕТ_ПОКРЫТИЯ[имя], f"покрытие {m.group(1)}%")]
+    имя = next(цвет for порог, цвет in coverage_badge.COLORS if float(основное) >= порог)
+    все = _процент(по_всем)
+    if все is None or все == основное:
+        return [("coverage", ПОДПИСЬ, ""), (f"{основное}%", ЦВЕТ_ПОКРЫТИЯ[имя], f"покрытие {основное}%")]
+    return [("coverage", ПОДПИСЬ, ""), (f"{основное}% / {все}%", ЦВЕТ_ПОКРЫТИЯ[имя],
+                                        f"покрытие {основное}%, по всем ОС {все}%")]
 
 
 def зона_версии(версия: str | None) -> list[Часть]:
@@ -324,6 +339,9 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
                     help="файл основного CI в .github/workflows")
     ap.add_argument("--coverage-json", type=Path,
                     help="файл значка покрытия (shields endpoint) — его message")
+    ap.add_argument("--coverage-all-json", type=Path,
+                    help="файл значка покрытия, сведённого по всем ОС; есть — "
+                         "в зоне покрытия появляется второе число")
     ap.add_argument("--version-json", type=Path,
                     help="файл значка версии (shields endpoint) — его message")
     ap.add_argument("--pypi", default="",
@@ -379,7 +397,7 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
     # Порядок зон — решение владельца 1 октября: проверки, ОС, покрытие,
     # выпуск, и версия последней.
     зоны = зоны_проверок(части, общий) + [
-        зона_покрытия(из_значка(args.coverage_json)),
+        зона_покрытия(из_значка(args.coverage_json), из_значка(args.coverage_all_json)),
         зона_выпуска(тег, на_pypi, bool(args.pypi)),
         зона_версии(из_значка(args.version_json)),
     ]

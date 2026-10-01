@@ -32,6 +32,13 @@ inputs:
       message. Пусто — зона покрытия серая «—».
     required: false
     default: ""
+  coverage-all-json:
+    description: >-
+      Файл значка покрытия, сведённого по всем ОС. Нужен проекту, у которого
+      часть кода исполняется только на своей ОС; задан — в зоне покрытия
+      второе число: `72% / 85%`.
+    required: false
+    default: ""
   version-json:
     description: >-
       Файл значка версии проекта (shields endpoint). Пусто — зона версии серая.
@@ -63,12 +70,14 @@ runs:
         CI_WORKFLOW: ${{ inputs.ci-workflow }}
         OUT: ${{ inputs.out }}
         COVERAGE_JSON: ${{ inputs.coverage-json }}
+        COVERAGE_ALL_JSON: ${{ inputs.coverage-all-json }}
         VERSION_JSON: ${{ inputs.version-json }}
         PYPI: ${{ inputs.pypi }}
       run: |
         set -euo pipefail
         args=(--root "$GITHUB_WORKSPACE" --ci "$CI_WORKFLOW" --out "$GITHUB_WORKSPACE/$OUT")
         [ -n "$COVERAGE_JSON" ] && args+=(--coverage-json "$GITHUB_WORKSPACE/$COVERAGE_JSON")
+        [ -n "$COVERAGE_ALL_JSON" ] && args+=(--coverage-all-json "$GITHUB_WORKSPACE/$COVERAGE_ALL_JSON")
         [ -n "$VERSION_JSON" ] && args+=(--version-json "$GITHUB_WORKSPACE/$VERSION_JSON")
         [ -n "$PYPI" ] && args+=(--pypi "$PYPI")
         python "$GITHUB_ACTION_PATH/../../../scripts/python_badge.py" "${args[@]}"
