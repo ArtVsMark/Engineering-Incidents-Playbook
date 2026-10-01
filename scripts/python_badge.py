@@ -221,6 +221,14 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
               f"{args.ci} с python-version, ни предварительного "
               "прогона — подписывать нечего (075)", file=sys.stderr)
         return 2
+    if args.ci not in {файл for _, файл in пары}:
+        # Без основного CI «Python» и ОС красить нечем: серый сказал бы «не
+        # проводилась» о прогоне, которого не спрашивали (075).
+        print(f"значок не собран: у {args.ci} не нашлось версии — ни "
+              "python-version числом, ни requires-python в pyproject.toml. "
+              "«Python» и ОС красятся основным CI, и без него значок врал бы "
+              "серым (075)", file=sys.stderr)
+        return 2
     части: list[tuple[str, str]] = []
     платформы = по_ос([])
     общий = "none"
