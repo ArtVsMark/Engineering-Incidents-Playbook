@@ -397,6 +397,49 @@ def test_reshennoe_u_sosseda_nazvano_v_metrike(monkeypatch, repo, capsys):
     assert "грейдер" in out and "001" in out
 
 
+def нельзя(why: str) -> dict:
+    """Ответ «документом, машиной держать нельзя» на правило 001."""
+    return {"project": "мой/каталог",
+            "rules": {"001": {"status": "active", "mechanism": "document",
+                              "where": "AGENTS.md § Свод — строкой",
+                              "why": why, "holdable": "no"}}}
+
+
+def test_nelzya_protiv_mashiny_soseda_nazvano_poimyonno(monkeypatch, repo, capsys):
+    """#509: «строить нечего» у нас, гейт у соседа — пара видна по имени."""
+    с_соседями(monkeypatch, repo, нельзя("строить нечего"))
+    write(repo / "AGENTS.md", "# Свод\n")
+
+    assert cb.main() == 0
+    out = capsys.readouterr().out
+    assert "сосед держит машиной: правил 1, из них сосед в причине не назван у 1" in out
+    assert "001 — грейдер" in out
+
+
+def test_nazvannyy_sosed_uhodit_v_chislo(monkeypatch, repo, capsys):
+    """Причина, назвавшая соседа, — вопрос задан; пара уходит в число.
+
+    ГРАНИЦА ЗАКРЕПЛЕНА ЭТИМ ЖЕ СЛУЧАЕМ: причина ниже не разбирает механизм
+    соседа, а лишь упоминает его, и засчитывается всё равно. Метрика меряет,
+    задан ли вопрос, а не верен ли ответ (находка ревью #635).
+    """
+    с_соседями(monkeypatch, repo, нельзя("строить нечего: гейт у грейдер про другое"))
+    write(repo / "AGENTS.md", "# Свод\n")
+
+    assert cb.main() == 0
+    out = capsys.readouterr().out
+    assert "правил 1, из них сосед в причине не назван у 0" in out
+    assert "001 — грейдер" not in out
+
+
+def test_imya_soseda_vnutri_slova_ne_zaschityvaetsya():
+    """Находка ревью #635: короткое имя репозитория — не упоминание соседа."""
+    сосед = [{"repo": "чужой/api"}]
+    assert not cb.сосед_назван({"why": "rapid-api-шлюз и therapist"}, сосед)
+    assert cb.сосед_назван({"why": "сосед api держит гейтом"}, сосед)
+    assert cb.сосед_назван({"why": "у api: гейт"}, сосед)
+
+
 def test_u_sosseda_tozhe_nichem_eto_otvet(monkeypatch, repo, capsys):
     """«Ни одного» печатается: пустая строка неотличима от несчитанного (027)."""
     с_соседями(monkeypatch, repo, ничем(),
