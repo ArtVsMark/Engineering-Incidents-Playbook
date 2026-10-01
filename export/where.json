@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-01T10:23:17+00:00",
+  "generated_at": "2026-10-01T10:28:10+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -299,7 +299,7 @@
           "where": ".claude/skills/incident-triage/SKILL.md — «Отнести к классу и задать его первый вопрос», строка «окно молчит»: ждёт ли оно разрешения, снаружи это неотличимо от работы",
           "holdable": "no",
           "awaiting": "",
-          "analysed": "2026-09-25",
+          "analysed": "2026-10-01",
           "decided": "2026-09-25",
           "skill": ".claude/skills/incident-triage"
         },
@@ -765,10 +765,10 @@
         "070": {
           "mechanism": "document",
           "where": "scripts/check_locale.py — докстрока § ПОРОГИ НЕ ВЫДУМАНЫ, А ЗАМЕРЕНЫ: два порога (0.15 сверху для английского дерева, 0.50 снизу для русского), и остаточный риск назван там же: «нарушение даёт значение у другого края, а не рядом с порогом, поэтому пороги стоят с запасом в разы». Это и есть требование 070, исполненное.",
-          "holdable": "no",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "2026-09-17",
-          "decided": "",
+          "analysed": "2026-10-01",
+          "decided": "2026-10-01",
           "skill": ""
         },
         "071": {
@@ -1883,7 +1883,7 @@
           "where": ".claude/skills/incident-communications/SKILL.md — «Срок — только с источником»: срок, зависящий от чужого события — релиз, площадка, сосед, — сверяется с живым источником, а своих сроков сообщение не обещает. ГРАНИЦА: пометок о чужом календаре в самом дереве нет — ни предрелизных версий, ни матрицы, ни «устарело с версии N»",
           "holdable": "no",
           "awaiting": "",
-          "analysed": "2026-09-25",
+          "analysed": "2026-10-01",
           "decided": "2026-09-25",
           "skill": ".claude/skills/incident-communications"
         },
