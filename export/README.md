@@ -594,8 +594,12 @@ as every `1.1` file reads.
 
 **Ответ навыку** — ключ `владелец/репозиторий:skill/слаг`. У навыка своё
 пространство имён: правило и навык с одним слагом решаются порознь. `admitted`
-и `merged-into` называют навык каталога полем `skill`, и он обязан лежать в
-`.claude/skills/<skill>/SKILL.md` с тем же именем в заголовке; `rejected` и
+и `merged-into` называют навык каталога полем `skill` в одной из двух форм,
+как у поля `skill` ответа о правилах: голое имя — навык окна каталога в
+`.claude/skills/<имя>/SKILL.md`, `<плагин>:<имя>` — навык плагина в
+`plugins/<плагин>/skills/<имя>/SKILL.md`. Навык для потребителей принимается во
+вторую форму: в `.claude/skills/` каталога он ссылался бы на наше дерево. Имя в
+заголовке обязано совпасть с папкой; `rejected` и
 `merged-into` несут причину `why`. Принятый навык доезжает до проектов плагином
 `catalogue`, а в облачное окно, где плагин не загружается, — копией в
 `.claude/skills/`, совпадение которой с тегом держит действие `skills`
@@ -608,8 +612,11 @@ the incident:** a rule is born from a failure, a skill from work, and an
 unmeasured skill would reach everyone untested. An improvement names the tag
 it started from, or later catalogue changes read as the proposal. The verdict key is
 `owner/repo:skill/slug` — a rule and a skill sharing a slug are decided
-separately. `admitted` and `merged-into` name the catalogue skill in `skill`;
-it must exist under `.claude/skills/<skill>/SKILL.md`. An admitted skill
+separately. `admitted` and `merged-into` name the catalogue skill in `skill`,
+in either of the two forms the rule answer uses: a bare name for a catalogue
+session skill under `.claude/skills/<name>/SKILL.md`, or `<plugin>:<name>` for a
+plugin skill under `plugins/<plugin>/skills/<name>/SKILL.md`. A skill for
+consumers is admitted in the second form. An admitted skill
 reaches projects through the `catalogue` plugin, and a cloud session, which
 does not load plugins, gets a copy in `.claude/skills/` held against the tag by
 the `skills` action.

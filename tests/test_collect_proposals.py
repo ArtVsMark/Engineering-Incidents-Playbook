@@ -277,3 +277,31 @@ def test_два_принятых_в_один_навык_находка(tmp_path,
         "o/r:skill/answer-a-rule": принят,
         "o/q:skill/answer-rules": {"status": "merged-into", "skill": "answer-a-rule",
                                    "why": "та же работа, взята правка шага 3"}}) == 0
+
+
+def test_принятый_в_плагин_навык_ищется_в_плагине(tmp_path, capsys):
+    """Навык для потребителей ложится в плагин, и вердикт обязан его найти там.
+
+    Прежде вердикт искал только `.claude/skills/<имя>` — навыки окна каталога,
+    — и ни одного навыка для потребителей принять не мог.
+    """
+    import json
+    (tmp_path / "rules" / "ru").mkdir(parents=True)
+    (tmp_path / ".rules").mkdir()
+    (tmp_path / ".rules" / "proposals.json").write_text(json.dumps({"verdicts": {
+        "o/r:skill/answer-a-rule": {"status": "admitted",
+                                    "skill": "catalogue:answer-a-rule"}}}),
+        encoding="utf-8")
+    assert cp.check_verdicts(tmp_path) == 1          # в плагине навыка нет
+    assert "plugins/catalogue/skills/answer-a-rule/SKILL.md" in capsys.readouterr().err
+    файл = tmp_path / "plugins" / "catalogue" / "skills" / "answer-a-rule" / "SKILL.md"
+    файл.parent.mkdir(parents=True)
+    файл.write_text(ТЕКСТ, encoding="utf-8")
+    assert cp.check_verdicts(tmp_path) == 0
+
+
+def test_адрес_навыка_не_той_формы_находка(tmp_path, capsys):
+    assert вердикты_навыкам(tmp_path, {
+        "o/r:skill/answer-a-rule": {"status": "admitted",
+                                    "skill": "plugins/catalogue:answer-a-rule"}}) == 1
+    assert "не адрес навыка" in capsys.readouterr().err
