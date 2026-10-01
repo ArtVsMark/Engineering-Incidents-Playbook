@@ -22,6 +22,13 @@
 прогонов гоняли 3.12, а окно работало на 3.11.15 — то есть НИЖЕ собственной
 планки. Ни один механизм этого не спрашивал.
 
+ПРЕДВАРИТЕЛЬНАЯ ВЕРСИЯ — НЕ ЧЕТВЁРТОЕ ЧИСЛО, А ВОПРОС. Прогон, объявивший
+`allow-prereleases: true` в том же `with:`, спрашивает «заработает ли на
+следующей версии», а не закрывает изменение. Требование «все прогоны на одной
+версии» его не касается — иначе вопрос нельзя было бы задать вовсе. Зато он
+обязан стоять ВЫШЕ версии прогонов: предварительный прогон на той же или более
+старой версии ничего не спрашивает, а выглядит так, будто спрашивает (051).
+
 ЧЕГО ГЕЙТ НЕ ДЕЛАЕТ. Не судит, хороша ли выбранная версия, и не требует
 новейшей: «новее» и «лучше» здесь не синонимы — поднятие планки у проекта,
 который отдаёт наружу заготовки и действие, есть подъём контракта с
@@ -58,6 +65,11 @@ FLOOR_RE = re.compile(r'^\s*requires-python\s*=\s*"[^"0-9]*(\d+)\.(\d+)', re.M)
 #: а разбор допускает обе формы, чтобы находка была о версии, а не о кавычках.
 CI_RE = re.compile(r'^\s*python-version:\s*"?(\d+)\.(\d+)"?', re.M)
 
+#: Пометка предварительного прогона — ключ setup-python, без которого площадка
+#: предрелизную версию не поставит вовсе. Поэтому пометка не договорённость, а
+#: условие работы: снять её значит сломать прогон, а не обойти гейт.
+PREVIEW_RE = re.compile(r'^\s*allow-prereleases:\s*"?true"?\s*$')
+
 
 def floor(pyproject: str) -> tuple[int, int] | None:
     """Объявленная нижняя планка; None — не объявлена."""
@@ -65,19 +77,49 @@ def floor(pyproject: str) -> tuple[int, int] | None:
     return (int(m.group(1)), int(m.group(2))) if m else None
 
 
-def in_workflows(root: Path) -> list[tuple[str, tuple[int, int]]]:
-    """Версия, объявленная каждым прогоном: (файл, версия)."""
+def _в_том_же_with(text: str, конец: int) -> list[str]:
+    """Строки после `python-version:` того же блока `with:` — пока отступ не
+    меньше, чем у неё самой."""
+    начало = text.rfind("\n", 0, конец) + 1
+    отступ = len(text[начало:конец]) - len(text[начало:конец].lstrip())
+    out: list[str] = []
+    for line in text[конец:].splitlines()[1:]:
+        if line.strip() and len(line) - len(line.lstrip()) < отступ:
+            break
+        out.append(line)
+    return out
+
+
+def in_workflows(root: Path, *, preview: bool = False
+                 ) -> list[tuple[str, tuple[int, int]]]:
+    """Версия, объявленная каждым прогоном: (файл, версия).
+
+    preview=False — прогоны, закрывающие изменение; True — только
+    предварительные (`allow-prereleases: true` в том же `with:`)."""
     out: list[tuple[str, tuple[int, int]]] = []
     for p in sorted((root / ".github" / "workflows").glob("*.yml")):
-        for m in CI_RE.finditer(p.read_text(encoding="utf-8")):
-            out.append((p.name, (int(m.group(1)), int(m.group(2)))))
+        text = p.read_text(encoding="utf-8")
+        for m in CI_RE.finditer(text):
+            помечен = any(PREVIEW_RE.match(l) for l in _в_том_же_with(text, m.end()))
+            if помечен == preview:
+                out.append((p.name, (int(m.group(1)), int(m.group(2)))))
     return out
 
 
 def findings(планка: tuple[int, int], прогоны: list[tuple[str, tuple[int, int]]],
-             окно: tuple[int, int]) -> list[str]:
+             окно: tuple[int, int],
+             предварительные: list[tuple[str, tuple[int, int]]] | None = None
+             ) -> list[str]:
     """Расхождения трёх чисел. Каждое — со своим сообщением, а не одним общим."""
     out: list[str] = []
+    верх = max((в for _, в in прогоны), default=планка)
+    for имя, версия in предварительные or []:
+        if версия <= верх:
+            out.append(
+                f".github/workflows/{имя}: предварительный прогон на "
+                f"{версия[0]}.{версия[1]}, а прогоны уже гоняют "
+                f"{верх[0]}.{верх[1]} — он ничего не спрашивает о следующей "
+                "версии, а выглядит так, будто спрашивает (051)")
     for имя, версия in прогоны:
         if версия < планка:
             out.append(
@@ -123,7 +165,8 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     окно = sys.version_info[:2]
-    найдено = findings(планка, прогоны, окно)
+    предварительные = in_workflows(args.root, preview=True)
+    найдено = findings(планка, прогоны, окно, предварительные)
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if найдено:
@@ -133,8 +176,10 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  • {n}", file=sys.stderr)
         return 1
 
+    вопрос = "".join(f", предварительный {a}.{b} ({имя})"
+                     for имя, (a, b) in предварительные)
     print(f"версии сходятся: планка >={планка[0]}.{планка[1]}, прогонов "
-          f"{len(прогоны)}, окно {окно[0]}.{окно[1]}")
+          f"{len(прогоны)}, окно {окно[0]}.{окно[1]}{вопрос}")
     return 0
 
 
