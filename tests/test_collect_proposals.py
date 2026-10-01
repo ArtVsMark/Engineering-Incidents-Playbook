@@ -325,3 +325,16 @@ def test_повтор_навыка_ловится_и_при_пробеле_и_в
         "o/q:skill/answer-rules": {"status": "admitted",
                                    "skill": " .claude/skills/answer-a-rule "}}) == 1
     assert "уже занят" in capsys.readouterr().err
+
+
+def test_голое_имя_с_той_же_границей_что_у_формы_окна():
+    """Находка ревью #641: голое имя резал шаблон слага предложений.
+
+    Граница имени навыка окна одна — у формы `.claude/skills/<имя>`.
+    Что принимает она, принимает и голое имя; что отвергает — отвергает.
+    """
+    for имя in ("ab", "My_Skill.v2", "answer-a-rule"):
+        assert cp.адрес_навыка(имя) == cp.адрес_навыка(f".claude/skills/{имя}")
+        assert cp.адрес_навыка(имя) is not None
+    for плохое in ("", "a/b", "имя с пробелом"):
+        assert cp.адрес_навыка(плохое) is None
