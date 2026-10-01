@@ -281,6 +281,10 @@ def test_хотя_бы_один_измеренный_раздел_публику
     """Вторая сторона (140): один собравшийся раздел — уже повод публиковать."""
     подставить(monkeypatch, repo)
     write(repo / "tests/test_a.py", "def test_one():\n    pass\n")
+    # Прогон CI — обязательное поле договора 1.2, а не измерение: без него
+    # файл не пишется вовсе. Он здесь только толчковый, чтобы не измерить
+    # заодно проверки на изменении.
+    write(repo / ".github/workflows/ci.yml", ТОЛЬКО_ТОЛЧОК)
     monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     monkeypatch.setattr(bf.coverage_badge, "measured", lambda: None)
@@ -399,12 +403,25 @@ def test_причина_вне_договора_в_none_не_идёт(monkeypatc
     assert set(факты["none"]) <= set(bf.ДОГОВОРНЫЕ)
 
 
-def test_без_прогона_ci_поля_нет_и_пропуск_назван(monkeypatch, repo):
+def test_без_прогона_ci_файл_не_пишется(monkeypatch, repo, capsys):
+    """Находка ревью #634: без обязательного `ci` файл писался невалидным."""
     дерево(repo)
     (repo / ".github/workflows/ci.yml").unlink()
     подставить(monkeypatch, repo)
     monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
-    факты, пропуски, _ = bf.build()
-    assert "ci" not in факты
-    assert any(п.startswith("ci:") for п in пропуски)
+    assert bf.main([]) == 2
+    err = capsys.readouterr().err
+    assert "обязательных полей" in err and "ci" in err
+    assert "не измерено — ci:" in err
+    assert not (repo / ".github/badges/facts.json").exists()
+
+
+def test_без_коммита_файл_не_пишется(monkeypatch, repo, capsys):
+    дерево(repo)
+    подставить(monkeypatch, repo)
+    monkeypatch.setattr(bf, "git", lambda *a: (128, "not a git repository"))
+    monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
+    assert bf.main([]) == 2
+    assert "commit" in capsys.readouterr().err
+    assert not (repo / ".github/badges/facts.json").exists()
