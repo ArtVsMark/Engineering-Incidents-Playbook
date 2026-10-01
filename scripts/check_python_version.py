@@ -78,16 +78,26 @@ def floor(pyproject: str) -> tuple[int, int] | None:
 
 
 def _в_том_же_with(text: str, конец: int) -> list[str]:
-    """Строки после `python-version:` того же блока `with:` — пока отступ не
-    меньше, чем у неё самой."""
-    начало = text.rfind("\n", 0, конец) + 1
-    отступ = len(text[начало:конец]) - len(text[начало:конец].lstrip())
-    out: list[str] = []
-    for line in text[конец:].splitlines()[1:]:
-        if line.strip() and len(line) - len(line.lstrip()) < отступ:
+    """Все строки блока `with:`, в котором стоит `python-version:`.
+
+    Блок целиком, а не хвост после версии: порядок ключей в `with:` значения не
+    имеет, и пометка выше версии обязана читаться так же, как ниже."""
+    строки = text.splitlines()
+    номер = text.count("\n", 0, конец)
+    отступ = len(строки[номер]) - len(строки[номер].lstrip())
+    верх = номер
+    while верх > 0:
+        выше = строки[верх - 1]
+        if выше.strip() and len(выше) - len(выше.lstrip()) < отступ:
             break
-        out.append(line)
-    return out
+        верх -= 1
+    низ = номер + 1
+    while низ < len(строки):
+        ниже = строки[низ]
+        if ниже.strip() and len(ниже) - len(ниже.lstrip()) < отступ:
+            break
+        низ += 1
+    return строки[верх:низ]
 
 
 def in_workflows(root: Path, *, preview: bool = False

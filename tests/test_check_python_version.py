@@ -98,6 +98,22 @@ def test_pometka_chitaetsya_tolko_v_svoyom_with(tmp_path):
     assert cv.in_workflows(tmp_path, preview=True) == [("a.yml", (3, 15))]
 
 
+def test_pometka_vyshe_versii_tozhe_chitaetsya(tmp_path):
+    """Порядок ключей в `with:` значения не имеет: пометка над версией
+    обязана читаться так же, как под ней."""
+    (tmp_path / ".github" / "workflows").mkdir(parents=True)
+    (tmp_path / ".github" / "workflows" / "a.yml").write_text(
+        "      - uses: actions/setup-python@v6\n"
+        "        with:\n"
+        "          allow-prereleases: true\n"
+        '          python-version: "3.15"\n'
+        "      - uses: actions/setup-python@v6\n"
+        "        with:\n"
+        '          python-version: "3.14"\n', encoding="utf-8")
+    assert cv.in_workflows(tmp_path) == [("a.yml", (3, 14))]
+    assert cv.in_workflows(tmp_path, preview=True) == [("a.yml", (3, 15))]
+
+
 
 def test_vsyo_shoditsya_chisto():
     assert cv.findings(ПЛАНКА, [("ci.yml", (3, 12))], (3, 12)) == []
