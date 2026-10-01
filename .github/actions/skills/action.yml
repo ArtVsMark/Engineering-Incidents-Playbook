@@ -16,11 +16,11 @@ description: >-
 inputs:
   skills:
     description: >-
-      Какие копии сверять, через пробел. Пусто — все папки в .claude/skills/,
-      чьё имя совпадает с навыком каталога. Названная копия, которой нет, —
-      находка, а не пропуск.
-    required: false
-    default: ""
+      Какие копии сверять, через пробел. Список и есть объявление копий
+      проекта: названная копия, которой нет, — находка, а навык, которого нет
+      у каталога, — третий исход. Пустой список — тоже третий исход: по
+      присутствию папки удалённая копия неотличима от необъявленной.
+    required: true
 
 runs:
   using: composite
@@ -35,9 +35,6 @@ runs:
         SKILLS: ${{ inputs.skills }}
       run: |
         set -euo pipefail
-        args=(--repo "$GITHUB_WORKSPACE")
-        if [ -n "$SKILLS" ]; then
-          read -ra names <<< "$SKILLS"
-          args+=(--skills "${names[@]}")
-        fi
+        read -ra names <<< "$SKILLS"
+        args=(--repo "$GITHUB_WORKSPACE" --skills "${names[@]}")
         python "$GITHUB_ACTION_PATH/../../../scripts/check_skill_copies.py" "${args[@]}"
