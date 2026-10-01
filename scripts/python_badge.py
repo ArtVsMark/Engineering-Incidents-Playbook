@@ -339,12 +339,18 @@ def релиз_площадки() -> str | None:
     raise НеОтветила(вывод)
 
 
+#: Ответ PyPI «пакета нет». fetch отдаёт отказ строкой с `str(HTTPError)`,
+#: а у неё форма `HTTP Error 404: Not Found` — код читается по этой форме,
+#: а не подстрокой «404», которая встретилась бы и в порте, и в адресе.
+НЕТ_ПАКЕТА = re.compile(r"\bHTTP Error 404\b")
+
+
 def версия_pypi(пакет: str) -> str | None:
     """Последняя версия пакета на PyPI; None — пакета там нет."""
     данные, ошибка = fetch(f"https://pypi.org/pypi/{пакет}/json")
     if ошибка is None:
         return str((данные or {}).get("info", {}).get("version") or "") or None
-    if "404" in ошибка:
+    if НЕТ_ПАКЕТА.search(ошибка):
         return None
     raise НеОтветила(f"PyPI: {ошибка}")
 

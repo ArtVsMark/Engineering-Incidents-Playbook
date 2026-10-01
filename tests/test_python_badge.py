@@ -313,3 +313,13 @@ def test_заданный_но_отсутствующий_файл_значка_
                     "--version-json", str(tmp_path / "битый.json")],
                    прогоны=исходы.__getitem__, работы=lambda r: []) == 2
     assert not out.exists()
+
+
+def test_нет_пакета_на_pypi_узнаётся_по_коду_а_не_подстроке():
+    """Находка обзора #653: «404» в порте или адресе не значит «пакета нет».
+    Форма строки, которую отдаёт fetch, закреплена здесь же."""
+    import urllib.error
+    отказ = f"не прочитан: {urllib.error.HTTPError('u', 404, 'Not Found', None, None)}"
+    assert pb.НЕТ_ПАКЕТА.search(отказ)
+    assert not pb.НЕТ_ПАКЕТА.search("не прочитан: <urlopen error [Errno 111] host:4040>")
+    assert not pb.НЕТ_ПАКЕТА.search("не прочитан: HTTP Error 503: Service Unavailable")
