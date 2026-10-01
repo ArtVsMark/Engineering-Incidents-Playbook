@@ -786,7 +786,47 @@ def next_door(rules: dict) -> list[str]:
     except (ValueError, KeyError, TypeError) as e:
         return [f"решено у соседа: не считалось — {WHERE} не разобрать ({e})"]
 
-    solved = sync_inbox.solved_next_door(rules, consumers, me)
+    return _solved_lines(sync_inbox.solved_next_door(rules, consumers, me)) \
+        + _machine_lines(rules, sync_inbox.machine_next_door(rules, consumers, me))
+
+
+def прочитана(rec: dict, held: list[dict]) -> bool:
+    """Пара прочитана, если наш ответ называет КАЖДОГО такого соседа по имени.
+
+    Признак формальный и сознательно слабый: имя в причине не доказывает, что
+    причина верна, — это решает чтение. Он отвечает на вопрос попроще и
+    проверяемый: задан ли вопрос вообще. Тот же приём, что у ответа о соседях
+    в check_duplicates.py: гейт требует вопроса, а не решает его.
+    """
+    текст = " ".join(str(rec.get(k) or "") for k in ("why", "machine_half", "where"))
+    return all(h["repo"].split("/")[-1] in текст for h in held)
+
+
+def _machine_lines(rules: dict, pairs: list[dict]) -> list[str]:
+    """«Держать нельзя» у нас против машины у соседа — строками метрики (#509).
+
+    МЕТРИКА, А НЕ ОТКАЗ, по той же причине, что у соседней строки: пару решает
+    чтение. Прочитанные пары — ответ называет соседа по имени — печатаются
+    числом; непрочитанные — поимённо, с теми, кто держит: их и надо читать.
+    """
+    if not pairs:
+        return ["«держать нельзя», а сосед держит машиной: ни одного"]
+    не_прочитаны = [row for row in pairs
+                    if not прочитана(rules.get(row["rule"]) or {}, row["held"])]
+    lines = [f"«держать нельзя», а сосед держит машиной: правил {len(pairs)}, "
+             f"из них сосед в причине не назван у {len(не_прочитаны)}"]
+    if не_прочитаны:
+        lines += ["  " + " · ".join(
+                      f"{row['rule']} — " + ", ".join(
+                          h["repo"].split("/")[-1] for h in row["held"])
+                      for row in не_прочитаны),
+                  "  пара решается чтением: «нельзя» с причиной, пережившей "
+                  "сверку, либо not-yet с названной половиной (#509)"]
+    return lines
+
+
+def _solved_lines(solved: list[dict]) -> list[str]:
+    """«Ничем» у нас против механизма у соседа — строками метрики (162)."""
     if not solved:
         return ["решено у соседа: ни одного — очередь «ничем» здесь своя"]
     # не проза: «владелец/репозиторий» — путь, а не предложение.

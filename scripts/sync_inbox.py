@@ -120,6 +120,32 @@ def solved_next_door(answered: dict, consumers: list[dict], me: str) -> list[dic
     свои = {rid for rid, rec in answered.items()
             if rec.get("status") == "active"
             and (rec.get("mechanism") or "none") == "none"}
+    return _держат_соседи(свои, consumers, me, lambda mech: mech != "none")
+
+
+def machine_next_door(answered: dict, consumers: list[dict], me: str) -> list[dict]:
+    """Правила, что у меня «машиной держать нельзя», а сосед держит машиной.
+
+    `holdable: no` — сильное слово: не «не построено», а «строить нечего». Ответ
+    соседа гейтом или конвейером на то же правило — сигнал, что причина могла
+    ответить не на тот вопрос (#509: так было у 047, 082 и 070). Сигнал, а не
+    вердикт: стек у соседа другой, и пару решает чтение, а не совпадение слов.
+
+    Документ соседа сюда не идёт: он тоже текст, и опровергнуть «нечего строить»
+    не может.
+    """
+    # Слово держимости контракт спрашивает только у механизма, который не
+    # краснеет (`document`, `skill`, `none`); у гейта оно ничего не значит.
+    свои = {rid for rid, rec in answered.items()
+            if rec.get("status") == "active" and rec.get("holdable") == "no"
+            and (rec.get("mechanism") or "none") in ("document", "skill", "none")}
+    return _держат_соседи(свои, consumers, me,
+                          lambda mech: mech in ("gate", "pipeline"))
+
+
+def _держат_соседи(свои: set[str], consumers: list[dict], me: str,
+                   годится) -> list[dict]:
+    """Для каждого своего правила — соседи, чей механизм годится, с адресом."""
     out: list[dict] = []
     for rid in sorted(свои):
         для_него = []
@@ -128,7 +154,7 @@ def solved_next_door(answered: dict, consumers: list[dict], me: str) -> list[dic
                 continue
             held = (c.get("holds") or {}).get(rid) or {}
             mech, where = held.get("mechanism"), (held.get("where") or "").strip()
-            if mech and mech != "none" and where:
+            if mech and годится(mech) and where:
                 для_него.append({"repo": c["repo"], "mechanism": mech, "where": where})
         if для_него:
             out.append({"rule": rid, "held": для_него})

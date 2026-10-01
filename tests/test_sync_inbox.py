@@ -228,6 +228,40 @@ def test_nedeystvuyushchee_pravilo_v_razdel_ne_idyot():
     assert si.solved_next_door(отклонено, [сосед("o/grader", "001")], "o/me") == []
 
 
+# ── «держать нельзя» у нас, а сосед держит машиной (#509) ────────────────────
+
+НЕЛЬЗЯ = {"001": {"status": "active", "mechanism": "document",
+                  "holdable": "no", "why": "строить нечего"}}
+
+
+def test_nelzya_protiv_geyta_soseda_popadaet():
+    out = si.machine_next_door(НЕЛЬЗЯ, [сосед("o/grader", "001")], "o/me")
+
+    assert out == [{"rule": "001",
+                    "held": [{"repo": "o/grader", "mechanism": "gate",
+                              "where": "s/g.py"}]}]
+
+
+def test_dokument_soseda_nelzya_ne_oprovergaet():
+    """Документ соседа — тоже текст: «строить нечего» он не опровергает."""
+    assert si.machine_next_door(
+        НЕЛЬЗЯ, [сосед("o/grader", "001", mechanism="document")], "o/me") == []
+
+
+def test_ne_postroeno_v_svedku_ne_idyot():
+    """`not-yet` уже признаёт половину: спрашивать с него нечего."""
+    можно = {"001": dict(НЕЛЬЗЯ["001"], holdable="not-yet")}
+
+    assert si.machine_next_door(можно, [сосед("o/grader", "001")], "o/me") == []
+
+
+def test_u_geyta_slovo_derzhimosti_nichego_ne_znachit():
+    """Контракт спрашивает слово только у механизма, который не краснеет."""
+    гейт = {"001": dict(НЕЛЬЗЯ["001"], mechanism="gate", where="s/x.py")}
+
+    assert si.machine_next_door(гейт, [сосед("o/grader", "001")], "o/me") == []
+
+
 def test_razdel_pechataetsya_v_tele_zadachi():
     body = si.body_for([], [], "o/cat", solved=[
         {"rule": "001", "held": [{"repo": "o/grader", "mechanism": "gate",
