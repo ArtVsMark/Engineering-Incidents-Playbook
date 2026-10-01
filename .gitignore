@@ -42,3 +42,7 @@ coverage.xml
 # поэтому возврат файла в дерево ловит scripts/check_derived.py.
 export/where.json
 export/where.md
+
+# Окружение проверки облачного окна: собирает .claude/hooks/session-start.sh,
+# в дереве не хранится.
+.venv/
