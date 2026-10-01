@@ -801,7 +801,13 @@ def сосед_назван(rec: dict, held: list[dict]) -> bool:
     а не решает его (находка ревью #635).
     """
     текст = " ".join(str(rec.get(k) or "") for k in ("why", "machine_half", "where"))
-    return all(h["repo"].split("/")[-1] in текст for h in held)
+    # ИМЯ ИЩЕТСЯ ЦЕЛИКОМ, С ГРАНИЦЕЙ СЛОВА. Подстрока засчитала бы короткое
+    # имя репозитория — `api`, `docs` — внутри любого слова причины, и пара
+    # ушла бы в число «назван» без единого упоминания (находка ревью #635).
+    # Дефис в границу входит: имена репозиториев им сшиты.
+    return all(re.search(rf"(?<![\w-]){re.escape(h['repo'].split('/')[-1])}(?![\w-])",
+                         текст)
+               for h in held)
 
 
 def _machine_lines(rules: dict, pairs: list[dict]) -> list[str]:

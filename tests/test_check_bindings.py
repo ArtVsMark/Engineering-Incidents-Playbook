@@ -432,6 +432,14 @@ def test_nazvannyy_sosed_uhodit_v_chislo(monkeypatch, repo, capsys):
     assert "001 — грейдер" not in out
 
 
+def test_imya_soseda_vnutri_slova_ne_zaschityvaetsya():
+    """Находка ревью #635: короткое имя репозитория — не упоминание соседа."""
+    сосед = [{"repo": "чужой/api"}]
+    assert not cb.сосед_назван({"why": "rapid-api-шлюз и therapist"}, сосед)
+    assert cb.сосед_назван({"why": "сосед api держит гейтом"}, сосед)
+    assert cb.сосед_назван({"why": "у api: гейт"}, сосед)
+
+
 def test_u_sosseda_tozhe_nichem_eto_otvet(monkeypatch, repo, capsys):
     """«Ни одного» печатается: пустая строка неотличима от несчитанного (027)."""
     с_соседями(monkeypatch, repo, ничем(),
