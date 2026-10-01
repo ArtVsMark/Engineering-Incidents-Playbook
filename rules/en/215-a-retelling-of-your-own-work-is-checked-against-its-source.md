@@ -20,18 +20,25 @@ change has this subject: a PR description, release notes, a decision record.
 **The neighbour's measurement, which the proposal came from** (the mechanisms
 project, 30.09.2026). Its registry of finding kinds has a kind called "an
 account of your own work not checked against its source". Between 23 and 30
-September that kind came up 17 times across 8 changes. Of the 11 occurrences
+September that kind came up 17 times across 8 changes. The source of these
+numbers is the "met" field of that kind in the neighbour's
+`.rules/finding-kinds.json` at the merge of
+ArtVsMark/Engineering-Pipeline-Mechanisms#966, and the fingerprint of each
+occurrence sits in the reviewer's comment on the named change. Of the 11 occurrences
 on the last five changes, eight were in the very text of the incident about
 this kind and in the fragment that went with it: a copy of the canon, typed
 from memory into a neighbouring file, drifted from the canon at the very next
 edit.
 
-**Here this kind sits on a third of the changes with findings.** Measured on 01.10 over the
-outside reviewer's comments on changes from 10 to 27 September: `НАХОДКА:`
-lines on 92 changes. On **34** of them at least one finding is text about that
-same change's work which the change itself refutes. The classification is a
-manual reading; the list of numbers is recorded in the catalogue's answer for
-this rule. Typical cases:
+**Here this kind sits on a third of the changes with findings.** Measured on
+01.10 over the outside reviewer's comments on changes from 10 to 27 September:
+`НАХОДКА:` lines sit on 92 changes. The command:
+
+`gh api --paginate 'repos/ArtVsMark/Engineering-Incidents-Playbook/issues/comments?since=2026-09-10T00:00:00Z&per_page=100' --jq '.[] | select(.body | test("НАХОДКА:")) | .issue_url'`
+
+On **34** of them at least one finding is text about that same change's work
+which the change itself refutes. The classification is a manual reading, and
+the numbers are listed in `.rules/bindings.json`, entry 215, field `why`. Typical cases:
 
 - #590 — the fragment says "7 calls" for the command it quotes, and the same
   command on the same branch returns 9;
@@ -82,9 +89,10 @@ first edit. A link never drifts.
 
 ## Where it applies
 
-**Works** for text about this same change's work: the body, a changelog
-fragment, a comment above the edit, a field of the rule answer, a decision
-record about your own check.
+**Works** for claims about this same change's work — a number, a list, "what
+was touched" and "what was done" — wherever they stand: the body, a changelog
+fragment, a comment above the edit, the `why` field of a rule answer, a
+decision record about your own check.
 
 **Does not work** for claims about others: a neighbour, the platform, someone
 else's calendar. There the source belongs to someone else and the check is
@@ -92,8 +100,11 @@ different — [190](190-a-consumers-answer-about-a-neighbour-is-asked-not-rememb
 [203](203-experimental-is-a-claim-about-someone-elses-calendar.md). **Does not
 work** for a claim about a mechanism that a machine can check against the
 code either: that is [183](183-a-claim-about-the-mechanism-is-checked-against-it.md),
-held by a gate, not by a practice. **Does not work** for an explanation of
-"why": there is nothing to take by a command.
+held by a gate, not by a practice. **Does not work** for an argument — the
+explanation of WHY it was decided so — even inside the same `why` field: an
+argument claims nothing about what the change contains, and there is nothing
+to take by a command. The field splits by meaning: numbers and lists in it are
+checked, the argument next to them is not.
 
 **Sign of a violation:** a number, a list or "what was touched" in text about
 your own work with no command named next to it, which disagrees with that
