@@ -290,3 +290,22 @@ jobs:
           gh release create "$WANT" --verify-tag --title "$WANT" \
             --notes-file "$RUNNER_TEMP/notes.md"
           echo "выпущено: $WANT"
+
+      # ВЫПУСК БУДИТ ЗНАЧКИ САМ. Страницу выпуска создаёт токен прогона, а
+      # события от него площадка другим прогонам не доставляет: `release:
+      # published` в badges.yml от этого выпуска не наступает. Замер 1 октября:
+      # после v1.6.0 единый значок держал «release / PyPI 1.5» и «version
+      # 1.5.3», пока его не пересобрали руками. Исключение у площадки одно —
+      # repository_dispatch и workflow_dispatch, — им и будим.
+      - name: значки пересобираются под новый тег
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          code=0
+          printf '{"event_type":"release"}' \
+            | gh api "repos/$GITHUB_REPOSITORY/dispatches" --input - >/dev/null || code=$?
+          if [ "$code" -ne 0 ]; then
+            echo "::warning::выпуск состоялся, но значки не разбужены — пересоберите badges.yml кнопкой"
+          fi
+          exit 0
