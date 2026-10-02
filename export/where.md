@@ -425,6 +425,7 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_own_name.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_window_lifetime.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/contract.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/items.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/journal.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/look_mode.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/squash_body.py` | 2 |
@@ -451,7 +452,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_steps_speak_outward.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_window_preflight.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 116 механизмов по одному правилу; без названного адреса: 0 из 205 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 115 механизмов по одному правилу; без названного адреса: 0 из 205 |
 
 ## Правила · Rules
 
