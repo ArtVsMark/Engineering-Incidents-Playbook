@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-02T12:28:23+00:00",
+  "generated_at": "2026-10-02T12:32:48+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -1999,7 +1999,7 @@
         },
         "217": {
           "mechanism": "gate",
-          "where": "scripts/check_py_style.py — стиль кода выводится из requires-python, цель ruff не вписана, версия ruff закреплена в requirements-test.txt; scripts/check_python_version.py — работа, зовущая python раньше setup-python, находка; .claude/hooks/session-start.sh переключает python3 окна на планку, .claude/hooks/push_guard.sh зовёт стража интерпретатором планки и без него закрывает git push кодом 2. ГРАНИЦА: хук окна, исполняемый площадкой, гейтом не сверяется — его держит тест tests/test_session_start_hook.py; замер скорости до/после гейтом не держится вовсе — это практическая граница правила, исполняемая рукой",
+          "where": "scripts/check_py_style.py — стиль кода выводится из requires-python, цель ruff не вписана, версия ruff закреплена в requirements-test.txt; scripts/check_python_version.py — работа И составное действие (action.yml, .github/actions/*) с версией ниже планки, с python раньше шага setup-python или с шагом setup-python без числа — находка (второй инцидент, #678); .claude/hooks/session-start.sh переключает python3 окна на планку, .claude/hooks/push_guard.sh зовёт стража интерпретатором планки и без него закрывает git push кодом 2. ГРАНИЦА: хук окна, исполняемый площадкой, гейтом не сверяется — его держит тест tests/test_session_start_hook.py; замер скорости до/после гейтом не держится вовсе — это практическая граница правила, исполняемая рукой",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-10-02",
@@ -2007,7 +2007,7 @@
           "skill": ""
         }
       },
-      "trails": 59,
+      "trails": 60,
       "born": 36
     },
     {

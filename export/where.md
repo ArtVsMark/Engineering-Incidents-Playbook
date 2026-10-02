@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 59 | 36 | 216 | 0 | 0 | 196 | 145 | 10 | 2 | 27 | 12 | 124 |  |
+| `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 216 | 0 | 0 | 196 | 145 | 10 | 2 | 27 | 12 | 124 |  |
 | `Stepik-Python-Grader` | подключён | 188 | 133 | 195 | 21 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 214 | 2 | 0 | 156 | 101 | 14 | 0 | 27 | 0 | 50 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 1 | 0 | 183 | 94 | 9 | 0 | 59 | 21 | 91 |  |
@@ -96,11 +96,11 @@
 | `Engineering-Incidents-Playbook` | `.github/workflows/agent-pr.yml` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/link_trails.py` | 7 |
 | `Engineering-Incidents-Playbook` | `CONTRIBUTING.md` | 6 |
+| `Engineering-Incidents-Playbook` | `action.yml` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_prose.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 6 |
 | `Engineering-Incidents-Playbook` | `.rules/consumers.json` | 5 |
-| `Engineering-Incidents-Playbook` | `action.yml` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/audit_catalogue.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/check_attribution.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 5 |
