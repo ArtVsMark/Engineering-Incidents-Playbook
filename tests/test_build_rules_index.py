@@ -15,7 +15,6 @@
   075 — непустой раздел следа, разобравшийся в ноль, — находка.
 """
 
-from __future__ import annotations
 
 import glob
 from pathlib import Path

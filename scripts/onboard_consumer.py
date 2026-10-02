@@ -29,7 +29,6 @@
 Коды:    0 собрано · 1 собрать нечего · 2 проверка не отработала
 """
 
-from __future__ import annotations
 
 import argparse
 import json

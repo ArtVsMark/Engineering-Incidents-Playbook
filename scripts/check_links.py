@@ -25,7 +25,6 @@ origin (check_own_name.py), а не константой; нет origin — та
 Коды:    0 чисто · 1 есть битые ссылки · 2 проверять было нечего
 """
 
-from __future__ import annotations
 
 import re
 import sys

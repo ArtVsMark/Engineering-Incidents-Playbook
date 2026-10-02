@@ -44,7 +44,6 @@
         читается, проза вместо номера пометкой не считается.
 """
 
-from __future__ import annotations
 
 import json
 import subprocess

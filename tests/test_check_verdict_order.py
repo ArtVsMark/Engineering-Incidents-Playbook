@@ -12,7 +12,6 @@
 значит копить находки о состоянии, которого не знаешь (039).
 """
 
-from __future__ import annotations
 
 import ast
 

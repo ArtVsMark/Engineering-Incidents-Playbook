@@ -16,7 +16,6 @@
 а прогон подделывается собственным скриптом-заглушкой.
 """
 
-from __future__ import annotations
 
 from pathlib import Path
 

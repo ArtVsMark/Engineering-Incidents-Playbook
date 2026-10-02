@@ -39,7 +39,6 @@ scripts/aggregate_bindings.py». Запрет читался как «не пр�
   051 — отказ на достоверном: файл в диапазоне — факт, а не подозрение.
 """
 
-from __future__ import annotations
 
 import argparse
 import subprocess

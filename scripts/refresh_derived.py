@@ -39,7 +39,6 @@
   109 — терминальный статус обязателен — 0, 1 или 2, и третий не растворяется во втором.
 """
 
-from __future__ import annotations
 
 import argparse
 import json

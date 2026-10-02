@@ -11,7 +11,6 @@
 трогаются.
 """
 
-from __future__ import annotations
 
 import check_third_outcome as ct
 

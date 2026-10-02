@@ -34,7 +34,6 @@
   165 — печатается ОХВАТ: сколько файлов просмотрено и сколько разрезов найдено.
 """
 
-from __future__ import annotations
 
 import argparse
 import ast

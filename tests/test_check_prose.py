@@ -14,7 +14,6 @@
 список файлов гейт берёт у git — непрослеживаемый мусор проверять незачем.
 """
 
-from __future__ import annotations
 
 import subprocess
 from pathlib import Path
@@ -221,7 +220,7 @@ def test_angliyskaya_vitrina_tozhe_schitaetsya(tmp_path):
 # а следом чужой файл, где номер схемы ВЫГРУЗКИ уехал в поле схемы ОТВЕТА.
 
 def дерево(tmp_path, файл: str, схема: str, versioning: str) -> Path:
-    return repo_with(tmp_path, {файл: '{\n  "schema": "%s"\n}\n' % схема,
+    return repo_with(tmp_path, {файл: f'{{\n  "schema": "{схема}"\n}}\n',
                                 "docs/VERSIONING.md": versioning})
 
 

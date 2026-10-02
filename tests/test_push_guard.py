@@ -12,7 +12,6 @@
 потому подключается путём, а не импортом из общего каталога.
 """
 
-from __future__ import annotations
 
 import importlib.util
 import io

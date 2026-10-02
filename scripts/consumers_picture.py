@@ -35,7 +35,6 @@
 Коды:    0 нарисовано · 2 рисовать нечем
 """
 
-from __future__ import annotations
 
 import argparse
 import json

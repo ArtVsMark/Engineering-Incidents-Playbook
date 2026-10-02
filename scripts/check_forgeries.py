@@ -40,7 +40,6 @@
   165 — печатается ОХВАТ: сколько наборов просмотрено и сколько из них с швом.
 """
 
-from __future__ import annotations
 
 import argparse
 import ast

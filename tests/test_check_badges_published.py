@@ -5,7 +5,6 @@
 берёт ли он своё имя у `origin`, когда его не назвали ключом (039, 140, 005).
 """
 
-from __future__ import annotations
 
 import subprocess
 from pathlib import Path

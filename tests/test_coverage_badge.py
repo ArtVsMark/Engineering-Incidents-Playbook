@@ -13,7 +13,6 @@
 ступень, и заметить это может только тот, кто помнит границу.
 """
 
-from __future__ import annotations
 
 import pytest
 

@@ -52,7 +52,6 @@ coverage_badge.COLORS. «release / PyPI» показывает старшие д
   209 — основной прогон назван константой build_facts, а не вторым литералом.
 """
 
-from __future__ import annotations
 
 import argparse
 import hashlib

@@ -7,7 +7,6 @@ requires-python, scripts/check_python_version.py, requirements-test.txt.
 и хук не ходит за ним в сеть.
 """
 
-from __future__ import annotations
 
 import os
 import shutil

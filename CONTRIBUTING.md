@@ -318,6 +318,7 @@ python scripts/check_schedules.py
 python scripts/check_forgeries.py
 python scripts/check_text_cuts.py
 python scripts/check_python_version.py
+python scripts/check_py_style.py
 python scripts/check_exclusive.py --check
 python scripts/check_labels.py --paths-from <файл со списком путей> --have <метки>
 python scripts/pr_body.py --check --body-file <файл с телом изменения>

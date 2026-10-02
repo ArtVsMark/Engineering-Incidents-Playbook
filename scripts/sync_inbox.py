@@ -42,7 +42,6 @@
   0 — чисто;  1 — есть нерассмотренные;  2 — проверка не отработала.
 """
 
-from __future__ import annotations
 
 import argparse
 import json
@@ -721,7 +720,7 @@ def main() -> int:
             схема_предложений = json.load(fh).get("schema") or ""
     except FileNotFoundError:
         схема_предложений = None
-    except (OSError, ValueError):
+    except OSError, ValueError:
         схема_предложений = ""
     ожидается = ((выгрузка or {}).get("contracts") or {})
     расхождение = contract_gaps(

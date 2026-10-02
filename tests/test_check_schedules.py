@@ -10,7 +10,6 @@
 Площадка не трогается: разбор cron и арифметика — чистые функции.
 """
 
-from __future__ import annotations
 
 import json
 

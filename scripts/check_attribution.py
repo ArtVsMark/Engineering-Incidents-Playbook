@@ -44,7 +44,6 @@
          python scripts/check_attribution.py --first-parents --ref main --since d1297ff
 """
 
-from __future__ import annotations
 
 import argparse
 import re

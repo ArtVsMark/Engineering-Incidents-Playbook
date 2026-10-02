@@ -38,7 +38,6 @@
   2 — проверка не отработала (список не прочитан, модуль не разобран).
 """
 
-from __future__ import annotations
 
 import argparse
 import ast

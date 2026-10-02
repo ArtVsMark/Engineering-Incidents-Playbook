@@ -17,7 +17,6 @@
 обязательная проверка не зависит от чужого сервера.
 """
 
-from __future__ import annotations
 
 import json
 from pathlib import Path
@@ -901,7 +900,7 @@ class ОтветЗаглушка:
     def __init__(self, текст: str) -> None:
         self._текст = текст
 
-    def __enter__(self) -> "ОтветЗаглушка":
+    def __enter__(self) -> ОтветЗаглушка:
         return self
 
     def __exit__(self, *_) -> bool:

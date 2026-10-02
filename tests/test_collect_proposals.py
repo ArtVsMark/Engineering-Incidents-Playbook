@@ -7,7 +7,6 @@
 каждого потребителя, поле `proposals`).
 """
 
-from __future__ import annotations
 
 import collect_proposals as cp
 

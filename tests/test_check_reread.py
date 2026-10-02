@@ -4,7 +4,6 @@
 «было» и «стало», — и ответ виден до того, как подпись куда-либо уехала (018).
 """
 
-from __future__ import annotations
 
 import json
 import subprocess

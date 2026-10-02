@@ -6,7 +6,6 @@
 до того, как что-либо открыто.
 """
 
-from __future__ import annotations
 
 import subprocess
 import sys

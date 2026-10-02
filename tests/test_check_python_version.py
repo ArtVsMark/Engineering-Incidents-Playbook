@@ -10,7 +10,6 @@
 `.github/workflows/*.yml`.
 """
 
-from __future__ import annotations
 
 import check_python_version as cv
 

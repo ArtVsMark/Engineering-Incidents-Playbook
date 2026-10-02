@@ -609,6 +609,16 @@ jobs:
       - name: обвязка тестов
         run: python -m pip install --quiet -r requirements-test.txt
 
+      # Стиль на планке: номер версии в манифесте обещает и «код написан на
+      # ней». Замер 02.10, на следующий день после переезда на 3.14:
+      # `from __future__ import annotations` — 132 файла из 132, `except (A, B):`
+      # без `as` — 21 раз; переезд был формальным. Цель выводится из планки,
+      # ruff получает её же. Шаг стоит ПОСЛЕ обвязки, а не рядом с версией:
+      # ruff ставит requirements-test.txt, и в начале работы его нет — ровно
+      # инцидент 7 сентября (check_runtime_deps.py), только вызов не импортом.
+      - name: стиль кода на версии планки, а не только номер
+        run: python scripts/check_py_style.py
+
       - name: тесты проходят
         run: python -m coverage run -m pytest
 

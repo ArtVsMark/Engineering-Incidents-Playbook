@@ -24,7 +24,6 @@
 Сеть не трогается: экспорт и `gh` подменяются.
 """
 
-from __future__ import annotations
 
 import json
 

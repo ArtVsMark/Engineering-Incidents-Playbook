@@ -11,7 +11,6 @@
 `scripts/check_text_cuts.py`.
 """
 
-from __future__ import annotations
 
 import check_text_cuts as ct
 

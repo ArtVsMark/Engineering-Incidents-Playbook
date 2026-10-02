@@ -44,7 +44,6 @@
 Исходы:  0 — подделки полны;  1 — есть пропуск;  2 — проверка не отработала.
 """
 
-from __future__ import annotations
 
 import argparse
 import os

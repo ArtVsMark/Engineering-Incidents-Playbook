@@ -41,7 +41,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-from __future__ import annotations
 
 import argparse
 import re
@@ -158,7 +157,7 @@ def tracked(root: Path) -> list[Path]:
     try:
         out = subprocess.run(["git", "-C", str(root), "ls-files", "-z"],
                              capture_output=True, text=True, encoding="utf-8", check=True).stdout
-    except (OSError, subprocess.CalledProcessError):
+    except OSError, subprocess.CalledProcessError:
         return []
     return [root / line for line in out.split("\0") if line]
 
@@ -237,7 +236,7 @@ def schema_unnamed(root: Path) -> list[str]:
             continue
         try:
             text = path.read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
+        except OSError, UnicodeDecodeError:
             continue
         if SCHEMA_RE.search(text) and rel not in сказано:
             out.append(
@@ -269,7 +268,7 @@ def main(argv: list[str] | None = None) -> int:
     for path in sorted(prose):
         try:
             text = path.read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
+        except OSError, UnicodeDecodeError:
             continue
         for line in details_lines(text):
             problems.append(

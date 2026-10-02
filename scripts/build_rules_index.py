@@ -55,7 +55,6 @@
 Коды:    0 чисто · 1 есть находки · 2 проверка не отработала
 """
 
-from __future__ import annotations
 
 import argparse
 import datetime as dt
@@ -965,7 +964,7 @@ def contracts_now(root: Path | None = None) -> dict[str, str]:
     for имя, путь in CONTRACT_FILES.items():
         try:
             данные = json.loads((база / путь).read_text(encoding="utf-8"))
-        except (OSError, ValueError):
+        except OSError, ValueError:
             continue
         if имя == "export":
             continue
@@ -975,7 +974,7 @@ def contracts_now(root: Path | None = None) -> dict[str, str]:
     for имя, (модуль, поле) in CONTRACT_MODULES.items():
         try:
             номер = getattr(__import__(модуль), поле)
-        except (ImportError, AttributeError):
+        except ImportError, AttributeError:
             continue
         if isinstance(номер, str) and номер:
             out[имя] = номер
@@ -997,7 +996,7 @@ def same_export(path: Path, built: str) -> bool:
     try:
         лежит = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
         собрано = json.loads(built)
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return False
     if лежит is None:
         return False

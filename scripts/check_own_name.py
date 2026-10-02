@@ -48,7 +48,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-from __future__ import annotations
 
 import argparse
 import json
@@ -136,7 +135,7 @@ def strangers(root: Path, mine: str, allowed: set[str]) -> list[str]:
     for path in files(root):
         try:
             text = path.read_text(encoding="utf-8")
-        except (UnicodeDecodeError, OSError):
+        except UnicodeDecodeError, OSError:
             continue
         for m in SLUG_RE.finditer(text):
             slug = TAIL.sub("", f"{m.group(1)}/{m.group(2)}")

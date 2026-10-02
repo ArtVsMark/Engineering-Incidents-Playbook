@@ -33,7 +33,6 @@ ArtVsMark/Stepik-Python-Grader прогон ревью зовёт `/code-review`
   2 — проверка не отработала.
 """
 
-from __future__ import annotations
 
 import argparse
 import re

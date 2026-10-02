@@ -10,7 +10,6 @@
 значило бы проверять его самим собой; предмет проверки — согласие сторон.
 """
 
-from __future__ import annotations
 
 import json
 

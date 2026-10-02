@@ -8,7 +8,6 @@
 две роли с РАЗНЫМИ возражениями к одному адресату законны, а с одинаковыми нет.
 """
 
-from __future__ import annotations
 
 from pathlib import Path
 

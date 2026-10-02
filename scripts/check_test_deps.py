@@ -23,7 +23,6 @@
   107 — каждый импорт набора объявлен, а не случайно установлен у автора.
 """
 
-from __future__ import annotations
 
 import argparse
 import ast

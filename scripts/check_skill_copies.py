@@ -50,7 +50,6 @@
   158 — третий исход называет предмет.
 """
 
-from __future__ import annotations
 
 import argparse
 import shutil

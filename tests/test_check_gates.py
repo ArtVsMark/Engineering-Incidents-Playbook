@@ -17,7 +17,6 @@
 потому что предмет здесь — СВОДКА по наборам, а не их содержимое.
 """
 
-from __future__ import annotations
 
 import check_gates as cg
 
