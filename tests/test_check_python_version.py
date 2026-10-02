@@ -11,6 +11,7 @@
 """
 
 
+import pytest
 import check_python_version as cv
 
 
@@ -262,3 +263,62 @@ def test_настоящие_действия_на_планке():
     assert len(cv.действия(корень)) >= 2
     assert cv.действия_мимо_планки(корень, cv.floor(
         (корень / "pyproject.toml").read_text(encoding="utf-8"))) == []
+
+
+# ── шаг установки — строка uses:, и число у него обязательно (#678) ───────
+
+ВЫЗОВ = "    - run: python scripts/a.py\n      shell: bash\n"
+УСТАНОВКА = ("    - uses: actions/setup-python@v6\n"
+             "      with:\n        python-version: \"3.14\"\n")
+
+
+def test_слово_setup_python_в_комментарии_не_прячет_ранний_вызов(tmp_path):
+    """Находка обзора #678: позиция установки искалась подстрокой по тексту с
+    комментариями — упоминание выше вызова делало установку «ранней»."""
+    корень = _действие(tmp_path, "action.yml",
+                       "    # setup-python ставится ниже\n" + ВЫЗОВ + УСТАНОВКА)
+    assert any("раньше setup-python" in н
+               for н in cv.действия_мимо_планки(корень, (3, 14)))
+
+
+def test_установка_после_вызова_находка(tmp_path):
+    корень = _действие(tmp_path, "action.yml", ВЫЗОВ + УСТАНОВКА)
+    assert any("раньше setup-python" in н
+               for н in cv.действия_мимо_планки(корень, (3, 14)))
+
+
+@pytest.mark.parametrize("with_", [
+    "      with:\n        python-version: ${{ inputs.python }}\n",
+    "      with:\n        cache: pip\n",
+    "",
+])
+def test_установка_без_числа_находка(tmp_path, with_):
+    """Находка обзора #678: версия выражением, файлом или раннером — гейту не
+    с чем сверять, и ниже планки она проходила молча."""
+    корень = _действие(tmp_path, "action.yml",
+                       "    - uses: actions/setup-python@v6\n" + with_ + ВЫЗОВ)
+    assert any("без числа" in н for н in cv.действия_мимо_планки(корень, (3, 14)))
+
+
+def test_with_до_uses_читается_тем_же_шагом(tmp_path):
+    корень = _действие(tmp_path, "action.yml",
+                       "    - name: python\n      with:\n        python-version: \"3.14\"\n"
+                       "      uses: actions/setup-python@v6\n" + ВЫЗОВ)
+    assert cv.действия_мимо_планки(корень, (3, 14)) == []
+
+
+def test_работа_с_установкой_без_числа_находка(tmp_path):
+    """Сосед по признаку (195): работа в .github/workflows/ с версией из матрицы
+    не попадала в in_workflows вовсе — числа нет."""
+    корень = _работа(tmp_path, "      - uses: actions/setup-python@v6\n"
+                              "        with:\n          python-version: ${{ matrix.py }}\n"
+                              "      - run: python3 scripts/a.py\n")
+    assert any("без числа" in н for н in cv.мимо_планки(корень))
+
+
+def test_работа_слово_в_комментарии_не_прячет_ранний_вызов(tmp_path):
+    корень = _работа(tmp_path, "      # setup-python ниже\n"
+                              "      - run: python3 scripts/a.py\n"
+                              "      - uses: actions/setup-python@v6\n"
+                              "        with:\n          python-version: \"3.14\"\n")
+    assert len(cv.мимо_планки(корень)) == 1
