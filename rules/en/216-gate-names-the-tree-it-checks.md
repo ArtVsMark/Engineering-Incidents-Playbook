@@ -117,8 +117,10 @@ not work for the REFERENCE a change is compared against — that is
 about the code under test itself.
 
 **Sign of a violation:** the run's report names the interpreter and the root
-but not where the package under test was imported from; `package.__file__`
-taken from a working tree points outside it.
+but not where the package under test was imported from, while
+`package.__file__` taken from a working tree lies in ANOTHER source tree — a
+neighbouring clone or working tree. A path in `site-packages` is not a sign:
+that is a regular install, and 216 says nothing about it.
 
 ## Trace
 
