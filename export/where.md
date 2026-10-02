@@ -16,7 +16,7 @@
 | `Stepik-Python-Grader` | подключён | 188 | 133 | 195 | 20 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 214 | 1 | 0 | 156 | 101 | 14 | 0 | 27 | 0 | 50 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 214 | 1 | 0 | 180 | 103 | 9 | 0 | 49 | 19 | 89 |  |
-| `Glossary-Python` | подключён | 0 | 0 | 181 | 34 | 0 | 117 | 60 | 12 | 0 | 29 | 16 | 78 |  |
+| `Glossary-Python` | подключён | 0 | 0 | 181 | 34 | 0 | 117 | 64 | 13 | 0 | 24 | 16 | 78 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 15 | 14 | 214 | 1 | 0 | 205 | 173 | 23 | 2 | 7 | 0 | 244 |  |
 
 ## Чем держат другие · How others enforce it
@@ -316,12 +316,12 @@
 | `Glossary-Python` | `tests/test_validation.py` | 9 |
 | `Glossary-Python` | `CLAUDE.md` | 8 |
 | `Glossary-Python` | `src/glossary/validation.py` | 8 |
-| `Glossary-Python` | `.rules/bindings.json` | 7 |
-| `Glossary-Python` | `.github/workflows/rules-inbox.yml` | 5 |
+| `Glossary-Python` | `.github/workflows/rules-inbox.yml` | 6 |
 | `Glossary-Python` | `README.md` | 5 |
 | `Glossary-Python` | `pyproject.toml` | 5 |
 | `Glossary-Python` | `tests/test_workflow_guardrails.py` | 5 |
 | `Glossary-Python` | `.pre-commit-config.yaml` | 4 |
+| `Glossary-Python` | `.rules/bindings.json` | 4 |
 | `Glossary-Python` | `CONTRIBUTING.md` | 4 |
 | `Glossary-Python` | `data/glossary.json` | 4 |
 | `Glossary-Python` | `data/glossary.schema.json` | 4 |
@@ -330,6 +330,7 @@
 | `Glossary-Python` | `src/glossary/cli.py` | 4 |
 | `Glossary-Python` | `src/glossary/exporters/html.py` | 4 |
 | `Glossary-Python` | `tests/test_facts.py` | 4 |
+| `Glossary-Python` | `tests/test_rules_bindings.py` | 4 |
 | `Glossary-Python` | `.github/workflows/automerge.yml` | 3 |
 | `Glossary-Python` | `.github/workflows/badges.yml` | 3 |
 | `Glossary-Python` | `CHANGELOG.md` | 3 |
@@ -339,16 +340,18 @@
 | `Glossary-Python` | `docs/agent/roles.md` | 2 |
 | `Glossary-Python` | `facts.json` | 2 |
 | `Glossary-Python` | `scripts/check_attribution.py` | 2 |
+| `Glossary-Python` | `scripts/check_decisions.py` | 2 |
 | `Glossary-Python` | `scripts/check_exclusive.py` | 2 |
 | `Glossary-Python` | `scripts/check_journal.py` | 2 |
 | `Glossary-Python` | `scripts/check_third_outcome.py` | 2 |
+| `Glossary-Python` | `tests/decisions_baseline.json` | 2 |
 | `Glossary-Python` | `tests/quality_baseline.json` | 2 |
 | `Glossary-Python` | `tests/test_automerge.py` | 2 |
 | `Glossary-Python` | `tests/test_check_journal.py` | 2 |
 | `Glossary-Python` | `tests/test_live_surface.py` | 2 |
+| `Glossary-Python` | `tests/test_loader.py` | 2 |
 | `Glossary-Python` | `tests/test_roles.py` | 2 |
-| `Glossary-Python` | `tests/test_rules_bindings.py` | 2 |
-| `Glossary-Python` | _остальные_ · _the rest_ | 40 механизмов по одному правилу; без названного адреса: 0 из 101 |
+| `Glossary-Python` | _остальные_ · _the rest_ | 37 механизмов по одному правилу; без названного адреса: 0 из 101 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_reject.py` | 25 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/agent_pr.py` | 19 |
 | `Engineering-Pipeline-Mechanisms` | `.pipeline.yml` | 18 |

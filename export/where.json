@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-02T09:30:08+00:00",
+  "generated_at": "2026-10-02T09:32:33+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -7461,8 +7461,8 @@
     {
       "repo": "ArtVsMark/Glossary-Python",
       "role": "потребитель",
-      "schema": "1.1",
-      "answers_to": "",
+      "schema": "1.7",
+      "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-02",
       "answered": 181,
@@ -7471,9 +7471,9 @@
         "not-applicable": 64
       },
       "by_mechanism": {
-        "gate": 60,
-        "pipeline": 12,
-        "document": 29,
+        "gate": 64,
+        "pipeline": 13,
+        "document": 24,
         "none": 16
       },
       "rules": {
@@ -7699,18 +7699,18 @@
         "006": {
           "mechanism": "document",
           "where": "CLAUDE.md § «Про окно» — срок назван ЧИСЛОМ там, где окно читает его при старте: три–пять дней, дальше перезапуск с передачей эстафеты. Названы и признаки, по которым не ждут календаря, и состав стартового сообщения. Прежний ответ звал предмет чужим («репозиторий об окнах ничего не знает»), но у обоих соседей 006 держится ровно так — абзацем свода, — и машинная половина была названа в самом ответе: раздела нет вовсе, и первым идёт он. ЗАМЕР СВОЙ: 7 сентября окно внесло в этот файл дюжину правок, и ни одна не стала ему видна — оно до конца работало по версии, прочитанной утром. Форму раздела держит tests/test_window.py: срок обязан быть числом, эстафета — названной по частям. ГРАНИЦА: соблюдение срока не проверяется и проверено быть не может — возраст окна дереву не наблюдаем ничем, и это сказано в самом разделе",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "007": {
           "mechanism": "none",
           "where": "CLAUDE.md",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -7735,27 +7735,27 @@
         "012": {
           "mechanism": "none",
           "where": "CLAUDE.md — раздел «Чего не делать»",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "013": {
           "mechanism": "none",
           "where": "CLAUDE.md",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "014": {
           "mechanism": "document",
           "where": "CONTRIBUTING.md — раздел «Правка кода»: новое поведение сопровождается тестом",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -7780,54 +7780,54 @@
         "018": {
           "mechanism": "none",
           "where": ".github/workflows/ci.yml",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "021": {
           "mechanism": "document",
           "where": "README.md — витрина, CONTRIBUTING.md — контрибьютор, CLAUDE.md — агентское окно, docs/architecture.md — решения и долг: документы разведены по читателю",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "022": {
           "mechanism": "document",
           "where": "docs/architecture.md — канон архитектурных решений, README.md и CLAUDE.md ссылаются на него, а не пересказывают",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "023": {
           "mechanism": "document",
           "where": "README.md — состав, команды и порядок правки; история в CHANGELOG.md, решения в docs/architecture.md",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "024": {
           "mechanism": "document",
           "where": "CHANGELOG.md — журнал вынесен из README, где он лежал до перестройки проекта",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "027": {
           "mechanism": "document",
           "where": ".rules/proposals.json — пустой список объявлен значением, а не пробелом; та же форма у tests/quality_baseline.json с полем _описание",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -7843,9 +7843,9 @@
         "029": {
           "mechanism": "document",
           "where": "CLAUDE.md — компактные триггеры с отсылкой к docs/architecture.md и CONTRIBUTING.md вместо пересказа",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -7861,9 +7861,9 @@
         "032": {
           "mechanism": "none",
           "where": "docs/architecture.md",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -7888,9 +7888,9 @@
         "038": {
           "mechanism": "none",
           "where": "CLAUDE.md",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -7913,20 +7913,20 @@
           "skill": ""
         },
         "042": {
-          "mechanism": "document",
-          "where": "docs/architecture.md — раздел «Принятые решения»: у каждого решения названа его цена и отвергнутая альтернатива",
+          "mechanism": "gate",
+          "where": "scripts/check_decisions.py — запись решения в docs/architecture.md обязана нести часть «Отвергнуто»; девять старых записей названы в tests/decisions_baseline.json, и список движется только вниз. ВЕРДИКТ ИСПРАВЛЕН 02.10: стояло «document», а гейт на ту же часть записи построен по правилу 161",
           "holdable": "",
           "awaiting": "",
-          "analysed": "",
-          "decided": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
           "skill": ""
         },
         "043": {
           "mechanism": "none",
           "where": "docs/architecture.md",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -7942,9 +7942,9 @@
         "047": {
           "mechanism": "none",
           "where": "CLAUDE.md",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -7969,27 +7969,27 @@
         "051": {
           "mechanism": "document",
           "where": "src/glossary/validation.py — разделение на ERROR и WARNING: ошибки ломают прогон, предупреждения нет; обоснование в docs/architecture.md",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "053": {
           "mechanism": "none",
           "where": ".github/workflows/automerge.yml — очередь ведёт площадка",
-          "holdable": "",
+          "holdable": "refused",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "055": {
           "mechanism": "document",
           "where": "data/glossary.schema.json и поле docs каждой карточки — внешний арбитр для содержимого глоссария — документация Python, а не наше ожидание",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -8003,29 +8003,29 @@
           "skill": ""
         },
         "057": {
-          "mechanism": "document",
-          "where": ".rules/bindings.json — правило без механизма отвечает mechanism none и называет причину, а не пропускается",
+          "mechanism": "gate",
+          "where": "tests/test_rules_bindings.py::test_answer_follows_contract — ответ mechanism none без why и machine_half роняет сборку. ВЕРДИКТ ИСПРАВЛЕН 02.10: стояло «document» с адресом самого ответа, а держит его набор",
           "holdable": "",
           "awaiting": "",
-          "analysed": "",
-          "decided": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
           "skill": ""
         },
         "058": {
           "mechanism": "document",
           "where": "scripts/automerge.py — повторов нет по построению, и это сказано в докстринге: скрипт ставит изменение в очередь площадки и выходит, не опрашивая её и не ожидая. За нулём счётчик продолжает расти, поэтому повтор не «пробует ещё раз», а отодвигает сброс — здесь ему просто неоткуда взяться",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "059": {
           "mechanism": "document",
           "where": "scripts/automerge.py — карта обхода названа заранее, в докстринге и в тексте отказа: при исчерпании квоты перестаёт работать ровно постановка в очередь, изменение остаётся открытым и ждёт следующего события, полусделанных состояний не возникает — мутация либо прошла, либо нет",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -8113,9 +8113,9 @@
         "080": {
           "mechanism": "document",
           "where": "CLAUDE.md — раздел «Каталог правил»: правило, родившееся здесь, едет в каталог через .rules/proposals.json как инцидент",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -8131,36 +8131,36 @@
         "089": {
           "mechanism": "document",
           "where": "README.md — ссылки ведут из витрины в источник (каталог правил, документация Python), обратных ссылок из источника в копию нет",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "090": {
           "mechanism": "document",
           "where": "src/glossary/exporters/base.py — общий контракт экспортёров поднят на уровень выше конкретных форматов, форматы друг друга не импортируют",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "093": {
           "mechanism": "document",
           "where": "docs/architecture.md — швы заведены заранее: реестр правил RULES и реестр форматов _FACTORIES принимают новый элемент одной строкой",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "096": {
           "mechanism": "document",
           "where": "docs/architecture.md — данные глоссария и производная витрина разведены по жизненному циклу: источник правится, витрина пересобирается",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -8176,18 +8176,18 @@
         "098": {
           "mechanism": "document",
           "where": "data/glossary.schema.json — единица дробления глоссария определена употреблением: одна карточка это один термин, который ищут",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "099": {
           "mechanism": "none",
           "where": "data/glossary.json",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -8212,18 +8212,18 @@
         "106": {
           "mechanism": "none",
           "where": "README.md",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "108": {
           "mechanism": "none",
           "where": "CHANGELOG.md",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "CHANGELOG.md станет тесным: появятся версионные разделы сверх предела. Замер 02.10: версионных заголовков нет — один раздел Unreleased и «Ранняя история», архива нет",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -8255,12 +8255,12 @@
           "skill": ""
         },
         "115": {
-          "mechanism": "document",
-          "where": "src/glossary/loader.py — поиск корня останавливается на маркере проекта (pyproject.toml или .git), а не уходит до корня файловой системы",
+          "mechanism": "gate",
+          "where": "tests/test_loader.py::test_project_root_finds_marker — поиск корня останавливается на ближайшем маркере (pyproject.toml или .git). ВЕРДИКТ ИСПРАВЛЕН 02.10: стояло «document» с адресом src/glossary/loader.py, а поведение держит набор",
           "holdable": "",
           "awaiting": "",
-          "analysed": "",
-          "decided": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
           "skill": ""
         },
         "118": {
@@ -8302,9 +8302,9 @@
         "124": {
           "mechanism": "none",
           "where": ".github/workflows/ci.yml",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "появится автоматический перезапуск проверок — до него зелёного со второго раза не бывает. Замер 02.10: ни один прогон не перезапускается сам, перезапуск только ручной",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -8347,45 +8347,45 @@
         "132": {
           "mechanism": "document",
           "where": "CONTRIBUTING.md — раздел «Оформление коммитов»: одно изменение одна тема, Conventional Commits",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "133": {
           "mechanism": "none",
           "where": "CONTRIBUTING.md",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "134": {
           "mechanism": "document",
           "where": "CLAUDE.md — свод, команды и точки расширения лежат в репозитории, окно читает их, а не память предшественника",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "135": {
           "mechanism": "none",
           "where": "CLAUDE.md",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "136": {
           "mechanism": "document",
           "where": ".rules/bindings.json — вердикт по каждому правилу вынесен после перечисления предметов правила в этом проекте, причина названа в why",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -8437,10 +8437,10 @@
         "142": {
           "mechanism": "none",
           "where": ".github/workflows/rules-inbox.yml",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
-          "decided": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
           "skill": ""
         },
         "144": {
@@ -8509,19 +8509,19 @@
         "153": {
           "mechanism": "document",
           "where": "README.md — устройство каталога правил дано ссылкой на его CONNECT.md и START.md, а не пересказано у себя",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
         "154": {
-          "mechanism": "document",
-          "where": ".rules/bindings.json — у каждого ответа mechanism none названа причина в поле why",
+          "mechanism": "gate",
+          "where": "tests/test_rules_bindings.py::test_answer_follows_contract — у каждого mechanism none обязательна причина в why. ВЕРДИКТ ИСПРАВЛЕН 02.10: стояло «document», а требование держит набор",
           "holdable": "",
           "awaiting": "",
-          "analysed": "",
-          "decided": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
           "skill": ""
         },
         "156": {
@@ -8534,12 +8534,12 @@
           "skill": ""
         },
         "157": {
-          "mechanism": "document",
-          "where": ".rules/bindings.json — ответы записаны по контракту 1.1, а не по 1.0, который отдал генератор подключения; расхождение названо отдельно",
+          "mechanism": "pipeline",
+          "where": ".github/workflows/rules-inbox.yml — действие каталога сверяет schema ответа и answers_to со своими номерами и печатает расхождение в задаче-входящие. Ответы перечитаны под контракт 1.7 02.10: holdable проставлен всем записям, которые машина не держит, и пять вердиктов исправлены. ВЕРДИКТ ИСПРАВЛЕН 02.10: стояло «document», а расхождение называет прогон",
           "holdable": "",
           "awaiting": "",
-          "analysed": "",
-          "decided": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
           "skill": ""
         },
         "158": {
@@ -8590,9 +8590,9 @@
         "164": {
           "mechanism": "document",
           "where": "data/glossary.schema.json — поле schema_version названо тем, чего оно версия; в .rules/bindings.json ключ schema относится к формату ответа",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -8680,9 +8680,9 @@
         "177": {
           "mechanism": "document",
           "where": "CLAUDE.md — раздел «Каталог правил»: незакрытая работа по правилам идёт впереди новой; этот файл и есть первый заход",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-02",
           "decided": "",
           "skill": ""
         },
@@ -8715,11 +8715,7 @@
         }
       },
       "trails": 0,
-      "born": 0,
-      "findings": [
-        "ответ по схеме 1.1, у контракта 1.7 — записи остаются валидными, означая уже другое",
-        "ответ не называет версию ВЫГРУЗКИ, по которой построен (ключ answers_to). Наша сейчас 1.7: подъём контракта такому потребителю не адресовать"
-      ]
+      "born": 0
     },
     {
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
