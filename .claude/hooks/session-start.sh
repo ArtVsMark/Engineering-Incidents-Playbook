@@ -45,26 +45,33 @@ fi
 # уронило бы хук ненулевым кодом мимо обещания «выход 0 всегда».
 project="${CLAUDE_PROJECT_DIR:-}"
 env_file="${CLAUDE_ENV_FILE:-}"
-if [ -z "$project" ] || ! cd "$project"; then
-  warn "нет каталога проекта (CLAUDE_PROJECT_DIR)"
-  exit 0
-fi
 
 # Планку читает floor.sh — без Python: интерпретатора планки на машине ещё нет,
 # а системный python3 окна (3.11) читать код каталога в стиле планки не умеет.
 # Почему это не второй разбор по смыслу — сказано в floor.sh (214).
 . "$(dirname "$0")/floor.sh"
 
-# СТРОКА СТАТУСА — ОДНА, В STDOUT, ПРИ ЛЮБОМ ИСХОДЕ. stdout хука старта
-# площадка кладёт в контекст окна, stderr — нет: предупреждения выше видит
-# человек, а окно — нет. Строка называет итог по трём звеньям переезда (217):
-# `python3` окна, .venv и страж толчка. Спрашивается состояние машины на
-# выходе, а не пройденные шаги, поэтому строка верна и при раннем выходе.
+# СТРОКА СТАТУСА — ОДНА, В STDOUT, ПРИ ЛЮБОМ ИСХОДЕ В ОБЛАКЕ. stdout хука
+# старта площадка кладёт в контекст окна, stderr — нет: предупреждения хука
+# видит человек, а окно — нет. Вне облака хук молчит целиком: окружение там
+# владельца, и судить его хук не берётся. Строка называет итог по трём звеньям
+# переезда (217): `python3` окна, .venv и страж толчка. Спрашивается состояние
+# на выходе, а не пройденные шаги, поэтому ловушка ставится ДО первого раннего
+# выхода, и «зелёная» строка не шире проверки: .venv считается на планке,
+# только если он на её версии, с зависимостями, обновлёнными в этот старт, и
+# выставлен в PATH окна через файл окружения площадки (находки обзора #675).
 pyver() {
   "$1" -c 'import sys; print("%d.%d.%d" % sys.version_info[:3])' 2>/dev/null
 }
+#: Звенья, которые знает только сам хук: состояние машины их не выдаёт.
+in_project=""
+deps_stale=""
 status_line() {
   local f full py3 venv out=""
+  if [ -z "$in_project" ]; then
+    echo "окно НЕ на планке: нет каталога проекта (CLAUDE_PROJECT_DIR) — Python окна не проверен"
+    return
+  fi
   f=$(planka_floor pyproject.toml)
   if [ -z "$f" ]; then
     echo "окно НЕ на планке: в pyproject.toml нет requires-python"
@@ -82,6 +89,12 @@ status_line() {
     out="$out; .venv — ${venv:-нет}"
   elif [ ! -e .venv/.deps-installed ]; then
     out="$out; .venv без тестовых зависимостей"
+  else
+    [ -z "$deps_stale" ] || out="$out; тестовые зависимости .venv не обновлены"
+    # PATH окна виден только через файл окружения: процесс окна читает его
+    # после хука, и спросить свой PATH хук не может.
+    grep -qF "$project/.venv/bin" "${env_file:-/dev/null}" 2>/dev/null \
+      || out="$out; .venv не выставлен в PATH окна"
   fi
   if [ -z "$out" ]; then
     echo "окно на $full: python3, .venv и страж толчка — на планке"
@@ -90,6 +103,12 @@ status_line() {
   fi
 }
 trap status_line EXIT
+
+if [ -z "$project" ] || ! cd "$project"; then
+  warn "нет каталога проекта (CLAUDE_PROJECT_DIR)"
+  exit 0
+fi
+in_project=1
 
 floor=$(planka_floor pyproject.toml)
 if [ -z "$floor" ]; then
@@ -141,6 +160,7 @@ if .venv/bin/pip install -q -r requirements-test.txt; then
   touch "$deps_mark"
 elif [ -e "$deps_mark" ] || { [ ! -e .venv/.built-by-hook ] && [ -n "$(.venv/bin/pip freeze 2>/dev/null)" ]; }; then
   touch "$deps_mark"
+  deps_stale=1
   warn "тестовые зависимости не обновлены — окружение на $floor оставлено как было"
 else
   warn "окружение на $floor собрано, но тестовые зависимости не поставлены ни разу — в PATH не выставлено"
