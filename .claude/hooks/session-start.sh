@@ -93,7 +93,10 @@ status_line() {
     [ -z "$deps_stale" ] || out="$out; тестовые зависимости .venv не обновлены"
     # PATH окна виден только через файл окружения: процесс окна читает его
     # после хука, и спросить свой PATH хук не может.
-    grep -qF "$project/.venv/bin" "${env_file:-/dev/null}" 2>/dev/null \
+    # Сверяется ТА ЖЕ строка, что пишет хук, целиком (-x): подстрока пути
+    # совпала бы с комментарием, чужим export или `.venv/bin2`, а провал
+    # самой записи остался бы зелёным (находка обзора #676).
+    grep -qxF "$path_line" "${env_file:-/dev/null}" 2>/dev/null \
       || out="$out; .venv не выставлен в PATH окна"
   fi
   if [ -z "$out" ]; then
@@ -102,6 +105,11 @@ status_line() {
     echo "окно НЕ на планке $f: ${out#; }"
   fi
 }
+# Строка PATH для файла окружения — одна на запись и на сверку статуса.
+# Она ИДЕМПОТЕНТНА: файл окружения перечитывается не один раз за жизнь окна,
+# и безусловный `export PATH=…:$PATH` копил одинаковые звенья — замер 02.10:
+# .venv/bin в PATH десять раз подряд.
+path_line="case \":\$PATH:\" in *\":$project/.venv/bin:\"*) ;; *) export PATH=\"$project/.venv/bin:\$PATH\" ;; esac"
 trap status_line EXIT
 
 if [ -z "$project" ] || ! cd "$project"; then
@@ -171,9 +179,5 @@ if [ -z "$env_file" ]; then
   warn "площадка не дала CLAUDE_ENV_FILE — .venv собран, но в PATH окна не выставлен"
   exit 0
 fi
-# Строка ИДЕМПОТЕНТНА: файл окружения перечитывается не один раз за жизнь
-# окна, и безусловный `export PATH=…:$PATH` копил одинаковые звенья — замер
-# 02.10: .venv/bin в PATH десять раз подряд.
-line="case \":\$PATH:\" in *\":$project/.venv/bin:\"*) ;; *) export PATH=\"$project/.venv/bin:\$PATH\" ;; esac"
-grep -qxF "$line" "$env_file" 2>/dev/null || echo "$line" >> "$env_file"
+grep -qxF "$path_line" "$env_file" 2>/dev/null || echo "$path_line" >> "$env_file"
 exit 0
