@@ -47,12 +47,6 @@
   158 — третий исход называет предмет отказа, а не только причину.
 """
 
-# ЗАГРУЗОЧНЫЙ ФАЙЛ: синтаксис держится НИЖЕ планки. Его исполняет системный
-# python3 окна (3.11) — до того, как хук старта собрал окружение на планке, и
-# когда собрать не смог. Стиль планки (except без скобок, ленивые аннотации
-# без __future__) уронил бы его SyntaxError'ом ровно там, где он нужен.
-# Список загрузочных держит scripts/check_py_style.py (ЗАГРУЗОЧНЫЕ).
-from __future__ import annotations
 
 import argparse
 import re
@@ -121,6 +115,41 @@ def in_workflows(root: Path, *, preview: bool = False
     return out
 
 
+#: Вызов интерпретатора в теле шага: `python3 scripts/x.py`, `python -m …`,
+#: `python - <<…`. Комментарии и имена шагов — не вызов.
+ВЫЗОВ_RE = re.compile(r"(?:^|[\s|;&(])python3?\s+(?:-m\s|-c\s|-\s|scripts/|\S+\.py)")
+
+
+def мимо_планки(root: Path) -> list[str]:
+    """Работы, где код зовётся раньше `setup-python` — системным python раннера.
+
+    ВЕРСИЯ ПРОГОНА ОБЪЯВЛЯЕТСЯ НЕ ТОЛЬКО ЧИСЛОМ. Работа без `setup-python`
+    числа не объявляет вовсе — и потому `in_workflows` её не видит, а
+    `python3` в ней есть: тот, что пришёл с образом раннера. Замер 2 октября,
+    на следующий день после переезда планки на 3.14: так жили открытие
+    изменения, автомерж и сверка задач — конвейер слияния гонял код каталога
+    не на планке, и ни одна проверка этого не спрашивала."""
+    out: list[str] = []
+    # Работы разбирает check_runtime_deps — один разбор на территорию (214).
+    from check_runtime_deps import работы
+    for p in sorted((root / ".github" / "workflows").glob("*.yml")):
+        for имя, тело in работы(p.read_text(encoding="utf-8")).items():
+            установка = тело.find("setup-python")
+            for строка_m in re.finditer(r"^.*$", тело, re.M):
+                строка = строка_m.group(0).strip()
+                if строка.startswith(("#", "- name:", "name:", "- uses:", "uses:")):
+                    continue
+                if ВЫЗОВ_RE.search(строка):
+                    if установка < 0 or строка_m.start() < установка:
+                        out.append(
+                            f".github/workflows/{p.name}: работа {имя} зовёт "
+                            "python раньше setup-python — код исполняется системным "
+                            "python раннера, а не версией планки, и число этого не "
+                            "выдаёт: его нет")
+                    break
+    return out
+
+
 def findings(планка: tuple[int, int], прогоны: list[tuple[str, tuple[int, int]]],
              окно: tuple[int, int],
              предварительные: list[tuple[str, tuple[int, int]]] | None = None
@@ -181,7 +210,7 @@ def main(argv: list[str] | None = None) -> int:
 
     окно = sys.version_info[:2]
     предварительные = in_workflows(args.root, preview=True)
-    найдено = findings(планка, прогоны, окно, предварительные)
+    найдено = findings(планка, прогоны, окно, предварительные) + мимо_планки(args.root)
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if найдено:

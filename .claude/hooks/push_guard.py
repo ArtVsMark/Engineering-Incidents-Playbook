@@ -42,12 +42,6 @@
   051 — сеть не ответила, сторож молчит: ложный отказ дороже пропуска.
 """
 
-# ЗАГРУЗОЧНЫЙ ФАЙЛ: синтаксис держится НИЖЕ планки. Его исполняет системный
-# python3 окна (3.11) — до того, как хук старта собрал окружение на планке, и
-# когда собрать не смог. Стиль планки (except без скобок, ленивые аннотации
-# без __future__) уронил бы его SyntaxError'ом ровно там, где он нужен.
-# Список загрузочных держит scripts/check_py_style.py (ЗАГРУЗОЧНЫЕ).
-from __future__ import annotations
 
 import json
 import re
@@ -352,7 +346,7 @@ def switched_to(words: list[str]) -> str | None:
 
 def без_плюса(ref: str) -> str:
     """Ссылка без ведущего `+`: он про принудительность, а не про адрес."""
-    return ref[1:] if ref.startswith("+") else ref
+    return ref.removeprefix("+")
 
 
 #: Один толчок команды: ветка окна на этот момент, названные ССЫЛКИ (без
@@ -656,7 +650,7 @@ def _вывод(argv: list[str]) -> str | None:
     """Вывод команды или None, если она не отработала. Третий исход не молчит."""
     try:
         p = subprocess.run(argv, capture_output=True, text=True, timeout=20)
-    except (OSError, subprocess.SubprocessError):
+    except OSError, subprocess.SubprocessError:
         return None
     return p.stdout if p.returncode == 0 else None
 
@@ -664,7 +658,7 @@ def _вывод(argv: list[str]) -> str | None:
 def main() -> int:
     try:
         event = json.load(sys.stdin)
-    except (ValueError, OSError):
+    except ValueError, OSError:
         return 0                        # не разобрали событие — не мешаем
     if event.get("tool_name") != "Bash":
         return 0

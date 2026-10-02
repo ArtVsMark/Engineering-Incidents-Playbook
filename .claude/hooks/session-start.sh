@@ -14,12 +14,11 @@
 # /usr/local/bin при каждом старте окна; незакреплённая версия значила бы, что
 # код, который здесь исполняется, меняется без единой правки дерева.
 #
-# ЗАЧЕМ .venv НА ПЛАНКЕ. Системный python3 окна — 3.11, ниже планки, и
+# ЗАЧЕМ .venv НА ПЛАНКЕ. Системный python3 образа — 3.11, ниже планки, и
 # прогон перед толчком с него отказывает (check_python_version.py). Окружение
 # собирается на версии из requires-python — той же, на которой гоняет
 # конвейер, — поэтому «чисто локально» снимается с его поверхности (037).
-# Планку читает check_python_version.floor, а не второй разбор (214): сдвинется
-# планка — хук сам соберёт окружение на новой версии.
+# Сдвинется планка — хук сам соберёт окружение на новой версии.
 #
 # СБОЙ СЕТИ НЕ РОНЯЕТ СТАРТ. Хук ходит в PyPI и за интерпретатором, а
 # «стартовый хук на сетевом вызове превращает открытие окна в лотерею» — так
@@ -51,26 +50,15 @@ if [ -z "$project" ] || ! cd "$project"; then
   exit 0
 fi
 
-# Планку читает check_python_version.floor (214). Читает тот интерпретатор,
-# что уже есть: код этого разбора пишется простым и обязан импортироваться и
-# системным python3 окна. Нет requires-python — причина называется словами,
-# а не трассировкой TypeError.
-reader=$(command -v python3.14 || command -v python3)
-floor=$("$reader" - <<'PY' 2>/dev/null
-import pathlib, sys
-sys.path.insert(0, "scripts")
-import check_python_version as c
-f = c.floor(pathlib.Path("pyproject.toml").read_text(encoding="utf-8"))
-if f is None:
-    sys.exit(3)
-print(f"{f[0]}.{f[1]}")
-PY
-)
-case $? in
-  0) ;;
-  3) warn "в pyproject.toml нет requires-python — планки, на которой собирать окружение, нет"; exit 0 ;;
-  *) warn "планка requires-python не прочитана"; exit 0 ;;
-esac
+# Планку читает floor.sh — без Python: интерпретатора планки на машине ещё нет,
+# а системный python3 окна (3.11) читать код каталога в стиле планки не умеет.
+# Почему это не второй разбор по смыслу — сказано в floor.sh (214).
+. "$(dirname "$0")/floor.sh"
+floor=$(planka_floor pyproject.toml)
+if [ -z "$floor" ]; then
+  warn "в pyproject.toml нет requires-python — планки, на которой собирать окружение, нет"
+  exit 0
+fi
 
 if ! command -v "python$floor" >/dev/null 2>&1; then
   { python3.12 -m venv "$UV_HOME" \
@@ -78,6 +66,16 @@ if ! command -v "python$floor" >/dev/null 2>&1; then
       && "$UV_HOME/bin/uv" python install "$floor" \
       && ln -sf "$("$UV_HOME/bin/uv" python find "$floor")" "$BIN_DIR/python$floor"; } \
     || { warn "Python $floor не поставлен"; exit 0; }
+fi
+
+# `python3` ОКНА — ВЕРСИЯ ПЛАНКИ, а не только `python$floor` рядом. Хуки
+# площадки исполняются в окружении самого процесса окна, куда PATH из
+# CLAUDE_ENV_FILE не доходит, и голый `python3` там — тот, что пришёл с
+# образом. Замер 02.10: /usr/local/bin/python3 → /usr/bin/python3.11 при уже
+# поставленном python3.14 рядом — переезд был формальным и здесь.
+if [ "$(python3 -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null)" != "$floor" ]; then
+  ln -sf "$(command -v "python$floor")" "$BIN_DIR/python3" \
+    || warn "python3 окна не переключён на $floor"
 fi
 
 if [ ! -x .venv/bin/python ] || [ "$(.venv/bin/python -c 'import sys; print("%d.%d" % sys.version_info[:2])')" != "$floor" ]; then
@@ -116,5 +114,9 @@ if [ -z "$env_file" ]; then
   warn "площадка не дала CLAUDE_ENV_FILE — .venv собран, но в PATH окна не выставлен"
   exit 0
 fi
-echo "export PATH=\"$project/.venv/bin:\$PATH\"" >> "$env_file"
+# Строка ИДЕМПОТЕНТНА: файл окружения перечитывается не один раз за жизнь
+# окна, и безусловный `export PATH=…:$PATH` копил одинаковые звенья — замер
+# 02.10: .venv/bin в PATH десять раз подряд.
+line="case \":\$PATH:\" in *\":$project/.venv/bin:\"*) ;; *) export PATH=\"$project/.venv/bin:\$PATH\" ;; esac"
+grep -qxF "$line" "$env_file" 2>/dev/null || echo "$line" >> "$env_file"
 exit 0

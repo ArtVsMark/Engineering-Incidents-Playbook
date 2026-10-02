@@ -166,3 +166,48 @@ def test_net_progonov_s_versiey_eto_tretiy_ishod(tmp_path):
                                              encoding="utf-8")
     (tmp_path / ".github" / "workflows").mkdir(parents=True)
     assert cv.main(["--root", str(tmp_path)]) == 2
+
+
+# ── работа без setup-python гоняет код системным python раннера ───────────
+
+def _работа(tmp_path, шаги: str):
+    (tmp_path / ".github" / "workflows").mkdir(parents=True)
+    (tmp_path / ".github" / "workflows" / "w.yml").write_text(
+        "on: push\njobs:\n  open:\n    runs-on: ubuntu-latest\n    steps:\n" + шаги,
+        encoding="utf-8")
+    return tmp_path
+
+
+def test_python_без_setup_python_находка(tmp_path):
+    """Замер 02.10: открытие изменения, автомерж и сверка задач гоняли код
+    каталога системным python раннера — числа версии в них нет, и
+    in_workflows их не видел."""
+    корень = _работа(tmp_path, "      - uses: actions/checkout@v5\n"
+                              "      - run: python3 scripts/pr_body.py --check\n")
+    assert any("работа open" in н for н in cv.мимо_планки(корень))
+
+
+def test_python_раньше_setup_python_находка(tmp_path):
+    корень = _работа(tmp_path, "      - run: python3 scripts/a.py\n"
+                              "      - uses: actions/setup-python@v6\n"
+                              "        with:\n          python-version: \"3.14\"\n")
+    assert len(cv.мимо_планки(корень)) == 1
+
+
+def test_python_после_setup_python_чисто(tmp_path):
+    корень = _работа(tmp_path, "      - uses: actions/setup-python@v6\n"
+                              "        with:\n          python-version: \"3.14\"\n"
+                              "      - run: python3 scripts/a.py\n")
+    assert cv.мимо_планки(корень) == []
+
+
+def test_слово_python_в_комментарии_и_имени_не_вызов(tmp_path):
+    корень = _работа(tmp_path, "      # python scripts/a.py здесь не зовётся\n"
+                              "      - name: python scripts/b.py в имени\n"
+                              "        run: echo ok\n")
+    assert cv.мимо_планки(корень) == []
+
+
+def test_настоящие_прогоны_на_планке():
+    from conftest import SCRIPTS
+    assert cv.мимо_планки(SCRIPTS.parent) == []
