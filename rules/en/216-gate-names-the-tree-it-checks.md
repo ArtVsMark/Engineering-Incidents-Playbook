@@ -86,6 +86,8 @@ visible before the investigation, not after it.
 - the source comes from the import (`package.__file__`), not from the run's
   root and not from `pip show`: the latter talks about the installation, not
   about what was loaded;
+- what is compared is the TREE holding that file against the run's root; a
+  path in `site-packages` is not a tree — a regular install gets no warning;
 - on divergence from the run's root both paths are printed — where the code
   lies and where it was taken from;
 - the window's document names which changes are legitimate in a working tree
@@ -95,15 +97,21 @@ visible before the investigation, not after it.
 
 ## Where it applies
 
-**Works** where the code under test reaches the run through an import
-mechanism independent of the run's root: an editable install, a package in
-`site-packages`, a `PYTHONPATH` set from outside — with several working trees,
-clones or windows on one machine.
+**Works** where the code under test reaches the run from ANOTHER SOURCE
+TREE: an editable install (`pip install -e`) or a `PYTHONPATH` pointing at a
+neighbouring clone or working tree — with several trees, clones or windows on
+one machine. The tree that holds `package.__file__` is compared with the
+run's root; equal — silence, different — a warning.
 
-**Does not work** where the code is taken by path from the run's own root:
-tests put the scripts directory of their own tree on `sys.path`, and the code
-has no other source. It does not work for CI with one checkout per runner and
-an installation from that same checkout: there is nothing to diverge. It does
+**Does not work** for a regular, non-editable install: `package.__file__` is
+always in `site-packages` there, a copy rather than a tree, and the warning
+would fire on every run with no signal — exactly what
+[051](051-warn-on-likely-block-on-certain.md) stands against here. Whether the
+installed copy is fresh is another question, and 216 does not answer it. It
+does not work where the code is taken by path from the run's own root: tests
+put the scripts directory of their own tree on `sys.path`, and the code has no
+other source. It does not work for CI with one checkout per runner and any
+installation made from that same checkout: the run has a single source tree. It does
 not work for the REFERENCE a change is compared against — that is
 [171](171-the-reference-set-comes-from-the-tree-under-test.md); this rule is
 about the code under test itself.
