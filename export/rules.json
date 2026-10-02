@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-01T09:58:21+00:00",
+  "generated_at": "2026-10-02T08:58:34+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.7",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.5"
   },
-  "count": 214,
+  "count": 215,
   "rules": [
     {
       "id": "001",
@@ -1807,7 +1807,8 @@
         "170",
         "176",
         "178",
-        "192"
+        "192",
+        "216"
       ]
     },
     {
@@ -2555,7 +2556,8 @@
         "203",
         "204",
         "208",
-        "213"
+        "213",
+        "216"
       ]
     },
     {
@@ -8875,7 +8877,8 @@
         "168"
       ],
       "mentioned_by": [
-        "168"
+        "168",
+        "216"
       ]
     },
     {
@@ -11226,6 +11229,55 @@
         "190",
         "203",
         "209"
+      ]
+    },
+    {
+      "id": "216",
+      "slug": "gate-names-the-tree-it-checks",
+      "title": {
+        "ru": "Прогон называет, чей код он проверяет, а не только чем он запущен",
+        "en": "A run names whose code it is checking, not only what it was launched with"
+      },
+      "areas": {
+        "ru": [
+          "прогоны",
+          "среды"
+        ],
+        "en": [
+          "runs",
+          "environments"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Прогон, у которого проверяемый код может прийти не из рабочего дерева, называет источник этого кода и говорит вслух, когда источник не тот. Источник спрашивается у среды исполнения — откуда на самом деле импортируется пакет, — а не выводится из корня прогона: корень об установке ничего не знает. Это предупреждение первой строкой отчёта, а не отказ: приём, при котором код и дерево расходятся, бывает законным.",
+        "en": "A run whose code under test may come from somewhere other than the working tree names the source of that code and says so out loud when the source is not the tree. The source is asked of the runtime — where the package is actually imported from — not derived from the run's root: the root knows nothing about the installation. This is a warning on the first line of the report, not a refusal: a setup where code and tree diverge can be legitimate."
+      },
+      "applies": {
+        "ru": "**Работает** там, где проверяемый код приходит в прогон из ДРУГОГО ДЕРЕВА\nИСХОДНИКОВ: редактируемая установка (`pip install -e`) или `PYTHONPATH`,\nуказывающие на соседний клон или рабочее дерево, — при нескольких деревьях,\nклонах или окнах на одной машине. Сравнивается дерево, в котором лежит\n`пакет.__file__`, с корнем прогона; совпали — молчание, разошлись —\nпредупреждение.\n\n**Не работает** для обычной, не редактируемой установки: `пакет.__file__`\nтам всегда в `site-packages`, это копия, а не дерево, и предупреждение\nгорело бы на каждом прогоне без сигнала — ровно то, против чего здесь стоит\n[051](051-warn-on-likely-block-on-certain.md). Свежа ли установленная копия —\nдругой вопрос, и 216 его не решает. Не работает там, где код берётся по пути\nот корня самого прогона: тесты добавляют каталог скриптов своего же дерева в\n`sys.path`, и другого источника у кода нет. Не работает и для CI, где на\nраннере одна выкачка и любая установка делается из неё же: дерево\nисходников у прогона одно. Не работает для сверки ЭТАЛОНА — набора, с\nкоторым сравнивается изменение: это\n[171](171-the-reference-set-comes-from-the-tree-under-test.md), а здесь речь о\nсамом проверяемом коде.\n\n**Признак нарушения:** отчёт прогона называет интерпретатор и корень, но не\nговорит, откуда импортирован проверяемый пакет, а `пакет.__file__` из рабочего\nдерева лежит в ДРУГОМ дереве исходников — соседнем клоне или рабочем дереве.\nПуть в `site-packages` признаком не является: это обычная установка, и 216 о\nней молчит.",
+        "en": "**Works** where the code under test reaches the run from ANOTHER SOURCE\nTREE: an editable install (`pip install -e`) or a `PYTHONPATH` pointing at a\nneighbouring clone or working tree — with several trees, clones or windows on\none machine. The tree that holds `package.__file__` is compared with the\nrun's root; equal — silence, different — a warning.\n\n**Does not work** for a regular, non-editable install: `package.__file__` is\nalways in `site-packages` there, a copy rather than a tree, and the warning\nwould fire on every run with no signal — exactly what\n[051](051-warn-on-likely-block-on-certain.md) stands against here. Whether the\ninstalled copy is fresh is another question, and 216 does not answer it. It\ndoes not work where the code is taken by path from the run's own root: tests\nput the scripts directory of their own tree on `sys.path`, and the code has no\nother source. It does not work for CI with one checkout per runner and any\ninstallation made from that same checkout: the run has a single source tree. It does\nnot work for the REFERENCE a change is compared against — that is\n[171](171-the-reference-set-comes-from-the-tree-under-test.md); this rule is\nabout the code under test itself.\n\n**Sign of a violation:** the run's report names the interpreter and the root\nbut not where the package under test was imported from, while\n`package.__file__` taken from a working tree lies in ANOTHER source tree — a\nneighbouring clone or working tree. A path in `site-packages` is not a sign:\nthat is a regular install, and 216 says nothing about it."
+      },
+      "added": "2026-10-02",
+      "files": {
+        "ru": "rules/ru/216-gate-names-the-tree-it-checks.md",
+        "en": "rules/en/216-gate-names-the-tree-it-checks.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1521"
+        }
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "portable": "yes",
+      "mentions": [
+        "037",
+        "051",
+        "171"
       ]
     }
   ],

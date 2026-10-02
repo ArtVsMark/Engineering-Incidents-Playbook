@@ -19,7 +19,6 @@
 
 from __future__ import annotations
 
-import datetime as dt
 import json
 from pathlib import Path
 
@@ -844,8 +843,7 @@ def читатель(ответ):
 #: UNCONNECTED_DAYS тикает от неё по настоящему календарю, и 2 октября набор
 #: покраснел без единой правки — тест «срок ещё не вышел» сам дотикал до
 #: «вышел». Граница проверяется относительно сегодня, как её считает код.
-ОБЪЯВЛЕН = [{"repo": "чужой/проект", "access": "public",
-             "since": (dt.date.today() - dt.timedelta(days=1)).isoformat()}]
+ОБЪЯВЛЕН = [{"repo": "чужой/проект", "access": "public", "since": days_ago(1)}]
 
 
 def test_otvet_est_a_adres_ne_zapolnen_nahodka():
