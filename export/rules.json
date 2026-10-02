@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-02T08:58:34+00:00",
+  "generated_at": "2026-10-02T11:19:01+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.7",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.5"
   },
-  "count": 215,
+  "count": 216,
   "rules": [
     {
       "id": "001",
@@ -293,7 +293,8 @@
         "125",
         "127",
         "160",
-        "197"
+        "197",
+        "217"
       ]
     },
     {
@@ -1808,7 +1809,8 @@
         "176",
         "178",
         "192",
-        "216"
+        "216",
+        "217"
       ]
     },
     {
@@ -2166,7 +2168,8 @@
         "136",
         "146",
         "195",
-        "199"
+        "199",
+        "217"
       ]
     },
     {
@@ -2327,7 +2330,8 @@
         "006",
         "049",
         "134",
-        "138"
+        "138",
+        "217"
       ]
     },
     {
@@ -8144,7 +8148,8 @@
         "186",
         "192",
         "201",
-        "207"
+        "207",
+        "217"
       ]
     },
     {
@@ -11278,6 +11283,67 @@
         "037",
         "051",
         "171"
+      ]
+    },
+    {
+      "id": "217",
+      "slug": "a-version-move-is-done-in-the-code",
+      "title": {
+        "ru": "Переезд на версию языка сделан, когда на ней написан код и на ней исполняется всё, а не когда тесты прошли",
+        "en": "A language version move is done when the code is written for it and everything runs on it, not when the tests pass"
+      },
+      "areas": {
+        "ru": [
+          "миграции",
+          "код",
+          "гейты"
+        ],
+        "en": [
+          "migrations",
+          "code",
+          "gates"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Переезд на новую версию языка закрывается двумя доказательствами, а не зелёным набором: код написан в стиле этой версии — это держит гейт, который выводит требования из планки `requires-python`, — и всё, что этот код исполняет, исполняет его интерпретатором планки. «Набор прошёл на новой версии без правок» — не итог переезда, а его исходная точка: так выглядит и формальный переезд.",
+        "en": "A move to a new language version is closed by two proofs, not by a green suite: the code is written in that version's style — held by a gate that derives its requirements from the `requires-python` floor — and everything that executes the code executes it with the floor's interpreter. \"The suite passed on the new version with no changes\" is not the result of the move but its starting point: a formal move looks exactly the same."
+      },
+      "applies": {
+        "ru": "**Работает** для подъёма планки версии языка или среды исполнения внутри\nпроекта, который сам решает, на чём исполняется его код: своё CI, свои хуки,\nсвоё окно.\n\n**Не работает** для контракта, отданного наружу: у потребителя заготовки или\nдействия своя среда, и подъём планки там — смена чужого контракта по\n[157](157-a-contract-version-bump-is-a-re-read.md), а не переезд. Не работает\nдля подъёма, при котором новая версия ломает старый код: там набор краснеет сам,\nи формальным переезд не остаётся. Не работает для зависимостей, а не языка:\nстиля библиотеки гейт по `requires-python` не выведет.\n\n**Признак нарушения:** переезд закрыт фразой «набор прошёл без правок», а в\nдереве есть исполнение, не называющее версию — работа без `setup-python`, хук,\nзовущий голый `python3`, — либо стиль кода не сдвинулся ни в одном файле.",
+        "en": "**Works** for raising the floor of the language or runtime version inside a\nproject that decides for itself what its code runs on: its own CI, its own\nhooks, its own window.\n\n**Does not work** for a contract handed outside: the consumer of a template or\naction has an environment of their own, and raising the floor there is a\nchange to someone else's contract under\n[157](157-a-contract-version-bump-is-a-re-read.md), not a move. Does not work\nfor a bump where the new version breaks old code: the suite turns red on its\nown, and the move cannot stay formal. Does not work for dependencies rather\nthan the language: a gate driven by `requires-python` cannot derive a\nlibrary's style.\n\n**Sign of a violation:** the move is closed with \"the suite passed without\nchanges\", while the tree has execution that names no version — a job without\n`setup-python`, a hook calling bare `python3` — or the code style has not\nshifted in a single file."
+      },
+      "added": "2026-10-02",
+      "files": {
+        "ru": "rules/ru/217-a-version-move-is-done-in-the-code.md",
+        "en": "rules/en/217-a-version-move-is-done-in-the-code.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "670"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "672"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "351"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "partly",
+      "mentions": [
+        "005",
+        "037",
+        "044",
+        "047",
+        "157"
       ]
     }
   ],
