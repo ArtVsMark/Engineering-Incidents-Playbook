@@ -322,3 +322,22 @@ def test_работа_слово_в_комментарии_не_прячет_р�
                               "      - uses: actions/setup-python@v6\n"
                               "        with:\n          python-version: \"3.14\"\n")
     assert len(cv.мимо_планки(корень)) == 1
+
+
+@pytest.mark.parametrize("версия", ['"3.14"', "'3.14'", "3.14"])
+def test_число_в_любых_кавычках_читается(tmp_path, версия):
+    """Находка обзора #680: одинарные кавычки выпадали из CI_RE, и шаг с верным
+    числом считался шагом «без числа» — гейт отвергал то, что обязан пропустить."""
+    корень = _действие(tmp_path, "action.yml",
+                       "    - uses: actions/setup-python@v6\n"
+                       f"      with:\n        python-version: {версия}\n" + ВЫЗОВ)
+    assert cv.действия_мимо_планки(корень, (3, 14)) == []
+
+
+def test_одинарные_кавычки_видит_и_сверка_прогонов(tmp_path):
+    """Сосед по признаку (195): in_workflows читает тот же образец."""
+    (tmp_path / ".github" / "workflows").mkdir(parents=True)
+    (tmp_path / ".github" / "workflows" / "a.yml").write_text(
+        "jobs:\n  t:\n    steps:\n      - uses: actions/setup-python@v6\n"
+        "        with:\n          python-version: '3.13'\n", encoding="utf-8")
+    assert cv.in_workflows(tmp_path) == [("a.yml", (3, 13))]
