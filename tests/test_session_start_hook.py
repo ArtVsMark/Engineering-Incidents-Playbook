@@ -347,3 +347,58 @@ def test_без_интерпретатора_планки_прочее_откр�
 def test_страж_зовётся_интерпретатором_планки(tmp_path):
     итог = _страж(tmp_path, ПЛАНКА, "ls -la")
     assert итог.returncode == 0, итог.stderr
+
+
+# --- строка статуса (217) ----------------------------------------------------
+#
+# stdout хука старта площадка кладёт в контекст окна: это единственное, что
+# окно узнаёт о своём Python, не спрашивая. Строка одна при любом исходе.
+
+ПОЛНАЯ = ".".join(map(str, sys.version_info[:3]))
+
+
+def _python3_ниже_планки(tmp_path: Path) -> str:
+    """Каталог с `python3`, отвечающим 3.11.15, — ровно то, что было в окне
+    2 октября: системный python3 ниже планки при планке, стоящей рядом."""
+    каталог = tmp_path / "система"
+    каталог.mkdir()
+    подделка = каталог / "python3"
+    подделка.write_text("#!/bin/sh\necho 3.11.15\n", encoding="utf-8")
+    подделка.chmod(0o755)
+    return str(каталог)
+
+
+@НУЖНА_ПЛАНКА
+def test_статус_на_планке_одной_строкой_в_stdout(tmp_path):
+    корень = проект(tmp_path)
+    итог = запуск({"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
+                   "CLAUDE_ENV_FILE": str(tmp_path / "env")})
+    assert итог.returncode == 0, итог.stderr
+    assert итог.stdout.splitlines() == [
+        f"окно на {ПОЛНАЯ}: python3, .venv и страж толчка — на планке"]
+
+
+@НУЖЕН_BASH
+def test_статус_без_планки_называет_причину(tmp_path):
+    корень = проект(tmp_path, pyproject="[project]\nname = 'x'\n")
+    итог = запуск({"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
+                   "CLAUDE_ENV_FILE": str(tmp_path / "env")})
+    assert итог.stdout.splitlines() == [
+        "окно НЕ на планке: в pyproject.toml нет requires-python"]
+
+
+@НУЖНА_ПЛАНКА
+def test_статус_называет_python3_ниже_планки(tmp_path):
+    """Хук переключает python3 в своём каталоге ссылок, а PATH окна смотрит
+    раньше — в системный: строка говорит, что вышло, а не что хук сделал."""
+    корень = проект(tmp_path)
+    путь = f"{_python3_ниже_планки(tmp_path)}:{os.environ['PATH']}"
+    итог = запуск({"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
+                   "CLAUDE_ENV_FILE": str(tmp_path / "env"), "PATH": путь})
+    assert итог.returncode == 0, итог.stderr
+    assert итог.stdout.splitlines() == [f"окно НЕ на планке {ПЛАНКА}: python3 — 3.11.15"]
+
+
+@НУЖЕН_BASH
+def test_статус_вне_облака_не_печатается():
+    assert запуск({}).stdout == ""
