@@ -464,37 +464,46 @@ def test_статус_сверяет_записанную_строку_а_не_�
 
 ПОДДЕЛЬНЫЙ_PYTHON3_БЕЗ_VENV = """#!/bin/bash
 # python3 без venv: запускается, но `import venv, ensurepip` падает — как
-# висячая ссылка или образ без пакета venv.
+# висячая ссылка или образ без пакета venv. Каждый вызов пишется в журнал
+# ДО ответа: проверка хука должна в нём остаться (обзор #683).
+echo "$*" >> "$JOURNAL"
 [ "$1" = "-c" ] && [ "$2" = "import venv, ensurepip" ] && exit 1
 exit 0
 """
 
 
 @НУЖЕН_BASH
-def test_python3_без_venv_установщик_берётся_системный(tmp_path, monkeypatch):
-    """Находка обзора #679: откат на /usr/bin/python3 не исполнялся ни одним
-    случаем — подделка отвечала 0 на любую проверку. Здесь python3 впереди
-    PATH venv не умеет; установщик обязан уйти к системному, а не упасть.
-    Системный подменить нельзя (путь абсолютный), поэтому проверяется, что
-    подделку не звали с `-m venv`: её журнал пишет каждый вызов."""
+def test_python3_без_venv_установщик_берётся_системный(tmp_path):
+    """Находки обзоров #679 и #683: откат на /usr/bin/python3 должен
+    ИСПОЛНЯТЬСЯ, и доказывать это положительный признак, а не отсутствие
+    вызова. Признаков три: хук спросил у python3 впереди PATH то, что нужно
+    установщику; получив отказ, не звал его с `-m venv`; окружение установщика
+    собрал системный интерпретатор — это пишет `home` в его pyvenv.cfg.
+    Сеть закрыта: дальше venv хук не идёт, и это не предмет случая."""
+    системный = Path("/usr/bin/python3")
+    if not системный.exists():
+        pytest.skip("нет /usr/bin/python3 — откату некуда идти, случай про образ с ним")
     корень = проект(tmp_path, pyproject='requires-python = ">=3.99"\n')
     подмена = tmp_path / "bin"
     подмена.mkdir()
     журнал = tmp_path / "журнал"
     поддельный = подмена / "python3"
-    поддельный.write_text(ПОДДЕЛЬНЫЙ_PYTHON3_БЕЗ_VENV.replace(
-        "exit 0\n", f'echo "$*" >> "{журнал}"\nexit 0\n'), encoding="utf-8")
+    поддельный.write_text(ПОДДЕЛЬНЫЙ_PYTHON3_БЕЗ_VENV, encoding="utf-8")
     поддельный.chmod(0o755)
     ссылки = tmp_path / "ссылки"
     ссылки.mkdir()
+    установщик = tmp_path / "uv"
     итог = запуск({"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
                    "CLAUDE_ENV_FILE": str(tmp_path / "env"),
                    "PATH": f"{подмена}:{ссылки}:{os.environ['PATH']}",
-                   "SESSION_START_UV_HOME": str(tmp_path / "uv"),
+                   "SESSION_START_UV_HOME": str(установщик),
                    "SESSION_START_BIN_DIR": str(ссылки),
-                   "PIP_INDEX_URL": "http://127.0.0.1:9/", "PIP_RETRIES": "0",
-                   "PIP_TIMEOUT": "1"})
+                   "JOURNAL": str(журнал), **НЕТ_ИНДЕКСА})
     assert итог.returncode == 0
-    вызовы = журнал.read_text(encoding="utf-8") if журнал.exists() else ""
-    assert "-m venv" not in вызовы
-    assert (tmp_path / "uv" / "bin" / "python").exists() or "не поставлен" in итог.stderr
+    вызовы = журнал.read_text(encoding="utf-8").splitlines()
+    assert "-c import venv, ensurepip" in вызовы
+    assert not any(в.startswith("-m venv") for в in вызовы)
+    настройка = (установщик / "pyvenv.cfg").read_text(encoding="utf-8")
+    дом = next(с.split("=", 1)[1].strip() for с in настройка.splitlines()
+               if с.startswith("home"))
+    assert Path(дом).resolve() == системный.resolve().parent
