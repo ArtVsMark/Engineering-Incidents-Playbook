@@ -25,7 +25,6 @@
 проходить, иначе необязательное поле станет обязательным молча.
 """
 
-from __future__ import annotations
 
 from pathlib import Path
 

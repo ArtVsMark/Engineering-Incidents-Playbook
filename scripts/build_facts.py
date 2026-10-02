@@ -56,7 +56,6 @@ ArtVsMark/Engineering-Incidents-Playbook#632). Неизмеренный пока
   075 — пропущенный раздел называется вслух, а не молчит.
 """
 
-from __future__ import annotations
 
 import argparse
 import datetime as dt

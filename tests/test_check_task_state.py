@@ -10,7 +10,6 @@ https://docs.github.com/rest/commits/commits#list-pull-requests-associated-with-
 на элемент со всех страниц.
 """
 
-from __future__ import annotations
 
 import json
 import sys

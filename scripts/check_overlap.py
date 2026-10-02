@@ -29,7 +29,6 @@
 Исходы:  0 пересечений нет · 1 есть · 2 проверка не отработала.
 """
 
-from __future__ import annotations
 
 import argparse
 import json

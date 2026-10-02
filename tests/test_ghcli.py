@@ -15,7 +15,6 @@
 а не для одного «представителя»: расходились они именно поодиночке.
 """
 
-from __future__ import annotations
 
 import pytest
 

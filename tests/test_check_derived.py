@@ -7,7 +7,6 @@
 Площадка и git не трогаются: `findings` — чистая функция над списком путей.
 """
 
-from __future__ import annotations
 
 import subprocess
 import sys

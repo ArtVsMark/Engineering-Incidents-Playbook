@@ -30,7 +30,6 @@
          python scripts/coverage_badge.py --check    # проверить, не устарел ли
 """
 
-from __future__ import annotations
 
 import argparse
 import json

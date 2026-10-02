@@ -17,7 +17,6 @@
 Коды:    0 всё чисто · 1 есть находки · 2 шаг не отработал
 """
 
-from __future__ import annotations
 
 import argparse
 import fnmatch

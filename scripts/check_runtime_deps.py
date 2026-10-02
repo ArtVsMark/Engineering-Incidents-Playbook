@@ -35,7 +35,6 @@
   2 — проверка не отработала.
 """
 
-from __future__ import annotations
 
 import argparse
 import ast
@@ -127,7 +126,7 @@ def импорты(путь: Path) -> set[str]:
     """Пакеты верхнего уровня, которые скрипт импортирует напрямую."""
     try:
         дерево = ast.parse(путь.read_text(encoding="utf-8"))
-    except (OSError, SyntaxError):
+    except OSError, SyntaxError:
         return set()
     имена: set[str] = set()
     for узел in ast.walk(дерево):

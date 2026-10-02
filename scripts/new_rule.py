@@ -30,7 +30,6 @@
 Коды: 0 каркас собран · 1 собрать нельзя · 2 проверка не отработала
 """
 
-from __future__ import annotations
 
 import argparse
 import json
@@ -144,7 +143,7 @@ def trail_resolves(trail: str, root: Path) -> bool:
     try:
         known = {c["repo"] for c in json.loads(
             (root / ".rules" / "consumers.json").read_text(encoding="utf-8"))["consumers"]}
-    except (OSError, ValueError, KeyError, TypeError):
+    except OSError, ValueError, KeyError, TypeError:
         return False
     for repo in known:
         if trail.startswith(repo) and разрешимый_адрес(trail[len(repo):]):

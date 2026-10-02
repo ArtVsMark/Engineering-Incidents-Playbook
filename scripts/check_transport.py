@@ -47,7 +47,6 @@ already exceeded» на `gh pr merge`, «GraphQL: Resource not accessible …
   2 — проверка не отработала (файл списка не прочитан, дерево не разобрано).
 """
 
-from __future__ import annotations
 
 import argparse
 import ast

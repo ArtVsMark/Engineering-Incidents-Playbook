@@ -14,7 +14,6 @@
 владельца, не объявленный нигде, становится находкой.
 """
 
-from __future__ import annotations
 
 import json
 import subprocess

@@ -5,7 +5,6 @@
 прогонов — форма своих же `.github/workflows/*.yml`.
 """
 
-from __future__ import annotations
 
 import python_badge as pb
 import pytest

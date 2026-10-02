@@ -5,7 +5,6 @@
 особенно: файл, в котором ничего не написано, выглядит сделанной работой.
 """
 
-from __future__ import annotations
 
 import subprocess
 from pathlib import Path

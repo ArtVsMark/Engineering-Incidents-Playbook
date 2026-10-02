@@ -5,7 +5,6 @@
 живых отказа подряд и была из-за них переписана.
 """
 
-from __future__ import annotations
 
 import json
 import sys

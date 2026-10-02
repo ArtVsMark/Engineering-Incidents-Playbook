@@ -6,7 +6,6 @@
 которой нет, — отказ проверки, а не зелень.
 """
 
-from __future__ import annotations
 
 import json
 import sys

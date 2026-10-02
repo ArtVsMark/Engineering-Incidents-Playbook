@@ -48,7 +48,6 @@ ArtVsMark/ArtVsMark#56 — `attribution-history` покраснел, и увид
         вердиктом, а работу, у которой все прогоны отменены, называет третьим исходом.
 """
 
-from __future__ import annotations
 
 import argparse
 import json

@@ -40,7 +40,6 @@
          python scripts/collect_changelog.py --close v1.2.0   # закрыть раздел
 """
 
-from __future__ import annotations
 
 import argparse
 import datetime as dt

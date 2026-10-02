@@ -13,7 +13,6 @@
 остались МЕСТА для суждения, а не заполненные поля.
 """
 
-from __future__ import annotations
 
 import json
 

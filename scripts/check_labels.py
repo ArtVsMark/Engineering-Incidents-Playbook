@@ -36,7 +36,6 @@
   064 — зона изменения выводится из тронутых путей и сверяется с тем, что на нём стоит.
 """
 
-from __future__ import annotations
 
 import argparse
 import fnmatch

@@ -44,7 +44,6 @@
         разбирает ответ по элементу, а не по странице.
 """
 
-from __future__ import annotations
 
 import json
 import re

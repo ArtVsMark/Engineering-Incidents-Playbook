@@ -6,7 +6,6 @@
 «проверять было нечего», причём последнее не зеленеет (правило 075).
 """
 
-from __future__ import annotations
 
 from pathlib import Path
 

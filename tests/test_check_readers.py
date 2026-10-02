@@ -8,7 +8,6 @@
 бы по чужой причине.
 """
 
-from __future__ import annotations
 
 from pathlib import Path
 

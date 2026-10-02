@@ -6,7 +6,6 @@
 (140, 146, 039).
 """
 
-from __future__ import annotations
 
 import subprocess
 from pathlib import Path

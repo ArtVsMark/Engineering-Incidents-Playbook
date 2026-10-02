@@ -9,7 +9,6 @@
 https://code.claude.com/docs/en/plugins/marketplace-reference.md
 """
 
-from __future__ import annotations
 
 import json
 from pathlib import Path

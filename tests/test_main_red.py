@@ -24,7 +24,6 @@
 площадки, и подделать ответ дешевле, чем ходить за ним.
 """
 
-from __future__ import annotations
 
 import json
 

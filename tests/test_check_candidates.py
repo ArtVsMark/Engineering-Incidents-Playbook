@@ -12,7 +12,6 @@
 краснеющий на ней, был бы хуже отсутствующего.
 """
 
-from __future__ import annotations
 
 from pathlib import Path
 

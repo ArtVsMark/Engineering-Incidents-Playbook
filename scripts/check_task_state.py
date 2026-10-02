@@ -38,7 +38,6 @@
   039 — три исхода: чисто · есть находки · проверка не отработала.
 """
 
-from __future__ import annotations
 
 import argparse
 import json

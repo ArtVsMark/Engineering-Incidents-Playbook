@@ -9,7 +9,6 @@
 подтверждает ничего (правило 075).
 """
 
-from __future__ import annotations
 
 import subprocess
 from pathlib import Path

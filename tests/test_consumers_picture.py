@@ -11,7 +11,6 @@
 одной территории (022), и разошлись бы они молча.
 """
 
-from __future__ import annotations
 
 import json
 import re

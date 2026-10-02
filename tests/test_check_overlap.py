@@ -15,7 +15,6 @@
 нечем, пока не сказано с чем; сама сверка требует сети и остаётся человеку.
 """
 
-from __future__ import annotations
 
 import json
 

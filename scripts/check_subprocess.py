@@ -75,7 +75,6 @@ NUL без `%x00` в формате, молча перестал находит�
         ghcli, и обход двери его теряет.
 """
 
-from __future__ import annotations
 
 import argparse
 import ast

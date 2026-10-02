@@ -45,7 +45,6 @@
   026 — вердикт по гипотезе записывается: уехала — файл удаляется вместе с ссылкой.
 """
 
-from __future__ import annotations
 
 import argparse
 import datetime as dt
@@ -127,7 +126,7 @@ def promoted(root: Path, found: list[Path]) -> tuple[list[str], list[str]]:
             принятые = {ключ.split(":", 1)[1]
                         for ключ, v in данные.get("verdicts", {}).items()
                         if ":" in ключ and v.get("status") == "admitted"}
-        except (ValueError, KeyError, TypeError):
+        except ValueError, KeyError, TypeError:
             принятые = set()
 
     отказы: list[str] = []

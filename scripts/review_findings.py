@@ -74,7 +74,6 @@
         и строки при этом пишутся: «находок 0» рядом с находкой её не теряет.
 """
 
-from __future__ import annotations
 
 import argparse
 import hashlib

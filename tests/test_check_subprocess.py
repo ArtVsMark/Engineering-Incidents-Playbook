@@ -9,7 +9,6 @@
 трогаются.
 """
 
-from __future__ import annotations
 
 import check_subprocess as cs
 

@@ -13,7 +13,6 @@
 Файловая система трогается во временном каталоге; сеть — нет.
 """
 
-from __future__ import annotations
 
 from pathlib import Path
 

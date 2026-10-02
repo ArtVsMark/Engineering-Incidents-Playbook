@@ -10,7 +10,6 @@
 отвечает площадка на `--jq` из самого скрипта (170).
 """
 
-from __future__ import annotations
 
 import json
 import sys

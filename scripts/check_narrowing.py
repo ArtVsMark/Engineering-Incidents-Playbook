@@ -62,7 +62,6 @@
   python scripts/check_narrowing.py --selftest
 """
 
-from __future__ import annotations
 
 import argparse
 import re

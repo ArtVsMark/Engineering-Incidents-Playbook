@@ -15,7 +15,6 @@
 Площадка не трогается: разбор — чистая функция над текстом файла.
 """
 
-from __future__ import annotations
 
 from pathlib import Path
 

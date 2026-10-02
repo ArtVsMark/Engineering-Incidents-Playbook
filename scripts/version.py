@@ -52,7 +52,6 @@ v1.0.0», а НЕ «семнадцатый патч-релиз»: релиза �
   0 — версия определена;  2 — тега схемы не видно, версия недостоверна.
 """
 
-from __future__ import annotations
 
 import argparse
 import json

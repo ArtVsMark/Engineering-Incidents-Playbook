@@ -9,7 +9,6 @@
 по которой атрибуция проверяется по одному коммиту.
 """
 
-from __future__ import annotations
 
 from pathlib import Path
 

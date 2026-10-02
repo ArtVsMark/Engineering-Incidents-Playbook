@@ -52,7 +52,6 @@ gh_json), в прогонах — по строке вызова после ск
   2 — проверка не отработала (таблица не прочитана).
 """
 
-from __future__ import annotations
 
 import argparse
 import ast

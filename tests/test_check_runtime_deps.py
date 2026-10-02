@@ -6,7 +6,6 @@
 и она удаляется в том же тесте.
 """
 
-from __future__ import annotations
 
 import pytest
 

@@ -65,7 +65,6 @@ URL-кодирован: сырым поиском они не находятся
   python scripts/check_badges_published.py --selftest
 """
 
-from __future__ import annotations
 
 import argparse
 import re
@@ -132,7 +131,7 @@ def из_дерева(корень: Path) -> list[tuple[str, str]]:
         try:
             out.append((path.relative_to(корень).as_posix(),
                         path.read_text(encoding="utf-8")))
-        except (UnicodeDecodeError, OSError):
+        except UnicodeDecodeError, OSError:
             continue
     return out
 

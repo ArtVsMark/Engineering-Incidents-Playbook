@@ -24,7 +24,6 @@
   064 — объявленный набор меток применяется к репозиторию, а расхождения называются.
 """
 
-from __future__ import annotations
 
 import argparse
 import json

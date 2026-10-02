@@ -54,7 +54,6 @@
   158 — третий исход называет предмет: файл и команду, которые не ответили.
 """
 
-from __future__ import annotations
 
 import argparse
 import json

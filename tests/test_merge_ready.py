@@ -15,7 +15,6 @@
 нет, не обязана: идущая проверка это ожидание, и случай стоит отдельно.
 """
 
-from __future__ import annotations
 
 import json
 

@@ -46,7 +46,6 @@ HTTPS, без API и без клона, и сводятся в одну табл
          python scripts/aggregate_bindings.py --check    # сверить, сеть не нужна
 """
 
-from __future__ import annotations
 
 import argparse
 import datetime as dt
@@ -57,7 +56,8 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 # Словарь механизмов живёт в одном месте (правило 209). Импорт, а не копия:
 # копия расходится молча, и первым это увидит потребитель, а не гейт.
@@ -633,7 +633,7 @@ def export_lag(slices: list[dict], own_export: str) -> list[str]:
 def _schema_of(path: Path) -> str:
     try:
         return json.loads(path.read_text(encoding="utf-8")).get("schema") or ""
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return ""
 
 
@@ -671,7 +671,7 @@ def schema_findings(slices: list[dict]) -> tuple[list[str], list[str]]:
     try:
         export_ver = (json.loads((ROOT / "export" / "rules.json").read_text(encoding="utf-8"))
                       .get("contracts", {}).get("export") or "")
-    except (OSError, ValueError):
+    except OSError, ValueError:
         pass
     чужое = schema_lag(slices, own)
     if export_ver:
@@ -767,7 +767,7 @@ def superseded_map() -> dict[str, str]:
     """
     try:
         doc = json.loads(RULES.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return {}
     return {r["id"]: r["superseded_by"] for r in doc.get("rules", [])
             if r.get("superseded_by")}
@@ -1105,11 +1105,11 @@ def main() -> int:
     slices, problems = collect(consumers)
     try:
         counts = trail_counts(json.loads(RULES.read_text(encoding="utf-8"))["rules"])
-    except (OSError, ValueError, KeyError):
+    except OSError, ValueError, KeyError:
         counts = {}
     try:
         born = origin_counts(json.loads(RULES.read_text(encoding="utf-8"))["rules"])
-    except (OSError, ValueError, KeyError):
+    except OSError, ValueError, KeyError:
         born = {}
     for entry in slices:
         entry["trails"] = counts.get(entry.get("repo"), 0)

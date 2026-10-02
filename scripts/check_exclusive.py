@@ -43,7 +43,6 @@
         паре приучало бы пропускать красное.
 """
 
-from __future__ import annotations
 
 import argparse
 import hashlib

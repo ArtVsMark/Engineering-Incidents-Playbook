@@ -12,7 +12,6 @@
 дерева, см. `scripts/check_forgeries.py`.
 """
 
-from __future__ import annotations
 
 import check_forgeries as cf
 

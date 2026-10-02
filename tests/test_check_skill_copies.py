@@ -5,7 +5,6 @@
 эталон лежит в дереве, из которого она запущена.
 """
 
-from __future__ import annotations
 
 from pathlib import Path
 

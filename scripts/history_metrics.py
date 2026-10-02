@@ -62,7 +62,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-from __future__ import annotations
 
 import argparse
 import io
@@ -220,7 +219,7 @@ def snapshot(files: dict[str, str]) -> dict[str, str]:
     if raw:
         try:
             answers = json.loads(raw)["rules"].values()
-        except (ValueError, KeyError, TypeError, AttributeError):
+        except ValueError, KeyError, TypeError, AttributeError:
             answers = []
         active = [a for a in answers if isinstance(a, dict)
                   and a.get("status") == "active"]

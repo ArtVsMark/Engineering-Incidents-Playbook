@@ -64,7 +64,6 @@ Claude-Code_Usage-Token. Теперь считается ОСТАТОК: ско�
         записи, а не находка до неё, и исходы объявлены порознь для двух режимов.
 """
 
-from __future__ import annotations
 
 import argparse
 import collections
