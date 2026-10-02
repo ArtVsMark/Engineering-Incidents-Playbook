@@ -4,11 +4,15 @@
 # ТОЛЬКО В ОБЛАКЕ. На машине владельца окружение его, и ставить туда
 # интерпретатор без спроса хук не вправе: признак облака — CLAUDE_CODE_REMOTE.
 #
-# ЗАЧЕМ СТАВИТЬ 3.14. Это планка каталога и всей семьи (решение владельца
-# 1 октября), а образ облачного окна несёт только 3.10–3.13, и встроенный uv
-# 0.8.17 знает лишь 3.14.0rc2. Сайт установщика uv (astral.sh) закрыт сетевой политикой,
-# PyPI — открыт, поэтому свежий uv ставится из PyPI. Замер 1 октября: uv
-# 0.12.21 ставит 3.14.7 за ~2 с.
+# ЗАЧЕМ СТАВИТЬ ИНТЕРПРЕТАТОР. Ставится версия ПЛАНКИ, а не прошитая: сейчас
+# это 3.14 (решение владельца 1 октября), а образ облачного окна несёт только
+# 3.10–3.13, и встроенный uv 0.8.17 знает лишь 3.14.0rc2. Сайт установщика uv
+# (astral.sh) закрыт сетевой политикой, PyPI — открыт, поэтому uv ставится из
+# PyPI. Замер 1 октября: uv 0.12.21 ставит 3.14.7 за ~2 с.
+#
+# ВЕРСИЯ uv ЗАКРЕПЛЕНА. Хук исполняет поставленное с правом записи в
+# /usr/local/bin при каждом старте окна; незакреплённая версия значила бы, что
+# код, который здесь исполняется, меняется без единой правки дерева.
 #
 # ЗАЧЕМ .venv НА ПЛАНКЕ. Системный python3 окна — 3.11, ниже планки, и
 # прогон перед толчком с него отказывает (check_python_version.py). Окружение
@@ -24,6 +28,13 @@
 # выход 0. Окно открывается всегда; не готово только то, что названо.
 set -uo pipefail
 
+#: Версия uv, которой ставится интерпретатор. Двигается правкой этой строки.
+UV_VERSION="0.12.21"
+#: Куда ставится uv и куда кладётся ссылка на интерпретатор. Переопределяются
+#: только набором — чтобы ветку установки исполнить, а не прочесть.
+UV_HOME="${SESSION_START_UV_HOME:-/opt/uv}"
+BIN_DIR="${SESSION_START_BIN_DIR:-/usr/local/bin}"
+
 warn() {
   echo "старт окна: $1 — окно работает без этого; прогон перед толчком запускайте интерпретатором не ниже планки вручную" >&2
 }
@@ -31,30 +42,65 @@ warn() {
 if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
-cd "$CLAUDE_PROJECT_DIR" || { warn "нет каталога проекта"; exit 0; }
-
-if ! command -v python3.14 >/dev/null 2>&1; then
-  { python3.12 -m venv /opt/uv \
-      && /opt/uv/bin/pip install -q -U uv \
-      && /opt/uv/bin/uv python install 3.14 \
-      && ln -sf "$(/opt/uv/bin/uv python find 3.14)" /usr/local/bin/python3.14; } \
-    || warn "Python 3.14 не поставлен"
-fi
-
-# Планку читает 3.14, если она уже стоит: код каталога пишется под планку, и
-# системный 3.11 окна не обязан его импортировать. Без 3.14 — системный, и
-# тогда отказ чтения назван предупреждением, а не упавшим стартом.
-reader=$(command -v python3.14 || command -v python3)
-if ! floor=$("$reader" -c "import sys, pathlib; sys.path.insert(0, 'scripts'); import check_python_version as c; f = c.floor(pathlib.Path('pyproject.toml').read_text(encoding='utf-8')); print(f'{f[0]}.{f[1]}')"); then
-  warn "планка requires-python не прочитана"
+# Переменные площадки читаются с умолчанием: при `set -u` их отсутствие
+# уронило бы хук ненулевым кодом мимо обещания «выход 0 всегда».
+project="${CLAUDE_PROJECT_DIR:-}"
+env_file="${CLAUDE_ENV_FILE:-}"
+if [ -z "$project" ] || ! cd "$project"; then
+  warn "нет каталога проекта (CLAUDE_PROJECT_DIR)"
   exit 0
 fi
+
+# Планку читает check_python_version.floor (214). Читает тот интерпретатор,
+# что уже есть: код этого разбора пишется простым и обязан импортироваться и
+# системным python3 окна. Нет requires-python — причина называется словами,
+# а не трассировкой TypeError.
+reader=$(command -v python3.14 || command -v python3)
+floor=$("$reader" - <<'PY' 2>/dev/null
+import pathlib, sys
+sys.path.insert(0, "scripts")
+import check_python_version as c
+f = c.floor(pathlib.Path("pyproject.toml").read_text(encoding="utf-8"))
+if f is None:
+    sys.exit(3)
+print(f"{f[0]}.{f[1]}")
+PY
+)
+case $? in
+  0) ;;
+  3) warn "в pyproject.toml нет requires-python — планки, на которой собирать окружение, нет"; exit 0 ;;
+  *) warn "планка requires-python не прочитана"; exit 0 ;;
+esac
+
+if ! command -v "python$floor" >/dev/null 2>&1; then
+  { python3.12 -m venv "$UV_HOME" \
+      && "$UV_HOME/bin/pip" install -q "uv==$UV_VERSION" \
+      && "$UV_HOME/bin/uv" python install "$floor" \
+      && ln -sf "$("$UV_HOME/bin/uv" python find "$floor")" "$BIN_DIR/python$floor"; } \
+    || { warn "Python $floor не поставлен"; exit 0; }
+fi
+
+fresh=0
 if [ ! -x .venv/bin/python ] || [ "$(.venv/bin/python -c 'import sys; print("%d.%d" % sys.version_info[:2])')" != "$floor" ]; then
   rm -rf .venv
   "python$floor" -m venv .venv || { warn "окружение на $floor не собрано"; exit 0; }
+  fresh=1
 fi
-.venv/bin/pip install -q -r requirements-test.txt \
-  || { warn "тестовые зависимости не поставлены"; exit 0; }
+# Два разных сбоя pip. На окружении, которое УЖЕ было собрано, зависимости
+# остались прежними, и окно его не теряет: PATH выставляется с
+# предупреждением. На окружении, собранном ТОЛЬКО ЧТО, зависимостей нет
+# вовсе, и пустой .venv в PATH окну не нужен — сказать это и выйти.
+if ! .venv/bin/pip install -q -r requirements-test.txt; then
+  if [ "$fresh" = 1 ]; then
+    warn "окружение на $floor собрано, но тестовые зависимости не поставлены — в PATH не выставлено"
+    exit 0
+  fi
+  warn "тестовые зависимости не обновлены — окружение на $floor оставлено как было"
+fi
 
-echo "export PATH=\"$CLAUDE_PROJECT_DIR/.venv/bin:\$PATH\"" >> "$CLAUDE_ENV_FILE"
+if [ -z "$env_file" ]; then
+  warn "площадка не дала CLAUDE_ENV_FILE — .venv собран, но в PATH окна не выставлен"
+  exit 0
+fi
+echo "export PATH=\"$project/.venv/bin:\$PATH\"" >> "$env_file"
 exit 0
