@@ -19,6 +19,7 @@
 
 from __future__ import annotations
 
+import datetime as dt
 import json
 from pathlib import Path
 
@@ -839,7 +840,12 @@ def читатель(ответ):
     return lambda url: (ответ, None)
 
 
-ОБЪЯВЛЕН = [{"repo": "чужой/проект", "access": "public", "since": "2026-09-01"}]
+#: Объявлен ВЧЕРА, а не в названный день. Дата буквой здесь была миной: срок
+#: UNCONNECTED_DAYS тикает от неё по настоящему календарю, и 2 октября набор
+#: покраснел без единой правки — тест «срок ещё не вышел» сам дотикал до
+#: «вышел». Граница проверяется относительно сегодня, как её считает код.
+ОБЪЯВЛЕН = [{"repo": "чужой/проект", "access": "public",
+             "since": (dt.date.today() - dt.timedelta(days=1)).isoformat()}]
 
 
 def test_otvet_est_a_adres_ne_zapolnen_nahodka():
