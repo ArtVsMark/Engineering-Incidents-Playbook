@@ -135,3 +135,33 @@ jobs:
           # Красным здесь имеет смысл быть только третьему исходу (039).
           if [ "$rc" -eq 2 ]; then exit 1; fi
           exit 0
+
+  # ПРЕДРЕЛИЗНАЯ ВЕРСИЯ СВЕРЯЕТСЯ С ПЛОЩАДКОЙ (203). Пометка `allow-prereleases`
+  # у прогона python-next устаревает от события в CPython, а не от правки здесь.
+  # Работа стоит ЗДЕСЬ, а не в python-next.yml: тот прогон дежурный исключает
+  # (несовместимость со следующей версией — не повод останавливать работу), и
+  # её отказ там не дошёл бы ни до кого. Здесь красное третьего исхода ловит
+  # следующий заход дежурного, а находку — своя задача с маркером (142).
+  python-next-drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: предрелизная версия сверена с площадкой
+        env:
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -uo pipefail
+          rc=0
+          python scripts/check_python_next.py --run-url "$RUN" --apply || rc=$?
+          if [ "$rc" -eq 2 ]; then exit 1; fi
+          exit 0

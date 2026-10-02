@@ -151,7 +151,11 @@ def body_for(template: str, red: list[str], run_url: str) -> str:
 
 
 def find_issue(title_marker: str = MARKER) -> tuple[int | None, str | None]:
-    """Номер открытой задачи дежурного, либо None. Вторая строка — причина отказа."""
+    """Номер открытой задачи с маркером, либо None. Вторая строка — причина отказа.
+
+    Маркер — параметр: тем же швом свою задачу находит сверка предрелизной
+    версии (check_python_next.py). Прежняя редакция параметр принимала и не
+    читала — сравнение шло с константой дежурного (214)."""
     # СПИСОК, А НЕ ПОИСК. `--search` ходит в поисковый индекс площадки, а он
     # догоняет с задержкой в минуты: два прогона с разницей в три минуты оба
     # не нашли только что заведённую задачу и завели по своей — #133 и #134,
@@ -168,7 +172,7 @@ def find_issue(title_marker: str = MARKER) -> tuple[int | None, str | None]:
     if code != 0:
         return None, почему
     for issue in found:
-        if MARKER in (issue.get("body") or ""):
+        if title_marker in (issue.get("body") or ""):
             return issue["number"], None
     return None, None
 
