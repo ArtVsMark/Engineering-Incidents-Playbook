@@ -130,8 +130,11 @@ fi
 # который его уберёт (005). Висячая ссылка `python3` — от прежней установки
 # планки — обходится системным /usr/bin/python3.
 if ! command -v "python$floor" >/dev/null 2>&1; then
+  # Спрашивается то, что установщику нужно, — venv и ensurepip, — а не то,
+  # что интерпретатор запускается: python3 без venv (в Debian это отдельный
+  # пакет) прошёл бы проверку запуска и упал бы на `-m venv` (обзор #679).
   bootstrap=python3
-  "$bootstrap" -c '' 2>/dev/null || bootstrap=/usr/bin/python3
+  "$bootstrap" -c 'import venv, ensurepip' 2>/dev/null || bootstrap=/usr/bin/python3
   { "$bootstrap" -m venv "$UV_HOME" \
       && "$UV_HOME/bin/pip" install -q "uv==$UV_VERSION" \
       && "$UV_HOME/bin/uv" python install "$floor" \

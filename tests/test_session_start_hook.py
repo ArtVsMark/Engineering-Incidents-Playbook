@@ -460,3 +460,41 @@ def test_статус_сверяет_записанную_строку_а_не_�
     assert итог.returncode == 0, итог.stderr
     assert итог.stdout.splitlines() == [
         f"окно НЕ на планке {ПЛАНКА}: .venv не выставлен в PATH окна"]
+
+
+ПОДДЕЛЬНЫЙ_PYTHON3_БЕЗ_VENV = """#!/bin/bash
+# python3 без venv: запускается, но `import venv, ensurepip` падает — как
+# висячая ссылка или образ без пакета venv.
+[ "$1" = "-c" ] && [ "$2" = "import venv, ensurepip" ] && exit 1
+exit 0
+"""
+
+
+@НУЖЕН_BASH
+def test_python3_без_venv_установщик_берётся_системный(tmp_path, monkeypatch):
+    """Находка обзора #679: откат на /usr/bin/python3 не исполнялся ни одним
+    случаем — подделка отвечала 0 на любую проверку. Здесь python3 впереди
+    PATH venv не умеет; установщик обязан уйти к системному, а не упасть.
+    Системный подменить нельзя (путь абсолютный), поэтому проверяется, что
+    подделку не звали с `-m venv`: её журнал пишет каждый вызов."""
+    корень = проект(tmp_path, pyproject='requires-python = ">=3.99"\n')
+    подмена = tmp_path / "bin"
+    подмена.mkdir()
+    журнал = tmp_path / "журнал"
+    поддельный = подмена / "python3"
+    поддельный.write_text(ПОДДЕЛЬНЫЙ_PYTHON3_БЕЗ_VENV.replace(
+        "exit 0\n", f'echo "$*" >> "{журнал}"\nexit 0\n'), encoding="utf-8")
+    поддельный.chmod(0o755)
+    ссылки = tmp_path / "ссылки"
+    ссылки.mkdir()
+    итог = запуск({"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
+                   "CLAUDE_ENV_FILE": str(tmp_path / "env"),
+                   "PATH": f"{подмена}:{ссылки}:{os.environ['PATH']}",
+                   "SESSION_START_UV_HOME": str(tmp_path / "uv"),
+                   "SESSION_START_BIN_DIR": str(ссылки),
+                   "PIP_INDEX_URL": "http://127.0.0.1:9/", "PIP_RETRIES": "0",
+                   "PIP_TIMEOUT": "1"})
+    assert итог.returncode == 0
+    вызовы = журнал.read_text(encoding="utf-8") if журнал.exists() else ""
+    assert "-m venv" not in вызовы
+    assert (tmp_path / "uv" / "bin" / "python").exists() or "не поставлен" in итог.stderr
