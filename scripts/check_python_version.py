@@ -121,6 +121,45 @@ def in_workflows(root: Path, *, preview: bool = False
 ВЫЗОВ_RE = re.compile(r"(?:^|[\s|;&(])python3?\s+(?:-m\s|-c\s|-\s|scripts/|\S+\.py)")
 
 
+#: Шаг установки — строка `uses: actions/setup-python@…`, а не слово в тексте:
+#: упоминание в комментарии выше вызова делало «установку» ранней и прятало
+#: вызов python до неё (находка обзора #678).
+SETUP_RE = re.compile(r"^([ \t]*)(?:-[ \t]+)?uses:[ \t]*actions/setup-python@", re.M)
+
+
+def шаги_установки(text: str) -> list[tuple[int, list[str]]]:
+    """Шаги `setup-python`: (смещение строки `uses:`, строки шага целиком).
+
+    Шаг — от его строки с дефисом до следующей строки с отступом меньше
+    ключей шага: `with:` выше или ниже `uses:` читается одинаково."""
+    строки = text.splitlines()
+    out: list[tuple[int, list[str]]] = []
+    for m in SETUP_RE.finditer(text):
+        номер = text.count("\n", 0, m.start())
+        ключи = m.group(0).index("uses")
+        верх = номер
+        while верх > 0 and not строки[верх].lstrip().startswith("- "):
+            выше = строки[верх - 1]
+            if выше.strip() and len(выше) - len(выше.lstrip()) < ключи - 2:
+                break
+            верх -= 1
+        низ = номер + 1
+        while низ < len(строки):
+            ниже = строки[низ]
+            if ниже.strip() and len(ниже) - len(ниже.lstrip()) < ключи:
+                break
+            низ += 1
+        out.append((m.start(), строки[верх:низ]))
+    return out
+
+
+def без_числа(шаги: list[tuple[int, list[str]]]) -> int:
+    """Сколько шагов установки не называют версию числом: `${{ … }}`, файл
+    `.python-version` или версия раннера — гейту не с чем сверять (#678)."""
+    return sum(1 for _, строки in шаги
+               if not any(CI_RE.match(л) for л in строки))
+
+
 def мимо_планки(root: Path) -> list[str]:
     """Работы, где код зовётся раньше `setup-python` — системным python раннера.
 
@@ -135,7 +174,13 @@ def мимо_планки(root: Path) -> list[str]:
     from check_runtime_deps import работы
     for p in sorted((root / ".github" / "workflows").glob("*.yml")):
         for имя, тело in работы(p.read_text(encoding="utf-8")).items():
-            установка = тело.find("setup-python")
+            шаги = шаги_установки(тело)
+            if без_числа(шаги):
+                out.append(
+                    f".github/workflows/{p.name}: работа {имя} ставит python "
+                    "шагом setup-python без числа в python-version — версию не с "
+                    "чем сверить с планкой, и ниже неё она пройдёт молча")
+            установка = шаги[0][0] if шаги else -1
             for строка_m in re.finditer(r"^.*$", тело, re.M):
                 строка = строка_m.group(0).strip()
                 if строка.startswith(("#", "- name:", "name:", "- uses:", "uses:")):
@@ -181,7 +226,12 @@ def действия_мимо_планки(root: Path, планка: tuple[int, 
                     f"{имя}: ставит {версия[0]}.{версия[1]}, а pyproject.toml "
                     f"объявляет >={планка[0]}.{планка[1]} — код каталога "
                     "исполняется версией, на которой он не написан")
-        установка = text.find("setup-python")
+        шаги = шаги_установки(text)
+        if без_числа(шаги):
+            out.append(
+                f"{имя}: шаг setup-python без числа в python-version — версию "
+                "не с чем сверить с планкой, и ниже неё она пройдёт молча")
+        установка = шаги[0][0] if шаги else -1
         for строка_m in re.finditer(r"^.*$", text, re.M):
             строка = строка_m.group(0).strip()
             if строка.startswith(("#", "- name:", "name:", "- uses:", "uses:")):
