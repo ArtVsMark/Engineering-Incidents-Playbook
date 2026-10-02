@@ -77,6 +77,26 @@ before and after is an item in the grader's issue. A dropped version costs the
 pipeline as many jobs as there are OSes, not one, so a multi-OS project
 recoups the move faster than the catalogue does.
 
+**Second incident: the number was there, but the gate did not read it**
+(#678). A sweep for "any old calls left" after the three links found a
+fourth. The root `action.yml` — the composite action for CONSUMERS — set up
+Python 3.12: the floor bump (#647, 1 October 13:49 UTC) moved the actions in
+`.github/actions/` to 3.14 and missed the root one. The version gate read only
+`.github/workflows/` and saw none of the actions, although they carry the
+number. After the style move (#670, 2 October 10:31 UTC)
+`scripts/sync_inbox.py` on 3.12 is a `SyntaxError` with exit code 1, and the
+action treats only code 2 as red: the consumer's rule sync would have gone
+silently off, by the same mechanism as the push guard. Impact — zero: the
+released v1.6.0 does not carry the style move and imports on 3.12 (checked),
+and consumers pin tags. The window of breakage was `main` from 10:31 to 12:11
+UTC, and the very next release would have shipped it to everyone. The review
+of the fix found two more holes of the same kind in the new parsing: the
+setup step was searched for as a word in text including comments, and a
+`setup-python` step without a number passed silently. So the search criterion
+is not "a job without `setup-python`" but **every file that executes code —
+job and composite action — and a setup step that names its version as a
+number**.
+
 ## Why
 
 **A green suite on the new version is common to both outcomes.** A new
@@ -146,6 +166,8 @@ shifted in a single file.
 ArtVsMark/Engineering-Incidents-Playbook#670
 
 ArtVsMark/Engineering-Incidents-Playbook#672
+
+ArtVsMark/Engineering-Incidents-Playbook#678
 
 See also: [157](157-a-contract-version-bump-is-a-re-read.md) — a version bump
 of SOMEONE ELSE's contract; here the floor is our own, and there are no
