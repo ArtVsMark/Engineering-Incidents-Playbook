@@ -21,9 +21,19 @@ ROOT = Path(__file__).resolve().parent.parent
 HOOK = ROOT / ".claude" / "hooks" / "session-start.sh"
 ПЛАНКА = f"{sys.version_info[0]}.{sys.version_info[1]}"
 
-pytestmark = pytest.mark.skipif(
-    shutil.which("bash") is None or shutil.which(f"python{ПЛАНКА}") is None,
-    reason=f"нужны bash и python{ПЛАНКА} в PATH — хук зовёт интерпретатор планки по имени")
+def требует(*имена: str) -> pytest.MarkDecorator:
+    """Пропуск по отсутствующей программе — только там, где она нужна, и
+    только вне CI. На конвейере отсутствие — отказ, а не зелёный набор без
+    исполненных случаев (140, 146; находка обзора #660)."""
+    нет = [и for и in имена if shutil.which(и) is None]
+    if нет and os.environ.get("CI"):
+        pytest.fail(f"на CI нет {', '.join(нет)} — набор хука не исполнился бы вовсе",
+                    pytrace=False)
+    return pytest.mark.skipif(bool(нет), reason=f"нет в PATH: {', '.join(нет)}")
+
+
+НУЖНА_ПЛАНКА = требует("bash", f"python{ПЛАНКА}")
+НУЖЕН_BASH = требует("bash")
 
 
 def проект(tmp_path: Path, pyproject: str = f'requires-python = ">={ПЛАНКА}"\n',
@@ -44,11 +54,13 @@ def запуск(env: dict[str, str]) -> subprocess.CompletedProcess[str]:
                           text=True, encoding="utf-8", timeout=300)
 
 
+@НУЖЕН_BASH
 def test_вне_облака_молчит():
     итог = запуск({})
     assert итог.returncode == 0 and итог.stderr == ""
 
 
+@НУЖЕН_BASH
 def test_без_каталога_проекта_выход_0_и_причина():
     """Находка #473 (46061c1): при `set -u` незаданная переменная площадки
     роняла хук ненулевым кодом мимо обещания «выход 0 всегда»."""
@@ -56,6 +68,7 @@ def test_без_каталога_проекта_выход_0_и_причина()
     assert итог.returncode == 0 and "CLAUDE_PROJECT_DIR" in итог.stderr
 
 
+@НУЖНА_ПЛАНКА
 def test_без_планки_причина_словами_а_не_трассировка(tmp_path):
     """Находка #473 (5a37026): floor() is None давал TypeError."""
     корень = проект(tmp_path, pyproject="[project]\nname = 'x'\n")
@@ -65,6 +78,7 @@ def test_без_планки_причина_словами_а_не_трасси�
     assert "нет requires-python" in итог.stderr and "Traceback" not in итог.stderr
 
 
+@НУЖНА_ПЛАНКА
 def test_окружение_собирается_и_выставляется(tmp_path):
     корень = проект(tmp_path)
     env_file = tmp_path / "env"
@@ -78,6 +92,7 @@ def test_окружение_собирается_и_выставляется(tmp
                "PIP_TIMEOUT": "1"}
 
 
+@НУЖНА_ПЛАНКА
 def test_сбой_pip_на_собранном_окружении_не_отнимает_его(tmp_path):
     """Находка #473 (b4d11dd): сбой сети при ОБНОВЛЕНИИ зависимостей оставлял
     окно без PATH, хотя окружение на планке уже было. Окружение собирается
@@ -96,6 +111,7 @@ def test_сбой_pip_на_собранном_окружении_не_отним
     assert f"{корень}/.venv/bin" in env_file.read_text(encoding="utf-8")
 
 
+@НУЖНА_ПЛАНКА
 def test_сбой_pip_на_свежем_окружении_не_выставляет_пустое(tmp_path):
     """Находка обзора #660: только что собранный .venv без зависимостей в PATH
     окну не нужен, и «оставлено как было» про него неправда."""
@@ -104,10 +120,16 @@ def test_сбой_pip_на_свежем_окружении_не_выставля
     итог = запуск({"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
                    "CLAUDE_ENV_FILE": str(env_file), **НЕТ_ИНДЕКСА})
     assert итог.returncode == 0
-    assert "не поставлены — в PATH не выставлено" in итог.stderr
+    assert "не поставлены ни разу — в PATH не выставлено" in итог.stderr
     assert not env_file.exists()
+    # Второй старт с тем же сбоем: .venv уже на планке, но зависимостей в нём
+    # не было никогда — признак живёт в дереве и переживает перезапуск.
+    повтор = запуск({"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
+                     "CLAUDE_ENV_FILE": str(env_file), **НЕТ_ИНДЕКСА})
+    assert "не поставлены ни разу" in повтор.stderr and not env_file.exists()
 
 
+@НУЖНА_ПЛАНКА
 def test_без_файла_окружения_выход_0_и_причина(tmp_path):
     корень = проект(tmp_path)
     итог = запуск({"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень)})
@@ -130,6 +152,7 @@ chmod +x "$dir/bin/pip" "$dir/bin/uv"
 """
 
 
+@НУЖЕН_BASH
 def test_нет_интерпретатора_планки_ставится_закреплённым_uv(tmp_path):
     """Находки #473 (2c380f8, 1ee9a42) и обзора #660: ветка установки
     ИСПОЛНЯЕТСЯ, а не читается. Планка — версия, которой на машине нет;
