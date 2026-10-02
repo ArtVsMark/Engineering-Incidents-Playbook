@@ -95,7 +95,10 @@ v1.6.0 scripts | tar -x -C "$d"; PYTHONPATH="$d/scripts" python3.12 -c
 UTC, and the very next release would have shipped it to everyone. The review
 of the fix (#678) found two more holes of the same kind in the new parsing: the
 setup step was searched for as a word in text including comments, and a
-`setup-python` step without a number passed silently. So the search criterion
+`setup-python` step without a number passed silently; both were closed by
+#680. The review of #680 found a third, the opposite one: a number in single
+quotes was not parsed, and a correct step became a "no number" finding —
+closed by #684. So the search criterion
 is not "a job without `setup-python`" but **every file that executes code —
 job and composite action — and a setup step that names its version as a
 number**.
