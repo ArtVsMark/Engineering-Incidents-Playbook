@@ -30,6 +30,10 @@ set -uo pipefail
 
 #: Версия uv, которой ставится интерпретатор. Двигается правкой этой строки.
 UV_VERSION="0.12.21"
+#: Куда ставится uv и куда кладётся ссылка на интерпретатор. Переопределяются
+#: только набором — чтобы ветку установки исполнить, а не прочесть.
+UV_HOME="${SESSION_START_UV_HOME:-/opt/uv}"
+BIN_DIR="${SESSION_START_BIN_DIR:-/usr/local/bin}"
 
 warn() {
   echo "старт окна: $1 — окно работает без этого; прогон перед толчком запускайте интерпретатором не ниже планки вручную" >&2
@@ -69,22 +73,30 @@ case $? in
 esac
 
 if ! command -v "python$floor" >/dev/null 2>&1; then
-  { python3.12 -m venv /opt/uv \
-      && /opt/uv/bin/pip install -q "uv==$UV_VERSION" \
-      && /opt/uv/bin/uv python install "$floor" \
-      && ln -sf "$(/opt/uv/bin/uv python find "$floor")" "/usr/local/bin/python$floor"; } \
+  { python3.12 -m venv "$UV_HOME" \
+      && "$UV_HOME/bin/pip" install -q "uv==$UV_VERSION" \
+      && "$UV_HOME/bin/uv" python install "$floor" \
+      && ln -sf "$("$UV_HOME/bin/uv" python find "$floor")" "$BIN_DIR/python$floor"; } \
     || { warn "Python $floor не поставлен"; exit 0; }
 fi
 
+fresh=0
 if [ ! -x .venv/bin/python ] || [ "$(.venv/bin/python -c 'import sys; print("%d.%d" % sys.version_info[:2])')" != "$floor" ]; then
   rm -rf .venv
   "python$floor" -m venv .venv || { warn "окружение на $floor не собрано"; exit 0; }
+  fresh=1
 fi
-# Сбой pip на уже собранном окружении не отнимает его у окна: интерпретатор
-# на планке есть, и PATH выставляется всё равно — с предупреждением, что
-# зависимости могли остаться прежними.
-.venv/bin/pip install -q -r requirements-test.txt \
-  || warn "тестовые зависимости не обновлены — окружение на $floor оставлено как было"
+# Два разных сбоя pip. На окружении, которое УЖЕ было собрано, зависимости
+# остались прежними, и окно его не теряет: PATH выставляется с
+# предупреждением. На окружении, собранном ТОЛЬКО ЧТО, зависимостей нет
+# вовсе, и пустой .venv в PATH окну не нужен — сказать это и выйти.
+if ! .venv/bin/pip install -q -r requirements-test.txt; then
+  if [ "$fresh" = 1 ]; then
+    warn "окружение на $floor собрано, но тестовые зависимости не поставлены — в PATH не выставлено"
+    exit 0
+  fi
+  warn "тестовые зависимости не обновлены — окружение на $floor оставлено как было"
+fi
 
 if [ -z "$env_file" ]; then
   warn "площадка не дала CLAUDE_ENV_FILE — .venv собран, но в PATH окна не выставлен"
