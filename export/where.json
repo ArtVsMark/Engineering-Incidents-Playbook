@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-02T10:56:30+00:00",
+  "generated_at": "2026-10-02T11:30:02+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,14 +10,14 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-02",
-      "answered": 215,
+      "answered": 216,
       "by_status": {
-        "active": 195,
+        "active": 196,
         "not-applicable": 14,
         "rejected": 6
       },
       "by_mechanism": {
-        "gate": 144,
+        "gate": 145,
         "document": 27,
         "skill": 2,
         "pipeline": 10,
@@ -238,7 +238,8 @@
         "213": "active",
         "214": "active",
         "215": "active",
-        "216": "not-applicable"
+        "216": "not-applicable",
+        "217": "active"
       },
       "holds": {
         "001": {
@@ -1995,10 +1996,19 @@
           "analysed": "2026-10-01",
           "decided": "2026-10-01",
           "skill": ""
+        },
+        "217": {
+          "mechanism": "gate",
+          "where": "scripts/check_py_style.py — стиль кода выводится из requires-python, цель ruff не вписана, версия ruff закреплена в requirements-test.txt; scripts/check_python_version.py — работа, зовущая python раньше setup-python, находка; .claude/hooks/session-start.sh переключает python3 окна на планку, .claude/hooks/push_guard.sh зовёт стража интерпретатором планки и без него закрывает git push кодом 2. ГРАНИЦА: хук окна, исполняемый площадкой, гейтом не сверяется — его держит тест tests/test_session_start_hook.py; замер скорости до/после гейтом не держится вовсе — это практическая граница правила, исполняемая рукой",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "",
+          "skill": ""
         }
       },
-      "trails": 56,
-      "born": 35
+      "trails": 59,
+      "born": 36
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
