@@ -80,22 +80,24 @@ if ! command -v "python$floor" >/dev/null 2>&1; then
     || { warn "Python $floor не поставлен"; exit 0; }
 fi
 
-fresh=0
 if [ ! -x .venv/bin/python ] || [ "$(.venv/bin/python -c 'import sys; print("%d.%d" % sys.version_info[:2])')" != "$floor" ]; then
   rm -rf .venv
   "python$floor" -m venv .venv || { warn "окружение на $floor не собрано"; exit 0; }
-  fresh=1
 fi
-# Два разных сбоя pip. На окружении, которое УЖЕ было собрано, зависимости
-# остались прежними, и окно его не теряет: PATH выставляется с
-# предупреждением. На окружении, собранном ТОЛЬКО ЧТО, зависимостей нет
-# вовсе, и пустой .venv в PATH окну не нужен — сказать это и выйти.
-if ! .venv/bin/pip install -q -r requirements-test.txt; then
-  if [ "$fresh" = 1 ]; then
-    warn "окружение на $floor собрано, но тестовые зависимости не поставлены — в PATH не выставлено"
-    exit 0
-  fi
+# Два разных сбоя pip. Различает их МЕТКА в самом .venv, которую кладёт
+# только успешная установка: признак живёт в дереве и переживает перезапуск
+# окна, а пересборка .venv стирает его вместе с окружением. Метка есть —
+# зависимости когда-то стояли, окно окружение не теряет: PATH выставляется с
+# предупреждением. Метки нет — зависимостей не было никогда, и пустой .venv
+# в PATH окну не нужен.
+deps_mark=.venv/.deps-installed
+if .venv/bin/pip install -q -r requirements-test.txt; then
+  touch "$deps_mark"
+elif [ -e "$deps_mark" ]; then
   warn "тестовые зависимости не обновлены — окружение на $floor оставлено как было"
+else
+  warn "окружение на $floor собрано, но тестовые зависимости не поставлены ни разу — в PATH не выставлено"
+  exit 0
 fi
 
 if [ -z "$env_file" ]; then
