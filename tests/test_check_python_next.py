@@ -139,3 +139,22 @@ def test_тело_несёт_маркер_и_источник(находки):
     текст = pn.тело(находки, "https://прогон")
     assert текст.startswith(pn.MARKER)
     assert pn.MANIFEST_URL in текст and all(f"- {н}" in текст for н in находки)
+
+
+def test_отказ_сверки_уходит_в_задачу_а_не_в_цвет(tmp_path, monkeypatch):
+    """Находка обзора #692: отказ сверки краснил прогон дежурного, и тот
+    объявил бы общую ветку красной из-за чужого сбоя. Теперь причина третьего
+    исхода пишется в ту же задачу с маркером."""
+    корень = _прогон(tmp_path)
+    тела: list[str] = []
+    monkeypatch.setattr(pn, "записать", lambda body: (тела.append(body), (1, "задача заведена"))[1])
+    манифест = _манифест(tmp_path, [])
+    assert pn.main(["--root", str(корень), "--manifest", манифест, "--apply"]) == 2
+    assert len(тела) == 1 and тела[0].startswith(pn.MARKER)
+    assert "не отработала" in тела[0] and "пуст или не список" in тела[0]
+
+
+def test_отказ_без_apply_в_трекер_не_пишет(tmp_path, monkeypatch):
+    корень = _прогон(tmp_path)
+    monkeypatch.setattr(pn, "записать", lambda body: pytest.fail("писать без --apply нельзя"))
+    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, [])]) == 2

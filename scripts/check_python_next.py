@@ -17,7 +17,14 @@ Engineering-Pipeline-Mechanisms (сверено 02.10).
 ПРЕДУПРЕЖДЕНИЕ, А НЕ ОТКАЗ (203, 051). Находка — источник работы, а не
 поломка: выход 3.15 ничего у нас не ломает. Поэтому у находки адресат —
 одна задача с маркером (142), а не красное на вкладке прогонов, куда не ходят.
-Красным становится только третий исход: сверка не отработала.
+
+ОТКАЗ СВЕРКИ ИДЁТ ТУДА ЖЕ, А НЕ В ЦВЕТ ПРОГОНА (обзор #692). Работа стоит в
+прогоне дежурного, и её красное он объявил бы красной общей веткой — «работу
+не начинают» из-за недоступного raw.githubusercontent.com, то есть из-за
+чужого сбоя, который своей работой не снять. Поэтому с --apply и третий исход
+записывается в ту же задачу с причиной, а прогон не краснеет. Единственный
+отказ, который до задачи не дойдёт, — сам трекер; его видит соседняя работа
+дежурного: она читает тот же трекер тем же токеном, и её красное честное.
 
 Исходы (039):
   0 — предрелизная версия прогона и площадки сходятся;
@@ -139,6 +146,56 @@ def записать(body: str) -> tuple[int, str]:
     return 1, что
 
 
+def отказ_тело(причина: str, run_url: str) -> str:
+    """Тело задачи для третьего исхода: сверка не отработала, и почему."""
+    return "\n".join([
+        MARKER, "",
+        "Сверка прогона `python-next` с манифестом `actions/python-versions` "
+        "(правило 203) **не отработала**:", "",
+        f"- {причина}", "",
+        "Общая ветка от этого не красная: это сбой сверки, а не работы. "
+        "Следующий заход повторит сверку и перепишет эту задачу.", "",
+        f"Источник: {MANIFEST_URL}",
+        f"Прогон: {run_url}" if run_url else "",
+    ]).rstrip() + "\n"
+
+
+def сверить(root: Path, manifest_path: Path | None
+            ) -> tuple[list[str], str] | str:
+    """(находки, охват) — сверка отработала; строка — причина третьего исхода."""
+    предварительные = cv.in_workflows(root, preview=True)
+    if not предварительные:
+        return ("в .github/workflows нет прогона с allow-prereleases — "
+                "предрелизной версии, которую сверять, нет")
+    if len({в for _, в in предварительные}) > 1:
+        return ("предрелизных версий несколько — "
+                + ", ".join(f"{a}.{b} ({ф})" for ф, (a, b) in предварительные))
+    файл, следующая = предварительные[0]
+
+    if manifest_path is not None:
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as e:
+            return f"манифест {manifest_path} не прочитан — {e}"
+    else:
+        manifest, отказ = aggregate_bindings.fetch(MANIFEST_URL, timeout=30)
+        if отказ is not None:
+            return f"манифест {MANIFEST_URL} {отказ}"
+    источник = manifest_path or MANIFEST_URL
+    if not isinstance(manifest, list) or not manifest:
+        return f"манифест {источник} пуст или не список — сверять не с чем (075)"
+    try:
+        найдено = расхождения(следующая, manifest)
+    except ValueError as e:
+        return f"манифест {источник}: {e} (075)"
+
+    стабильные, пробные = ветки(manifest)
+    охват = (f"{файл}: {следующая[0]}.{следующая[1]}; у площадки стабильная "
+             f"{стабильные[-1][0]}.{стабильные[-1][1]}, предрелизных "
+             + (", ".join(f"{a}.{b}" for a, b in пробные) or "нет"))
+    return найдено, охват
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=ROOT)
@@ -148,49 +205,22 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--apply", action="store_true", help="писать в трекер, а не только печатать")
     args = ap.parse_args(argv)
 
+    итог = сверить(args.root, args.manifest)
+
     # ── исход 2 ────────────────────────────────────────────────────────────
-    предварительные = cv.in_workflows(args.root, preview=True)
-    if not предварительные:
-        print("сверка не отработала: в .github/workflows нет прогона с "
-              "allow-prereleases — предрелизной версии, которую сверять, нет", file=sys.stderr)
-        return 2
-    if len({в for _, в in предварительные}) > 1:
-        print("сверка не отработала: предрелизных версий несколько — "
-              + ", ".join(f"{a}.{b} ({ф})" for ф, (a, b) in предварительные), file=sys.stderr)
-        return 2
-    файл, следующая = предварительные[0]
-
-    if args.manifest is not None:
-        try:
-            manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
-        except (OSError, ValueError) as e:
-            print(f"сверка не отработала: манифест {args.manifest} не прочитан — {e}",
-                  file=sys.stderr)
-            return 2
-    else:
-        manifest, отказ = aggregate_bindings.fetch(MANIFEST_URL, timeout=30)
-        if отказ is not None:
-            print(f"сверка не отработала: манифест {MANIFEST_URL} {отказ}", file=sys.stderr)
-            return 2
-    источник = args.manifest or MANIFEST_URL
-    if not isinstance(manifest, list) or not manifest:
-        print(f"сверка не отработала: манифест {источник} пуст или не список — "
-              "сверять не с чем (075)", file=sys.stderr)
-        return 2
-    try:
-        найдено = расхождения(следующая, manifest)
-    except ValueError as e:
-        print(f"сверка не отработала: манифест {источник}: {e} (075)", file=sys.stderr)
+    if isinstance(итог, str):
+        print(f"сверка не отработала: {итог}", file=sys.stderr)
+        if args.apply:
+            код, что = записать(отказ_тело(итог, args.run_url))
+            print(что if код == 1 else f"и до задачи не дошла: {что}", file=sys.stderr)
         return 2
 
-    стабильные, пробные = ветки(manifest)
-    охват = (f"{файл}: {следующая[0]}.{следующая[1]}; у площадки стабильная "
-             f"{стабильные[-1][0]}.{стабильные[-1][1]}, предрелизных "
-             + (", ".join(f"{a}.{b}" for a, b in пробные) or "нет"))
+    найдено, охват = итог
     if not найдено:
         print(f"предрелизная версия сходится с площадкой — {охват}")
         return 0
 
+    # ── исход 1 ────────────────────────────────────────────────────────────
     print(f"предрелизная версия разошлась с площадкой — {охват}:")
     for н in найдено:
         print(f"  • {н}")
