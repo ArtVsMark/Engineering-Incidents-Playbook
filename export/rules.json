@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-01T09:58:21+00:00",
+  "generated_at": "2026-10-02T08:27:02+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.7",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.5"
   },
-  "count": 214,
+  "count": 215,
   "rules": [
     {
       "id": "001",
@@ -1807,7 +1807,8 @@
         "170",
         "176",
         "178",
-        "192"
+        "192",
+        "216"
       ]
     },
     {
@@ -2555,7 +2556,8 @@
         "203",
         "204",
         "208",
-        "213"
+        "213",
+        "216"
       ]
     },
     {
@@ -8875,7 +8877,8 @@
         "168"
       ],
       "mentioned_by": [
-        "168"
+        "168",
+        "216"
       ]
     },
     {
@@ -11226,6 +11229,55 @@
         "190",
         "203",
         "209"
+      ]
+    },
+    {
+      "id": "216",
+      "slug": "gate-names-the-tree-it-checks",
+      "title": {
+        "ru": "Прогон называет, чей код он проверяет, а не только чем он запущен",
+        "en": "A run names whose code it is checking, not only what it was launched with"
+      },
+      "areas": {
+        "ru": [
+          "прогоны",
+          "среды"
+        ],
+        "en": [
+          "runs",
+          "environments"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Прогон, у которого проверяемый код может прийти не из рабочего дерева, называет источник этого кода и говорит вслух, когда источник не тот. Источник спрашивается у среды исполнения — откуда на самом деле импортируется пакет, — а не выводится из корня прогона: корень об установке ничего не знает. Это предупреждение первой строкой отчёта, а не отказ: приём, при котором код и дерево расходятся, бывает законным.",
+        "en": "A run whose code under test may come from somewhere other than the working tree names the source of that code and says so out loud when the source is not the tree. The source is asked of the runtime — where the package is actually imported from — not derived from the run's root: the root knows nothing about the installation. This is a warning on the first line of the report, not a refusal: a setup where code and tree diverge can be legitimate."
+      },
+      "applies": {
+        "ru": "**Работает** там, где проверяемый код приходит в прогон механизмом импорта,\nнезависимым от корня прогона: редактируемая установка, пакет в\n`site-packages`, `PYTHONPATH`, выставленный снаружи, — при нескольких рабочих\nдеревьях, клонах или окнах на одной машине.\n\n**Не работает** там, где код берётся по пути от корня самого прогона: тесты\nдобавляют каталог скриптов своего же дерева в `sys.path`, и другого источника у\nкода нет. Не работает и для CI, где на раннере одна выкачка и установка из\nнеё же: расходиться там нечему. Не работает для сверки ЭТАЛОНА — набора, с\nкоторым сравнивается изменение: это\n[171](171-the-reference-set-comes-from-the-tree-under-test.md), а здесь речь о\nсамом проверяемом коде.\n\n**Признак нарушения:** отчёт прогона называет интерпретатор и корень, но не\nговорит, откуда импортирован проверяемый пакет; `пакет.__file__` из рабочего\nдерева указывает за его пределы.",
+        "en": "**Works** where the code under test reaches the run through an import\nmechanism independent of the run's root: an editable install, a package in\n`site-packages`, a `PYTHONPATH` set from outside — with several working trees,\nclones or windows on one machine.\n\n**Does not work** where the code is taken by path from the run's own root:\ntests put the scripts directory of their own tree on `sys.path`, and the code\nhas no other source. It does not work for CI with one checkout per runner and\nan installation from that same checkout: there is nothing to diverge. It does\nnot work for the REFERENCE a change is compared against — that is\n[171](171-the-reference-set-comes-from-the-tree-under-test.md); this rule is\nabout the code under test itself.\n\n**Sign of a violation:** the run's report names the interpreter and the root\nbut not where the package under test was imported from; `package.__file__`\ntaken from a working tree points outside it."
+      },
+      "added": "2026-10-02",
+      "files": {
+        "ru": "rules/ru/216-gate-names-the-tree-it-checks.md",
+        "en": "rules/en/216-gate-names-the-tree-it-checks.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1521"
+        }
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "portable": "yes",
+      "mentions": [
+        "037",
+        "051",
+        "171"
       ]
     }
   ],

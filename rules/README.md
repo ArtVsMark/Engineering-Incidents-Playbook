@@ -18,7 +18,7 @@ Shape: rule → incident → why → where it applies → trace.
 
 > Пропуски в нумерации: 143. Это не ошибка — номера не переиспользуются даже после удаления ([`120`](ru/120-how-to-run-a-rule-catalogue.md)).
 
-Всего правил · rules in total: **214**
+Всего правил · rules in total: **215**
 
 | № | Правило | Rule | Файлы · Files | Область · Area |
 |---|---|---|---|---|
@@ -236,6 +236,7 @@ Shape: rule → incident → why → where it applies → trace.
 | 213 | Отказ строить механизм, замеренный и выбранный, — не долг и не «нельзя», и у него своё слово | A refusal to build a mechanism, measured and chosen, is neither a debt nor "impossible", and it has its own word | [ru](ru/213-a-refusal-measured-and-chosen-is-not-a-debt.md) [en](en/213-a-refusal-measured-and-chosen-is-not-a-debt.md) | контракты, метрики · contracts, metrics |
 | 214 | Один предмет разбирает одна реализация: второй разбор расходится с первым молча | One subject is parsed by one implementation: a second parse drifts from the first silently | [ru](ru/214-one-territory-one-parse.md) [en](en/214-one-territory-one-parse.md) | код · code |
 | 215 | Пересказ своей только что сделанной работы сверяется с источником, а не пишется по памяти | An account of the work you have just done is checked against its source, not written from memory | [ru](ru/215-a-retelling-of-your-own-work-is-checked-against-its-source.md) [en](en/215-a-retelling-of-your-own-work-is-checked-against-its-source.md) | процесс · process |
+| 216 | Прогон называет, чей код он проверяет, а не только чем он запущен | A run names whose code it is checking, not only what it was launched with | [ru](ru/216-gate-names-the-tree-it-checks.md) [en](en/216-gate-names-the-tree-it-checks.md) | прогоны, среды · runs, environments |
 
 ---
 
@@ -275,8 +276,10 @@ Shape: rule → incident → why → where it applies → trace.
 | **интерфейс** | что видит и понимает получатель: пустое состояние, сообщения, завершённость действия | 4 | [027](ru/027-empty-state-is-a-state.md) · [076](ru/076-messages-point-at-what-the-user-actually-has.md) · [109](ru/109-every-exit-from-a-transient-state-must-be-terminal.md) · [111](ru/111-do-it-instead-of-advising-it.md) |
 | **релиз** | выпуск наружу: версия, журнал изменений, необратимые шаги, огласка | 4 | [030](ru/030-changelog-from-fragments.md) · [035](ru/035-version-is-never-edited-by-hand.md) · [074](ru/074-one-shot-irreversible-steps-get-their-own-guard.md) · [106](ru/106-publicity-multiplies-both-sides.md) |
 | **конкурентность** | несколько писателей одновременно: что блокировать и что записывать | 3 | [066](ru/066-lock-the-companion-not-the-target.md) · [069](ru/069-write-the-field-not-the-snapshot.md) · [179](ru/179-cancellation-group-must-name-the-head.md) |
+| **прогоны** | разделение проходов: сбор отдельно, разбор отдельно | 3 | [054](ru/054-collect-and-analyse-are-separate-passes.md) · [145](ru/145-every-declared-outcome-is-run.md) · [216](ru/216-gate-names-the-tree-it-checks.md) |
 | **продукт** | решения в пользу пользователя: умолчания, право удалить, момент показа | 3 | [095](ru/095-the-default-is-chosen-for-the-user.md) · [106](ru/106-publicity-multiplies-both-sides.md) · [112](ru/112-whatever-the-tool-created-it-must-be-able-to-delete.md) |
 | **роли** | зачем нужна роль, что она обязана делать и все ли пласты покрыты | 3 | [032](ru/032-role-must-run-the-product.md) · [062](ru/062-a-role-must-be-able-to-object.md) · [082](ru/082-roles-must-cover-every-layer.md) |
+| **среды** | чем окружения различаются и что проверяется только в своём | 3 | [018](ru/018-cloud-checks-nodes-local-checks-chain.md) · [036](ru/036-expensive-window-enters-twice-and-briefly.md) · [216](ru/216-gate-names-the-tree-it-checks.md) |
 | **трекер** | как выглядит задача, по которой ведут работу | 3 | [028](ru/028-checklist-not-a-list-of-findings.md) · [128](ru/128-a-required-field-is-checked-for-completeness.md) · [130](ru/130-a-rule-arrives-with-candidates-from-the-backlog.md) |
 | **API** | выбор транспорта к внешнему сервису и его цена | 2 | [001](ru/001-transport-rest-not-graphql.md) · [212](ru/212-a-platform-list-is-read-to-its-end.md) |
 | **ИИ** | модель как часть продукта: чем проверяют сгенерированное, что уходит в промпт | 2 | [083](ru/083-generated-output-is-checked-by-properties.md) · [085](ru/085-content-from-the-subject-is-untrusted-input-to-the-prompt.md) |
@@ -284,9 +287,7 @@ Shape: rule → incident → why → where it applies → trace.
 | **миграции** | переход со старого на новое: откуда считать и чем кончается заглушка | 2 | [094](ru/094-a-compatibility-shim-makes-migration-permanent.md) · [114](ru/114-migrate-from-the-current-version-not-from-zero.md) |
 | **планирование** | что готовят заранее, пока ресурс ещё есть | 2 | [059](ru/059-map-the-detour-before-the-resource-runs-out.md) · [133](ru/133-file-overlap-sets-the-boundary.md) |
 | **приватность** | что собирают о пользователе и что он может стереть | 2 | [095](ru/095-the-default-is-chosen-for-the-user.md) · [112](ru/112-whatever-the-tool-created-it-must-be-able-to-delete.md) |
-| **прогоны** | разделение проходов: сбор отдельно, разбор отдельно | 2 | [054](ru/054-collect-and-analyse-are-separate-passes.md) · [145](ru/145-every-declared-outcome-is-run.md) |
 | **решения** | запись решения: отвергнутые варианты и запрет правки задним числом | 2 | [042](ru/042-decision-records-its-alternatives.md) · [043](ru/043-decisions-are-superseded-not-edited.md) |
-| **среды** | чем окружения различаются и что проверяется только в своём | 2 | [018](ru/018-cloud-checks-nodes-local-checks-chain.md) · [036](ru/036-expensive-window-enters-twice-and-briefly.md) |
 | **вывод** | то, что печатается: обрыв, маркеры, полнота | 1 | [016](ru/016-no-silent-truncation.md) |
 | **заимствование** | перенос чужого решения и границы «у автора работает» | 1 | [107](ru/107-it-works-for-the-author-means-tested-on-the-authors-sample.md) |
 | **история** | что остаётся в истории репозитория и где это проверять | 1 | [123](ru/123-attribution-is-verified-on-the-final-history.md) |
@@ -336,18 +337,18 @@ point at the English tree.
 | **release** | shipping outward: version, changelog, irreversible steps, publicity | 4 | [030](en/030-changelog-from-fragments.md) · [035](en/035-version-is-never-edited-by-hand.md) · [074](en/074-one-shot-irreversible-steps-get-their-own-guard.md) · [106](en/106-publicity-multiplies-both-sides.md) |
 | **tooling** | what you work with: tool versions and how code reaches them | 4 | [013](en/013-write-escapes-to-file-not-heredoc.md) · [073](en/073-tool-version-from-one-source-with-an-upper-bound.md) · [144](en/144-context-window-for-prose-is-a-paragraph.md) · [186](en/186-exit-code-flips-meaning-in-apply-mode.md) |
 | **concurrency** | several writers at once: what to lock and what to write | 3 | [066](en/066-lock-the-companion-not-the-target.md) · [069](en/069-write-the-field-not-the-snapshot.md) · [179](en/179-cancellation-group-must-name-the-head.md) |
+| **environments** | how environments differ, and what can only be checked in its own | 3 | [018](en/018-cloud-checks-nodes-local-checks-chain.md) · [036](en/036-expensive-window-enters-twice-and-briefly.md) · [216](en/216-gate-names-the-tree-it-checks.md) |
 | **product** | decisions made in the user's favour: defaults, the right to delete, when to show it | 3 | [095](en/095-the-default-is-chosen-for-the-user.md) · [106](en/106-publicity-multiplies-both-sides.md) · [112](en/112-whatever-the-tool-created-it-must-be-able-to-delete.md) |
 | **roles** | why a role exists, what it must do, and whether every layer is covered | 3 | [032](en/032-role-must-run-the-product.md) · [062](en/062-a-role-must-be-able-to-object.md) · [082](en/082-roles-must-cover-every-layer.md) |
+| **runs** | separating the passes: collecting apart from analysing | 3 | [054](en/054-collect-and-analyse-are-separate-passes.md) · [145](en/145-every-declared-outcome-is-run.md) · [216](en/216-gate-names-the-tree-it-checks.md) |
 | **tracker** | what a task looks like when work runs on it | 3 | [028](en/028-checklist-not-a-list-of-findings.md) · [128](en/128-a-required-field-is-checked-for-completeness.md) · [130](en/130-a-rule-arrives-with-candidates-from-the-backlog.md) |
 | **AI** | the model as part of the product: what verifies generated output, what goes into the prompt | 2 | [083](en/083-generated-output-is-checked-by-properties.md) · [085](en/085-content-from-the-subject-is-untrusted-input-to-the-prompt.md) |
 | **API** | choosing the transport to an external service, and what it costs | 2 | [001](en/001-transport-rest-not-graphql.md) · [212](en/212-a-platform-list-is-read-to-its-end.md) |
 | **collaboration** | somebody else's boundaries: what not to touch | 2 | [012](en/012-do-not-push-to-someone-elses-branch.md) · [202](en/202-a-merged-branch-is-recreated-by-any-push.md) |
 | **decisions** | recording a decision: the rejected options, and no edits after the fact | 2 | [042](en/042-decision-records-its-alternatives.md) · [043](en/043-decisions-are-superseded-not-edited.md) |
-| **environments** | how environments differ, and what can only be checked in its own | 2 | [018](en/018-cloud-checks-nodes-local-checks-chain.md) · [036](en/036-expensive-window-enters-twice-and-briefly.md) |
 | **migrations** | moving from old to new: where to count from, and how a shim ends | 2 | [094](en/094-a-compatibility-shim-makes-migration-permanent.md) · [114](en/114-migrate-from-the-current-version-not-from-zero.md) |
 | **planning** | what to prepare in advance, while the resource lasts | 2 | [059](en/059-map-the-detour-before-the-resource-runs-out.md) · [133](en/133-file-overlap-sets-the-boundary.md) |
 | **privacy** | what is collected about the user, and what they can erase | 2 | [095](en/095-the-default-is-chosen-for-the-user.md) · [112](en/112-whatever-the-tool-created-it-must-be-able-to-delete.md) |
-| **runs** | separating the passes: collecting apart from analysing | 2 | [054](en/054-collect-and-analyse-are-separate-passes.md) · [145](en/145-every-declared-outcome-is-run.md) |
 | **borrowing** | adopting somebody else's solution, and the limits of “it works for the author” | 1 | [107](en/107-it-works-for-the-author-means-tested-on-the-authors-sample.md) |
 | **community** | how a newcomer gets here | 1 | [065](en/065-the-onramp-must-speak-the-newcomers-language.md) |
 | **comparison** | comparing against what was expected, and the tolerances in it | 1 | [102](en/102-leniency-is-enumerated-and-switchable.md) |
