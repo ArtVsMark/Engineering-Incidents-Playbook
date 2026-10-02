@@ -200,7 +200,7 @@ def test_обязательный_минимум_есть_всегда(monkeypat
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     факты, _, беда = bf.build()
     assert беда == ""
-    assert факты["schema"] == "1.2" and isinstance(факты["schema"], str)
+    assert факты["schema"] == "1.3" and isinstance(факты["schema"], str)
     assert факты["repo"] == "своё/имя"
     assert факты["generated_at"].endswith("+00:00")
     assert факты["commit"] == "deadbeef"
@@ -227,7 +227,7 @@ def test_записанный_файл_разбирается_и_несёт_об
     assert bf.main([]) == 0
     записано = json.loads((repo / ".github/badges/facts.json")
                           .read_text(encoding="utf-8"))
-    assert записано["schema"] == "1.2"
+    assert записано["schema"] == "1.3"
     # Номер схемы обязан сказать, ЧЕГО он: ключ `schema` носят четыре предмета.
     assert "164" in записано["schema_of"]
 
@@ -376,7 +376,9 @@ def test_версия_и_выпуск_берутся_у_тега(monkeypatch, re
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     факты, _, _ = bf.build()
     assert факты["version"] == "1.3.5"
-    assert факты["release"] == "v1.3.0"
+    assert факты["release"] == "1.3"
+    # Договор 1.3: сборка начинается с серии и точки.
+    assert факты["version"].startswith(факты["release"] + ".")
     assert "version" not in факты.get("none", {})
 
 
