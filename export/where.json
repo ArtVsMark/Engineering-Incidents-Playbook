@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-02T08:58:29+00:00",
+  "generated_at": "2026-10-02T09:04:35+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,10 +10,10 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-02",
-      "answered": 214,
+      "answered": 215,
       "by_status": {
         "active": 195,
-        "not-applicable": 13,
+        "not-applicable": 14,
         "rejected": 6
       },
       "by_mechanism": {
@@ -237,7 +237,8 @@
         "212": "active",
         "213": "active",
         "214": "active",
-        "215": "active"
+        "215": "active",
+        "216": "not-applicable"
       },
       "holds": {
         "001": {
@@ -3943,8 +3944,8 @@
           "skill": ""
         }
       },
-      "trails": 187,
-      "born": 132,
+      "trails": 188,
+      "born": 133,
       "findings": [
         "ответ по схеме 1.2, у контракта 1.7 — записи остаются валидными, означая уже другое",
         "ответ построен на выгрузке 1.5, у нас 1.7 — записи валидны, а составленные по ним ответы отвечают на другой вопрос (157)"
