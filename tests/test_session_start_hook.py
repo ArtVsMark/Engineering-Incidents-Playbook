@@ -8,10 +8,12 @@ requires-python, scripts/check_python_version.py, requirements-test.txt.
 """
 
 
+import json
 import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -48,6 +50,9 @@ def проект(tmp_path: Path, pyproject: str = f'requires-python = ">={ПЛА
 def запуск(env: dict[str, str]) -> subprocess.CompletedProcess[str]:
     окружение = {k: v for k, v in os.environ.items()
                  if not k.startswith("CLAUDE_")}
+    # Каталог ссылок — временный, если случай не задал свой: хук переключает
+    # `python3` окна, и набор не вправе переключить его машине, где идёт.
+    окружение["SESSION_START_BIN_DIR"] = tempfile.mkdtemp(prefix="ссылки-")
     окружение.update(env)
     return subprocess.run(["bash", str(HOOK)], env=окружение, capture_output=True,
                           text=True, encoding="utf-8", timeout=300)
@@ -245,3 +250,97 @@ def test_нет_интерпретатора_планки_ставится_за�
     assert "pip install -q uv==0.12.21" in вызовы
     assert "uv python install 3.99" in вызовы
     assert (ссылки / "python3.99").resolve() == Path(sys.executable).resolve()
+
+
+# ── переезд целиком: планка без Python, python3 окна, страж на планке ─────
+
+FLOOR_SH = ROOT / ".claude" / "hooks" / "floor.sh"
+GUARD_SH = ROOT / ".claude" / "hooks" / "push_guard.sh"
+
+
+def планка_sed(pyproject: Path) -> str:
+    return subprocess.run(["sh", "-c", f'. "{FLOOR_SH}"; planka_floor "$1"', "_", str(pyproject)],
+                          capture_output=True, text=True, encoding="utf-8").stdout.strip()
+
+
+@НУЖЕН_BASH
+@pytest.mark.parametrize("строка", [
+    'requires-python = ">=3.14"', 'requires-python=">=3.14.1"', '  requires-python = "~=3.13"',
+    'requires-python = ">= 3.12, <4"', 'name = "x"',
+])
+def test_разбор_планки_в_оболочке_совпадает_с_питоновым(tmp_path, строка):
+    """floor.sh — второй разбор той же территории (214), и держится он только
+    этим тестом: тот же ответ, что у check_python_version.floor."""
+    import check_python_version as cv
+    манифест = tmp_path / "pyproject.toml"
+    манифест.write_text(строка + "\n", encoding="utf-8")
+    ждём = cv.floor(манифест.read_text(encoding="utf-8"))
+    assert планка_sed(манифест) == (f"{ждём[0]}.{ждём[1]}" if ждём else "")
+
+
+@НУЖЕН_BASH
+def test_разбор_планки_на_настоящем_манифесте():
+    import check_python_version as cv
+    ждём = cv.floor((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    assert планка_sed(ROOT / "pyproject.toml") == f"{ждём[0]}.{ждём[1]}"
+
+
+@НУЖНА_ПЛАНКА
+def test_python3_окна_переключается_на_планку(tmp_path):
+    """Замер 02.10: python3 окна — 3.11 при поставленном 3.14 рядом. Хуки
+    площадки видят именно его."""
+    корень = проект(tmp_path)
+    старый = tmp_path / "образ"
+    старый.mkdir()
+    (старый / "python3").write_text("#!/bin/sh\necho 3.11\n", encoding="utf-8")
+    (старый / "python3").chmod(0o755)
+    ссылки = tmp_path / "ссылки"
+    ссылки.mkdir()
+    итог = запуск({"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
+                   "CLAUDE_ENV_FILE": str(tmp_path / "env"),
+                   "PATH": f"{старый}:{os.environ['PATH']}",
+                   "SESSION_START_BIN_DIR": str(ссылки)})
+    assert итог.returncode == 0, итог.stderr
+    assert (ссылки / "python3").resolve() == Path(shutil.which(f"python{ПЛАНКА}")).resolve()
+
+
+@НУЖНА_ПЛАНКА
+def test_строка_окружения_не_копится(tmp_path):
+    """Замер 02.10: .venv/bin в PATH окна десять раз подряд."""
+    корень = проект(tmp_path)
+    env_file = tmp_path / "env"
+    база = {"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
+            "CLAUDE_ENV_FILE": str(env_file)}
+    assert запуск(база).returncode == 0
+    assert запуск(база).returncode == 0
+    assert env_file.read_text(encoding="utf-8").count(".venv/bin") == 2  # одна строка, два упоминания
+    путь = subprocess.run(["bash", "-c", f'. "{env_file}"; . "{env_file}"; echo "$PATH"'],
+                          capture_output=True, text=True, encoding="utf-8").stdout
+    assert путь.count(f"{корень}/.venv/bin") == 1
+
+
+def _страж(tmp_path, планка: str, команда: str) -> subprocess.CompletedProcess[str]:
+    корень = проект(tmp_path, pyproject=f'requires-python = ">={планка}"\n')
+    вход = json.dumps({"tool_name": "Bash", "tool_input": {"command": команда}})
+    return subprocess.run(["sh", str(GUARD_SH)], input=вход, capture_output=True, text=True,
+                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)})
+
+
+@НУЖЕН_BASH
+def test_без_интерпретатора_планки_толчок_закрыт(tmp_path):
+    """Ненулевой код, кроме 2, площадка не считает отказом: страж, упавший на
+    старой версии, открыл бы толчок молча."""
+    итог = _страж(tmp_path, "3.99", "git push -u origin agent/x")
+    assert итог.returncode == 2 and "python3.99" in итог.stderr
+
+
+@НУЖЕН_BASH
+def test_без_интерпретатора_планки_прочее_открыто(tmp_path):
+    """Сбой сети на старте не обездвиживает окно: закрыт только толчок."""
+    assert _страж(tmp_path, "3.99", "ls -la").returncode == 0
+
+
+@НУЖНА_ПЛАНКА
+def test_страж_зовётся_интерпретатором_планки(tmp_path):
+    итог = _страж(tmp_path, ПЛАНКА, "ls -la")
+    assert итог.returncode == 0, итог.stderr

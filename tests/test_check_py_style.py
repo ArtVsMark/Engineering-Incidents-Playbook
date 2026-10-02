@@ -7,8 +7,6 @@
 замыканием от стража толчка, а не списком по памяти.
 """
 
-import ast
-import re
 import subprocess
 
 import pytest
@@ -64,75 +62,6 @@ def test_except_звёздочка_в_скобках_находка():
 def test_одноэлементный_кортеж_с_запятой_не_предмет():
     """`except A,:` не пишется — находка требовала бы невозможного."""
     assert st.except_в_скобках("try:\n    pass\nexcept (OSError,):\n    pass\n") == []
-
-
-# ── загрузочные файлы: требование наоборот ─────────────────────────────────
-
-def test_загрузочный_без_future_находка():
-    путь = sorted(st.ЗАГРУЗОЧНЫЕ)[0]
-    assert any("__future__" in н for н in st.находки_стиля(путь, "x = 1\n", P314))
-
-
-def test_загрузочный_с_синтаксисом_планки_находка():
-    путь = sorted(st.ЗАГРУЗОЧНЫЕ)[0]
-    текст = FUT + "try:\n    pass\nexcept OSError, ValueError:\n    pass\n"
-    assert any("не разбирается" in н for н in st.находки_стиля(путь, текст, P314))
-
-
-@pytest.mark.parametrize("конструкция", [
-    "try:\n    pass\nexcept OSError, ValueError:\n    pass\n",   # 3.14, PEP 758
-    "type Число = int\n",                                          # 3.12, PEP 695
-    "def f[T](x: T) -> T:\n    return x\n",                       # 3.12, PEP 695
-    "x = t'{1}'\n",                                                # 3.14, PEP 750
-])
-def test_грамматика_окна_отвергает_синтаксис_новее(конструкция):
-    """Граница best-effort разбора замерена, а не обещана."""
-    путь = sorted(st.ЗАГРУЗОЧНЫЕ)[0]
-    assert any("не разбирается" in н for н in st.находки_стиля(путь, FUT + конструкция, P314))
-
-
-def test_грамматика_окна_пропускает_кавычки_pep701():
-    """Названный пробел (докстринг у ast.parse): если разбор начнёт его
-    ловить, тест покраснеет — и пробел надо вычеркнуть из комментария."""
-    путь = sorted(st.ЗАГРУЗОЧНЫЕ)[0]
-    assert st.находки_стиля(путь, FUT + 'x = f"{\'a\' + f"{1}"}"\n', P314) == []
-
-
-def test_загрузочный_в_старом_стиле_чист():
-    путь = sorted(st.ЗАГРУЗОЧНЫЕ)[0]
-    assert st.находки_стиля(путь, FUT + EXC, P314) == []
-
-
-def test_загрузочные_настоящего_дерева_разбираются_грамматикой_окна():
-    for путь in st.ЗАГРУЗОЧНЫЕ:
-        ast.parse((ROOT / путь).read_text(encoding="utf-8"), feature_version=st.ОКНО)
-
-
-def _замыкание() -> set[str]:
-    """От стража толчка и чтеца планки: импорты из scripts/ и запуски
-    `scripts/<имя>.py`, названные в коде, — транзитивно."""
-    очередь = [".claude/hooks/push_guard.py", "scripts/check_python_version.py"]
-    видели: set[str] = set()
-    while очередь:
-        путь = очередь.pop()
-        if путь in видели:
-            continue
-        видели.add(путь)
-        текст = (ROOT / путь).read_text(encoding="utf-8")
-        имена = set(re.findall(r'"scripts"\s*/\s*"(\w+)\.py"', текст))
-        for узел in ast.walk(ast.parse(текст)):
-            if isinstance(узел, ast.Import):
-                имена |= {a.name.split(".")[0] for a in узел.names}  # не проза: путь модуля
-            elif isinstance(узел, ast.ImportFrom) and узел.module:
-                имена.add(узел.module.split(".")[0])  # не проза: путь модуля
-        очередь += [f"scripts/{и}.py" for и in имена if (SCRIPTS / f"{и}.py").exists()]
-    return видели
-
-
-def test_загрузочный_список_равен_замыканию_от_стража():
-    """Страж начнёт запускать ещё один скрипт — список обязан вырасти, иначе
-    тот уедет в стиле планки и уронит стража на python окна."""
-    assert set(st.ЗАГРУЗОЧНЫЕ) == _замыкание()
 
 
 # ── исходы ─────────────────────────────────────────────────────────────────
