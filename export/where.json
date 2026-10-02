@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-02T09:42:05+00:00",
+  "generated_at": "2026-10-02T09:43:02+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -7492,15 +7492,15 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-02",
-      "answered": 181,
+      "answered": 214,
       "by_status": {
-        "active": 117,
-        "not-applicable": 64
+        "active": 143,
+        "not-applicable": 71
       },
       "by_mechanism": {
-        "gate": 64,
-        "pipeline": 13,
-        "document": 24,
+        "gate": 72,
+        "pipeline": 16,
+        "document": 39,
         "none": 16
       },
       "rules": {
@@ -7684,7 +7684,40 @@
         "179": "active",
         "180": "not-applicable",
         "181": "active",
-        "182": "active"
+        "182": "active",
+        "183": "active",
+        "184": "active",
+        "185": "not-applicable",
+        "186": "not-applicable",
+        "187": "active",
+        "188": "not-applicable",
+        "189": "active",
+        "190": "not-applicable",
+        "191": "active",
+        "192": "active",
+        "193": "not-applicable",
+        "194": "not-applicable",
+        "195": "active",
+        "196": "active",
+        "197": "active",
+        "198": "active",
+        "199": "active",
+        "200": "active",
+        "201": "active",
+        "202": "active",
+        "203": "active",
+        "204": "active",
+        "205": "active",
+        "206": "active",
+        "207": "active",
+        "208": "active",
+        "209": "active",
+        "210": "active",
+        "211": "active",
+        "212": "not-applicable",
+        "213": "active",
+        "214": "active",
+        "215": "active"
       },
       "holds": {
         "001": {
@@ -8738,6 +8771,240 @@
           "awaiting": "",
           "analysed": "",
           "decided": "",
+          "skill": ""
+        },
+        "183": {
+          "mechanism": "gate",
+          "where": "tests/test_rules_bindings.py::test_answer_follows_contract — адрес механизма в поле where обязан разрешаться в существующий файл. Вторая половина — что названный скрипт объявляет правило своим — не строилась",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "184": {
+          "mechanism": "gate",
+          "where": "tests/test_rules_bindings.py::test_absence_claim_is_not_refuted — у ответа «неприменимо» с пробой refuted_by набор исполняет пробу по дереву: появилась БУКВА предмета — ответ опровергнут. Обобщение, механизм поломки за буквой, остаётся суждением: машине не видно, что чужой предмет работает здесь под другим именем",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "187": {
+          "mechanism": "gate",
+          "where": "tests/test_workflow_guardrails.py — обязательная проверка одна, check PR, и у неё if: always(): пропуском она не бывает, а вторая запись с тем же именем на голове не появляется — группа одновременности с коммитом в имени вытесняет повтор отменой",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "189": {
+          "mechanism": "document",
+          "where": "CLAUDE.md § «Работа с GitHub» — ветка называется предметом задачи и после слияния не продолжается: следующая работа начинается новой веткой от свежего main",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "191": {
+          "mechanism": "gate",
+          "where": "scripts/check_pr_link.py — стоп-кран заготовки изменения: тело без одного из трёх ответов о задаче держит слияние, и отказ называет раздел формы, который не заполнен, — разбор идёт к тексту, а не к механизму. Заполнять тем же заходом — дисциплина окна, она в CLAUDE.md § «Работа с GitHub»",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "192": {
+          "mechanism": "document",
+          "where": ".github/workflows/badges.yml — раздел «ПОЧЕМУ РАСПИСАНИЕ»: замер «публикация идёт на каждый пуш в main» был снят, пока сливал человек; с переходом слияния на автомерж исполнителем стал токен прогона, пуш которого прогонов не будит, и замер обесценился молча на три недели (Glossary-Python#49)",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "195": {
+          "mechanism": "document",
+          "where": "CONTRIBUTING.md § «Правка кода» — починка называет соседние случаи, решаемые тем же признаком, и отвечает по каждому",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "196": {
+          "mechanism": "document",
+          "where": "CLAUDE.md § «Чего не делать» — ссылка из README на файл ветки badges едет отдельным изменением после первого прогона, который его положит",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "197": {
+          "mechanism": "pipeline",
+          "where": ".github/workflows/badges.yml — шаг «Факты отвечают договору витрины»: опубликованное наружу проверяется схемой потребителя до публикации. Числа README собираются из тех же фактов (scripts/facts.py --check), то есть издатель читает то же, что отдаёт",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "198": {
+          "mechanism": "document",
+          "where": "CLAUDE.md § «Каталог правил» — ссылка на правило каталога сверяется с его выгрузкой, а не пишется по памяти",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "199": {
+          "mechanism": "pipeline",
+          "where": "scripts/automerge.py — прогон .github/workflows/automerge.yml стоит в группе с cancel-in-progress: false и будится событием изменения; внутри захода состояние изменения спрашивается заново по REST (черновик, метка hold, открыто ли), а не берётся из события. pages.yml в той же форме ничего не ждёт: он собирает витрину из головы",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "200": {
+          "mechanism": "document",
+          "where": "scripts/facts.py — у каждого значка названо событие, при котором он покажет другое: карточек — импорт, правил без механизма — построенный механизм, замечаний — правка источника, покрытия и полноты — пороги GOOD_COVERAGE и GOOD_COMPLETENESS, выпуска и версии — тег и принятое изменение",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "201": {
+          "mechanism": "pipeline",
+          "where": ".github/workflows/badges.yml — objections.json публикует у каждой находки не только имя правила, но и его букву: message, уровень и область. Источник карточек отвечает по тексту замечания, а не по названию правила",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "202": {
+          "mechanism": "document",
+          "where": "CLAUDE.md § «Работа с GitHub» — дописывать в открытое изменение нельзя, следующая работа начинается от свежего main новой веткой",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "203": {
+          "mechanism": "document",
+          "where": ".github/workflows/badges.yml — у работы preview названо, что 3.15 «ещё в release candidate», и почему ей разрешены предрелизы",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "204": {
+          "mechanism": "document",
+          "where": "CLAUDE.md § «Каталог правил» — ссылка на правило как на основание сверяется с его разделом «Применимость»; близкое называется аналогией",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "205": {
+          "mechanism": "gate",
+          "where": "tests/test_rules_bindings.py::test_absence_claim_is_not_refuted — у ответов «неприменимо» с пробой refuted_by предикат по дереву исполняется командой при каждом прогоне. Ответы без пробы называют событие словами в why — законная форма правила, когда неприменимость следует из природы проекта",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "206": {
+          "mechanism": "document",
+          "where": "scripts/check_links.py — гейты, ищущие предмет по форме записи, называют в докстринге формы, которых не видят; так же scripts/check_defaults.py и scripts/check_deadlines.py",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "207": {
+          "mechanism": "document",
+          "where": "CLAUDE.md § «Каталог правил» — заход перечитывания называет числа: сколько прочитано, сколько осталось, какой была отдача",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "208": {
+          "mechanism": "gate",
+          "where": ".github/workflows/ci.yml — слияние делает площадка, и только по зелёной обязательной проверке check PR: проверка и действие сцеплены. Прогон make check перед толчком — напоминание, а не механизм, и это сказано: толчок проверкой не держится",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "209": {
+          "mechanism": "gate",
+          "where": "tests/test_check_pr_link.py::test_template_itself_passes_the_gate — форма изменения прогоняется через сам гейт: фразы, которые форма печатает, а гейт узнаёт, сверяются константами гейта, а не копией букв",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "210": {
+          "mechanism": "document",
+          "where": "CONTRIBUTING.md § «Правка кода» — вторая находка по одному месту останавливает починку по одной форме: сначала перечень форм с замером",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "211": {
+          "mechanism": "document",
+          "where": "CLAUDE.md § «Чего не делать» — зелёный набор на подделках не утверждение о дереве; у гейта две половины, и живую требует tests/test_live_surface.py",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "213": {
+          "mechanism": "gate",
+          "where": "tests/test_rules_bindings.py::test_answer_follows_contract — holdable из закрытого словаря четырёх слов, refused без замера в machine_half отвергается. Слово применено: ответ по 053",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "214": {
+          "mechanism": "document",
+          "where": "CLAUDE.md § «Чего не делать» — один предмет разбирает одна реализация: версию считает scripts/version.py, планку Python читает scripts/python_floor.py, и остальные места спрашивают их",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
+          "skill": ""
+        },
+        "215": {
+          "mechanism": "document",
+          "where": "CONTRIBUTING.md § «Оформление коммитов и pull request» — числа и перечни в теле изменения и фрагменте журнала снимаются командой в момент записи, и команда названа рядом",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-02",
+          "decided": "2026-10-02",
           "skill": ""
         }
       },
