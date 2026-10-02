@@ -124,8 +124,15 @@ if [ -z "$floor" ]; then
   exit 0
 fi
 
+# Установщик ставится ЛЮБЫМ python3 образа: он исполняет pip и uv, а не код
+# каталога, и интерпретатора планки на этом шаге ещё нет по построению.
+# Номера здесь нет намеренно: прошитый python3.12 умер бы вместе с образом,
+# который его уберёт (005). Висячая ссылка `python3` — от прежней установки
+# планки — обходится системным /usr/bin/python3.
 if ! command -v "python$floor" >/dev/null 2>&1; then
-  { python3.12 -m venv "$UV_HOME" \
+  bootstrap=python3
+  "$bootstrap" -c '' 2>/dev/null || bootstrap=/usr/bin/python3
+  { "$bootstrap" -m venv "$UV_HOME" \
       && "$UV_HOME/bin/pip" install -q "uv==$UV_VERSION" \
       && "$UV_HOME/bin/uv" python install "$floor" \
       && ln -sf "$("$UV_HOME/bin/uv" python find "$floor")" "$BIN_DIR/python$floor"; } \

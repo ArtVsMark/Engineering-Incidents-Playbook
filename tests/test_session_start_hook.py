@@ -213,8 +213,10 @@ def test_без_файла_окружения_выход_0_и_причина(tmp
     assert итог.returncode == 0 and "CLAUDE_ENV_FILE" in итог.stderr
 
 
-ПОДДЕЛЬНЫЙ_PYTHON312 = """#!/bin/bash
-# python3.12 -m venv DIR: кладёт в DIR/bin подставные pip и uv, пишущие журнал.
+ПОДДЕЛЬНЫЙ_PYTHON3 = """#!/bin/bash
+# python3 -m venv DIR: кладёт в DIR/bin подставные pip и uv, пишущие журнал.
+# Прочие вызовы (сверка версии хуком) — молча: подделка изображает установщик.
+[ "$1 $2" = "-m venv" ] || exit 0
 dir="$3"; mkdir -p "$dir/bin"
 cat > "$dir/bin/pip" <<'S'
 #!/bin/bash
@@ -233,12 +235,13 @@ chmod +x "$dir/bin/pip" "$dir/bin/uv"
 def test_нет_интерпретатора_планки_ставится_закреплённым_uv(tmp_path):
     """Находки #473 (2c380f8, 1ee9a42) и обзора #660: ветка установки
     ИСПОЛНЯЕТСЯ, а не читается. Планка — версия, которой на машине нет;
-    python3.12 и uv подставные и пишут журнал вызовов."""
+    python3 образа и uv подставные и пишут журнал вызовов. Номера у
+    установщика нет: прошитый python3.12 умер бы вместе с образом (005)."""
     корень = проект(tmp_path, pyproject='requires-python = ">=3.99"\n')
     подмена = tmp_path / "bin"
     подмена.mkdir()
-    (подмена / "python3.12").write_text(ПОДДЕЛЬНЫЙ_PYTHON312, encoding="utf-8")
-    (подмена / "python3.12").chmod(0o755)
+    (подмена / "python3").write_text(ПОДДЕЛЬНЫЙ_PYTHON3, encoding="utf-8")
+    (подмена / "python3").chmod(0o755)
     журнал = tmp_path / "журнал"
     ссылки = tmp_path / "ссылки"
     ссылки.mkdir()
