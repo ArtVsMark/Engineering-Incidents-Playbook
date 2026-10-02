@@ -506,4 +506,9 @@ def test_python3_без_venv_установщик_берётся_системн�
     настройка = (установщик / "pyvenv.cfg").read_text(encoding="utf-8")
     дом = next(с.split("=", 1)[1].strip() for с in настройка.splitlines()
                if с.startswith("home"))
-    assert Path(дом).resolve() == системный.resolve().parent
+    # `home` — каталог того, чем venv запущен, а не цели ссылки: на образе,
+    # где /usr/bin/python3 — ссылка в другой каталог, верный откат дал бы
+    # /usr/bin, а resolve() цели — чужой каталог (обзор #688). Годится любой
+    # из двух; подделка лежит в третьем, и её признак отличим.
+    assert Path(дом) in {системный.parent, системный.resolve().parent}
+    assert Path(дом) != подмена
