@@ -130,6 +130,44 @@ def test_сбой_pip_на_свежем_окружении_не_выставля
 
 
 @НУЖНА_ПЛАНКА
+def test_сбой_pip_на_окружении_до_метки_не_отнимает_его(tmp_path):
+    """Находка обзора #664: .venv, собранный прежним хуком, метки не несёт, хотя
+    зависимости в нём стоят. Первый же сбой pip не должен отнять у него PATH."""
+    корень = проект(tmp_path)
+    env_file = tmp_path / "env"
+    база = {"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
+            "CLAUDE_ENV_FILE": str(env_file)}
+    assert запуск(база).returncode == 0
+    env_file.unlink()
+    (корень / ".venv" / ".deps-installed").unlink()
+    # Установленный пакет без сети: запись dist-info — то, по чему его видит pip.
+    сайт = next((корень / ".venv" / "lib").glob("python*/site-packages"))
+    дист = сайт / "prezhnyaya_zavisimost-1.0.dist-info"
+    дист.mkdir()
+    (дист / "METADATA").write_text(
+        "Metadata-Version: 2.1\nName: prezhnyaya-zavisimost\nVersion: 1.0\n",
+        encoding="utf-8")
+    (корень / "requirements-test.txt").write_text("такого-пакета-нет-ни-где==0\n",
+                                                  encoding="utf-8")
+    итог = запуск({**база, **НЕТ_ИНДЕКСА})
+    assert итог.returncode == 0
+    assert "оставлено как было" in итог.stderr
+    assert f"{корень}/.venv/bin" in env_file.read_text(encoding="utf-8")
+    assert (корень / ".venv" / ".deps-installed").exists()
+
+
+def test_требует_на_ci_отказывает_а_вне_ci_пропускает(monkeypatch):
+    """Находка обзора #664: гейт против пустого набора сам не был проверен."""
+    нет = "такой-программы-нет-ни-где"
+    monkeypatch.setenv("CI", "true")
+    with pytest.raises(pytest.fail.Exception, match="на CI нет"):
+        требует(нет)
+    assert требует(Path(sys.executable).name).args == (False,)
+    monkeypatch.delenv("CI")
+    assert требует(нет).args == (True,)
+
+
+@НУЖНА_ПЛАНКА
 def test_без_файла_окружения_выход_0_и_причина(tmp_path):
     корень = проект(tmp_path)
     итог = запуск({"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень)})
