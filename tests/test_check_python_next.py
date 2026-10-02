@@ -117,23 +117,6 @@ def test_задача_находится_своим_маркером_а_не_д�
     assert main_red.find_issue() == (7, None)
 
 
-def test_запись_обновляет_найденную_и_заводит_новую(monkeypatch):
-    вызовы: list[tuple[str, ...]] = []
-    monkeypatch.setattr(pn.ghcli, "run", lambda *a: (вызовы.append(a), (0, "ok"))[1])
-    monkeypatch.setattr(pn.main_red, "find_issue", lambda m: (9, None))
-    assert pn.записать("тело") == (1, "задача #9 обновлена")
-    assert "PATCH" in вызовы[-1]
-    monkeypatch.setattr(pn.main_red, "find_issue", lambda m: (None, None))
-    assert pn.записать("тело") == (1, "задача заведена")
-    assert f"title={pn.TITLE}" in вызовы[-1]
-
-
-def test_трекер_не_ответил_третий_исход(monkeypatch):
-    monkeypatch.setattr(pn.main_red, "find_issue", lambda m: (None, "403"))
-    код, что = pn.записать("тело")
-    assert код == 2 and "403" in что
-
-
 @pytest.mark.parametrize("находки", [["одна"], ["одна", "две"]])
 def test_тело_несёт_маркер_и_источник(находки):
     текст = pn.тело(находки, "https://прогон")
@@ -141,20 +124,106 @@ def test_тело_несёт_маркер_и_источник(находки):
     assert pn.MANIFEST_URL in текст and all(f"- {н}" in текст for н in находки)
 
 
-def test_отказ_сверки_уходит_в_задачу_а_не_в_цвет(tmp_path, monkeypatch):
-    """Находка обзора #692: отказ сверки краснил прогон дежурного, и тот
-    объявил бы общую ветку красной из-за чужого сбоя. Теперь причина третьего
-    исхода пишется в ту же задачу с маркером."""
+class Трекер:
+    """Подделка трекера: задачи по номеру, поиск по маркеру — тот же, что у
+    main_red.find_issue (тело содержит маркер). Источник формы — REST
+    /repos/{o}/{r}/issues: PATCH body/state, POST title/body/labels[]."""
+
+    def __init__(self, задачи: dict[int, str] | None = None, *, лежит: bool = False):
+        self.задачи = dict(задачи or {})
+        self.закрытые: set[int] = set()
+        self.лежит = лежит
+
+    def find(self, marker):
+        if self.лежит:
+            return None, "HTTP 503"
+        for n, body in self.задачи.items():
+            if n not in self.закрытые and marker in body:
+                return n, None
+        return None, None
+
+    def run(self, *args):
+        if self.лежит:
+            return 1, "HTTP 503"
+        поля = dict(a.split("=", 1) for a in args if "=" in a and not a.startswith("repos/"))
+        if "PATCH" in args:
+            n = int(args[3].rsplit("/", 1)[1])
+            if поля.get("state") == "closed":
+                self.закрытые.add(n)
+            else:
+                self.задачи[n] = поля["body"]
+        else:
+            n = max(self.задачи, default=0) + 1
+            self.задачи[n] = поля["body"]
+        return 0, "ok"
+
+
+@pytest.fixture
+def трекер(monkeypatch):
+    def завести(**kw):
+        т = Трекер(**kw)
+        monkeypatch.setattr(pn.main_red, "find_issue", т.find)
+        monkeypatch.setattr(pn.ghcli, "run", т.run)
+        return т
+    return завести
+
+
+def test_находка_заводит_задачу_и_обновляет_её(tmp_path, трекер):
+    т = трекер()
     корень = _прогон(tmp_path)
-    тела: list[str] = []
-    monkeypatch.setattr(pn, "записать", lambda body: (тела.append(body), (1, "задача заведена"))[1])
-    манифест = _манифест(tmp_path, [])
-    assert pn.main(["--root", str(корень), "--manifest", манифест, "--apply"]) == 2
-    assert len(тела) == 1 and тела[0].startswith(pn.MARKER)
-    assert "не отработала" in тела[0] and "пуст или не список" in тела[0]
+    манифест = _манифест(tmp_path, ВЫШЛА)
+    assert pn.main(["--root", str(корень), "--manifest", манифест, "--apply"]) == 1
+    assert pn.main(["--root", str(корень), "--manifest", манифест, "--apply"]) == 1
+    assert list(т.задачи) == [1] and т.задачи[1].startswith(pn.MARKER)
+
+
+def test_отказ_сверки_уходит_в_свою_задачу_а_не_в_цвет(tmp_path, трекер):
+    """Находка обзора #692: отказ краснил прогон дежурного. Код 2 — записано,
+    прогон его красным не делает."""
+    т = трекер()
+    корень = _прогон(tmp_path)
+    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, []), "--apply"]) == 2
+    (тело,) = т.задачи.values()
+    assert тело.startswith(pn.MARKER_ОТКАЗ) and "пуст или не список" in тело
+
+
+def test_отказ_не_перетирает_открытую_находку(tmp_path, трекер):
+    """Находка обзора #693: маркер был общий, и разовый сбой источника
+    переписывал тело открытого расхождения."""
+    находка = pn.MARKER + "\n- python-next гоняет 3.15, а площадка такой ветки не знает"
+    т = трекер(задачи={1: находка})
+    корень = _прогон(tmp_path)
+    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, []), "--apply"]) == 2
+    assert т.задачи[1] == находка
+    assert т.задачи[2].startswith(pn.MARKER_ОТКАЗ)
+
+
+def test_сверка_отработала_закрывает_задачу_отказа(tmp_path, трекер):
+    """Находка обзора #693: задачу, заведённую чужим сбоем, не закрывал никто.
+    Находку при этом не трогает — её закрывает человек."""
+    т = трекер(задачи={1: pn.MARKER + "\nнаходка", 2: pn.MARKER_ОТКАЗ + "\nсбой"})
+    корень = _прогон(tmp_path)
+    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, СЕГОДНЯ), "--apply"]) == 0
+    assert т.закрытые == {2}
+
+
+def test_трекер_не_ответил_при_отказе_код_3(tmp_path, трекер):
+    """Находка обзора #693: «причина в задаче» печаталось, когда задачи не было.
+    Код 3 — адресата нет, и прогон его различает."""
+    трекер(лежит=True)
+    корень = _прогон(tmp_path)
+    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, []),
+                    "--apply"]) == pn.НЕТ_АДРЕСАТА
+
+
+def test_трекер_не_ответил_при_находке_код_3(tmp_path, трекер):
+    трекер(лежит=True)
+    корень = _прогон(tmp_path)
+    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, ВЫШЛА),
+                    "--apply"]) == pn.НЕТ_АДРЕСАТА
 
 
 def test_отказ_без_apply_в_трекер_не_пишет(tmp_path, monkeypatch):
     корень = _прогон(tmp_path)
-    monkeypatch.setattr(pn, "записать", lambda body: pytest.fail("писать без --apply нельзя"))
+    monkeypatch.setattr(pn, "записать", lambda *a: pytest.fail("писать без --apply нельзя"))
     assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, [])]) == 2
