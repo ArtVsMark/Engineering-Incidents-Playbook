@@ -227,3 +227,21 @@ def test_отказ_без_apply_в_трекер_не_пишет(tmp_path, monke
     корень = _прогон(tmp_path)
     monkeypatch.setattr(pn, "записать", lambda *a: pytest.fail("писать без --apply нельзя"))
     assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, [])]) == 2
+
+
+def test_сбой_уборки_не_гасит_запись_находки(tmp_path, трекер, monkeypatch):
+    """Находка обзора #694: задача отказа закрывалась ДО записи находки, и
+    сбой закрытия возвращал 3, не записав расхождение. Теперь находка
+    записывается первой, а сбой уборки — худший код поверх уже сделанного."""
+    т = трекер(задачи={1: pn.MARKER_ОТКАЗ + "\nсбой"})
+    настоящий = т.run
+
+    def закрытие_падает(*args):
+        if "state=closed" in args:
+            return 1, "HTTP 500"
+        return настоящий(*args)
+    monkeypatch.setattr(pn.ghcli, "run", закрытие_падает)
+    корень = _прогон(tmp_path)
+    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, ВЫШЛА),
+                    "--apply"]) == pn.НЕТ_АДРЕСАТА
+    assert any(тело.startswith(pn.MARKER) for тело in т.задачи.values())
