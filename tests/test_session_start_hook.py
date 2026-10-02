@@ -129,6 +129,16 @@ def test_сбой_pip_на_свежем_окружении_не_выставля
     assert "не поставлены ни разу" in повтор.stderr and not env_file.exists()
 
 
+def поставь_без_сети(корень: Path) -> None:
+    """Установленный пакет без сети: запись dist-info — то, по чему его видит pip."""
+    сайт = next((корень / ".venv" / "lib").glob("python*/site-packages"))
+    дист = сайт / "prezhnyaya_zavisimost-1.0.dist-info"
+    дист.mkdir()
+    (дист / "METADATA").write_text(
+        "Metadata-Version: 2.1\nName: prezhnyaya-zavisimost\nVersion: 1.0\n",
+        encoding="utf-8")
+
+
 @НУЖНА_ПЛАНКА
 def test_сбой_pip_на_окружении_до_метки_не_отнимает_его(tmp_path):
     """Находка обзора #664: .venv, собранный прежним хуком, метки не несёт, хотя
@@ -139,14 +149,10 @@ def test_сбой_pip_на_окружении_до_метки_не_отнима�
             "CLAUDE_ENV_FILE": str(env_file)}
     assert запуск(база).returncode == 0
     env_file.unlink()
+    # Прежний хук не клал ни одной метки.
     (корень / ".venv" / ".deps-installed").unlink()
-    # Установленный пакет без сети: запись dist-info — то, по чему его видит pip.
-    сайт = next((корень / ".venv" / "lib").glob("python*/site-packages"))
-    дист = сайт / "prezhnyaya_zavisimost-1.0.dist-info"
-    дист.mkdir()
-    (дист / "METADATA").write_text(
-        "Metadata-Version: 2.1\nName: prezhnyaya-zavisimost\nVersion: 1.0\n",
-        encoding="utf-8")
+    (корень / ".venv" / ".built-by-hook").unlink()
+    поставь_без_сети(корень)
     (корень / "requirements-test.txt").write_text("такого-пакета-нет-ни-где==0\n",
                                                   encoding="utf-8")
     итог = запуск({**база, **НЕТ_ИНДЕКСА})
@@ -156,13 +162,37 @@ def test_сбой_pip_на_окружении_до_метки_не_отнима�
     assert (корень / ".venv" / ".deps-installed").exists()
 
 
-def test_требует_на_ci_отказывает_а_вне_ci_пропускает(monkeypatch):
+@НУЖНА_ПЛАНКА
+def test_частичная_установка_на_своём_окружении_не_выставляет_его(tmp_path):
+    """Находка обзора #665: freeze не пуст и после ЧАСТИЧНОЙ установки на .venv
+    этого хука — исключение «до метки» ему не положено, целых зависимостей
+    там не было никогда."""
+    корень = проект(tmp_path, зависимости="такого-пакета-нет-ни-где==0\n")
+    env_file = tmp_path / "env"
+    база = {"CLAUDE_CODE_REMOTE": "true", "CLAUDE_PROJECT_DIR": str(корень),
+            "CLAUDE_ENV_FILE": str(env_file), **НЕТ_ИНДЕКСА}
+    assert "ни разу" in запуск(база).stderr
+    поставь_без_сети(корень)
+    итог = запуск(база)
+    assert "не поставлены ни разу" in итог.stderr and not env_file.exists()
+    assert not (корень / ".venv" / ".deps-installed").exists()
+
+
+def test_требует_на_ci_отказывает_а_вне_ci_пропускает(monkeypatch, tmp_path):
     """Находка обзора #664: гейт против пустого набора сам не был проверен."""
     нет = "такой-программы-нет-ни-где"
     monkeypatch.setenv("CI", "true")
     with pytest.raises(pytest.fail.Exception, match="на CI нет"):
         требует(нет)
-    assert требует(Path(sys.executable).name).args == (False,)
+    # «Заведомо найденная» программа заводится здесь же: имя интерпретатора
+    # в PATH может и не лежать (находка обзора #665).
+    каталог = tmp_path / "bin"
+    каталог.mkdir()
+    есть = каталог / "zavedomo-est"
+    есть.write_text("#!/bin/sh\n", encoding="utf-8")
+    есть.chmod(0o755)
+    monkeypatch.setenv("PATH", str(каталог))
+    assert требует("zavedomo-est").args == (False,)
     monkeypatch.delenv("CI")
     assert требует(нет).args == (True,)
 
