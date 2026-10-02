@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-02T10:36:50+00:00",
+  "generated_at": "2026-10-02T10:37:55+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -5602,10 +5602,10 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-02",
-      "answered": 215,
+      "answered": 214,
       "by_status": {
         "active": 183,
-        "not-applicable": 27,
+        "not-applicable": 26,
         "rejected": 5
       },
       "by_mechanism": {
@@ -5828,8 +5828,7 @@
         "212": "active",
         "213": "active",
         "214": "active",
-        "215": "active",
-        "216": "not-applicable"
+        "215": "active"
       },
       "holds": {
         "001": {
