@@ -87,7 +87,8 @@ number. After the style move (#670, 2 October 10:31 UTC)
 `scripts/sync_inbox.py` on 3.12 is a `SyntaxError` with exit code 1, and the
 action treats only code 2 as red: the consumer's rule sync would have gone
 silently off, by the same mechanism as the push guard. Impact — zero: the
-released v1.6.0 does not carry the style move and imports on 3.12 (checked),
+released v1.6.0 does not carry the style move and imports on 3.12 (`git archive v1.6.0 scripts`, then
+`python3.12 -c 'import sync_inbox'` — no error),
 and consumers pin tags. The window of breakage was `main` from 10:31 to 12:11
 UTC, and the very next release would have shipped it to everyone. The review
 of the fix found two more holes of the same kind in the new parsing: the
