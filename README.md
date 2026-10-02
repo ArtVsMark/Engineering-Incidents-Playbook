@@ -4,7 +4,7 @@
 
 [![Состояние: Python и версии, ОС linux / windows / mac, покрытие, выпуск и PyPI, версия](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/python.svg)](.github/workflows/python-next.yml)
 
-**Каталог из <!--m:rules-->215<!--/m:rules--> правил для Claude Code и GitHub,
+**Каталог из <!--m:rules-->216<!--/m:rules--> правил для Claude Code и GitHub,
 где каждое выросло из реальной поломки.** Работа с агентскими окнами и сводом проекта (`CLAUDE.md`),
 конвейер GitHub, параллельные исполнители, аудит. Каждая запись — с историей:
 что сломалось, как обнаружили, чем обошлось.
