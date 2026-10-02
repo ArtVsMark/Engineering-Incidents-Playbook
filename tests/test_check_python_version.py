@@ -211,3 +211,54 @@ def test_слово_python_в_комментарии_и_имени_не_вызо
 def test_настоящие_прогоны_на_планке():
     from conftest import SCRIPTS
     assert cv.мимо_планки(SCRIPTS.parent) == []
+
+
+# ── составное действие — тоже прогон (217) ────────────────────────────────
+
+def _действие(tmp_path, путь: str, шаги: str):
+    файл = tmp_path / путь
+    файл.parent.mkdir(parents=True, exist_ok=True)
+    файл.write_text("runs:\n  using: composite\n  steps:\n" + шаги, encoding="utf-8")
+    return tmp_path
+
+
+НА_ПЛАНКЕ = ("    - uses: actions/setup-python@v6\n"
+             "      with:\n        python-version: \"3.14\"\n"
+             "    - run: python \"$GITHUB_ACTION_PATH/scripts/a.py\"\n"
+             "      shell: bash\n")
+
+
+def test_корневое_действие_ниже_планки_находка(tmp_path):
+    """Замер 02.10: #647 перевёл .github/actions/ на 3.14, а корневое
+    action.yml — действие ПОТРЕБИТЕЛЕЙ — оставил на 3.12, и гейт его не читал."""
+    корень = _действие(tmp_path, "action.yml", НА_ПЛАНКЕ.replace("3.14", "3.12"))
+    найдено = cv.действия_мимо_планки(корень, (3, 14))
+    assert найдено and найдено[0].startswith("action.yml: ставит 3.12")
+
+
+def test_вложенное_действие_ниже_планки_находка(tmp_path):
+    корень = _действие(tmp_path, ".github/actions/x/action.yml",
+                       НА_ПЛАНКЕ.replace("3.14", "3.13"))
+    assert cv.действия_мимо_планки(корень, (3, 14)) == [
+        ".github/actions/x/action.yml: ставит 3.13, а pyproject.toml объявляет "
+        ">=3.14 — код каталога исполняется версией, на которой он не написан"]
+
+
+def test_действие_без_setup_python_находка(tmp_path):
+    корень = _действие(tmp_path, "action.yml",
+                       "    - run: python3 scripts/a.py\n      shell: bash\n")
+    assert any("раньше setup-python" in н
+               for н in cv.действия_мимо_планки(корень, (3, 14)))
+
+
+def test_действие_на_планке_чисто(tmp_path):
+    корень = _действие(tmp_path, "action.yml", НА_ПЛАНКЕ)
+    assert cv.действия_мимо_планки(корень, (3, 14)) == []
+
+
+def test_настоящие_действия_на_планке():
+    from conftest import SCRIPTS
+    корень = SCRIPTS.parent
+    assert len(cv.действия(корень)) >= 2
+    assert cv.действия_мимо_планки(корень, cv.floor(
+        (корень / "pyproject.toml").read_text(encoding="utf-8"))) == []

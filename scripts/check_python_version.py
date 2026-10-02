@@ -151,6 +151,51 @@ def мимо_планки(root: Path) -> list[str]:
     return out
 
 
+def действия(root: Path) -> list[Path]:
+    """Составные действия каталога: корневое и те, что в `.github/actions/`.
+
+    ДЕЙСТВИЕ — ТОЖЕ ПРОГОН, И ЧИСЛО У НЕГО СВОЁ. Оно ставит python своим
+    `setup-python` и исполняет код каталога, но в `.github/workflows/` не
+    лежит. Замер 2 октября: подъём планки (#647) перевёл действия в
+    `.github/actions/` на 3.14, а корневое `action.yml` — действие для
+    ПОТРЕБИТЕЛЕЙ — оставил на 3.12; после переезда стиля `sync_inbox.py` на
+    3.12 падает SyntaxError'ом, а действие любой код, кроме 2, считает
+    очередью, — сверка у потребителя выключилась бы молча (217)."""
+    out = [root / "action.yml"] if (root / "action.yml").exists() else []
+    return out + sorted((root / ".github" / "actions").glob("*/action.yml"))
+
+
+def действия_мимо_планки(root: Path, планка: tuple[int, int]) -> list[str]:
+    """Действие ставит версию ниже планки либо зовёт python раньше setup-python.
+
+    Шаги действия — один список, а не работы: разбор `работы()` здесь не
+    годится, и тело читается целиком."""
+    out: list[str] = []
+    for p in действия(root):
+        имя = p.relative_to(root).as_posix()
+        text = p.read_text(encoding="utf-8")
+        for m in CI_RE.finditer(text):
+            версия = (int(m.group(1)), int(m.group(2)))
+            if версия < планка:
+                out.append(
+                    f"{имя}: ставит {версия[0]}.{версия[1]}, а pyproject.toml "
+                    f"объявляет >={планка[0]}.{планка[1]} — код каталога "
+                    "исполняется версией, на которой он не написан")
+        установка = text.find("setup-python")
+        for строка_m in re.finditer(r"^.*$", text, re.M):
+            строка = строка_m.group(0).strip()
+            if строка.startswith(("#", "- name:", "name:", "- uses:", "uses:")):
+                continue
+            if ВЫЗОВ_RE.search(строка):
+                if установка < 0 or строка_m.start() < установка:
+                    out.append(
+                        f"{имя}: зовёт python раньше setup-python — код "
+                        "исполняется системным python раннера, а не версией "
+                        "планки")
+                break
+    return out
+
+
 def findings(планка: tuple[int, int], прогоны: list[tuple[str, tuple[int, int]]],
              окно: tuple[int, int],
              предварительные: list[tuple[str, tuple[int, int]]] | None = None
@@ -211,7 +256,8 @@ def main(argv: list[str] | None = None) -> int:
 
     окно = sys.version_info[:2]
     предварительные = in_workflows(args.root, preview=True)
-    найдено = findings(планка, прогоны, окно, предварительные) + мимо_планки(args.root)
+    найдено = (findings(планка, прогоны, окно, предварительные)
+              + мимо_планки(args.root) + действия_мимо_планки(args.root, планка))
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if найдено:
@@ -224,7 +270,8 @@ def main(argv: list[str] | None = None) -> int:
     вопрос = "".join(f", предварительный {a}.{b} ({имя})"
                      for имя, (a, b) in предварительные)
     print(f"версии сходятся: планка >={планка[0]}.{планка[1]}, прогонов "
-          f"{len(прогоны)}, окно {окно[0]}.{окно[1]}{вопрос}")
+          f"{len(прогоны)}, действий {len(действия(args.root))}, окно "
+          f"{окно[0]}.{окно[1]}{вопрос}")
     return 0
 
 
