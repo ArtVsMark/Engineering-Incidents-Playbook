@@ -15,7 +15,7 @@
 | `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 216 | 0 | 0 | 196 | 145 | 11 | 1 | 27 | 12 | 124 |  |
 | `Stepik-Python-Grader` | подключён | 188 | 133 | 195 | 21 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 214 | 2 | 0 | 156 | 101 | 14 | 0 | 27 | 0 | 50 |  |
-| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 1 | 0 | 183 | 94 | 9 | 0 | 59 | 21 | 91 |  |
+| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 1 | 0 | 183 | 95 | 9 | 0 | 58 | 21 | 92 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 214 | 2 | 0 | 143 | 72 | 16 | 0 | 39 | 16 | 82 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 15 | 14 | 214 | 2 | 0 | 205 | 173 | 23 | 2 | 7 | 0 | 244 |  |
 
@@ -250,7 +250,7 @@
 | `ArtVsMark` | `scripts/reauthor_deps.py` | 2 |
 | `ArtVsMark` | `scripts/stuck_prs.py` | 2 |
 | `ArtVsMark` | _остальные_ · _the rest_ | 9 механизмов по одному правилу; без названного адреса: 0 из 156 |
-| `Claude-Code_Usage-Token` | `CLAUDE.md` | 40 |
+| `Claude-Code_Usage-Token` | `CLAUDE.md` | 39 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 36 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 17 |
 | `Claude-Code_Usage-Token` | `scripts/rules_answer.py` | 17 |
@@ -277,6 +277,7 @@
 | `Claude-Code_Usage-Token` | `tests/test_subprocess_encoding.py` | 6 |
 | `Claude-Code_Usage-Token` | `.github/workflows/badges.yml` | 5 |
 | `Claude-Code_Usage-Token` | `.github/workflows/merge-queue.yml` | 5 |
+| `Claude-Code_Usage-Token` | `.github/workflows/release.yml` | 5 |
 | `Claude-Code_Usage-Token` | `HISTORY.md` | 5 |
 | `Claude-Code_Usage-Token` | `docs/roles.md` | 5 |
 | `Claude-Code_Usage-Token` | `scripts/attribution.py` | 5 |
@@ -284,7 +285,6 @@
 | `Claude-Code_Usage-Token` | `scripts/repo_links.py` | 5 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/transcripts.py` | 5 |
 | `Claude-Code_Usage-Token` | `tests/test_transcripts.py` | 5 |
-| `Claude-Code_Usage-Token` | `.github/workflows/release.yml` | 4 |
 | `Claude-Code_Usage-Token` | `.rules/proposals.json` | 4 |
 | `Claude-Code_Usage-Token` | `scripts/gh_rest.py` | 4 |
 | `Claude-Code_Usage-Token` | `scripts/release.py` | 4 |
@@ -314,7 +314,7 @@
 | `Claude-Code_Usage-Token` | `tests/test_registry.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_repo_links.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_shell_ascii.py` | 2 |
-| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 27 механизмов по одному правилу; без названного адреса: 0 из 162 |
+| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 28 механизмов по одному правилу; без названного адреса: 0 из 162 |
 | `Glossary-Python` | `.github/workflows/ci.yml` | 17 |
 | `Glossary-Python` | `CLAUDE.md` | 17 |
 | `Glossary-Python` | `docs/architecture.md` | 9 |

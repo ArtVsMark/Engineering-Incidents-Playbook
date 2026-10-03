@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-02T14:49:34+00:00",
+  "generated_at": "2026-10-03T11:50:19+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,7 +9,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-02",
+      "read_at": "2026-10-03",
       "answered": 216,
       "by_status": {
         "active": 196,
@@ -2016,7 +2016,7 @@
       "schema": "1.2",
       "answers_to": "1.5",
       "state": "подключён",
-      "read_at": "2026-10-02",
+      "read_at": "2026-10-03",
       "answered": 195,
       "by_status": {
         "active": 192,
@@ -3967,7 +3967,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-02",
+      "read_at": "2026-10-03",
       "answered": 214,
       "by_status": {
         "active": 156,
@@ -5611,7 +5611,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-02",
+      "read_at": "2026-10-03",
       "answered": 215,
       "by_status": {
         "active": 183,
@@ -5619,8 +5619,8 @@
         "rejected": 5
       },
       "by_mechanism": {
-        "document": 59,
-        "gate": 94,
+        "gate": 95,
+        "document": 58,
         "none": 21,
         "pipeline": 9
       },
@@ -5843,9 +5843,9 @@
       },
       "holds": {
         "001": {
-          "mechanism": "document",
-          "where": "CLAUDE.md § «Работа с GitHub» и scripts/gh_rest.py — единственный транспорт, REST. Следствие названо вслух: авто-мержа площадки нет и не будет, он включается только GraphQL-мутацией enablePullRequestAutoMerge, поэтому очередь мержит сама. СВЕРКА 2026-10-02 (#139, дефекты кода — #151): названное не краснеет — механизм document, а не gate.",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/gh_rest.py — единственный транспорт: REST по умолчанию, GraphQL только через graphql() и только операции из закрытого списка ГРАФQL_ОПЕРАЦИИ, каждая с причиной. Сейчас в списке одна пара — авто-мерж площадки (enablePullRequestAutoMerge и обратная), у REST его нет вовсе: решение владельца 2 октября (#165). Держит tests/test_gh_rest.py: операция вне списка отвергается ДО обращения к площадке, ошибка GraphQL с кодом 200 — отказ, адрес /graphql вне транспорта и «gh api graphql» в прогонах — находка, urllib импортирует только транспорт. ГРАНИЦА названа: второй транспорт — gh CLI в .github/workflows/release.yml (gh release view/edit/upload/create), он ходит по REST и GraphQL не шлёт; внешние действия каталога в прогонах этим тестом не видны.",
+          "holdable": "",
           "awaiting": "",
           "analysed": "2026-10-02",
           "decided": "2026-10-02",
@@ -7499,7 +7499,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-02",
+      "read_at": "2026-10-03",
       "answered": 214,
       "by_status": {
         "active": 143,
@@ -9025,7 +9025,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-02",
+      "read_at": "2026-10-03",
       "answered": 214,
       "by_status": {
         "active": 205,
