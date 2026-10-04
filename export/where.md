@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 29 | 18 | 214 | 2 | 0 | 156 | 101 | 14 | 0 | 27 | 0 | 50 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 1 | 0 | 183 | 95 | 9 | 0 | 58 | 21 | 92 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 214 | 2 | 0 | 143 | 72 | 16 | 0 | 39 | 16 | 82 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 15 | 14 | 214 | 2 | 0 | 205 | 173 | 23 | 2 | 7 | 0 | 244 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 15 | 14 | 214 | 2 | 0 | 205 | 174 | 24 | 2 | 5 | 0 | 245 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -414,6 +414,7 @@
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/rules-inbox.yml` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/schedules.json` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `claude.yml` | 4 |
+| `Engineering-Pipeline-Mechanisms` | `docs/agent/roles.md` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/002-review-taken-from-two-neighbours.md` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/changerefs.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_rule_links.py` | 4 |
@@ -426,7 +427,6 @@
 | `Engineering-Pipeline-Mechanisms` | `.rules/proposals.json` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/protection.json` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/showcase.json` | 3 |
-| `Engineering-Pipeline-Mechanisms` | `docs/agent/roles.md` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `docs/decisions/001-attribution-of-merged-1.md` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/arm.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_derived_refs.py` | 3 |
@@ -441,6 +441,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_outcomes_run.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_pipeline_checks.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_platform_shape.py` | 3 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_rulebook_fresh.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_third_outcome.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/automerge.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/leniency.json` | 2 |
@@ -462,6 +463,7 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_env.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_new_is_tested.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_own_name.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/check_rulebook_fresh.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_window_lifetime.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/contract.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/items.py` | 2 |
@@ -487,11 +489,11 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_protection.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_push_guard.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_release.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `tests/test_rulebook_fresh.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_roles.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_steps_speak_outward.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_window_preflight.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 115 механизмов по одному правилу; без названного адреса: 0 из 205 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 114 механизмов по одному правилу; без названного адреса: 0 из 205 |
 
 ## Правила · Rules
 
