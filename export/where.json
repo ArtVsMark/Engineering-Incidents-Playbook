@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-04T12:32:17+00:00",
+  "generated_at": "2026-10-05T14:24:32+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,7 +9,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-04",
+      "read_at": "2026-10-05",
       "answered": 216,
       "by_status": {
         "active": 196,
@@ -2016,7 +2016,7 @@
       "schema": "1.2",
       "answers_to": "1.5",
       "state": "подключён",
-      "read_at": "2026-10-04",
+      "read_at": "2026-10-05",
       "answered": 195,
       "by_status": {
         "active": 192,
@@ -3967,7 +3967,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-04",
+      "read_at": "2026-10-05",
       "answered": 214,
       "by_status": {
         "active": 156,
@@ -5611,7 +5611,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-04",
+      "read_at": "2026-10-05",
       "answered": 215,
       "by_status": {
         "active": 183,
@@ -7499,7 +7499,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-04",
+      "read_at": "2026-10-05",
       "answered": 214,
       "by_status": {
         "active": 143,
@@ -8198,10 +8198,10 @@
         },
         "089": {
           "mechanism": "document",
-          "where": "README.md — ссылки ведут из витрины в источник (каталог правил, документация Python), обратных ссылок из источника в копию нет",
+          "where": "README.md и docs/architecture.md — оригинал с #76 здесь (data/cards/), копия — выгрузка у грейдера; ссылок из данных, кода и витрины на копию нет, наружу ведёт только docs_url на документацию Python, полнота меряется по самому Python (glossary completeness)",
           "holdable": "no",
           "awaiting": "",
-          "analysed": "2026-10-02",
+          "analysed": "2026-10-05",
           "decided": "",
           "skill": ""
         },
@@ -8225,10 +8225,10 @@
         },
         "096": {
           "mechanism": "document",
-          "where": "docs/architecture.md — данные глоссария и производная витрина разведены по жизненному циклу: источник правится, витрина пересобирается",
+          "where": "docs/architecture.md — три вида данных с разной жизнью разведены по файлам: карточки data/cards/ правятся руками, data/glossary.json и витрина пересобираются (glossary assemble, glossary build) и сверяются в CI",
           "holdable": "no",
           "awaiting": "",
-          "analysed": "2026-10-02",
+          "analysed": "2026-10-05",
           "decided": "",
           "skill": ""
         },
@@ -8252,10 +8252,10 @@
         },
         "099": {
           "mechanism": "none",
-          "where": "data/glossary.json",
+          "where": "src/glossary/validation.py — правило section-size",
           "holdable": "no",
           "awaiting": "",
-          "analysed": "2026-10-02",
+          "analysed": "2026-10-05",
           "decided": "",
           "skill": ""
         },
@@ -8333,7 +8333,7 @@
         },
         "118": {
           "mechanism": "gate",
-          "where": "tests/test_data_integrity.py — производная витрина хранится рядом с источником data/glossary.json, и тест не даёт им разойтись",
+          "where": "tests/test_cards.py и tests/test_data_integrity.py — производные data/glossary.json и витрина хранятся рядом со своим исходником data/cards/ и пересобираются локально (glossary assemble, glossary build); оба теста, отмеченные live_surface, не дают им разойтись",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -8378,7 +8378,7 @@
         },
         "125": {
           "mechanism": "gate",
-          "where": "tests/test_data_integrity.py — генератор витрины читает только data/glossary.json; тест test_showcase_matches_data не даёт производному стать источником",
+          "where": "src/glossary/cards.py и tests/test_cards.py — сборка читает только data/cards/ и никогда не data/glossary.json, генератор витрины читает только data/glossary.json; assemble --check и test_showcase_matches_data в CI не дают производному стать источником",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -8882,19 +8882,19 @@
         },
         "200": {
           "mechanism": "document",
-          "where": "scripts/facts.py — у каждого значка названо событие, при котором он покажет другое: карточек — импорт, правил без механизма — построенный механизм, замечаний — правка источника, покрытия и полноты — пороги GOOD_COVERAGE и GOOD_COMPLETENESS, выпуска и версии — тег и принятое изменение",
+          "where": "scripts/facts.py — у каждого значка названо событие, при котором он покажет другое: карточек — новая карточка в data/cards/, правил без механизма — построенный механизм, замечаний — правка карточки, покрытия и полноты — пороги GOOD_COVERAGE и GOOD_COMPLETENESS, выпуска и версии — тег и принятое изменение",
           "holdable": "no",
           "awaiting": "",
-          "analysed": "2026-10-02",
+          "analysed": "2026-10-05",
           "decided": "2026-10-02",
           "skill": ""
         },
         "201": {
           "mechanism": "pipeline",
-          "where": ".github/workflows/badges.yml — objections.json публикует у каждой находки не только имя правила, но и его букву: message, уровень и область. Источник карточек отвечает по тексту замечания, а не по названию правила",
+          "where": ".github/workflows/badges.yml — objections.json публикует у каждой находки не только имя правила, но и его букву: message, уровень и область. Отвечает по нему окно, разбирающее очередь эпика #79, — машинный потребитель, который откроет файл правила лишь отдельным решением",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-02",
+          "analysed": "2026-10-05",
           "decided": "2026-10-02",
           "skill": ""
         },
@@ -9025,16 +9025,16 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-04",
-      "answered": 214,
+      "read_at": "2026-10-05",
+      "answered": 216,
       "by_status": {
-        "active": 205,
-        "not-applicable": 9
+        "active": 208,
+        "not-applicable": 8
       },
       "by_mechanism": {
-        "gate": 174,
-        "pipeline": 24,
-        "document": 5,
+        "gate": 177,
+        "pipeline": 25,
+        "document": 4,
         "skill": 2
       },
       "rules": {
@@ -9230,7 +9230,7 @@
         "191": "active",
         "192": "active",
         "193": "active",
-        "194": "not-applicable",
+        "194": "active",
         "195": "active",
         "196": "active",
         "197": "active",
@@ -9251,7 +9251,9 @@
         "212": "active",
         "213": "active",
         "214": "active",
-        "215": "active"
+        "215": "active",
+        "216": "active",
+        "217": "active"
       },
       "holds": {
         "001": {
@@ -10919,6 +10921,15 @@
           "decided": "2026-09-26",
           "skill": ""
         },
+        "194": {
+          "mechanism": "pipeline",
+          "where": "scripts/check_facts_schema.py::pinned_on_trunk — sha в адресе схемы витрины признаётся её коммитом только по ответу `compare <sha>...main` её же истории: коммит из форка той же сети — отказ (tests/test_check_facts_schema.py::test_the_pinned_commit_is_asked_about_and_a_foreign_one_is_rejected, tests/test_check_facts_schema.py::test_on_trunk_reads_the_compare_answer); scripts/drift.py::pin_mislabelled — хеш действия с пометкой-тегом сверяется `compare/<хеш>...<тег>` в репозитории самого действия, а не равенством строк (tests/test_drift.py::test_a_hash_that_left_its_label_is_named)",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-05",
+          "decided": "2026-10-05",
+          "skill": ""
+        },
         "195": {
           "mechanism": "skill",
           "where": ".claude/skills/build-a-gate — шаг 2 «ПРОЧИТАТЬ названное поимённо, а не только сосчитать» и его последний абзац «Сужение называет соседа» (абзац, а не отдельный шаг: искавший по нумерации его не найдёт): что осталось за границей и почему — в докстроку, а не в память. Шаг появился из замера 18.09.2026, где предикат оказывался шире предмета ЧЕТЫРЕЖДЫ за смену при правдоподобном числе каждый раз. Исполнение замерено по дереву: объявленных сужений 19, причину в своём абзаце называют 19 — последнему — списку отвергнутых написаний в tests/test_new_is_tested.py — причина дописана этим же изменением. Гейтом это не держится, и причина замерена, а не предположена: чтобы потребовать причину, надо сперва отличить СУЖЕНИЕ от СЛОВАРЯ понятий, а по дереву это неразличимо — наборов, по которым спрашивают принадлежность, 50, и 39 из них перечисляют виды предмета (MECHANISMS, ROLES, STATUSES, SUFFIXES), а не исключения из него. Отбирать сужения по словам в имени значило бы угадать список (057, 068). Соседнюю половину — «починка соседей не оставляет», гейты идут по всему дереву сразу — держит tests/test_source_hygiene.py",
@@ -11091,12 +11102,30 @@
           "skill": ""
         },
         "215": {
-          "mechanism": "document",
-          "where": "Держится по частям, и каждая названа. Тело изменения не пересказывается, а собирается из тел коммитов: scripts/agent_pr.py::describe_from — одна сборка на открытие и на гейт разметки scripts/check_pr_meta.py, и строка «Закрывает пункт» сверяется с пунктом задачи: после приведения changerefs.normalise, по всему тексту пункта либо по его заголовку (scripts/items.py::names_of). Счёт «Правил на документах» сверяется с деревом в форме следа, а не каждой записи: хотя бы одна запись журнала обязана назвать нынешний счёт (tests/test_counted_numbers.py::test_the_last_move_is_written_down), и прошлые записи о своих днях законно говорят иное — запись со счётом, разошедшимся с деревом, гейт не видит, пока рядом есть верная. Остальной пересказ — числа, перечни и «что тронуто» во фрагменте, теле и поле why — держит приём, записанный в роде находок «пересказ своей работы не сверен с источником» (.rules/finding-kinds.json): перед фрагментом — git diff --stat origin/main и реестр по отпечатку, у перечня с каноном — ссылка, у числа — датированный замер с командой",
+          "mechanism": "gate",
+          "where": "scripts/check_journal.py — шаг журнала сверяет шапку фрагмента internal «Потребителю безразлично: …» с составом изменения: путь, названный в шапке (header_paths), которого изменение не трогает, — отказ (stray_in_header); тронутый механизм scripts/, не названный шапкой, — предупреждение (unnamed_mechanisms, 051: правка докстроки законно описывается словами). Держит tests/test_journal_fragments.py, обе половины. Остальной пересказ — тело коммита, перечни, числа, поле why — держит навык .claude/skills/retell-from-the-source: состав по git diff --stat, находка по реестру, число командой с закреплённым концом, пересказ заново после самоправки. Прежние части держатся как держались: тело изменения собирается из тел коммитов (scripts/agent_pr.py::describe_from), «Закрывает пункт» сверяется с пунктом задачи (scripts/items.py::names_of), счёт «Правил на документах» — tests/test_counted_numbers.py::test_the_last_move_is_written_down",
           "holdable": "conditional",
-          "awaiting": "решение владельца в ArtVsMark/Engineering-Pipeline-Mechanisms#1010 и предмет варианта 1 — шапка «Потребителю безразлично» фрагментов internal. Шапку несёт каждый фрагмент internal — это требует сборщик журнала (scripts/build_changelog.py отвергает internal без причины первой строкой), — поэтому сверять шапку с составом изменения есть на чём. Число фрагментов растёт с каждым изменением и потому дано следом замера, а не утверждением о сегодня (210): на общей ветке 214bcca 01.10.2026 команда git ls-tree -r --name-only 214bcca changelog.d | grep -c '\\.internal\\.md$' даёт 83, из них до выпуска 29",
-          "analysed": "2026-10-01",
+          "awaiting": "",
+          "analysed": "2026-10-04",
           "decided": "2026-10-01",
+          "skill": ".claude/skills/retell-from-the-source"
+        },
+        "216": {
+          "mechanism": "gate",
+          "where": "scripts/preflight.py::source_line и code_origin — первой строкой отчёта предполётная печатает, откуда ШАГИ импортируют транспорт: спрошено у их же среды (окружение шагов и их корень), а не выведено из корня; хозяина модуля называет сам git (owning_tree: rev-parse --show-toplevel из каталога модуля), и вложенное рабочее дерево — чужое; отказ git, кроме «не дерево», — не предупреждение, а названное незнание (test_a_refusal_of_git_is_not_a_warning); модуль чужого дерева — предупреждение с обоими путями и с тем, какие шаги правку видят (типы через mypy_path, линтер), обычная установка (site-packages) — молча. Держит tests/test_window_preflight.py::test_the_source_line_warns_only_on_another_tree (обе половины), test_the_origin_is_asked_of_the_steps_environment и test_the_source_is_the_first_line_of_the_report. Документ окна — docs/agent/behaviour.md, раздел «Рабочее дерево проверяет не всё»: правку packages/transport в рабочем дереве читают только шаги по исходникам (типы, линтер), а импортирующие шаги и набор — в дереве, откуда стоит пакет",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-05",
+          "decided": "2026-10-05",
+          "skill": ""
+        },
+        "217": {
+          "mechanism": "gate",
+          "where": "tests/test_py_style.py — стиль кода выводится из requires-python через check_env.python_floor; tests/test_declared_versions.py — каждая версия языка, вписанная рукой, равна планке; tests/test_python_after_setup.py — ни одна работа прогона не зовёт python или pip раньше actions/setup-python; .claude/hooks/push_guard.sh — страж толчка зовётся интерпретатором планки, а без него закрывает толчок кодом 2 (tests/test_push_guard.py::test_without_the_floor_interpreter_a_push_is_refused); .claude/hooks/session-start.sh собирает .venv на планке (tests/test_session_start.py)",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-05",
+          "decided": "2026-10-05",
           "skill": ""
         }
       },
