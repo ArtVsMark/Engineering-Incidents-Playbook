@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-07T20:51:44+00:00",
+  "generated_at": "2026-10-07T21:17:05+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.7",
@@ -10046,6 +10046,14 @@
         {
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "issue": "1454"
+        },
+        {
+          "repo": "ArtVsMark/Glossary-Python",
+          "issue": "76"
+        },
+        {
+          "repo": "ArtVsMark/Glossary-Python",
+          "doc": "scripts/check_examples.py"
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
@@ -11024,6 +11032,10 @@
         "en": "rules/en/211-a-mechanism-is-alive-only-if-a-working-path-reaches-it.md"
       },
       "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1553"
+        },
         {
           "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "doc": "scripts/runs_series.py"
