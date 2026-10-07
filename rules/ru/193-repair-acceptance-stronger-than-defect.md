@@ -80,8 +80,11 @@
 
 ## След
 
-ArtVsMark/Stepik-Python-Grader#1454 — разбор и ручная починка;
-`scripts/check_glossary_examples.py`
+ArtVsMark/Stepik-Python-Grader#1454 — разбор и ручная починка.
+
+ArtVsMark/Glossary-Python — `scripts/check_examples.py`: носитель с 05.10, когда
+содержание глоссария переехало к Glossary-Python (ArtVsMark/Glossary-Python#76);
+примеры исполняются по блокам, и падение обязано быть названо в примере.
 
 Смежное: [146](146-a-green-gate-does-not-verify-its-premise.md) — зелёная
 проверка подтверждает себя; здесь она подтверждала синтаксис, а спрашивали о
