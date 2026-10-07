@@ -1013,3 +1013,25 @@ def test_счёт_называет_кто_держит_навыком_плаги
                in с for с in строки)
     assert not any("навыком плагина" in с
                    for с in ab.census([срез_с_навыком(".claude/skills/x")], ["001"]))
+
+
+# ── происхождение механизма в сводке (сводка 1.6, #701) ───────────────────
+
+def test_держание_выгружает_происхождение():
+    rec = {"status": "active", "mechanism": "gate", "where": "scripts/x.py",
+           "origin": "o/r:scripts/x.py@v1", "origin_kind": "adapted"}
+    h = ab.держание(rec)
+    assert h["origin"] == "o/r:scripts/x.py@v1" and h["origin_kind"] == "adapted"
+    assert ab.держание({"status": "active", "mechanism": "gate"})["origin"] == ""
+
+
+def test_происхождение_потребителя_сверяется_тем_же_разбором():
+    """Свой ответ и чужие сверяются одной функцией (214): находка называет
+    потребителя и правило, прогон от неё не краснеет."""
+    срез = {"repo": "o/r", "holds": {
+        "001": {"mechanism": "gate", "origin": "o/r:a.py@v1", "origin_kind": "called"},
+        "002": {"mechanism": "gate", "origin": "o/r:a.py@v1"},
+        "003": {"mechanism": "none", "origin": "o/r:a.py@v1", "origin_kind": "copied"},
+    }}
+    найдено = ab.происхождение_неверно(срез)
+    assert [н.split(" — ")[0] for н in найдено] == ["o/r: 002", "o/r: 003"]

@@ -1473,3 +1473,33 @@ def test_на_законных_формах_сужение_не_покупает
     assert bool(cb.БЛОЧНЫЙ_RE.match(форма)) == bool(УЗКИЙ.match(форма)), (
         f"{форма}: ширины разошлись — значит сужение что-то меняет, и довод "
         "«не покупает ничего» неверен")
+
+
+# ── происхождение механизма: origin и origin_kind (контракт 1.8, #701) ────
+
+ИСТОЧНИК = "ArtVsMark/Engineering-Pipeline-Mechanisms:scripts/check_orphans.py@v2.3.0"
+
+
+@pytest.mark.parametrize("rec", [
+    {"mechanism": "gate"},
+    {"mechanism": "gate", "origin": ИСТОЧНИК, "origin_kind": "adapted"},
+    {"mechanism": "pipeline", "origin": ИСТОЧНИК, "origin_kind": "called"},
+    {"mechanism": "skill", "origin": "o/r:.claude/skills/x@0123abc", "origin_kind": "copied"},
+])
+def test_происхождение_по_форме_пропускается(rec):
+    assert cb.происхождение(rec) is None
+
+
+@pytest.mark.parametrize("rec, слово", [
+    ({"mechanism": "gate", "origin": ИСТОЧНИК}, "без `origin_kind`"),
+    ({"mechanism": "gate", "origin_kind": "copied"}, "без `origin`"),
+    ({"mechanism": "gate", "origin": ИСТОЧНИК, "origin_kind": "borrowed"}, "такого слова нет"),
+    ({"mechanism": "gate", "origin": "взят у соседа", "origin_kind": "copied"}, "не адрес"),
+    ({"mechanism": "gate", "origin": "o/r:path", "origin_kind": "copied"}, "не адрес"),
+    ({"mechanism": "none", "origin": ИСТОЧНИК, "origin_kind": "copied"}, "при механизме `none`"),
+    ({"origin": ИСТОЧНИК, "origin_kind": "copied"}, "при механизме `none`"),
+])
+def test_происхождение_не_по_форме_отвергается(rec, слово):
+    """Приёмка #701: без origin_kind, неразрешимый адрес, origin при none."""
+    что = cb.происхождение(rec)
+    assert что is not None and слово in что
