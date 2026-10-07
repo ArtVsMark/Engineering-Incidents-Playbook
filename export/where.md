@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 29 | 18 | 214 | 2 | 0 | 156 | 101 | 14 | 0 | 27 | 0 | 50 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 1 | 0 | 183 | 95 | 9 | 0 | 58 | 21 | 92 |  |
 | `Glossary-Python` | подключён | 0 | 0 | 214 | 2 | 0 | 143 | 72 | 16 | 0 | 39 | 16 | 84 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 15 | 14 | 216 | 0 | 0 | 208 | 177 | 25 | 2 | 4 | 0 | 249 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 15 | 14 | 216 | 0 | 0 | 208 | 177 | 25 | 2 | 4 | 0 | 250 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -389,7 +389,6 @@
 | `Engineering-Pipeline-Mechanisms` | `packages/transport/ghrest.py` | 8 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/main_red.py` | 8 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_facts.py` | 8 |
-| `Engineering-Pipeline-Mechanisms` | `.github/workflows/agent-pr.yml` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `facts.json` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/build_changelog.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_pr_meta.py` | 7 |
@@ -401,6 +400,7 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/debt.py` | 6 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/work_plan.py` | 6 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_automerge.py` | 6 |
+| `Engineering-Pipeline-Mechanisms` | `.github/workflows/agent-pr.yml` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `docs/dev/directions.md` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `docs/use/pipeline.md` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_required_context.py` | 5 |
@@ -450,6 +450,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_third_outcome.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_window_preflight.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/automerge.yml` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `.github/workflows/step-agent-pr.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/leniency.json` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/outcomes.json` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/rerun.json` | 2 |
