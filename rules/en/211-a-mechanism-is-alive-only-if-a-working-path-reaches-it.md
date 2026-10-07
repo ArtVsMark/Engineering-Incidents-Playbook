@@ -67,23 +67,33 @@ half the orphans hid behind someone else's name. The measurement is still one
 level deep: a name called only by an orphan does not show up in it. Twelve is
 a lower bound, not a count.
 
-**Second incident: there is a path, but not the one the change takes** (the
-grader, ArtVsMark/Stepik-Python-Grader#1553; a project proposal admitted as a
-second incident). The agent's signature in commit trailers was checked by
-exactly one gate — the merge-readiness check run before a MANUAL merge. The
-agent's changes reach the shared branch another way: an `agent/` branch gets a
-change opened in the owner's name and auto-merge, and nobody calls the
-readiness check. The pre-push gate did not check trailers, and in a cloud clone
-its hook is not installed at all. On 1 October the window's model changed, and
-the environment began suggesting the trailer "Claude Opus 5.5" instead of the
-agreed "Claude Opus 5": the readiness gate rejects that line, but it is never
-reached, and the trailer would have gone into the shared branch on squash
-irreversibly. The owner noticed it with a question in the window — before the
-first commit. The mechanism was alive for one path and dead for the one the
-work took: the working path here is the path of the change itself, and when
-there is more than one merge path it is asked about by name. The fix made the
-check a step of the `ci` run on every change — on the segment both paths
-share.
+**Second incident — a near miss: there is a path, but not the one the change
+takes** (the grader, ArtVsMark/Stepik-Python-Grader#1553; a project proposal
+admitted as a second incident). The agent's signature in commit trailers was
+checked by exactly one gate — the merge-readiness check run before a MANUAL
+merge. The agent's changes reach the shared branch another way: an `agent/`
+branch gets a change opened in the owner's name and auto-merge, and nobody
+calls the readiness check. The pre-push gate did not check trailers, and in a
+cloud clone its hook is not installed at all. On 1 October the window's model
+changed, and the environment began suggesting the trailer "Claude Opus 5.5"
+instead of the grader's agreed "Claude Opus 5" (its `.claude/settings.json`,
+`attribution.commit`; the catalogue's own list, `.github/authors.txt`, allows
+both, and the check here is the grader's). The readiness gate rejects that line,
+but it is never reached. **No commit with a wrong signature reached the shared
+branch**: the owner noticed the suggestion with a question in the window before
+the first commit. This is a near miss — it shows where the mechanism was dead,
+but measured no cost, and it strengthens the rule rather than proving it.
+
+The subject is the same as the first incident's: the mechanism was alive for
+one path and dead for the one the work took. Hence the checkable form of the
+question when there are several merge paths: **the paths are listed by name —
+manual merge, auto-merge, queue — and for each it is stated whether it passes
+the gate**; whether the gate covers ALL of them shows in whether it sits on the
+shared segment — a required check of the run. The grader's fix
+(ArtVsMark/Stepik-Python-Grader#1555, `8dbb727`, 1 October): trailer checking
+became a step of `ci.yml` on every change, and merging is held by the required
+`ci-complete`. Checked by reading the grader's tree; this record has no red run
+on an agent change with a wrong signature.
 
 ## Why
 
@@ -148,6 +158,8 @@ and nothing by the name says why no working path reaches it.
 ArtVsMark/Engineering-Pipeline-Mechanisms — `scripts/runs_series.py`
 
 ArtVsMark/Stepik-Python-Grader#1553
+
+ArtVsMark/Stepik-Python-Grader#1555
 
 See also: [145](145-every-declared-outcome-is-run.md) — every outcome is run,
 while here no path reaches the mechanism;
