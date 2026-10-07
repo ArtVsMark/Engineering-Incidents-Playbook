@@ -86,8 +86,12 @@ the defect, and the accepted share is high while the diff is unread.
 
 ## Trace
 
-ArtVsMark/Stepik-Python-Grader#1454 — the analysis and manual repair;
-`scripts/check_glossary_examples.py`
+ArtVsMark/Stepik-Python-Grader#1454 — the analysis and manual repair.
+
+ArtVsMark/Glossary-Python — `scripts/check_examples.py`: the carrier since 5
+October, when glossary content moved to Glossary-Python
+(ArtVsMark/Glossary-Python#76); examples run block by block, and a failure must
+be named in the example.
 
 Related: [146](146-a-green-gate-does-not-verify-its-premise.md) — a green check
 confirms itself; here it confirmed syntax while the question was about meaning;
