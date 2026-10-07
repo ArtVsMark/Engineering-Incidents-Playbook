@@ -4,7 +4,7 @@
 
 [![Status: Python and versions, OS linux / windows / mac, coverage, release and PyPI, version](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/python.svg)](.github/workflows/python-next.yml)
 
-**A catalogue of <!--m:rules-->216<!--/m:rules--> rules for Claude Code and GitHub,
+**A catalogue of <!--m:rules-->217<!--/m:rules--> rules for Claude Code and GitHub,
 where every one grew out of a real failure.** Agent sessions and the project rulebook (`CLAUDE.md`), the
 GitHub delivery pipeline, parallel executors, audits. Every record comes with its
 history: what broke, how it surfaced, what it cost.
