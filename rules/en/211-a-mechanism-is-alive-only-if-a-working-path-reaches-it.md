@@ -86,14 +86,23 @@ but measured no cost, and it strengthens the rule rather than proving it.
 
 The subject is the same as the first incident's: the mechanism was alive for
 one path and dead for the one the work took. Hence the checkable form of the
-question when there are several merge paths: **the paths are listed by name —
-manual merge, auto-merge, queue — and for each it is stated whether it passes
-the gate**; whether the gate covers ALL of them shows in whether it sits on the
-shared segment — a required check of the run. The grader's fix
-(ArtVsMark/Stepik-Python-Grader#1555, `8dbb727`, 1 October): trailer checking
-became a step of `ci.yml` on every change, and merging is held by the required
-`ci-complete`. Checked by reading the grader's tree; this record has no red run
-on an agent change with a wrong signature.
+question when there are several merge paths: **the paths are listed by name,
+and for each it is stated whether it passes the gate**. The list comes not
+from memory but from what holds merging: GitHub lets manual merge, auto-merge
+and the queue into a protected branch only through the required checks of its
+protection, so the gate covers ALL paths when the chain from it to a required
+check is named link by link in the tree. In the grader at `4182859`
+(7 October) the chain is: the signature step sits in the `docs-guardrails`
+job (`.github/workflows/ci.yml`), the job is in `PLAIN_JOBS`
+(`scripts/check_branch_protection.py`), from which `scripts/ci_aggregate.py`
+builds the set behind the `ci-complete` verdict, and
+`EXPECTED_CHECKS = ("ci-complete",)` declares it the only required check. The
+protection setting itself is not in the tree; `check_branch_protection.py`
+compares it. The grader change is ArtVsMark/Stepik-Python-Grader#1555,
+`8dbb727`, 1 October. **This is changed, not proven fixed:** the path was
+read, and this record has no run where an agent change with a wrong signature
+turned red. By this same rule liveness is shown by a working path, not by
+reading, so the record claims only how the chain is built.
 
 ## Why
 
