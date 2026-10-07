@@ -18,8 +18,8 @@ by subtracting from the source.
 
 ## The incident
 
-**The mechanisms project, 6–7 October: five hits in three external reviews of
-one place** (ArtVsMark/Engineering-Pipeline-Mechanisms#1183, #1189, #1195). The
+**The mechanisms project, 6–7 October: three external reviews and eight fix
+commits to one place** (ArtVsMark/Engineering-Pipeline-Mechanisms#1183, #1189, #1195). The
 onboarding pass (`scripts/onboard.py::calling_part`) builds a consumer's calling
 workflow template: it removes the supplier's own jobs, keeps the job that calls
 the shared step and strips that job's `needs`.
@@ -36,8 +36,8 @@ the shared step and strips that job's `needs`.
    and not carried over: the call would never run. And `needs` on ANOTHER call
    job was stripped along with the rest — two calls silently lost their order.
 
-**The cost.** Three review passes of ~10 minutes each and three fixes to one
-place. Every template parsed as YAML and passed the shape tests. None of the
+**The cost.** Three review passes (by the project's estimate, about 10 minutes
+each) and the eight commits listed above, to one place. Every template parsed as YAML and passed the shape tests. None of the
 errors would have turned red at the consumer: the step would simply not run, or
 run at the wrong time.
 
@@ -70,9 +70,14 @@ which means never right away.
   conditions, event filters, artifact names, ordering;
 - for each item — carry it over or refuse with a stated reason; there is no
   silent "went along with it";
-- only what leads to the removed element is removed; an expression referring to
-  it, and a status function with its dependency removed, is a refusal, not a
-  quiet edit;
+- **carry over** what stood on the removed element but does not need it: a
+  filter on waking events, ordering relative to REMAINING jobs, a condition that
+  does not refer to the removed element;
+- **refuse with a reason** what has no meaning without it: an expression
+  referring to the removed element (`needs.<removed>`, its artifact's name), a
+  status function (`failure()`, `success()`) with its dependency removed. Such
+  things are not quietly rewritten or dropped along with it — the mechanism
+  says it cannot build the result, and why;
 - the test suite checks the list with "stood on the removed element" cases, not
   only the shape of the result;
 - there is no general gate and none is promised: what stood on the removed
