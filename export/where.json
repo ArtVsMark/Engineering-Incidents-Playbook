@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-07T21:30:38+00:00",
+  "generated_at": "2026-10-07T22:06:12+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -7507,10 +7507,10 @@
         "not-applicable": 70
       },
       "by_mechanism": {
-        "gate": 82,
+        "gate": 83,
         "pipeline": 16,
         "document": 44,
-        "none": 4
+        "none": 3
       },
       "rules": {
         "001": "active",
@@ -7930,12 +7930,12 @@
           "skill": ""
         },
         "032": {
-          "mechanism": "none",
-          "where": "docs/architecture.md",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/check_showcase_runs.py, шаг «Витрина открывается в браузере» задания данных в .github/workflows/ci.yml — вывод о том, что витрина работает, делается запуском: безголовый Chrome раннера исполняет её сценарий (--dump-dom), и по DOM сверяются два сценария читателя — счётчик показывает все карточки сборки, и переход по якорю к карточке за пределами первой порции её отрисовывает. Браузера нет — третий исход, шаг краснеет. Набор tests/test_check_showcase_runs.py: подделки разбора DOM и живая половина, в том числе страница, падающая на первой строке сценария. Новой зависимости нет: браузер раннера, без Playwright. ГРАНИЦА: нажатия и ввод (поиск, фильтры, тема) --dump-dom не порождает — это ручная половина, названная в README § «Статус»",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-02",
-          "decided": "",
+          "analysed": "2026-10-07",
+          "decided": "2026-10-07",
           "skill": ""
         },
         "035": {
