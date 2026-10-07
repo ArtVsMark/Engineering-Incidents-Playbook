@@ -104,6 +104,7 @@ HEADER_RE = re.compile(r"^\|\s*-{3,}")
 RULE_PATH_RE = re.compile(r"^rules/ru/\d{3}-[a-z0-9-]+\.md$")
 #: Строка «Область» разбирается там, где её разбирает указатель каталога (214).
 from build_rules_index import AREA_RE as _AREA_RE  # noqa: E402
+from build_rules_index import день_utc  # noqa: E402
 AREA_RE = _AREA_RE["ru"]
 #: Ячейка «Ключевое» со ссылкой — см. заголовок: строка сверяется по дереву,
 #: в котором сама и лежит.
@@ -268,11 +269,12 @@ MONTHS = ("января", "февраля", "марта", "апреля", "ма�
 
 def tag_date(root: Path, tag: str) -> tuple[str, str]:
     """Дата тега словами. Ошибка возвращается строкой, а не трассировкой."""
-    done = subprocess.run(["git", "-C", str(root), "log", "-1", "--format=%cs",
+    done = subprocess.run(["git", "-C", str(root), "log", "-1", "--format=%cI",
                            tag], capture_output=True, text=True, encoding="utf-8")
     if done.returncode != 0 or not done.stdout.strip():
         return "", f"у тега {tag} не спросить дату: {done.stderr.strip()}"
-    year, month, day = done.stdout.strip().split("-")
+    # В UTC, как дата появления правила: пояс коммита — пояс машины (#706).
+    year, month, day = день_utc(done.stdout.strip()).split("-")
     return f"{int(day)} {MONTHS[int(month) - 1]} {year}", ""
 
 
