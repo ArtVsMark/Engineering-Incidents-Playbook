@@ -90,8 +90,7 @@ ArtVsMark/Stepik-Python-Grader#1454 — the analysis and manual repair.
 
 ArtVsMark/Glossary-Python — `scripts/check_examples.py`: the carrier since 5
 October, when glossary content moved to Glossary-Python
-(ArtVsMark/Glossary-Python#76); examples run block by block, and a failure must
-be named in the example.
+(ArtVsMark/Glossary-Python#76).
 
 Related: [146](146-a-green-gate-does-not-verify-its-premise.md) — a green check
 confirms itself; here it confirmed syntax while the question was about meaning;
