@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-07T21:22:03+00:00",
+  "generated_at": "2026-10-07T22:00:22+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.7",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "where": "1.5"
   },
-  "count": 216,
+  "count": 217,
   "rules": [
     {
       "id": "001",
@@ -10172,7 +10172,8 @@
       ],
       "mentioned_by": [
         "210",
-        "214"
+        "214",
+        "218"
       ]
     },
     {
@@ -10990,6 +10991,9 @@
         "195",
         "206",
         "207"
+      ],
+      "mentioned_by": [
+        "218"
       ]
     },
     {
@@ -11045,7 +11049,8 @@
         "209"
       ],
       "mentioned_by": [
-        "214"
+        "214",
+        "218"
       ]
     },
     {
@@ -11360,6 +11365,65 @@
         "044",
         "047",
         "157"
+      ]
+    },
+    {
+      "id": "218",
+      "slug": "removing-an-element-names-what-stood-on-it",
+      "title": {
+        "ru": "Механизм, снимающий элемент, называет, что на снятом держалось",
+        "en": "A mechanism that removes an element names what stood on it"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "конфигурация",
+          "качество"
+        ],
+        "en": [
+          "code",
+          "configuration",
+          "quality"
+        ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
+      "claim": {
+        "ru": "Механизм, который снимает элемент ради чистоты результата — работу, ключ, зависимость, строку, — перечисляет, что на снятом держалось (условие, фильтр событий, имя артефакта, порядок), и каждое либо переносит, либо отказывает с названной причиной. Снимается только то, что ведёт на снятое; выражение, которое на него ссылается, не снимается молча вместе с ним. Вопрос задаётся о снятом, а не об оставшемся: чтение оставшегося этого не видит.",
+        "en": "A mechanism that removes an element to clean up its result — a job, a key, a dependency, a line — lists what stood on the removed element (a condition, an event filter, an artifact name, an ordering), and either carries each item over or refuses with a stated reason. Only what leads to the removed element is removed; an expression that refers to it is not dropped silently along with it. The question is asked about what was removed, not about what remains: reading the remainder does not show it."
+      },
+      "applies": {
+        "ru": "**Работает** для механизмов, которые собирают результат вычитанием из\nисходного: генератор заготовки, сужающий чужой прогон; очистка манифеста от\nзависимостей; свёртка конфигурации, снимающая ключи; удаление шага, работы,\nстроки из машинно собираемого файла.\n\n**Не работает** для удаления, у которого ничего не держится по построению:\nснимается лист, на который нет ни одной ссылки, и это проверяемо. Не работает и\nдля сужения признака — условия, образца, набора ключей, — где сосед — то, что\nрешается тем же признаком: это [195](195-a-narrowed-predicate-names-its-neighbour.md).\nЗдесь сужения нет, есть удаление, и сосед — то, что опиралось на удалённое.\n\n**Признак нарушения:** механизм снимает элемент, а в его коде или наборе нет ни\nперечня того, что на снятом держалось, ни отказа с причиной — и результат\nпроверяется только на форму.",
+        "en": "**Works** for mechanisms that build a result by subtracting from the source: a\ntemplate generator narrowing someone else's workflow; pruning dependencies from\na manifest; collapsing configuration by removing keys; removing a step, job or\nline from a machine-assembled file.\n\n**Does not work** for a removal on which nothing stands by construction: a leaf\nwith no references to it, and that is checkable. Nor for narrowing a predicate —\na condition, a pattern, a set of keys — where the neighbour is what is decided\nby the same predicate: that is\n[195](195-a-narrowed-predicate-names-its-neighbour.md). Here nothing is\nnarrowed, something is removed, and the neighbour is what relied on it.\n\n**Sign of a violation:** a mechanism removes an element, while neither its code\nnor its tests hold a list of what stood on the removed element or a refusal with\na reason — and the result is checked only for shape."
+      },
+      "added": "2026-10-08",
+      "files": {
+        "ru": "rules/ru/218-removing-an-element-names-what-stood-on-it.md",
+        "en": "rules/en/218-removing-an-element-names-what-stood-on-it.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "issue": "1183"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "issue": "1195"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": ".rules/finding-kinds.json"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "mentions": [
+        "195",
+        "210",
+        "211"
       ]
     }
   ],
