@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-07T21:03:46+00:00",
+  "generated_at": "2026-10-07T21:04:58+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -7506,10 +7506,10 @@
         "not-applicable": 70
       },
       "by_mechanism": {
-        "gate": 78,
+        "gate": 80,
         "pipeline": 16,
         "document": 39,
-        "none": 13
+        "none": 11
       },
       "rules": {
         "001": "active",
@@ -7803,21 +7803,21 @@
           "skill": ""
         },
         "012": {
-          "mechanism": "none",
-          "where": "CLAUDE.md — раздел «Чего не делать»",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/window_guard.py — хук PreToolUse окна (.claude/hooks/pre_tool_use.sh, регистрация в .claude/settings.json) отвергает команду ДО вызова инструмента. Набор tests/test_window_guard.py: подделки разбора и живая половина — хук зарегистрирован и ведёт к сторожу. РАЗБОР НАДВОЕ: намерение — чужая ветка или своя — машине не видно и остаётся суждением; машинная половина — форма действия: толчок с явным именем ветки, отличным от текущей головы, отвергается. Граница названа: окно, переключившееся на чужую ветку, толкает её законной формой, и сторож это пропустит",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-02",
-          "decided": "",
+          "analysed": "2026-10-07",
+          "decided": "2026-10-07",
           "skill": ""
         },
         "013": {
-          "mechanism": "none",
-          "where": "CLAUDE.md",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/window_guard.py — хук PreToolUse окна (.claude/hooks/pre_tool_use.sh, регистрация в .claude/settings.json) отвергает команду ДО вызова инструмента. Набор tests/test_window_guard.py: подделки разбора и живая половина — хук зарегистрирован и ведёт к сторожу. Отвергается heredoc без кавычек в разделителе при обратной косой черте в теле; <<'EOF' проходит. Что именно потеряется на экранировании, решает понимание — сторож держит форму записи, а не смысл",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-02",
-          "decided": "",
+          "analysed": "2026-10-07",
+          "decided": "2026-10-07",
           "skill": ""
         },
         "014": {
