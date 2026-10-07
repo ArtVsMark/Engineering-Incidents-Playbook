@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-07T21:17:05+00:00",
+  "generated_at": "2026-10-07T22:00:22+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.7",
@@ -11399,7 +11399,7 @@
         "ru": "**Работает** для механизмов, которые собирают результат вычитанием из\nисходного: генератор заготовки, сужающий чужой прогон; очистка манифеста от\nзависимостей; свёртка конфигурации, снимающая ключи; удаление шага, работы,\nстроки из машинно собираемого файла.\n\n**Не работает** для удаления, у которого ничего не держится по построению:\nснимается лист, на который нет ни одной ссылки, и это проверяемо. Не работает и\nдля сужения признака — условия, образца, набора ключей, — где сосед — то, что\nрешается тем же признаком: это [195](195-a-narrowed-predicate-names-its-neighbour.md).\nЗдесь сужения нет, есть удаление, и сосед — то, что опиралось на удалённое.\n\n**Признак нарушения:** механизм снимает элемент, а в его коде или наборе нет ни\nперечня того, что на снятом держалось, ни отказа с причиной — и результат\nпроверяется только на форму.",
         "en": "**Works** for mechanisms that build a result by subtracting from the source: a\ntemplate generator narrowing someone else's workflow; pruning dependencies from\na manifest; collapsing configuration by removing keys; removing a step, job or\nline from a machine-assembled file.\n\n**Does not work** for a removal on which nothing stands by construction: a leaf\nwith no references to it, and that is checkable. Nor for narrowing a predicate —\na condition, a pattern, a set of keys — where the neighbour is what is decided\nby the same predicate: that is\n[195](195-a-narrowed-predicate-names-its-neighbour.md). Here nothing is\nnarrowed, something is removed, and the neighbour is what relied on it.\n\n**Sign of a violation:** a mechanism removes an element, while neither its code\nnor its tests hold a list of what stood on the removed element or a refusal with\na reason — and the result is checked only for shape."
       },
-      "added": "2026-10-07",
+      "added": "2026-10-08",
       "files": {
         "ru": "rules/ru/218-removing-an-element-names-what-stood-on-it.md",
         "en": "rules/en/218-removing-an-element-names-what-stood-on-it.md"
