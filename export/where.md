@@ -13,7 +13,7 @@
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 216 | 0 | 0 | 196 | 145 | 11 | 1 | 27 | 12 | 124 |  |
-| `Stepik-Python-Grader` | подключён | 188 | 133 | 195 | 21 | 0 | 192 | 86 | 39 | 0 | 67 | 0 | 145 |  |
+| `Stepik-Python-Grader` | подключён | 189 | 133 | 195 | 21 | 0 | 192 | 85 | 39 | 0 | 68 | 0 | 144 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 214 | 2 | 0 | 156 | 101 | 14 | 0 | 27 | 0 | 50 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 1 | 0 | 183 | 95 | 9 | 0 | 58 | 21 | 92 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 216 | 0 | 0 | 146 | 78 | 16 | 0 | 39 | 13 | 92 |  |
@@ -163,15 +163,15 @@
 | `Stepik-Python-Grader` | `scripts/check_workflow_guardrails.py` | 6 |
 | `Stepik-Python-Grader` | `.rules/bindings.json` | 5 |
 | `Stepik-Python-Grader` | `CHANGELOG.md` | 4 |
+| `Stepik-Python-Grader` | `CONTRIBUTING.md` | 4 |
 | `Stepik-Python-Grader` | `scripts/check_adr_records.py` | 4 |
 | `Stepik-Python-Grader` | `scripts/check_attribution.py` | 4 |
+| `Stepik-Python-Grader` | `scripts/check_declared_outcomes.py` | 4 |
 | `Stepik-Python-Grader` | `scripts/check_work_overlap.py` | 4 |
 | `Stepik-Python-Grader` | `.rules/proposals.json` | 3 |
-| `Stepik-Python-Grader` | `CONTRIBUTING.md` | 3 |
 | `Stepik-Python-Grader` | `HISTORY.md` | 3 |
 | `Stepik-Python-Grader` | `docs/agent/claude-handoff.md` | 3 |
 | `Stepik-Python-Grader` | `docs/agent/course-walkthrough.md` | 3 |
-| `Stepik-Python-Grader` | `scripts/check_declared_outcomes.py` | 3 |
 | `Stepik-Python-Grader` | `scripts/check_hidden_defaults.py` | 3 |
 | `Stepik-Python-Grader` | `scripts/rerun_flaky_checks.py` | 3 |
 | `Stepik-Python-Grader` | `src/stepik_grader/web/playground.py` | 3 |
@@ -186,7 +186,6 @@
 | `Stepik-Python-Grader` | `scripts/check_branch_protection.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_gate_tests.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_generated_sources.py` | 2 |
-| `Stepik-Python-Grader` | `scripts/check_glossary_examples.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_locale_guardrails.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_orphan_branches.py` | 2 |
 | `Stepik-Python-Grader` | `scripts/check_raw_values.py` | 2 |

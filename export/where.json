@@ -1,7 +1,7 @@
 {
   "schema": "1.5",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-07T20:56:57+00:00",
+  "generated_at": "2026-10-07T21:02:13+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -2023,9 +2023,9 @@
         "not-applicable": 3
       },
       "by_mechanism": {
-        "gate": 86,
+        "gate": 85,
         "pipeline": 39,
-        "document": 67
+        "document": 68
       },
       "rules": {
         "001": "active",
@@ -2830,7 +2830,7 @@
         },
         "070": {
           "mechanism": "gate",
-          "where": "scripts/check_glossary_examples.py — храповик с числом (BUDGET), опускается починкой, а не правкой числа; tests/test_check_glossary_examples.py не даёт бюджету молча вырасти",
+          "where": "scripts/check_declared_outcomes.py — храповик с числом (BUDGET непрогнанных исходов), опускается починкой, а не правкой числа; tests/test_check_declared_outcomes.py не даёт бюджету молча вырасти. Прежний носитель — храповик примеров карточек — уехал в Glossary-Python вместе с содержанием (#1573)",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -3918,8 +3918,8 @@
           "skill": ""
         },
         "193": {
-          "mechanism": "gate",
-          "where": "scripts/check_glossary_examples.py — приёмка примеров карточек строже прежнего храповика исполнения: тот помечал некомпилируемую карточку как unverifiable и проходил мимо, гейт требует компилируемости",
+          "mechanism": "document",
+          "where": "CONTRIBUTING.md § Когда дефект считается исправленным — тест, красный до фикса, и прогон той поверхности, где дефект найден. Прежний гейт-носитель — приёмка примеров карточек, строже прежнего храповика исполнения, — уехал в Glossary-Python вместе с содержанием глоссария (#1573)",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -3954,7 +3954,7 @@
           "skill": ""
         }
       },
-      "trails": 188,
+      "trails": 189,
       "born": 133,
       "findings": [
         "ответ по схеме 1.2, у контракта 1.7 — записи остаются валидными, означая уже другое",
