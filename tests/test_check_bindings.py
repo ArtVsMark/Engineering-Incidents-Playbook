@@ -1498,6 +1498,10 @@ def test_происхождение_по_форме_пропускается(rec
     ({"mechanism": "gate", "origin": "o/r:path", "origin_kind": "copied"}, "не адрес"),
     ({"mechanism": "none", "origin": ИСТОЧНИК, "origin_kind": "copied"}, "при механизме `none`"),
     ({"origin": ИСТОЧНИК, "origin_kind": "copied"}, "при механизме `none`"),
+    ({"mechanism": "gate", "origin": [ИСТОЧНИК], "origin_kind": "copied"}, "ждётся строка"),
+    ({"mechanism": "gate", "origin": ИСТОЧНИК, "origin_kind": 123}, "ждётся строка"),
+    ({"mechanism": "gate", "origin": ИСТОЧНИК, "origin_kind": True}, "ждётся строка"),
+    ({"mechanism": "gate", "origin": [], "origin_kind": False}, "ждётся строка"),
 ])
 def test_происхождение_не_по_форме_отвергается(rec, слово):
     """Приёмка #701: без origin_kind, неразрешимый адрес, origin при none."""

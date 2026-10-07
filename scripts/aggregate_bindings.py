@@ -101,8 +101,10 @@ def держание(rec: dict) -> dict:
             # вызван, скопирован, переделан. Без него «чьи гейты в ходу у
             # семьи» угадывалось по именам файлов, а копия от своего гейта
             # по дереву неотличима.
-            "origin": (rec.get("origin") or ""),
-            "origin_kind": (rec.get("origin_kind") or "")}
+            # Без `or ""`: ложное нестроковое ([], 0, false) иначе исчезло бы
+            # до сверки формы и прошло как «поля нет».
+            "origin": rec.get("origin", ""),
+            "origin_kind": rec.get("origin_kind", "")}
 
 EXPORT_MD = ROOT / "export" / "where.md"
 RULES = ROOT / "export" / "rules.json"
