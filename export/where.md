@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 217 | 0 | 0 | 201 | 152 | 7 | 1 | 27 | 14 | 124 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 195 | 22 | 0 | 192 | 85 | 39 | 0 | 68 | 0 | 144 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 105 | 14 | 0 | 25 | 0 | 51 |  |
+| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 103 | 14 | 0 | 27 | 0 | 51 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 95 | 9 | 0 | 58 | 21 | 92 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 147 | 84 | 16 | 0 | 45 | 2 | 110 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 216 | 1 | 0 | 208 | 177 | 25 | 2 | 4 | 0 | 250 |  |
@@ -204,7 +204,7 @@
 | `ArtVsMark` | `scripts/build_metrics.py` | 64 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 52 |
 | `ArtVsMark` | `CLAUDE.md` | 27 |
-| `ArtVsMark` | `scripts/check_bindings.py` | 22 |
+| `ArtVsMark` | `scripts/check_bindings.py` | 20 |
 | `ArtVsMark` | `.github/workflows/pr-check.yml` | 19 |
 | `ArtVsMark` | `scripts/checks.py` | 19 |
 | `ArtVsMark` | `.github/workflows/agent-pr.yml` | 16 |
@@ -230,9 +230,9 @@
 | `ArtVsMark` | `.github/workflows/rules-inbox.yml` | 5 |
 | `ArtVsMark` | `pr-check.yml` | 5 |
 | `ArtVsMark` | `scripts/check_facts.py` | 5 |
-| `ArtVsMark` | `scripts/neighbours.py` | 5 |
 | `ArtVsMark` | `.rules/proposals.json` | 4 |
 | `ArtVsMark` | `agent-pr.yml` | 4 |
+| `ArtVsMark` | `scripts/neighbours.py` | 4 |
 | `ArtVsMark` | `.github/workflows/attribution-history.yml` | 3 |
 | `ArtVsMark` | `automerge.yml` | 3 |
 | `ArtVsMark` | `scripts/check_neighbours.py` | 3 |
