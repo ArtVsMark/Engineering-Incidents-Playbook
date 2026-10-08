@@ -1,6 +1,6 @@
 {
   "name": "catalogue",
-  "description": "Навыки работы с каталогом правил Engineering-Incidents-Playbook: ответить по правилу в .rules/bindings.json",
+  "description": "Навыки работы с каталогом правил Engineering-Incidents-Playbook: ответить по правилу в .rules/bindings.json; решить, сводить ли 2–3 правила в одно",
   "author": {
     "name": "ArtVsMark"
   },
