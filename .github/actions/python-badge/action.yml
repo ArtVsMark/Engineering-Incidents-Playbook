@@ -44,13 +44,6 @@ inputs:
       Файл значка версии проекта (shields endpoint). Пусто — зона версии серая.
     required: false
     default: ""
-  prefix:
-    description: >-
-      Подпись всей картинки серой частью в начале первой зоны — «CI» по
-      умолчанию: значок отвечает за основной CI, и родной значок CI рядом не
-      нужен. Пусто — без префикса, прежний вид.
-    required: false
-    default: CI
   pypi:
     description: >-
       Имя пакета на PyPI. Пусто — проект на PyPI не публикуется, и зона
@@ -80,10 +73,9 @@ runs:
         COVERAGE_ALL_JSON: ${{ inputs.coverage-all-json }}
         VERSION_JSON: ${{ inputs.version-json }}
         PYPI: ${{ inputs.pypi }}
-        PREFIX: ${{ inputs.prefix }}
       run: |
         set -euo pipefail
-        args=(--root "$GITHUB_WORKSPACE" --ci "$CI_WORKFLOW" --out "$GITHUB_WORKSPACE/$OUT" --prefix "$PREFIX")
+        args=(--root "$GITHUB_WORKSPACE" --ci "$CI_WORKFLOW" --out "$GITHUB_WORKSPACE/$OUT")
         [ -n "$COVERAGE_JSON" ] && args+=(--coverage-json "$GITHUB_WORKSPACE/$COVERAGE_JSON")
         [ -n "$COVERAGE_ALL_JSON" ] && args+=(--coverage-all-json "$GITHUB_WORKSPACE/$COVERAGE_ALL_JSON")
         [ -n "$VERSION_JSON" ] && args+=(--version-json "$GITHUB_WORKSPACE/$VERSION_JSON")
