@@ -1,7 +1,7 @@
 {
   "schema": "1.6",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T19:43:30+00:00",
+  "generated_at": "2026-10-08T19:47:24+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -16,10 +16,10 @@
         "not-applicable": 16
       },
       "by_mechanism": {
-        "gate": 151,
+        "gate": 152,
         "document": 27,
         "skill": 1,
-        "none": 15,
+        "none": 14,
         "pipeline": 7
       },
       "rules": {
@@ -2256,12 +2256,12 @@
           "origin_kind": ""
         },
         "199": {
-          "mechanism": "none",
-          "where": ".github/workflows/automerge.yml — шаг «состояние изменения» перечитывает состояние опросом (`gh api .../pulls/$PR` и `.../check-runs`), а не верит разбудившему событию; группа `automerge-<номер>` стоит с `cancel-in-progress: false`. Машинного сторожа над этим нет, причина в why",
-          "holdable": "not-yet",
-          "awaiting": "ПЕРЕМЕР 08.10: прежний замер «такой прогон один» неверен — событием будятся и стоят с `cancel-in-progress: false` четыре прогона: .github/workflows/automerge.yml, .github/workflows/thaw.yml, .github/workflows/task-state.yml, .github/workflows/badges.yml. Условие постройки («второй такой прогон») наступило; гейт строится в scripts/check_workflows.py: такой прогон обязан читать состояние внутри работы (`gh api` или checkout головы общей ветки), а не SHA разбудившего события",
+          "mechanism": "gate",
+          "where": "scripts/check_workflows.py — прогон, разбуженный событием и стоящий в группе с `cancel-in-progress: false`, обязан читать состояние внутри работы: обращением к площадке (`gh api`, `gh run list`, `gh pr view`) или выкачкой с явным `ref:` головы ветки; иначе отказ. Группа на каждый коммит (`github.sha` в имени) предмета не даёт. Сегодня таких прогонов четыре: .github/workflows/automerge.yml и .github/workflows/thaw.yml опрашивают площадку, .github/workflows/badges.yml выкачивает голову ветки, .github/workflows/task-state.yml держит группу на коммит. ГРАНИЦА: проверяется НАЛИЧИЕ опроса, а не то, верное ли состояние он читает и достаточно ли рано — это суждение (182)",
+          "holdable": "",
+          "awaiting": "",
           "analysed": "2026-10-08",
-          "decided": "",
+          "decided": "2026-10-08",
           "skill": "",
           "origin": "",
           "origin_kind": ""
