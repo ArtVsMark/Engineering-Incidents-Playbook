@@ -18,7 +18,7 @@ import check_test_deps as td
 from conftest import write
 
 
-def tree(repo, test_src: str, reqs: str = "pytest\n"):
+def tree(repo, test_src: str, reqs: str = "pytest<10\n"):
     write(repo / "scripts" / "own_module.py", "x = 1\n")
     write(repo / "tests" / "test_a.py", test_src)
     write(repo / "requirements-test.txt", reqs)
@@ -44,12 +44,12 @@ def test_соседний_тест_объявления_не_требует(repo
 
 
 def test_объявленная_зависимость_проходит(repo):
-    assert run(tree(repo, "import pytest\n", "pytest\n")) == 0
+    assert run(tree(repo, "import pytest\n", "pytest<10\n")) == 0
 
 
 def test_версия_в_объявлении_не_мешает(repo):
     """Предмет у границы: в файле зависимостей пишут не только имена."""
-    assert run(tree(repo, "import pytest\n", "pytest>=8.0  # с версией\n")) == 0
+    assert run(tree(repo, "import pytest\n", "pytest>=8.0,<10  # с версией\n")) == 0
 
 
 def test_имя_модуля_объявляется_рядом_с_пакетом(repo):
@@ -60,17 +60,17 @@ def test_имя_модуля_объявляется_рядом_с_пакетом
     болезнью, которую ловит. Она прошла у автора и упала в конвейере, где
     библиотеки на момент проверки ещё нет.
     """
-    assert run(tree(repo, "import yaml\n", "pyyaml  # модуль: yaml\n")) == 0
+    assert run(tree(repo, "import yaml\n", "pyyaml<7  # модуль: yaml\n")) == 0
 
 
 def test_без_объявления_модуля_имя_пакета_не_спасает(repo, capsys):
     """Граница ровно здесь: `pyyaml` объявлен, `yaml` — нет."""
-    assert run(tree(repo, "import yaml\n", "pyyaml\n")) == 1
+    assert run(tree(repo, "import yaml\n", "pyyaml<7\n")) == 1
     assert "yaml" in capsys.readouterr().err
 
 
 def test_объявить_можно_несколько_модулей(repo):
-    assert run(tree(repo, "import a\nimport b\n", "pkg  # модули: a, b\n")) == 0
+    assert run(tree(repo, "import a\nimport b\n", "pkg<2  # модули: a, b\n")) == 0
 
 
 def test_проверка_не_трогает_установленное(repo):
@@ -105,7 +105,7 @@ def test_находка_называет_файл_и_модуль(repo, capsys):
 # ── три исхода ─────────────────────────────────────────────────────────────
 
 def test_нет_тестов_это_третий_исход(repo, capsys):
-    write(repo / "requirements-test.txt", "pytest\n")
+    write(repo / "requirements-test.txt", "pytest<10\n")
     (repo / "tests").mkdir(parents=True, exist_ok=True)
     assert run(repo) == 2
     assert "смотреть нечего" in capsys.readouterr().err
@@ -151,3 +151,21 @@ def test_defis_v_imeni_privoditsya_k_podcherku():
     """Имя сравнивается с именем в `import`, а там дефиса не бывает."""
     assert td.объявлено(["python-dateutil  # модуль: dateutil"]) == {
         "python_dateutil": {"dateutil"}}
+
+
+# ── верхняя граница версии (правило 073) ──────────────────────────────────
+
+@pytest.mark.parametrize("строка", ["pytest", "pytest>=9", "pytest!=9.0",
+                                    'pytest>=9; python_version<"3.13"',
+                                    'pytest[x]>=9; python_version=="3.14"'])
+def test_без_верхней_границы_это_находка(repo, capsys, строка):
+    assert run(tree(repo, "import pytest\n", строка + "\n")) == 1
+    assert "без верхней границы" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("строка", ["pytest<10", "pytest>=9,<10", "pytest==9.1.1",
+                                    "pytest~=9.1", "pytest<=9.9", "pytest ~= 9.1",
+                                    "pytest[x]>=9,<10",
+                                    'pytest<10; python_version>="3.14"'])
+def test_верхняя_граница_проходит(repo, строка):
+    assert run(tree(repo, "import pytest\n", строка + "\n")) == 0

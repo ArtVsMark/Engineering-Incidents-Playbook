@@ -57,3 +57,41 @@ def test_imena_i_kod_v_znamenatel_ne_idut(repo):
 def test_net_derevev_eto_tretiy_ishod(repo, capsys):
     assert cl.main(["--root", str(repo)]) == 2
     assert "не отработала" in capsys.readouterr().err
+
+
+# ── запас порога — проверяемое утверждение (правило 070) ──────────────────
+
+def test_английское_у_самого_потолка_это_находка(repo, capsys):
+    """Ниже потолка, но выше половины: порог прошёл бы, запас — нет."""
+    англ = АНГЛИЙСКИЙ + "Цитата: " + "щ" * 2 + "\n"
+    доля = cl.share(англ)
+    assert cl.EN_MARGIN < доля <= cl.EN_CEIL
+    assert cl.main(["--root", str(подделка(repo, en=англ))]) == 1
+    assert "без запаса" in capsys.readouterr().err
+
+
+def test_русское_у_самого_пола_это_находка(repo, capsys):
+    рус = РУССКИЙ + "English quote kept as is in the original wording.\n"
+    доля = cl.share(рус)
+    assert cl.RU_FLOOR <= доля < cl.RU_MARGIN
+    assert cl.main(["--root", str(подделка(repo, ru=рус))]) == 1
+    assert "без запаса" in capsys.readouterr().err
+
+
+def test_сдвиг_порога_запас_не_двигает(repo, capsys):
+    """Поднять потолок «под корпус» правкой числа В ИСХОДНИКЕ — ровно то
+    ослабление, о котором 070. Подмена атрибута после импорта этого не
+    воспроизводит: производное от порога уже вычислено, и тест зеленел бы на
+    коде, где запас едет вместе с порогом."""
+    import importlib.util
+    исходник = Path(cl.__file__).read_text(encoding="utf-8")
+    assert "EN_CEIL = 0.15" in исходник
+    правка = repo / "check_locale_ослаблен.py"
+    правка.write_text(исходник.replace("EN_CEIL = 0.15", "EN_CEIL = 0.30"),
+                      encoding="utf-8")
+    spec = importlib.util.spec_from_file_location("ослаблен", правка)
+    ослаблен = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ослаблен)
+    англ = АНГЛИЙСКИЙ + "Цитата: " + "щ" * 2 + "\n"
+    assert ослаблен.main(["--root", str(подделка(repo, en=англ))]) == 1
+    assert "без запаса" in capsys.readouterr().err

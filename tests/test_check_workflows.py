@@ -232,13 +232,16 @@ def test_golova_v_gruppe_chisto(tmp_path):
     assert cw.main(["--root", str(tmp_path)]) == 0
 
 
-def test_gruppa_bez_otmeny_pod_pravilo_ne_podpadaet(tmp_path):
+def test_gruppa_bez_otmeny_pod_pravilo_ne_podpadaet(tmp_path, capsys):
     """ГРАНИЦА: очередь ничего не вытесняет, и голова в ней раздробила бы ровно
-    то, что собирают, — так устроены automerge и thaw."""
+    то, что собирают, — так устроены automerge и thaw. Под 179 такая группа
+    не подпадает; что она обязана читать состояние — предмет 199, и он
+    проверяется своими случаями ниже."""
     текст = (BUTTON + "concurrency:\n  group: automerge-${{ inputs.pr }}\n"
              "  cancel-in-progress: false\n" + РАБОТА)
     workflow(tmp_path, "w.yml", текст)
-    assert cw.main(["--root", str(tmp_path)]) == 0
+    cw.main(["--root", str(tmp_path)])
+    assert "(179)" not in capsys.readouterr().err
 
 
 def test_predmet_sostoyanie_nazvan_spiskom(tmp_path):
@@ -859,3 +862,46 @@ def test_apostrof_vne_puti_ne_lomaet_razbor(строка, находки):
 def test_razorvannaya_kavychka_v_samom_puti_ne_suditsya():
     """До пути разбор не дошёл — запрещается достоверное (051)."""
     assert cw.скрипт_вызова('"$GITHUB_ACTION_PATH/s.py') is None
+
+
+# ── ожидающий заход отменяется молча: второй источник (правило 199) ───────
+
+ОЖИДАЮЩИЙ = ("on:\n  push:\n  workflow_dispatch:\n"
+             "concurrency:\n  group: {group}\n  cancel-in-progress: false\n"
+             "jobs:\n  a:\n    timeout-minutes: 5\n    runs-on: ubuntu-latest\n"
+             "    steps:\n{steps}")
+
+
+def test_событие_без_опроса_состояния_находка(tmp_path, capsys):
+    workflow(tmp_path, "w.yml", ОЖИДАЮЩИЙ.format(
+        group="one", steps="      - run: echo \"$GITHUB_SHA\"\n"))
+    assert cw.main(["--root", str(tmp_path)]) == 1
+    assert "(199)" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("group, steps", [
+    ("one", "      - run: gh api repos/o/r/pulls\n"),
+    ("one", "      - uses: actions/checkout@v5\n        with:\n          ref: main\n"),
+    ("w-${{ github.sha }}", "      - run: echo \"$GITHUB_SHA\"\n"),
+])
+def test_опрос_или_группа_на_коммит_чисто(tmp_path, group, steps):
+    workflow(tmp_path, "w.yml", ОЖИДАЮЩИЙ.format(group=group, steps=steps))
+    assert cw.ожидающий_без_опроса(
+        (tmp_path / ".github/workflows/w.yml").read_text()) == []
+
+
+def test_опрос_в_комментарии_не_считается():
+    текст = ОЖИДАЮЩИЙ.format(group="one",
+                             steps="      # gh api здесь не зовётся\n      - run: true\n")
+    assert cw.ожидающий_без_опроса(текст) == ["one"]
+
+
+@pytest.mark.parametrize("steps", [
+    "      - uses: actions/checkout@v5\n        with:\n          ref: ${{ github.sha }}\n",
+    "      - uses: actions/checkout@v5\n        with:\n"
+    "          ref: ${{ github.event.pull_request.head.sha }}\n",
+    "      - run: true  # gh api здесь только в комментарии\n",
+])
+def test_sha_события_и_хвостовой_комментарий_не_опрос(steps):
+    текст = ОЖИДАЮЩИЙ.format(group="one", steps=steps)
+    assert cw.ожидающий_без_опроса(текст) == ["one"]

@@ -1046,3 +1046,25 @@ def test_нестроковое_происхождение_потребител�
                                  "origin": [], "origin_kind": False})}
     найдено = ab.происхождение_неверно({"repo": "o/r", "holds": holds})
     assert len(найдено) == 2 and all("ждётся строка" in н for н in найдено)
+
+
+# ── заметки и замеры проектов едут в сводку (ответ 1.9, сводка 1.7) ────────
+
+def test_заметки_собираются_с_любой_записи():
+    rules = {"001": {"status": "not-applicable", "why": "нет", "note": "идея"},
+             "002": {"status": "active", "mechanism": "gate",
+                     "metric": {"what": "x", "value": 3, "measured": "2026-10-08"}},
+             "003": {"status": "active", "mechanism": "gate"}}
+    assert ab.заметки(rules) == {
+        "001": {"note": "идея"},
+        "002": {"metric": {"what": "x", "value": 3, "measured": "2026-10-08"}}}
+
+
+def test_раздел_заметок_в_сводке():
+    строки = ab._notes([{"repo": "o/proj", "notes": {
+        "001": {"note": "a | b", "metric": {"what": "x", "value": 3,
+                                            "measured": "2026-10-08"}}}}])
+    текст = "\n".join(строки)
+    assert "## Заметки и замеры проектов" in текст
+    assert "| 001 | `proj` | a \\| b | x: 3 (2026-10-08) |" in текст
+    assert ab._notes([{"repo": "o/proj", "notes": {}}]) == []

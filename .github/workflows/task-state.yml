@@ -22,6 +22,8 @@ permissions:
   contents: read
   issues: read
 
+# Группа на каждый коммит: вытеснить можно только дубль того же коммита, и
+# SHA события здесь и есть состояние (199).
 concurrency:
   group: task-state-${{ github.sha }}
   cancel-in-progress: false

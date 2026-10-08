@@ -1,5 +1,5 @@
 {
-  "schema": "1.8",
+  "schema": "1.9",
   "answers_to": "1.7",
   "_answers_to": "Версия ВЫГРУЗКИ каталога (export/rules.json → contracts.export), по которой построены ответы ниже. Каталог сверяет её со своей и печатает отставание: подъём контракта — это повод перечитать ответы, а не только формат (157). Значение читается из самой выгрузки, а не переписывается по памяти.",
   "project": "<владелец>/<репозиторий>",
@@ -8,7 +8,14 @@
     "002": {
       "status": "active",
       "mechanism": "gate",
-      "where": "scripts/preflight.py"
+      "where": "scripts/preflight.py",
+      "origin_kind": "own",
+      "note": "Замените своим: мысль по правилу, которая не ложится в поля, — идея, сомнение, предложение (контракт 1.9).",
+      "metric": {
+        "what": "<что измерено, словами>",
+        "value": 0,
+        "measured": "2026-10-08"
+      }
     },
     "021": {
       "status": "active",
@@ -22,7 +29,9 @@
     "030": {
       "status": "active",
       "mechanism": "pipeline",
-      "where": ".github/workflows/nightly.yml — прогон замечает, слияние не держит"
+      "where": ".github/workflows/nightly.yml — прогон замечает, слияние не держит",
+      "origin": "owner/neighbour:.github/workflows/nightly.yml@v1.2.0",
+      "origin_kind": "adapted"
     },
     "047": {
       "status": "active",
@@ -38,6 +47,7 @@
       "status": "active",
       "mechanism": "gate",
       "where": "tests/test_roles_map.py — обход артефактов держится гейтом; вторая половина, обход вопросов, гейтом не берётся: её предмета в дереве нет по построению",
+      "origin_kind": "own",
       "skill": ".claude/skills/role-coverage"
     },
     "038": {
@@ -53,7 +63,15 @@
     },
     "018": {
       "status": "not-applicable",
-      "why": "одна целевая ОС, матрицы прогонов нет"
+      "why": "одна целевая ОС, матрицы прогонов нет",
+      "refuted_by": {
+        "globs": [
+          ".github/workflows/*.yml"
+        ],
+        "contains": [
+          "<строка, появление которой делает ответ ложным>"
+        ]
+      }
     },
     "031": {
       "status": "rejected",

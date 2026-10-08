@@ -536,3 +536,42 @@ def test_fayla_otveta_net_pro_versiyu_vygruzki_molchim():
     беды = si.contract_gaps(
         {"bindings": "", "proposals": None, "export": si.ответ_на_версию({})}, ЖДЁМ)
     assert len(беды) == 1 and "schema" in беды[0]
+
+
+
+# ── навыки каталога доезжают до проекта (правило 142) ─────────────────────
+
+НАВЫКИ = [("answer-a-rule", "пишет ответ"), ("merge-rules", "сводит правила")]
+
+
+def test_навык_копией_плагином_или_никак(tmp_path):
+    (tmp_path / ".claude/skills/answer-a-rule").mkdir(parents=True)
+    (tmp_path / ".claude/skills/answer-a-rule/SKILL.md").write_text("x")
+    got = si.навыки_здесь(НАВЫКИ, str(tmp_path))
+    assert [s["here"] for s in got] == ["копия", ""]
+
+    (tmp_path / ".claude/settings.json").write_text(
+        '{"enabledPlugins": {"catalogue@incidents-playbook": true}}')
+    got = si.навыки_здесь(НАВЫКИ, str(tmp_path))
+    assert [s["here"] for s in got] == ["копия", "плагин"]
+
+
+def test_раздел_навыков_называет_не_поставленный():
+    тело = si.body_for([], [], "o/cat", skills=[
+        {"name": "merge-rules", "when": "сводит правила", "here": ""}])
+    assert "## Навыки каталога" in тело
+    assert "| `merge-rules` | сводит правила | не стоит |" in тело
+    assert "не стоит: 1" in тело
+
+
+def test_непрочитанный_список_навыков_назван_а_не_пуст():
+    тело = si.body_for([], [], "o/cat", skills_error="https://x — 404")
+    assert "Список навыков не прочитан: https://x — 404" in тело
+    assert "это не «навыков нет»" in тело
+
+
+def test_строки_списка_и_listed_читают_одно():
+    import check_skills
+    текст = "| Навык | Когда |\n|---|---|\n| `a-b` | когда-то |\n"
+    assert check_skills.строки_списка(текст) == [("a-b", "когда-то")]
+    assert check_skills.listed(текст) == ["a-b"]

@@ -113,6 +113,40 @@ def test_отказ_без_причины_это_находка(monkeypatch, rep
     assert "без причины" in capsys.readouterr().err
 
 
+# ── «не применимо» называет предикат или событие (правило 205) ────────────
+
+@pytest.mark.parametrize("why", [
+    "предмета нет: прогонов с матрицей ноль",
+    "прежнее `rejected` описывало отсутствие предмета",
+    "предмета нет: проверено словом `нет`",
+    "предмета нет. СОБЫТИЕ: что-нибудь когда-нибудь",
+    "предикат вырождается.\n\nСОБЫТИЕ: что-нибудь когда-нибудь",
+])
+def test_неприменимо_без_предиката_это_находка(monkeypatch, repo, capsys, why):
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "not-applicable", "why": why}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "без предиката" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("why", [
+    "ПРЕДИКАТ: `grep -c matrix: .github/workflows/*.yml` больше нуля",
+    "предмет появится с первым файлом в .github/workflows/release.yml",
+    "СОБЫТИЕ: появится пользователь с установленным пакетом — предикат по "
+    "дереву вырождается, пакета нет по природе проекта",
+])
+def test_неприменимо_с_предикатом_или_событием_проходит(monkeypatch, repo,
+                                                         capsys, why):
+    # Названный путь гейт сверяет с деревом (183): в подделке он обязан быть.
+    write(repo / ".github/workflows/release.yml", "on: push\n")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": "not-applicable", "why": why}}},
+            export_of("001"))
+    assert cb.main() == 0
+    assert "без предиката" not in capsys.readouterr().err
+
+
 def test_заявленный_файл_обязан_существовать(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "active", "mechanism": "gate",
