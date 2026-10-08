@@ -15,7 +15,7 @@
 | `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 217 | 0 | 0 | 201 | 152 | 7 | 1 | 27 | 14 | 124 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 195 | 22 | 0 | 192 | 85 | 39 | 0 | 68 | 0 | 144 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 107 | 16 | 0 | 21 | 0 | 52 |  |
-| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 95 | 9 | 0 | 58 | 21 | 92 |  |
+| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 95 | 9 | 0 | 58 | 21 | 93 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 147 | 84 | 16 | 0 | 45 | 2 | 110 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 217 | 0 | 0 | 209 | 178 | 25 | 2 | 4 | 0 | 252 |  |
 
@@ -247,7 +247,7 @@
 | `ArtVsMark` | `scripts/stuck_prs.py` | 2 |
 | `ArtVsMark` | _остальные_ · _the rest_ | 8 механизмов по одному правилу; без названного адреса: 0 из 158 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 39 |
-| `Claude-Code_Usage-Token` | `scripts/preflight.py` | 36 |
+| `Claude-Code_Usage-Token` | `scripts/preflight.py` | 38 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 17 |
 | `Claude-Code_Usage-Token` | `scripts/rules_answer.py` | 17 |
 | `Claude-Code_Usage-Token` | `.github/workflows/rules-inbox.yml` | 15 |
@@ -310,7 +310,7 @@
 | `Claude-Code_Usage-Token` | `tests/test_registry.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_repo_links.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_shell_ascii.py` | 2 |
-| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 28 механизмов по одному правилу; без названного адреса: 0 из 162 |
+| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 29 механизмов по одному правилу; без названного адреса: 0 из 162 |
 | `Glossary-Python` | `CLAUDE.md` | 22 |
 | `Glossary-Python` | `.github/workflows/ci.yml` | 20 |
 | `Glossary-Python` | `docs/dev/architecture.md` | 11 |
