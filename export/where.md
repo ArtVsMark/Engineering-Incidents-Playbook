@@ -207,9 +207,9 @@
 | `ArtVsMark` | `scripts/check_bindings.py` | 20 |
 | `ArtVsMark` | `.github/workflows/pr-check.yml` | 19 |
 | `ArtVsMark` | `scripts/checks.py` | 19 |
-| `ArtVsMark` | `.github/workflows/agent-pr.yml` | 16 |
 | `ArtVsMark` | `.github/workflows/automerge.yml` | 16 |
 | `ArtVsMark` | `scripts/check_labels.py` | 16 |
+| `ArtVsMark` | `.github/workflows/agent-pr.yml` | 15 |
 | `ArtVsMark` | `README.md` | 13 |
 | `ArtVsMark` | `scripts/check_author.py` | 13 |
 | `ArtVsMark` | `scripts/check_page.py` | 13 |
@@ -237,14 +237,13 @@
 | `ArtVsMark` | `automerge.yml` | 3 |
 | `ArtVsMark` | `scripts/check_neighbours.py` | 3 |
 | `ArtVsMark` | `.github/workflows/snake.yml` | 2 |
-| `ArtVsMark` | `.github/workflows/stuck-prs.yml` | 2 |
 | `ArtVsMark` | `.rules/facts-contract.md` | 2 |
 | `ArtVsMark` | `CHANGELOG.md` | 2 |
 | `ArtVsMark` | `scripts/check_branch.py` | 2 |
 | `ArtVsMark` | `scripts/reauthor_deps.py` | 2 |
 | `ArtVsMark` | `scripts/staleness.py` | 2 |
 | `ArtVsMark` | `scripts/stuck_prs.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 8 механизмов по одному правилу; без названного адреса: 0 из 158 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 9 механизмов по одному правилу; без названного адреса: 0 из 158 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 39 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 36 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 17 |
