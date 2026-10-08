@@ -341,6 +341,18 @@ def test_без_интерпретатора_планки_толчок_закр�
 
 
 @НУЖЕН_BASH
+@pytest.mark.parametrize("команда", [
+    "git -C . push origin main", "git p''ush origin main", 'git "push" origin main',
+    "git\tpush origin main", "cd x && git --no-pager push", "git pu\\sh origin main",
+])
+def test_без_интерпретатора_планки_закрыты_и_непрямые_толчки(tmp_path, команда):
+    """Находка обзора #672: запасной разбор ловил только литерал «git push»,
+    а страж видит больше форм — каждая из них уходила непроверенной."""
+    итог = _страж(tmp_path, "3.99", команда)
+    assert итог.returncode == 2, команда
+
+
+@НУЖЕН_BASH
 def test_без_интерпретатора_планки_прочее_открыто(tmp_path):
     """Сбой сети на старте не обездвиживает окно: закрыт только толчок."""
     assert _страж(tmp_path, "3.99", "ls -la").returncode == 0
