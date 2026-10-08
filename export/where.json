@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T22:52:51+00:00",
+  "generated_at": "2026-10-08T22:54:34+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -6790,9 +6790,9 @@
         "rejected": 5
       },
       "by_mechanism": {
-        "gate": 98,
+        "gate": 99,
         "document": 58,
-        "none": 18,
+        "none": 17,
         "pipeline": 9
       },
       "rules": {
@@ -8950,12 +8950,12 @@
           "origin_kind": ""
         },
         "209": {
-          "mechanism": "none",
-          "where": "НЕ ДЕРЖИТСЯ НИЧЕМ, и есть живое нарушение: scripts/check_pr_metadata.py узнаёт «Без issue:» и «Часть #N —» регулярками _NO_ISSUE_RE и _PART_RE, а в тексте отказа печатает их рукописной копией; tests/test_pr_metadata.py сверяет с той же копией. Ещё одна копия — в .github/pull_request_template.md. В остальных местах константы цитируются ссылкой, но держит это привычка, а не проверка: метки очереди импортируются из scripts/pr_ready.py, ЗАГОЛОВОК в scripts/schedule_alarm.py и печатает, и узнаёт, имя PR check сверяет с workflow tests/test_pr_check.py. Проверено перебором строковых констант scripts/, src/ и .claude/hooks/. Починка — #141.",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/check_pr_metadata.py — зачины «Без issue:» и «Часть #» и печатаемые формы связи заданы константами (ЗАЧИН_*, ФОРМА_*, ЗАГЛУШКА_*), из них же собираются регулярки _NO_ISSUE_RE и _PART_RE и текст отказа: разойтись узнаваемое и печатаемое не могут по построению. Документы импортировать не умеют, и их копии держит tests/test_pr_metadata.py: .github/pull_request_template.md и docs/labels.md обязаны цитировать форму гейта дословно (порча цитаты в шаблоне — отказ, проверено), а форма из отказа, заполненная автором, обязана проходить гейт. Граница: держится названный гейт разметки; в остальных местах (метки очереди из scripts/pr_ready.py, ЗАГОЛОВОК в scripts/schedule_alarm.py, имя PR check — tests/test_pr_check.py) константы по-прежнему цитируются ссылкой, общего гейта на «узнаваемый текст печатается рукописной копией» нет (#141).",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-02",
-          "decided": "2026-10-02",
+          "analysed": "2026-10-08",
+          "decided": "2026-10-08",
           "skill": "",
           "origin": "",
           "origin_kind": ""
