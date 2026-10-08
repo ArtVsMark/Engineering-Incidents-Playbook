@@ -1,7 +1,7 @@
 {
   "schema": "1.6",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T15:17:40+00:00",
+  "generated_at": "2026-10-08T15:25:29+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -8957,7 +8957,7 @@
     {
       "repo": "ArtVsMark/Glossary-Python",
       "role": "потребитель",
-      "schema": "1.7",
+      "schema": "1.8",
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-08",
@@ -9399,8 +9399,8 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.7.0",
+          "origin_kind": "called"
         },
         "029": {
           "mechanism": "document",
@@ -9542,8 +9542,8 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.7.0",
+          "origin_kind": "called"
         },
         "050": {
           "mechanism": "gate",
@@ -10015,8 +10015,8 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.7.0",
+          "origin_kind": "called"
         },
         "131": {
           "mechanism": "pipeline",
@@ -10218,7 +10218,7 @@
         },
         "152": {
           "mechanism": "gate",
-          "where": ".github/workflows/rules-inbox.yml — стороннее действие каталога закреплено тегом v1.6.0. Тег поднимается явным изменением после сверки action.yml между тегами: v1.4.0 → v1.6.0 действие не менялось (07.10)",
+          "where": ".github/workflows/rules-inbox.yml — стороннее действие каталога закреплено тегом v1.7.0. Тег поднимается явным изменением после сверки action.yml между тегами: v1.4.0 → v1.6.0 действие не менялось (07.10); v1.6.0 → v1.7.0 — Python действия 3.12 → 3.14 и синтаксис sync_inbox.py под неё, логика сверки та же (08.10)",
           "holdable": "",
           "awaiting": "",
           "analysed": "",
@@ -10268,8 +10268,8 @@
           "analysed": "2026-10-02",
           "decided": "2026-10-02",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.7.0",
+          "origin_kind": "called"
         },
         "158": {
           "mechanism": "gate",
@@ -10323,8 +10323,8 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.7.0",
+          "origin_kind": "called"
         },
         "164": {
           "mechanism": "document",
@@ -10812,10 +10812,7 @@
         }
       },
       "trails": 2,
-      "born": 0,
-      "findings": [
-        "ответ по схеме 1.7, у контракта 1.8 — записи остаются валидными, означая уже другое"
-      ]
+      "born": 0
     },
     {
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
