@@ -391,6 +391,21 @@ def test_без_интерпретатора_планки_без_ключа_ре
 
 
 @НУЖЕН_BASH
+@pytest.mark.parametrize("вход, код", [
+    ('{"cwd":"/srv/git","tool_name":"Bash","tool_input":{"command":null,"description":"push"}}', 2),
+    ('{"cwd":"/w","tool_name":"Bash","tool_input":{"command":null}}', 0),
+])
+def test_без_интерпретатора_планки_граница_без_ключа_строки(tmp_path, вход, код):
+    """Граница, записанная по обзору #714 решением владельца: без ключа-строки
+    решает весь вход, и слово `git` из пути закрывает лишнее — но только в
+    сторону закрытия; без `git…push` во входе ничего не закрывается."""
+    корень = проект(tmp_path, pyproject='requires-python = ">=3.99"\n')
+    итог = subprocess.run(["sh", str(GUARD_SH)], input=вход, capture_output=True, text=True,
+                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)})
+    assert итог.returncode == код
+
+
+@НУЖЕН_BASH
 def test_без_интерпретатора_планки_косвенный_толчок_не_виден_как_и_стражу(tmp_path):
     """Граница названа, а не обещана: `git $c` не видит и сам страж."""
     import importlib.util
