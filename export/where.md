@@ -16,7 +16,7 @@
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 195 | 22 | 0 | 192 | 85 | 39 | 0 | 68 | 0 | 144 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 214 | 3 | 0 | 156 | 101 | 14 | 0 | 27 | 0 | 50 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 95 | 9 | 0 | 58 | 21 | 92 |  |
-| `Glossary-Python` | подключён | 2 | 0 | 216 | 1 | 0 | 146 | 83 | 16 | 0 | 45 | 2 | 106 |  |
+| `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 147 | 84 | 16 | 0 | 45 | 2 | 109 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 216 | 1 | 0 | 208 | 177 | 25 | 2 | 4 | 0 | 250 |  |
 
 ## Чем держат другие · How others enforce it
@@ -303,10 +303,10 @@
 | `Glossary-Python` | `CLAUDE.md` | 22 |
 | `Glossary-Python` | `.github/workflows/ci.yml` | 20 |
 | `Glossary-Python` | `docs/dev/architecture.md` | 11 |
+| `Glossary-Python` | `src/glossary/validation.py` | 10 |
 | `Glossary-Python` | `tests/test_validation.py` | 10 |
-| `Glossary-Python` | `src/glossary/validation.py` | 9 |
+| `Glossary-Python` | `tests/test_data_integrity.py` | 9 |
 | `Glossary-Python` | `docs/dev/contributing.md` | 8 |
-| `Glossary-Python` | `tests/test_data_integrity.py` | 8 |
 | `Glossary-Python` | `tests/test_rules_bindings.py` | 8 |
 | `Glossary-Python` | `.github/workflows/badges.yml` | 7 |
 | `Glossary-Python` | `.github/workflows/rules-inbox.yml` | 6 |
@@ -326,9 +326,11 @@
 | `Glossary-Python` | `src/glossary/exporters/html.py` | 4 |
 | `Glossary-Python` | `tests/test_facts.py` | 4 |
 | `Glossary-Python` | `.claude/settings.json` | 3 |
+| `Glossary-Python` | `scripts/changelog.py` | 3 |
 | `Glossary-Python` | `scripts/check_attribution.py` | 3 |
 | `Glossary-Python` | `scripts/check_decisions.py` | 3 |
 | `Glossary-Python` | `src/glossary/loader.py` | 3 |
+| `Glossary-Python` | `tests/quality_baseline.json` | 3 |
 | `Glossary-Python` | `tests/test_automerge.py` | 3 |
 | `Glossary-Python` | `tests/test_check_attribution.py` | 3 |
 | `Glossary-Python` | `tests/test_live_surface.py` | 3 |
@@ -339,7 +341,6 @@
 | `Glossary-Python` | `docs/dev/getting-started.md` | 2 |
 | `Glossary-Python` | `docs/use/status.md` | 2 |
 | `Glossary-Python` | `facts.json` | 2 |
-| `Glossary-Python` | `scripts/changelog.py` | 2 |
 | `Glossary-Python` | `scripts/check_deadlines.py` | 2 |
 | `Glossary-Python` | `scripts/check_defaults.py` | 2 |
 | `Glossary-Python` | `scripts/check_exclusive.py` | 2 |
@@ -350,7 +351,6 @@
 | `Glossary-Python` | `scripts/python_floor.py` | 2 |
 | `Glossary-Python` | `scripts/window_guard.py` | 2 |
 | `Glossary-Python` | `tests/decisions_baseline.json` | 2 |
-| `Glossary-Python` | `tests/quality_baseline.json` | 2 |
 | `Glossary-Python` | `tests/test_cards.py` | 2 |
 | `Glossary-Python` | `tests/test_check_decisions.py` | 2 |
 | `Glossary-Python` | `tests/test_check_journal.py` | 2 |
@@ -358,7 +358,7 @@
 | `Glossary-Python` | `tests/test_loader.py` | 2 |
 | `Glossary-Python` | `tests/test_roles.py` | 2 |
 | `Glossary-Python` | `tests/test_window_guard.py` | 2 |
-| `Glossary-Python` | _остальные_ · _the rest_ | 48 механизмов по одному правилу; без названного адреса: 0 из 144 |
+| `Glossary-Python` | _остальные_ · _the rest_ | 51 механизмов по одному правилу; без названного адреса: 0 из 145 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_reject.py` | 25 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/agent_pr.py` | 19 |
 | `Engineering-Pipeline-Mechanisms` | `.pipeline.yml` | 18 |
@@ -713,4 +713,4 @@
 | 215 | действует | — | действует | действует | действует | действует |
 | 216 | нет предмета | — | — | нет предмета | нет предмета | действует |
 | 217 | действует | — | — | — | действует | действует |
-| 218 | нет предмета | — | — | — | — | — |
+| 218 | нет предмета | — | — | — | действует | — |

@@ -1,7 +1,7 @@
 {
   "schema": "1.6",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T15:10:00+00:00",
+  "generated_at": "2026-10-08T15:15:29+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -8961,14 +8961,14 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-08",
-      "answered": 216,
+      "answered": 217,
       "by_status": {
-        "active": 146,
+        "active": 147,
         "not-applicable": 69,
         "rejected": 1
       },
       "by_mechanism": {
-        "gate": 83,
+        "gate": 84,
         "pipeline": 16,
         "document": 45,
         "none": 2
@@ -9189,7 +9189,8 @@
         "214": "active",
         "215": "active",
         "216": "not-applicable",
-        "217": "active"
+        "217": "active",
+        "218": "active"
       },
       "holds": {
         "001": {
@@ -10794,6 +10795,17 @@
           "awaiting": "",
           "analysed": "2026-10-07",
           "decided": "2026-10-07",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "218": {
+          "mechanism": "gate",
+          "where": "tests/test_delivery.py и src/glossary/delivery.py — предмет здесь один: снятие карточки при слиянии с дублем, и на снятой держатся две вещи. Первая — id, на который ведут ссылки грейдера: живая половина tests/test_delivery.py сверяет id каждого выпуска с выгрузкой и требует для исчезнувшего записи в data/moved.json, а moved() отказывает, если переезд ведёт в несуществующую карточку или старая ещё жива — перенос, а не молчаливое снятие. Вторая — связи «см. также» и «частые ошибки» соседних карточек: правила related-resolves и related-errors-resolve в src/glossary/validation.py, планка 0 в tests/quality_baseline.json, держит tests/test_data_integrity.py. Сборка фрагментов журнала (scripts/changelog.py --collect) снимает файлы, на которых не держится ничего, кроме перенесённой строки",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-08",
+          "decided": "2026-10-08",
           "skill": "",
           "origin": "",
           "origin_kind": ""
