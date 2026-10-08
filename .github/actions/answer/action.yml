@@ -1,0 +1,29 @@
+# Проверка формы ответа проекта каталогу (контракт ответа 1.9, правило 129).
+#
+# Каталог определяет, как ему отвечать, — и отдаёт проверку этой формы, чтобы
+# ответы семьи были однотипными до слияния, а не после сводки. Код берётся из
+# пути самого действия (095): тег в строке `uses:` закрепляет и разметку, и
+# проверку.
+name: Ответ каталогу по форме
+description: >-
+  Сверяет .rules/bindings.json проекта с формой контракта ответа каталога и
+  прогоняет пробы «не применимо» по дереву проекта.
+inputs:
+  bindings:
+    description: Путь к ответу проекта каталогу.
+    required: false
+    default: .rules/bindings.json
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v6
+      with:
+        python-version: "3.14"
+    - name: ответ каталогу по форме контракта
+      shell: bash
+      env:
+        BINDINGS: ${{ inputs.bindings }}
+      run: |
+        set -euo pipefail
+        python "$GITHUB_ACTION_PATH/../../../scripts/check_answer.py" \
+          --bindings "$GITHUB_WORKSPACE/$BINDINGS" --root "$GITHUB_WORKSPACE"

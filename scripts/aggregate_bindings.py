@@ -71,7 +71,7 @@ from check_plugins import PLUGINS  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 CONSUMERS = ROOT / ".rules" / "consumers.json"
 EXPORT_JSON = ROOT / "export" / "where.json"
-SUMMARY_SCHEMA = "1.6"
+SUMMARY_SCHEMA = "1.7"
 
 #: Поля записи, которые сводка переносит НАРУЖУ. Собираются ОДНОЙ функцией
 #: потому, что таких мест два — сборка и сверка, — и они сравниваются на
@@ -105,6 +105,22 @@ def держание(rec: dict) -> dict:
             # до сверки формы и прошло как «поля нет».
             "origin": rec.get("origin", ""),
             "origin_kind": rec.get("origin_kind", "")}
+
+def заметки(rules: dict) -> dict:
+    """Мысли и замеры проекта по правилам — `note` и `metric` (ответ 1.9).
+
+    По ЛЮБОЙ записи, а не только действующей: идея бывает и о правиле, которое
+    у проекта не применимо. Собирается одной функцией для сборки и сверки — по
+    той же причине, что держание выше."""
+    out: dict = {}
+    for rid, rec in sorted(rules.items()):
+        if not isinstance(rec, dict):
+            continue
+        z = {k: rec[k] for k in ("note", "metric") if k in rec}
+        if z:
+            out[rid] = z
+    return out
+
 
 EXPORT_MD = ROOT / "export" / "where.md"
 RULES = ROOT / "export" / "rules.json"
@@ -275,6 +291,7 @@ def collect(consumers: list[dict]) -> tuple[list[dict], list[str]]:
         entry["by_mechanism"] = by_mechanism
         entry["rules"] = {rid: rec.get("status") for rid, rec in rules.items()}
         entry["holds"] = holds
+        entry["notes"] = заметки(rules)
         slices.append(entry)
 
     return slices, problems
@@ -847,7 +864,11 @@ def происхождение_неверно(s: dict) -> list[str]:
     сверки значило бы менять состав выгрузки."""
     out: list[str] = []
     for rid, h in sorted((s.get("holds") or {}).items()):
-        if (что := происхождение(h)) is not None:
+        # Срез несёт только действующие записи, и статус в держание не
+        # переносится — он известен по построению среза. Схема — самого
+        # ответа: требования 1.9 к ответу 1.8 не предъявляются (157).
+        if (что := происхождение({**h, "status": "active"},
+                                 s.get("schema") or "")) is not None:
             out.append(f"{s['repo']}: {rid} — {что}")
     return out
 
@@ -885,6 +906,26 @@ def census(slices: list[dict], rule_ids: list[str]) -> list[str]:
                        f"{len(навыки)} — " + ", ".join(
                            f"{rid} ({адрес})" for rid, адрес in навыки.items()))
     return out
+
+
+def _notes(connected: list[dict]) -> list[str]:
+    """Раздел «Заметки и замеры проектов» — то, что не легло в поля ответа."""
+    строки: list[str] = []
+    for s in connected:
+        for rid, z in (s.get("notes") or {}).items():
+            m = z.get("metric") or {}
+            замер = (f"{m.get('what')}: {m.get('value')} ({m.get('measured')})"
+                     if isinstance(m, dict) and m else "")
+            заметка = str(z.get("note") or "").replace("|", "\\|").replace("\n", " ")
+            строки.append(f"| {rid} | `{s['repo'].split('/')[-1]}` | "
+                          f"{заметка} | {замер} |")
+    if not строки:
+        return []
+    return ["", "## Заметки и замеры проектов · Project notes and metrics", "",
+            "Мысли проекта по правилу (`note`) и замеры (`metric`) — то, что не "
+            "легло в стандартные поля ответа (контракт 1.9).", "",
+            "| № | Проект | Заметка | Замер |", "|---|---|---|---|",
+            *строки]
 
 
 def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
@@ -965,6 +1006,7 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
 
     lines += _how_others_enforce(connected)
     lines += _load_bearing(connected)
+    lines += _notes(connected)
 
     head = " | ".join(f"`{s['repo'].split('/')[-1]}`" for s in connected)
     lines += ["", "## Правила · Rules", "",
@@ -1066,6 +1108,15 @@ def check_offline(consumers: list[dict], rule_ids: list[str],
             print(f"сводка отстала от того, ЧЕМ держит {c['repo']}: {shown}"
                   f"{more}.\n  Пересоберите: "
                   "python scripts/aggregate_bindings.py", file=sys.stderr)
+            return 1
+
+        want_n = заметки(data.get("rules", {}))
+        have_n = next((s.get("notes") or {} for s in slices
+                       if s.get("repo") == c.get("repo")), {})
+        if want_n != have_n:
+            print(f"сводка отстала от заметок и замеров {c['repo']}.\n  "
+                  "Пересоберите: python scripts/aggregate_bindings.py",
+                  file=sys.stderr)
             return 1
 
     if as_markdown(slices, rule_ids) != stored_md:

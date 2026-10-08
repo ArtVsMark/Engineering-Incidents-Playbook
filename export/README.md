@@ -240,9 +240,40 @@ fails the build.
 | `awaiting` | СОБЫТИЕ, при котором механизм строится, с замером отсутствия предмета · the EVENT that will make the mechanism buildable, with a measurement of the subject's absence | обязательно при `holdable: conditional`; запрещено при `gate` и `pipeline` · required with `holdable: conditional`; forbidden with `gate` and `pipeline` |
 | `analysed` | дата сверки записи с деревом, `ГГГГ-ММ-ДД` · the date the record was last checked against the tree | необязательно; отсутствие значит «не сверяли» и считается отдельно · optional; absence means "never checked" and is counted separately |
 | `decided` | дата, когда вынесен НЫНЕШНИЙ вердикт · the date the CURRENT verdict was made | необязательно; не позже `analysed` и не без него · optional; never later than `analysed`, never without it |
-| `origin` | **разрешимый адрес источника** механизма, взятого не своим: `<владелец>/<репозиторий>:<путь>@<версия>` — версия тегом или коммитом (с 1.8). Каталог проверяет только форму: что механизм и правда взят оттуда — слово проекта, как и `where` · the **resolvable address of the source** of a mechanism taken from elsewhere: `<owner>/<repo>:<path>@<version>` — a tag or a commit (since 1.8). Only the form is checked: that the mechanism really came from there is the project's word, like `where` | необязательно; отсутствие значит «свой или не объявлено» и задним числом не спрашивается; запрещено при `mechanism: none`; у потребителя каталог сверяет его на записях `active` — в сводку идут только они · optional; absence means "own or not declared" and is never asked for retroactively; forbidden with `mechanism: none`; at a consumer the catalogue checks it on `active` records only — only those go into the summary |
-| `origin_kind` | как механизм перенесён: `called` — вызван по адресу с тегом · `copied` — скопирован без правки · `adapted` — переделан под проект (с 1.8). Копия отличима от вызова: копия — кандидат в расхождение с источником · how the mechanism was taken: `called` — invoked by address at a tag · `copied` — copied unchanged · `adapted` — reworked for the project (since 1.8). A copy is distinguishable from a call: a copy is a candidate for drifting from its source | при `origin` — обязательно; без `origin` запрещено · required with `origin`; forbidden without it |
+| `origin_kind` | откуда механизм: `own` — разработан здесь (с 1.9) · `called` — вызван по адресу с тегом · `copied` — скопирован без правки · `adapted` — приём взят у соседа и переделан (с 1.8). Копия отличима от вызова: копия — кандидат в расхождение с источником · where the mechanism came from: `own` — built here (since 1.9) · `called` — invoked by address at a tag · `copied` — copied unchanged · `adapted` — the technique was taken and reworked (since 1.8) | **с 1.9 обязательно** у `active` с `gate` и `pipeline`; запрещено при `mechanism: none`. Ответ ниже 1.9 сверяется по своим правилам: задним числом не спрашивается, подъём своей схемы и есть перечитывание · **required since 1.9** on `active` records with `gate` or `pipeline`; forbidden with `mechanism: none`. An answer below 1.9 is checked by its own rules |
+| `origin` | **разрешимый адрес источника**: `<владелец>/<репозиторий>:<путь>@<версия>` — версия тегом или коммитом. Каталог проверяет только форму: что механизм и правда взят оттуда — слово проекта, как и `where` · the **resolvable address of the source**: `<owner>/<repo>:<path>@<version>`, a tag or a commit. Only the form is checked | обязательно при `called`, `copied`, `adapted`; запрещено при `own` · required with `called`, `copied`, `adapted`; forbidden with `own` |
+| `refuted_by` | проба, опровергающая «не применимо»: `{"globs": ["<маска пути>", …], "contains": ["<строка>", …]}` — файл по маске (а при непустом `contains` — файл, где есть одна из строк) делает ответ ложным (с 1.9). Проверка проекта прогоняет пробу по его дереву · a probe that refutes "not applicable": a file matching a glob (containing one of the strings, when `contains` is non-empty) makes the answer false (since 1.9). The project's check runs it on its own tree | необязательно; только при `not-applicable`. Диалекты до 1.9 — строка-маска и `absent: {substring, globs}` — читаются, пока ответ не поднят на 1.9 · optional; only with `not-applicable`. Pre-1.9 dialects are read until the answer is raised to 1.9 |
+| `note` | мысль проекта по правилу — то, что не ложится в поля: идея, сомнение, предложение · the project's own thought on the rule — whatever does not fit the fields (с 1.9) | необязательно; непустая строка; едет в сводку разделом «Заметки и замеры» · optional; a non-empty string; goes to the summary |
+| `metric` | замер проекта по правилу: `{"what": "<что измерено>", "value": <число или строка>, "measured": "ГГГГ-ММ-ДД"}` · the project's measurement on the rule (с 1.9) | необязательно; едет в сводку рядом с заметкой · optional; goes to the summary |
 | `document_reason` | устар. · deprecated: прежнее имя `holdable` со словами `impossible`/`not-yet`. Читается на входе, у себя не пишется · the former name of `holdable`; read on input, never written | — |
+
+**Форма записи закрыта с 1.9.** Ключ вне таблицы — находка: то, что не
+ложится в поля, пишется в `note`, замер — в `metric`. Замер перед подъёмом:
+два проекта несли ключи вне контракта, а три завели пробу «не применимо» в
+трёх разных формах — `refuted_by` строкой, `refuted_by` объектом и `absent`. Без
+закрытой формы ответы семьи перестают быть однотипными, а сводка узнаёт об этом
+через сутки.
+
+**The record form is closed since 1.9.** A key outside the table is a finding:
+what does not fit the fields goes into `note`, a measurement into `metric`.
+
+**Проверка формы — у проекта, до слияния.** Каталог определяет, как ему
+отвечать, и потому отдаёт проверку этой формы действием: тем же модулем формы
+записи, которым сверяет свой ответ и сводку (`scripts/answer_form.py`).
+
+```yaml
+- uses: actions/checkout@v5
+- uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/answer@<!--m:ref-->v1.9.0<!--/m:ref-->
+```
+
+Проверка отвергает статус и механизм вне словаря, отрицательный статус без
+причины, происхождение не по форме (с 1.9 — и его отсутствие у `gate` и
+`pipeline`), пробу и заметку не по форме, ключи вне контракта — и прогоняет
+пробы `refuted_by` по дереву проекта: проба нашла предмет — ответ «не
+применимо» опровергнут.
+
+**The form check runs at the project, before merge**, by the same record-form
+module the catalogue uses on its own answer and on the summary.
 
 **Почему навык плагина (контракт 1.7).** Навык работы с каталогом проект
 ставит плагином `catalogue`, и в своём дереве его не держит: адрес
@@ -937,8 +968,8 @@ repository settings.
 {
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
-    "export": "1.7", "bindings": "1.8", "consumers": "1.1",
-    "proposals": "1.3", "showcase": "1.1", "where": "1.6"
+    "export": "1.7", "bindings": "1.9", "consumers": "1.1",
+    "proposals": "1.3", "showcase": "1.1", "where": "1.7"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
                                                // build time, example value
