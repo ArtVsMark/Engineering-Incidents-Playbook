@@ -15,7 +15,7 @@
 | `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 217 | 0 | 0 | 201 | 152 | 7 | 1 | 27 | 14 | 124 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 195 | 22 | 0 | 192 | 85 | 39 | 0 | 68 | 0 | 144 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 112 | 16 | 0 | 16 | 0 | 52 |  |
-| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 99 | 9 | 0 | 58 | 17 | 100 |  |
+| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 99 | 9 | 0 | 58 | 17 | 102 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 147 | 84 | 16 | 0 | 45 | 2 | 110 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 217 | 0 | 0 | 209 | 178 | 25 | 2 | 4 | 0 | 252 |  |
 
@@ -247,8 +247,8 @@
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 38 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 17 |
 | `Claude-Code_Usage-Token` | `scripts/rules_answer.py` | 17 |
+| `Claude-Code_Usage-Token` | `scripts/merge_queue.py` | 16 |
 | `Claude-Code_Usage-Token` | `.github/workflows/rules-inbox.yml` | 15 |
-| `Claude-Code_Usage-Token` | `scripts/merge_queue.py` | 15 |
 | `Claude-Code_Usage-Token` | `.rules/bindings.json` | 14 |
 | `Claude-Code_Usage-Token` | `scripts/changelog.py` | 14 |
 | `Claude-Code_Usage-Token` | `scripts/check_pr_metadata.py` | 12 |
@@ -266,6 +266,7 @@
 | `Claude-Code_Usage-Token` | `.github/workflows/release.yml` | 6 |
 | `Claude-Code_Usage-Token` | `CHANGELOG.md` | 6 |
 | `Claude-Code_Usage-Token` | `scripts/concurrency_head.py` | 6 |
+| `Claude-Code_Usage-Token` | `scripts/gh_rest.py` | 6 |
 | `Claude-Code_Usage-Token` | `scripts/shell_ascii.py` | 6 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/storage.py` | 6 |
 | `Claude-Code_Usage-Token` | `tests/test_subprocess_encoding.py` | 6 |
@@ -275,12 +276,12 @@
 | `Claude-Code_Usage-Token` | `docs/roles.md` | 5 |
 | `Claude-Code_Usage-Token` | `scripts/attribution.py` | 5 |
 | `Claude-Code_Usage-Token` | `scripts/badges.py` | 5 |
-| `Claude-Code_Usage-Token` | `scripts/gh_rest.py` | 5 |
+| `Claude-Code_Usage-Token` | `scripts/release.py` | 5 |
 | `Claude-Code_Usage-Token` | `scripts/repo_links.py` | 5 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/transcripts.py` | 5 |
 | `Claude-Code_Usage-Token` | `tests/test_transcripts.py` | 5 |
 | `Claude-Code_Usage-Token` | `.rules/proposals.json` | 4 |
-| `Claude-Code_Usage-Token` | `scripts/release.py` | 4 |
+| `Claude-Code_Usage-Token` | `pyproject.toml` | 4 |
 | `Claude-Code_Usage-Token` | `scripts/schedule_alarm.py` | 4 |
 | `Claude-Code_Usage-Token` | `scripts/subprocess_timeout.py` | 4 |
 | `Claude-Code_Usage-Token` | `tests/test_attribution.py` | 4 |
@@ -290,11 +291,11 @@
 | `Claude-Code_Usage-Token` | `.rules/exclusive.json` | 3 |
 | `Claude-Code_Usage-Token` | `README.en.md` | 3 |
 | `Claude-Code_Usage-Token` | `docs/versioning.md` | 3 |
-| `Claude-Code_Usage-Token` | `pyproject.toml` | 3 |
 | `Claude-Code_Usage-Token` | `scripts/doc_limits.py` | 3 |
 | `Claude-Code_Usage-Token` | `scripts/exclusive_claims.py` | 3 |
 | `Claude-Code_Usage-Token` | `scripts/facts.py` | 3 |
 | `Claude-Code_Usage-Token` | `scripts/version.py` | 3 |
+| `Claude-Code_Usage-Token` | `tests/test_repo_links.py` | 3 |
 | `Claude-Code_Usage-Token` | `tests/test_rules_inbox.py` | 3 |
 | `Claude-Code_Usage-Token` | `tests/test_utf8_output.py` | 3 |
 | `Claude-Code_Usage-Token` | `.claude/hooks/push_guard.py` | 2 |
@@ -304,13 +305,17 @@
 | `Claude-Code_Usage-Token` | `docs/storage-setup.md` | 2 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/output.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_badges.py` | 2 |
+| `Claude-Code_Usage-Token` | `tests/test_concurrency_head.py` | 2 |
+| `Claude-Code_Usage-Token` | `tests/test_gh_rest_pages.py` | 2 |
+| `Claude-Code_Usage-Token` | `tests/test_merge_queue.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_pr_metadata.py` | 2 |
+| `Claude-Code_Usage-Token` | `tests/test_preflight.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_push_guard.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_registry.py` | 2 |
-| `Claude-Code_Usage-Token` | `tests/test_repo_links.py` | 2 |
+| `Claude-Code_Usage-Token` | `tests/test_release.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_schedule_alarm.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_shell_ascii.py` | 2 |
-| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 33 механизмов по одному правилу; без названного адреса: 0 из 166 |
+| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 30 механизмов по одному правилу; без названного адреса: 0 из 166 |
 | `Glossary-Python` | `CLAUDE.md` | 22 |
 | `Glossary-Python` | `.github/workflows/ci.yml` | 20 |
 | `Glossary-Python` | `docs/dev/architecture.md` | 11 |
