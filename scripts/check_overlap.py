@@ -125,7 +125,11 @@ def main(argv: list[str] | None = None) -> int:
          f"origin/main...{branch}"],
         capture_output=True, text=True, encoding="utf-8")
     if done.returncode == 0:
-        my_files = {line for line in done.stdout.split() if line}
+        # ПО NUL, А НЕ `split()` (165, #762): NUL не пробел, и голый `split()`
+        # склеивал весь список в одно имя с `\0` внутри — оно не совпадало ни
+        # с одним чужим файлом, и локальный путь отвечал «пересечений нет» на
+        # любом дереве. Путь площадки (`files_of`) этим не болел: там REST.
+        my_files = {name for name in done.stdout.split("\0") if name}
     elif mine is not None:
         my_files, err = files_of(mine.get("number"))
         if err:

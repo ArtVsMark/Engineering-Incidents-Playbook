@@ -17,6 +17,7 @@
 
 
 import json
+import subprocess
 
 import check_overlap as co
 
@@ -99,3 +100,49 @@ def test_peresechenie_za_sotym_faylom_vidno(monkeypatch, capsys):
 
     assert co.main(["--branch", МОЙ]) == 1
     assert "scripts/a.py" in capsys.readouterr().out
+
+
+def дерево_с_веткой(tmp_path, *files: str) -> None:
+    """Настоящий репозиторий: `origin/main` и ветка МОЙ, тронувшая files.
+
+    Локальный путь гейта зовёт `git diff --name-only -z origin/main...ветка`,
+    и подделать его разбор нечем, кроме настоящего вывода git (150).
+    """
+    def git(*args: str) -> None:
+        subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
+                       capture_output=True)
+
+    subprocess.run(["git", "init", "-q", "-b", "main", str(tmp_path)], check=True)
+    git("config", "user.email", "проба@пример")
+    git("config", "user.name", "проба")
+    (tmp_path / "README.md").write_text("основание\n", encoding="utf-8")
+    git("add", "-A")
+    git("commit", "-qm", "основание")
+    git("update-ref", "refs/remotes/origin/main", "HEAD")
+    git("checkout", "-q", "-b", МОЙ)
+    for name in files:
+        path = tmp_path / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("правка\n", encoding="utf-8")
+    git("add", "-A")
+    git("commit", "-qm", "работа ветки")
+
+
+def test_lokalnyy_put_vidit_obshchiy_fayl(tmp_path, monkeypatch, capsys):
+    """#762: вывод `git diff -z` резался `split()`, и два файла ветки сливались
+    в одно имя с NUL внутри — «пересечений нет» на любом дереве. Своих файлов
+    у площадки здесь нет вовсе: найти общий файл может только локальный путь."""
+    дерево_с_веткой(tmp_path, "README.md", "docs/имя с пробелом.md")
+    площадка(monkeypatch, [изменение(2, "agent/чужая", "docs/имя с пробелом.md")])
+
+    assert co.main(["--root", str(tmp_path), "--branch", МОЙ]) == 1
+    assert "docs/имя с пробелом.md" in capsys.readouterr().out
+
+
+def test_lokalnyy_put_bez_obshchego_chisto(tmp_path, monkeypatch, capsys):
+    """Обратная сторона: файлы ветки разобраны поимённо и с чужими не сошлись."""
+    дерево_с_веткой(tmp_path, "README.md", "scripts/a.py")
+    площадка(monkeypatch, [изменение(2, "agent/чужая", "scripts/b.py")])
+
+    assert co.main(["--root", str(tmp_path), "--branch", МОЙ]) == 0
+    assert "пересечений нет" in capsys.readouterr().out
