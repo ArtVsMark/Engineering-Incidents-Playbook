@@ -894,3 +894,14 @@ def test_опрос_в_комментарии_не_считается():
     текст = ОЖИДАЮЩИЙ.format(group="one",
                              steps="      # gh api здесь не зовётся\n      - run: true\n")
     assert cw.ожидающий_без_опроса(текст) == ["one"]
+
+
+@pytest.mark.parametrize("steps", [
+    "      - uses: actions/checkout@v5\n        with:\n          ref: ${{ github.sha }}\n",
+    "      - uses: actions/checkout@v5\n        with:\n"
+    "          ref: ${{ github.event.pull_request.head.sha }}\n",
+    "      - run: true  # gh api здесь только в комментарии\n",
+])
+def test_sha_события_и_хвостовой_комментарий_не_опрос(steps):
+    текст = ОЖИДАЮЩИЙ.format(group="one", steps=steps)
+    assert cw.ожидающий_без_опроса(текст) == ["one"]
