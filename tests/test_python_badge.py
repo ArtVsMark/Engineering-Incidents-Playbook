@@ -475,3 +475,34 @@ def test_без_наборов_зоны_нет(tmp_path):
     assert pb.зона_наборов([]) == []
     код, картинка = _с_наборами(tmp_path, "", [job("e2e", "failure")])
     assert код == 0 and ">e2e<" not in картинка
+
+
+# ── разбор jobs: комментарии, кавычки, чужое имя (находка обзора #725) ─────
+
+def test_хвостовой_комментарий_не_входит_в_имя_и_ключ():
+    текст = ("jobs:\n  e2e:  # сквозные\n    name: E2E  # браузер\n"
+             "  'sandbox-linux':\n    runs-on: ubuntu-latest\n")
+    assert pb.работы_ci(текст) == {"e2e": "E2E", "sandbox-linux": "sandbox-linux"}
+
+
+def test_набор_с_комментарием_в_имени_красится_а_не_сереет(tmp_path):
+    """Прежде имя «E2E  # браузер» проходило сверку и ни с чем не совпадало."""
+    корень = дерево(tmp_path)
+    (корень / ".github" / "workflows" / "ci.yml").write_text(
+        "jobs:\n  e2e:\n    name: E2E  # браузер\n    steps:\n"
+        "      - uses: actions/setup-python@v6\n        with:\n"
+        '          python-version: "3.14"\n', encoding="utf-8")
+    out = tmp_path / "python.svg"
+    исходы = {"ci.yml": [прогон("success", "2026-10-01T11:00Z")],
+              "python-next.yml": [прогон("success", "2026-10-01T11:00Z")]}
+    assert pb.main(["--root", str(корень), "--out", str(out), "--suites", "e2e"],
+                   прогоны=исходы.__getitem__,
+                   работы=lambda r: [job("E2E", "failure")]) == 0
+    assert "e2e: CI не пройден" in out.read_text(encoding="utf-8")
+
+
+def test_отдельная_работа_со_скобками_не_матрица_соседа():
+    работы = {"e2e": "e2e", "smoke": "e2e (smoke)"}
+    jobs = [job("e2e", "success"), job("e2e (smoke)", "failure")]
+    assert pb.по_наборам([("e2e", "e2e")], работы, jobs) == [("e2e", "pass")]
+    assert pb.по_наборам([("smoke", "smoke")], работы, jobs) == [("smoke", "fail")]
