@@ -48,6 +48,8 @@ def находки(answer: dict, root: Path) -> list[str]:
     """Все находки формы ответа проекта и опровергнутые пробы."""
     схема = answer.get("schema") or ""
     out: list[str] = []
+    if (что := answer_form.схема_неверна(схема)):
+        out.append(что)
     for rid, rec in sorted((answer.get("rules") or {}).items()):
         if not isinstance(rec, dict):
             out += answer_form.запись(rid, rec, схема)

@@ -60,11 +60,23 @@ ORIGIN_RE = re.compile(r"^[\w.-]+/[\w.-]+:[^\s@:]+@[^\s@]+$")
 
 
 def версия(schema: object) -> tuple[int, ...]:
-    """«1.9» → (1, 9); нечитаемое — (0,), то есть «старше всего»."""
+    """«1.9» → (1, 9); нечитаемое — (0,), то есть МЛАДШЕ всего.
+
+    Нечитаемый номер здесь не смягчается молча: проверка проекта называет его
+    находкой отдельно (`схема_неверна`), иначе ответ без `schema` проходил бы
+    «по форме», не пройдя ни одной проверки 1.9 (обзор #756)."""
     try:
         return tuple(int(x) for x in str(schema).split("."))  # не проза: номер версии схемы
     except ValueError:
         return (0,)
+
+
+def схема_неверна(schema: object) -> str | None:
+    """Номер схемы ответа читается как `X.Y`; иначе — находка."""
+    if not re.fullmatch(r"\d+\.\d+", str(schema or "")):
+        return (f"`schema` — «{schema}», а ждётся номер контракта ответа вида "
+                "`1.9`: без него неизвестно, по каким правилам сверять запись")
+    return None
 
 
 def с_19(schema: object) -> bool:
@@ -144,6 +156,8 @@ def проба_неверна(rec: dict, schema: object) -> str | None:
     if rec.get("status") != "not-applicable":
         return ("проба опровергает «не применимо», а статус записи "
                 f"`{rec.get('status')}` — опровергать нечего")
+    if "refuted_by" not in rec and not isinstance(rec.get(ДИАЛЕКТ_ПРОБЫ), dict):
+        return "`absent` — объект `{substring, globs}` (диалект до 1.9)"
     if с_19(schema):
         if ДИАЛЕКТ_ПРОБЫ in rec:
             return ("`absent` — диалект до 1.9; с 1.9 проба пишется "
@@ -156,6 +170,12 @@ def проба_неверна(rec: dict, schema: object) -> str | None:
     if (not isinstance(маски, list) or not маски
             or not all(isinstance(m, str) and m.strip() for m in маски)):
         return "`refuted_by.globs` — непустой список масок путей"
+    # Маска приходит из ДАННЫХ изменения, а прогоняется в чужом прогоне:
+    # абсолютная или с `..` вышла бы за дерево проекта (обзор #756).
+    for m in маски:
+        if m.startswith(("/", "\\")) or re.match(r"^[A-Za-z]:", m) or ".." in Path(m).parts:
+            return (f"`refuted_by.globs` — «{m}» выходит за дерево проекта: "
+                    "маска относительная и без `..`")
     if not isinstance(строки, list) or not all(isinstance(s, str) and s for s in строки):
         return "`refuted_by.contains` — список строк (пустой — «файл есть»)"
     return None
@@ -169,9 +189,17 @@ def прогнать_пробу(rec: dict, root: Path) -> str | None:
     п = проба(rec)
     if not п or проба_неверна(rec, "1.8"):
         return None
+    корень = root.resolve()
     for маска in п["globs"]:
-        for путь in sorted(root.glob(маска)):
+        try:
+            найдено = sorted(root.glob(маска))
+        except NotImplementedError, ValueError:
+            continue
+        for путь in найдено:
             if not путь.is_file() or ".git" in путь.parts:
+                continue
+            # Симлинк ведёт куда угодно: читается только то, что внутри корня.
+            if not путь.resolve().is_relative_to(корень):
                 continue
             if not п["contains"]:
                 return f"есть {путь.relative_to(root)}"
