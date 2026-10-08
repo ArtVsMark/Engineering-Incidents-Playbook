@@ -241,8 +241,9 @@
 | `ArtVsMark` | `CHANGELOG.md` | 2 |
 | `ArtVsMark` | `scripts/check_branch.py` | 2 |
 | `ArtVsMark` | `scripts/reauthor_deps.py` | 2 |
+| `ArtVsMark` | `scripts/staleness.py` | 2 |
 | `ArtVsMark` | `scripts/stuck_prs.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 10 механизмов по одному правилу; без названного адреса: 0 из 158 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 9 механизмов по одному правилу; без названного адреса: 0 из 158 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 39 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 36 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 17 |
