@@ -49,9 +49,10 @@ the bootstrap files on 3.11" — the same formal move hidden in an exception.
 `check_python_version.py` flags a job that calls python before `setup-python`;
 the start hook reads the floor without Python and switches the window's
 `python3`; the push guard is invoked with the floor's interpreter and, without
-it, blocks `git push` with code 2. The move becomes complete only together with
-the next window's leftovers: a search for any other execution that names no
-version and a check of the window at start.
+it, blocks `git push` with code 2. These three links did not finish
+the move: its leftovers — a search for any other execution that names no
+version and a check of the window at start — were closed by the next window
+(#675–#684), and only with them did the move become complete.
 
 **Speed before and after** — taken on 2 October in a fresh window after the
 restart, one machine, three interleaved rounds, medians. The suite is only the
@@ -129,7 +130,8 @@ through.
 
 - measure speed before and after the move on one machine, in interleaved
   rounds, on the suite that existed BEFORE the move; name the gain as a number
-  or record that there is none;
+  or record that there is none. The threshold is the spread within one
+  configuration: a difference smaller than that is no gain, not a small one;
 - count the pipeline matrix width before and after separately: a dropped
   version removes as many jobs as the matrix has OSes, and this gain does not
   show up in a suite speed measurement;
