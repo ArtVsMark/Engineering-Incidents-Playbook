@@ -80,6 +80,11 @@ import check_links
 ROOT = Path(__file__).resolve().parent.parent
 
 HISTORY = "docs/HISTORY.md"
+#: Разделы старше окна живой истории (audit_catalogue.HISTORY_WINDOW) лежат
+#: здесь дословно. Наличие раздела у тега спрашивается у обоих файлов: иначе
+#: два гейта требовали бы противоположного — один вынести раздел за окно,
+#: другой держать его в живом документе, — и окно не сдвинулось бы ни разу.
+ARCHIVE = "docs/HISTORY-ARCHIVE.md"
 SECTION = "## Эволюция метрик каталога"
 #: Заголовок раздела выпуска: «## v1.1.0 · 28 августа 2026 · чем он был».
 #: Единица истории — выпуск (правило 161), и раздел, которого нет, оставляет
@@ -322,13 +327,17 @@ def check(root: Path) -> int:
     # ── исход 1 ────────────────────────────────────────────────────────────
     problems: list[str] = []
     text = path.read_text(encoding="utf-8")
+    archive = root / ARCHIVE
+    if archive.exists():
+        text += "\n" + archive.read_text(encoding="utf-8")
     sections = {release(m.group(1)) for m in RELEASE_HEAD_RE.finditer(text)}
     written = {release(cells(r)[0]): r for r in rows}
     for tag in found:
         num = release(tag)
         if num not in sections:
             problems.append(
-                f"выпуск {tag} состоялся, а раздела о нём в {HISTORY} нет. "
+                f"выпуск {tag} состоялся, а раздела о нём ни в {HISTORY}, "
+                f"ни в {ARCHIVE} нет. "
                 "Единица истории — выпуск: без раздела его решения остаются "
                 "нерассказанными, и рядом с рядом тегов стоит пустое место")
         if num not in written:
