@@ -99,8 +99,6 @@
 сборку не проходит: это и есть механизм, не дающий деревьям разойтись. Два
 отдельных указателя такого не дают — каждый выглядит полным сам по себе.
 
-## Чем держится правило у потребителей
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/consumers-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/consumers-light.svg">
