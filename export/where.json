@@ -1,12 +1,12 @@
 {
-  "schema": "1.6",
+  "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T20:34:38+00:00",
+  "generated_at": "2026-10-08T21:31:13+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
       "role": "каталог",
-      "schema": "1.8",
+      "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-08",
@@ -251,7 +251,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "002": {
           "mechanism": "gate",
@@ -262,7 +262,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "003": {
           "mechanism": "gate",
@@ -273,7 +273,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "004": {
           "mechanism": "gate",
@@ -284,7 +284,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "005": {
           "mechanism": "gate",
@@ -295,7 +295,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "006": {
           "mechanism": "document",
@@ -328,7 +328,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "009": {
           "mechanism": "gate",
@@ -339,7 +339,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "010": {
           "mechanism": "gate",
@@ -350,7 +350,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "011": {
           "mechanism": "gate",
@@ -361,7 +361,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "012": {
           "mechanism": "gate",
@@ -405,7 +405,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "017": {
           "mechanism": "gate",
@@ -416,7 +416,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "018": {
           "mechanism": "gate",
@@ -427,7 +427,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "019": {
           "mechanism": "gate",
@@ -438,18 +438,18 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "021": {
           "mechanism": "gate",
           "where": "scripts/check_readers.py — у каждого документа (файл в корне либо README папки) объявлен читатель строкой «> **Читатель:** кто — на какой вопрос отвечает»; значение берётся из закрытого словаря из пяти, и у КАЖДОГО читателя обязан быть хотя бы один документ. Раскладка по каталогам docs/use|dev|agent|archive, как у грейдера, не взята намеренно: README, CONTRIBUTING и AGENTS имеют для площадки своё значение в корне, и переезд спрятал бы их — взят приём, а не файл (162). Указатель rules/README.md получает строку от сборки scripts/build_rules_index.py, а не от руки. ГРАНИЦА: тому ли читателю адресован текст на самом деле и не отвечает ли документ на два вопроса сразу, гейт не судит — это приёмка",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-17",
+          "analysed": "2026-10-08",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Stepik-Python-Grader:docs@cbfcdcc439c5",
+          "origin_kind": "adapted"
         },
         "022": {
           "mechanism": "gate",
@@ -460,7 +460,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "023": {
           "mechanism": "gate",
@@ -471,7 +471,7 @@
           "decided": "2026-09-17",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "024": {
           "mechanism": "gate",
@@ -482,7 +482,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "025": {
           "mechanism": "gate",
@@ -493,7 +493,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "026": {
           "mechanism": "gate",
@@ -504,7 +504,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "027": {
           "mechanism": "document",
@@ -537,7 +537,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "030": {
           "mechanism": "gate",
@@ -570,7 +570,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "033": {
           "mechanism": "gate",
@@ -581,7 +581,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "034": {
           "mechanism": "none",
@@ -603,7 +603,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "037": {
           "mechanism": "gate",
@@ -614,7 +614,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "039": {
           "mechanism": "gate",
@@ -625,7 +625,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "040": {
           "mechanism": "gate",
@@ -636,7 +636,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "041": {
           "mechanism": "gate",
@@ -647,7 +647,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "042": {
           "mechanism": "document",
@@ -669,7 +669,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "044": {
           "mechanism": "gate",
@@ -680,7 +680,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "045": {
           "mechanism": "gate",
@@ -691,7 +691,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "046": {
           "mechanism": "gate",
@@ -702,7 +702,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "047": {
           "mechanism": "document",
@@ -724,7 +724,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "050": {
           "mechanism": "document",
@@ -746,7 +746,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "052": {
           "mechanism": "document",
@@ -764,11 +764,11 @@
           "where": "scripts/merge_ready.py::frozen, подключён шагом «красная общая ветка замораживает очередь» в .github/workflows/automerge.yml: пока последний прогон хоть одной работы общей ветки не зелёный, изменение не получает ни автомержа, ни слияния. Размораживает метка `blocker` на самом изменении — объявлена в .github/labels.yml; вычислить «а это ли починка» механизм не может, и признак ставит человек. Заморозка спрашивается ПЕРВОЙ, до проверок самого изменения: это условие входа, а не сортировка, и случай на это есть. .github/workflows/main-red.yml заводит задачу, пока ветка красная, — вторая половина: заморозка останавливает очередь, дежурный зовёт человека. ИЗМЕРЕНО: до 2 сентября 2026 ответ называл механизмом только дежурного, а тот никого не останавливает — ветка покраснела в 08:55, и за полчаса в неё уехали два изменения с зелёными проверками на сломанном основании (146). Тем же заходом снято `--exclude attribution-history` у дежурного: причина исключения давно выражена ключом --since, а само оно пережило её молча (068). Приём взят у грейдера целиком — метка та же и значит то же (162); набор — tests/test_merge_ready.py, одиннадцать случаев с обеих сторон. ГРАНИЦА: ПОРЯДОК внутри очереди — кто голова среди незамороженных — не держится ничем: у соседа он вычисляется своей шкалой приоритетов, здесь изменения идут по готовности, и это отдельный предмет (052)",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-17",
+          "analysed": "2026-10-08",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Stepik-Python-Grader:scripts/merge_when_green.py@8264eb850379",
+          "origin_kind": "adapted"
         },
         "054": {
           "mechanism": "pipeline",
@@ -779,7 +779,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "055": {
           "mechanism": "gate",
@@ -790,7 +790,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "056": {
           "mechanism": "gate",
@@ -801,7 +801,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "057": {
           "mechanism": "gate",
@@ -812,7 +812,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "058": {
           "mechanism": "gate",
@@ -823,7 +823,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "059": {
           "mechanism": "gate",
@@ -834,7 +834,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "060": {
           "mechanism": "none",
@@ -863,11 +863,11 @@
           "where": "scripts/check_roles.py — у каждой строки карты направлений в AGENTS.md заполнены все колонки, а возражение НАЗЫВАЕТ АДРЕСАТА, и адресат — другая роль этой же карты: возражение в пустоту не останавливает никого, а спор с собой проходит всегда. Возражения сверяются на различие: два направления с одним доводом — одно направление, записанное дважды (009). Форма «Роль — «довод»» выбрана под посимвольную сверку: разбирать падежи ради одной таблицы значило бы ошибаться на каждой новой роли (013). Приём взят у грейдера — у него та же колонка и свой такой же гейт над отдельным документом ролей; файл не взят: там роли живут отдельным документом, здесь карта стоит в своде рядом с тем, что она объясняет (162). Набор — tests/test_check_roles.py, двенадцать случаев с обеих сторон. ГРАНИЦА: содержателен ли довод, гейт не судит — отписку нужной формы он пропустит, и отличить довод от отписки машинно нечем; приёмку проводит человек, а гейт держит полноту перебора",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-17",
+          "analysed": "2026-10-08",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/ArtVsMark:scripts/check_roles.py@e1a768754439",
+          "origin_kind": "adapted"
         },
         "063": {
           "mechanism": "gate",
@@ -878,7 +878,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "064": {
           "mechanism": "gate",
@@ -889,7 +889,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "065": {
           "mechanism": "document",
@@ -911,7 +911,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "068": {
           "mechanism": "gate",
@@ -922,7 +922,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "070": {
           "mechanism": "gate",
@@ -933,7 +933,7 @@
           "decided": "2026-10-08",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "071": {
           "mechanism": "gate",
@@ -944,7 +944,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "072": {
           "mechanism": "gate",
@@ -955,7 +955,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "073": {
           "mechanism": "gate",
@@ -966,7 +966,7 @@
           "decided": "2026-10-08",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "074": {
           "mechanism": "gate",
@@ -977,7 +977,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "075": {
           "mechanism": "gate",
@@ -988,7 +988,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "076": {
           "mechanism": "gate",
@@ -999,7 +999,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "077": {
           "mechanism": "gate",
@@ -1021,7 +1021,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "079": {
           "mechanism": "gate",
@@ -1032,7 +1032,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "080": {
           "mechanism": "gate",
@@ -1043,7 +1043,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "082": {
           "mechanism": "document",
@@ -1065,7 +1065,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "084": {
           "mechanism": "gate",
@@ -1076,7 +1076,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "085": {
           "mechanism": "gate",
@@ -1087,7 +1087,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "086": {
           "mechanism": "gate",
@@ -1098,7 +1098,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "087": {
           "mechanism": "gate",
@@ -1109,7 +1109,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "088": {
           "mechanism": "gate",
@@ -1120,7 +1120,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "089": {
           "mechanism": "gate",
@@ -1131,7 +1131,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "090": {
           "mechanism": "gate",
@@ -1142,7 +1142,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "091": {
           "mechanism": "gate",
@@ -1153,7 +1153,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "092": {
           "mechanism": "document",
@@ -1197,7 +1197,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "096": {
           "mechanism": "gate",
@@ -1208,7 +1208,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "097": {
           "mechanism": "gate",
@@ -1219,7 +1219,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "098": {
           "mechanism": "document",
@@ -1241,7 +1241,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "100": {
           "mechanism": "gate",
@@ -1252,7 +1252,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "101": {
           "mechanism": "none",
@@ -1274,7 +1274,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "104": {
           "mechanism": "gate",
@@ -1285,7 +1285,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "105": {
           "mechanism": "pipeline",
@@ -1295,8 +1295,8 @@
           "analysed": "2026-10-08",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Stepik-Python-Grader:.github/workflows/claude-code-review.yml@8140dc4eb6d3",
+          "origin_kind": "adapted"
         },
         "106": {
           "mechanism": "gate",
@@ -1307,7 +1307,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "107": {
           "mechanism": "gate",
@@ -1318,7 +1318,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "108": {
           "mechanism": "gate",
@@ -1329,7 +1329,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "109": {
           "mechanism": "gate",
@@ -1340,7 +1340,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "110": {
           "mechanism": "document",
@@ -1362,7 +1362,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "113": {
           "mechanism": "document",
@@ -1384,7 +1384,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "116": {
           "mechanism": "gate",
@@ -1395,7 +1395,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "117": {
           "mechanism": "none",
@@ -1417,7 +1417,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "119": {
           "mechanism": "gate",
@@ -1428,7 +1428,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "120": {
           "mechanism": "gate",
@@ -1439,7 +1439,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "121": {
           "mechanism": "none",
@@ -1472,7 +1472,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "124": {
           "mechanism": "document",
@@ -1494,7 +1494,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "126": {
           "mechanism": "gate",
@@ -1505,7 +1505,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "127": {
           "mechanism": "gate",
@@ -1516,7 +1516,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "128": {
           "mechanism": "gate",
@@ -1527,7 +1527,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "129": {
           "mechanism": "gate",
@@ -1538,18 +1538,18 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "130": {
           "mechanism": "pipeline",
           "where": "scripts/sync_inbox.py::candidates_here — во «входящие» потребителя приезжает раздел «Возможно, про это ваши задачи»: правила, ещё не разобранные у него, рядом с ЕГО ОТКРЫТЫМИ ЗАДАЧАМИ, чьи заголовки говорят о том же. Доставить правило мало: без предмета в своём проекте оно остаётся абстракцией, которую откладывают — «понятно, но не про нас». Связывают значимые слова: короче пяти знаков в счёт не идут (в русском это почти всегда служебное), общие слова каталога — «правило», «механизм», «проект» — исключены поимённо, потому что стоят и в правилах и в задачах и связывают всё со всем. Порог: два общих слова либо одно длиной от девяти. Показывается не больше двух задач на правило: список-отчёт не читают (016). ГРАНИЦА НАЗВАНА В САМОМ РАЗДЕЛЕ, а не только здесь: совпадение по словам — ПОДСКАЗКА, а не вердикт; ни принять правило, ни отклонить его список не может. Трекер не ответил — раздела просто нет: 130 говорит «приходит вместе с», а не «не приходит без», и ронять доставку правил из-за подсказки значило бы менять предмет на украшение (084). Приём взят у грейдера — у него это свой прогон связи правил с задачами (162). Набор — tests/test_sync_inbox.py, семь случаев с обеих сторон",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-17",
+          "analysed": "2026-10-08",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Stepik-Python-Grader:scripts/link_rules_to_issues.py@da2aa2aa60ec",
+          "origin_kind": "adapted"
         },
         "131": {
           "mechanism": "gate",
@@ -1560,7 +1560,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "132": {
           "mechanism": "document",
@@ -1582,7 +1582,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "134": {
           "mechanism": "document",
@@ -1604,7 +1604,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "136": {
           "mechanism": "document",
@@ -1626,18 +1626,18 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "138": {
           "mechanism": "gate",
           "where": "scripts/collect_changelog.py::entry_required, шаг «запись журнала едет вместе с изменением» в .github/workflows/ci.yml — изменение, тронувшее scripts/, .github/workflows/ или .github/actions/, обязано нести фрагмент в changelog.d/ ТЕМ ЖЕ заходом. Решение, оставленное «на потом», существует только в контексте окна и умирает вместе с ним; отложенная запись означает, что следующее окно разбирает тот же вопрос заново. ЗАМЕР, А НЕ ОПАСЕНИЕ: из 34 изменений общей ветки, тронувших поведение, запись несут 34 — ноль нарушений. Гейт не чинит поломку, он снимает правило с ДИСЦИПЛИНЫ (002): дисциплина, о которой известно, что она стопроцентна, ломается ровно один раз и незаметно, потому что смотреть на неё уже перестали. У отказа есть названный выход — строка «Журнал: не требуется — причина» в теле изменения; без выхода гейт обходили бы пустым фрагментом, а пустой фрагмент хуже отсутствующего: он выглядит памятью (126). Освобождение ищется СТРОКОЙ, а не вхождением: те же слова в прозе освобождением не являются (141). Приём взят у витрины — у неё это тот же гейт над своим документом истории (162). ГРАНИЦА: СОДЕРЖАНИЕ записи гейт не судит — отличить решение от отписки машина не может, и вопрос «тянет ли это на правило» задаётся соседним шагом человеку, а не проверяется",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-17",
+          "analysed": "2026-10-08",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/ArtVsMark:scripts/check_journal.py@aaac13325710",
+          "origin_kind": "adapted"
         },
         "139": {
           "mechanism": "gate",
@@ -1648,7 +1648,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "140": {
           "mechanism": "gate",
@@ -1659,7 +1659,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "141": {
           "mechanism": "gate",
@@ -1670,7 +1670,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "142": {
           "mechanism": "gate",
@@ -1681,7 +1681,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "144": {
           "mechanism": "gate",
@@ -1692,7 +1692,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "145": {
           "mechanism": "gate",
@@ -1703,7 +1703,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "146": {
           "mechanism": "gate",
@@ -1714,7 +1714,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "147": {
           "mechanism": "pipeline",
@@ -1725,7 +1725,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "148": {
           "mechanism": "document",
@@ -1758,7 +1758,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "151": {
           "mechanism": "document",
@@ -1780,7 +1780,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "153": {
           "mechanism": "document",
@@ -1802,7 +1802,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "155": {
           "mechanism": "gate",
@@ -1813,7 +1813,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "156": {
           "mechanism": "gate",
@@ -1824,7 +1824,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "157": {
           "mechanism": "gate",
@@ -1835,7 +1835,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "158": {
           "mechanism": "gate",
@@ -1846,18 +1846,18 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "159": {
           "mechanism": "gate",
           "where": "scripts/check_verdict_order.py — разбором СИНТАКСИСА, а не поиском по тексту: в функции ищется накопитель (имя, которому присвоен список), затем цикл, который в него добавляет, затем `return` внутри этого цикла, ЧИТАЮЩИЙ накопитель. Возврат третьего исхода (`return 2` либо кортеж с двойкой первой) находкой не является и обязан быть ранним: продолжать перебор, не прочитав источник, значит копить находки о состоянии, которого не знаешь (039). Замер, на котором различие и построено: в scripts/ таких возвратов внутри накопительных циклов два, и оба именно третий исход — сборщика нет, сборщик отказал; поиск по слову «return» отверг бы оба. Просматриваются scripts/ и tests/: набор копит находки так же, как гейт. Приём взят у витрины — у неё это разбор кода с тем же вопросом (162). Набор — tests/test_check_verdict_order.py, одиннадцать случаев с обеих сторон. ГРАНИЦА: накопитель узнаётся по УПОТРЕБЛЕНИЮ — присвоен список, в него добавляют в цикле. Накопитель, собранный иначе (словарь, множество, счётчик строк), гейт не увидит, и это сказано вслух",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-17",
+          "analysed": "2026-10-08",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/ArtVsMark:scripts/check_mechanisms.py@f77859bf3078",
+          "origin_kind": "adapted"
         },
         "160": {
           "mechanism": "gate",
@@ -1868,7 +1868,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "161": {
           "mechanism": "gate",
@@ -1890,7 +1890,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "163": {
           "mechanism": "gate",
@@ -1901,7 +1901,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "164": {
           "mechanism": "gate",
@@ -1923,7 +1923,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "166": {
           "mechanism": "gate",
@@ -1934,7 +1934,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "167": {
           "mechanism": "gate",
@@ -1945,7 +1945,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "168": {
           "mechanism": "gate",
@@ -1956,7 +1956,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "169": {
           "mechanism": "gate",
@@ -1967,7 +1967,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "170": {
           "mechanism": "gate",
@@ -1978,7 +1978,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "171": {
           "mechanism": "gate",
@@ -1989,7 +1989,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "172": {
           "mechanism": "gate",
@@ -2000,7 +2000,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "173": {
           "mechanism": "gate",
@@ -2011,18 +2011,18 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "174": {
           "mechanism": "gate",
           "where": "scripts/build_facts.py — сводные факты каталога о себе публикуются в .github/badges/facts.json на ветке `badges`, по контракту витрины: schema строкой, generated_at обязателен, неизмеренный раздел ОТСУТСТВУЕТ, а не выставлен в ноль; scripts/build_rules_index.py — выгрузка export/rules.json собирается издателем и читается потребителями (витрина берёт числа оттуда, а не считает их клоном); scripts/aggregate_bindings.py — то же для сводки export/where.json",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-17",
+          "analysed": "2026-10-08",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/ArtVsMark:.rules/facts.schema.json@c17e09433443",
+          "origin_kind": "copied"
         },
         "175": {
           "mechanism": "gate",
@@ -2033,7 +2033,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "176": {
           "mechanism": "gate",
@@ -2044,7 +2044,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "177": {
           "mechanism": "gate",
@@ -2055,7 +2055,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "178": {
           "mechanism": "gate",
@@ -2066,7 +2066,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "179": {
           "mechanism": "gate",
@@ -2077,7 +2077,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "180": {
           "mechanism": "gate",
@@ -2088,7 +2088,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "181": {
           "mechanism": "gate",
@@ -2099,7 +2099,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "182": {
           "mechanism": "gate",
@@ -2110,7 +2110,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "183": {
           "mechanism": "gate",
@@ -2121,7 +2121,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "184": {
           "mechanism": "gate",
@@ -2132,7 +2132,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "185": {
           "mechanism": "gate",
@@ -2143,7 +2143,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "186": {
           "mechanism": "gate",
@@ -2154,7 +2154,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "187": {
           "mechanism": "none",
@@ -2176,18 +2176,18 @@
           "decided": "2026-09-25",
           "skill": ".claude/skills/incident-communications",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "189": {
           "mechanism": "gate",
           "where": ".claude/hooks/push_guard.py — сторож толчка сверяет имя ветки в команде с текущей, и ветка с чужим именем не уезжает; приставку `agent/` требует .github/workflows/agent-pr.yml, где она переключатель: без неё изменение не откроется вовсе (003). Слаг машинно не судится — половина названа в why",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-17",
+          "analysed": "2026-10-08",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Stepik-Python-Grader:.claude/hooks/pre_tool_use.py@f508688be4ce",
+          "origin_kind": "adapted"
         },
         "190": {
           "mechanism": "gate",
@@ -2198,7 +2198,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "191": {
           "mechanism": "gate",
@@ -2209,7 +2209,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "192": {
           "mechanism": "gate",
@@ -2220,7 +2220,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "195": {
           "mechanism": "gate",
@@ -2231,7 +2231,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "196": {
           "mechanism": "pipeline",
@@ -2242,7 +2242,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "197": {
           "mechanism": "gate",
@@ -2253,7 +2253,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "199": {
           "mechanism": "gate",
@@ -2264,7 +2264,7 @@
           "decided": "2026-10-08",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "200": {
           "mechanism": "none",
@@ -2286,7 +2286,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "202": {
           "mechanism": "gate",
@@ -2297,7 +2297,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "203": {
           "mechanism": "pipeline",
@@ -2308,7 +2308,7 @@
           "decided": "2026-09-25",
           "skill": ".claude/skills/incident-communications",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "204": {
           "mechanism": "document",
@@ -2330,7 +2330,7 @@
           "decided": "2026-10-08",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "206": {
           "mechanism": "gate",
@@ -2341,7 +2341,7 @@
           "decided": "2026-09-17",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "207": {
           "mechanism": "none",
@@ -2396,7 +2396,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "212": {
           "mechanism": "gate",
@@ -2407,7 +2407,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "213": {
           "mechanism": "gate",
@@ -2418,7 +2418,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "214": {
           "mechanism": "gate",
@@ -2429,7 +2429,7 @@
           "decided": "2026-09-25",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "215": {
           "mechanism": "document",
@@ -2451,9 +2451,10 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         }
       },
+      "notes": {},
       "trails": 60,
       "born": 36
     },
@@ -4785,10 +4786,11 @@
           "origin_kind": ""
         }
       },
+      "notes": {},
       "trails": 190,
       "born": 133,
       "findings": [
-        "ответ по схеме 1.2, у контракта 1.8 — записи остаются валидными, означая уже другое",
+        "ответ по схеме 1.2, у контракта 1.9 — записи остаются валидными, означая уже другое",
         "ответ построен на выгрузке 1.5, у нас 1.7 — записи валидны, а составленные по ним ответы отвечают на другой вопрос (157)"
       ]
     },
@@ -4806,10 +4808,10 @@
         "rejected": 1
       },
       "by_mechanism": {
-        "gate": 105,
+        "gate": 107,
         "code": 14,
         "pipeline": 16,
-        "document": 23
+        "document": 21
       },
       "rules": {
         "001": "active",
@@ -5208,9 +5210,9 @@
           "origin_kind": ""
         },
         "023": {
-          "mechanism": "document",
-          "where": "README.md — витрина держится в пределах страницы, подробности по ссылкам в проекты",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "README.md — витрина держится в пределах страницы, подробности по ссылкам в проекты. ПОСТРОЕНО 8 ОКТЯБРЯ: scripts/check_page.py::audit_prose — английская часть витрины (до заголовка русского пересказа) не длиннее 1000 слов прозы; шаг «Запреты витрины соблюдены» в .github/workflows/pr-check.yml. Предел выведен из самого правила — «первые пять минут» при 200 словах в минуту, — а не из достигнутого; так же его переводит check_prose каталога, оттуда и счёт: слова, а не строки, без тегов, маркеров и адресов ссылок. Суждение «что нужно ещё не решившему, а что уносится по ссылке» остаётся человеку (182). ЗАМЕР НА ВКЛЮЧЕНИИ: 719 слов, запас 281.",
+          "holdable": "",
           "awaiting": "",
           "analysed": "",
           "decided": "",
@@ -5252,9 +5254,9 @@
           "origin_kind": ""
         },
         "029": {
-          "mechanism": "document",
-          "where": "CLAUDE.md — свод устроен ровно по этому правилу и говорит об этом во врезке под заголовком: «здесь компактные триггеры и ссылки на канон, а не пересказ», со ссылкой на 029. АДРЕС — ЦИТАТА, А НЕ НОМЕР СТРОКИ: здесь стояло «третьей строкой», и к 8 сентября это была уже четвёртая. Позиционная ссылка стареет от любой правки выше себя и не опровергается ничем — ни гейтом, ни глазами. Семнадцать ссылок в каталог, таблица «Источники истины» отправляет за деталями в README.md, .rules/README.md, .rules/roles.md и HISTORY.md, а не пересказывает их. ВЕРДИКТ ИСПРАВЛЕН 3 СЕНТЯБРЯ: стояло «входного свода у витрины нет: единственный файл-вход — README», и это устарело молча — свод появился с #22, а ответ остался прежним. Опровергалось одной командой (правило 175): файл CLAUDE.md лежит в корне.",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "CLAUDE.md — свод устроен ровно по этому правилу и говорит об этом во врезке под заголовком: «здесь компактные триггеры и ссылки на канон, а не пересказ», со ссылкой на 029. АДРЕС — ЦИТАТА, А НЕ НОМЕР СТРОКИ: здесь стояло «третьей строкой», и к 8 сентября это была уже четвёртая. Позиционная ссылка стареет от любой правки выше себя и не опровергается ничем — ни гейтом, ни глазами. Семнадцать ссылок в каталог, таблица «Источники истины» отправляет за деталями в README.md, .rules/README.md, .rules/roles.md и HISTORY.md, а не пересказывает их. ВЕРДИКТ ИСПРАВЛЕН 3 СЕНТЯБРЯ: стояло «входного свода у витрины нет: единственный файл-вход — README», и это устарело молча — свод появился с #22, а ответ остался прежним. Опровергалось одной командой (правило 175): файл CLAUDE.md лежит в корне. ПОСТРОЕНО 8 ОКТЯБРЯ: scripts/check_page.py::audit_prose — CLAUDE.md не длиннее 3000 слов прозы; шаг «Запреты витрины соблюдены» в .github/workflows/pr-check.yml. Предел взят из ряда правок, а не из правила: по всей истории свода 487 → 2585 слов за 29 правок, вверх 24, вниз одна (−7). 3000 — около месяца роста нынешним темпом (+380 с 17 сентября): срок, к которому рост оплачивается выносом в канон, а не строкой; подъём предела — правкой числа с замером. Сосед — проект механизмов держит свой свод агента пределом 2300 (test_the_main_file_stays_a_trigger). Отличить пересказ от отсылки по-прежнему суждение (182).",
+          "holdable": "",
           "awaiting": "",
           "analysed": "",
           "decided": "",
@@ -6770,8 +6772,12 @@
           "origin_kind": ""
         }
       },
+      "notes": {},
       "trails": 29,
-      "born": 18
+      "born": 18,
+      "findings": [
+        "ответ по схеме 1.8, у контракта 1.9 — записи остаются валидными, означая уже другое"
+      ]
     },
     {
       "repo": "ArtVsMark/Claude-Code_Usage-Token",
@@ -9024,10 +9030,11 @@
           "origin_kind": ""
         }
       },
+      "notes": {},
       "trails": 17,
       "born": 15,
       "findings": [
-        "ответ по схеме 1.7, у контракта 1.8 — записи остаются валидными, означая уже другое"
+        "ответ по схеме 1.7, у контракта 1.9 — записи остаются валидными, означая уже другое"
       ]
     },
     {
@@ -10887,23 +10894,27 @@
           "origin_kind": ""
         }
       },
+      "notes": {},
       "trails": 2,
-      "born": 0
+      "born": 0,
+      "findings": [
+        "ответ по схеме 1.8, у контракта 1.9 — записи остаются валидными, означая уже другое"
+      ]
     },
     {
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
       "role": "потребитель",
-      "schema": "1.7",
+      "schema": "1.8",
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-08",
-      "answered": 216,
+      "answered": 217,
       "by_status": {
-        "active": 208,
+        "active": 209,
         "not-applicable": 8
       },
       "by_mechanism": {
-        "gate": 177,
+        "gate": 178,
         "pipeline": 25,
         "document": 4,
         "skill": 2
@@ -11124,7 +11135,8 @@
         "214": "active",
         "215": "active",
         "216": "active",
-        "217": "active"
+        "217": "active",
+        "218": "active"
       },
       "holds": {
         "001": {
@@ -12075,11 +12087,11 @@
         },
         "091": {
           "mechanism": "pipeline",
-          "where": "scripts/work_plan.py — ПОРЯДОК ПОКАЗАН ЦЕЛИКОМ ОДНИМ МЕХАНИЗМОМ: сборщик ведёт план работ — живую задачу с маркером work-plan — разделами в порядке контура 1: краснота общей ветки (0), конфликт и красное на своём открытом изменении (1, 2), находки и совещательное красное по слитому (3), указание владельца (4), правила каталога и дрейф (5), план автора (6). Разделы 0–3 и 5 собираются из источников; 4 и 6 ведёт владелец, а сборщик лишь уносит из них строки с закрытым адресом и отвергает строку без адреса. Отказ одного источника называется в его разделе, а не выдаётся за пустоту. Пересобирает план прогон .github/workflows/work-plan.yml — после ci на любой голове, после слияния и после дрейфа. КАК план читать — первый непустой раздел и есть работа, указание владельца 0–3 не отменяет — суждение окна, машиной не проверяемое; его держит навык .claude/skills/work-the-plan. scripts/debt.py остаётся шагом долга на изменении и печатает источники 1, 2, 3, 5 в том же порядке; сборщик плана читает их ЕГО функциями, а не считает заново (022). Плюс AGENTS.md и docs/agent/behaviour.md — контур 1. ВТОРАЯ ПОЛОВИНА ПРИТЯЗАНИЯ — «статусы живут только в трекере и не дублируются файлами» — исполнена планом ПО УСТРОЙСТВУ: план живёт задачей трекера, а не файлом дерева, и его строки — зеркало источников с адресом, а не второе место правды. Числа долга читаются из задачи-«входящих» и живой задачи находок, а не считаются. Файлов со статусом работ в дереве нет ни одного: .rules/outcomes.json несёт долг ИСХОДОВ и сверяется с живым разбором в обе стороны, а строки раздела пробелов ведут в задачи адресом, а не хранят их состояние. Тревога о застрявшем остаётся предметом службы (docs/decisions/004-schedules-stay-service-observes.md) — план читает СВОЁ состояние, это порядок работ, а не тревога",
+          "where": "scripts/work_plan.py — ПОРЯДОК ПОКАЗАН ЦЕЛИКОМ ОДНИМ МЕХАНИЗМОМ: сборщик ведёт план работ — живую задачу с маркером work-plan — разделами в порядке контура 1: краснота общей ветки (0), конфликт и красное на своём открытом изменении (1, 2), дефекты и совещательное красное по слитому (3), указание владельца (4), правила каталога, дрейф и копящиеся риски и замечания на слитом (5; debt.ACCRUED, решение владельца 08.10.2026), план автора (6). Разделы 0–3 и 5 собираются из источников; 4 и 6 ведёт владелец, а сборщик лишь уносит из них строки с закрытым адресом и отвергает строку без адреса. Отказ одного источника называется в его разделе, а не выдаётся за пустоту. Пересобирает план прогон .github/workflows/work-plan.yml — после ci на любой голове, после слияния и после дрейфа. КАК план читать — первый непустой раздел и есть работа, указание владельца 0–3 не отменяет — суждение окна, машиной не проверяемое; его держит навык .claude/skills/work-the-plan. scripts/debt.py остаётся шагом долга на изменении и печатает источники 1, 2, 3, 5 в том же порядке; сборщик плана читает их ЕГО функциями, а не считает заново (022). Плюс AGENTS.md и docs/agent/behaviour.md — контур 1. ВТОРАЯ ПОЛОВИНА ПРИТЯЗАНИЯ — «статусы живут только в трекере и не дублируются файлами» — исполнена планом ПО УСТРОЙСТВУ: план живёт задачей трекера, а не файлом дерева, и его строки — зеркало источников с адресом, а не второе место правды. Числа долга читаются из задачи-«входящих» и живой задачи находок, а не считаются. Файлов со статусом работ в дереве нет ни одного: .rules/outcomes.json несёт долг ИСХОДОВ и сверяется с живым разбором в обе стороны, а строки раздела пробелов ведут в задачи адресом, а не хранят их состояние. Тревога о застрявшем остаётся предметом службы (docs/decisions/004-schedules-stay-service-observes.md) — план читает СВОЁ состояние, это порядок работ, а не тревога",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-26",
-          "decided": "2026-09-23",
+          "analysed": "2026-10-08",
+          "decided": "2026-10-08",
           "skill": ".claude/skills/work-the-plan",
           "origin": "",
           "origin_kind": ""
@@ -12790,11 +12802,11 @@
         },
         "160": {
           "mechanism": "pipeline",
-          "where": ".github/workflows/badges.yml — значок и facts.json пересобираются на каждое слияние, то есть чаще, чем идут изменения, и в дереве общей ветки не лежат: прогон кладёт их в ветку-сироту badges силовым толчком. Иначе каждое слияние конфликтовало бы на одном и том же файле, а сдвиг числа красил бы ветку как поломка",
+          "where": "scripts/build_facts.py::branch_files — значок и facts.json пересобираются на каждое слияние, то есть чаще, чем идут изменения, и в дереве общей ветки не лежат: .github/workflows/badges.yml кладёт их в ветку badges коммитом поверх неё, без --force (ArtVsMark/Engineering-Pipeline-Mechanisms#1001), а снятое с ветки уносит scripts/build_facts.py::prune по перечню допустимого; факты общего шага публикует scripts/publish_facts.py тоже поверх, без --force. Иначе каждое слияние конфликтовало бы на одном и том же файле, а сдвиг числа красил бы ветку как поломка",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-26",
-          "decided": "",
+          "analysed": "2026-10-08",
+          "decided": "2026-10-08",
           "skill": "",
           "origin": "",
           "origin_kind": ""
@@ -13414,12 +13426,24 @@
           "skill": "",
           "origin": "",
           "origin_kind": ""
+        },
+        "218": {
+          "mechanism": "gate",
+          "where": "scripts/onboard.py::inherited_guard — снятый джоб отдаёт вызову своё условие, а условие со ссылкой на needs. и статусная функция при снятом needs — отказ NotRun с причиной; scripts/onboard.py::artifacts_of — имена артефактов снятых джобов, вход с таким именем не уезжает в заготовку; scripts/onboard.py::leans_on — ссылка на выход снятого. Держат tests/test_onboard.py::test_a_dropped_need_hands_its_guard_to_the_call, test_the_guard_forms_are_carried_or_refused, test_an_input_naming_a_dropped_artifact_does_not_ship, test_order_through_a_dropped_middle_job_is_kept и test_a_need_on_another_call_stays_and_may_be_read",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
         }
       },
+      "notes": {},
       "trails": 18,
       "born": 15,
       "findings": [
-        "ответ по схеме 1.7, у контракта 1.8 — записи остаются валидными, означая уже другое"
+        "ответ по схеме 1.8, у контракта 1.9 — записи остаются валидными, означая уже другое"
       ]
     }
   ]

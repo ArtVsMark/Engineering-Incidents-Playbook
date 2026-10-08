@@ -14,10 +14,10 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 217 | 0 | 0 | 201 | 152 | 7 | 1 | 27 | 14 | 124 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 195 | 22 | 0 | 192 | 85 | 39 | 0 | 68 | 0 | 144 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 105 | 16 | 0 | 23 | 0 | 52 |  |
+| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 107 | 16 | 0 | 21 | 0 | 52 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 95 | 9 | 0 | 58 | 21 | 92 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 147 | 84 | 16 | 0 | 45 | 2 | 110 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 216 | 1 | 0 | 208 | 177 | 25 | 2 | 4 | 0 | 250 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 217 | 0 | 0 | 209 | 178 | 25 | 2 | 4 | 0 | 252 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -204,15 +204,15 @@
 | `ArtVsMark` | `scripts/build_metrics.py` | 64 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 52 |
 | `ArtVsMark` | `CLAUDE.md` | 27 |
+| `ArtVsMark` | `.github/workflows/pr-check.yml` | 23 |
 | `ArtVsMark` | `scripts/check_bindings.py` | 22 |
-| `ArtVsMark` | `.github/workflows/pr-check.yml` | 21 |
 | `ArtVsMark` | `scripts/checks.py` | 19 |
 | `ArtVsMark` | `.github/workflows/agent-pr.yml` | 16 |
 | `ArtVsMark` | `.github/workflows/automerge.yml` | 16 |
 | `ArtVsMark` | `scripts/check_labels.py` | 16 |
+| `ArtVsMark` | `scripts/check_page.py` | 15 |
 | `ArtVsMark` | `README.md` | 13 |
 | `ArtVsMark` | `scripts/check_author.py` | 13 |
-| `ArtVsMark` | `scripts/check_page.py` | 13 |
 | `ArtVsMark` | `scripts/check_roles.py` | 13 |
 | `ArtVsMark` | `scripts/hold.py` | 13 |
 | `ArtVsMark` | `scripts/gh_outcome.py` | 12 |
@@ -377,7 +377,7 @@
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/step-review.yml` | 16 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/review_findings.py` | 16 |
 | `Engineering-Pipeline-Mechanisms` | `AGENTS.md` | 15 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/build_facts.py` | 14 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/build_facts.py` | 15 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_version.py` | 14 |
 | `Engineering-Pipeline-Mechanisms` | `docs/agent/behaviour.md` | 13 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/ci.yml` | 11 |
@@ -482,6 +482,7 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/items.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/journal.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/look_mode.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/onboard.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/squash_body.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/task_shape.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/fixtures/check-runs.shape.json` | 2 |
@@ -502,7 +503,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_roles.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_steps_speak_outward.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 118 механизмов по одному правилу; без названного адреса: 0 из 208 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 119 механизмов по одному правилу; без названного адреса: 0 из 209 |
 
 ## Правила · Rules
 
@@ -724,4 +725,4 @@
 | 215 | действует | — | действует | действует | действует | действует |
 | 216 | нет предмета | — | нет предмета | нет предмета | нет предмета | действует |
 | 217 | действует | — | действует | — | действует | действует |
-| 218 | нет предмета | — | действует | — | действует | — |
+| 218 | нет предмета | — | действует | — | действует | действует |
