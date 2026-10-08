@@ -904,6 +904,19 @@ PROPOSAL_CASES = [
      "номера не переиспользуются: второе предложение потеряно молча"),
     ("вердикты не объект", "broken", 2,
      "нечитаемый вход — третий исход, а не «всё хорошо» (правило 075)"),
+    # Слияние 2–3 правил в одно (формат 1.3, #728). В подделке 002 и 003 несут
+    # «Заменено.» 004, 001 — нет.
+    ("слияние принято, старые помечены", "merge-ok", 0,
+     "законное слияние обязано проходить"),
+    ("слияние принято без replaces", "merge-no-replaces", 1,
+     "вердикт «свели» без списка старых не проверить по корпусу"),
+    ("замещённое правило без пометки", "merge-unmarked", 1,
+     "выгрузка отдала бы старое правило действующим, и потребитель не узнал "
+     "бы, что перечитывать (043)"),
+    ("соседи без причины", "neighbours-no-why", 1,
+     "«оставили раздельными» без причины вернётся тем же предложением"),
+    ("соседи у правила, а не у слияния", "neighbours-on-rule", 1,
+     "у правила вопроса «одно ли это целое» нет — статус от другого вида"),
 ]
 
 
@@ -921,6 +934,10 @@ def suite_proposals() -> tuple[list[str], int]:
             (root / "rules" / "ru").mkdir(parents=True)
             (root / "rules" / "ru" / "001-fixture.md").write_text(
                 "# Подделка\n", encoding="utf-8")
+            for н, текст in (("002", "**Заменено.** 004\n"),
+                             ("003", "**Заменено.** 004\n"), ("004", "")):
+                (root / "rules" / "ru" / f"{н}-fixture.md").write_text(
+                    f"# Подделка {н}\n\n{текст}", encoding="utf-8")
             (root / ".rules").mkdir(parents=True)
 
             v = dict(PROPOSAL_OK)
@@ -936,6 +953,18 @@ def suite_proposals() -> tuple[list[str], int]:
                                                 "why": "   "}}
             elif spoil == "dup-number":
                 verdicts["owner/repo:other"] = dict(PROPOSAL_OK)
+            elif spoil and spoil.startswith("merge-"):
+                слияние = {"status": "admitted", "rule": "004",
+                           "replaces": ["002", "003"], "why": "одно целое"}
+                if spoil == "merge-no-replaces":
+                    слияние.pop("replaces")
+                elif spoil == "merge-unmarked":
+                    слияние["replaces"] = ["001", "002"]
+                verdicts["owner/repo:merge/m"] = слияние
+            elif spoil == "neighbours-no-why":
+                verdicts["owner/repo:merge/m"] = {"status": "neighbours", "why": " "}
+            elif spoil == "neighbours-on-rule":
+                verdicts["owner/repo:x"] = {"status": "neighbours", "why": "раздельно"}
 
             doc = ({"verdicts": "не объект"} if spoil == "broken"
                    else {"schema": "1.0", "verdicts": verdicts})

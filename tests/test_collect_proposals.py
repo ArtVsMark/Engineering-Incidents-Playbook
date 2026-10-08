@@ -9,6 +9,7 @@
 
 
 import collect_proposals as cp
+import pytest
 
 
 ПОТРЕБИТЕЛЬ = [{"repo": "o/r", "proposals": "https://example.invalid/p.json"}]
@@ -337,3 +338,45 @@ def test_голое_имя_с_той_же_границей_что_у_формы_
         assert cp.адрес_навыка(имя) is not None
     for плохое in ("", "a/b", "имя с пробелом"):
         assert cp.адрес_навыка(плохое) is None
+
+
+# ── слияние 2–3 правил в одно (формат 1.3, #728) ─────────────────────────
+
+СЛИЯНИЕ = {"kind": "merge", "slug": "one-whole", "rules": ["131", "135"],
+           "why": "отвечают на один вопрос с двух сторон",
+           "claim": "запись из облачного окна уходит в конвейер"}
+
+
+def test_слияние_читается_и_ложится_во_входящие(monkeypatch):
+    подменить(monkeypatch, [СЛИЯНИЕ])
+    pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, {"131", "135"})
+    assert problems == []
+    assert pending[0]["kind"] == "merge" and pending[0]["rules"] == ["131", "135"]
+    текст = cp.body_for(pending, problems)
+    assert "слияние `one-whole`" in текст and "131, 135" in текст
+
+
+def test_вердикт_снимает_слияние_своим_ключом(monkeypatch):
+    подменить(monkeypatch, [СЛИЯНИЕ])
+    pending, _ = cp.gather(ПОТРЕБИТЕЛЬ, {"o/r:merge/one-whole": {"status": "rejected"}})
+    assert pending == []
+    # Вердикт правилу с тем же слагом слияние не снимает.
+    pending, _ = cp.gather(ПОТРЕБИТЕЛЬ, {"o/r:one-whole": {"status": "rejected"}})
+    assert [p["slug"] for p in pending] == ["one-whole"]
+
+
+
+@pytest.mark.parametrize("порча, слово", [
+    ({"rules": ["131"]}, "одно правило"),
+    ({"rules": ["131", "131"]}, "разных"),
+    ({"rules": ["131", "999"]}, "999 в каталоге нет"),
+    ({"rules": ["131", "abc"]}, "не номер"),
+    ({"why": ""}, "why пусто"),
+    ({"claim": ""}, "claim пусто"),
+    ({"rule": "220"}, "присваивает каталог"),
+])
+def test_форма_слияния_возражает_но_не_теряет_предложение(monkeypatch, порча, слово):
+    подменить(monkeypatch, [{**СЛИЯНИЕ, **порча}])
+    pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, {"131", "135"})
+    assert len(pending) == 1
+    assert any(слово in p for p in problems), problems

@@ -549,6 +549,23 @@ both language trees, the neighbours answer and a resolvable trail live here.
 | `admitted` | номер, который присвоил каталог · the number the catalogue assigned |
 | `rejected` | причину · the reason |
 | `merged-into` | номер существующей записи и причину · the existing rule and why |
+| `neighbours` | только у слияния: правила остаются раздельными, причину · merge only: the rules stay separate, and why |
+
+**Слияние 2–3 правил в одно — тем же каналом (формат `1.3`).** Предложение
+`kind: merge` несёт `rules` (2–3 номера каталога), `why` — почему это одно
+целое, а не соседи, — и `claim`, формулировку нового правила. Номер новому
+правилу присваивает каталог, ключ вердикта — `владелец/репозиторий:merge/слаг`.
+Принятое слияние называет в `replaces` замещённые правила; каждое остаётся
+читаемым с пометкой «Заменено» и полем `superseded_by` (выше), и гейт сверяет
+это по корпусу. Ответ потребителя о замещённом правиле — состояние, а не
+находка: перенести его решает он.
+
+**Merging 2–3 rules into one goes through the same channel (format `1.3`).**
+A `kind: merge` proposal carries `rules` (2–3 catalogue numbers), `why` (why
+they are one whole, not neighbours) and `claim` (the new rule's wording). The
+catalogue assigns the number; the verdict key is `owner/repo:merge/slug`. An
+admitted merge lists the replaced rules in `replaces`; each stays readable with
+`superseded_by`, and the gate checks it against the corpus.
 
 Без ответа отправитель не узнаёт исход — ровно та асимметрия, ради которой
 заведён `bindings.json` вниз по течению. Держится гейтом
@@ -921,7 +938,7 @@ repository settings.
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
     "export": "1.7", "bindings": "1.8", "consumers": "1.1",
-    "proposals": "1.2", "showcase": "1.1", "where": "1.6"
+    "proposals": "1.3", "showcase": "1.1", "where": "1.6"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
                                                // build time, example value
