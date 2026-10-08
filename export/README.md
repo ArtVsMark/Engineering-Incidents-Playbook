@@ -806,7 +806,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ArtVsMark/Engineering-Incidents-Playbook@<!--m:ref-->v1.8.0<!--/m:ref-->
+      - uses: ArtVsMark/Engineering-Incidents-Playbook@<!--m:ref-->v1.9.0<!--/m:ref-->
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -896,7 +896,7 @@ of the rules: it only means this project no longer answers in public.
 ```yaml
 - uses: actions/checkout@v4
   with: { fetch-depth: 0 }        # гейту нужна история
-- uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/attribution@<!--m:ref-->v1.8.0<!--/m:ref-->
+- uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/attribution@<!--m:ref-->v1.9.0<!--/m:ref-->
   with:
     authors: .github/authors.txt  # СВОЙ список согласованных имён
     baseline: ""                  # свой коммит, с которого спрашивать
