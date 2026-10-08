@@ -195,6 +195,14 @@ def test_выпуск_без_раздела_это_отказ(repo):
     assert hm.main(["--root", str(repo), "--check"]) == 1
 
 
+def test_раздел_в_архиве_засчитан(repo):
+    """Раздел, вынесенный за окно живой истории, у тега не пропал."""
+    fake(repo, section="")
+    write(repo / hm.ARCHIVE, "# Архив\n\n" + SECTION)
+
+    assert hm.main(["--root", str(repo), "--check"]) == 0
+
+
 def test_незакрытый_раздел_закрывается_выпуском(repo):
     """«Не выпущено» получает номер и дату от того же вызова, что и строку."""
     fake(repo, rows="", section=SECTION.replace(
