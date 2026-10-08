@@ -141,3 +141,41 @@ def test_нечитаемый_ответ_это_третий_исход(tmp_path
     p = tmp_path / "bindings.json"
     p.write_text("{битый", encoding="utf-8")
     assert ca.main(["--bindings", str(p), "--root", str(tmp_path)]) == 2
+
+
+
+# ── обзор #756: схема, диалект не объектом, маска за деревом ──────────────
+
+@pytest.mark.parametrize("схема", [None, "", "один-девять", "1"])
+def test_нечитаемая_схема_это_находка(tmp_path, capsys, схема):
+    p = tmp_path / "bindings.json"
+    тело = {"rules": {"001": {"status": "active", "mechanism": "document"}}}
+    if схема is not None:
+        тело["schema"] = схема
+    p.write_text(json.dumps(тело), encoding="utf-8")
+    assert ca.main(["--bindings", str(p), "--root", str(tmp_path)]) == 1
+    assert "`schema`" in capsys.readouterr().err
+
+
+def test_absent_не_объектом_находка_а_не_падение():
+    что = af.проба_неверна({"status": "not-applicable", "absent": "x"}, "1.8")
+    assert что is not None and "объект" in что
+
+
+@pytest.mark.parametrize("маска", ["/etc/*", "../*", "a/../../b", "C:/x"])
+def test_маска_за_деревом_отвергается(маска):
+    rec = {"status": "not-applicable", "refuted_by": {"globs": [маска], "contains": []}}
+    что = af.проба_неверна(rec, "1.9")
+    assert что is not None and "за дерево" in что
+
+
+def test_симлинк_наружу_не_читается(tmp_path):
+    снаружи = tmp_path / "снаружи"
+    снаружи.mkdir()
+    (снаружи / "s.txt").write_text("matrix:")
+    корень = tmp_path / "корень"
+    корень.mkdir()
+    (корень / "link.txt").symlink_to(снаружи / "s.txt")
+    rec = {"status": "not-applicable",
+           "refuted_by": {"globs": ["*.txt"], "contains": ["matrix:"]}}
+    assert af.прогнать_пробу(rec, корень) is None
