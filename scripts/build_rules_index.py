@@ -874,6 +874,16 @@ def by_area(areas: dict[str, list[str]], lang: str) -> str:
     return "\n".join(rows)
 
 
+def день_utc(stamp: str) -> str:
+    """День ISO-отметки git (`%aI`, `%cI`) в UTC.
+
+    Отметка несёт пояс того, кто писал коммит, а слияние от имени владельца
+    пишет его пояс: squash #703 в 00:24 +03:00 — это 21:24 UTC предыдущих
+    суток. Срез `[:10]` дал бы дату, зависящую от машины автора, а у
+    `generated_at` выгрузки пояс — UTC (находка обзора #706)."""
+    return dt.datetime.fromisoformat(stamp).astimezone(dt.UTC).date().isoformat()
+
+
 def added_dates() -> tuple[dict[str, str], list[str]]:
     """Дата появления правила — из истории, а не из поля в файле.
 
@@ -911,7 +921,7 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
         if not кусок:
             continue
         if кусок[0].isdigit() and "T" in кусок:
-            stamp = кусок[:10]
+            stamp = день_utc(кусок)
         elif кусок.startswith("rules/ru/"):
             dates.setdefault(Path(кусок).name[:3], stamp)
     return dates, []

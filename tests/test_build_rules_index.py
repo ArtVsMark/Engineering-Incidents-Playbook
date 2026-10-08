@@ -17,6 +17,8 @@
 
 
 import glob
+import os
+import subprocess
 from pathlib import Path
 
 import build_rules_index as b
@@ -429,3 +431,30 @@ def test_zagotovka_pokazyvaet_kazhduyu_pometku():
     }
     нет = [имя for имя in пометки if f"**{имя}.**" not in заготовка]
     assert нет == [], f"сборка читает пометку, а заготовка о ней молчит: {нет}"
+
+
+# ── дата появления — в UTC, а не в поясе слившего (находка обзора #706) ───
+
+def test_день_utc_переводит_пояс_коммита():
+    """Squash #703: 00:24 +03:00 — это ещё 7 октября по UTC."""
+    assert b.день_utc("2026-10-08T00:24:00+03:00") == "2026-10-07"
+    assert b.день_utc("2026-10-07T21:24:00Z") == "2026-10-07"
+    assert b.день_utc("2026-10-07T23:30:00-05:00") == "2026-10-08"
+
+
+def test_дата_появления_не_зависит_от_пояса_автора(tmp_path, monkeypatch):
+    def git(*args: str, **env: str) -> None:
+        subprocess.run(["git", "-C", str(tmp_path), "-c", "commit.gpgsign=false",
+                        "-c", "user.name=Владелец", "-c", "user.email=o@example.com",
+                        *args], check=True, capture_output=True,
+                       env={**os.environ, **env})
+
+    git("init", "-q")
+    (tmp_path / "rules" / "ru").mkdir(parents=True)
+    (tmp_path / "rules" / "ru" / "218-x.md").write_text("# x\n", encoding="utf-8")
+    git("add", "-A")
+    git("commit", "-qm", "218", GIT_AUTHOR_DATE="2026-10-08T00:24:00+03:00",
+        GIT_COMMITTER_DATE="2026-10-08T00:24:00+03:00")
+    monkeypatch.setattr(b, "ROOT", tmp_path)
+    dates, problems = b.added_dates()
+    assert not problems and dates == {"218": "2026-10-07"}
