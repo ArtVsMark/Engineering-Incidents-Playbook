@@ -369,6 +369,28 @@ def test_без_интерпретатора_планки_сверяется_т�
 
 
 @НУЖЕН_BASH
+def test_без_интерпретатора_планки_слово_command_раньше_ключа_не_открывает(tmp_path):
+    """Находка обзора #712: первое вхождение СЛОВА бралось за ключ, и
+    значение `"command"` раньше ключа давало пустую команду — толчок уходил."""
+    корень = проект(tmp_path, pyproject='requires-python = ">=3.99"\n')
+    вход = ('{"cwd":"/w","tool_name":"Bash","tool_input":{"description":"command",'
+            '"command":"git push origin main"}}')
+    итог = subprocess.run(["sh", str(GUARD_SH)], input=вход, capture_output=True, text=True,
+                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)})
+    assert итог.returncode == 2
+
+
+@НУЖЕН_BASH
+def test_без_интерпретатора_планки_без_ключа_решает_весь_вход(tmp_path):
+    """Разбор, не нашедший ключа, не открывает: неуверенность — закрытие."""
+    корень = проект(tmp_path, pyproject='requires-python = ">=3.99"\n')
+    вход = '{"tool_name":"Bash","tool_input":{"cmd":"git push origin main"}}'
+    итог = subprocess.run(["sh", str(GUARD_SH)], input=вход, capture_output=True, text=True,
+                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)})
+    assert итог.returncode == 2
+
+
+@НУЖЕН_BASH
 def test_без_интерпретатора_планки_косвенный_толчок_не_виден_как_и_стражу(tmp_path):
     """Граница названа, а не обещана: `git $c` не видит и сам страж."""
     import importlib.util
