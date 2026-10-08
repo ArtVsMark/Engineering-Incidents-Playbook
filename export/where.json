@@ -1,7 +1,7 @@
 {
   "schema": "1.6",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T19:36:43+00:00",
+  "generated_at": "2026-10-08T19:40:35+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -16,8 +16,8 @@
         "not-applicable": 16
       },
       "by_mechanism": {
-        "gate": 150,
-        "document": 28,
+        "gate": 151,
+        "document": 27,
         "skill": 1,
         "none": 15,
         "pipeline": 7
@@ -925,12 +925,12 @@
           "origin_kind": ""
         },
         "070": {
-          "mechanism": "document",
-          "where": "scripts/check_locale.py — докстрока § ПОРОГИ НЕ ВЫДУМАНЫ, А ЗАМЕРЕНЫ: два порога (0.15 сверху для английского дерева, 0.50 снизу для русского), и остаточный риск назван там же: «нарушение даёт значение у другого края, а не рядом с порогом, поэтому пороги стоят с запасом в разы». Это и есть требование 070, исполненное.",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/check_locale.py — два порога доли кириллицы (0.15 сверху для английского дерева, 0.50 снизу для русского) замерены, остаточный риск назван в докстроке («нарушение даёт значение у другого края»), и обещанный запас ПРОВЕРЯЕТСЯ: корпус, подошедший к порогу ближе половины расстояния до своего края (английское выше 0.075, русское ниже 0.75), — отказ. Ослабить порог «под корпус» одним числом больше нельзя молча. ГРАНИЦА: выбор самого порога и меры запаса — замер человека, гейт держит обещание, а не число",
+          "holdable": "",
           "awaiting": "",
           "analysed": "2026-10-08",
-          "decided": "2026-10-01",
+          "decided": "2026-10-08",
           "skill": "",
           "origin": "",
           "origin_kind": ""
@@ -4806,11 +4806,10 @@
         "rejected": 1
       },
       "by_mechanism": {
-        "gate": 102,
+        "gate": 103,
         "code": 14,
         "document": 27,
-        "pipeline": 14,
-        "none": 1
+        "pipeline": 14
       },
       "rules": {
         "001": "active",
@@ -6749,15 +6748,15 @@
           "origin_kind": ""
         },
         "217": {
-          "mechanism": "none",
-          "where": "ПЕРЕЕЗДА ЕЩЁ НЕ БЫЛО, И ПРАВИЛО ДЕРЖИТ ЕГО ЗАРАНЕЕ: планка витрины — 3.12 во всех setup-python, решение семьи — 3.14 (задача #269, «полный, а не формальный»). Частично держит scripts/check_mechanisms.py::audit_workflows — версия Python в прогонах одна (022), — но это единство, а не переезд: обоих доказательств правила нет. ПРИЗНАК НАРУШЕНИЯ ЕСТЬ УЖЕ СЕЙЧАС, замер 8 октября: 14 вызовов python в двух работах без setup-python — .github/workflows/agent-pr.yml, работа open (7), и .github/workflows/automerge.yml, работа arm (7); они исполняют системный python3 образа, а ubuntu-latest 19 октября переезжает на 26.04 (задача #273) — версия этих шагов сменится молча, без правки дерева.",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "ПЕРЕЕЗД НА 3.14 СДЕЛАН КОДОМ, А НЕ НОМЕРОМ (задача #269). Планка объявлена одним местом — pyproject.toml, requires-python >=3.14. Обе половины правила держат гейты каталога, вызванные в .github/workflows/pr-check.yml по закреплённой версии v1.9.0: гейт версий check_python_version — каждый setup-python на планке, а работа, которая зовёт python раньше setup-python или без числа версии, — находка (до переезда так жили две работы, agent-pr.yml open и automerge.yml arm, 14 вызовов на системном python3 образа; обе получили setup-python на планке); гейт стиля check_py_style — стиль планки: без from __future__ import annotations во всех 21 файлах, except A, B: без скобок (6 мест в scripts/build_metrics.py), ruff UP с целью из той же планки (10 находок UP017/UP033 исправлены). Гейт версий проверен подделкой: работа arm без setup-python — находка, код 1. Замер до и после на одной машине, на 21 самопроверке, существовавшей до переезда, медиана пяти прогонов: до — дерево main на 3.12, 1,98 с; после — переехавшее дерево на 3.14, 2,11 с. Выигрыша нет, на 3.14 медленнее примерно на 6 %. Единство версии в прогонах по-прежнему держит и scripts/check_mechanisms.py::audit_runners (022).",
+          "holdable": "",
           "awaiting": "",
           "analysed": "2026-10-08",
           "decided": "2026-10-08",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/check_python_version.py@827cf7122b9934e9c32b8352194fa69c33dc8f0b",
+          "origin_kind": "called"
         },
         "218": {
           "mechanism": "gate",
