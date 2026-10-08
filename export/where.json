@@ -1,7 +1,7 @@
 {
   "schema": "1.6",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T07:11:44+00:00",
+  "generated_at": "2026-10-08T07:49:23+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -8963,14 +8963,15 @@
       "read_at": "2026-10-08",
       "answered": 216,
       "by_status": {
-        "active": 146,
-        "not-applicable": 70
+        "active": 145,
+        "not-applicable": 70,
+        "rejected": 1
       },
       "by_mechanism": {
         "gate": 83,
         "pipeline": 16,
         "document": 44,
-        "none": 3
+        "none": 2
       },
       "rules": {
         "001": "active",
@@ -8990,7 +8991,7 @@
         "015": "not-applicable",
         "016": "active",
         "017": "active",
-        "018": "active",
+        "018": "rejected",
         "019": "not-applicable",
         "020": "not-applicable",
         "021": "active",
@@ -9329,17 +9330,6 @@
           "holdable": "",
           "awaiting": "",
           "analysed": "",
-          "decided": "",
-          "skill": "",
-          "origin": "",
-          "origin_kind": ""
-        },
-        "018": {
-          "mechanism": "none",
-          "where": ".github/workflows/ci.yml",
-          "holdable": "not-yet",
-          "awaiting": "",
-          "analysed": "2026-10-02",
           "decided": "",
           "skill": "",
           "origin": "",
