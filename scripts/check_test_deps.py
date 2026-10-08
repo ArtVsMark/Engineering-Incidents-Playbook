@@ -156,7 +156,10 @@ def без_границы(lines: Iterable[str]) -> list[str]:
         if not line or line.startswith("-"):
             continue
         m = ИМЯ_ПАКЕТА.match(line)
-        if m and not ГРАНИЦА_RE.search(line[m.end():]):
+        # Граница ищется в СПЕЦИФИКАТОРЕ, а не в строке: маркер среды после
+        # `;` несёт свои `<` и `==` (`python_version<"3.13"`), и они говорят о
+        # Python, а не о версии пакета (обзор #747).
+        if m and not ГРАНИЦА_RE.search(line[m.end():].split(";")[0]):
             out.append(m.group(0))
     return out
 

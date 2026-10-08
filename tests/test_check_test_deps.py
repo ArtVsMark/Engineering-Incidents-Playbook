@@ -155,13 +155,17 @@ def test_defis_v_imeni_privoditsya_k_podcherku():
 
 # ── верхняя граница версии (правило 073) ──────────────────────────────────
 
-@pytest.mark.parametrize("строка", ["pytest", "pytest>=9", "pytest!=9.0"])
+@pytest.mark.parametrize("строка", ["pytest", "pytest>=9", "pytest!=9.0",
+                                    'pytest>=9; python_version<"3.13"',
+                                    'pytest[x]>=9; python_version=="3.14"'])
 def test_без_верхней_границы_это_находка(repo, capsys, строка):
     assert run(tree(repo, "import pytest\n", строка + "\n")) == 1
     assert "без верхней границы" in capsys.readouterr().err
 
 
 @pytest.mark.parametrize("строка", ["pytest<10", "pytest>=9,<10", "pytest==9.1.1",
-                                    "pytest~=9.1", "pytest<=9.9"])
+                                    "pytest~=9.1", "pytest<=9.9", "pytest ~= 9.1",
+                                    "pytest[x]>=9,<10",
+                                    'pytest<10; python_version>="3.14"'])
 def test_верхняя_граница_проходит(repo, строка):
     assert run(tree(repo, "import pytest\n", строка + "\n")) == 0
