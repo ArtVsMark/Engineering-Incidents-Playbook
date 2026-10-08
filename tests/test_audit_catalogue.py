@@ -135,6 +135,44 @@ def test_второй_выпуск_проверяется_отдельно_от_
     assert len(out) == 1 and "v1.1.0" in out[0]
 
 
+# ── архив истории: туда уходит только вышедшее за окно (108) ──────────────
+
+def выпуск(n: int) -> str:
+    return RELEASE.replace("## v1.0.0 · 27 августа 2026",
+                           f"## v1.{n}.0 · 27 августа 2026")
+
+
+def архив(root: Path, text: str) -> Path:
+    return write(root / "docs" / ac.HISTORY_ARCHIVE, "# Архив\n\n" + text)
+
+
+def test_архив_со_старшими_за_полным_окном_проходит(repo):
+    history(repo, "\n".join(выпуск(n) for n in range(1, ac.HISTORY_WINDOW + 1)))
+    архив(repo, выпуск(0))
+    assert ac.check_history(repo) == []
+
+
+def test_свежий_раздел_в_архиве_это_находка(repo):
+    history(repo, "\n".join(выпуск(n) for n in range(0, ac.HISTORY_WINDOW)))
+    архив(repo, выпуск(ac.HISTORY_WINDOW))
+    out = ac.check_history(repo)
+    assert any("не старше живых" in p for p in out)
+
+
+def test_вынесено_при_незаполненном_окне_это_находка(repo):
+    history(repo, выпуск(2))
+    архив(repo, выпуск(1))
+    out = ac.check_history(repo)
+    assert any("раньше срока" in p for p in out)
+
+
+def test_незакрытый_выпуск_в_архиве_это_находка(repo):
+    history(repo, "\n".join(выпуск(n) for n in range(1, ac.HISTORY_WINDOW + 1)))
+    архив(repo, RELEASE.replace("## v1.0.0 · 27 августа 2026 ·", "## Не выпущено ·"))
+    out = ac.check_history(repo)
+    assert any("незакрытый" in p for p in out)
+
+
 def test_записи_без_поля_проходят(repo):
     assert ac.check_portable("001", slot(repo, RU.format(f=""), EN.format(f=""))) == []
 
