@@ -93,7 +93,7 @@ languages** and generated from the files themselves. A rule added in only one
 language fails the build: that is the mechanism keeping the trees from diverging.
 Two separate indexes would not do this — each looks complete on its own.
 
-## How rules are enforced across consumers
+## Consumers
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/consumers-en-dark.svg">
