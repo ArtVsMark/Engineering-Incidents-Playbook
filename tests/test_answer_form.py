@@ -160,6 +160,9 @@ def test_нечитаемая_схема_это_находка(tmp_path, capsys,
 def test_absent_не_объектом_находка_а_не_падение():
     что = af.проба_неверна({"status": "not-applicable", "absent": "x"}, "1.8")
     assert что is not None and "объект" in что
+    # На 1.9 совет другой: не чинить диалект, а писать `refuted_by` (#757).
+    что = af.проба_неверна({"status": "not-applicable", "absent": "x"}, "1.9")
+    assert что is not None and "refuted_by" in что
 
 
 @pytest.mark.parametrize("маска", ["/etc/*", "../*", "a/../../b", "C:/x"])

@@ -156,8 +156,6 @@ def проба_неверна(rec: dict, schema: object) -> str | None:
     if rec.get("status") != "not-applicable":
         return ("проба опровергает «не применимо», а статус записи "
                 f"`{rec.get('status')}` — опровергать нечего")
-    if "refuted_by" not in rec and not isinstance(rec.get(ДИАЛЕКТ_ПРОБЫ), dict):
-        return "`absent` — объект `{substring, globs}` (диалект до 1.9)"
     if с_19(schema):
         if ДИАЛЕКТ_ПРОБЫ in rec:
             return ("`absent` — диалект до 1.9; с 1.9 проба пишется "
@@ -165,6 +163,10 @@ def проба_неверна(rec: dict, schema: object) -> str | None:
         if not isinstance(rec.get("refuted_by"), dict):
             return ("`refuted_by` строкой — диалект до 1.9; с 1.9 проба "
                     "пишется объектом `{globs, contains}`")
+    # Совет про объект `absent` верен только для ответа ниже 1.9: на 1.9 сам
+    # `absent` уже запрещён, и ветка выше говорит, чем его заменить (#757).
+    if "refuted_by" not in rec and not isinstance(rec.get(ДИАЛЕКТ_ПРОБЫ), dict):
+        return "`absent` — объект `{substring, globs}` (диалект до 1.9)"
     п = проба(rec)
     маски, строки = п["globs"], п["contains"]
     if (not isinstance(маски, list) or not маски
