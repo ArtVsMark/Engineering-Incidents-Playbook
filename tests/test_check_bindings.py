@@ -118,6 +118,8 @@ def test_отказ_без_причины_это_находка(monkeypatch, rep
 @pytest.mark.parametrize("why", [
     "предмета нет: прогонов с матрицей ноль",
     "прежнее `rejected` описывало отсутствие предмета",
+    "предмета нет: проверено словом `нет`",
+    "предмета нет. СОБЫТИЕ: что-нибудь когда-нибудь",
 ])
 def test_неприменимо_без_предиката_это_находка(monkeypatch, repo, capsys, why):
     prepare(monkeypatch, repo,
@@ -135,10 +137,12 @@ def test_неприменимо_без_предиката_это_находка(
 ])
 def test_неприменимо_с_предикатом_или_событием_проходит(monkeypatch, repo,
                                                          capsys, why):
+    # Названный путь гейт сверяет с деревом (183): в подделке он обязан быть.
+    write(repo / ".github/workflows/release.yml", "on: push\n")
     prepare(monkeypatch, repo,
             {"rules": {"001": {"status": "not-applicable", "why": why}}},
             export_of("001"))
-    cb.main()
+    assert cb.main() == 0
     assert "без предиката" not in capsys.readouterr().err
 
 
