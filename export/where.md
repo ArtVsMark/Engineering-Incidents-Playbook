@@ -121,6 +121,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/version.py` | 3 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 3 |
 | `Engineering-Incidents-Playbook` | `tests/test_sync_inbox.py` | 3 |
+| `Engineering-Incidents-Playbook` | `.claude/settings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/badges.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/off-prefix.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/exclusives.json` | 2 |
@@ -137,7 +138,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_verdict_order.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `templates/bindings.json` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 57 механизмов по одному правилу; без названного адреса: 1 из 184 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 56 механизмов по одному правилу; без названного адреса: 1 из 184 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 46 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 14 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 14 |
