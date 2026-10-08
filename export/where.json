@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T22:03:44+00:00",
+  "generated_at": "2026-10-08T22:05:16+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -6793,9 +6793,9 @@
         "rejected": 5
       },
       "by_mechanism": {
-        "gate": 95,
+        "gate": 96,
         "document": 58,
-        "none": 21,
+        "none": 20,
         "pipeline": 9
       },
       "rules": {
@@ -8502,12 +8502,12 @@
           "origin_kind": ""
         },
         "163": {
-          "mechanism": "none",
-          "where": "Нарушено, и замером: наружу отдаётся механизм — колесо пакета прикладывается к выпуску (.github/workflows/release.yml, gh release upload), а у пакета есть команда claude-code-usage-meter ([project.scripts] в pyproject.toml). Вход у проекта один — README.md и README.en.md, — и правило для такого сводится к «назови их»; витрина называет подкоманду sample, но не саму команду и не то, как её поставить. Прежний ответ «механизмов наружу не отдаём» строился по заголовку, а не по applies, где библиотека с командной строкой названа прямо. Починка витрин — #146.",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "tests/test_showcase_names_commands.py — каждое имя из [project.scripts] в pyproject.toml обязано встретиться целым словом в README.md и README.en.md; на прежних витринах тест краснел. Наружу отдаётся механизм — колесо пакета прикладывается к выпуску (.github/workflows/release.yml), у пакета есть команда claude-code-usage-meter, а вход у проекта один — витрины; обе называют команду и путь установки колесом из выпуска (#146). Прежний ответ «механизмов наружу не отдаём» строился по заголовку, а не по applies. Граница: КАК названа команда — с путём установки или мимоходом — тест не видит, это приёмка.",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-02",
-          "decided": "2026-10-02",
+          "analysed": "2026-10-08",
+          "decided": "2026-10-08",
           "skill": "",
           "origin": "",
           "origin_kind": ""
