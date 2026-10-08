@@ -325,9 +325,13 @@ def test_строка_окружения_не_копится(tmp_path):
     assert путь.count(f"{корень}/.venv/bin") == 1
 
 
-def _страж(tmp_path, планка: str, команда: str) -> subprocess.CompletedProcess[str]:
+def _страж(tmp_path, планка: str, команда: str,
+           **поля: str) -> subprocess.CompletedProcess[str]:
     корень = проект(tmp_path, pyproject=f'requires-python = ">={планка}"\n')
-    вход = json.dumps({"tool_name": "Bash", "tool_input": {"command": команда}})
+    cwd = поля.pop("cwd", "/w")
+    # `cwd` ПЕРВЫМ, как во входе площадки: слово из пути стоит до команды.
+    вход = json.dumps({"cwd": cwd, "tool_name": "Bash",
+                       "tool_input": {"command": команда, **поля}})
     return subprocess.run(["sh", str(GUARD_SH)], input=вход, capture_output=True, text=True,
                           encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)})
 
@@ -350,6 +354,30 @@ def test_без_интерпретатора_планки_закрыты_и_не
     а страж видит больше форм — каждая из них уходила непроверенной."""
     итог = _страж(tmp_path, "3.99", команда)
     assert итог.returncode == 2, команда
+
+
+@НУЖЕН_BASH
+@pytest.mark.parametrize("команда, поля", [
+    ("grep push docs/", {"cwd": "/home/u/.github/digit"}),
+    ("ls", {"description": "git push the branch"}),
+    ('echo "pushed"', {"cwd": "/srv/git"}),
+])
+def test_без_интерпретатора_планки_сверяется_только_команда(tmp_path, команда, поля):
+    """Находка обзора #710: шаблон шёл по всему JSON входа, и слово `git` в
+    `cwd` или описании закрывало любую команду со словом `push`."""
+    assert _страж(tmp_path, "3.99", команда, **поля).returncode == 0
+
+
+@НУЖЕН_BASH
+def test_без_интерпретатора_планки_косвенный_толчок_не_виден_как_и_стражу(tmp_path):
+    """Граница названа, а не обещана: `git $c` не видит и сам страж."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("push_guard", GUARD_SH.with_suffix(".py"))
+    страж = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(страж)
+    команда = "c=push; git $c origin main"
+    assert страж.targets(команда, "agent/x") == []
+    assert _страж(tmp_path, "3.99", команда).returncode == 0
 
 
 @НУЖЕН_BASH
