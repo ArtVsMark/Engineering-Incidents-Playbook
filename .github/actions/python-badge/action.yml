@@ -11,8 +11,8 @@
 # рисуется, и прежний значок публикацией лучше не трогать.
 name: Значок Python каталога
 description: >-
-  Рисует единый значок «CI │ Python │ версии │ ОС │ coverage │ release /
-  PyPI │ version»: проверки — исходами прогонов на main, покрытие и версия — из
+  Рисует единый значок «CI │ Python │ версии │ ОС │ наборы │ coverage │
+  release / PyPI │ version»: проверки — исходами прогонов на main, покрытие и версия — из
   файлов значков проекта, выпуск — сверкой с PyPI; серый — не проверялось.
 
 inputs:
@@ -44,6 +44,14 @@ inputs:
       Файл значка версии проекта (shields endpoint). Пусто — зона версии серая.
     required: false
     default: ""
+  suites:
+    description: >-
+      Наборы проверок основного CI отдельной зоной после ОС:
+      `работа[:подпись],…`, например `e2e, sandbox-linux:sandbox`. Цвет — исход
+      работы в решающем прогоне на main. Работа, которой нет в файле CI, —
+      значок не собирается (код 2), а не рисуется серым. Не больше четырёх.
+    required: false
+    default: ""
   pypi:
     description: >-
       Имя пакета на PyPI. Пусто — проект на PyPI не публикуется, и зона
@@ -73,6 +81,7 @@ runs:
         COVERAGE_ALL_JSON: ${{ inputs.coverage-all-json }}
         VERSION_JSON: ${{ inputs.version-json }}
         PYPI: ${{ inputs.pypi }}
+        SUITES: ${{ inputs.suites }}
       run: |
         set -euo pipefail
         args=(--root "$GITHUB_WORKSPACE" --ci "$CI_WORKFLOW" --out "$GITHUB_WORKSPACE/$OUT")
@@ -80,4 +89,5 @@ runs:
         [ -n "$COVERAGE_ALL_JSON" ] && args+=(--coverage-all-json "$GITHUB_WORKSPACE/$COVERAGE_ALL_JSON")
         [ -n "$VERSION_JSON" ] && args+=(--version-json "$GITHUB_WORKSPACE/$VERSION_JSON")
         [ -n "$PYPI" ] && args+=(--pypi "$PYPI")
+        [ -n "$SUITES" ] && args+=(--suites "$SUITES")
         python "$GITHUB_ACTION_PATH/../../../scripts/python_badge.py" "${args[@]}"

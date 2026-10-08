@@ -378,3 +378,100 @@ def test_префикс_не_настраивается(tmp_path):
     """Решение владельца 08.10: «CI» стоит всегда, входа нет."""
     with pytest.raises(SystemExit):
         _картинка(tmp_path, "--prefix", "")
+
+
+# ── зона наборов: работы основного CI, сверенные с файлом (#719) ───────────
+
+CI_С_РАБОТАМИ = """name: ci
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+  e2e:
+    runs-on: ubuntu-latest
+  sandbox-linux:
+    name: Sandbox (linux)
+    runs-on: ubuntu-latest
+"""
+
+
+def дерево_с_работами(tmp_path):
+    корень = дерево(tmp_path)
+    (корень / ".github" / "workflows" / "ci.yml").write_text(CI_С_РАБОТАМИ, encoding="utf-8")
+    return корень
+
+
+def job(name: str, conclusion: str) -> dict:
+    return {"name": name, "conclusion": conclusion, "labels": ["ubuntu-latest"]}
+
+
+def _с_наборами(tmp_path, suites: str, jobs: list[dict]) -> tuple[int, str]:
+    out = tmp_path / "python.svg"
+    исходы = {"ci.yml": [прогон("success", "2026-10-01T11:00Z")],
+              "python-next.yml": [прогон("success", "2026-10-01T11:00Z")]}
+    код = pb.main(["--root", str(дерево_с_работами(tmp_path)), "--out", str(out),
+                   "--suites", suites],
+                  прогоны=исходы.__getitem__, работы=lambda r: jobs)
+    return код, out.read_text(encoding="utf-8") if out.exists() else ""
+
+
+def test_работы_ci_ключ_и_имя():
+    assert pb.работы_ci(CI_С_РАБОТАМИ) == {
+        "test": "test", "e2e": "e2e", "sandbox-linux": "Sandbox (linux)"}
+
+
+def test_набор_красный_когда_его_работа_упала(tmp_path):
+    код, картинка = _с_наборами(tmp_path, "e2e, sandbox-linux:sandbox",
+                                [job("test (ubuntu-latest, 3.14)", "success"),
+                                 job("e2e", "failure"), job("Sandbox (linux)", "success")])
+    assert код == 0
+    assert ">e2e<" in картинка and ">sandbox<" in картинка
+    assert "e2e: CI не пройден" in картинка and "sandbox: CI пройден" in картинка
+
+
+def test_наборы_после_ос_перед_покрытием(tmp_path):
+    код, картинка = _с_наборами(tmp_path, "e2e", [job("e2e", "success")])
+    assert код == 0
+    assert картинка.index(">linux<") < картинка.index(">e2e<") < картинка.index(">coverage<")
+
+
+def test_матричная_работа_совпадает_по_имени_с_значениями(tmp_path):
+    код, картинка = _с_наборами(tmp_path, "test:unit",
+                                [job("test (ubuntu-latest, 3.14)", "success"),
+                                 job("test (windows-latest, 3.14)", "failure")])
+    assert код == 0 and "unit: CI не пройден" in картинка
+
+
+def test_работа_не_запускалась_набор_серый(tmp_path):
+    код, картинка = _с_наборами(tmp_path, "e2e", [job("e2e", "skipped")])
+    assert код == 0 and "e2e: проверка не проводилась" in картинка
+
+
+def test_работы_нет_в_файле_ci_значок_не_собран(tmp_path, capsys):
+    """Выбор владельца 08.10: переименованная работа не сереет молча (005, 039)."""
+    код, картинка = _с_наборами(tmp_path, "e2e-old", [job("e2e", "success")])
+    assert код == 2 and картинка == ""
+    assert "e2e-old" in capsys.readouterr().err
+
+
+def test_больше_четырёх_наборов_значок_не_собран(tmp_path):
+    код, _ = _с_наборами(tmp_path, "test,e2e,sandbox-linux,test:a,e2e:b", [])
+    assert код == 2
+
+
+def test_имя_выражением_сверять_не_с_чем(tmp_path):
+    корень = дерево(tmp_path)
+    (корень / ".github" / "workflows" / "ci.yml").write_text(
+        "jobs:\n  t:\n    name: ${{ matrix.os }}\n", encoding="utf-8")
+    assert "выражением" in (pb.сверить_наборы([("t", "t")], pb.работы_ci(
+        (корень / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8"))) or "")
+
+
+def test_без_наборов_зоны_нет(tmp_path):
+    assert pb.зона_наборов([]) == []
+    код, картинка = _с_наборами(tmp_path, "", [job("e2e", "failure")])
+    assert код == 0 and ">e2e<" not in картинка
