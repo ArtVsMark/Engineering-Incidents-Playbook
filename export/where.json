@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T22:41:34+00:00",
+  "generated_at": "2026-10-08T22:52:51+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -6790,9 +6790,9 @@
         "rejected": 5
       },
       "by_mechanism": {
-        "gate": 96,
+        "gate": 98,
         "document": 58,
-        "none": 20,
+        "none": 18,
         "pipeline": 9
       },
       "rules": {
@@ -8973,7 +8973,7 @@
         },
         "211": {
           "mechanism": "none",
-          "where": "НЕ ДЕРЖИТСЯ НИЧЕМ, и нарушения были живые — найдены перебором имён scripts/, src/ и .claude/hooks/ против рабочего кода и .github/workflows/. scripts/changelog.py: requires_entry — его зовут только тесты, а рабочий путь решает тот же вопрос шагом оболочки в .github/workflows/changelog.yml (починка — #141). preflight.project_version стал сиротой при переходе значка на version.counted и снят тем же изменением (#134). SOURCES в src/claude_code_usage/whitelist.py — законная роспись для набора, но у имени это не сказано. Гейта сирот здесь нет; покрытие из .github/workflows/badges.yml его не заменяет — его считает набор. Механизм есть у соседа (check_reached_by_work.py проекта механизмов) — подключение в #138.",
+          "where": "НЕ ДЕРЖИТСЯ НИЧЕМ, и нарушения были живые — найдены перебором имён scripts/, src/ и .claude/hooks/ против рабочего кода и .github/workflows/. scripts/changelog.py: requires_entry звали только тесты, а рабочий путь решал тот же вопрос шагом оболочки в .github/workflows/changelog.yml — сирота устранена 2026-10-08: прогон зовёт функцию (#141, вместе с 214). preflight.project_version стал сиротой при переходе значка на version.counted и снят тем же изменением (#134). SOURCES в src/claude_code_usage/whitelist.py — законная роспись для набора, но у имени это не сказано. Гейта сирот здесь нет; покрытие из .github/workflows/badges.yml его не заменяет — его считает набор. Механизм есть у соседа (check_reached_by_work.py проекта механизмов) — подключение в #138.",
           "holdable": "not-yet",
           "awaiting": "",
           "analysed": "2026-10-02",
@@ -8983,12 +8983,12 @@
           "origin_kind": ""
         },
         "212": {
-          "mechanism": "none",
-          "where": "НЕ ДЕРЖИТСЯ НИЧЕМ, и нарушения живые. Обход страниц есть — paged в scripts/gh_rest.py, и через него идут три списка: задачи в scripts/schedule_alarm.py, коммиты PR и открытые PR в scripts/merge_queue.py. Одиночным запросом без названного предела читаются: прогоны на голове PR в scripts/pr_check.py (fetch_runs, per_page=100), check-runs в scripts/merge_queue.py (snapshot_for, per_page=100) и прогоны ci на main там же (main_state, per_page=20 — по смыслу «свежие N», но предел не назван). Ничто не краснеет на списочном запросе мимо paged, а сам paged молча обрезает выдачу на MAX_PAGES. Проверено перебором всех вызовов gh_rest в scripts/ и шагов .github/workflows/. Починка — #141.",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "tests/test_gh_rest_pages.py — литерал per_page вне scripts/gh_rest.py допустим только с названным пределом (именем константы), число в вызове — отказ; scripts/gh_rest.py paged обходит и обёрнутые списки (key=) со сверкой total_count, а потолок страниц и недобор — отказ TruncatedError, а не молча усечённый список. Переведены на обход: fetch_runs в scripts/pr_check.py, snapshot_for в scripts/merge_queue.py и цвет_проверки в scripts/automerge.py — последний гейт нашёл сам, в задаче его не было. main_state в scripts/merge_queue.py читает одну страницу намеренно, предел назван константой СВЕЖИХ_ПРОГОНОВ с причиной. Граница гейта: списочный GET без per_page вовсе (умолчание площадки — 30) он не видит; перебор всех вызовов gh_rest.request в scripts/, src/ и .claude/hooks/ 08.10 таких не нашёл — остальные GET читают одиночные объекты. Сверка с total_count ловит недобор, а не сдвиг страниц во время обхода (#141).",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-02",
-          "decided": "2026-10-02",
+          "analysed": "2026-10-08",
+          "decided": "2026-10-08",
           "skill": "",
           "origin": "",
           "origin_kind": ""
@@ -9005,12 +9005,12 @@
           "origin_kind": ""
         },
         "214": {
-          "mechanism": "none",
-          "where": "НЕ ДЕРЖИТСЯ НИЧЕМ. Подписанная копия одна: force_utf8_output в scripts/utf8_output.py и src/claude_code_usage/output.py (071), но совпадение тел не проверяет ничто — гейт ищет вызов по имени, и надпись в обоих файлах, будто разойтись копиям не даёт гейт, неверна. Неподписанные дубли: вопрос «слушает ли workflow pull_request» — в scripts/pr_check.py и scripts/concurrency_head.py, и ответы уже расходятся на pull_request_target; «нужна ли запись журнала» — в scripts/changelog.py и шагом оболочки в .github/workflows/changelog.yml; трейлер соавтора — в scripts/attribution.py и scripts/merge_queue.py (#140). Разбор литерала __version__ шёл дважды — в scripts/version.py и в preflight; второй снят (#134). Проверено перебором регулярок и разборов в scripts/, src/ и .github/workflows/. Починка — #141.",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "Три предмета сведены и держатся тестами (#141). «На каких событиях идёт прогон» — один разбор scripts/workflow_on.py вместо четырёх (pr_check, concurrency_head, check_schedules и помощник в tests/test_schedule_alarm.py); вопрос к набору остаётся у вызывающего: обязательной проверке нужен pull_request, гейту отмены — и pull_request_target. Держит tests/test_workflow_on.py: регулярка re.* с именем события вне scripts/workflow_on.py — отказ; на прежнем дереве он нашёл все три. «Нужна ли запись журнала» — только requires_entry в scripts/changelog.py: прогон .github/workflows/changelog.yml передаёт метки, черновик и форк аргументами; держит tests/test_changelog.py — имя типа изменения в workflow — отказ. Подписанная копия force_utf8_output в scripts/utf8_output.py и src/claude_code_usage/output.py сверяется телом по AST — tests/test_utf8_output_copies.py; неверная надпись «не даёт гейт» в обеих шапках исправлена. Граница: гейты держат названные предметы, нового дубля другого предмета они не найдут. Трейлер соавтора в двух местах — отдельно, #140.",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-02",
-          "decided": "2026-10-02",
+          "analysed": "2026-10-08",
+          "decided": "2026-10-08",
           "skill": "",
           "origin": "",
           "origin_kind": ""
