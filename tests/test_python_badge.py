@@ -94,8 +94,9 @@ def test_main_python_красный_когда_ci_упал(tmp_path):
                    прогоны=исходы.__getitem__,
                    работы=lambda run_id: [работа("failure", "ubuntu-latest")]) == 0
     картинка = out.read_text(encoding="utf-8")
-    первый = картинка.split('<rect x="')[1]
-    assert pb.СОСТОЯНИЯ["fail"][0] in первый
+    # Первая часть — префикс «CI» (#719); исход CI несёт часть «Python».
+    python = картинка.split('<rect x="')[2]
+    assert pb.СОСТОЯНИЯ["fail"][0] in python
     assert "проверка не проводилась" in картинка
 
 
@@ -336,3 +337,45 @@ def test_файл_значка_без_числа_это_третий_исход(
         assert pb.main(["--root", str(корень), "--out", str(out), ключ, str(tmp_path / имя)],
                        прогоны=исходы.__getitem__, работы=lambda r: []) == 2
     assert not out.exists()
+
+
+# ── префикс «CI»: подпись всей картинки, а не статус (#719) ────────────────
+
+def _картинка(tmp_path, *доп: str) -> str:
+    out = tmp_path / "python.svg"
+    исходы = {"ci.yml": [прогон("failure", "2026-10-01T11:00Z")],
+              "python-next.yml": [прогон("success", "2026-10-01T11:00Z")]}
+    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out), *доп],
+                   прогоны=исходы.__getitem__,
+                   работы=lambda r: [работа("failure", "ubuntu-latest")]) == 0
+    return out.read_text(encoding="utf-8")
+
+
+def _цвета(картинка: str) -> list[str]:
+    return [к.split('fill="')[1].split('"')[0] for к in картинка.split('<rect x="')[1:]]
+
+
+def test_префикс_ci_первым_нейтральным_цветом(tmp_path):
+    """Цвет исхода остаётся у «Python»: подпись не спорит с цветом."""
+    картинка = _картинка(tmp_path)
+    assert картинка.index(">CI<") < картинка.index(">Python<")
+    цвета = _цвета(картинка)
+    assert цвета[0] == pb.ПОДПИСЬ and цвета[1] == pb.СОСТОЯНИЯ["fail"][0]
+    assert "CI:" not in картинка.split("<title>")[1].split("</title>")[0]
+
+
+def test_префикс_отдельной_зоной(tmp_path):
+    """Зона, а не часть первой: у префикса своя обрезка-скругление."""
+    картинка = _картинка(tmp_path)
+    assert картинка.count("<clipPath") == len(pb.зоны_проверок(
+        [("3.14", "fail"), ("3.15", "pass"), ("linux", "fail")], "fail", "CI")) + 3
+
+
+def test_пустой_префикс_прежний_вид(tmp_path):
+    картинка = _картинка(tmp_path, "--prefix", "")
+    assert ">CI<" not in картинка
+    assert _цвета(картинка)[0] == pb.СОСТОЯНИЯ["fail"][0]
+
+
+def test_префикс_задаётся_входом(tmp_path):
+    assert ">Checks<" in _картинка(tmp_path, "--prefix", "Checks")
