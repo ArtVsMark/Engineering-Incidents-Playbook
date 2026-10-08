@@ -140,9 +140,12 @@ through.
 - search for everything that does NOT run on the floor's interpreter: window
   hooks, pipeline jobs without `setup-python`, the system `python3`, scripts
   with `#!/usr/bin/env python3`. The search criterion is a missing version
-  number, not a mismatched one. A shebang runs code only when the script is
-  executed directly, so search for direct executions, not for files with a
-  shebang: their count alone proves no boundary;
+  number, not a mismatched one. A manual run and a shebang execute code
+  with whatever `python3` comes first in the runner's PATH, and nothing in the
+  tree assigns it a version. So the gate's boundary is named as a category —
+  "execution that does not declare its version as a number" — not as a list
+  of what a search did not find: such a list is refuted by the first missed
+  place;
 - a guard that needs the floor's interpreter blocks the guarded action when
   it is absent (code 2) instead of silently allowing it;
 - the linter version is pinned: an unpinned one changes the style rule set
