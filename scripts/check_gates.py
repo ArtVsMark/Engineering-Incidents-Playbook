@@ -913,6 +913,19 @@ PROPOSAL_CASES = [
     ("замещённое правило без пометки", "merge-unmarked", 1,
      "выгрузка отдала бы старое правило действующим, и потребитель не узнал "
      "бы, что перечитывать (043)"),
+    ("пометка замены на чужой номер", "merge-wrong-target", 1,
+     "старое правило заменено не тем, что приняли: выгрузка ведёт "
+     "потребителя не туда"),
+    ("слияние одного правила", "merge-one", 1,
+     "одно правило не сливают — его переписывают"),
+    ("слияние четырёх правил", "merge-four", 1,
+     "больше трёх — уже перестройка области, а не слияние"),
+    ("повтор в replaces", "merge-dup", 1,
+     "«002, 002» засчиталось бы двумя сведёнными правилами"),
+    ("не номер в replaces", "merge-not-number", 1,
+     "строка идёт в glob: «00[2]» прочла бы пометку, не будучи номером"),
+    ("merged-into у слияния", "merge-merged-into", 1,
+     "у слияния «влито» неотличимо от «принято»"),
     ("соседи без причины", "neighbours-no-why", 1,
      "«оставили раздельными» без причины вернётся тем же предложением"),
     ("соседи у правила, а не у слияния", "neighbours-on-rule", 1,
@@ -960,6 +973,19 @@ def suite_proposals() -> tuple[list[str], int]:
                     слияние.pop("replaces")
                 elif spoil == "merge-unmarked":
                     слияние["replaces"] = ["001", "002"]
+                elif spoil == "merge-wrong-target":
+                    слияние["rule"] = "001"
+                elif spoil == "merge-one":
+                    слияние["replaces"] = ["002"]
+                elif spoil == "merge-four":
+                    слияние["replaces"] = ["001", "002", "003", "004"]
+                elif spoil == "merge-dup":
+                    слияние["replaces"] = ["002", "002"]
+                elif spoil == "merge-not-number":
+                    слияние["replaces"] = ["00[2]", "003"]
+                elif spoil == "merge-merged-into":
+                    слияние = {"status": "merged-into", "rule": "004",
+                               "why": "влито"}
                 verdicts["owner/repo:merge/m"] = слияние
             elif spoil == "neighbours-no-why":
                 verdicts["owner/repo:merge/m"] = {"status": "neighbours", "why": " "}
