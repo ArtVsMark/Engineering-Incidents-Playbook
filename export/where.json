@@ -1,7 +1,7 @@
 {
   "schema": "1.6",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T00:17:09+00:00",
+  "generated_at": "2026-10-08T01:17:47+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -4731,7 +4731,7 @@
           "origin_kind": ""
         }
       },
-      "trails": 189,
+      "trails": 190,
       "born": 133,
       "findings": [
         "ответ по схеме 1.2, у контракта 1.8 — записи остаются валидными, означая уже другое",
