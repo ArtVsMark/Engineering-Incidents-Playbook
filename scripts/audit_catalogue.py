@@ -237,7 +237,33 @@ def check_history(root: Path) -> list[str]:
         out.append(f"HISTORY.md: выпусков больше, чем держит окно. Перенесите "
                    f"в {HISTORY_ARCHIVE} ДОСЛОВНО, старшими вперёд: "
                    + ", ".join(f"«{n}»" for n in older))
+
+    # Архив засчитывает раздел у тега (history_metrics), и потому сам
+    # проверяется на обратное: в нём только то, что ВЫШЛО за окно. Иначе
+    # свежий раздел, убранный в архив, проходил бы оба гейта, а живой
+    # документ переставал бы отвечать на «что было недавно» (108).
+    archive = root / "docs" / HISTORY_ARCHIVE
+    if archive.exists():
+        moved = [m.group(1) for m in RELEASE_RE.finditer(
+            re.sub(r"(?s)```.*?```", "", archive.read_text(encoding="utf-8")))]
+        if "Не выпущено" in moved:
+            out.append(f"{HISTORY_ARCHIVE}: незакрытый выпуск в архиве — "
+                       "окно уходит только вышедшее")
+        if moved and len(marks) < HISTORY_WINDOW:
+            out.append(f"{HISTORY_ARCHIVE}: разделы вынесены раньше срока — "
+                       f"в HISTORY.md {len(marks)} из {HISTORY_WINDOW}, "
+                       "окно не заполнено")
+        live = [версия(m.group(1)) for m in marks if m.group(1) != "Не выпущено"]
+        old = [версия(n) for n in moved if n != "Не выпущено"]
+        if live and old and max(old) >= min(live):
+            out.append(f"{HISTORY_ARCHIVE}: в архиве выпуск не старше живых "
+                       "разделов — за окно уходят старшие, а не выбранные")
     return out
+
+
+def версия(name: str) -> tuple[int, ...]:
+    """«v1.2.0» и «0.1.0» — в кортеж чисел: первый тег стоит без «v»."""
+    return tuple(int(x) for x in name.lstrip("v").split("."))  # не проза: номер версии выпуска
 
 
 #: Переносимость: поле НЕОБЯЗАТЕЛЬНОЕ, но заполненное проверяется на полноту,
