@@ -1,7 +1,7 @@
 {
   "schema": "1.6",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-07T23:15:03+00:00",
+  "generated_at": "2026-10-08T00:14:29+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,7 +9,7 @@
       "schema": "1.8",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-07",
+      "read_at": "2026-10-08",
       "answered": 217,
       "by_status": {
         "active": 196,
@@ -2409,7 +2409,7 @@
       "schema": "1.2",
       "answers_to": "1.5",
       "state": "подключён",
-      "read_at": "2026-10-07",
+      "read_at": "2026-10-08",
       "answered": 195,
       "by_status": {
         "active": 192,
@@ -4744,7 +4744,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-07",
+      "read_at": "2026-10-08",
       "answered": 214,
       "by_status": {
         "active": 156,
@@ -6703,7 +6703,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-07",
+      "read_at": "2026-10-08",
       "answered": 215,
       "by_status": {
         "active": 183,
@@ -8960,7 +8960,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-07",
+      "read_at": "2026-10-08",
       "answered": 216,
       "by_status": {
         "active": 146,
@@ -10810,7 +10810,7 @@
       "schema": "1.7",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-07",
+      "read_at": "2026-10-08",
       "answered": 216,
       "by_status": {
         "active": 208,
