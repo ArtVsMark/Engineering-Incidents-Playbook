@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T22:12:44+00:00",
+  "generated_at": "2026-10-08T22:14:07+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -4797,7 +4797,7 @@
     {
       "repo": "ArtVsMark/ArtVsMark",
       "role": "потребитель",
-      "schema": "1.8",
+      "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-08",
@@ -5042,7 +5042,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "002": {
           "mechanism": "gate",
@@ -5053,7 +5053,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "003": {
           "mechanism": "gate",
@@ -5064,7 +5064,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "004": {
           "mechanism": "code",
@@ -5086,7 +5086,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "006": {
           "mechanism": "pipeline",
@@ -5096,8 +5096,8 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms:.github/workflows/step-window-lifetime.yml@b6a08e75af6f10a227d58d1b81a5af8d5d4912e3",
+          "origin_kind": "adapted"
         },
         "008": {
           "mechanism": "gate",
@@ -5108,7 +5108,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "009": {
           "mechanism": "gate",
@@ -5119,7 +5119,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "010": {
           "mechanism": "gate",
@@ -5130,7 +5130,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "011": {
           "mechanism": "gate",
@@ -5141,7 +5141,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "012": {
           "mechanism": "document",
@@ -5163,7 +5163,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "016": {
           "mechanism": "gate",
@@ -5174,7 +5174,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "017": {
           "mechanism": "code",
@@ -5196,7 +5196,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "022": {
           "mechanism": "gate",
@@ -5207,7 +5207,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "023": {
           "mechanism": "gate",
@@ -5217,8 +5217,8 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/check_prose.py@827cf7122b9934e9c32b8352194fa69c33dc8f0b",
+          "origin_kind": "adapted"
         },
         "025": {
           "mechanism": "gate",
@@ -5229,7 +5229,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "026": {
           "mechanism": "gate",
@@ -5240,7 +5240,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "027": {
           "mechanism": "code",
@@ -5261,8 +5261,8 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms:tests/test_docs_shape.py@b6a08e75af6f10a227d58d1b81a5af8d5d4912e3",
+          "origin_kind": "adapted"
         },
         "030": {
           "mechanism": "gate",
@@ -5273,7 +5273,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "032": {
           "mechanism": "gate",
@@ -5284,7 +5284,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "038": {
           "mechanism": "document",
@@ -5306,7 +5306,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "041": {
           "mechanism": "gate",
@@ -5317,7 +5317,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "044": {
           "mechanism": "gate",
@@ -5328,7 +5328,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "045": {
           "mechanism": "gate",
@@ -5339,7 +5339,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "046": {
           "mechanism": "gate",
@@ -5350,7 +5350,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "047": {
           "mechanism": "pipeline",
@@ -5360,8 +5360,8 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms:.github/workflows/step-rulebook-fresh.yml@b6a08e75af6f10a227d58d1b81a5af8d5d4912e3",
+          "origin_kind": "adapted"
         },
         "049": {
           "mechanism": "pipeline",
@@ -5372,7 +5372,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "050": {
           "mechanism": "gate",
@@ -5383,7 +5383,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "051": {
           "mechanism": "gate",
@@ -5394,7 +5394,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "056": {
           "mechanism": "document",
@@ -5416,7 +5416,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "058": {
           "mechanism": "code",
@@ -5438,7 +5438,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "063": {
           "mechanism": "gate",
@@ -5449,7 +5449,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "064": {
           "mechanism": "gate",
@@ -5460,7 +5460,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "067": {
           "mechanism": "code",
@@ -5482,7 +5482,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "069": {
           "mechanism": "pipeline",
@@ -5493,7 +5493,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "070": {
           "mechanism": "code",
@@ -5515,7 +5515,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "072": {
           "mechanism": "gate",
@@ -5526,7 +5526,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "073": {
           "mechanism": "gate",
@@ -5537,7 +5537,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "074": {
           "mechanism": "gate",
@@ -5548,7 +5548,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "075": {
           "mechanism": "gate",
@@ -5559,7 +5559,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "078": {
           "mechanism": "gate",
@@ -5570,7 +5570,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "080": {
           "mechanism": "pipeline",
@@ -5581,7 +5581,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "082": {
           "mechanism": "gate",
@@ -5592,7 +5592,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "083": {
           "mechanism": "gate",
@@ -5603,7 +5603,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "084": {
           "mechanism": "code",
@@ -5636,7 +5636,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "091": {
           "mechanism": "document",
@@ -5669,7 +5669,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "097": {
           "mechanism": "gate",
@@ -5680,7 +5680,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "100": {
           "mechanism": "gate",
@@ -5691,7 +5691,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "104": {
           "mechanism": "gate",
@@ -5702,7 +5702,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "105": {
           "mechanism": "document",
@@ -5724,7 +5724,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "108": {
           "mechanism": "gate",
@@ -5735,7 +5735,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "109": {
           "mechanism": "gate",
@@ -5746,7 +5746,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "111": {
           "mechanism": "pipeline",
@@ -5757,7 +5757,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "114": {
           "mechanism": "gate",
@@ -5768,7 +5768,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "118": {
           "mechanism": "gate",
@@ -5779,7 +5779,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "119": {
           "mechanism": "gate",
@@ -5790,7 +5790,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "123": {
           "mechanism": "gate",
@@ -5823,7 +5823,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "126": {
           "mechanism": "pipeline",
@@ -5834,7 +5834,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "127": {
           "mechanism": "gate",
@@ -5845,7 +5845,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "128": {
           "mechanism": "gate",
@@ -5856,7 +5856,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "129": {
           "mechanism": "pipeline",
@@ -5878,7 +5878,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "132": {
           "mechanism": "document",
@@ -5911,7 +5911,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "135": {
           "mechanism": "gate",
@@ -5922,7 +5922,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "136": {
           "mechanism": "document",
@@ -5944,7 +5944,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "138": {
           "mechanism": "gate",
@@ -5955,7 +5955,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "139": {
           "mechanism": "gate",
@@ -5965,8 +5965,8 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/check_bindings.py@827cf7122b9934e9c32b8352194fa69c33dc8f0b",
+          "origin_kind": "adapted"
         },
         "140": {
           "mechanism": "gate",
@@ -5977,7 +5977,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "141": {
           "mechanism": "gate",
@@ -5988,7 +5988,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "142": {
           "mechanism": "pipeline",
@@ -6010,7 +6010,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "145": {
           "mechanism": "gate",
@@ -6021,7 +6021,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "146": {
           "mechanism": "document",
@@ -6043,7 +6043,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "148": {
           "mechanism": "pipeline",
@@ -6054,7 +6054,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "149": {
           "mechanism": "gate",
@@ -6065,7 +6065,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "150": {
           "mechanism": "gate",
@@ -6076,7 +6076,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "151": {
           "mechanism": "gate",
@@ -6087,7 +6087,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "152": {
           "mechanism": "document",
@@ -6109,7 +6109,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "154": {
           "mechanism": "gate",
@@ -6120,7 +6120,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "156": {
           "mechanism": "gate",
@@ -6131,7 +6131,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "157": {
           "mechanism": "gate",
@@ -6142,7 +6142,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "158": {
           "mechanism": "gate",
@@ -6153,7 +6153,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "159": {
           "mechanism": "gate",
@@ -6164,7 +6164,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "160": {
           "mechanism": "pipeline",
@@ -6197,7 +6197,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "164": {
           "mechanism": "gate",
@@ -6230,7 +6230,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "167": {
           "mechanism": "gate",
@@ -6241,7 +6241,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "168": {
           "mechanism": "gate",
@@ -6252,7 +6252,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "169": {
           "mechanism": "gate",
@@ -6263,7 +6263,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "170": {
           "mechanism": "code",
@@ -6285,7 +6285,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "172": {
           "mechanism": "gate",
@@ -6296,7 +6296,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "173": {
           "mechanism": "document",
@@ -6318,7 +6318,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "175": {
           "mechanism": "gate",
@@ -6329,7 +6329,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "176": {
           "mechanism": "gate",
@@ -6340,7 +6340,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "177": {
           "mechanism": "gate",
@@ -6351,7 +6351,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "178": {
           "mechanism": "gate",
@@ -6362,7 +6362,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "179": {
           "mechanism": "gate",
@@ -6373,7 +6373,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "180": {
           "mechanism": "gate",
@@ -6384,7 +6384,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "181": {
           "mechanism": "document",
@@ -6405,8 +6405,8 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/check_bindings.py@827cf7122b9934e9c32b8352194fa69c33dc8f0b",
+          "origin_kind": "adapted"
         },
         "183": {
           "mechanism": "gate",
@@ -6417,7 +6417,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "184": {
           "mechanism": "gate",
@@ -6428,7 +6428,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "185": {
           "mechanism": "gate",
@@ -6439,7 +6439,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "186": {
           "mechanism": "document",
@@ -6461,7 +6461,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "188": {
           "mechanism": "document",
@@ -6483,7 +6483,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "190": {
           "mechanism": "gate",
@@ -6494,7 +6494,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "191": {
           "mechanism": "gate",
@@ -6505,7 +6505,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "192": {
           "mechanism": "gate",
@@ -6516,7 +6516,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "193": {
           "mechanism": "gate",
@@ -6527,7 +6527,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "195": {
           "mechanism": "gate",
@@ -6538,7 +6538,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "196": {
           "mechanism": "gate",
@@ -6549,7 +6549,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "197": {
           "mechanism": "code",
@@ -6571,7 +6571,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "199": {
           "mechanism": "code",
@@ -6604,7 +6604,7 @@
           "decided": "2026-09-29",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "203": {
           "mechanism": "code",
@@ -6637,7 +6637,7 @@
           "decided": "2026-09-28",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "206": {
           "mechanism": "gate",
@@ -6648,7 +6648,7 @@
           "decided": "2026-09-29",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "207": {
           "mechanism": "code",
@@ -6670,7 +6670,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "209": {
           "mechanism": "gate",
@@ -6681,7 +6681,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "210": {
           "mechanism": "document",
@@ -6703,7 +6703,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "212": {
           "mechanism": "gate",
@@ -6714,7 +6714,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "213": {
           "mechanism": "gate",
@@ -6725,7 +6725,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "214": {
           "mechanism": "gate",
@@ -6736,7 +6736,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "215": {
           "mechanism": "document",
@@ -6769,15 +6769,12 @@
           "decided": "2026-10-08",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         }
       },
       "notes": {},
       "trails": 29,
-      "born": 18,
-      "findings": [
-        "ответ по схеме 1.8, у контракта 1.9 — записи остаются валидными, означая уже другое"
-      ]
+      "born": 18
     },
     {
       "repo": "ArtVsMark/Claude-Code_Usage-Token",
