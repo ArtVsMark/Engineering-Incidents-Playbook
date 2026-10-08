@@ -67,9 +67,9 @@ half the orphans hid behind someone else's name. The measurement is still one
 level deep: a name called only by an orphan does not show up in it. Twelve is
 a lower bound, not a count.
 
-**Second incident — a near miss: there is a path, but not the one the change
-takes** (the grader, ArtVsMark/Stepik-Python-Grader#1553; a project proposal
-admitted as a second incident). The agent's signature in commit trailers was
+**A near miss: there is a path, but not the one the change takes** (the
+grader, ArtVsMark/Stepik-Python-Grader#1553; a project proposal admitted to
+this rule rather than as a separate one). The agent's signature in commit trailers was
 checked by exactly one gate — the merge-readiness check run before a MANUAL
 merge. The agent's changes reach the shared branch another way: an `agent/`
 branch gets a change opened in the owner's name and auto-merge, and nobody
@@ -88,21 +88,22 @@ The subject is the same as the first incident's: the mechanism was alive for
 one path and dead for the one the work took. Hence the checkable form of the
 question when there are several merge paths: **the paths are listed by name,
 and for each it is stated whether it passes the gate**. The list comes not
-from memory but from what holds merging: GitHub lets manual merge, auto-merge
-and the queue into a protected branch only through the required checks of its
-protection, so the gate covers ALL paths when the chain from it to a required
-check is named link by link in the tree. In the grader at `4182859`
-(7 October) the chain is: the signature step sits in the `docs-guardrails`
+from memory but from what holds merging: the required checks of the branch
+protection. Bypassing protection as an administrator or through a ruleset is a
+separate path, and by construction it does not pass the gate. Only half of the
+answer is checkable from the tree — the chain from the gate to the check the
+tree DECLARES required. In the grader at `4182859` (7 October) the chain is: the signature step sits in the `docs-guardrails`
 job (`.github/workflows/ci.yml`), the job is in `PLAIN_JOBS`
 (`scripts/check_branch_protection.py`), from which `scripts/ci_aggregate.py`
 builds the set behind the `ci-complete` verdict, and
-`EXPECTED_CHECKS = ("ci-complete",)` declares it the only required check. The
-protection setting itself is not in the tree; `check_branch_protection.py`
-compares it. The grader change is ArtVsMark/Stepik-Python-Grader#1555,
+`EXPECTED_CHECKS = ("ci-complete",)` declares it the only required check. The live
+protection setting is not in the tree; `check_branch_protection.py` compares
+it, and its run at this revision is not named here — **the record claims
+nothing about the live setting**. The grader change is ArtVsMark/Stepik-Python-Grader#1555,
 `8dbb727`, 1 October. **This is changed, not proven fixed:** the path was
 read, and this record has no run where an agent change with a wrong signature
 turned red. By this same rule liveness is shown by a working path, not by
-reading, so the record claims only how the chain is built.
+reading, so the record claims only how the chain is built in the tree.
 
 ## Why
 
