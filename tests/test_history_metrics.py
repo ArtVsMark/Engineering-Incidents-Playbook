@@ -317,3 +317,15 @@ def test_ключевое_без_истории_третий_исход(repo):
     fake(repo)
     (repo / "docs" / "HISTORY.md").unlink()
     assert hm.main(["--root", str(repo), "--key-of", "v1.0.0"]) == 2
+
+
+def test_дата_раздела_в_utc_а_не_в_поясе_коммита(repo, monkeypatch):
+    """Находка обзора #706: дата из истории бралась в поясе машины автора."""
+    monkeypatch.setenv("GIT_COMMITTER_DATE", "2026-10-08T00:24:00+03:00")
+    git(repo, "init", "-q")
+    git(repo, "-c", "commit.gpgsign=false", "-c", "user.name=Владелец",
+        "-c", "user.email=owner@example.com", "commit", "-q", "--allow-empty", "-m", "x")
+    git(repo, "tag", "v9.9.9")
+    дата, ошибка = hm.tag_date(repo, "v9.9.9")
+
+    assert not ошибка and дата == "7 октября 2026"

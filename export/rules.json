@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T00:05:46+00:00",
+  "generated_at": "2026-10-08T01:12:30+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.8",
@@ -10653,7 +10653,7 @@
         "ru": "**Работает** в своде, где у записи объявлены границы и где записи ссылаются друг\nна друга как на основание: каталог правил, реестр решений, свод стандартов.\n\n**Не работает** там, где правила границ не объявляют: сверять нечего, и\nтребование вырождается в «читайте внимательно», то есть в предпочтение.\n\n**Не работает** для упоминания и обратного указателя: они применимости не\nутверждают, и требовать от них сверки значит краснеть на верной работе\n([051](051-warn-on-likely-block-on-certain.md)).\n\n**Признак нарушения:** цитируемое правило, открытое на «Применимость», называет\nваш случай среди того, чего оно НЕ покрывает. Второй признак — ссылка в одном\nабзаце сменилась дважды подряд.",
         "en": "**Works** in a body of rules whose records state their limits and cite one\nanother as grounds: a rules catalogue, a decision register, a standards manual.\n\n**Does not work** where rules declare no limits: there is nothing to check\nagainst, and the requirement degenerates into \"read carefully\" — that is, into a\npreference.\n\n**Does not work** for mentions and back-references: they assert no applicability,\nand demanding a check of them means going red on correct work\n([051](051-warn-on-likely-block-on-certain.md)).\n\n**Sign of violation:** the cited rule, opened at its applicability section, names\nyour case among the things it does NOT cover. A second sign: the citation in one\nparagraph has changed twice in a row."
       },
-      "added": "2026-09-11",
+      "added": "2026-09-10",
       "files": {
         "ru": "rules/ru/204-a-citation-is-checked-by-applicability.md",
         "en": "rules/en/204-a-citation-is-checked-by-applicability.md"
@@ -11399,7 +11399,7 @@
         "ru": "**Работает** для механизмов, которые собирают результат вычитанием из\nисходного: генератор заготовки, сужающий чужой прогон; очистка манифеста от\nзависимостей; свёртка конфигурации, снимающая ключи; удаление шага, работы,\nстроки из машинно собираемого файла.\n\n**Не работает** для удаления, у которого ничего не держится по построению:\nснимается лист, на который нет ни одной ссылки, и это проверяемо. Не работает и\nдля сужения признака — условия, образца, набора ключей, — где сосед — то, что\nрешается тем же признаком: это [195](195-a-narrowed-predicate-names-its-neighbour.md).\nЗдесь сужения нет, есть удаление, и сосед — то, что опиралось на удалённое.\n\n**Признак нарушения:** механизм снимает элемент, а в его коде или наборе нет ни\nперечня того, что на снятом держалось, ни отказа с причиной — и результат\nпроверяется только на форму.",
         "en": "**Works** for mechanisms that build a result by subtracting from the source: a\ntemplate generator narrowing someone else's workflow; pruning dependencies from\na manifest; collapsing configuration by removing keys; removing a step, job or\nline from a machine-assembled file.\n\n**Does not work** for a removal on which nothing stands by construction: a leaf\nwith no references to it, and that is checkable. Nor for narrowing a predicate —\na condition, a pattern, a set of keys — where the neighbour is what is decided\nby the same predicate: that is\n[195](195-a-narrowed-predicate-names-its-neighbour.md). Here nothing is\nnarrowed, something is removed, and the neighbour is what relied on it.\n\n**Sign of a violation:** a mechanism removes an element, while neither its code\nnor its tests hold a list of what stood on the removed element or a refusal with\na reason — and the result is checked only for shape."
       },
-      "added": "2026-10-08",
+      "added": "2026-10-07",
       "files": {
         "ru": "rules/ru/218-removing-an-element-names-what-stood-on-it.md",
         "en": "rules/en/218-removing-an-element-names-what-stood-on-it.md"
