@@ -94,8 +94,23 @@ FRONT_RE = re.compile(r"\A---\r?\n.*?\r?\n---\s*(?:\r?\n|\Z)", re.S)
 
 def listed(text: str) -> list[str]:
     """Имена навыков из таблицы списка, в порядке документа, с повторами."""
-    return [m.group(1) for m in (ROW_RE.match(line) for line in text.splitlines())
-            if m]
+    return [имя for имя, _ in строки_списка(text)]
+
+
+def строки_списка(text: str) -> list[tuple[str, str]]:
+    """Строки таблицы списка: имя навыка и «когда звать».
+
+    Разбор один на каталог: тот же список читает и задача-«входящие» у
+    потребителя (`sync_inbox.py`), и вторая копия образца разошлась бы с этой
+    на первой же правке таблицы (214).
+    """
+    out: list[tuple[str, str]] = []
+    for line in text.splitlines():
+        m = ROW_RE.match(line)
+        if m:
+            ячейки = [c.strip() for c in line.strip().strip("|").split("|")]
+            out.append((m.group(1), ячейки[1] if len(ячейки) > 1 else ""))
+    return out
 
 
 def sections(template: str) -> list[str]:

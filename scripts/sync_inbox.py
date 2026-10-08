@@ -36,7 +36,11 @@
   162 — дыру в своём механизме сначала ищут у соседа: раздел «У соседей это уже
         решено» кладётся во входящие адресно, с механизмом и адресом; та же
         свёртка отвечает и самому каталогу в scripts/check_bindings.py;
-  039 — три исхода, а не два.
+  039 — три исхода, а не два;
+  142 — навык, который каталог раздаёт, доезжает до адресата: раздел
+        «Навыки каталога» печатает список плагина на том же теге и то, стоит
+        ли навык у проекта копией или плагином. Без него новый навык
+        появлялся у каталога, а семья о нём не знала.
 
 Исходы:
   0 — чисто;  1 — есть нерассмотренные;  2 — проверка не отработала.
@@ -103,6 +107,46 @@ def fetch_where(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None
             return json.loads(resp.read().decode("utf-8")).get("consumers", []), None
     except (urllib.error.URLError, OSError, ValueError) as e:
         return None, f"{url} — {e}"
+
+
+#: Список навыков плагина каталога: таблица в его README. Берётся на том же
+#: `ref`, что и выгрузка, — навык закреплён тегом вместе с правилами, и
+#: копию у потребителя сверяют с плагином на этом же теге.
+SKILLS_LIST = "plugins/catalogue/README.md"
+#: Как плагин включается у потребителя: имя плагина и витрины в настройках.
+PLUGIN_KEY = "catalogue@incidents-playbook"
+
+
+def fetch_skills(catalogue: str, ref: str) -> tuple[list[tuple[str, str]] | None,
+                                                    str | None]:
+    """Навыки плагина каталога на этом `ref`: имя и «когда звать».
+
+    РАЗДЕЛ — ДОПОЛНЕНИЕ, И ОН НЕ РОНЯЕТ ОСНОВНУЮ РАБОТУ (084): не прочитался
+    список — раздел говорит об этом с адресом (158), а задача обновляется.
+    """
+    import check_skills
+    url = f"https://raw.githubusercontent.com/{catalogue}/{ref}/{SKILLS_LIST}"
+    try:
+        with urllib.request.urlopen(url, timeout=30) as resp:
+            return check_skills.строки_списка(resp.read().decode("utf-8")), None
+    except (urllib.error.URLError, OSError, ValueError) as e:
+        return None, f"{url} — {e}"
+
+
+def навыки_здесь(skills: list[tuple[str, str]], root: str = ".") -> list[dict]:
+    """Стоит ли каждый навык каталога у проекта: копией, плагином или никак."""
+    try:
+        with open(os.path.join(root, ".claude", "settings.json"),
+                  encoding="utf-8") as fh:
+            плагин = bool((json.load(fh).get("enabledPlugins") or {}).get(PLUGIN_KEY))
+    except OSError, ValueError, AttributeError:
+        плагин = False
+    out = []
+    for имя, когда in skills:
+        копия = os.path.isfile(os.path.join(root, ".claude", "skills", имя, "SKILL.md"))
+        out.append({"name": имя, "when": когда,
+                    "here": "копия" if копия else "плагин" if плагин else ""})
+    return out
 
 
 def solved_next_door(answered: dict, consumers: list[dict], me: str) -> list[dict]:
@@ -419,7 +463,9 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
              candidates: list[dict] | None = None,
              started: list[dict] | None = None,
              nothing: list[str] | None = None,
-             contract: list[str] | str | None = None) -> str:
+             contract: list[str] | str | None = None,
+             skills: list[dict] | None = None,
+             skills_error: str | None = None) -> str:
     lines = [
         MARKER,
         "",
@@ -562,6 +608,28 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
             "`.rules/bindings.json` целиком.",
             "",
         ]
+
+    if skills or skills_error:
+        lines += ["## Навыки каталога", ""]
+        if skills_error:
+            lines += [f"Список навыков не прочитан: {skills_error}. Раздел "
+                      "пропущен — это не «навыков нет».", ""]
+        else:
+            нет = sum(1 for s in skills if not s["here"])
+            lines += [
+                f"Навыки плагина каталога на этом теге: {len(skills)}, у "
+                f"проекта не стоит: {нет}. Навык звать можно словами — окно "
+                "решает по описанию; в облачном окне он доезжает только копией. "
+                f"Как поставить — [`{SKILLS_LIST}`](https://github.com/{catalogue}"
+                f"/blob/main/{SKILLS_LIST}).",
+                "",
+                "| Навык | Когда звать | У вас |",
+                "|---|---|---|",
+            ]
+            for s in skills:
+                lines.append(f"| `{s['name']}` | {s['when']} | "
+                             f"{s['here'] or 'не стоит'} |")
+            lines.append("")
 
     if not missing and not unreviewed:
         lines += ["**Нерассмотренных нет.** Это состояние, а не пустая задача: "
@@ -730,10 +798,16 @@ def main() -> int:
         ожидается)
     решено = sum(1 for r in rules
                  if answered.get(r["id"], {}).get("status") not in (None, "unreviewed"))
+    навыки, ошибка_навыков = fetch_skills(args.catalogue, args.ref)
+    if ошибка_навыков:
+        print(f"список навыков не прочитан — {ошибка_навыков}; раздел "
+              "сообщит об этом", file=sys.stderr)
     body = body_for(missing, unreviewed, args.catalogue, stale=stale,
                     total=len(rules), answered=решено, solved=solved,
                     candidates=candidates, started=начатое,
-                    nothing=ничем, contract=расхождение)
+                    nothing=ничем, contract=расхождение,
+                    skills=навыки_здесь(навыки) if навыки else None,
+                    skills_error=ошибка_навыков)
     if args.dry_run:
         print(body)
         return 1 if (missing or unreviewed or stale) else 0
