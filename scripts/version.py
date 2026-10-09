@@ -86,10 +86,10 @@ SYNC_MERGE_RE = re.compile(
 )
 
 
-def git(*args: str) -> str | None:
+def git(*args: str, root: Path = ROOT) -> str | None:
     """stdout git-команды без хвостового перевода строки; None при любой ошибке."""
     try:
-        done = subprocess.run(("git", "-C", str(ROOT), *args),
+        done = subprocess.run(("git", "-C", str(root), *args),
                               capture_output=True, text=True, encoding="utf-8", check=False)
     except OSError:
         return None
@@ -139,9 +139,9 @@ def accepted_since(rev_range: str) -> int:
     return len(numbered) + len(unnumbered)
 
 
-def latest_tag() -> str | None:
+def latest_tag(root: Path = ROOT) -> str | None:
     """Ближайший релизный тег или None. Форма проверяется дважды — маской и регуляркой."""
-    tag = git("describe", "--tags", "--abbrev=0", "--match", TAG_GLOB)
+    tag = git("describe", "--tags", "--abbrev=0", "--match", TAG_GLOB, root=root)
     return tag if tag and TAG_RE.match(tag) else None
 
 

@@ -39,7 +39,7 @@
 
 Исходы:
   0 — файл записан;
-  2 — не записан: свой манифест не собран (нет реестра, нет номеров).
+  2 — сводка не записана: реестр не прочитан.
 """
 
 import argparse
@@ -77,12 +77,16 @@ def своё_имя() -> str:
     return CATALOGUE_URL.removeprefix("https://github.com/")
 
 
-def выпуск() -> dict[str, str] | None:
-    """Последний тег схемы и его коммит; None, пока тега нет."""
-    тег = latest_tag()
+def выпуск(root: Path = ROOT) -> dict[str, str] | None:
+    """Последний тег схемы и его коммит в дереве `root`; None, пока тега нет.
+
+    Дерево то же, из которого берутся номера (обзор #801): иначе выпуск и
+    номера одного манифеста могли бы прийти из двух разных клонов.
+    """
+    тег = latest_tag(root)
     if тег is None:
         return None
-    коммит = git("rev-list", "-n", "1", тег)
+    коммит = git("rev-list", "-n", "1", тег, root=root)
     return {"tag": тег, "sha": коммит} if коммит else None
 
 
@@ -91,7 +95,7 @@ def манифест(root: Path | None = None) -> dict[str, Any]:
     return {
         "schema": FAMILY_SCHEMA,
         "project": своё_имя(),
-        "release": выпуск(),
+        "release": выпуск(root or ROOT),
         "gives": contracts_now(root),
         "takes": [],
     }
@@ -159,11 +163,9 @@ def main(argv: list[str] | None = None) -> int:
                      help=f"собрать манифесты реестра в {SUMMARY}")
     args = ap.parse_args(argv)
 
+    # Пустого `gives` не бывает: свой номер выгрузки `contracts_now` берёт из
+    # константы, а не с диска (обзор #801 — охрана здесь была недостижима).
     свой = манифест(args.root)
-    if not свой["gives"]:
-        print(f"манифест не собран: номеров контрактов нет — "
-              f"{args.root / 'export' / 'rules.json'}", file=sys.stderr)
-        return 2
     if args.manifest:
         записать(args.root / MANIFEST, свой)
         print(f"манифест: {args.root / MANIFEST}")
