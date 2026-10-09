@@ -883,6 +883,8 @@ def test_событие_без_опроса_состояния_находка(tm
     ("one", "      - run: gh api repos/o/r/pulls\n"),
     ("one", "      - uses: actions/checkout@v5\n        with:\n          ref: main\n"),
     ("w-${{ github.sha }}", "      - run: echo \"$GITHUB_SHA\"\n"),
+    ("one", "      - uses: actions/checkout@v5\n        with:\n          ref: "
+            "${{ github.event_name == 'workflow_run' && 'main' || github.ref }}\n"),
 ])
 def test_опрос_или_группа_на_коммит_чисто(tmp_path, group, steps):
     workflow(tmp_path, "w.yml", ОЖИДАЮЩИЙ.format(group=group, steps=steps))
@@ -901,6 +903,10 @@ def test_опрос_в_комментарии_не_считается():
     "      - uses: actions/checkout@v5\n        with:\n"
     "          ref: ${{ github.event.pull_request.head.sha }}\n",
     "      - run: true  # gh api здесь только в комментарии\n",
+    "      - uses: actions/checkout@v5\n        with:\n"
+    "          ref: ${{ github.event.after }}\n",
+    "      - uses: actions/checkout@v5\n        with:\n"
+    "          ref: ${{ github.event.head_commit.id }}\n",
 ])
 def test_sha_события_и_хвостовой_комментарий_не_опрос(steps):
     текст = ОЖИДАЮЩИЙ.format(group="one", steps=steps)
