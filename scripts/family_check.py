@@ -86,16 +86,35 @@ class Связь:
     why: str = ""
 
 
+#: Номер версии в теге или номере контракта: `v1.10.0`, `facts-v1.5.0`, `1.9`.
+НОМЕР_RE = re.compile(r"(\d+(?:\.\d+)*)$")
+
+
+def номер(версия: str) -> tuple[int, ...] | None:
+    """Числа версии для сравнения; None — не версия (SHA, ветка)."""
+    m = НОМЕР_RE.search(версия)
+    # не проза: номер версии, разрез по точке.
+    return tuple(int(x) for x in m[1].split(".")) if m else None
+
+
 def сверить(segment: str, publisher: str, what: str, mine: str | None,
             latest: str | None, where: str, sha: str | None = None) -> Связь:
-    """Одна связь: равенство — ok; нет одной из сторон — unknown; иначе behind."""
+    """Одна связь: равенство — ok; нет одной из сторон — unknown; моё старше
+    свежего — behind; моё НОВЕЕ свежего — unknown (обзор #807): опережение
+    значит, что сводка отстала от издателя, а не что отстал я."""
     if mine is None or latest is None:
         почему = "у издателя не опубликовано" if latest is None else "у себя не найдено"
         return Связь(segment, publisher, what, mine, latest, where, "unknown", почему)
     if mine == latest or (sha is not None and mine == sha):
         return Связь(segment, publisher, what, mine, latest, where, "ok")
-    return Связь(segment, publisher, what, mine, latest, where, "behind",
-                 "прибит не к последнему выпуску" if SHA_RE.match(mine) else "")
+    if SHA_RE.match(mine):
+        return Связь(segment, publisher, what, mine, latest, where, "behind",
+                     "прибит не к последнему выпуску")
+    моё, свежее = номер(mine), номер(latest)
+    if моё is not None and свежее is not None and моё > свежее:
+        return Связь(segment, publisher, what, mine, latest, where, "unknown",
+                     "опережает опубликованное — сводка отстала от издателя")
+    return Связь(segment, publisher, what, mine, latest, where, "behind")
 
 
 def издатели(сводка: dict) -> dict[str, dict]:
@@ -156,6 +175,13 @@ def пары(root: Path, сводка: dict, манифест: dict | None) -> l
     опубликовано = издатели(сводка)
     связи = []
     for t in (манифест or {}).get("takes", []):
+        if not isinstance(t, dict) or not all(isinstance(t.get(k), str)
+                                              for k in ("from", "contract", "where", "field")):
+            # Неполная запись — данные, а не падение (обзор #807).
+            связи.append(Связь("pairs", str((t or {}).get("from", "?")) if isinstance(t, dict)
+                               else "?", "takes", None, None, str(family.MANIFEST),
+                               "unknown", "запись takes неполна: нужны from, contract, where, field"))
+            continue
         файл = _json(root / t["where"]) or {}
         latest = (опубликовано.get(t["from"].lower()) or {}).get("gives", {}).get(t["contract"])
         связи.append(сверить("pairs", t["from"], t["contract"], файл.get(t["field"]),
@@ -164,16 +190,25 @@ def пары(root: Path, сводка: dict, манифест: dict | None) -> l
 
 
 def отдаю(root: Path, сводка: dict, свой: str, манифест: dict | None) -> list[Связь]:
-    """Собранный манифест против опубликованного и против тега дерева."""
+    """Манифест издателя: той ли он формы, называет ли последний тег дерева и
+    дошёл ли до сводки.
+
+    НОМЕРА С ОПУБЛИКОВАННЫМИ НЕ СРАВНИВАЮТСЯ (обзор #807): сводку собирают из
+    этого же манифеста, и у издателя, собирающего её сам, они разойтись не
+    могут — такая сверка зеленела бы по построению. Что номера в манифесте
+    верны своим файлам, держит сборщик манифеста, а не значок.
+    """
     if манифест is None:
         return []                          # не издатель — сегмент серый
-    опубликован = издатели(сводка).get(свой.lower())
     связи = [сверить("gives", свой, "release", (манифест.get("release") or {}).get("tag"),
                      latest_tag(root), str(family.MANIFEST))]
-    for контракт, номер in sorted(манифест.get("gives", {}).items()):
-        связи.append(сверить("gives", свой, контракт,
-                             (опубликован or {}).get("gives", {}).get(контракт), номер,
-                             "опубликованный манифест"))
+    изъян = family.изъян_формы(манифест)
+    связи.append(Связь("gives", свой, "form", манифест.get("schema"), family.FAMILY_SCHEMA,
+                       str(family.MANIFEST), "behind" if изъян else "ok", изъян or ""))
+    в_сводке = свой.lower() in издатели(сводка)
+    связи.append(Связь("gives", свой, "published", "yes" if в_сводке else None, "yes",
+                       "сводка семьи", "ok" if в_сводке else "unknown",
+                       "" if в_сводке else "манифеста нет в сводке семьи"))
     return связи
 
 

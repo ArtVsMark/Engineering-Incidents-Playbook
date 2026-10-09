@@ -355,6 +355,9 @@ def test_токен_записи_живёт_только_в_шаге_публи�
     assert checkout and all("persist-credentials: false" in ш for ш in checkout)
     с_токеном = [ш for ш in шаги if "extraheader" in ш and "git config" in ш]
     assert len(с_токеном) == 1 and с_токеном[0].startswith("name: положить на ветку badges")
-    assert "--unset-all http.https://github.com/.extraheader" in с_токеном[0]
+    # Снятие стоит в trap на EXIT, а не строкой после толчка: упавший толчок
+    # до строки не дошёл бы (обзор #806).
+    assert re.search(r"trap '[^']*--unset-all http\.https://github\.com/\.extraheader[^']*' EXIT",
+                     с_токеном[0])
     assert шаги.index(с_токеном[0]) > next(
         i for i, ш in enumerate(шаги) if ш.startswith("name: Факты отвечают договору витрины"))
