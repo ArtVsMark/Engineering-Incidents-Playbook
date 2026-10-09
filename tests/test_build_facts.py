@@ -169,7 +169,7 @@ def test_обязательный_минимум_есть_всегда(monkeypat
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     факты, _, беда = bf.build()
     assert беда == ""
-    assert факты["schema"] == "1.4" and isinstance(факты["schema"], str)
+    assert факты["schema"] == "1.5" and isinstance(факты["schema"], str)
     assert факты["repo"] == "своё/имя"
     assert факты["generated_at"].endswith("+00:00")
     assert факты["commit"] == "deadbeef"
@@ -196,7 +196,7 @@ def test_записанный_файл_разбирается_и_несёт_об
     assert bf.main([]) == 0
     записано = json.loads((repo / ".github/badges/facts.json")
                           .read_text(encoding="utf-8"))
-    assert записано["schema"] == "1.4"
+    assert записано["schema"] == "1.5"
     # Номер схемы обязан сказать, ЧЕГО он: ключ `schema` носят четыре предмета.
     assert "164" in записано["schema_of"]
 

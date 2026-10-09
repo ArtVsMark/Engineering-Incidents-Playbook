@@ -229,6 +229,25 @@ jobs:
       # Ветка `badges` осиротевшая: истории кода в ней нет, только значки.
       # Так обновление значка не заводит коммит в общей ветке и не двигает
       # счётчик, который сам же и считает.
+      # ФАКТЫ СВЕРЯЮТСЯ ПРОВЕРКОЙ ВИТРИНЫ ДО ПУБЛИКАЦИИ (договор 1.5). Шаг взят
+      # из договора дословно, между его метками `facts-ci-step`
+      # (ArtVsMark/ArtVsMark:.rules/facts-contract.md): проверка прибита к тегу
+      # выпуска договора, а не к ветке — живая `main` витрины сменила бы
+      # требование под нами молча. Красный шаг — файл не уезжает на ветку.
+      # Подъём договора — одна правка: тег здесь и SCHEMA в build_facts.py.
+      - name: Факты отвечают договору витрины
+        env:
+          FACTS_CONTRACT: facts-v1.5.0
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/facts-contract"
+          mkdir -p "$dir"
+          for f in check_facts.py facts.schema.json facts.version; do
+            curl -fsSL -o "$dir/$f" \
+              "https://github.com/ArtVsMark/ArtVsMark/releases/download/$FACTS_CONTRACT/$f"
+          done
+          python "$dir/check_facts.py" --file .github/badges/facts.json --repo "$GITHUB_REPOSITORY"
+
       - name: положить на ветку badges
         env:
           GH_TOKEN: ${{ github.token }}
