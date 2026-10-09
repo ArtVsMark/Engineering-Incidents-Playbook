@@ -92,6 +92,64 @@ def test_quotepath_prinimaetsya_kak_ravnosilnyy():
     assert cs.unseparated(код) == []
 
 
+# ── вывод -z разбирается по NUL, а не split() (165, #762) ─────────────────
+
+ВЫЗОВ_Z = ('    done = subprocess.run(["git", "diff", "--name-only", "-z", "x"],\n'
+           '                          capture_output=True, text=True, encoding="utf-8")\n')
+
+
+def test_z_razrezan_split_nahodka():
+    """Ровно инцидент #762: `-z` в команде, голый `split()` в разборе — весь
+    список становится одним именем, и check_overlap не видел пересечений."""
+    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
+           + "    return {x for x in done.stdout.split() if x}\n")
+    assert [что for _, что in cs.unsplit(код)] == ["split"]
+
+
+def test_z_razrezan_po_nul_chisto():
+    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
+           + '    return [x for x in done.stdout.split("\\0") if x]\n')
+    assert cs.unsplit(код) == []
+
+
+def test_splitlines_tozhe_ne_nul():
+    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
+           + "    return done.stdout.splitlines()\n")
+    assert [что for _, что in cs.unsplit(код)] == ["splitlines"]
+
+
+def test_tsepochka_na_samom_vyzove():
+    код = ('import subprocess\nимена = subprocess.run(["git", "ls-files", "-z"],'
+           ' capture_output=True, text=True, encoding="utf-8").stdout.split()\n')
+    assert [что for _, что in cs.unsplit(код)] == ["split"]
+
+
+def test_chuzhoy_split_v_toy_zhe_funktsii_ne_nahodka():
+    """Предмет — ОТНОШЕНИЕ вызова и разбора (166): `.split()` у строки, не
+    связанной с выводом `-z`, находкой не становится."""
+    код = ("import subprocess\ndef f(строка):\n" + ВЫЗОВ_Z
+           + '    имена = done.stdout.split("\\0")\n'
+           + "    return строка.split(), имена\n")
+    assert cs.unsplit(код) == []
+
+
+def test_imya_iz_drugoy_funktsii_ne_svyazano():
+    """Связь прослеживается в ОДНОЙ функции: одноимённая переменная соседней
+    функции к выводу `-z` отношения не имеет."""
+    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z + "    return done\n"
+           "def g(done):\n    return done.split()\n")
+    assert cs.unsplit(код) == []
+
+
+def test_razbor_ne_po_nul_otkaz_cherez_main(tmp_path):
+    """Решение спрашивается у гейта через `main` (150)."""
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts" / "x.py").write_text(
+        "import subprocess\ndef f():\n" + ВЫЗОВ_Z
+        + "    return done.stdout.split()\n", encoding="utf-8")
+    assert cs.main(["--root", str(tmp_path)]) == 1
+
+
 def test_vyzov_bez_spiska_putey_ne_nahodka():
     """У `git describe` списка нет — требовать от него разделитель значило бы
     краснеть на верном вызове."""

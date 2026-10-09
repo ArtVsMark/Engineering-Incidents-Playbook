@@ -48,6 +48,17 @@ NUL без `%x00` в формате, молча перестал находит�
 ещё не в истории» о правилах, которые в ней были. Поэтому гейт требует `-z`, а
 верность разбора остаётся за автором.
 
+ВТОРАЯ ПОЛОВИНА ВТОРОГО — `-z` без разбора по NUL (#762). Гейт держал только
+команду, и `check_overlap` прошёл его с `-z` в вызове и голым `.split()` в
+разборе: NUL не пробел, весь список склеивался в одно имя, и механизм 133
+отвечал «пересечений нет» на любом дереве. Теперь вывод такого вызова,
+разобранный `split()` без разделителя или `splitlines()`, — находка. Связь
+вызова с разбором прослеживается ИМЕНЕМ в той же функции (`done = run(…)` →
+`done.stdout.split()`) или цепочкой прямо на вызове. ГРАНИЦА, названная вслух:
+вывод, переданный в другую функцию или собственной обёрткой над git
+(`pr_source_commit.git`), разбором не прослеживается; формат `%x00` у `git log`
+— тоже по-прежнему за автором.
+
 ТРЕТЬЕ ТРЕБОВАНИЕ — `gh` зовут через `ghcli`, а не напрямую (правила 017, 058).
 Оба правила держатся ОДНИМ модулем: он мерит остаток квоты при первом отказе и
 отдаёт исчерпанию собственный терминальный код. Держатся они там ровно до тех
@@ -67,6 +78,7 @@ NUL без `%x00` в формате, молча перестал находит�
   039 — три исхода: чисто · есть находки · проверка не отработала;
   075 — ноль просмотренных файлов это отказ, а не чистый прогон;
   165 — печатается ОХВАТ: сколько файлов просмотрено, а не только находки;
+  165 — вывод `-z` разбирается по NUL, а не `split()` без разделителя;
   180 — предмет разрешается по импортам разбираемого файла, а не по
         последнему звену имени вызова;
   017 — остаток квоты мерится, а не угадывается: мерит ghcli, и потому звать
@@ -216,6 +228,77 @@ def unseparated(source: str) -> list[tuple[int, str]]:
     return found
 
 
+#: Разборы, которые NUL разделителем не считают: `split()` без аргумента режет
+#: по пробельным, `splitlines()` — по переводам строк, и ни то ни другое не
+#: видит `\0` (#762).
+РАЗБОР_НЕ_ПО_NUL = ("split", "splitlines")
+
+
+def _списочный_z(node: ast.AST) -> bool:
+    """Вызов git, отдающий список путей с `-z`: его вывод режется по NUL."""
+    if not isinstance(node, ast.Call):
+        return False
+    слова = [a.value for a in ast.walk(node)
+             if isinstance(a, ast.Constant) and isinstance(a.value, str)]
+    return ("git" in слова and "-z" in слова
+            and any(с in LISTING for с in слова))
+
+
+def _корень(node: ast.AST) -> ast.AST:
+    """Начало цепочки `done.stdout[…]` — то, к чему привязан разбор."""
+    while isinstance(node, (ast.Attribute, ast.Subscript)):
+        node = node.value
+    return node
+
+
+def _имена(target: ast.AST) -> set[str]:
+    return {n.id for n in ast.walk(target) if isinstance(n, ast.Name)}
+
+
+def unsplit(source: str) -> list[tuple[int, str]]:
+    """Строки, где вывод `git … -z` разобран не по NUL.
+
+    Предмет — ОТНОШЕНИЕ вызова и разбора, а не присутствие `.split()` в файле
+    (166): связь прослеживается присваиванием в той же функции или цепочкой
+    прямо на вызове. Другие `.split()` той же функции находками не становятся,
+    если их начало не связано с выводом `-z`.
+    """
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return []
+    found: list[tuple[int, str]] = []
+    функции = [n for n in ast.walk(tree)
+               if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
+    # Уровень модуля — всё, что не внутри функции. Множество id строится один
+    # раз: попарное сравнение узлов модуля с узлами функций было квадратичным
+    # и на дереве каталога шло минутами.
+    внутри = {id(m) for f in функции for m in ast.walk(f)}
+    области = [[n for n in ast.walk(tree) if id(n) not in внутри],
+               *(list(ast.walk(f)) for f in функции)]
+    for узлы in области:
+        связанные: set[str] = set()
+        for n in узлы:
+            if (isinstance(n, (ast.Assign, ast.AnnAssign))
+                    and n.value is not None
+                    and any(_списочный_z(m) for m in ast.walk(n.value))):
+                цели = n.targets if isinstance(n, ast.Assign) else [n.target]
+                for ц in цели:
+                    связанные |= _имена(ц)
+        for n in узлы:
+            if not (isinstance(n, ast.Call)
+                    and isinstance(n.func, ast.Attribute)
+                    and n.func.attr in РАЗБОР_НЕ_ПО_NUL):
+                continue
+            if n.func.attr == "split" and (n.args or n.keywords):
+                continue
+            корень = _корень(n.func.value)
+            if ((isinstance(корень, ast.Name) and корень.id in связанные)
+                    or _списочный_z(корень)):
+                found.append((n.lineno, n.func.attr))
+    return sorted(set(found))
+
+
 def мимо_двери(source: str) -> list[int]:
     """Строки, где `gh` зовут подпроцессом напрямую.
 
@@ -271,6 +354,9 @@ def main(argv: list[str] | None = None) -> int:
         for строка, подкоманда in unseparated(текст):
             находки.append(f"{f.relative_to(args.root)}:{строка} — "
                            f"git {подкоманда} отдаёт список путей без -z")
+        for строка, разбор in unsplit(текст):
+            находки.append(f"{f.relative_to(args.root)}:{строка} — "
+                           f"вывод git -z режется {разбор}(), а не по NUL")
         if f.name not in ДВЕРЬ:
             for строка in мимо_двери(текст):
                 находки.append(f"{f.relative_to(args.root)}:{строка} — "
