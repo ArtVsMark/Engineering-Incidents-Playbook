@@ -1568,6 +1568,9 @@ def test_вердикт_по_одному_примеру_это_находка(m
     ("rejected", "отклонено: у всех прогонов .github/workflows/release.yml матриц 0"),
     ("rejected", "ни один прогон .github/workflows/release.yml матрицы не несёт"),
     ("rejected", "в .github/workflows/release.yml 14 прогонов из 14 без матрицы"),
+    # Доля и большое число — счёт, а не дата и не год (обзор #799).
+    ("rejected", "в .github/workflows/release.yml 14/14 прогонов без матрицы"),
+    ("rejected", "в .github/workflows/release.yml 2000 прогонов без матрицы"),
     # «Не применимо» держит 205 предикатом по дереву — 136 его не спрашивает.
     ("not-applicable", "предмет появится с первым файлом в .github/workflows/release.yml"),
 ])
