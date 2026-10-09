@@ -14,8 +14,8 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 217 | 0 | 0 | 201 | 152 | 7 | 1 | 27 | 14 | 124 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 195 | 22 | 0 | 192 | 85 | 39 | 0 | 68 | 0 | 144 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 112 | 16 | 0 | 16 | 0 | 52 |  |
-| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 99 | 9 | 0 | 58 | 17 | 102 |  |
+| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 113 | 19 | 0 | 12 | 0 | 53 |  |
+| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 99 | 9 | 0 | 58 | 17 | 104 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 147 | 84 | 16 | 0 | 45 | 2 | 110 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 217 | 0 | 0 | 209 | 178 | 25 | 2 | 4 | 0 | 252 |  |
 
@@ -200,10 +200,10 @@
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 89 механизмов по одному правилу; без названного адреса: 0 из 192 |
 | `ArtVsMark` | `scripts/build_metrics.py` | 64 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 53 |
-| `ArtVsMark` | `.github/workflows/pr-check.yml` | 28 |
+| `ArtVsMark` | `.github/workflows/pr-check.yml` | 30 |
 | `ArtVsMark` | `CLAUDE.md` | 27 |
-| `ArtVsMark` | `scripts/check_bindings.py` | 22 |
-| `ArtVsMark` | `scripts/checks.py` | 19 |
+| `ArtVsMark` | `scripts/check_bindings.py` | 23 |
+| `ArtVsMark` | `scripts/checks.py` | 20 |
 | `ArtVsMark` | `.github/workflows/agent-pr.yml` | 16 |
 | `ArtVsMark` | `.github/workflows/automerge.yml` | 16 |
 | `ArtVsMark` | `scripts/check_labels.py` | 16 |
@@ -222,26 +222,27 @@
 | `ArtVsMark` | `.rules/bindings.json` | 8 |
 | `ArtVsMark` | `projects.json` | 8 |
 | `ArtVsMark` | `.rules/facts.schema.json` | 7 |
+| `ArtVsMark` | `agent-pr.yml` | 6 |
 | `ArtVsMark` | `scripts/collect_changelog.py` | 6 |
 | `ArtVsMark` | `.github/workflows/main-red.yml` | 5 |
 | `ArtVsMark` | `.github/workflows/rules-inbox.yml` | 5 |
-| `ArtVsMark` | `agent-pr.yml` | 5 |
 | `ArtVsMark` | `pr-check.yml` | 5 |
 | `ArtVsMark` | `scripts/check_facts.py` | 5 |
 | `ArtVsMark` | `scripts/neighbours.py` | 5 |
 | `ArtVsMark` | `.rules/proposals.json` | 4 |
+| `ArtVsMark` | `scripts/stuck_prs.py` | 4 |
 | `ArtVsMark` | `.github/workflows/attribution-history.yml` | 3 |
+| `ArtVsMark` | `.github/workflows/stuck-prs.yml` | 3 |
 | `ArtVsMark` | `automerge.yml` | 3 |
 | `ArtVsMark` | `scripts/check_neighbours.py` | 3 |
+| `ArtVsMark` | `scripts/staleness.py` | 3 |
 | `ArtVsMark` | `.github/workflows/snake.yml` | 2 |
-| `ArtVsMark` | `.github/workflows/stuck-prs.yml` | 2 |
+| `ArtVsMark` | `.github/workflows/staleness.yml` | 2 |
 | `ArtVsMark` | `.rules/facts-contract.md` | 2 |
 | `ArtVsMark` | `CHANGELOG.md` | 2 |
 | `ArtVsMark` | `scripts/check_branch.py` | 2 |
 | `ArtVsMark` | `scripts/check_window.py` | 2 |
 | `ArtVsMark` | `scripts/reauthor_deps.py` | 2 |
-| `ArtVsMark` | `scripts/staleness.py` | 2 |
-| `ArtVsMark` | `scripts/stuck_prs.py` | 2 |
 | `ArtVsMark` | _остальные_ · _the rest_ | 8 механизмов по одному правилу; без названного адреса: 0 из 158 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 39 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 38 |
@@ -270,6 +271,7 @@
 | `Claude-Code_Usage-Token` | `scripts/shell_ascii.py` | 6 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/storage.py` | 6 |
 | `Claude-Code_Usage-Token` | `tests/test_subprocess_encoding.py` | 6 |
+| `Claude-Code_Usage-Token` | `tests/test_transcripts.py` | 6 |
 | `Claude-Code_Usage-Token` | `.github/workflows/badges.yml` | 5 |
 | `Claude-Code_Usage-Token` | `.github/workflows/merge-queue.yml` | 5 |
 | `Claude-Code_Usage-Token` | `HISTORY.md` | 5 |
@@ -279,13 +281,13 @@
 | `Claude-Code_Usage-Token` | `scripts/release.py` | 5 |
 | `Claude-Code_Usage-Token` | `scripts/repo_links.py` | 5 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/transcripts.py` | 5 |
-| `Claude-Code_Usage-Token` | `tests/test_transcripts.py` | 5 |
 | `Claude-Code_Usage-Token` | `.rules/proposals.json` | 4 |
 | `Claude-Code_Usage-Token` | `pyproject.toml` | 4 |
 | `Claude-Code_Usage-Token` | `scripts/schedule_alarm.py` | 4 |
 | `Claude-Code_Usage-Token` | `scripts/subprocess_timeout.py` | 4 |
 | `Claude-Code_Usage-Token` | `tests/test_attribution.py` | 4 |
 | `Claude-Code_Usage-Token` | `tests/test_changelog.py` | 4 |
+| `Claude-Code_Usage-Token` | `tests/test_registry.py` | 4 |
 | `Claude-Code_Usage-Token` | `.github/pull_request_template.md` | 3 |
 | `Claude-Code_Usage-Token` | `.github/workflows/ci.yml` | 3 |
 | `Claude-Code_Usage-Token` | `.rules/exclusive.json` | 3 |
@@ -303,19 +305,22 @@
 | `Claude-Code_Usage-Token` | `.github/workflows/schedule-alarm.yml` | 2 |
 | `Claude-Code_Usage-Token` | `docs/limits.md` | 2 |
 | `Claude-Code_Usage-Token` | `docs/storage-setup.md` | 2 |
+| `Claude-Code_Usage-Token` | `src/claude_code_usage/__init__.py` | 2 |
 | `Claude-Code_Usage-Token` | `src/claude_code_usage/output.py` | 2 |
+| `Claude-Code_Usage-Token` | `src/claude_code_usage/registry.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_badges.py` | 2 |
+| `Claude-Code_Usage-Token` | `tests/test_cli_sample.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_concurrency_head.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_gh_rest_pages.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_merge_queue.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_pr_metadata.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_preflight.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_push_guard.py` | 2 |
-| `Claude-Code_Usage-Token` | `tests/test_registry.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_release.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_schedule_alarm.py` | 2 |
 | `Claude-Code_Usage-Token` | `tests/test_shell_ascii.py` | 2 |
-| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 30 механизмов по одному правилу; без названного адреса: 0 из 166 |
+| `Claude-Code_Usage-Token` | `tests/test_whitelist.py` | 2 |
+| `Claude-Code_Usage-Token` | _остальные_ · _the rest_ | 28 механизмов по одному правилу; без названного адреса: 0 из 166 |
 | `Glossary-Python` | `CLAUDE.md` | 22 |
 | `Glossary-Python` | `.github/workflows/ci.yml` | 20 |
 | `Glossary-Python` | `docs/dev/architecture.md` | 11 |
