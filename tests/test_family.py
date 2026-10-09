@@ -92,3 +92,12 @@ def test_main_пишет_сводку_по_реестру(tmp_path, monkeypatch,
 def test_main_без_реестра_третий_исход_с_адресом(tmp_path, capsys):
     assert family.main(["--root", str(tmp_path), "--summary"]) == 2
     assert str(tmp_path / family.REGISTRY) in capsys.readouterr().err
+
+
+def test_выпуск_берётся_из_того_же_дерева(tmp_path):
+    """Выпуск и номера одного манифеста — из одного дерева (обзор #801):
+    в клоне без тегов выпуска нет, хотя у каталога рядом он есть."""
+    import subprocess
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    assert family.выпуск(tmp_path) is None
+    assert family.манифест(tmp_path)["release"] is None
