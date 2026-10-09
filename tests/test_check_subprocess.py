@@ -190,6 +190,43 @@ def test_svyaz_pered_pereprivyazkoy_eshchyo_nahodka():
     assert [что for _, что in cs.unsplit(код)] == ["split"]
 
 
+def test_spisok_posle_razreza_po_nul_ne_svyazan():
+    """Ревью #767: `run(…-z).stdout.split("\\0")` — уже список путей, и разрез
+    пути по «/» на нём находкой не становится."""
+    код = ('import subprocess\ndef f():\n'
+           '    имена = subprocess.run(["git", "ls-files", "-z"], capture_output=True,'
+           ' text=True, encoding="utf-8").stdout.split("\\0")\n'
+           '    return [и.split("/") for и in имена], имена[0].rsplit(".", 1)\n')
+    assert cs.unsplit(код) == []
+
+
+def test_for_razvyazyvaet_posle_iteriruemogo():
+    """Ревью #767: цель `for` привязывается ПОСЛЕ итерируемого, и разрез в
+    самом итерируемом — ещё вывод `-z`."""
+    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
+           + "    for done in done.stdout.split():\n        pass\n")
+    assert [что for _, что in cs.unsplit(код)] == ["split"]
+
+
+def test_umolchanie_vlozhennoy_funktsii_vo_vneshney_oblasti():
+    """Значение по умолчанию вычисляется во внешней области — и проверяется там."""
+    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
+           + "    def g(имена=done.stdout.split()):\n        return имена\n"
+           + "    return g\n")
+    assert [что for _, что in cs.unsplit(код)] == ["split"]
+
+
+def test_granitsa_potok_ne_proslezhivaetsya():
+    """ГРАНИЦА, НАЗВАННАЯ ВСЛУХ (решение владельца, правило 210): порядок —
+    исходника, а не исполнения. Присваивание в ветке снимает связь и для кода
+    после ветки. Случай фиксирует границу, а не желаемое поведение: если гейт
+    научится видеть поток, случай обязан поменяться вместе с записью 165."""
+    код = ("import subprocess\ndef f(c):\n" + ВЫЗОВ_Z
+           + "    if c:\n        done = None\n"
+           + "    return done.stdout.split()\n")
+    assert cs.unsplit(код) == []
+
+
 def test_razbor_ne_po_nul_otkaz_cherez_main(tmp_path):
     """Решение спрашивается у гейта через `main` (150)."""
     (tmp_path / "scripts").mkdir()

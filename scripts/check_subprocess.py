@@ -240,10 +240,16 @@ def unseparated(source: str) -> list[tuple[int, str]]:
 
 
 def _списочный_z(node: ast.AST) -> bool:
-    """Вызов git, отдающий список путей с `-z`: его вывод режется по NUL."""
+    """Вызов git, отдающий список путей с `-z`: его вывод режется по NUL.
+
+    Слова берутся из АРГУМЕНТОВ этого вызова, а не из всего поддерева: у
+    `run(…-z).stdout.split("\\0")` поддерево разреза содержит и сам вызов git,
+    и разрез иначе принимался бы за вызов (ревью #767).
+    """
     if not isinstance(node, ast.Call):
         return False
-    слова = [a.value for a in ast.walk(node)
+    слова = [a.value for арг in (*node.args, *(k.value for k in node.keywords))
+             for a in ast.walk(арг)
              if isinstance(a, ast.Constant) and isinstance(a.value, str)]
     return ("git" in слова and "-z" in слова
             and any(с in LISTING for с in слова))
@@ -283,13 +289,25 @@ def _режет_не_по_nul(call: ast.Call) -> bool:
 
 
 def _узлы_области(корень: ast.AST) -> list[ast.AST]:
-    """Узлы одной области имён — без тел вложенных функций и лямбд."""
+    """Узлы одной области имён — без тел вложенных функций и лямбд.
+
+    Декораторы и значения параметров по умолчанию вложенной функции
+    вычисляются во ВНЕШНЕЙ области и в неё же и попадают; тело — нет.
+    """
+    if isinstance(корень, ast.Module):
+        стек: list[ast.AST] = list(корень.body)
+    elif isinstance(корень, ast.Lambda):
+        стек = [корень.body]
+    else:
+        стек = list(корень.body)
     out: list[ast.AST] = []
-    стек = list(ast.iter_child_nodes(корень))
     while стек:
         n = стек.pop()
         out.append(n)
-        if not isinstance(n, ОБЛАСТИ):
+        if isinstance(n, ОБЛАСТИ):
+            стек.extend(getattr(n, "decorator_list", []))
+            стек.extend(d for d in (*n.args.defaults, *n.args.kw_defaults) if d)
+        else:
             стек.extend(ast.iter_child_nodes(n))
     return out
 
@@ -298,15 +316,35 @@ def _имена(target: ast.AST) -> set[str]:
     return {n.id for n in ast.walk(target) if isinstance(n, ast.Name)}
 
 
+def _вывод_z(value: ast.AST) -> bool:
+    """Правая часть — САМ вывод `git … -z`: вызов или его атрибут (`.stdout`).
+
+    Узко нарочно (решение владельца после пяти находок ревью #764 и #767):
+    `run(…-z).stdout.split("\\0")` — уже список путей, а не вывод, и связь на
+    него не переходит.
+    """
+    while isinstance(value, ast.Attribute):
+        value = value.value
+    return _списочный_z(value)
+
+
 def unsplit(source: str) -> list[tuple[int, str]]:
     """Строки, где вывод `git … -z` разобран не по NUL.
 
     Предмет — ОТНОШЕНИЕ вызова и разбора, а не присутствие `.split()` в файле
-    (166). Связь прослеживается в ОДНОЙ области имён и В ПОРЯДКЕ ИСХОДНИКА:
-    присваивание из вызова с `-z` связывает имя, любое другое присваивание
-    того же имени — развязывает (`d = d.stdout.split("\\0")` делает `d`
-    списком, и `.split()` на нём уже не находка — ревью #764). Цепочка прямо
-    на вызове связана всегда.
+    (166). Связь узкая и названная:
+      • цепочка разреза прямо на вызове — `run(…-z).stdout.split()`;
+      • имя, которому присвоен САМ вывод — `done = run(…-z)` либо
+        `out = run(…-z).stdout`, — в той же области имён и ниже по исходнику;
+        любое другое присваивание того же имени связь снимает, цель `for` и
+        `with` — после вычисления правой части.
+
+    ГРАНИЦА, НАЗВАННАЯ ВСЛУХ (решение владельца, правило 210): поток данных не
+    прослеживается. Порядок — это порядок исходника, а не исполнения: ветка
+    `if c: done = None` снимает связь и для кода после ветки, тело цикла
+    читается сверху вниз. Вывод, переданный в другую функцию или идущий через
+    свою обёртку над git, не прослеживается тоже. Гейт ловит форму инцидента
+    #762 и её разрезы, а не всякий путь вывода по программе.
     """
     try:
         tree = ast.parse(source)
@@ -315,26 +353,29 @@ def unsplit(source: str) -> list[tuple[int, str]]:
     found: list[tuple[int, str]] = []
     области = [tree, *(n for n in ast.walk(tree) if isinstance(n, ОБЛАСТИ))]
     for область in области:
-        # События области по месту в исходнике. Присваивание срабатывает в
-        # КОНЦЕ своего узла: правая часть вычисляется до привязки имени.
+        # Привязка срабатывает в КОНЦЕ правой части: она вычисляется раньше.
         события: list[tuple[tuple[int, int], int, str, ast.AST]] = []
+
+        def привязка(где: ast.AST, цель: ast.AST, связать: bool) -> None:
+            for имя in _имена(цель):
+                события.append(((где.end_lineno, где.end_col_offset), 1,
+                                "связать" if связать else "развязать",
+                                ast.Name(id=имя)))
+
         for n in _узлы_области(область):
             if isinstance(n, (ast.Assign, ast.AnnAssign, ast.NamedExpr)) \
                     and n.value is not None:
-                цели = (n.targets if isinstance(n, ast.Assign) else [n.target])
-                связать = any(_списочный_z(m) for m in ast.walk(n.value))
+                цели = n.targets if isinstance(n, ast.Assign) else [n.target]
                 for ц in цели:
-                    for имя in _имена(ц):
-                        события.append(((n.end_lineno, n.end_col_offset), 1,
-                                        "связать" if связать else "развязать",
-                                        ast.Name(id=имя)))
-            elif isinstance(n, (ast.For, ast.AsyncFor, ast.With)):
-                цели = ([n.target] if isinstance(n, (ast.For, ast.AsyncFor))
-                        else [i.optional_vars for i in n.items if i.optional_vars])
-                for ц in цели:
-                    for имя in _имена(ц):
-                        события.append(((ц.lineno, ц.col_offset), 1,
-                                        "развязать", ast.Name(id=имя)))
+                    привязка(n.value, ц, _вывод_z(n.value))
+            elif isinstance(n, ast.AugAssign):
+                привязка(n.value, n.target, False)
+            elif isinstance(n, (ast.For, ast.AsyncFor)):
+                привязка(n.iter, n.target, False)
+            elif isinstance(n, (ast.With, ast.AsyncWith)):
+                for item in n.items:
+                    if item.optional_vars is not None:
+                        привязка(item.context_expr, item.optional_vars, False)
             elif (isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
                     and n.func.attr in РЕЖУЩИЕ and _режет_не_по_nul(n)):
                 события.append(((n.lineno, n.col_offset), 0, "разбор", n))
