@@ -1544,3 +1544,33 @@ def test_происхождение_не_по_форме_отвергается(
     """Приёмка #701: без origin_kind, неразрешимый адрес, origin при none."""
     что = cb.происхождение(rec)
     assert что is not None and слово in что
+
+
+# ── отрицательный вердикт называет перебор (правило 136) ──────────────────
+
+@pytest.mark.parametrize("status", ["rejected"])
+def test_вердикт_по_одному_примеру_это_находка(monkeypatch, repo, capsys, status):
+    """Шесть отклонений 25.09 были ровно такими: одна строка об одном факте."""
+    write(repo / ".github/workflows/release.yml", "on: push\n")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": status,
+                               "why": "работа идёт в одно окно — "
+                                      "см. .github/workflows/release.yml (051)"}}},
+            export_of("001"))
+    assert cb.main() == 1
+    assert "без перебора" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("status, why", [
+    ("rejected", "отклонено: у всех прогонов .github/workflows/release.yml матриц 0"),
+    ("rejected", "ни один прогон .github/workflows/release.yml матрицы не несёт"),
+    # «Не применимо» держит 205 предикатом по дереву — 136 его не спрашивает.
+    ("not-applicable", "предмет появится с первым файлом в .github/workflows/release.yml"),
+])
+def test_вердикт_с_перебором_проходит(monkeypatch, repo, capsys, status, why):
+    write(repo / ".github/workflows/release.yml", "on: push\n")
+    prepare(monkeypatch, repo,
+            {"rules": {"001": {"status": status, "why": why}}},
+            export_of("001"))
+    cb.main()
+    assert "без перебора" not in capsys.readouterr().err
