@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-09T07:33:01+00:00",
+  "generated_at": "2026-10-09T07:57:05+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -2461,19 +2461,19 @@
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
       "role": "потребитель",
-      "schema": "1.2",
-      "answers_to": "1.5",
+      "schema": "1.9",
+      "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-09",
-      "answered": 195,
+      "answered": 217,
       "by_status": {
-        "active": 192,
-        "not-applicable": 3
+        "active": 212,
+        "not-applicable": 5
       },
       "by_mechanism": {
-        "gate": 85,
-        "pipeline": 39,
-        "document": 68
+        "gate": 95,
+        "pipeline": 43,
+        "document": 74
       },
       "rules": {
         "001": "active",
@@ -2670,7 +2670,29 @@
         "193": "active",
         "194": "active",
         "195": "active",
-        "196": "active"
+        "196": "active",
+        "197": "active",
+        "198": "active",
+        "199": "active",
+        "200": "active",
+        "201": "not-applicable",
+        "202": "active",
+        "203": "active",
+        "204": "active",
+        "205": "active",
+        "206": "active",
+        "207": "active",
+        "208": "active",
+        "209": "active",
+        "210": "active",
+        "211": "active",
+        "212": "active",
+        "213": "active",
+        "214": "active",
+        "215": "active",
+        "216": "active",
+        "217": "active",
+        "218": "not-applicable"
       },
       "holds": {
         "001": {
@@ -2682,7 +2704,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "002": {
           "mechanism": "gate",
@@ -2693,7 +2715,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "003": {
           "mechanism": "pipeline",
@@ -2704,7 +2726,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "004": {
           "mechanism": "gate",
@@ -2715,7 +2737,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "005": {
           "mechanism": "gate",
@@ -2726,14 +2748,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "006": {
           "mechanism": "document",
           "where": "CLAUDE.md § Два окна: «Окно живёт 3–5 дней, дальше перезапуск — обязательно»; замер 764 против 81 прочитанного токена на токен выхода и шаблон эстафеты — docs/agent/environments.md",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2742,9 +2764,9 @@
         "007": {
           "mechanism": "document",
           "where": "docs/agent/dispatcher.md — окно, ждущее разрешения, узнаётся по pending_action в реестре сессий; порог получаса, решение принимает диспетчер",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2759,25 +2781,25 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "010": {
-          "mechanism": "document",
-          "where": "CLAUDE.md § Гейты: пустой список проверок — «CI не стартовал», а не «зелено»; проверяет scripts/check_pr_ready.py, который запускает окно перед мержем",
+          "mechanism": "gate",
+          "where": "scripts/ci_aggregate.py (.github/workflows/ci-complete.yml) — обязательная проверка ci-complete отвечает «ещё не появились» на отсутствующие ожидаемые check-run'ы, пустой набор зелёным не читается; ruleset ждёт именно её",
           "holdable": "",
           "awaiting": "",
-          "analysed": "",
-          "decided": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "011": {
           "mechanism": "document",
           "where": "CLAUDE.md § Гейты: авто-мерж вместо опроса статусов, «цикл опроса на GraphQL запрещён как класс», интервал опроса 45–60 с; разбор — docs/agent/preflight.md",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2792,7 +2814,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "013": {
           "mechanism": "gate",
@@ -2803,14 +2825,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "014": {
           "mechanism": "document",
           "where": "CONTRIBUTING.md § Когда дефект считается исправленным: краснота доказывается полу-откатом — новые имена оставить, убрать только поведение; откат всего src/ даёт ImportError",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2819,9 +2841,9 @@
         "015": {
           "mechanism": "document",
           "where": "CLAUDE.md § Мультиагентный режим и docs/agent/multiagent.md § Агенты возвращают данные — файлы правит хост (agent(schema=...) → детерминированный applier)",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Workflow-скрипты волн хранятся в дереве (например, в .claude/ или scripts/). Замер: git ls-files не находит ни одного скрипта волны или applier'а, в .claude/ лежат только hooks и settings.json.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2836,7 +2858,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "017": {
           "mechanism": "pipeline",
@@ -2847,14 +2869,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "018": {
           "mechanism": "document",
           "where": "CLAUDE.md § Два окна и docs/agent/environments.md § Облако проверяет узлы, локальное окно — цепочку; планируя срез аудита, окно проставляется сразу",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2863,9 +2885,9 @@
         "019": {
           "mechanism": "document",
           "where": "docs/agent/multiagent.md § Аудит планируется от поверхностей продукта, а не от файлов: первый шаг планирования — инвентарь поверхностей",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2874,9 +2896,9 @@
         "020": {
           "mechanism": "document",
           "where": "docs/agent/multiagent.md § Рестарт только дельты: после сбоя добирается недостающее, а не повторяется вся волна",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Скрипты волн и их журналы (или сводка запусков) начинают храниться в репозитории. Замер 09.10.2026: grep по scripts/, .github/ и tests/ не нашёл ни resumeFromRunId, ни journal.jsonl, скриптов волн в дереве нет (в .claude/ только hooks и settings.json).",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2891,14 +2913,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "022": {
           "mechanism": "document",
           "where": "CLAUDE.md § Источники истины: канонический документ на тему один, остальные ссылаются; компактные триггеры не дублируют канон",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2913,14 +2935,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "024": {
           "mechanism": "document",
           "where": "CLAUDE.md § Обновление CHANGELOG.md / HISTORY.md — журнал работ живёт в HISTORY.md и docs/archive/, действующие документы описывают настоящее; CLAUDE.md § Открытая работа — «Чего там не бывает» про очередь работ",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2935,7 +2957,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "026": {
           "mechanism": "pipeline",
@@ -2946,7 +2968,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "027": {
           "mechanism": "pipeline",
@@ -2957,7 +2979,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "028": {
           "mechanism": "pipeline",
@@ -2968,14 +2990,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "029": {
           "mechanism": "document",
           "where": "CLAUDE.md: блок в главном файле — компактный триггер, детали канонически живут в docs/ и не дублируются",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -2990,14 +3012,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "031": {
           "mechanism": "document",
           "where": "CLAUDE.md § Мультиагентный режим (волнами по 5) и docs/agent/multiagent.md; прецеденты залпов записаны там же числами",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3006,9 +3028,9 @@
         "032": {
           "mechanism": "document",
           "where": "docs/agent/roles.md: если предмет роли наблюдаем в работающем продукте, роль обязана его запустить — вывод чтением кода считается неполным",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Нужно поле «способ проверки» у каждой находки в формате docs/audit/. Сейчас в docs/audit/2026-08-10-full-roles.md у строк находок только ID, file:line, суть, тяжесть и состояние, способа нет.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3017,9 +3039,9 @@
         "033": {
           "mechanism": "document",
           "where": "docs/agent/multiagent.md § арифметика интервала между стартами; CLAUDE.md § Гейты — порог остатка квоты и интервал опроса статусов",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Появится числовой остаток лимита Claude и цена волны в виде, доступном окну без кодовой зависимости. Сейчас такого источника нет: только светофор реестра, а Claude-Code_Usage-Token подключён лишь указателем.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3028,9 +3050,9 @@
         "034": {
           "mechanism": "document",
           "where": "docs/agent/multiagent.md § Роль дробится на 2–3 агента; CLAUDE.md § Мультиагентный режим — явный список файлов и лимиты объёма ответа",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Workflow-скрипты волн появляются в дереве, и тогда гейт читает в них схемы agent(). Замер: в git ls-files сейчас 0 таких скриптов.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3045,14 +3067,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "036": {
           "mechanism": "document",
           "where": "docs/agent/environments.md § Фаза 0 — слепок реальности до облачных волн и подтверждение в конце; docs/agent/multiagent.md § фазы аудита",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3061,9 +3083,9 @@
         "037": {
           "mechanism": "document",
           "where": "docs/agent/environments.md: находка с фикстуры — гипотеза, уходит в список фазы L; то же в multiagent.md и roles.md",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Нужна колонка окна (облако · CI · локально) у находок в docs/audit/*.md. Сейчас в таблице 2026-08-10-full-roles.md колонки ID | file:line | описание | Итог (severity) | ✓, окна среди них нет.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3072,9 +3094,9 @@
         "038": {
           "mechanism": "document",
           "where": "CLAUDE.md § Два окна: имя окна начинается с окружения ([WEB]/[LOCAL]/[CLI]), метка ставится при открытии; канон — docs/agent/environments.md",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3089,7 +3111,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "040": {
           "mechanism": "gate",
@@ -3100,14 +3122,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "041": {
           "mechanism": "document",
           "where": "два бейджа покрытия — single-OS и cross-OS combined: одного правдивого числа не существует, потому что три backend'а песочницы ОС-специфичны (CLAUDE.md § Метрики)",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3122,7 +3144,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "043": {
           "mechanism": "gate",
@@ -3133,14 +3155,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "044": {
           "mechanism": "document",
           "where": "docs/agent/roles.md: оценка 🔍 Аудитора едет как заявка и проходит через ⚖️ Верификатора с установкой «опровергай по умолчанию» — по находке не работают, пока её премиса не проверена",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3155,14 +3177,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "046": {
           "mechanism": "document",
           "where": "SECURITY.md § Гарантии по ОС: таблица асимметрии, а не выравнивание на бумаге — что даёт bwrap, seatbelt и Job Object, названо порознь",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3171,9 +3193,9 @@
         "047": {
           "mechanism": "document",
           "where": "CLAUDE.md § Гейты: смена правил транспорта требует перезапуска активных окон — настройки читаются при старте сессии",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3188,7 +3210,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "050": {
           "mechanism": "gate",
@@ -3199,7 +3221,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "051": {
           "mechanism": "pipeline",
@@ -3210,7 +3232,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "052": {
           "mechanism": "pipeline",
@@ -3221,7 +3243,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "053": {
           "mechanism": "pipeline",
@@ -3232,14 +3254,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "054": {
           "mechanism": "document",
           "where": "docs/agent/course-walkthrough.md: на шаге сбора ничего не анализируется — прогнать, записать сырое; разбор на границе главы",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Нужен журнал прохода как структурированный файл со схемой полей (в дереве или артефактом прогона). Сейчас формат записи есть только образцом в docs/agent/course-walkthrough.md § Запись журнала, самих записей в дереве нет.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3248,9 +3270,9 @@
         "055": {
           "mechanism": "document",
           "where": "docs/agent/course-walkthrough.md § Внешний судья вердикта: свои ожидания в каталоге мутаций не доказывают ничего, сверка идёт со Stepik; каталог мутаций — docs/dev/corpus.md",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3259,9 +3281,9 @@
         "056": {
           "mechanism": "document",
           "where": "docs/dev/result-contract.md § Вердикты (семантика) и docs/agent/preflight.md: пустой список проверок означает «CI не стартовал», а не «зелено» — у сигнала записано и то, чего он не означает",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3276,7 +3298,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "058": {
           "mechanism": "pipeline",
@@ -3287,14 +3309,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "059": {
           "mechanism": "document",
           "where": "docs/agent/preflight.md § Маршрут при исчерпании лимитов: что недоступно, что работает и чем занять время до сброса квоты",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3303,9 +3325,9 @@
         "060": {
           "mechanism": "document",
           "where": "docs/agent/multiagent.md § Разбор после КАЖДОЙ волны — по двум осям, и качество важнее механики",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3314,9 +3336,9 @@
         "061": {
           "mechanism": "document",
           "where": "docs/agent/multiagent.md § Прогонным агентам — запреты окружения прямо в промпте",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Блок запретов выносится отдельным файлом, а прогонные скрипты волн, которые его подставляют, хранятся в дереве. Замер 09.10.2026: блок есть только прозой в docs/agent/multiagent.md (стр. 132-140), скриптов волн в репозитории нет.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3325,9 +3347,9 @@
         "062": {
           "mechanism": "document",
           "where": "docs/agent/roles.md § критерий приёмки новой роли: свой вопрос, свой артефакт, своё возражение конкретной роли — иначе это раздел документации",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3342,14 +3364,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "064": {
           "mechanism": "document",
           "where": "CLAUDE.md § Метки при заведении issue: на PR обязательны area/*, тип работы и связь с задачей; отказывает scripts/check_pr_ready.py, который запускает окно перед мержем",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3364,7 +3386,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "066": {
           "mechanism": "gate",
@@ -3375,7 +3397,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "067": {
           "mechanism": "gate",
@@ -3386,7 +3408,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "068": {
           "mechanism": "pipeline",
@@ -3397,7 +3419,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "069": {
           "mechanism": "gate",
@@ -3408,7 +3430,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "070": {
           "mechanism": "gate",
@@ -3419,14 +3441,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "071": {
           "mechanism": "document",
           "where": "намеренный дубль подписывается комментарием с причиной: src/stepik_grader/launcher.py — имя дублирует downloader.CONFIG_FILE намеренно (issue #823), scripts/preflight.py::_trailer_block повторяет разбор из scripts/check_attribution.py, чтобы предпушевой гейт не импортировал соседние. Приём подсказан ответом соседа по своду (правило 162)",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3441,7 +3463,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "073": {
           "mechanism": "gate",
@@ -3452,7 +3474,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "074": {
           "mechanism": "gate",
@@ -3463,7 +3485,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "075": {
           "mechanism": "gate",
@@ -3474,7 +3496,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "076": {
           "mechanism": "gate",
@@ -3485,7 +3507,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "077": {
           "mechanism": "gate",
@@ -3496,7 +3518,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "078": {
           "mechanism": "gate",
@@ -3507,7 +3529,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "080": {
           "mechanism": "pipeline",
@@ -3518,7 +3540,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "081": {
           "mechanism": "gate",
@@ -3529,14 +3551,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "082": {
           "mechanism": "document",
           "where": "CLAUDE.md § Режим ответов: пласт без владельца — слепая зона, покрытие не равно отдельной роли; разбор пластов — docs/agent/roles.md",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Нужна машиночитаемая карта «каталог/поверхность → роль» (CODEOWNERS-подобный файл). Замер: .github/CODEOWNERS и CODEOWNERS отсутствуют, связи вроде web/static/** → 🌐 описаны только прозой в docs/agent/roles.md.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3545,9 +3567,9 @@
         "083": {
           "mechanism": "document",
           "where": "docs/dev/corpus.md — прогонный корпус проверяет вердикты детерминированными мутациями эталона, а не сверкой с «правильным ответом» LLM",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3556,9 +3578,9 @@
         "084": {
           "mechanism": "document",
           "where": "CLAUDE.md § Архитектурные инварианты, п. 3: rich опционален, весь вывод через _console с graceful fallback; AI-подсказка отказывает молча и не задерживает проверку",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3573,14 +3595,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "086": {
           "mechanism": "document",
           "where": "CLAUDE.md § Режим ответов (🔍 не ставит окончательную тяжесть — его оценка заявка; ⚖️ доказывает) и docs/agent/multiagent.md § адверсариальный верификатор со шкалой на примерах",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "В дереве появляются скрипт волны аудита или живой файл docs/audit/ с колонками «заявка/вердикт». Замер: скриптов волн 0, живых аудитов нет.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3589,9 +3611,9 @@
         "087": {
           "mechanism": "document",
           "where": "docs/agent/multiagent.md: второй аудит получает на вход накопитель первого и правило новизны — иначе на 60% переоткрывает его",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3600,9 +3622,9 @@
         "088": {
           "mechanism": "document",
           "where": "docs/agent/roles.md § Роль 27 — Критик метода: вход — след фазы, вопрос о методе, а не о продукте",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3617,7 +3639,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "090": {
           "mechanism": "gate",
@@ -3628,14 +3650,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "091": {
           "mechanism": "document",
           "where": "CLAUDE.md § Открытая работа: порядок обращения сверху вниз — issue, docs/audit/, docs/agent/claude-handoff.md, CHANGELOG.md; первый непустой источник и есть план",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3644,9 +3666,9 @@
         "092": {
           "mechanism": "document",
           "where": "CLAUDE.md § Открытая работа: аудит даёт находки (docs/audit/), очередь задаёт порядок (docs/agent/claude-handoff.md) — два документа, смешивать нельзя",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3655,9 +3677,9 @@
         "093": {
           "mechanism": "document",
           "where": "docs/dev/adr/0006-runner-abstraction.md — протокол Runner введён швом до server mode: минимальная обратимая точка расширения вместо обобщения по первому случаю",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3666,9 +3688,9 @@
         "094": {
           "mechanism": "document",
           "where": "docs/dev/adr/0004-src-layout.md § Альтернативы, вариант B: src-layout плюс тонкие root-shim'ы отклонён явно — два пути импорта и их дрейф",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3677,9 +3699,9 @@
         "095": {
           "mechanism": "document",
           "where": "docs/dev/adr/0002-history-opt-in.md: сбор и отдача данных выключены по умолчанию, решение принимает человек; consent-гейт AI-подсказки и флаг --expose-usage",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3688,9 +3710,9 @@
         "096": {
           "mechanism": "document",
           "where": "docs/dev/adr/0011-local-persistence.md: SQLite для того, что пишется конкурентно и переживает прогон, JSON для настроек — хранилище выбрано по жизненному циклу данных",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Нужен машиночитаемый перечень хранилищ: путь, срок жизни, способ записи, кто чистит. Сейчас это есть только прозой в docs/dev/adr/0011-local-persistence.md (стр. ~82–92), файла-перечня в дереве нет.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3705,14 +3727,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "098": {
           "mechanism": "document",
           "where": "docs/dev/glossary.md § Одна концепция — одна карточка: парные протоколы намеренно остаются бандлами, а поиск чинится keywords, а не разбиением",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3721,9 +3743,9 @@
         "099": {
           "mechanism": "document",
           "where": "docs/dev/glossary.md § Дубли двух поколений импорта: при конфликте выигрывает тематика — иначе «Типы данных» осталась бы без int/str/float",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3738,7 +3760,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "101": {
           "mechanism": "pipeline",
@@ -3749,7 +3771,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "102": {
           "mechanism": "gate",
@@ -3760,7 +3782,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "103": {
           "mechanism": "gate",
@@ -3771,7 +3793,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "104": {
           "mechanism": "pipeline",
@@ -3782,7 +3804,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "105": {
           "mechanism": "pipeline",
@@ -3793,29 +3815,29 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "106": {
           "mechanism": "document",
           "where": "HISTORY.md: решение владельца — не показывать широко, пока не пройден настоящий курс и вердикты не сошлись с платформой; протокол прогона — docs/agent/course-walkthrough.md",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "Нужен закоммиченный машиночитаемый журнал (матрица вердиктов) прогона курса. Сейчас git ls-files не находит ни журнала, ни матрицы: журнал по course-walkthrough.md пишется на диск локального окна.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
           "origin_kind": ""
         },
         "107": {
-          "mechanism": "document",
-          "where": "матрица CI (три ОС × 3.12/3.13): вторая и третья ОС не проверяются руками ни в одном окне — только матрицей, потому что выборка окна это выборка его автора (CLAUDE.md § Два окна)",
+          "mechanism": "gate",
+          "where": "tests/test_ci_main_queue.py — матрица .github/workflows/ci.yml обязана гонять все три ОС на каждом событии (test_every_os_runs_on_push_too, test_candidate_runs_the_full_matrix); набор идёт шагом pytest на каждом pull_request. Вторая и третья ОС руками не проверяются ни в одном окне (CLAUDE.md § Два окна)",
           "holdable": "",
           "awaiting": "",
-          "analysed": "",
-          "decided": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "108": {
           "mechanism": "gate",
@@ -3826,7 +3848,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "109": {
           "mechanism": "gate",
@@ -3837,7 +3859,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "110": {
           "mechanism": "gate",
@@ -3848,14 +3870,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "111": {
           "mechanism": "document",
           "where": "CLAUDE.md § Гейты: может сделать сам — делает, а не советует; прецедент — gh_rest.py edit-pr вместо совета проставить Closes руками",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3870,7 +3892,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "113": {
           "mechanism": "gate",
@@ -3881,7 +3903,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "114": {
           "mechanism": "gate",
@@ -3892,7 +3914,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "115": {
           "mechanism": "gate",
@@ -3903,7 +3925,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "116": {
           "mechanism": "gate",
@@ -3914,14 +3936,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "117": {
           "mechanism": "document",
           "where": "docs/agent/multiagent.md: лимит объёма ответа прямо в схеме (minItems/maxItems, maxLength на каждом строковом поле) и бюджет обращений; то же в CLAUDE.md § Мультиагентный режим",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -3936,7 +3958,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "119": {
           "mechanism": "gate",
@@ -3947,7 +3969,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "120": {
           "mechanism": "gate",
@@ -3958,7 +3980,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "121": {
           "mechanism": "pipeline",
@@ -3969,7 +3991,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "122": {
           "mechanism": "gate",
@@ -3980,18 +4002,18 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "123": {
-          "mechanism": "document",
-          "where": "CLAUDE.md § Формат коммитов: идентичность окна согласована до слияния, после squash подпись не переписать; смотрит scripts/check_attribution.py --check-branch, который не зовёт ни прогон, ни preflight",
+          "mechanism": "gate",
+          "where": ".github/workflows/ci.yml — шаг scripts/check_attribution.py --check-branch --agents-only на каждом pull_request: несогласованная подпись агента отвергается до слияния; правило записано в CLAUDE.md § Формат коммитов. Неустранимый остаток — трейлер, который GitHub дописывает сам при squash",
           "holdable": "",
           "awaiting": "",
-          "analysed": "",
-          "decided": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "124": {
           "mechanism": "pipeline",
@@ -4002,7 +4024,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "125": {
           "mechanism": "gate",
@@ -4013,7 +4035,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "126": {
           "mechanism": "pipeline",
@@ -4024,7 +4046,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "127": {
           "mechanism": "gate",
@@ -4035,14 +4057,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "128": {
           "mechanism": "document",
           "where": "CLAUDE.md § Метки при заведении issue: связь проверяется на полноту — номера во фрагментах changelog.d против тела PR; сверяет scripts/check_pr_ready.py, запускаемый окном перед мержем",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4057,7 +4079,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "130": {
           "mechanism": "pipeline",
@@ -4068,14 +4090,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "131": {
           "mechanism": "document",
           "where": "CLAUDE.md § Формат коммитов: PR, открытый ботом, пересоздаётся, а не мержится — squash записал бы бота автором в main; отказывает scripts/check_pr_ready.py при запуске окном",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4090,7 +4112,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "133": {
           "mechanism": "pipeline",
@@ -4101,7 +4123,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "134": {
           "mechanism": "gate",
@@ -4112,14 +4134,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "135": {
           "mechanism": "document",
           "where": "CLAUDE.md § Формат коммитов: автор PR — человек, соавторство — место вклада Claude; scripts/check_pr_ready.py и scripts/check_attribution.py --check-branch запускаются окном, а не прогоном",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4134,7 +4156,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "137": {
           "mechanism": "gate",
@@ -4145,14 +4167,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "138": {
           "mechanism": "document",
           "where": "docs/agent/environments.md — решение оседает задачей или комментарием сразу, эстафета передаётся ссылками; шаблон стартового сообщения окна там же",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4161,9 +4183,9 @@
         "139": {
           "mechanism": "document",
           "where": "CONTRIBUTING.md § Когда дефект считается исправленным и чек-лист CLAUDE.md: дефект закрыт прогоном той поверхности, где найден, — браузер браузером, CLI командой",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4178,7 +4200,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "141": {
           "mechanism": "gate",
@@ -4189,7 +4211,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "142": {
           "mechanism": "pipeline",
@@ -4200,7 +4222,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "144": {
           "mechanism": "pipeline",
@@ -4211,7 +4233,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "145": {
           "mechanism": "gate",
@@ -4222,14 +4244,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "146": {
           "mechanism": "document",
           "where": "docs/agent/preflight.md § Что гейты не ловят: зелёный гейт подтверждает себя, утверждение проверяется замером на живом предмете, замер пишется рядом с механизмом",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4244,14 +4266,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "148": {
           "mechanism": "document",
           "where": "CLAUDE.md § Гейты: проверки читаются по sha головы PR, отдельно смотрится прогон main; scripts/check_pr_ready.py запускает окно перед мержем",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4266,14 +4288,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "150": {
           "mechanism": "document",
           "where": "docs/agent/preflight.md § Что гейты не ловят: тест проверки спрашивает её вердикт, а не пересказывает условие; механизмом не ловится — тот же признак законен там, где предмет теста и есть константа",
-          "holdable": "",
+          "holdable": "refused",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4288,7 +4310,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "152": {
           "mechanism": "gate",
@@ -4299,7 +4321,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "153": {
           "mechanism": "pipeline",
@@ -4310,7 +4332,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "154": {
           "mechanism": "gate",
@@ -4321,7 +4343,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "155": {
           "mechanism": "gate",
@@ -4332,7 +4354,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "156": {
           "mechanism": "gate",
@@ -4343,7 +4365,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "157": {
           "mechanism": "pipeline",
@@ -4354,14 +4376,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "158": {
           "mechanism": "document",
           "where": "docs/agent/preflight.md § Что гейты не ловят: scripts/check_three_outcomes.py требует наличия третьего исхода, но не адреса отказа; признак «в сообщении есть адрес» от «есть любая подстановка» машинно не отличить",
-          "holdable": "",
+          "holdable": "refused",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4370,9 +4392,9 @@
         "159": {
           "mechanism": "document",
           "where": "docs/agent/preflight.md § Что гейты не ловят: ранний return посреди перебора ловится грепом и почти всегда законен — отличает их только то, копится ли что-то в список, который читают позже",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4387,14 +4409,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "161": {
           "mechanism": "document",
           "where": "docs/dev/adr/README.md — поворот с отвергнутой альтернативой пишется записью ADR, и полноту такой записи держит гейт scripts/check_adr_records.py; HISTORY.md по CLAUDE.md § Обновление CHANGELOG.md / HISTORY.md ведётся релизными сводками. Механизма, требующего завести ADR на состоявшийся поворот, нет",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4409,14 +4431,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "163": {
           "mechanism": "document",
           "where": "docs/use/installation.md и README.md — вход описан командами (pip install -e, stepik-grader, stepik-grader-gui), список команд один и живёт в CLAUDE.md § Команды; копирование образцов названо там же",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4431,7 +4453,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "165": {
           "mechanism": "gate",
@@ -4442,7 +4464,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "166": {
           "mechanism": "gate",
@@ -4453,7 +4475,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "167": {
           "mechanism": "gate",
@@ -4464,7 +4486,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "168": {
           "mechanism": "pipeline",
@@ -4475,7 +4497,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "169": {
           "mechanism": "pipeline",
@@ -4486,7 +4508,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "170": {
           "mechanism": "pipeline",
@@ -4497,18 +4519,18 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "171": {
-          "mechanism": "document",
-          "where": "docs/agent/preflight.md § Что гейты НЕ ловят — эталон обязательных проверок в scripts/check_branch_protection.py (EXPECTED_CHECKS) является КОПИЕЙ имён из .github/workflows/ci.yml, а не производным от него: переименование ячейки матрицы оставит ruleset и константу согласными друг с другом, а работы — с другими именами. Самоблокировка и починка — issue #1420",
+          "mechanism": "gate",
+          "where": "scripts/ci_aggregate.py — expected_checks выводит состав матричных проверок из .github/workflows/ci.yml того же изменения, а не из копии; запускается обязательной ci-complete (.github/workflows/ci-complete.yml) на каждом pull_request",
           "holdable": "",
           "awaiting": "",
-          "analysed": "",
-          "decided": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "172": {
           "mechanism": "pipeline",
@@ -4519,7 +4541,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "173": {
           "mechanism": "pipeline",
@@ -4530,7 +4552,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "174": {
           "mechanism": "pipeline",
@@ -4541,7 +4563,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "175": {
           "mechanism": "gate",
@@ -4552,7 +4574,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "176": {
           "mechanism": "gate",
@@ -4563,7 +4585,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "177": {
           "mechanism": "gate",
@@ -4574,14 +4596,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "178": {
           "mechanism": "document",
           "where": "CLAUDE.md § Открытая работа — разбор расхождения начинается с двух гипотез о своём чтении. Механизма нет и не предлагается: по правилу 182 требование разложено, и машинная половина не нашлась — у нас ровно одно место, где два числа расходятся законно (два бейджа покрытия, причина названа рядом), а остальные расхождения единичны и разбираются по одному. Живой разбор: расхождение колонки состояния и реестра на 493 записи объяснено первопричиной, а не «разными величинами» (issue #1438)",
-          "holdable": "",
+          "holdable": "refused",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4596,7 +4618,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "180": {
           "mechanism": "gate",
@@ -4607,7 +4629,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "181": {
           "mechanism": "gate",
@@ -4618,7 +4640,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "182": {
           "mechanism": "gate",
@@ -4629,7 +4651,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "183": {
           "mechanism": "gate",
@@ -4640,7 +4662,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "184": {
           "mechanism": "gate",
@@ -4651,7 +4673,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "185": {
           "mechanism": "pipeline",
@@ -4662,7 +4684,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "186": {
           "mechanism": "gate",
@@ -4673,7 +4695,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "187": {
           "mechanism": "gate",
@@ -4684,7 +4706,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "188": {
           "mechanism": "pipeline",
@@ -4695,7 +4717,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "189": {
           "mechanism": "gate",
@@ -4706,7 +4728,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "190": {
           "mechanism": "gate",
@@ -4717,7 +4739,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "191": {
           "mechanism": "gate",
@@ -4728,7 +4750,7 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "192": {
           "mechanism": "gate",
@@ -4739,14 +4761,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "193": {
           "mechanism": "document",
           "where": "CONTRIBUTING.md § Когда дефект считается исправленным — тест, красный до фикса, и прогон той поверхности, где дефект найден. Прежний гейт-носитель — приёмка примеров карточек, строже прежнего храповика исполнения, — уехал в Glossary-Python вместе с содержанием глоссария (#1573)",
-          "holdable": "",
-          "awaiting": "",
-          "analysed": "",
+          "holdable": "conditional",
+          "awaiting": "В дереве снова появляется массовая автоматическая правка хранимых данных. Замер: git ls-files по repair|fix_|migrate пусто, глоссарий ввозится импортом без преобразования.",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4761,14 +4783,14 @@
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "195": {
           "mechanism": "document",
           "where": "CLAUDE.md § Чеклист перед PR — «покрыты ВСЕ вызовы класса (grep)»; CONTRIBUTING.md § Когда дефект считается исправленным. Механизма, требующего назвать соседние случаи, нет: их перечисление проверить нечем",
-          "holdable": "",
+          "holdable": "no",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -4777,22 +4799,238 @@
         "196": {
           "mechanism": "document",
           "where": "CLAUDE.md § Метрики — бейджи публикуются в ветку badges отдельным прогоном, README ссылается на raw. Порядок «сначала артефакт, потом ссылка» держится текстом: гейта, сверяющего очерёдность, нет",
-          "holdable": "",
+          "holdable": "not-yet",
           "awaiting": "",
-          "analysed": "",
+          "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
           "origin": "",
           "origin_kind": ""
+        },
+        "197": {
+          "mechanism": "gate",
+          "where": "scripts/generate_facts.py — числа, которые мы публикуем соседям (facts.json в ветке badges), считаются тем же кодом, что и наши гейты и значки: check_pr_ready._expected_names, generate_coverage_badge, generate_release_badge; tests/test_generate_facts.py гоняет pytest в .github/workflows/ci.yml",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "198": {
+          "mechanism": "pipeline",
+          "where": ".github/workflows/rules-digest.yml (ночью пересобирает docs/agent/rules/README.md через scripts/generate_rules_index.py из клона каталога, адрес берётся из имени файла правила); scripts/nightly_checks.py → scripts/check_rule_bindings.py --catalogue сверяет номера с export/rules.json",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "199": {
+          "mechanism": "pipeline",
+          "where": "scripts/rerun_red_main.py — заход, разбуженный workflow_run в группе cancel-in-progress: false (.github/workflows/rerun-red-main.yml), сам опрашивает состояние main через gh_rest.main_run; scripts/move_merge_queue.py вычисляет очередь из API, а не из события",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "200": {
+          "mechanism": "document",
+          "where": "docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте; предмет: README.md — значки: CI/release (состояние), version (счётчик), coverage и good-first-issues (двигаются); собираются scripts/generate_*_badge.py. Предмет движения рядом со сборкой нигде не назван",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "202": {
+          "mechanism": "document",
+          "where": "CLAUDE.md § Рабочая ветка: каждая задача — своя ветка от свежего main. scripts/preflight.py check_branch_not_taken смотрит только локальную origin/<ветка> и не блокирует — воскрешение слитой ветки не ловит",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "203": {
+          "mechanism": "pipeline",
+          "where": "scripts/check_experimental_python.py сверяет предрелизную версию python-next.yml с манифестом actions/python-versions; запускается ночным обходом scripts/nightly_checks.py из .github/workflows/tracker-guardrails.yml, предупреждением, а не отказом",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "204": {
+          "mechanism": "document",
+          "where": "docs/agent/rules/DIGEST.md — утверждения правил, читаемые окном на старте (генерирует scripts/generate_rules_digest.py из ответа); CLAUDE.md § Новое правило — в общий каталог",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "205": {
+          "mechanism": "gate",
+          "where": "scripts/check_rule_bindings.py: why обязателен у not-applicable/rejected, проба refuted_by прогоняется по дереву (_refuted). Шаг «Rule bindings answer the catalogue» в .github/workflows/ci.yml и хук pre-commit. Остаток: наличие предиката или события в why не проверяется",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "206": {
+          "mechanism": "document",
+          "where": "docs/agent/preflight.md § Что гейты не ловят: зелёный гейт подтверждает себя, утверждение проверяется замером на живом предмете, замер пишется рядом с механизмом (общая форма, правило 146)",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "207": {
+          "mechanism": "document",
+          "where": "docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте; предмет: scripts/check_rule_bindings.py — только ПОВОД перечитать (подъём answers_to/schema), порядка и остановки по замеру нет",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "208": {
+          "mechanism": "gate",
+          "where": ".github/workflows/ci-complete.yml + scripts/ci_aggregate.py: мерж делает auto-merge самой площадки, и он ждёт обязательную ci-complete (проверка и действие одним заходом). Для пуша — pre-push хук scripts/preflight.py --gate-push, обход назван: PREFLIGHT_SKIP=1",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "209": {
+          "mechanism": "document",
+          "where": "docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте; предмет: src/stepik_grader/core/runner.py — константа TRUNCATION_MARKER; соблюдение ничем не проверяется",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "210": {
+          "mechanism": "document",
+          "where": "docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте; предмет: CONTRIBUTING.md § Когда дефект считается исправленным — близкий п.2 (все вызовы класса), но перечня форм при второй находке не требует",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "211": {
+          "mechanism": "gate",
+          "where": "scripts/check_rule_bindings.py — reachable_gates()/_unreachable(): скрипт, заявленный гейтом, обязан достигаться рабочим путём (workflow, pre-commit, preflight, с пересадками), иначе отказ; долг — только в GATE_DEBT с причиной. Шаг .github/workflows/ci.yml на каждый PR. Держит часть предиката про гейты, не про любые функции",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "212": {
+          "mechanism": "document",
+          "where": "docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте; предмет: scripts/gh_rest.py — предмет: списки REST читаются одной страницей per_page=100 без обхода (pull_files, pull_checks, workflow_runs, комментарии, sub_issues, jobs); обход страниц есть только в scripts/check_audit_registry.py::_merged_pulls",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "213": {
+          "mechanism": "gate",
+          "where": "scripts/check_rule_bindings.py — HOLDABLE включает refused, _contract_1_9() отвергает refused без machine_half (замера) и holdable без why; шаг .github/workflows/ci.yml на каждый PR и хук check-rule-bindings в .pre-commit-config.yaml",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "214": {
+          "mechanism": "document",
+          "where": "docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте; предмет: scripts/preflight.py — предмет: _trailer_block() и _TRAILER_LINE_RE повторяют scripts/check_attribution.py::trailer_block; копия подписана по 071 в docstring, но совпадение ничем не проверяется",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "215": {
+          "mechanism": "document",
+          "where": "docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "216": {
+          "mechanism": "pipeline",
+          "where": "scripts/preflight.py::check_package_is_this_tree: неблокирующая ЗАМЕТКА «пакет из этого дерева». Сравнивает, откуда реально импортируется stepik_grader (package_origin, через import в подпроцессе), с <дерево>/src. Закреплено tests/test_preflight.py; запрет правок src/ в worktree записан в CLAUDE.md § Критические запреты",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "217": {
+          "mechanism": "gate",
+          "where": "scripts/check_py_style.py выводит требования стиля из requires-python, исключения берёт из per-file-target-version. scripts/check_python_setup.py: работы зовут python только после setup-python. Оба запускаются шагами .github/workflows/ci.yml и хуками .pre-commit-config.yaml",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
         }
       },
       "notes": {},
       "trails": 190,
-      "born": 133,
-      "findings": [
-        "ответ по схеме 1.2, у контракта 1.9 — записи остаются валидными, означая уже другое",
-        "ответ построен на выгрузке 1.5, у нас 1.7 — записи валидны, а составленные по ним ответы отвечают на другой вопрос (157)"
-      ]
+      "born": 133
     },
     {
       "repo": "ArtVsMark/ArtVsMark",
