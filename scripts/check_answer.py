@@ -12,6 +12,13 @@
 сводки (`answer_form.py`, 214):
   • статус из словаря; у `rejected`/`not-applicable` есть причина; у `active`
     назван механизм из словаря;
+  • обязательные поля по таблице контракта, и пробелы — не заполнение: адрес
+    `where` у механизма, причина и `machine_half` у `none`, `skill` у навыка;
+    у того, что машина не держит, — слово `holdable` с причиной, событием
+    `awaiting` или замером; даты `analysed`/`decided` по форме и порядку.
+    Требование действует с той версии ответа, где его завёл контракт (157).
+    До 9 октября эта часть жила только у гейта каталога о себе, и ответ из
+    девяти заведомо пустых записей проходил здесь с кодом 0;
   • происхождение механизма: с ответа 1.9 обязательно у `gate`/`pipeline`;
   • проба «не применимо» `refuted_by` — форма, и она ПРОГОНЯЕТСЯ по дереву
     проекта: нашла предмет — ответ «не применимо» опровергнут;
@@ -38,10 +45,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+# Словари и обязательные поля — в модуле формы, а не копией здесь (214).
+# Слово `process-step` словарь ещё принимает: оно в переходном слое (094).
 import answer_form  # noqa: E402
-# Словари — у гейта ответа каталога, а не копией здесь (214). Слово
-# `process-step` словарь ещё принимает: оно в переходном слое (094).
-from check_bindings import MECHANISMS, STATUSES  # noqa: E402
 
 
 def находки(answer: dict, root: Path) -> list[str]:
@@ -51,21 +57,11 @@ def находки(answer: dict, root: Path) -> list[str]:
     if (что := answer_form.схема_неверна(схема)):
         out.append(что)
     for rid, rec in sorted((answer.get("rules") or {}).items()):
-        if not isinstance(rec, dict):
-            out += answer_form.запись(rid, rec, схема)
-            continue
-        статус = rec.get("status")
-        if статус not in STATUSES:
-            out.append(f"{rid}: статус «{статус}» вне словаря — "
-                       + ", ".join(STATUSES))
-        if статус in ("rejected", "not-applicable") and not rec.get("why"):
-            out.append(f"{rid}: статус «{статус}» без причины — решение без "
-                       "причины вернётся следующей ревизией")
-        if статус == "active" and (rec.get("mechanism") or "none") not in MECHANISMS:
-            out.append(f"{rid}: механизм «{rec.get('mechanism')}» вне словаря — "
-                       + ", ".join(MECHANISMS))
+        # Вся форма записи — обязательные поля, словари, даты, происхождение,
+        # проба, заметка, закрытый список ключей — одним вызовом, тем же, что
+        # у гейта каталога о себе (214).
         out += answer_form.запись(rid, rec, схема)
-        if статус == "not-applicable":
+        if isinstance(rec, dict) and rec.get("status") == "not-applicable":
             улика = answer_form.прогнать_пробу(rec, root)
             if улика:
                 out.append(f"{rid}: «не применимо» опровергнуто своей же пробой — "

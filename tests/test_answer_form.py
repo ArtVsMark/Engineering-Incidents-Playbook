@@ -182,3 +182,75 @@ def test_симлинк_наружу_не_читается(tmp_path):
     rec = {"status": "not-applicable",
            "refuted_by": {"globs": ["*.txt"], "contains": ["matrix:"]}}
     assert af.прогнать_пробу(rec, корень) is None
+
+
+# ── обязательные поля: пустота — находка, и пробелы — тоже пустота ─────────
+# Замер 9 октября: ответ из девяти заведомо неполных записей проходил проверку
+# проекта с кодом 0 — эти требования жили только у гейта каталога о себе.
+
+ПОЛНЫЙ_ДОКУМЕНТ = {"status": "active", "mechanism": "document",
+                   "where": "README.md", "holdable": "no", "why": "суждение"}
+
+
+@pytest.mark.parametrize("rec, слово", [
+    ({"status": "active"}, "вне словаря"),
+    ({"status": "active", "mechanism": "gate", "origin_kind": "own"}, "где именно"),
+    ({"status": "active", "mechanism": "gate", "origin_kind": "own",
+      "where": "   "}, "где именно"),
+    ({"status": "active", "mechanism": "gate", "origin_kind": "own",
+      "where": "где-то в конвейере"}, "адреса нет"),
+    ({"status": "rejected", "why": "   "}, "без причины"),
+    ({"status": "active", "mechanism": "none", "holdable": "no",
+      "why": "суждение"}, "machine_half"),
+    ({"status": "active", "mechanism": "none", "machine_half": "нет",
+      "holdable": "no", "why": " "}, "почему — не сказано"),
+    ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "потом"}, "`holdable` принимает"),
+    ({**ПОЛНЫЙ_ДОКУМЕНТ, "why": ""}, "причины нет"),
+    ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "conditional"}, "без события"),
+    ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "refused"}, "без замера"),
+    ({"status": "active", "mechanism": "skill", "where": "README.md",
+      "holdable": "no", "why": "суждение"}, "каким — не сказано"),
+    ({"status": "active", "mechanism": "gate", "origin_kind": "own",
+      "where": "s.py", "awaiting": "предмет"}, "awaiting осталось"),
+    ({**ПОЛНЫЙ_ДОКУМЕНТ, "analysed": "вчера"}, "не дата"),
+    ({**ПОЛНЫЙ_ДОКУМЕНТ, "decided": "2026-10-01"}, "`decided` без `analysed`"),
+    ({**ПОЛНЫЙ_ДОКУМЕНТ, "analysed": "2026-10-01",
+      "decided": "2026-10-02"}, "новее сверки"),
+])
+def test_обязательное_не_заполнено(tmp_path, capsys, rec, слово):
+    """Решение спрашивается у проверки проекта целиком, через `main` (150)."""
+    p = ответ(tmp_path, {"001": rec})
+    assert ca.main(["--bindings", str(p), "--root", str(tmp_path)]) == 1
+    assert слово in capsys.readouterr().err
+
+
+def test_полная_запись_документом_проходит():
+    """Обратная сторона каждого случая выше: заполненное — не находка (051)."""
+    assert af.запись("001", ПОЛНЫЙ_ДОКУМЕНТ, "1.9") == []
+
+
+def test_требование_действует_с_своей_версии():
+    """`holdable` заведён в 1.5, `refused` — в 1.6: ответ 1.2 о них не обязан
+    знать, а ответ 1.5 слова `refused` ещё не имеет (157)."""
+    без_слова = {"status": "active", "mechanism": "document",
+                 "where": "README.md", "why": "суждение"}
+    assert af.обязательные(без_слова, "1.2") == []
+    assert af.обязательные(без_слова, "1.5")
+    отказ = {**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "refused", "machine_half": "замер"}
+    assert af.обязательные(отказ, "1.6") == []
+    assert "`holdable` принимает" in af.обязательные(отказ, "1.5")[0]
+
+
+def test_без_номера_отсрочки_нет():
+    """Отсрочку даёт объявленная старая версия; ответ без номера не объявил
+    ничего, и спрашивается с него всё."""
+    без_слова = {"status": "active", "mechanism": "document",
+                 "where": "README.md", "why": "суждение"}
+    assert af.обязательные(без_слова, None)
+
+
+def test_чужой_механизм_одна_находка_а_не_шум():
+    """Слово вне словаря — одна находка: следствия чужого слова (адрес,
+    `holdable`) были бы шумом поверх неё."""
+    out = af.обязательные({"status": "active", "mechanism": "code"}, "1.9")
+    assert len(out) == 1 and "вне словаря" in out[0]
