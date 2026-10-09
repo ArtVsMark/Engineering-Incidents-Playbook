@@ -1,0 +1,39 @@
+# Шаги проекта механизмов, взятые версией, а не копией (правило 090: общее
+# уезжает вверх, а не копируется вбок). Сосед держит гейтом правила, которые у
+# каталога машиной не держались ничем:
+#   006 — срок жизни окна, открывшего изменение (трейлер Claude-Session);
+#   047, 134 — свод (AGENTS.md / CLAUDE.md) правился под уже работающим окном.
+#
+# ОТДЕЛЬНЫМ ПРОГОНОМ, А НЕ ДЖОБОМ ci.yml. Обязательная работа у каталога одна
+# (084, 168), а оба шага сосед сам объявляет необязательными: их красное
+# правкой изменения не чинится — окно стареет, а не код (051). Ставить их в
+# защиту ветки — решение владельца, и это настройка площадки, а не дерева.
+#
+# ВЕРСИЯ ПРИБИТА ТЕГОМ. Шаг забирает код соседа на коммите вызова, а не на его
+# голове: подъём тега — отдельное изменение, а не сюрприз в чужом прогоне.
+name: mechanisms
+
+on:
+  pull_request:
+    # Умолчание НЕ включает ready_for_review — правило 104.
+    types: [opened, synchronize, reopened, ready_for_review]
+  # Кнопка — выход для прогона, чьё событие не наступило (126).
+  workflow_dispatch:
+
+# Шаги соседа объявляют эти права; вызывающий обязан выдать не меньше.
+permissions:
+  contents: read
+  checks: read
+  pull-requests: read
+  issues: read
+
+# Голова в имени группы — поколение прогона (179), как у ci.yml.
+concurrency:
+  group: mechanisms-${{ github.ref }}-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  window-lifetime:
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-window-lifetime.yml@v1.5.0
+  rulebook-fresh:
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-rulebook-fresh.yml@v1.5.0
