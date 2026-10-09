@@ -482,11 +482,18 @@ def cancelling_groups(text: str) -> list[tuple[str, bool]]:
 #: `ref: ${{ github.sha }}` проходил, хотя это и есть вера SHA события; теперь
 #: значение `ref:` со словом `sha` опросом не считается. И `gh api` в хвостовом
 #: комментарии строки снимал находку; теперь хвост после ` #` отрезается.
+#: Третья дыра (обзор #753): SHA события пишется и без слова `sha` —
+#: `github.event.after` у push, `github.event.head_commit.id`. Они отсеиваются
+#: поимённо, рядом со словом, а не вместо него: условное выражение вида
+#: `… && 'main' || github.ref` законно, и разрешительный список полей
+#: отверг бы его вместе с ними (badges.yml).
 #: ГРАНИЦА остаётся и названа в сообщении: проверяется НАЛИЧИЕ опроса в файле,
 #: а не то, что опрос стоит в нужном шаге и читает нужное состояние, — и
 #: `gh api` внутри строки `echo` тоже засчитается (182).
 ОПРОС_ПЛОЩАДКИ_RE = re.compile(r"\bgh\s+(?:api|run\s+list|pr\s+(?:view|list))\b")
 ГОЛОВА_ВЕТКИ_RE = re.compile(r"^\s+ref:\s*(\S.*)$")
+SHA_СОБЫТИЯ_RE = re.compile(
+    r"\bgithub\.event\.(?:after|before)\b|\bhead_commit\.id\b")
 ТОЛЬКО_РУКОЙ = {"workflow_dispatch", "schedule"}
 
 
@@ -499,7 +506,8 @@ def читает_состояние(text: str) -> bool:
         if ОПРОС_ПЛОЩАДКИ_RE.search(строка):
             return True
         m = ГОЛОВА_ВЕТКИ_RE.match(строка)
-        if m and "sha" not in m.group(1).lower():
+        if (m and "sha" not in m.group(1).lower()
+                and not SHA_СОБЫТИЯ_RE.search(m.group(1))):
             return True
     return False
 
