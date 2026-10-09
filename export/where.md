@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 217 | 0 | 0 | 201 | 152 | 7 | 1 | 27 | 14 | 125 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 195 | 22 | 0 | 192 | 85 | 39 | 0 | 68 | 0 | 144 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 113 | 19 | 0 | 12 | 0 | 53 |  |
+| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 114 | 19 | 0 | 11 | 0 | 53 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 99 | 9 | 0 | 58 | 17 | 104 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 147 | 84 | 16 | 0 | 45 | 2 | 110 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 217 | 0 | 0 | 209 | 178 | 25 | 2 | 4 | 0 | 252 |  |
@@ -200,11 +200,11 @@
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 89 механизмов по одному правилу; без названного адреса: 0 из 192 |
 | `ArtVsMark` | `scripts/build_metrics.py` | 64 |
-| `ArtVsMark` | `scripts/check_mechanisms.py` | 53 |
-| `ArtVsMark` | `.github/workflows/pr-check.yml` | 30 |
+| `ArtVsMark` | `scripts/check_mechanisms.py` | 54 |
+| `ArtVsMark` | `.github/workflows/pr-check.yml` | 31 |
 | `ArtVsMark` | `CLAUDE.md` | 27 |
 | `ArtVsMark` | `scripts/check_bindings.py` | 23 |
-| `ArtVsMark` | `scripts/checks.py` | 20 |
+| `ArtVsMark` | `scripts/checks.py` | 21 |
 | `ArtVsMark` | `.github/workflows/agent-pr.yml` | 16 |
 | `ArtVsMark` | `.github/workflows/automerge.yml` | 16 |
 | `ArtVsMark` | `scripts/check_labels.py` | 16 |
