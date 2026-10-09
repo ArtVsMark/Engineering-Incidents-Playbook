@@ -19,70 +19,20 @@
         {
           "segment": "gives",
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "bindings",
-          "mine": "1.9",
-          "latest": "1.9",
-          "where": "опубликованный манифест",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "consumers",
-          "mine": "1.1",
-          "latest": "1.1",
-          "where": "опубликованный манифест",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "export",
-          "mine": "1.7",
-          "latest": "1.7",
-          "where": "опубликованный манифест",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "family",
+          "what": "form",
           "mine": "1.0",
           "latest": "1.0",
-          "where": "опубликованный манифест",
+          "where": ".github/badges/contracts.json",
           "state": "ok",
           "why": ""
         },
         {
           "segment": "gives",
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "proposals",
-          "mine": "1.3",
-          "latest": "1.3",
-          "where": "опубликованный манифест",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "showcase",
-          "mine": "1.1",
-          "latest": "1.1",
-          "where": "опубликованный манифест",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "where",
-          "mine": "1.7",
-          "latest": "1.7",
-          "where": "опубликованный манифест",
+          "what": "published",
+          "mine": "yes",
+          "latest": "yes",
+          "where": "сводка семьи",
           "state": "ok",
           "why": ""
         }
