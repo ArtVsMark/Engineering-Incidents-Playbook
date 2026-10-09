@@ -1,79 +1,78 @@
-<svg width="1000" height="468" viewBox="0 0 1000 468" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="How rules are enforced across consumers">
-<rect x="0.5" y="0.5" width="999" height="467" rx="16" fill="#FFFFFF" stroke="#D0D7DE"/>
+<svg width="1001" height="468" viewBox="0 0 1001 468" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="How rules are enforced across consumers">
+<rect x="0.5" y="0.5" width="1000" height="467" rx="16" fill="#FFFFFF" stroke="#D0D7DE"/>
 <rect x="36" y="28" width="46" height="4" rx="2" fill="#0969DA"/>
-<rect x="577" y="84" width="414" height="326" rx="12" fill="#F6F8FA"/>
+<rect x="585" y="84" width="410" height="326" rx="12" fill="#F6F8FA"/>
 <text x="36" y="68" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="31" font-weight="800" letter-spacing="-0.6">How rules are enforced across consumers</text>
-<text x="443" y="100" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="1.4" text-anchor="middle">rules</text>
-<text x="784" y="100" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="1.4" text-anchor="middle">held by</text>
-<text x="371" y="124" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">answered</text>
-<text x="450" y="124" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">trails</text>
-<text x="522" y="124" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">born</text>
-<text x="628" y="124" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" letter-spacing="0.3" text-anchor="middle">gate</text>
-<text x="706" y="124" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" letter-spacing="0.3" text-anchor="middle">pipeline</text>
-<text x="781" y="124" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" letter-spacing="0.3" text-anchor="middle">skill</text>
+<text x="447" y="100" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="1.4" text-anchor="middle">rules</text>
+<text x="790" y="100" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="1.4" text-anchor="middle">held by</text>
+<text x="375" y="124" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">answered</text>
+<text x="457" y="124" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">trails</text>
+<text x="530" y="124" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.3" text-anchor="middle">born</text>
+<text x="636" y="124" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" letter-spacing="0.3" text-anchor="middle">gate</text>
+<text x="713" y="124" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" letter-spacing="0.3" text-anchor="middle">pipeline</text>
+<text x="780" y="124" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" letter-spacing="0.3" text-anchor="middle">skill</text>
 <text x="855" y="124" fill="#8250DF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" letter-spacing="0.3" text-anchor="middle">document</text>
-<text x="937" y="124" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" letter-spacing="0.3" text-anchor="middle">nothing</text>
+<text x="941" y="124" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="12.5" font-weight="700" letter-spacing="0.3" text-anchor="middle">nothing</text>
 <text x="36" y="148" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Engineering-Pipeline-</text>
 <text x="36" y="167" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Mechanisms</text>
-<text x="371" y="159" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
-<text x="450" y="159" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">18</text>
-<text x="522" y="159" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">15</text>
-<text x="628" y="159" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">178</text>
-<text x="706" y="159" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">25</text>
-<text x="781" y="159" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">2</text>
+<text x="375" y="159" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
+<text x="457" y="159" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">18</text>
+<text x="530" y="159" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">15</text>
+<text x="636" y="159" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">178</text>
+<text x="713" y="159" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">25</text>
+<text x="780" y="159" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">2</text>
 <text x="855" y="159" fill="#8250DF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">4</text>
-<text x="937" y="159" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">8</text>
-<rect x="36" y="177" width="928" height="1" fill="#D0D7DE" opacity="0.55"/>
+<text x="941" y="159" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">8</text>
+<rect x="36" y="177" width="929" height="1" fill="#D0D7DE" opacity="0.55"/>
 <text x="36" y="194" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Engineering-Incidents-</text>
 <text x="36" y="213" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Playbook</text>
-<text x="371" y="205" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
-<text x="450" y="205" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">61</text>
-<text x="522" y="205" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">36</text>
-<text x="628" y="205" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">155</text>
-<text x="706" y="205" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">10</text>
-<text x="781" y="205" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">5</text>
+<text x="375" y="205" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
+<text x="457" y="205" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">61</text>
+<text x="530" y="205" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">36</text>
+<text x="636" y="205" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">155</text>
+<text x="713" y="205" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">10</text>
+<text x="780" y="205" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">5</text>
 <text x="855" y="205" fill="#8250DF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">23</text>
-<text x="937" y="205" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">24</text>
-<rect x="36" y="223" width="928" height="1" fill="#D0D7DE" opacity="0.55"/>
+<text x="941" y="205" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">24</text>
+<rect x="36" y="223" width="929" height="1" fill="#D0D7DE" opacity="0.55"/>
 <text x="36" y="249" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">ArtVsMark</text>
-<text x="371" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
-<text x="450" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">29</text>
-<text x="522" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">18</text>
-<text x="628" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">128</text>
-<text x="706" y="251" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">20</text>
-<text x="781" y="251" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
+<text x="375" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
+<text x="457" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">29</text>
+<text x="530" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">18</text>
+<text x="636" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">128</text>
+<text x="713" y="251" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">20</text>
+<text x="780" y="251" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
 <text x="855" y="251" fill="#8250DF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">10</text>
-<text x="937" y="251" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">58</text>
-<rect x="36" y="269" width="928" height="1" fill="#D0D7DE" opacity="0.55"/>
+<text x="941" y="251" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">58</text>
+<rect x="36" y="269" width="929" height="1" fill="#D0D7DE" opacity="0.55"/>
 <text x="36" y="295" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Stepik-Python-Grader</text>
-<text x="371" y="297" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
-<text x="450" y="297" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">190</text>
-<text x="522" y="297" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">133</text>
-<text x="628" y="297" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">95</text>
-<text x="706" y="297" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">43</text>
-<text x="781" y="297" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
+<text x="375" y="297" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
+<text x="457" y="297" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">190</text>
+<text x="530" y="297" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">133</text>
+<text x="636" y="297" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">95</text>
+<text x="713" y="297" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">43</text>
+<text x="780" y="297" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
 <text x="855" y="297" fill="#8250DF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">74</text>
-<text x="937" y="297" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">5</text>
-<rect x="36" y="315" width="928" height="1" fill="#D0D7DE" opacity="0.55"/>
-<text x="36" y="332" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Claude-Code_Usage-</text>
-<text x="36" y="351" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Token</text>
-<text x="371" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
-<text x="450" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">17</text>
-<text x="522" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">15</text>
-<text x="628" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">100</text>
-<text x="706" y="343" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">9</text>
-<text x="781" y="343" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
+<text x="941" y="297" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">5</text>
+<rect x="36" y="315" width="929" height="1" fill="#D0D7DE" opacity="0.55"/>
+<text x="36" y="341" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Claude-Code_Usage-Token</text>
+<text x="375" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
+<text x="457" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">17</text>
+<text x="530" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">15</text>
+<text x="636" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">100</text>
+<text x="713" y="343" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">9</text>
+<text x="780" y="343" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
 <text x="855" y="343" fill="#8250DF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">58</text>
-<text x="937" y="343" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">45</text>
-<rect x="36" y="361" width="928" height="1" fill="#D0D7DE" opacity="0.55"/>
+<text x="941" y="343" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">45</text>
+<rect x="36" y="361" width="929" height="1" fill="#D0D7DE" opacity="0.55"/>
 <text x="36" y="387" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Glossary-Python</text>
-<text x="371" y="389" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
-<text x="450" y="389" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">2</text>
-<text x="522" y="389" fill="#8C959F" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">—</text>
-<text x="628" y="389" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">84</text>
-<text x="706" y="389" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">16</text>
-<text x="781" y="389" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
+<text x="375" y="389" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
+<text x="457" y="389" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">2</text>
+<text x="530" y="389" fill="#8C959F" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">—</text>
+<text x="636" y="389" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">84</text>
+<text x="713" y="389" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">16</text>
+<text x="780" y="389" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
 <text x="855" y="389" fill="#8250DF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">45</text>
-<text x="937" y="389" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">71</text>
+<text x="941" y="389" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">71</text>
 <text x="36" y="440" fill="#636C76" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="500">each project&apos;s own answer on all 217 catalogue rules — not our assessment of them</text>
 </svg>
