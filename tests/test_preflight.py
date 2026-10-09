@@ -255,3 +255,74 @@ def test_zamena_stoit_na_shage_zhivogo_konveyera():
 
     имена = {s.name for s in шаги}
     assert set(preflight.STAND_IN) <= имена
+
+
+# ── проверка и толчок одним заходом (правило 208) ──────────────────────────
+#
+# Красное до толчка не доходит: --push зовёт толчок только после чистого
+# прогона. Сам `git push` здесь не исполняется ни разу — подделка толчка
+# записывает вызов, а сторож и приставки проверяются на своих подделках.
+
+def test_pri_nahodke_tolchka_net(tmp_path, monkeypatch):
+    толкали: list[Path] = []
+    monkeypatch.setattr(preflight, "толкнуть", lambda root: толкали.append(root) or 0)
+    root = stub(tmp_path, "import sys; sys.exit(1)\n", "python scripts/stub.py")
+    assert preflight.main(["--root", str(root), "--push"]) == 1
+    assert толкали == []
+
+
+def test_chisto_i_push_tolkaet(tmp_path, monkeypatch):
+    толкали: list[Path] = []
+    monkeypatch.setattr(preflight, "толкнуть", lambda root: толкали.append(root) or 0)
+    root = stub(tmp_path, "import sys; sys.exit(0)\n", "python scripts/stub.py")
+    assert preflight.main(["--root", str(root), "--push"]) == 0
+    assert толкали == [root]
+
+
+def test_push_s_only_eto_dva(tmp_path):
+    """Выборка шагов чистоты не доказывает — толкать после неё нельзя."""
+    root = stub(tmp_path, "import sys; sys.exit(0)\n", "python scripts/stub.py")
+    assert preflight.main(["--root", str(root), "--push", "--only", "подд"]) == 2
+
+
+def _для_толчка(tmp_path: Path, ветка: str, сторож_код: int) -> Path:
+    root = репо(tmp_path)
+    subprocess.run(["git", "-C", str(root), "checkout", "-q", "-b", ветка],
+                   check=True, capture_output=True)
+    work = root / ".github" / "workflows"
+    work.mkdir(parents=True, exist_ok=True)
+    (work / "agent-pr.yml").write_text(
+        'on:\n  push:\n    branches:\n      - "agent/**"\n', encoding="utf-8")
+    hooks = root / ".claude" / "hooks"
+    hooks.mkdir(parents=True, exist_ok=True)
+    (hooks / "push_guard.py").write_text(
+        f"import sys; print('отказ сторожа', file=sys.stderr); sys.exit({сторож_код})\n",
+        encoding="utf-8")
+    return root
+
+
+def test_prefiks_beryotsya_iz_agent_pr(tmp_path):
+    root = _для_толчка(tmp_path, "agent/x", 0)
+    assert preflight.приставки(root) == ("agent/",)
+
+
+def test_vetka_bez_pristavki_ne_tolkaetsya(tmp_path, capsys):
+    root = _для_толчка(tmp_path, "claude/x", 0)
+    assert preflight.толкнуть(root) == 2
+    assert "без приставки" in capsys.readouterr().err
+
+
+def test_otkaz_storozha_derzhit_tolchok(tmp_path, capsys):
+    """Хук окна этого толчка не видит — сторож зовётся отсюда (202, 012)."""
+    root = _для_толчка(tmp_path, "agent/x", 2)
+    assert preflight.толкнуть(root) == 2
+    assert "отказ сторожа" in capsys.readouterr().err
+
+
+def test_bez_push_ne_tolkaet_dazhe_chisto(tmp_path, monkeypatch):
+    """Второй конец сцепки (208): действие без просьбы — тоже дефект."""
+    толкали: list[Path] = []
+    monkeypatch.setattr(preflight, "толкнуть", lambda root: толкали.append(root) or 0)
+    root = stub(tmp_path, "import sys; sys.exit(0)\n", "python scripts/stub.py")
+    assert preflight.main(["--root", str(root)]) == 0
+    assert толкали == []

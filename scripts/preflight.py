@@ -29,16 +29,20 @@
   075 — шаг без предмета называется, а не зеленеет молча;
   046 — «нечего запускать» и «всё прошло» различимы в выводе;
   100 — у каждого шага свой предел времени;
-  029 — свод держит ссылку на команду, а не пересказ того, что она делает.
+  029 — свод держит ссылку на команду, а не пересказ того, что она делает;
+  208 — проверка и толчок одним заходом: `--push` толкает ветку ТОЛЬКО после
+        чистого прогона, и красное до толчка не доходит.
 
 Запуск:  python scripts/preflight.py          # все исполнимые локально шаги
          python scripts/preflight.py --list   # план без запуска
          python scripts/preflight.py --only bindings
+         python scripts/preflight.py --push   # толкнуть ветку, если чисто
 Коды:    0 чисто · 1 есть находки · 2 проверка не отработала
 """
 
 
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -269,7 +273,14 @@ def main(argv: list[str] | None = None) -> int:
                         help="показать план и выйти, ничего не запуская")
     parser.add_argument("--only", metavar="ПОДСТРОКА",
                         help="запустить шаги, чьё имя или скрипт её содержат")
+    parser.add_argument("--push", action="store_true",
+                        help="толкнуть текущую ветку, ЕСЛИ прогон чист: "
+                             "проверка и действие одним заходом (208)")
     args = parser.parse_args(argv)
+    if args.push and (args.only or args.list):
+        print("проверка не отработала: --push толкает только после ПОЛНОГО "
+              "прогона — с --only или --list чистота не доказана", file=sys.stderr)
+        return 2
     root: Path = args.root
     pipeline = root / ".github" / "workflows" / "ci.yml"
 
@@ -367,6 +378,76 @@ def main(argv: list[str] | None = None) -> int:
               + ", ".join(findings), file=sys.stderr)
         return 1
     print(f"\nчисто: {len(runnable)} шагов конвейера прошли локально")
+    if args.push:
+        return толкнуть(root)
+    return 0
+
+
+#: Сторож толчка окна. Он висит хуком на команде `git push` в оболочке окна, а
+#: толчок отсюда идёт подпроцессом — хук его не видит. Поэтому сторож зовётся
+#: ЗДЕСЬ, тем же файлом и тем же событием, а не пишется второй копией (090):
+#: воскрешение слитой ветки (202), толчок не в ту ветку (012), тело первого
+#: коммита, которое не пройдёт гейт изменения.
+СТОРОЖ = Path(".claude") / "hooks" / "push_guard.py"
+#: Приставка, по которой конвейер открывает изменение, — из его же файла.
+ОТКРЫТИЕ = Path(".github") / "workflows" / "agent-pr.yml"
+
+
+def приставки(root: Path) -> tuple[str, ...]:
+    """Приставки веток, по которым `agent-pr` открывает изменение (003).
+
+    Читаются из `branches:` самого прогона, а не пишутся здесь второй копией:
+    разъехавшись, они дали бы толчок, после которого изменение не открылось
+    бы, а красного не было бы нигде (022).
+    """
+    текст = (root / ОТКРЫТИЕ).read_text(encoding="utf-8")
+    return tuple(m.group(1) for m in
+                 re.finditer(r'^\s+- "?([\w./-]+?)\*\*"?\s*$', текст, re.M))
+
+
+def толкнуть(root: Path) -> int:
+    """Толкает текущую ветку — зовётся только после чистого прогона (208).
+
+    ВЕРДИКТ, КОТОРЫЙ ЧИТАЕТ ТОТ ЖЕ, КТО ДЕЙСТВУЕТ, — НАПОМИНАНИЕ, А НЕ
+    МЕХАНИЗМ. Прогон печатал «чисто» или «находки», а `git push` набирался
+    отдельной командой тем же окном. Здесь красное до этой строки просто не
+    доходит. Приём взят у проекта механизмов (`preflight.py --push`), а код
+    свой: сторож и приставки у каталога свои (162).
+
+    ЧЕГО ЭТО НЕ ДЕЛАЕТ: не мешает толкнуть руками. Обход законен, когда он
+    назван (154); неназванный стоил соседу трёх толчков при красном из
+    пятнадцати.
+    """
+    ветка = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                           cwd=root, capture_output=True, text=True,
+                           encoding="utf-8").stdout.strip()
+    try:
+        можно = приставки(root)
+    except OSError as e:
+        print(f"толчок не сделан: приставки не прочитаны — {e}", file=sys.stderr)
+        return 2
+    if not можно or not ветка.startswith(можно):
+        print(f"толчок не сделан: ветка «{ветка}» без приставки "
+              f"{' или '.join(можно) or '—'} — изменения по ней не откроется (003)",
+              file=sys.stderr)
+        return 2
+    команда = f"git push -u origin {ветка}"
+    событие = json.dumps({"tool_name": "Bash", "tool_input": {"command": команда}})
+    сторож = subprocess.run([sys.executable, str(root / СТОРОЖ)], cwd=root,
+                            input=событие, capture_output=True, text=True,
+                            encoding="utf-8")
+    if сторож.returncode != 0:
+        print(f"толчок не сделан — сторож отказал:\n{сторож.stderr.strip()}",
+              file=sys.stderr)
+        return 2
+    толчок = subprocess.run(команда.split(), cwd=root, capture_output=True,
+                            text=True, encoding="utf-8")
+    print((толчок.stdout + толчок.stderr).strip())
+    if толчок.returncode != 0:
+        print(f"толчок не прошёл: {команда} — код {толчок.returncode}, вывод git выше",
+              file=sys.stderr)
+        return 2
+    print(f"толкнуто: {ветка}")
     return 0
 
 
