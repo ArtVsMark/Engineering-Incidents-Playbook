@@ -17,7 +17,11 @@
              "владелец/имя", "contract": имя, "where": путь в своём дереве,
              "field": ключ с номером}]. Семейные (действия каталога, шаги
              механизмов, схемы ответа) и внешние связи сверка находит в дереве
-             сама и здесь не объявляются.
+             сама и здесь не объявляются;
+  skips    — НЕОБЯЗАТЕЛЬНО, с 1.1: отказ от связи с издателем семьи,
+             {"EPM": "причина"} — код или `владелец/имя`. Без отказа
+             отсутствующая связь на значке красная, с отказом — серая с
+             этой причиной (решение владельца 09.10).
 
 СВОДКА (`export/family.json` на ветке `badges` каталога) — манифесты всех
 проектов реестра `.rules/consumers.json` одним файлом: свежие версии
@@ -58,7 +62,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 #: Номер формата манифеста и сводки семьи — один на оба: сводка есть список
 #: манифестов, и разойтись им не в чем.
-FAMILY_SCHEMA = "1.0"
+FAMILY_SCHEMA = "1.1"
 MANIFEST = Path(".github") / "badges" / "contracts.json"
 SUMMARY = Path("export") / "family.json"
 REGISTRY = Path(".rules") / "consumers.json"
@@ -110,6 +114,10 @@ def изъян_формы(doc: Any) -> str | None:
             return f"нет ключа «{ключ}»"
         if not isinstance(doc[ключ], тип):
             return f"«{ключ}» не того типа"
+    отказы = doc.get("skips", {})
+    if not isinstance(отказы, dict) or not all(
+            isinstance(k, str) and isinstance(v, str) and v.strip() for k, v in отказы.items()):
+        return "«skips» — не объект «издатель: причина» с непустыми причинами"
     # не проза: номер формата «мажор.минор», сверяется мажор.
     if doc["schema"].split(".")[0] != FAMILY_SCHEMA.split(".")[0]:
         return f"формат {doc['schema']}, а читается {FAMILY_SCHEMA}"
