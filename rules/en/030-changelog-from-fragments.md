@@ -21,6 +21,30 @@ Entries written that way retold **what was done in the code**, not what changed
 for the user. Some changes were lost outright: a commit subject does not always
 say whether anything was visible from outside.
 
+## Second incident: assembly at release was a manual step
+
+The boundary "Requires an assembly step at release" below was there from the
+start — and never became a step of the release itself. Fragments were collected
+by a preparation change; the release run only closed the section. Changes kept
+merging between the preparation and the button press.
+
+- **v1.9.0, 8 October** — caught by hand: a separate change #736 "collected
+  fragment #734 into [Unreleased]" before the press.
+- **v1.10.0, 9 October** — not caught. Preparation #759 merged at 21:59 UTC on
+  8 October, the release (run 37899491212) was pressed at 07:31 UTC on
+  9 October; 21 changes reached the shared branch in between, and 10 of them
+  brought fragments. Section [1.10.0] closed without them: **the code is in the
+  tag, the entries are not** — neither in the release changelog nor on its page,
+  and the platform marked the page immutable.
+
+The window accompanying the release told the owner the release would collect the
+fragments itself, without opening `release.yml`: there was neither a collect
+step nor a refusal on leftovers.
+
+The fix is a mechanism, not a reminder: the release collects fragments itself
+before building the page body, and closing the section refuses while anything
+remains in `changelog.d/`.
+
 ## The fix
 
 Every change drops a **separate file** into a fragments directory. At release
@@ -68,3 +92,5 @@ and a shared file is cheaper.
 ## Trace
 
 ArtVsMark/Stepik-Python-Grader — `CLAUDE.md` § Обновление CHANGELOG
+
+ArtVsMark/Engineering-Incidents-Playbook#736 — second incident: the v1.9.0 miss caught by hand; v1.10.0 shipped without 10 entries (release run 37899491212); the mechanism is the collect step in `.github/workflows/release.yml` and the `scripts/collect_changelog.py --close` refusal on leftovers

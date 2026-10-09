@@ -165,6 +165,13 @@ jobs:
               --changelog "$RUNNER_TEMP/at-tag/CHANGELOG.md" --key "$KEY" \
               --repo "$GITHUB_REPOSITORY" > "$RUNNER_TEMP/notes.md"
           else
+            # ФРАГМЕНТЫ СОБИРАЕТ САМ ВЫПУСК, ДО ТЕЛА СТРАНИЦЫ (030). Сборка
+            # держалась изменением-подготовкой, а между ним и нажатием
+            # сливались ещё изменения: v1.10.0 (прогон 37899491212) вышел без
+            # 10 записей — код в теге, на неизменяемой странице их нет. Удалённые
+            # фрагменты и собранный раздел уезжают коммитом выпуска (`-a`), а
+            # `--close` ниже отказывает, если что-то осталось несобранным.
+            python scripts/collect_changelog.py --collect
             python scripts/collect_changelog.py --notes "$WANT" --key "$KEY" \
               --repo "$GITHUB_REPOSITORY" > "$RUNNER_TEMP/notes.md"
           fi

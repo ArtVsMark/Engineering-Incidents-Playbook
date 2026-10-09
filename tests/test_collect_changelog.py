@@ -441,6 +441,30 @@ def test_zakrytie_pustogo_razdela_eto_otkaz(monkeypatch, repo, capsys):
     assert "пуст" in capsys.readouterr().err
 
 
+def test_zakrytie_pri_nesobrannyh_fragmentah_eto_otkaz(monkeypatch, repo, capsys):
+    """v1.10.0 закрыл раздел, оставив 10 фрагментов: код в теге, записей нет
+    ни в разделе, ни на странице выпуска (030). Закрытие с остатком — отказ,
+    и журнал не тронут."""
+    cli(monkeypatch, repo, {"a.fixed.md": "Починили.\n\n> правило 030.\n"},
+        ВЫШЕДШИЙ, "--close", "v1.1.0", теги=("0.1.0", "v1.1.0"))
+
+    assert cc.main() == 1
+    assert "несобранных фрагментов: 1" in capsys.readouterr().err
+    assert (repo / "CHANGELOG.md").read_text(encoding="utf-8") == ВЫШЕДШИЙ
+
+
+def test_sborka_i_zakrytie_berut_vse_fragmenty(monkeypatch, repo):
+    """Порядок выпуска: собрать, потом закрыть — фрагмент доезжает в раздел."""
+    cli(monkeypatch, repo, {"a.fixed.md": "Починили.\n\n> правило 030.\n"},
+        ВЫШЕДШИЙ, "--collect", теги=("0.1.0", "v1.1.0"))
+    assert cc.main() == 0
+    monkeypatch.setattr("sys.argv", ["collect_changelog.py", "--close", "v1.1.0"])
+    assert cc.main() == 0
+    раздел = cc.закрытый_раздел(
+        (repo / "CHANGELOG.md").read_text(encoding="utf-8"), "1.1.0")
+    assert "- Починили." in раздел and "- свежее" in раздел
+
+
 def test_vtoroy_raz_odin_vypusk_ne_zakryvaetsya(monkeypatch, repo, capsys):
     """Номера не переиспользуются: второй раздел с тем же номером — не выпуск,
     а потерянная половина записей."""
