@@ -270,12 +270,30 @@ def test_абзац_соседей_в_журнал_не_едет(monkeypatch, re
     assert found["fixed"] == ["Починили разбор."]
 
 
-def test_хвост_соседей_в_строке_режется_до_конца_абзаца(monkeypatch, repo):
+def test_абзац_соседей_с_отступом_режется_как_у_гейта(monkeypatch, repo):
+    """Отступ гейт принимает (`check_narrowing`, самопроверка) — сборка тоже."""
     prepare(monkeypatch, repo, {"a.changed.md": (
-        "Гейт сужен (#1). Соседи: разбор зовёт только он.\n\n"
-        "Второй абзац записи остаётся.\n")})
-    found, _ = cc.validate()
-    assert found["changed"] == ["Гейт сужен (#1). Второй абзац записи остаётся."]
+        "Гейт сужен (#1).\n\n  Соседи: и вот что вышло\n\nВторой абзац.\n")})
+    found, problems = cc.validate()
+    assert problems == []
+    assert found["changed"] == ["Гейт сужен (#1). Второй абзац."]
+
+
+def test_ответ_внутри_абзаца_это_находка_а_не_срез(monkeypatch, repo):
+    """Срез до конца абзаца молча съел бы поведение рядом (обзор #771)."""
+    prepare(monkeypatch, repo, {"a.changed.md": (
+        "Гейт сужен (#1).\nСоседи: спросили всех.\nИ ещё поведение.\n")})
+    found, problems = cc.validate()
+    assert found["changed"] == []
+    assert problems and "внутри абзаца" in problems[0]
+
+
+def test_соседи_посреди_строки_не_ответ_и_не_режется(monkeypatch, repo):
+    """Граница одна у гейта и у сборки: посреди строки это не ответ."""
+    prepare(monkeypatch, repo, {"a.changed.md": "Гейт сужен (#1). Соседи: нет.\n"})
+    found, problems = cc.validate()
+    assert problems == []
+    assert found["changed"] == ["Гейт сужен (#1). Соседи: нет."]
 
 
 def test_слово_соседи_внутри_фразы_не_режется(monkeypatch, repo):

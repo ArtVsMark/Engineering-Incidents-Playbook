@@ -34,10 +34,11 @@ build adds those.
 
 **Ответ о соседях — абзацем `Соседи:`, и в журнал он не едет.** Его требует
 `check_narrowing` у автора, а читателю выпуска это отчёт о вопросе, а не о
-поведении: сборка режет его от слова до конца абзаца.
+поведении: сборка режет абзац, начинающийся ответом, а ответ внутри абзаца —
+находка.
 
 **The neighbours answer — a `Соседи:` paragraph — stays in the fragment.** The
-build cuts it from the word to the end of the paragraph.
+build drops the paragraph that starts with it; inside a paragraph it is a finding.
 
 ## Пример · Example
 
