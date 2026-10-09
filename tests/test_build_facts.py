@@ -325,3 +325,20 @@ def test_без_коммита_файл_не_пишется(monkeypatch, repo, c
     assert bf.main([]) == 2
     assert "commit" in capsys.readouterr().err
     assert not (repo / ".github/badges/facts.json").exists()
+
+
+def test_тег_договора_в_прогоне_сходится_со_схемой():
+    """Подъём договора — три правки: тег, хэши и SCHEMA (обзор #804).
+
+    Серия тега `facts-vX.Y.Z` в badges.yml обязана совпасть с SCHEMA, а хэши
+    стоят ровно у трёх файлов, которые шаг скачивает. Что хэши сняты именно с
+    этого тега, без сети не сверить — это названная граница в самом прогоне.
+    """
+    import re
+    прогон = (bf.ROOT / ".github" / "workflows" / "badges.yml").read_text(encoding="utf-8")
+    тег = re.search(r"FACTS_CONTRACT: facts-v(\d+)\.(\d+)\.\d+", прогон)
+    assert тег, "шаг проверки фактов не называет тег договора"
+    assert f"{тег[1]}.{тег[2]}" == bf.SCHEMA
+    скачиваем = re.search(r"for f in ([\w. ]+); do", прогон)[1].split()
+    хэши = re.findall(r"^\s*[0-9a-f]{64}  (\S+)$", прогон, re.M)
+    assert sorted(хэши) == sorted(скачиваем)
