@@ -39,11 +39,11 @@
 <text x="371" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
 <text x="450" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">29</text>
 <text x="522" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">18</text>
-<text x="628" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">126</text>
+<text x="628" y="251" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">127</text>
 <text x="706" y="251" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">20</text>
 <text x="781" y="251" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
 <text x="855" y="251" fill="#8250DF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">10</text>
-<text x="937" y="251" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">60</text>
+<text x="937" y="251" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">59</text>
 <rect x="36" y="269" width="928" height="1" fill="#D0D7DE" opacity="0.55"/>
 <text x="36" y="295" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Stepik-Python-Grader</text>
 <text x="371" y="297" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">195</text>
@@ -57,14 +57,14 @@
 <rect x="36" y="315" width="928" height="1" fill="#D0D7DE" opacity="0.55"/>
 <text x="36" y="332" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Claude-Code_Usage-</text>
 <text x="36" y="351" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Token</text>
-<text x="371" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">215</text>
+<text x="371" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
 <text x="450" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">17</text>
 <text x="522" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">15</text>
-<text x="628" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">99</text>
+<text x="628" y="343" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">100</text>
 <text x="706" y="343" fill="#1A7F37" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">9</text>
 <text x="781" y="343" fill="#9A6700" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
 <text x="855" y="343" fill="#8250DF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">58</text>
-<text x="937" y="343" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">44</text>
+<text x="937" y="343" fill="#CF222E" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">45</text>
 <rect x="36" y="361" width="928" height="1" fill="#D0D7DE" opacity="0.55"/>
 <text x="36" y="387" fill="#1F2328" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Glossary-Python</text>
 <text x="371" y="389" fill="#0969DA" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">217</text>
