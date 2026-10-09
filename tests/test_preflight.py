@@ -326,3 +326,37 @@ def test_bez_push_ne_tolkaet_dazhe_chisto(tmp_path, monkeypatch):
     root = stub(tmp_path, "import sys; sys.exit(0)\n", "python scripts/stub.py")
     assert preflight.main(["--root", str(root)]) == 0
     assert толкали == []
+
+
+def test_pristavka_tolko_iz_spiska_branches(tmp_path):
+    """Строка того же вида в другом списке приставкой не считается (обзор #793)."""
+    root = _для_толчка(tmp_path, "agent/x", 0)
+    (root / ".github" / "workflows" / "agent-pr.yml").write_text(
+        'on:\n  push:\n    branches:\n      - "agent/**"\n'
+        'jobs:\n  a:\n    paths:\n      - "docs/**"\n', encoding="utf-8")
+    assert preflight.приставки(root) == ("agent/",)
+
+
+def test_udachnyy_put_vyzyvaet_git_push(tmp_path, monkeypatch, capsys):
+    """Сторож молчит, приставка верна — толчок действительно зовётся: без
+    этого случая удаление самой строки `git push` набор не заметил бы."""
+    import os
+    import shutil
+    import stat
+    root = _для_толчка(tmp_path, "agent/x", 0)
+    журнал = tmp_path / "git-calls.txt"
+    настоящий = shutil.which("git")
+    assert настоящий, "git не найден в PATH"
+    подделка = tmp_path / "bin" / "git"
+    подделка.parent.mkdir()
+    # Источник подделки (правило 170): форма вызова — та, что строит
+    # `толкнуть` (`git push -u origin <ветка>`); прочие команды — настоящему git.
+    подделка.write_text(
+        "#!/bin/sh\n"
+        f'if [ "$1" = push ]; then echo "$@" >> "{журнал}"; exit 0; fi\n'
+        f'exec "{настоящий}" "$@"\n', encoding="utf-8")
+    подделка.chmod(подделка.stat().st_mode | stat.S_IEXEC)
+    monkeypatch.setenv("PATH", f"{подделка.parent}{os.pathsep}{os.environ['PATH']}")
+    assert preflight.толкнуть(root) == 0
+    assert журнал.read_text(encoding="utf-8").strip() == "push -u origin agent/x"
+    assert "толкнуто: agent/x" in capsys.readouterr().out
