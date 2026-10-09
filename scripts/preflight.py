@@ -405,13 +405,14 @@ def приставки(root: Path) -> tuple[str, ...]:
     бы, а красного не было бы нигде (022).
     """
     текст = (root / ОТКРЫТИЕ).read_text(encoding="utf-8")
-    # ТОЛЬКО СПИСОК ПОД `branches:` (обзор #793): строка того же вида в другом
-    # списке файла прочиталась бы приставкой.
-    блок = re.search(r"^(\s*)branches:\s*\n((?:\1\s+- .*\n?)+)", текст, re.M)
-    if not блок:
-        return ()
-    return tuple(m.group(1) for m in
-                 re.finditer(r'^\s+- "?([\w./-]+?)\*\*"?\s*$', блок.group(2), re.M))
+    # ТОЛЬКО СПИСКИ ПОД `branches:` (обзор #793): строка того же вида в другом
+    # списке файла прочиталась бы приставкой. Блоков берётся СКОЛЬКО ЕСТЬ
+    # (обзор #796): второй `branches:` не теряется молча.
+    списки = (б.group(2) for б in re.finditer(
+        r"^([ \t]*)branches:[ \t]*\n((?:\1[ \t]+- .*\n?)+)", текст, re.M))
+    return tuple(dict.fromkeys(
+        m.group(1) for список in списки
+        for m in re.finditer(r'^[ \t]+- "?([\w./-]+?)\*\*"?[ \t]*$', список, re.M)))
 
 
 def толкнуть(root: Path) -> int:

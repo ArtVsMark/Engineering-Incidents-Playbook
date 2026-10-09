@@ -337,13 +337,12 @@ def test_pristavka_tolko_iz_spiska_branches(tmp_path):
     assert preflight.приставки(root) == ("agent/",)
 
 
-def test_udachnyy_put_vyzyvaet_git_push(tmp_path, monkeypatch, capsys):
-    """Сторож молчит, приставка верна — толчок действительно зовётся: без
-    этого случая удаление самой строки `git push` набор не заметил бы."""
+def _подложить_git(tmp_path: Path, monkeypatch, на_толчок: str) -> Path:
+    """Ставит в PATH git, который на `push` пишет вызов в журнал и исполняет
+    `на_толчок`; прочие команды отдаёт настоящему git. Возвращает журнал."""
     import os
     import shutil
     import stat
-    root = _для_толчка(tmp_path, "agent/x", 0)
     журнал = tmp_path / "git-calls.txt"
     настоящий = shutil.which("git")
     assert настоящий, "git не найден в PATH"
@@ -353,10 +352,49 @@ def test_udachnyy_put_vyzyvaet_git_push(tmp_path, monkeypatch, capsys):
     # `толкнуть` (`git push -u origin <ветка>`); прочие команды — настоящему git.
     подделка.write_text(
         "#!/bin/sh\n"
-        f'if [ "$1" = push ]; then echo "$@" >> "{журнал}"; exit 0; fi\n'
+        f'if [ "$1" = push ]; then echo "$@" >> "{журнал}"; {на_толчок}; fi\n'
         f'exec "{настоящий}" "$@"\n', encoding="utf-8")
     подделка.chmod(подделка.stat().st_mode | stat.S_IEXEC)
     monkeypatch.setenv("PATH", f"{подделка.parent}{os.pathsep}{os.environ['PATH']}")
+    return журнал
+
+
+def test_udachnyy_put_vyzyvaet_git_push(tmp_path, monkeypatch, capsys):
+    """Сторож молчит, приставка верна — толчок действительно зовётся: без
+    этого случая удаление самой строки `git push` набор не заметил бы."""
+    root = _для_толчка(tmp_path, "agent/x", 0)
+    журнал = _подложить_git(tmp_path, monkeypatch, "exit 0")
     assert preflight.толкнуть(root) == 0
     assert журнал.read_text(encoding="utf-8").strip() == "push -u origin agent/x"
     assert "толкнуто: agent/x" in capsys.readouterr().out
+
+
+def test_zavisshiy_tolchok_daet_tretiy_iskhod(tmp_path, monkeypatch, capsys):
+    """Предел толчка исполняется (100, обзор #796): без `timeout=` вызов висел бы."""
+    root = _для_толчка(tmp_path, "agent/x", 0)
+    _подложить_git(tmp_path, monkeypatch, "exec sleep 5")
+    monkeypatch.setattr(preflight, "ПРЕДЕЛ_ТОЛЧКА", 0.5)
+    assert preflight.толкнуть(root) == 2
+    assert "не закончился за 0.5 с" in capsys.readouterr().err
+
+
+def test_zavisshiy_storozh_derzhit_tolchok(tmp_path, monkeypatch, capsys):
+    """Предел сторожа исполняется, и до толчка зависание не доходит."""
+    root = _для_толчка(tmp_path, "agent/x", 0)
+    (root / ".claude" / "hooks" / "push_guard.py").write_text(
+        "import time; time.sleep(5)\n", encoding="utf-8")
+    журнал = _подложить_git(tmp_path, monkeypatch, "exit 0")
+    monkeypatch.setattr(preflight, "ПРЕДЕЛ_СТОРОЖА", 0.5)
+    assert preflight.толкнуть(root) == 2
+    assert "не ответил за 0.5 с" in capsys.readouterr().err
+    assert not журнал.exists()
+
+
+def test_vtoroy_spisok_branches_ne_teryaetsya(tmp_path):
+    """Второй блок `branches:` читается, а не теряется молча (обзор #796)."""
+    root = _для_толчка(tmp_path, "agent/x", 0)
+    (root / ".github" / "workflows" / "agent-pr.yml").write_text(
+        'on:\n  push:\n    branches:\n      - "agent/**"\n'
+        '  pull_request:\n    branches:\n      - "bot/**"\n      - "agent/**"\n',
+        encoding="utf-8")
+    assert preflight.приставки(root) == ("agent/", "bot/")
