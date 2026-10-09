@@ -1034,6 +1034,16 @@ formats that never moved.
 `absent` — файла нет, `unreadable` — не прочитан, и причина названа. Последние
 два не равны «всё сходится»: сегмент значка у сверяющего будет серым.
 
+**Семейный значок.** Проект сверяет себя сам: `scripts/family_check.py`
+находит в своём дереве, на чём он стоит (`uses: <издатель>/…@<ссылка>`,
+номера `.rules/bindings.json`, номер своих фактов, парные `takes`), и
+сравнивает со свежими версиями из `family.json`. Сегменты: `gives` (отдаю),
+`family` (беру у семьи), `pairs` (беру парно), `external` (внешние — на этой
+ступени не сверяются). Любое отставание по семье и парам — красный, минор
+тоже; нечего сверять или не прочитано — серый. Значок каталога —
+[`family.svg`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/family.svg),
+разбор — `family-check.json` рядом.
+
 Every family project publishes `.github/badges/contracts.json` on its `badges`
 branch: what it gives, its latest release and the pairwise links that cannot
 be discovered automatically. The catalogue collects them into `family.json`.
