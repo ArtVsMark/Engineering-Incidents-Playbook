@@ -389,6 +389,10 @@ def main(argv: list[str] | None = None) -> int:
 #: воскрешение слитой ветки (202), толчок не в ту ветку (012), тело первого
 #: коммита, которое не пройдёт гейт изменения.
 СТОРОЖ = Path(".claude") / "hooks" / "push_guard.py"
+#: Пределы времени сторожа и толчка, в секундах (100, обзор #793): зависший
+#: запрос учётных данных или сеть повесили бы окно, а не дали третий исход.
+#: Сторож ходит на площадку за одной веткой, толчок везёт ветку целиком.
+ПРЕДЕЛ_СТОРОЖА, ПРЕДЕЛ_ТОЛЧКА = 60, 180
 #: Приставка, по которой конвейер открывает изменение, — из его же файла.
 ОТКРЫТИЕ = Path(".github") / "workflows" / "agent-pr.yml"
 
@@ -401,8 +405,13 @@ def приставки(root: Path) -> tuple[str, ...]:
     бы, а красного не было бы нигде (022).
     """
     текст = (root / ОТКРЫТИЕ).read_text(encoding="utf-8")
+    # ТОЛЬКО СПИСОК ПОД `branches:` (обзор #793): строка того же вида в другом
+    # списке файла прочиталась бы приставкой.
+    блок = re.search(r"^(\s*)branches:\s*\n((?:\1\s+- .*\n?)+)", текст, re.M)
+    if not блок:
+        return ()
     return tuple(m.group(1) for m in
-                 re.finditer(r'^\s+- "?([\w./-]+?)\*\*"?\s*$', текст, re.M))
+                 re.finditer(r'^\s+- "?([\w./-]+?)\*\*"?\s*$', блок.group(2), re.M))
 
 
 def толкнуть(root: Path) -> int:
@@ -433,15 +442,26 @@ def толкнуть(root: Path) -> int:
         return 2
     команда = f"git push -u origin {ветка}"
     событие = json.dumps({"tool_name": "Bash", "tool_input": {"command": команда}})
-    сторож = subprocess.run([sys.executable, str(root / СТОРОЖ)], cwd=root,
-                            input=событие, capture_output=True, text=True,
-                            encoding="utf-8")
+    try:
+        сторож = subprocess.run([sys.executable, str(root / СТОРОЖ)], cwd=root,
+                                input=событие, capture_output=True, text=True,
+                                encoding="utf-8", timeout=ПРЕДЕЛ_СТОРОЖА)
+    except subprocess.TimeoutExpired:
+        print(f"толчок не сделан: сторож {СТОРОЖ} не ответил за "
+              f"{ПРЕДЕЛ_СТОРОЖА} с", file=sys.stderr)
+        return 2
     if сторож.returncode != 0:
         print(f"толчок не сделан — сторож отказал:\n{сторож.stderr.strip()}",
               file=sys.stderr)
         return 2
-    толчок = subprocess.run(команда.split(), cwd=root, capture_output=True,
-                            text=True, encoding="utf-8")
+    try:
+        толчок = subprocess.run(команда.split(), cwd=root, capture_output=True,
+                                text=True, encoding="utf-8",
+                                timeout=ПРЕДЕЛ_ТОЛЧКА)
+    except subprocess.TimeoutExpired:
+        print(f"толчок не прошёл: {команда} не закончился за "
+              f"{ПРЕДЕЛ_ТОЛЧКА} с", file=sys.stderr)
+        return 2
     print((толчок.stdout + толчок.stderr).strip())
     if толчок.returncode != 0:
         print(f"толчок не прошёл: {команда} — код {толчок.returncode}, вывод git выше",
