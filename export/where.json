@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-09T05:15:30+00:00",
+  "generated_at": "2026-10-09T05:16:58+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -1795,7 +1795,7 @@
         },
         "154": {
           "mechanism": "gate",
-          "where": "scripts/check_bindings.py — ответ `active` + `none` без поля `why` отвергается до слияния, симметрично тому, как `why` давно обязателен при `rejected` и `not-applicable`. Гейт держит форму: что причина есть. Того, что она не пересказ самого правила, он не держит — это чтение при приёмке, и граница названа в самой записи",
+          "where": "scripts/answer_form.py — та же форма у каталога и у проекта (действие answer); scripts/check_bindings.py — ответ `active` + `none` без поля `why` отвергается до слияния, симметрично тому, как `why` давно обязателен при `rejected` и `not-applicable`. Гейт держит форму: что причина есть. Того, что она не пересказ самого правила, он не держит — это чтение при приёмке, и граница названа в самой записи",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-09-17",
@@ -2103,7 +2103,7 @@
         },
         "182": {
           "mechanism": "gate",
-          "where": "scripts/check_bindings.py — у каждого ответа `mechanism: none` обязано стоять поле `machine_half`: что следует из данных целиком и почему оно не построено",
+          "where": "scripts/answer_form.py — та же форма у каталога и у проекта (действие answer); scripts/check_bindings.py — у каждого ответа `mechanism: none` обязано стоять поле `machine_half`: что следует из данных целиком и почему оно не построено",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-09-17",
@@ -2411,7 +2411,7 @@
         },
         "213": {
           "mechanism": "gate",
-          "where": "scripts/check_bindings.py — словарь holdable из четырёх слов: `refused` без замера в machine_half отвергается находкой, с замером считается своим числом («отказано по замеру») в строке ступени 0 и в долг не идёт; контракт ответа поднят до 1.6 в .rules/bindings.json, templates/bindings.json и export/README.md. ГРАНИЦА: верно ли, что предупреждение отвергнуто по делу (051), машина не судит — это читается в why",
+          "where": "scripts/answer_form.py — та же форма у каталога и у проекта (действие answer); scripts/check_bindings.py — словарь holdable из четырёх слов: `refused` без замера в machine_half отвергается находкой, с замером считается своим числом («отказано по замеру») в строке ступени 0 и в долг не идёт; контракт ответа поднят до 1.6 в .rules/bindings.json, templates/bindings.json и export/README.md. ГРАНИЦА: верно ли, что предупреждение отвергнуто по делу (051), машина не судит — это читается в why",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-09-25",

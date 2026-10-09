@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 217 | 0 | 0 | 201 | 152 | 7 | 1 | 27 | 14 | 124 |  |
+| `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 217 | 0 | 0 | 201 | 152 | 7 | 1 | 27 | 14 | 125 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 195 | 22 | 0 | 192 | 85 | 39 | 0 | 68 | 0 | 144 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 113 | 19 | 0 | 12 | 0 | 53 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 215 | 2 | 0 | 183 | 99 | 9 | 0 | 58 | 17 | 104 |  |
@@ -111,6 +111,7 @@
 | `Engineering-Incidents-Playbook` | `.github/workflows/main-red.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.rules/bindings.json` | 3 |
 | `Engineering-Incidents-Playbook` | `docs/VERSIONING.md` | 3 |
+| `Engineering-Incidents-Playbook` | `scripts/answer_form.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_links.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_locale.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_python_version.py` | 3 |
