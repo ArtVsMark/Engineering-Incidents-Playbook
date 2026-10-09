@@ -307,3 +307,58 @@ def test_пустой_раздел_авторов_подписи_не_даёт(r
 
     assert ca.main() == 2
     assert capsys.readouterr().out.strip() == ""
+
+
+# ── слияние только уплотнением: поле автора не проверяется (#695) ─────────
+
+def _окно(repo: Path) -> Path:
+    """Ветка облачного окна: автором честно стоит согласованный соавтор."""
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    commit(repo, "от окна", f"Co-Authored-By: {AGREED}",
+           author=("Claude", "noreply@anthropic.com"))
+    return authors_file(repo)
+
+
+def test_окно_автором_при_merge_находка(repo, capsys, monkeypatch):
+    path = _окно(repo)
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path)])
+    assert ca.main() == 1
+    assert "СОАВТОР, а не автор" in capsys.readouterr().err
+
+
+def test_окно_автором_при_squash_проходит_и_это_названо(repo, capsys, monkeypatch):
+    """Ложный отказ из #695: при уплотнении поле автора в историю не едет."""
+    path = _окно(repo)
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path), "--merge-method", "squash"])
+    assert ca.main() == 0
+    assert "поле автора не проверялось" in capsys.readouterr().out
+
+
+def test_squash_не_снимает_проверку_трейлеров(repo, capsys, monkeypatch):
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    commit(repo, "чужой", "Co-Authored-By: Чужой <x@example.com>")
+    path = authors_file(repo)
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path), "--merge-method", "squash"])
+    assert ca.main() == 1
+    assert "соавтор вне списка" in capsys.readouterr().err
+
+
+def test_squash_вместе_с_объявленным_автором_это_третий_исход(repo, capsys, monkeypatch):
+    """Требовать поле, которое в историю не едет, нечем — противоречие входов
+    называется, а не решается молча за проект."""
+    path = _окно(repo)
+    write(path, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path), "--merge-method", "squash",
+        "--require-declared-author"])
+    assert ca.main() == 2
+    assert "снимите один из ключей" in capsys.readouterr().err

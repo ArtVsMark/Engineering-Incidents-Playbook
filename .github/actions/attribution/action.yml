@@ -58,6 +58,16 @@ inputs:
       облачные окна, нужен отказ; это свойство проекта, а не инструмента.
     required: false
     default: "false"
+  merge-method:
+    description: >-
+      Как проект сливает изменения: merge (по умолчанию) или squash. При
+      squash поле автора коммитов ветки в общую ветку не едет — автора задаёт
+      открывший изменение (правило 131), — и гейт его не проверяет. Без этого
+      входа у проекта со слиянием только уплотнением каждое изменение
+      облачного окна получало ложный отказ (задача #695). Это объявление
+      проекта: разрешите объединяющее слияние — верните merge.
+    required: false
+    default: merge
   mode:
     description: "branch — коммиты ветки; first-parents — первопредки общей ветки"
     required: false
@@ -108,6 +118,7 @@ runs:
         if [ "${{ inputs.require-coauthor }}" = "true" ]; then
           args+=(--require-coauthor)
         fi
+        args+=(--merge-method "${{ inputs.merge-method }}")
         if [ "${{ inputs.mode }}" = "first-parents" ]; then
           args+=(--first-parents --ref "${{ inputs.ref }}")
           if [ -n "${{ inputs.since }}" ]; then
