@@ -101,7 +101,7 @@ CONTRACTS_MARKER_RE = re.compile(
     r"(<!--m:contracts-->).*?(<!--/m:contracts-->)", re.S)
 #: Порядок ключей в примере — тот же, что в выгрузке: читатель сверяет глазами.
 CONTRACTS_ORDER = ("export", "bindings", "consumers", "proposals",
-                   "showcase", "where")
+                   "showcase", "where", "family")
 
 #: ЗНАЧКА С ЧИСЛОМ ПРАВИЛ БОЛЬШЕ НЕТ, и это решение владельца 1 октября, а
 #: не пропажа. Первая строка обоих README несёт то же число маркером
@@ -947,6 +947,8 @@ CONTRACT_FILES = {
 #: Поэтому номер спрашивается у сборщика — там же, где он и объявлен (035).
 CONTRACT_MODULES = {
     "where": ("aggregate_bindings", "SUMMARY_SCHEMA"),
+    # Манифест и сводка семьи — тоже на ветке `badges`, номер у сборщика.
+    "family": ("family", "FAMILY_SCHEMA"),
 }
 
 

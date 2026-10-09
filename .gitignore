@@ -42,6 +42,8 @@ coverage.xml
 # поэтому возврат файла в дерево ловит scripts/check_derived.py.
 export/where.json
 export/where.md
+# Сводка манифестов семьи — тот же владелец и то же место (scripts/family.py).
+export/family.json
 
 # Окружение проверки облачного окна: собирает .claude/hooks/session-start.sh,
 # в дереве не хранится.
