@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-09T10:04:37+00:00",
+  "generated_at": "2026-10-09T10:07:11+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -16,11 +16,11 @@
         "not-applicable": 16
       },
       "by_mechanism": {
-        "gate": 154,
+        "gate": 155,
         "pipeline": 10,
         "skill": 5,
         "document": 23,
-        "none": 9
+        "none": 8
       },
       "rules": {
         "001": "active",
@@ -2355,15 +2355,15 @@
           "origin_kind": ""
         },
         "208": {
-          "mechanism": "none",
-          "where": "механизма нет, и предмет для него назван точно: у scripts/preflight.py должен появиться заход, который сам толкает ветку и зовётся ТОЛЬКО после зелёного. Сегодня `grep -c push scripts/preflight.py` даёт 0 — вердикт печатается, толчок набирается отдельной командой тем же окном. Причина отсутствия названа в why",
-          "holdable": "not-yet",
-          "awaiting": "заход `--push` у scripts/preflight.py: сегодня упоминаний толчка в нём 0, у соседа механизм стоит и проверен откатом с 2 концов",
-          "analysed": "2026-09-17",
-          "decided": "2026-09-17",
+          "mechanism": "gate",
+          "where": "scripts/preflight.py --push — толкает текущую ветку ТЕМ ЖЕ вызовом, что проверяет, и только после чистого прогона: находка или третий исход до толчка не доходят. Перед толчком зовётся тот же сторож толчка окна (хук push_guard), что висит хуком на `git push` (хук подпроцесса не видит): воскрешение слитой ветки, толчок не туда, тело первого коммита. Приставка ветки берётся из прогона открытия изменения, а не пишется второй копией. tests/test_preflight.py — оба конца сцепки: находка — толчка нет; чисто без --push — толчка нет; --push с --only — третий исход; отказ сторожа держит толчок (полу-откат краснеет). ГРАНИЦА: прямой `git push` остаётся возможным — обход законен, когда он назван (154); каким путём идут толчки, прогон не считает",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms:scripts/preflight.py@0fe76b748dd3",
+          "origin_kind": "adapted"
         },
         "209": {
           "mechanism": "none",
