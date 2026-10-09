@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-09T09:12:10+00:00",
+  "generated_at": "2026-10-09T09:13:39+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -18,8 +18,8 @@
       "by_mechanism": {
         "gate": 152,
         "document": 27,
-        "skill": 1,
-        "none": 14,
+        "skill": 5,
+        "none": 10,
         "pipeline": 7
       },
       "rules": {
@@ -551,13 +551,13 @@
           "origin_kind": "adapted"
         },
         "031": {
-          "mechanism": "none",
-          "where": "задания исполнителям окна — в разговоре; в дереве механизма нет, причина в why",
+          "mechanism": "skill",
+          "where": ".claude/skills/parallel-waves/SKILL.md — шаг 1 «Размер волны — числом». Навык читается в момент выдачи заданий исполнителям; гейта нет — задание живёт в разговоре окна, в дереве его нет",
           "holdable": "no",
           "awaiting": "",
-          "analysed": "2026-10-08",
+          "analysed": "2026-10-09",
           "decided": "2026-10-08",
-          "skill": "",
+          "skill": ".claude/skills/parallel-waves",
           "origin": "",
           "origin_kind": ""
         },
@@ -584,13 +584,13 @@
           "origin_kind": "own"
         },
         "034": {
-          "mechanism": "none",
-          "where": "задания исполнителям окна — в разговоре; в дереве механизма нет, причина в why",
+          "mechanism": "skill",
+          "where": ".claude/skills/parallel-waves/SKILL.md — шаг 2 «Зона одного исполнителя — малая» и запреты окружения в шаге 3. Навык читается в момент выдачи заданий исполнителям; гейта нет — задание живёт в разговоре окна, в дереве его нет",
           "holdable": "no",
           "awaiting": "",
-          "analysed": "2026-10-08",
+          "analysed": "2026-10-09",
           "decided": "2026-10-08",
-          "skill": "",
+          "skill": ".claude/skills/parallel-waves",
           "origin": "",
           "origin_kind": ""
         },
@@ -837,13 +837,13 @@
           "origin_kind": "own"
         },
         "060": {
-          "mechanism": "none",
-          "where": "задания исполнителям окна — в разговоре; в дереве механизма нет, причина в why",
+          "mechanism": "skill",
+          "where": ".claude/skills/parallel-waves/SKILL.md — шаг 4 «разбор по двум осям» и стоп при непрошедшей выборке. Навык читается в момент выдачи заданий исполнителям; гейта нет — задание живёт в разговоре окна, в дереве его нет",
           "holdable": "no",
           "awaiting": "",
-          "analysed": "2026-10-08",
+          "analysed": "2026-10-09",
           "decided": "2026-10-08",
-          "skill": "",
+          "skill": ".claude/skills/parallel-waves",
           "origin": "",
           "origin_kind": ""
         },
@@ -1398,13 +1398,13 @@
           "origin_kind": "own"
         },
         "117": {
-          "mechanism": "none",
-          "where": "задания исполнителям окна — в разговоре; у ревьюера .github/workflows/review.yml числом задан только предел времени (`timeout-minutes: 20`); в дереве механизма нет, причина в why",
+          "mechanism": "skill",
+          "where": ".claude/skills/parallel-waves/SKILL.md — шаг 3 «В задании стоят числа». Навык читается в момент выдачи заданий исполнителям; гейта нет — задание живёт в разговоре окна, в дереве его нет",
           "holdable": "no",
           "awaiting": "",
-          "analysed": "2026-10-08",
+          "analysed": "2026-10-09",
           "decided": "2026-10-08",
-          "skill": "",
+          "skill": ".claude/skills/parallel-waves",
           "origin": "",
           "origin_kind": ""
         },
