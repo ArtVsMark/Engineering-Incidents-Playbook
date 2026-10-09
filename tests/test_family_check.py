@@ -94,7 +94,7 @@ def test_значок_рисует_общая_функция_и_называет
     root = дерево(tmp_path, f"{МЕХ}/.github/workflows/step-x.yml@v1.4.0")
     разбор = fc.разобрать(root, сводка(издатель(МЕХ)), КАТАЛОГ)
     svg = fc.значок(разбор)
-    assert "family 1 behind" in svg and fc.ЦВЕТ["behind"] in svg
+    assert "family ✗1" in svg and fc.ЦВЕТ["behind"] in svg
     assert разбор["segments"]["external"]["state"] == "unknown"
     assert разбор["segments"]["gives"]["why"]          # не издатель — названо
 
@@ -131,7 +131,7 @@ def _манифест(root: Path, tag: str | None, **поверх) -> None:
 def test_сегмент_отдаю(tmp_path, monkeypatch, тег_манифеста, в_сводке, итог):
     monkeypatch.setattr(fc, "latest_tag", lambda root: "v2.0.0")
     _манифест(tmp_path, тег_манифеста)
-    свод = сводка(издатель("o/p", tag=тег_манифеста)) if в_сводке else сводка()
+    свод = сводка(издатель("o/p", tag=тег_манифеста, x="1.0")) if в_сводке else сводка()
     связи = fc.отдаю(tmp_path, свод, "o/p", json.loads(
         (tmp_path / family.MANIFEST).read_text(encoding="utf-8")))
     assert fc.итог(связи) == итог
@@ -153,5 +153,49 @@ def test_main_пишет_значок_и_разбор(tmp_path, capsys):
     assert fc.main(["--root", str(root), "--family", str(файл), "--repo", "o/p"]) == 0
     разбор = json.loads((root / fc.РАЗБОР).read_text(encoding="utf-8"))
     assert разбор["segments"]["family"]["state"] == "behind"
-    assert "family 1 behind" in (root / fc.SVG).read_text(encoding="utf-8")
+    assert "family ✗1" in (root / fc.SVG).read_text(encoding="utf-8")
     assert "v1.4.0" in capsys.readouterr().out
+
+
+
+def test_номер_разошёлся_со_сводкой_серый(tmp_path, monkeypatch):
+    """Сводка ещё не перечитала манифест — видно, но это не отставание (обзор #808)."""
+    monkeypatch.setattr(fc, "latest_tag", lambda root: "v2.0.0")
+    манифест = {"schema": "1.1", "project": "o/p", "takes": [], "gives": {"x": "1.1"},
+                "release": {"tag": "v2.0.0", "sha": SHA}}
+    связи = fc.отдаю(tmp_path, сводка(издатель("o/p", tag="v2.0.0", x="1.0")), "o/p", манифест)
+    assert [(с.state, с.why) for с in связи if с.what == "x"] == [
+        ("unknown", "сводка ещё не перечитала манифест")]
+
+
+def _издатели(root, свод, свой="o/p", манифест=None):
+    if манифест is not None:
+        _манифест(root, None, **манифест)
+    return {и["code"]: и["state"] for и in fc.разобрать(root, свод, свой)["publishers"]}
+
+
+def test_блок_издателей(tmp_path):
+    """EPM отстаёт, с витриной связи нет и отказ не объявлен — красный «—»,
+    каталог без манифеста в сводке — нет связи тоже."""
+    root = дерево(tmp_path, f"{МЕХ}/.github/workflows/step-x.yml@v1.4.0")
+    состояния = _издатели(root, сводка(издатель(МЕХ)))
+    assert состояния == {"EIP": "none", "EPM": "behind", "AVM": "none"}
+
+
+def test_отказ_с_причиной_серый_а_не_красный(tmp_path):
+    root = дерево(tmp_path)
+    состояния = _издатели(root, сводка(), манифест={"skips": {"EPM": "шаги не нужны: нет PR"}})
+    assert состояния["EPM"] == "skipped" and состояния["AVM"] == "none"
+
+
+def test_свой_издатель_показывает_отдачу(tmp_path, monkeypatch):
+    monkeypatch.setattr(fc, "latest_tag", lambda root: None)
+    root = дерево(tmp_path)
+    состояния = _издатели(root, сводка(), свой=МЕХ, манифест={"project": МЕХ})
+    assert состояния["EPM"] != "none"
+
+
+def test_пустая_причина_отказа_не_форма():
+    doc = {"schema": "1.1", "project": "o/p", "release": None, "gives": {}, "takes": [],
+           "skips": {"EPM": " "}}
+    assert "skips" in family.изъян_формы(doc)
