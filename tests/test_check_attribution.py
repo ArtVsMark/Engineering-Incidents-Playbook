@@ -387,7 +387,7 @@ def test_squash_при_слиянии_в_общей_ветке_предупре�
         "--authors", str(path), "--merge-method", "squash", "--baseline", ""])
     assert ca.main() == 0
     вывод = capsys.readouterr().out
-    assert "коммитов слияния 1" in вывод and "верните merge" in вывод
+    assert вывод.count("::warning::") == 1 and "верните merge" in вывод
 
 
 def test_squash_без_слияний_молчит(repo, capsys, monkeypatch):
@@ -397,7 +397,30 @@ def test_squash_без_слияний_молчит(repo, capsys, monkeypatch):
         "check_attribution.py", "--repo", str(repo), "--range", "база..HEAD",
         "--authors", str(path), "--merge-method", "squash", "--baseline", ""])
     assert ca.main() == 0
-    assert "внимание" not in capsys.readouterr().out
+    assert "::warning::" not in capsys.readouterr().out
+
+
+def test_squash_после_перехода_молчит(repo, capsys, monkeypatch):
+    """Старые слияния объявлению не противоречат: после первого уплотнения
+    предупреждение кончается само (обзор #787)."""
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    run(repo, "checkout", "-q", "-b", "тема")
+    write(repo / "тема.txt", "своё")
+    run(repo, "add", "-A")
+    run(repo, "commit", "-q", "-m", f"в теме\n\nCo-Authored-By: {AGREED}")
+    run(repo, "checkout", "-q", "main")
+    run(repo, "merge", "-q", "--no-ff", "-m", "старое слияние", "тема")
+    commit(repo, "уплотнённое", f"Co-Authored-By: {AGREED}")
+    run(repo, "branch", "база", "main")
+    commit(repo, "от окна", f"Co-Authored-By: {AGREED}",
+           author=("Claude", "noreply@anthropic.com"))
+    path = authors_file(repo)
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "база..HEAD",
+        "--authors", str(path), "--merge-method", "squash", "--baseline", ""])
+    assert ca.main() == 0
+    assert "::warning::" not in capsys.readouterr().out
 
 
 def test_отказ_при_merge_подсказывает_вход(repo, capsys, monkeypatch):
