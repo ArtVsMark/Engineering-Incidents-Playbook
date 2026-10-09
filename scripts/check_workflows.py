@@ -486,14 +486,20 @@ def cancelling_groups(text: str) -> list[tuple[str, bool]]:
 #: `github.event.after` у push, `github.event.head_commit.id`. Они отсеиваются
 #: поимённо, рядом со словом, а не вместо него: условное выражение вида
 #: `… && 'main' || github.ref` законно, и разрешительный список полей
-#: отверг бы его вместе с ними (badges.yml).
+#: отверг бы его вместе с ними (badges.yml). Скобочная запись
+#: (`github.event['after']`) приводится к точечной до сверки, и
+#: `commits[0].id` — тот же SHA события (обзор #772). ПЕРЕЧЕНЬ ИМЁН НЕПОЛОН
+#: и полным не станет: выражение площадки умеет больше, чем разбор, — это
+#: граница, а не обещание (140).
 #: ГРАНИЦА остаётся и названа в сообщении: проверяется НАЛИЧИЕ опроса в файле,
 #: а не то, что опрос стоит в нужном шаге и читает нужное состояние, — и
 #: `gh api` внутри строки `echo` тоже засчитается (182).
 ОПРОС_ПЛОЩАДКИ_RE = re.compile(r"\bgh\s+(?:api|run\s+list|pr\s+(?:view|list))\b")
 ГОЛОВА_ВЕТКИ_RE = re.compile(r"^\s+ref:\s*(\S.*)$")
 SHA_СОБЫТИЯ_RE = re.compile(
-    r"\bgithub\.event\.(?:after|before)\b|\bhead_commit\.id\b")
+    r"\bgithub\.event\.(?:after|before)\b|\bhead_commit\.id\b"
+    r"|\bcommits\[\s*\d+\s*\]\.id\b")
+СКОБКИ_RE = re.compile(r"\[\s*['\"]([\w-]+)['\"]\s*\]")
 ТОЛЬКО_РУКОЙ = {"workflow_dispatch", "schedule"}
 
 
@@ -507,7 +513,7 @@ def читает_состояние(text: str) -> bool:
             return True
         m = ГОЛОВА_ВЕТКИ_RE.match(строка)
         if (m and "sha" not in m.group(1).lower()
-                and not SHA_СОБЫТИЯ_RE.search(m.group(1))):
+                and not SHA_СОБЫТИЯ_RE.search(СКОБКИ_RE.sub(r".\1", m.group(1)))):
             return True
     return False
 

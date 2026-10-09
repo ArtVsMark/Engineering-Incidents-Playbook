@@ -907,6 +907,10 @@ def test_опрос_в_комментарии_не_считается():
     "          ref: ${{ github.event.after }}\n",
     "      - uses: actions/checkout@v5\n        with:\n"
     "          ref: ${{ github.event.head_commit.id }}\n",
+    "      - uses: actions/checkout@v5\n        with:\n"
+    "          ref: ${{ github.event['after'] }}\n",
+    "      - uses: actions/checkout@v5\n        with:\n"
+    "          ref: ${{ github.event.commits[0].id }}\n",
 ])
 def test_sha_события_и_хвостовой_комментарий_не_опрос(steps):
     текст = ОЖИДАЮЩИЙ.format(group="one", steps=steps)
