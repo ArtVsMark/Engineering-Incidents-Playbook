@@ -228,10 +228,15 @@ def unseparated(source: str) -> list[tuple[int, str]]:
     return found
 
 
-#: Разборы, которые NUL разделителем не считают: `split()` без аргумента режет
-#: по пробельным, `splitlines()` — по переводам строк, и ни то ни другое не
-#: видит `\0` (#762).
-РАЗБОР_НЕ_ПО_NUL = ("split", "splitlines")
+#: Методы, режущие строку. Находка — любой из них на выводе `-z`, кроме
+#: `split("\0")`: `split()` и `split(None)` режут по пробельным, `split("\n")`
+#: и `splitlines()` — по переводам строк, и никто из них не видит `\0` (#762,
+#: ревью #764).
+РЕЖУЩИЕ = ("split", "rsplit", "splitlines")
+
+#: Узлы, открывающие СВОЮ область имён: внутри — свои переменные, и имя
+#: внешней функции к ним отношения не имеет (ревью #764).
+ОБЛАСТИ = (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)
 
 
 def _списочный_z(node: ast.AST) -> bool:
@@ -245,10 +250,48 @@ def _списочный_z(node: ast.AST) -> bool:
 
 
 def _корень(node: ast.AST) -> ast.AST:
-    """Начало цепочки `done.stdout[…]` — то, к чему привязан разбор."""
-    while isinstance(node, (ast.Attribute, ast.Subscript)):
-        node = node.value
+    """Начало цепочки `done.stdout.strip()[…]` — то, к чему привязан разбор.
+
+    Цепочка идёт и сквозь вызовы методов: `.strip().split("\\n")` режет тот
+    же вывод (ревью #764). Останавливается на самом вызове git с `-z`.
+    """
+    while not _списочный_z(node):
+        if isinstance(node, (ast.Attribute, ast.Subscript)):
+            node = node.value
+        elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+            node = node.func.value
+        else:
+            break
     return node
+
+
+def _режет_не_по_nul(call: ast.Call) -> bool:
+    """Разбор, который NUL разделителем не считает.
+
+    Разделитель-переменная находкой не считается: чему она равна, разбор
+    исходника не знает, и красное на ней было бы догадкой (051).
+    """
+    if call.func.attr == "splitlines":
+        return True
+    sep = call.args[0] if call.args else next(
+        (k.value for k in call.keywords if k.arg == "sep"), None)
+    if sep is None:
+        return True
+    if isinstance(sep, ast.Constant):
+        return sep.value != "\0"
+    return False
+
+
+def _узлы_области(корень: ast.AST) -> list[ast.AST]:
+    """Узлы одной области имён — без тел вложенных функций и лямбд."""
+    out: list[ast.AST] = []
+    стек = list(ast.iter_child_nodes(корень))
+    while стек:
+        n = стек.pop()
+        out.append(n)
+        if not isinstance(n, ОБЛАСТИ):
+            стек.extend(ast.iter_child_nodes(n))
+    return out
 
 
 def _имена(target: ast.AST) -> set[str]:
@@ -259,43 +302,53 @@ def unsplit(source: str) -> list[tuple[int, str]]:
     """Строки, где вывод `git … -z` разобран не по NUL.
 
     Предмет — ОТНОШЕНИЕ вызова и разбора, а не присутствие `.split()` в файле
-    (166): связь прослеживается присваиванием в той же функции или цепочкой
-    прямо на вызове. Другие `.split()` той же функции находками не становятся,
-    если их начало не связано с выводом `-z`.
+    (166). Связь прослеживается в ОДНОЙ области имён и В ПОРЯДКЕ ИСХОДНИКА:
+    присваивание из вызова с `-z` связывает имя, любое другое присваивание
+    того же имени — развязывает (`d = d.stdout.split("\\0")` делает `d`
+    списком, и `.split()` на нём уже не находка — ревью #764). Цепочка прямо
+    на вызове связана всегда.
     """
     try:
         tree = ast.parse(source)
     except SyntaxError:
         return []
     found: list[tuple[int, str]] = []
-    функции = [n for n in ast.walk(tree)
-               if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
-    # Уровень модуля — всё, что не внутри функции. Множество id строится один
-    # раз: попарное сравнение узлов модуля с узлами функций было квадратичным
-    # и на дереве каталога шло минутами.
-    внутри = {id(m) for f in функции for m in ast.walk(f)}
-    области = [[n for n in ast.walk(tree) if id(n) not in внутри],
-               *(list(ast.walk(f)) for f in функции)]
-    for узлы in области:
-        связанные: set[str] = set()
-        for n in узлы:
-            if (isinstance(n, (ast.Assign, ast.AnnAssign))
-                    and n.value is not None
-                    and any(_списочный_z(m) for m in ast.walk(n.value))):
-                цели = n.targets if isinstance(n, ast.Assign) else [n.target]
+    области = [tree, *(n for n in ast.walk(tree) if isinstance(n, ОБЛАСТИ))]
+    for область in области:
+        # События области по месту в исходнике. Присваивание срабатывает в
+        # КОНЦЕ своего узла: правая часть вычисляется до привязки имени.
+        события: list[tuple[tuple[int, int], int, str, ast.AST]] = []
+        for n in _узлы_области(область):
+            if isinstance(n, (ast.Assign, ast.AnnAssign, ast.NamedExpr)) \
+                    and n.value is not None:
+                цели = (n.targets if isinstance(n, ast.Assign) else [n.target])
+                связать = any(_списочный_z(m) for m in ast.walk(n.value))
                 for ц in цели:
-                    связанные |= _имена(ц)
-        for n in узлы:
-            if not (isinstance(n, ast.Call)
-                    and isinstance(n.func, ast.Attribute)
-                    and n.func.attr in РАЗБОР_НЕ_ПО_NUL):
-                continue
-            if n.func.attr == "split" and (n.args or n.keywords):
-                continue
-            корень = _корень(n.func.value)
-            if ((isinstance(корень, ast.Name) and корень.id in связанные)
-                    or _списочный_z(корень)):
-                found.append((n.lineno, n.func.attr))
+                    for имя in _имена(ц):
+                        события.append(((n.end_lineno, n.end_col_offset), 1,
+                                        "связать" if связать else "развязать",
+                                        ast.Name(id=имя)))
+            elif isinstance(n, (ast.For, ast.AsyncFor, ast.With)):
+                цели = ([n.target] if isinstance(n, (ast.For, ast.AsyncFor))
+                        else [i.optional_vars for i in n.items if i.optional_vars])
+                for ц in цели:
+                    for имя in _имена(ц):
+                        события.append(((ц.lineno, ц.col_offset), 1,
+                                        "развязать", ast.Name(id=имя)))
+            elif (isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+                    and n.func.attr in РЕЖУЩИЕ and _режет_не_по_nul(n)):
+                события.append(((n.lineno, n.col_offset), 0, "разбор", n))
+        связанные: set[str] = set()
+        for _, _, что, n in sorted(события, key=lambda e: (e[0], e[1])):
+            if что == "связать":
+                связанные.add(n.id)
+            elif что == "развязать":
+                связанные.discard(n.id)
+            else:
+                корень = _корень(n.func.value)
+                if ((isinstance(корень, ast.Name) and корень.id in связанные)
+                        or _списочный_z(корень)):
+                    found.append((n.lineno, n.func.attr))
     return sorted(set(found))
 
 

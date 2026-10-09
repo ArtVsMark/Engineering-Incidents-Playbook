@@ -10,6 +10,8 @@
 """
 
 
+import pytest
+
 import check_subprocess as cs
 
 
@@ -139,6 +141,53 @@ def test_imya_iz_drugoy_funktsii_ne_svyazano():
     код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z + "    return done\n"
            "def g(done):\n    return done.split()\n")
     assert cs.unsplit(код) == []
+
+
+@pytest.mark.parametrize("разбор", [
+    'done.stdout.strip().split("\\n")',
+    "done.stdout.split(None)",
+    "done.stdout.split(maxsplit=1)",
+    "done.stdout.rsplit()",
+])
+def test_lyuboy_razdelitel_krome_nul_nahodka(разбор):
+    """Ревью #764: гейт ловил только `split()` без аргумента, а `split("\\n")`
+    после `.strip()` и `split(maxsplit=1)` склеивают список так же."""
+    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z + f"    return {разбор}\n")
+    assert cs.unsplit(код)
+
+
+def test_razdelitel_peremennaya_ne_nahodka():
+    """Чему равна переменная-разделитель, разбор не знает — красное было бы
+    догадкой (051)."""
+    код = ("import subprocess\ndef f(sep):\n" + ВЫЗОВ_Z
+           + "    return done.stdout.split(sep)\n")
+    assert cs.unsplit(код) == []
+
+
+def test_pereprivyazka_razvyazyvaet():
+    """Ревью #764: `d = d.stdout.split("\\0")` делает `d` списком имён, и
+    `.split()` на имени после этого к выводу `-z` отношения не имеет."""
+    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
+           + '    done = done.stdout.split("\\0")[0]\n'
+           + "    return done.split()\n")
+    assert cs.unsplit(код) == []
+
+
+def test_vlozhennaya_funktsiya_svoya_oblast():
+    """Ревью #764: параметр вложенной функции с тем же именем — другое имя."""
+    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
+           + "    def g(done):\n        return done.split()\n"
+           + "    return g\n")
+    assert cs.unsplit(код) == []
+
+
+def test_svyaz_pered_pereprivyazkoy_eshchyo_nahodka():
+    """Обратная сторона порядка: разбор ДО перепривязки — по-прежнему вывод
+    `-z`, и голый `split()` на нём находка."""
+    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
+           + "    имена = done.stdout.split()\n"
+           + "    done = None\n    return имена\n")
+    assert [что for _, что in cs.unsplit(код)] == ["split"]
 
 
 def test_razbor_ne_po_nul_otkaz_cherez_main(tmp_path):
