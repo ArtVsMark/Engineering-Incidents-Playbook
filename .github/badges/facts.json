@@ -2,23 +2,25 @@
   "schema": "1.3",
   "schema_of": "формат ЭТОГО файла — факты каталога для витрины профиля. Не версия каталога, не номер выпуска и не схема выгрузки правил: ключ `schema` в этой экосистеме носят четыре разных предмета (выгрузка, ответ потребителя, сводка, факты) — правило 164",
   "repo": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-09T09:38:08+00:00",
-  "commit": "fbb14bae2bdea25439c48fee42e9f6777bf6e8da",
+  "generated_at": "2026-10-09T09:49:12+00:00",
+  "commit": "9f7f437ed5f74fc7740323d585eab703e2ee22c8",
   "ci": {
     "workflow": "ci.yml"
   },
-  "version": "1.10.9",
+  "version": "1.10.10",
   "release": "1.10",
   "tests": {
-    "functions": 1547,
+    "functions": 1550,
     "modules": 65
   },
   "checks_per_pr": {
-    "count": 3,
+    "count": 5,
     "names": [
       "arm",
       "catalogue",
-      "review"
+      "review",
+      "rulebook-fresh",
+      "window-lifetime"
     ],
     "counts_": "работы прогонов, просыпающихся на событие pull_request. Проверок у коммита может быть видно больше: работа, разбуженная толчком в ветку, попадает в ту же голову, но изменением не вызвана"
   },
@@ -35,9 +37,9 @@
   "rules": {
     "total": 217,
     "gate": 153,
-    "pipeline": 7,
+    "pipeline": 10,
     "skill": 5,
-    "document": 27,
+    "document": 24,
     "none": 9,
     "rejected": 0,
     "not_applicable": 16,

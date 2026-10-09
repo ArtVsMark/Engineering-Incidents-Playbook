@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 61 | 36 | 217 | 0 | 0 | 201 | 153 | 7 | 5 | 27 | 9 | 126 |  |
+| `Engineering-Incidents-Playbook` | подключён | 61 | 36 | 217 | 0 | 0 | 201 | 153 | 10 | 5 | 24 | 9 | 127 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 217 | 0 | 0 | 212 | 95 | 43 | 0 | 74 | 0 | 158 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 128 | 20 | 0 | 10 | 0 | 54 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 217 | 0 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
@@ -66,9 +66,9 @@
 |---|---|---|
 | `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 18 |
 | `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 16 |
+| `Engineering-Incidents-Playbook` | `AGENTS.md` | 15 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 14 |
 | `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 14 |
-| `Engineering-Incidents-Playbook` | `AGENTS.md` | 13 |
 | `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 13 |
 | `Engineering-Incidents-Playbook` | `scripts/check_workflows.py` | 10 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/automerge.yml` | 9 |
@@ -105,6 +105,7 @@
 | `Engineering-Incidents-Playbook` | `.github/workflows/badges.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/consumers-sync.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/main-red.yml` | 3 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/mechanisms.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.rules/bindings.json` | 3 |
 | `Engineering-Incidents-Playbook` | `docs/VERSIONING.md` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/answer_form.py` | 3 |
