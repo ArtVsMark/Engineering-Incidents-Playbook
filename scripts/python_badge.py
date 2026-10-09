@@ -91,6 +91,7 @@ import build_facts  # noqa: E402
 import check_python_version as cv  # noqa: E402
 import coverage_badge  # noqa: E402
 import ghcli  # noqa: E402
+import text_width  # noqa: E402
 from aggregate_bindings import fetch  # noqa: E402
 
 OUT = ROOT / ".github" / "badges" / "python.svg"
@@ -206,9 +207,18 @@ def работы_площадки(run_id: int) -> list[dict]:
     return работы
 
 
+#: Поле части по каждую сторону надписи, как у shields: 5 px.
+ПОЛЕ = 5
+
+
 def _ширина(текст: str) -> int:
-    """Ширина надписи шрифтом 11px Verdana — приближение, как у shields."""
-    return round(len(текст) * 7.2) + 14
+    """Ширина части: надпись Verdana 11px по таблице знаков и поля (#792).
+
+    Была «длина × 7,2 + 14»: узкие `l`, `i`, `/` получали ширину широких, и
+    значок выходил на 20–25 % шире текста. Ширина надписи — общая функция
+    каталога (`text_width`), а не своя формула здесь (214).
+    """
+    return round(text_width.ширина(текст)) + 2 * ПОЛЕ
 
 
 #: Часть значка: надпись, цвет, слово для подсказки.

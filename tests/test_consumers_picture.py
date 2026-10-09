@@ -17,6 +17,7 @@ import re
 import xml.etree.ElementTree as ET
 
 import consumers_picture as cp
+import text_width
 from conftest import write
 
 
@@ -163,12 +164,17 @@ def test_плашки_стоят_в_одних_колонках(repo):
     assert первая == вторая
 
 
+def число(s: str) -> float:
+    """Ширина числа в строке таблицы — той же функцией, что у генератора."""
+    return text_width.ширина(s, cp.ШРИФТ, cp.SIZE["number"], 800)
+
+
 def test_ширина_колонки_берётся_по_самой_широкой_строке(repo):
     """Иначе колонка дышала бы от строки к строке."""
     данные = [подключён("a", gate=5), подключён("b", gate=148)]
 
     # Подпись «гейт» короткая, значит ширину задаёт самое широкое число.
-    assert полоса(данные)["gate"][1] == int(len("148") * cp.NUMBER_K)
+    assert полоса(данные)["gate"][1] == int(число("148"))
 
 
 def test_у_колонок_есть_подписи(repo):
@@ -214,8 +220,9 @@ def test_shirinu_zadayot_to_chto_shire(repo):
     кол = {k: v[1] for k, v in
            полоса([подключён("a", gate=148, **{"process-step": 1})]).items()}
 
-    assert кол["gate"] == int(len("148") * cp.NUMBER_K)
-    assert кол["process-step"] == int(len(w["process-step"]) * cp.LABEL_K)
+    assert кол["gate"] == int(число("148"))
+    assert кол["process-step"] == int(text_width.ширина(
+        w["process-step"], cp.ШРИФТ, cp.SIZE["column"], 700, 0.3))
     assert кол["process-step"] > кол["gate"]
 
 
@@ -447,7 +454,7 @@ def test_kolonka_rodil_ne_naezzhaet_na_sosedniy_blok(repo):
     x, ш = band["born"]
     левый = cp.край(band, cp.shown(cp.rows({"consumers": данные})))[0]
 
-    assert ш >= int(3 * cp.NUMBER_K), "трёхзначное «родил» не поместилось"
+    assert ш >= int(число("127")), "трёхзначное «родил» не поместилось"
     assert левый - (x + ш) == cp.COL_BETWEEN
 
 
@@ -498,7 +505,9 @@ def test_bez_defisa_ryvyom_po_mestu(repo):
     """Имя без разрывов рвётся жёстко: это лучше, чем выехать за колонку."""
     куски = cp.wrap_name("a" * 30)
 
-    assert len(куски) == 2 and len(куски[0]) == cp.NAME_LINE
+    # Влезло ровно столько, сколько помещается по ширине знаков (#792).
+    assert len(куски) == 2 and cp.влезает(куски[0])
+    assert not cp.влезает("a" * (len(куски[0]) + 1))
 
 
 def test_ne_vlezshiy_hvost_obryvaetsya_mnogotochiem(repo):
