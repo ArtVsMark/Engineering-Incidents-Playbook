@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-09T12:49:08+00:00",
+  "generated_at": "2026-10-09T12:56:59+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -12265,7 +12265,7 @@
         },
         "083": {
           "mechanism": "gate",
-          "where": "scripts/review_findings.py — приёмка вывода ревьюера идёт СВОЙСТВАМИ, а не сверкой с эталонным ответом, которого у недетерминированного компонента нет. Свойства держит tests/test_review_findings.py: число в строке вердикта обязано сойтись с числом строк находок, и расхождение объявляется наружу аннотацией (test_a_verdict_that_disagrees_with_its_list_is_announced); вес берётся из закрытой шкалы, слово вне её не приводится к ближайшему, а объявляется «без веса» (test_a_weight_outside_the_scale_is_not_a_weight); отпечаток находки не зависит от переносов и пробелов, то есть переформулировка того же заголовка даёт ту же запись (test_fingerprint_survives_reflow). Выборка — вторая половина правила — читается человеком: находки разбираются по одной, и премиса каждой проверяется до починки (044) У ПРОВЕРКИ ПОЧИНКИ (ArtVsMark/Engineering-Pipeline-Mechanisms#848) СВОЁ СВОЙСТВО: число в вердикте обязано сойтись с числом НЕ закрытых строк `ПОЧИНКА[…]`, и расхождение объявляется так же (test_a_fix_check_that_disagrees_with_its_verdict_is_announced).",
+          "where": "scripts/review_findings.py — приёмка вывода ревьюера идёт СВОЙСТВАМИ, а не сверкой с эталонным ответом, которого у недетерминированного компонента нет. Свойства держит tests/test_review_findings.py: число в строке вердикта обязано сойтись с числом строк находок, и расхождение — свой исход шага с аннотацией после записи прочитанного (test_a_verdict_that_disagrees_with_its_list_is_refused, ArtVsMark/Engineering-Pipeline-Mechanisms#1247); вес берётся из закрытой шкалы, слово вне её не приводится к ближайшему, а объявляется «без веса» (test_a_weight_outside_the_scale_is_not_a_weight); отпечаток находки не зависит от переносов и пробелов, то есть переформулировка того же заголовка даёт ту же запись (test_fingerprint_survives_reflow). Выборка — вторая половина правила — читается человеком: находки разбираются по одной, и премиса каждой проверяется до починки (044) У ПРОВЕРКИ ПОЧИНКИ (ArtVsMark/Engineering-Pipeline-Mechanisms#848) СВОЁ СВОЙСТВО: число в вердикте обязано сойтись с числом НЕ закрытых строк `ПОЧИНКА[…]`, и расхождение — тот же исход, что у основного захода: строки записаны, шаг объявляет ответ спорным отдельным кодом (test_a_fix_check_that_disagrees_with_its_verdict_is_the_same_outcome, ArtVsMark/Engineering-Pipeline-Mechanisms#1272).",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-09-26",
