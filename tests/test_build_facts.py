@@ -342,3 +342,19 @@ def test_тег_договора_в_прогоне_сходится_со_схе�
     скачиваем = re.search(r"for f in ([\w. ]+); do", прогон)[1].split()
     хэши = re.findall(r"^\s*[0-9a-f]{64}  (\S+)$", прогон, re.M)
     assert sorted(хэши) == sorted(скачиваем)
+
+
+def test_токен_записи_живёт_только_в_шаге_публикации():
+    """Скачанная проверка витрины не видит токена (обзор #805): checkout его
+    не оставляет, прописывает его шаг публикации — после проверки — и снимает
+    на выходе из шага."""
+    import re
+    прогон = (bf.ROOT / ".github" / "workflows" / "badges.yml").read_text(encoding="utf-8")
+    шаги = re.split(r"^      - (?=name:|uses:)", прогон, flags=re.M)
+    checkout = [ш for ш in шаги if ш.startswith("uses: actions/checkout")]
+    assert checkout and all("persist-credentials: false" in ш for ш in checkout)
+    с_токеном = [ш for ш in шаги if "extraheader" in ш and "git config" in ш]
+    assert len(с_токеном) == 1 and с_токеном[0].startswith("name: положить на ветку badges")
+    assert "--unset-all http.https://github.com/.extraheader" in с_токеном[0]
+    assert шаги.index(с_токеном[0]) > next(
+        i for i, ш in enumerate(шаги) if ш.startswith("name: Факты отвечают договору витрины"))
