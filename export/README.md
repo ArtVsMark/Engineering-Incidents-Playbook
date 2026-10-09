@@ -977,8 +977,8 @@ repository settings.
 {
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
-    "export": "1.7", "bindings": "1.9", "consumers": "1.1",
-    "proposals": "1.3", "showcase": "1.1", "where": "1.7"
+    "export": "1.7", "bindings": "1.9", "consumers": "1.1", "proposals": "1.3",
+    "showcase": "1.1", "where": "1.7", "family": "1.0"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
                                                // build time, example value
@@ -1018,6 +1018,25 @@ contract moved and when the export was last built. A missing key means "not
 read", never zero. There is deliberately no single unified number: a contract
 version bump is a re-read on your side, and one number would force re-reads of
 formats that never moved.
+
+## Манифест семьи · The family manifest
+
+Каждый проект семьи кладёт на свою ветку `badges` манифест
+`.github/badges/contracts.json`: что он **отдаёт** (`gives` — контракты и их
+номера), последний выпуск (`release` — тег и коммит) и парные связи, которых
+не найти автоматически (`takes` — у кого, какой контракт, в каком файле и под
+каким ключом лежит номер). Каталог собирает манифесты всех проектов реестра в
+[`family.json`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/family.json)
+— это свежие версии издателей, с которыми проект сверяет себя для семейного
+значка. Собирает `scripts/family.py`, формат — `family` в номерах контрактов.
+
+У проекта в сводке одно из трёх состояний: `published` — манифест прочитан,
+`absent` — файла нет, `unreadable` — не прочитан, и причина названа. Последние
+два не равны «всё сходится»: сегмент значка у сверяющего будет серым.
+
+Every family project publishes `.github/badges/contracts.json` on its `badges`
+branch: what it gives, its latest release and the pairwise links that cannot
+be discovered automatically. The catalogue collects them into `family.json`.
 
 ## Сводная таблица · The summary table
 

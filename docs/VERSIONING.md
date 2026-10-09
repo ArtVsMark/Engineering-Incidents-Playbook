@@ -89,6 +89,7 @@ one — and no fallback through package metadata.
 | `schema` в [`.rules/proposals.json`](../.rules/proposals.json) | формат предложения правила, навыка или слияния снизу | проект, который его присылает | когда меняется форма предложения |
 | `schema` в [`.rules/showcase.json`](../.rules/showcase.json) | формат набора вопросов витрины | каталог и потребители витрины | когда меняется состав вопроса |
 | `schema` в [`export/where.json`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.json) | формат сводки «где действует» | тот, кто читает сводку машинно | когда меняется состав среза потребителя |
+| `schema` в [`export/family.json`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/family.json) и в манифесте `.github/badges/contracts.json` каждого проекта | формат манифеста семьи: что проект отдаёт и что берёт парно | каждый проект семьи, сверяющий себя для значка | когда меняется состав манифеста |
 | версия плагина [`catalogue`](../plugins/catalogue/README.md) | навыки, которые проект ставит плагином | площадка, решая, обновлять ли кеш | каждым коммитом витрины: поля `version` нет, версией служит коммит |
 
 **Версию плагина не пишет никто, и это не пропуск.** Без поля `version`

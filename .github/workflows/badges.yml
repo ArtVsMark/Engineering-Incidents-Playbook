@@ -196,6 +196,12 @@ jobs:
           # Копировать его отдельно не нужно: ниже идёт `cp .github/badges/*.json`
           # глобом, и перечисление поимённо завело бы второй список значков (049).
           python scripts/build_facts.py
+          # МАНИФЕСТ И СВОДКА СЕМЬИ — после фактов: номера контрактов те же, что
+          # в выгрузке, и собраны уже сейчас. Манифест уезжает глобом вместе со
+          # значками; сводка читает манифесты соседей, и непрочитанный сосед —
+          # её строка с причиной, а не красный прогон (004).
+          python scripts/family.py --manifest
+          python scripts/family.py --summary
 
       # Единый значок «Python │ ОС │ coverage │ release / PyPI │ version»
       # (решение владельца 1 октября). Стоит ПОСЛЕ значков из дерева: покрытие
@@ -238,7 +244,7 @@ jobs:
           # её читают: `export/where.*` на ветке `badges`. Путь внутри ветки
           # сохранён намеренно — читателю меняется ВЕТКА, а не имя файла.
           mkdir -p "$tmp/export"
-          cp export/where.json export/where.md "$tmp/export/"
+          cp export/where.json export/where.md export/family.json "$tmp/export/"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -291,7 +297,8 @@ jobs:
           #
           # Отсутствие файла здесь — ОТКАЗ, а не пропуск: сборка выше строит его
           # безусловно, и если его нет, то не отработала именно она (075).
-          if [ ! -f "$tmp/export/where.json" ] || [ ! -f "$tmp/export/where.md" ]; then
+          if [ ! -f "$tmp/export/where.json" ] || [ ! -f "$tmp/export/where.md" ] \
+             || [ ! -f "$tmp/export/family.json" ]; then
             echo "::error::Сводка не собралась: $tmp/export пуст. Публиковать нечего, а молчать об этом нельзя — витрина и потребители читают её отсюда."
             exit 1
           fi
