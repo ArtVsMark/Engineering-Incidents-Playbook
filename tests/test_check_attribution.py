@@ -362,3 +362,50 @@ def test_squash_вместе_с_объявленным_автором_это_т�
         "--require-declared-author"])
     assert ca.main() == 2
     assert "снимите один из ключей" in capsys.readouterr().err
+
+
+# ── объявление squash сверяется с общей веткой (обзор #784) ────────────────
+
+def test_squash_при_слиянии_в_общей_ветке_предупреждает(repo, capsys, monkeypatch):
+    """Устаревший вход снимал бы проверку автора молча: коммит слияния
+    в общей ветке называется предупреждением."""
+    make_repo(repo)
+    commit(repo, "первый", f"Co-Authored-By: {AGREED}")
+    run(repo, "checkout", "-q", "-b", "тема")
+    write(repo / "тема.txt", "своё")  # другой файл: слияние без конфликта
+    run(repo, "add", "-A")
+    run(repo, "commit", "-q", "-m", f"в теме\n\nCo-Authored-By: {AGREED}")
+    run(repo, "checkout", "-q", "main")
+    commit(repo, "в main", f"Co-Authored-By: {AGREED}")
+    run(repo, "merge", "-q", "--no-ff", "-m", "слияние темы", "тема")
+    run(repo, "branch", "база", "main")
+    commit(repo, "от окна", f"Co-Authored-By: {AGREED}",
+           author=("Claude", "noreply@anthropic.com"))
+    path = authors_file(repo)
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "база..HEAD",
+        "--authors", str(path), "--merge-method", "squash", "--baseline", ""])
+    assert ca.main() == 0
+    вывод = capsys.readouterr().out
+    assert "коммитов слияния 1" in вывод and "верните merge" in вывод
+
+
+def test_squash_без_слияний_молчит(repo, capsys, monkeypatch):
+    path = _окно(repo)
+    run(repo, "branch", "база", "HEAD~1")
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "база..HEAD",
+        "--authors", str(path), "--merge-method", "squash", "--baseline", ""])
+    assert ca.main() == 0
+    assert "внимание" not in capsys.readouterr().out
+
+
+def test_отказ_при_merge_подсказывает_вход(repo, capsys, monkeypatch):
+    path = _окно(repo)
+    monkeypatch.setattr("sys.argv", [
+        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
+        "--authors", str(path)])
+    assert ca.main() == 1
+    err = capsys.readouterr().err
+    assert "объединяющем слиянии" in err and "--merge-method squash" in err
+    assert "squash перенесёт" not in err
