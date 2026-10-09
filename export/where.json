@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-09T09:50:52+00:00",
+  "generated_at": "2026-10-09T10:01:47+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -16,10 +16,10 @@
         "not-applicable": 16
       },
       "by_mechanism": {
-        "gate": 153,
+        "gate": 154,
         "pipeline": 10,
         "skill": 5,
-        "document": 24,
+        "document": 23,
         "none": 9
       },
       "rules": {
@@ -1607,15 +1607,15 @@
           "origin_kind": "own"
         },
         "136": {
-          "mechanism": "document",
-          "where": ".rules/bindings.json — вердикт о себе пишется после перебора предметов. ГРАНИЦА: полон ли перебор — машине не видно по построению; видно, НАЗВАН ли он в причине вообще, и эта половина не построена — число в why",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/check_bindings.py — отклонение (`rejected`) называет перебор предметов: в причине слово охвата («все», «каждый», «ни одного») или число, номера правил не в счёт; без него — находка. «Не применимо» держит 205 предикатом по дереву. scripts/review_findings.py — вердикт ревьюера сверяется с перечислением: «находок N» против строк «НАХОДКА:», «находок N» без строк — отказ. tests/test_check_bindings.py — обе стороны, полу-откат краснеет. ГРАНИЦА: проверяется, что перебор НАЗВАН, а не что он ПОЛОН — предмет, не попавший в перечисление, отсутствует и в данных (182)",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-25",
-          "decided": "2026-09-25",
+          "analysed": "2026-10-09",
+          "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         },
         "137": {
           "mechanism": "gate",
