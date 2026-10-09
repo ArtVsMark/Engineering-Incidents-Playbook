@@ -259,6 +259,37 @@ def test_фрагмент_из_одного_вердикта_считается_
     assert problems and "пуст" in problems[0]
 
 
+# ── ответ о соседях в журнал не едет (466b867, #473) ──────────────────────
+
+def test_абзац_соседей_в_журнал_не_едет(monkeypatch, repo):
+    prepare(monkeypatch, repo, {"a.fixed.md": (
+        "Починили разбор.\n\n> правило 165 — его половина.\n\n"
+        "Соседи: спросили семь скриптов,\nвсе режут верно.\n")})
+    found, problems = cc.validate()
+    assert problems == []
+    assert found["fixed"] == ["Починили разбор."]
+
+
+def test_хвост_соседей_в_строке_режется_до_конца_абзаца(monkeypatch, repo):
+    prepare(monkeypatch, repo, {"a.changed.md": (
+        "Гейт сужен (#1). Соседи: разбор зовёт только он.\n\n"
+        "Второй абзац записи остаётся.\n")})
+    found, _ = cc.validate()
+    assert found["changed"] == ["Гейт сужен (#1). Второй абзац записи остаётся."]
+
+
+def test_слово_соседи_внутри_фразы_не_режется(monkeypatch, repo):
+    prepare(monkeypatch, repo, {"a.added.md": "Раздел «Соседи: кто решил» добавлен.\n"})
+    found, _ = cc.validate()
+    assert found["added"] == ["Раздел «Соседи: кто решил» добавлен."]
+
+
+def test_фрагмент_из_одних_соседей_считается_пустым(monkeypatch, repo):
+    prepare(monkeypatch, repo, {"a.changed.md": "Соседи: сужения нет.\n"})
+    _, problems = cc.validate()
+    assert problems and "пуст" in problems[0]
+
+
 # ── сборка в уже собранный раздел ──────────────────────────────────────────
 #
 # Сборка вставляла свежий блок сразу после заголовка `[Unreleased]`, а прежнее

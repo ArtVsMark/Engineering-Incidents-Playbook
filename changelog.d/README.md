@@ -32,6 +32,13 @@ changelog.d/<слаг>.<секция>.md
 Inside — **one line of text**, with no leading `-` and no section name: the
 build adds those.
 
+**Ответ о соседях — абзацем `Соседи:`, и в журнал он не едет.** Его требует
+`check_narrowing` у автора, а читателю выпуска это отчёт о вопросе, а не о
+поведении: сборка режет его от слова до конца абзаца.
+
+**The neighbours answer — a `Соседи:` paragraph — stays in the fragment.** The
+build cuts it from the word to the end of the paragraph.
+
 ## Пример · Example
 
 `changelog.d/attribution-gate.added.md`:
