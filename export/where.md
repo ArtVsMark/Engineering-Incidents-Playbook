@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 61 | 36 | 217 | 0 | 0 | 201 | 155 | 10 | 5 | 23 | 8 | 129 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 217 | 0 | 0 | 212 | 95 | 43 | 0 | 74 | 0 | 158 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 128 | 20 | 0 | 10 | 0 | 54 |  |
+| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 160 | 130 | 20 | 0 | 10 | 0 | 54 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 217 | 0 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 147 | 84 | 16 | 0 | 45 | 2 | 110 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 217 | 0 | 0 | 209 | 178 | 25 | 2 | 4 | 0 | 252 |  |
@@ -204,9 +204,9 @@
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 97 механизмов по одному правилу; без названного адреса: 0 из 212 |
-| `ArtVsMark` | `scripts/build_metrics.py` | 65 |
+| `ArtVsMark` | `scripts/build_metrics.py` | 66 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 57 |
-| `ArtVsMark` | `.github/workflows/pr-check.yml` | 46 |
+| `ArtVsMark` | `.github/workflows/pr-check.yml` | 48 |
 | `ArtVsMark` | `CLAUDE.md` | 27 |
 | `ArtVsMark` | `scripts/check_bindings.py` | 23 |
 | `ArtVsMark` | `scripts/checks.py` | 21 |
@@ -229,28 +229,28 @@
 | `ArtVsMark` | `projects.json` | 8 |
 | `ArtVsMark` | `.rules/facts.schema.json` | 7 |
 | `ArtVsMark` | `agent-pr.yml` | 7 |
+| `ArtVsMark` | `scripts/check_facts.py` | 7 |
 | `ArtVsMark` | `scripts/collect_changelog.py` | 6 |
 | `ArtVsMark` | `.github/workflows/main-red.yml` | 5 |
 | `ArtVsMark` | `.github/workflows/rules-inbox.yml` | 5 |
 | `ArtVsMark` | `pr-check.yml` | 5 |
-| `ArtVsMark` | `scripts/check_facts.py` | 5 |
 | `ArtVsMark` | `scripts/neighbours.py` | 5 |
 | `ArtVsMark` | `.rules/proposals.json` | 4 |
 | `ArtVsMark` | `automerge.yml` | 4 |
 | `ArtVsMark` | `scripts/stuck_prs.py` | 4 |
 | `ArtVsMark` | `.github/workflows/attribution-history.yml` | 3 |
 | `ArtVsMark` | `.github/workflows/stuck-prs.yml` | 3 |
+| `ArtVsMark` | `.rules/facts-contract.md` | 3 |
 | `ArtVsMark` | `scripts/check_neighbours.py` | 3 |
 | `ArtVsMark` | `scripts/staleness.py` | 3 |
 | `ArtVsMark` | `.github/workflows/snake.yml` | 2 |
 | `ArtVsMark` | `.github/workflows/staleness.yml` | 2 |
-| `ArtVsMark` | `.rules/facts-contract.md` | 2 |
 | `ArtVsMark` | `CHANGELOG.md` | 2 |
 | `ArtVsMark` | `pyproject.toml` | 2 |
 | `ArtVsMark` | `scripts/check_branch.py` | 2 |
 | `ArtVsMark` | `scripts/check_window.py` | 2 |
 | `ArtVsMark` | `scripts/reauthor_deps.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 8 механизмов по одному правилу; без названного адреса: 0 из 158 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 8 механизмов по одному правилу; без названного адреса: 0 из 160 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 39 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 38 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 17 |
@@ -560,7 +560,7 @@
 | 032 | действует | действует | действует | действует | действует | действует |
 | 033 | действует | действует | нет предмета | действует | нет предмета | действует |
 | 034 | действует | действует | нет предмета | нет предмета | нет предмета | действует |
-| 035 | действует | действует | нет предмета | отклонено | действует | действует |
+| 035 | действует | действует | действует | отклонено | действует | действует |
 | 036 | нет предмета | действует | нет предмета | нет предмета | нет предмета | действует |
 | 037 | действует | действует | нет предмета | действует | действует | действует |
 | 038 | нет предмета | действует | действует | действует | действует | действует |
@@ -638,7 +638,7 @@
 | 110 | действует | действует | нет предмета | действует | нет предмета | действует |
 | 111 | действует | действует | действует | действует | действует | действует |
 | 112 | нет предмета | действует | нет предмета | отклонено | действует | действует |
-| 113 | действует | действует | нет предмета | действует | действует | действует |
+| 113 | действует | действует | действует | действует | действует | действует |
 | 114 | действует | действует | действует | нет предмета | нет предмета | действует |
 | 115 | нет предмета | действует | нет предмета | нет предмета | действует | действует |
 | 116 | действует | действует | нет предмета | действует | нет предмета | действует |

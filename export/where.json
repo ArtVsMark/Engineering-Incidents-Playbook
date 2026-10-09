@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-09T10:30:19+00:00",
+  "generated_at": "2026-10-09T11:55:43+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -5041,12 +5041,12 @@
       "read_at": "2026-10-09",
       "answered": 217,
       "by_status": {
-        "active": 158,
-        "not-applicable": 58,
+        "active": 160,
+        "not-applicable": 56,
         "rejected": 1
       },
       "by_mechanism": {
-        "gate": 128,
+        "gate": 130,
         "pipeline": 20,
         "document": 10
       },
@@ -5085,7 +5085,7 @@
         "032": "active",
         "033": "not-applicable",
         "034": "not-applicable",
-        "035": "not-applicable",
+        "035": "active",
         "036": "not-applicable",
         "037": "not-applicable",
         "038": "active",
@@ -5163,7 +5163,7 @@
         "110": "not-applicable",
         "111": "active",
         "112": "not-applicable",
-        "113": "not-applicable",
+        "113": "active",
         "114": "active",
         "115": "not-applicable",
         "116": "not-applicable",
@@ -5519,6 +5519,17 @@
           "awaiting": "",
           "analysed": "",
           "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "035": {
+          "mechanism": "gate",
+          "where": "ВЕРДИКТ ИСПРАВЛЕН 9 ОКТЯБРЯ (#309): стояло «версии у витрины нет: страница не выпускается». Страница по-прежнему не выпускается, но с договора фактов 1.4 у витрины есть версионируемый артефакт — сам договор, и номер его нужен в нескольких местах: заголовок схемы, заголовок прозы, тег выпуска. Ровно два требования правила. Один источник — .rules/facts.version; согласованность держит scripts/check_facts.py --contract шагом .github/workflows/pr-check.yml: заголовки схемы и прозы против источника, и мажор, который схема принимает в поле schema. Набор scripts/check_facts.py --selftest прогоняет main() --contract на подставной прозе: старый номер — 1, верный — 0. Прежний ответ устарел ровно так, как предупреждает сама применимость правила: «второе место появится вместе с первым внешним потребителем», — а потребителей у договора пятеро. НЕ ДЕРЖИТСЯ И НАЗВАНО: тег выпуска из источника подставит прогон выпуска — следующий шаг #309.",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
           "skill": "",
           "origin": "",
           "origin_kind": "own"
@@ -5992,6 +6003,17 @@
           "awaiting": "",
           "analysed": "",
           "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "113": {
+          "mechanism": "gate",
+          "where": "ВЕРДИКТ ИСПРАВЛЕН 9 ОКТЯБРЯ (#309): стояло «своего формата обмена витрина не публикует: она читает чужой контракт». Неверно с 1 октября: витрина ведёт договор фактов для пятерых издателей, и проба refuted_by искала export/**, а не его. Правила эволюции записаны в самом договоре — .rules/facts-contract.md § Как контракт меняется: минор аддитивен, смена смысла — мажор, роняющий чтение; с 1.4 расширение получило место — раздел обмена exchange со своей версией у темы. Требование игнорировать незнакомое — на стороне потребителя, и оно проверено: набор scripts/check_facts.py --selftest в .github/workflows/pr-check.yml держит, что поле сверх договора не находка, а совет; scripts/build_metrics.py читает мажор (FACTS_SCHEMA) и отказывает чужому мажору, а не разбирает «что получится». НЕ ДЕРЖИТСЯ И НАЗВАНО: что проза раздела полна — суждение.",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-09",
+          "decided": "2026-10-09",
           "skill": "",
           "origin": "",
           "origin_kind": "own"
