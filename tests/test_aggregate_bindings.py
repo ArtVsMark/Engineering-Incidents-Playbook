@@ -18,6 +18,9 @@
 """
 
 
+import datetime as dt
+import email.message
+import email.utils
 import json
 from pathlib import Path
 
@@ -1068,3 +1071,63 @@ def test_раздел_заметок_в_сводке():
     assert "## Заметки и замеры проектов" in текст
     assert "| 001 | `proj` | a \\| b | x: 3 (2026-10-08) |" in текст
     assert ab._notes([{"repo": "o/proj", "notes": {}}]) == []
+
+
+# ── пауза, названная сервером, важнее расчётной (правило 101) ─────────────
+#
+# Источник подделки (правило 170): форма заголовка — RFC 9110, раздел 10.2.3,
+# «Retry-After: 120» и HTTP-дата; коды 429 и 503 — те, которыми площадка
+# отвечает на перегрузку (`urllib.error.HTTPError`, как у живого urlopen).
+
+def _с_паузой(код: int, значение: str) -> Exception:
+    заголовки = email.message.Message()
+    заголовки["Retry-After"] = значение
+    return ab.urllib.error.HTTPError("https://example.org/x", код, "busy",
+                                     заголовки, None)
+
+
+def _сны(monkeypatch) -> list[float]:
+    сны: list[float] = []
+    monkeypatch.setattr(ab.time, "sleep", сны.append)
+    return сны
+
+
+def test_503_с_паузой_ждёт_названное_сервером(monkeypatch):
+    попытки = _урл(monkeypatch, _с_паузой(503, "7"), '{"rules": {}}')
+    сны = _сны(monkeypatch)
+    data, err = ab.fetch("https://example.org/x")
+    assert err is None and data == {"rules": {}}
+    assert len(попытки) == 2 and сны == [7.0]
+
+
+def test_429_повторяется_а_не_считается_ответом(monkeypatch):
+    попытки = _урл(monkeypatch, _с_паузой(429, "2"), '{"rules": {}}')
+    сны = _сны(monkeypatch)
+    data, err = ab.fetch("https://example.org/x")
+    assert err is None and len(попытки) == 2 and сны == [2.0]
+
+
+def test_пауза_больше_предела_это_отказ_с_названной_паузой(monkeypatch):
+    попытки = _урл(monkeypatch, _с_паузой(429, "3600"))
+    сны = _сны(monkeypatch)
+    data, err = ab.fetch("https://example.org/x")
+    assert data is None and "3600 с" in err and "предела" in err
+    assert len(попытки) == 1 and сны == []
+
+
+def test_без_паузы_сервера_действует_расчётная(monkeypatch):
+    попытки = _урл(monkeypatch,
+                   ab.urllib.error.HTTPError("https://example.org/x", 503,
+                                             "busy", email.message.Message(),
+                                             None),
+                   '{"rules": {}}')
+    сны = _сны(monkeypatch)
+    ab.fetch("https://example.org/x")
+    assert len(попытки) == 2 and сны == [ab.ПАУЗА * 1]
+
+
+def test_пауза_датой_и_неразборчивая():
+    будущее = email.utils.format_datetime(
+        dt.datetime.now(dt.UTC) + dt.timedelta(seconds=30), usegmt=True)
+    assert 0 < ab.пауза_сервера(_с_паузой(503, будущее)) <= 30
+    assert ab.пауза_сервера(_с_паузой(503, "скоро")) is None
