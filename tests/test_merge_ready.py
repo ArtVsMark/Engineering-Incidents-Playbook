@@ -419,3 +419,26 @@ def test_предварительный_прогон_исключён_и_оче�
         имя = re.search(r"(?m)^name:\s*(\S+)", текст).group(1)
         assert имя in дежурный, f"{файл}: «{имя}» не исключён в main-red.yml"
         assert имя in исключения_очереди(), f"{файл}: «{имя}» не исключён в automerge.yml"
+
+
+# ── советники: краснота видна, слияние не держит (решение владельца 09.10) ──
+
+def test_krasnyy_sovetnik_sliyanie_ne_derzhit(monkeypatch, capsys):
+    """Срок окна (006) правкой изменения не чинится: его красное — совет,
+    а сбой чужого шага на пути очереди запрещает 084."""
+    import io
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
+        прогон("catalogue"),
+        прогон("window-lifetime / window-lifetime", исход="failure"),
+        прогон("rulebook-fresh / rulebook-fresh", исход="failure")]})))
+
+    assert mr.main(["--required", "catalogue"]) == 0
+
+
+def test_sovetnik_ne_podmenyaet_obyazatelnuyu(monkeypatch):
+    """Граница с другой стороны: зелёный советник за catalogue не считается."""
+    import io
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
+        прогон("window-lifetime / window-lifetime")]})))
+
+    assert mr.main(["--required", "catalogue"]) == 1

@@ -915,3 +915,12 @@ def test_опрос_в_комментарии_не_считается():
 def test_sha_события_и_хвостовой_комментарий_не_опрос(steps):
     текст = ОЖИДАЮЩИЙ.format(group="one", steps=steps)
     assert cw.ожидающий_без_опроса(текст) == ["one"]
+
+
+def test_vyzov_chuzhogo_progona_predela_ne_trebuet():
+    """`timeout-minutes` у работы с `uses:` площадка не принимает: предел
+    стоит внутри вызываемого прогона (mechanisms.yml). Работа со своими шагами
+    рядом по-прежнему обязана нести свой."""
+    text = (BUTTON + "jobs:\n  a:\n    uses: o/r/.github/workflows/s.yml@v1\n"
+            "  b:\n    runs-on: x\n")
+    assert cw.jobs_without_timeout(text) == ["b"]
