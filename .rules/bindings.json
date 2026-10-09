@@ -230,7 +230,7 @@
     "030": {
       "status": "active",
       "mechanism": "gate",
-      "where": "scripts/collect_changelog.py --check",
+      "where": "scripts/collect_changelog.py --check — запись едет фрагментом; .github/workflows/release.yml — выпуск сам собирает фрагменты (--collect) до тела страницы, а scripts/collect_changelog.py --close отказывает, пока в changelog.d/ что-то осталось (второй инцидент: v1.10.0 вышел без 10 записей)",
       "origin": "ArtVsMark/Stepik-Python-Grader:changelog.d/README.md@7bda804f62db",
       "origin_kind": "adapted",
       "analysed": "2026-10-08"

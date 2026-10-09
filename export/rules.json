@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-08T21:19:33+00:00",
+  "generated_at": "2026-10-09T07:53:20+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.9",
@@ -1469,6 +1469,10 @@
         "en": "rules/en/030-changelog-from-fragments.md"
       },
       "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "736"
+        },
         {
           "repo": "ArtVsMark/Stepik-Python-Grader",
           "doc": "CLAUDE.md",
