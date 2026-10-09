@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 60 | 36 | 217 | 0 | 0 | 201 | 152 | 7 | 1 | 27 | 14 | 125 |  |
+| `Engineering-Incidents-Playbook` | подключён | 61 | 36 | 217 | 0 | 0 | 201 | 152 | 7 | 1 | 27 | 14 | 125 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 217 | 0 | 0 | 212 | 95 | 43 | 0 | 74 | 0 | 158 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 158 | 128 | 20 | 0 | 10 | 0 | 54 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 217 | 0 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
@@ -123,6 +123,7 @@
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 3 |
 | `Engineering-Incidents-Playbook` | `tests/test_sync_inbox.py` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/off-prefix.yml` | 2 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/release.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/task-state.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/thaw.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/copies.json` | 2 |
@@ -142,7 +143,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/check_verdict_order.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `templates/bindings.json` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 52 механизмов по одному правилу; без названного адреса: 0 из 187 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 51 механизмов по одному правилу; без названного адреса: 0 из 187 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 48 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 21 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 19 |

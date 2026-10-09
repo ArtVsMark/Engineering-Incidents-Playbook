@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-09T07:58:46+00:00",
+  "generated_at": "2026-10-09T08:00:11+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -541,7 +541,7 @@
         },
         "030": {
           "mechanism": "gate",
-          "where": "scripts/collect_changelog.py --check",
+          "where": "scripts/collect_changelog.py --check — запись едет фрагментом; .github/workflows/release.yml — выпуск сам собирает фрагменты (--collect) до тела страницы, а scripts/collect_changelog.py --close отказывает, пока в changelog.d/ что-то осталось (второй инцидент: v1.10.0 вышел без 10 записей)",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-10-08",
@@ -2455,7 +2455,7 @@
         }
       },
       "notes": {},
-      "trails": 60,
+      "trails": 61,
       "born": 36
     },
     {
