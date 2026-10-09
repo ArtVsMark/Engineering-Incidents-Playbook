@@ -1548,14 +1548,17 @@ def test_происхождение_не_по_форме_отвергается(
 
 # ── отрицательный вердикт называет перебор (правило 136) ──────────────────
 
-@pytest.mark.parametrize("status", ["rejected"])
-def test_вердикт_по_одному_примеру_это_находка(monkeypatch, repo, capsys, status):
+@pytest.mark.parametrize("why", [
+    "работа идёт в одно окно — см. .github/workflows/release.yml (051)",
+    # Цифра адреса или момента — не счёт (обзор #794): дата, #N, версия, год.
+    "замер 25.09.2026 в .github/workflows/release.yml, #793, v1.10.0, 2026 год",
+    "с 2026-10-09 в 10:26 .github/workflows/release.yml держит одно окно (1.9)",
+])
+def test_вердикт_по_одному_примеру_это_находка(monkeypatch, repo, capsys, why):
     """Шесть отклонений 25.09 были ровно такими: одна строка об одном факте."""
     write(repo / ".github/workflows/release.yml", "on: push\n")
     prepare(monkeypatch, repo,
-            {"rules": {"001": {"status": status,
-                               "why": "работа идёт в одно окно — "
-                                      "см. .github/workflows/release.yml (051)"}}},
+            {"rules": {"001": {"status": "rejected", "why": why}}},
             export_of("001"))
     assert cb.main() == 1
     assert "без перебора" in capsys.readouterr().err
@@ -1564,6 +1567,7 @@ def test_вердикт_по_одному_примеру_это_находка(m
 @pytest.mark.parametrize("status, why", [
     ("rejected", "отклонено: у всех прогонов .github/workflows/release.yml матриц 0"),
     ("rejected", "ни один прогон .github/workflows/release.yml матрицы не несёт"),
+    ("rejected", "в .github/workflows/release.yml 14 прогонов из 14 без матрицы"),
     # «Не применимо» держит 205 предикатом по дереву — 136 его не спрашивает.
     ("not-applicable", "предмет появится с первым файлом в .github/workflows/release.yml"),
 ])
