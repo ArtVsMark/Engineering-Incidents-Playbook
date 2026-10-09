@@ -95,3 +95,22 @@ def test_сдвиг_порога_запас_не_двигает(repo, capsys):
     англ = АНГЛИЙСКИЙ + "Цитата: " + "щ" * 2 + "\n"
     assert ослаблен.main(["--root", str(подделка(repo, en=англ))]) == 1
     assert "без запаса" in capsys.readouterr().err
+
+
+def test_сдвиг_пола_запас_не_двигает(repo, capsys):
+    """Зеркало потолка для русского дерева (обзор #752): опустить пол «под
+    корпус» правкой в исходнике — то же ослабление. Без этого случая возврат
+    `RU_MARGIN` к производной от `RU_FLOOR` (`RU_FLOOR * 1.5`) оставался
+    зелёным: доля 0.67 прошла бы запас 0.60 ослабленного пола."""
+    import importlib.util
+    исходник = Path(cl.__file__).read_text(encoding="utf-8")
+    assert "RU_FLOOR = 0.50" in исходник
+    правка = repo / "check_locale_ослаблен_ru.py"
+    правка.write_text(исходник.replace("RU_FLOOR = 0.50", "RU_FLOOR = 0.40"),
+                      encoding="utf-8")
+    spec = importlib.util.spec_from_file_location("ослаблен_ru", правка)
+    ослаблен = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ослаблен)
+    рус = РУССКИЙ + "English quote kept as is in the original wording.\n"
+    assert ослаблен.main(["--root", str(подделка(repo, ru=рус))]) == 1
+    assert "без запаса" in capsys.readouterr().err
