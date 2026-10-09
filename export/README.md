@@ -266,14 +266,23 @@ what does not fit the fields goes into `note`, a measurement into `metric`.
 - uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/answer@<!--m:ref-->v1.9.0<!--/m:ref-->
 ```
 
-Проверка отвергает статус и механизм вне словаря, отрицательный статус без
-причины, происхождение не по форме (с 1.9 — и его отсутствие у `gate` и
-`pipeline`), пробу и заметку не по форме, ключи вне контракта — и прогоняет
-пробы `refuted_by` по дереву проекта: проба нашла предмет — ответ «не
-применимо» опровергнут.
+Проверка отвергает статус и механизм вне словаря, незаполненное обязательное
+поле по таблице выше — и строка из пробелов заполнением не считается: адрес
+`where` у механизма, причину у отрицательного статуса и у `none`,
+`machine_half` у `none` и у отказа по замеру, `skill` у навыка, слово
+`holdable` с причиной и событием у того, что машина не держит, даты
+`analysed`/`decided` по форме и порядку. Требование действует с той версии
+ответа, где его завёл контракт: ответ 1.2 не спрашивают про `holdable`, а ответ
+без читаемого `schema` отсрочки не получает. Дальше — происхождение не по форме
+(с 1.9 — и его отсутствие у `gate` и `pipeline`), пробу и заметку не по форме,
+ключи вне контракта — и прогоняет пробы `refuted_by` по дереву проекта: проба
+нашла предмет — ответ «не применимо» опровергнут. Существование названных
+файлов проверка не сверяет: это дерево проекта и его гейт.
 
 **The form check runs at the project, before merge**, by the same record-form
-module the catalogue uses on its own answer and on the summary.
+module the catalogue uses on its own answer and on the summary. It rejects any
+required field from the table above left empty — whitespace counts as empty —
+from the contract version that introduced it on.
 
 **Почему навык плагина (контракт 1.7).** Навык работы с каталогом проект
 ставит плагином `catalogue`, и в своём дереве его не держит: адрес
