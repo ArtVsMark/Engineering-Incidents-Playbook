@@ -310,6 +310,9 @@ jobs:
           # Токен для толчка — только здесь и только из GH_TOKEN этого шага:
           # checkout его в дереве не оставил (persist-credentials: false).
           # Заголовок той же формы, что прописывает сам checkout.
+          # И СНИМАЕТСЯ на выходе из шага, при любом исходе (обзор #805): шаги
+          # ниже — свои, но токену после толчка в дереве делать нечего.
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
           git config --local http.https://github.com/.extraheader \
             "AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
 
