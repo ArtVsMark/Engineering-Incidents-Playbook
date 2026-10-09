@@ -9,6 +9,8 @@
 import subprocess
 from pathlib import Path
 
+import pytest
+
 import collect_changelog as cc
 from conftest import write
 
@@ -286,6 +288,21 @@ def test_ответ_внутри_абзаца_это_находка_а_не_ср
     found, problems = cc.validate()
     assert found["changed"] == []
     assert problems and "внутри абзаца" in problems[0]
+
+
+@pytest.mark.parametrize("ответ", [
+    "Соседи:\nспросили всех, других форм нет.",
+    "Соседи:\n\nспросили всех, других форм нет.",
+])
+def test_ответ_со_следующей_строки_режется_как_у_гейта(monkeypatch, repo, ответ):
+    """Гейт ищет по тексту целиком, и `\\s*` у него съедает перевод строки —
+    такой ответ он принимает; сборка обязана резать его тоже (обзор #776)."""
+    import check_narrowing
+    assert check_narrowing.СОСЕДИ.search(ответ)
+    prepare(monkeypatch, repo, {"a.changed.md": f"Гейт сужен (#1).\n\n{ответ}\n"})
+    found, problems = cc.validate()
+    assert problems == []
+    assert found["changed"] == ["Гейт сужен (#1)."]
 
 
 def test_соседи_посреди_строки_не_ответ_и_не_режется(monkeypatch, repo):
