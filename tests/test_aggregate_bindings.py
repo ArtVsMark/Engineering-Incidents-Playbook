@@ -1127,11 +1127,25 @@ def test_без_паузы_сервера_действует_расчётная(
 
 
 def test_худший_случай_укладывается_в_бюджет_работы():
-    """Бюджет считается арифметикой (обзор #786): все попытки висят до
-    таймаута, все паузы — на пределе; восемь чтений ночного прогона обязаны
-    уложиться в 10 минут работы `consumers-sync.yml`."""
-    на_чтение = ab.ПОПЫТОК * 10 + (ab.ПОПЫТОК - 1) * ab.ПРЕДЕЛ_ПАУЗЫ
-    assert 8 * на_чтение < 10 * 60
+    """Бюджет считается арифметикой (обзор #786), и числа берутся из
+    источников, а не вписываются (обзор #789): таймаут — умолчание `fetch`,
+    чтений — адреса `bindings` и `proposals` в реестре, минуты — предел
+    работы `consumers-sync.yml`. ГРАНИЦА: тексты навыков, которые
+    `collect_proposals` читает по предложениям, сюда не входят — их число
+    зависит от содержимого предложений, а не от реестра."""
+    import inspect
+    import re
+    таймаут = inspect.signature(ab.fetch).parameters["timeout"].default
+    реестр = json.loads((ab.ROOT / ".rules/consumers.json").read_text(
+        encoding="utf-8"))["consumers"]
+    чтений = sum(1 for c in реестр for k in ("bindings", "proposals")
+                 if str(c.get(k, "")).startswith("http"))
+    прогон = (ab.ROOT / ".github/workflows/consumers-sync.yml").read_text(
+        encoding="utf-8")
+    минут = int(re.search(r"timeout-minutes:\s*(\d+)", прогон).group(1))
+    на_чтение = ab.ПОПЫТОК * таймаут + (ab.ПОПЫТОК - 1) * ab.ПРЕДЕЛ_ПАУЗЫ
+    assert чтений > 0
+    assert чтений * на_чтение < минут * 60
 
 
 def test_пауза_датой_и_неразборчивая():
