@@ -189,18 +189,18 @@ def tier_zero(answered: dict, rules: set[str], schema: str | None,
                   if rec.get("status") in ("active", "not-applicable")
                   and (rec.get("mechanism") or "none") not in МАШИННЫЕ]
     нельзя = sorted(rid for rid in не_машиной
-                    if держимость(answered[rid]) == "no")
+                    if держимость(answered[rid], schema) == "no")
     не_построено = sorted(rid for rid in не_машиной
-                          if держимость(answered[rid]) == "not-yet")
+                          if держимость(answered[rid], schema) == "not-yet")
     при_условии = sorted(rid for rid in не_машиной
-                         if держимость(answered[rid]) == "conditional")
+                         if держимость(answered[rid], schema) == "conditional")
     # ОТКАЗ ПО ЗАМЕРУ — НЕ ДОЛГ И НЕ «НЕЛЬЗЯ», И ЭТО ТРЕТЬЯ ГРАНЬ ЗНАМЕНАТЕЛЯ.
     # В `not-yet` он завышал бы долг ровно там, где разбор был глубже всего, в
     # `no` — лгал бы о дереве: половина считается командой (213).
     отказано = sorted(rid for rid in не_машиной
-                      if держимость(answered[rid]) == "refused")
+                      if держимость(answered[rid], schema) == "refused")
     без_разбора = sorted(rid for rid in не_машиной
-                         if держимость(answered[rid]) is None)
+                         if держимость(answered[rid], schema) is None)
     if не_машиной:
         строки.append(
             f"  не держится машиной: {len(не_машиной)} — держать нельзя у "
@@ -408,7 +408,7 @@ MECHANISM_ORDER = ("gate", "pipeline", "skill", "document", "none")
 
 
 
-def держимость(rec: dict, schema: object = None) -> str | None:
+def держимость(rec: dict, schema: object) -> str | None:
     """Слово разбора, если ответ «документом» разобран ЦЕЛИКОМ; иначе None.
 
     ОДИН ПРЕДИКАТ НА ГЕЙТ И НА СЧЁТ, И ЭТО ИЗМЕРЕНО. Гейт отвергает такую
