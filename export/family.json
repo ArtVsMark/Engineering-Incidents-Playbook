@@ -1,6 +1,6 @@
 {
   "schema": "1.1",
-  "generated": "2026-10-09",
+  "generated": "2026-10-10",
   "projects": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -28,8 +28,16 @@
     },
     {
       "repo": "ArtVsMark/ArtVsMark",
-      "state": "absent",
-      "why": "не прочитан: HTTP Error 404: Not Found"
+      "state": "published",
+      "schema": "1.1",
+      "release": {
+        "tag": "facts-v1.6.0",
+        "sha": "d620f14dee618f17862a09ab0c270bdf76bf2a54"
+      },
+      "gives": {
+        "facts": "1.6"
+      },
+      "takes": []
     },
     {
       "repo": "ArtVsMark/Claude-Code_Usage-Token",
@@ -38,13 +46,29 @@
     },
     {
       "repo": "ArtVsMark/Glossary-Python",
-      "state": "absent",
-      "why": "не прочитан: HTTP Error 404: Not Found"
+      "state": "published",
+      "schema": "1.1",
+      "release": {
+        "tag": "v1.4.0",
+        "sha": "19898d36a7f4aa01ebf2305e56c046ca31b8ce20"
+      },
+      "gives": {
+        "glossary-form": "6.1"
+      },
+      "takes": []
     },
     {
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
-      "state": "absent",
-      "why": "не прочитан: HTTP Error 404: Not Found"
+      "state": "published",
+      "schema": "1.1",
+      "release": {
+        "tag": "v1.5.0",
+        "sha": "c36d16b1abe889e16be1b4a4b2fbd7a165a2e147"
+      },
+      "gives": {
+        "steps": "0.7"
+      },
+      "takes": []
     }
   ]
 }

@@ -99,7 +99,7 @@
       ]
     },
     "family": {
-      "state": "unknown",
+      "state": "behind",
       "why": "",
       "links": [
         {
@@ -107,20 +107,20 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.5.0",
-          "latest": null,
+          "latest": "v1.5.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "unknown",
-          "why": "у издателя не опубликовано"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "family",
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.5.0",
-          "latest": null,
+          "latest": "v1.5.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "unknown",
-          "why": "у издателя не опубликовано"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "family",
@@ -147,10 +147,10 @@
           "publisher": "ArtVsMark/ArtVsMark",
           "what": "facts",
           "mine": "1.5",
-          "latest": null,
+          "latest": "1.6",
           "where": ".github/badges/facts.json",
-          "state": "unknown",
-          "why": "у издателя не опубликовано"
+          "state": "behind",
+          "why": ""
         }
       ]
     },
@@ -175,14 +175,14 @@
     {
       "code": "EPM",
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
-      "state": "unknown",
-      "why": "release: v1.5.0 → None; release: v1.5.0 → None"
+      "state": "ok",
+      "why": ""
     },
     {
       "code": "AVM",
       "repo": "ArtVsMark/ArtVsMark",
-      "state": "unknown",
-      "why": "facts: 1.5 → None"
+      "state": "behind",
+      "why": "facts: 1.5 → 1.6"
     }
   ]
 }
