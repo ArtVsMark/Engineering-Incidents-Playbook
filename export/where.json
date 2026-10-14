@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-14T14:11:28+00:00",
+  "generated_at": "2026-10-14T14:25:47+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -16,10 +16,10 @@
         "not-applicable": 16
       },
       "by_mechanism": {
-        "gate": 155,
+        "gate": 156,
         "pipeline": 10,
         "skill": 5,
-        "document": 23,
+        "document": 22,
         "none": 8
       },
       "rules": {
@@ -386,15 +386,15 @@
           "origin_kind": ""
         },
         "014": {
-          "mechanism": "document",
-          "where": "CONTRIBUTING.md § Когда дефект считается исправленным — краснота доказывается ПОЛУ-откатом: убрать поведение, оставить имена; откат целиком даёт ImportError, и такое красное не доказывает ничего. Меняется ровно одна переменная. ГРАНИЦА: годная мутация ломает предмет правила, а не его границу, и отличить одно от другого может только понимающий предмет — гейт здесь не судья. ВТОРАЯ ПОЛОВИНА — принесла ли починка проверку вообще — машинная, и у нас она не построена",
-          "holdable": "not-yet",
+          "mechanism": "gate",
+          "where": "scripts/check_fix_check.py — шаг «починка принесла проверку» в .github/workflows/ci.yml на каждом изменении: фрагмент журнала рода fixed при тронутом КОДЕ scripts/*.py без единого пути в tests/ — отказ. Код от прозы отличается деревом разбора без докстрок: правка докстроки, комментария или пробелов проверки не требует, удалённый скрипт — тоже. Выход назван — строка «Проверка: не требуется — причина» в теле изменения. Набор — tests/test_check_fix_check.py. ГРАНИЦА: краснела ли проверка ДО починки (полу-откат) — первая половина правила, и она остаётся документом: CONTRIBUTING.md § Когда дефект считается исправленным",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-16",
-          "decided": "2026-09-16",
+          "analysed": "2026-10-14",
+          "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms:scripts/check_journal.py@ffac499d89eb",
+          "origin_kind": "adapted"
         },
         "016": {
           "mechanism": "gate",
