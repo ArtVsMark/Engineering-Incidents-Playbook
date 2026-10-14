@@ -274,3 +274,45 @@ def test_при_споре_факты_не_сверяются_ни_с_кем(tmp
     связи = fc.разобрать(root, с, "o/p")["segments"]["family"]["links"]
     факты = [x for x in связи if x["what"] == "facts"]
     assert факты and all(x["state"] == "unknown" for x in факты)
+
+
+def _факты(root: Path, doc: object) -> None:
+    (root / ".github" / "badges").mkdir(parents=True, exist_ok=True)
+    (root / fc.ФАКТЫ).write_text(json.dumps(doc), encoding="utf-8")
+
+
+@pytest.mark.parametrize("факты, состояние, отстаёт, причина", [
+    (None, "unknown", 0, "фактов нет"),                              # файла нет
+    ({"schema": "1.6"}, "unknown", 0, "нет python.os"),              # раздела нет
+    ({"python": {"os": []}}, "unknown", 0, "нет python.os"),         # пусто
+    ({"python": {"os": ["ubuntu-26.04"]}}, "ok", 0, ""),             # прибито
+    ({"python": {"os": ["ubuntu-26.04", "windows-latest", "macos-latest"]}},
+     "behind", 2, ""),                                               # грейдер на 14.10
+    (["не объект"], "unknown", 0, "нет python.os"),                  # не той формы
+])
+def test_ext_по_своим_фактам(tmp_path, факты, состояние, отстаёт, причина):
+    """Все формы входа сегмента ext (решение владельца 14.10, #816): плавающая
+    метка исполнителя — красный, нечего судить — серый с причиной."""
+    root = дерево(tmp_path)
+    if факты is not None:
+        _факты(root, факты)
+    ext = fc.разобрать(root, сводка(), "o/p")["segments"]["external"]
+    assert ext["state"] == состояние
+    assert sum(x["state"] == "behind" for x in ext["links"]) == отстаёт
+    assert причина in ext["why"]
+    if отстаёт:
+        assert fc.надпись("external", ext) == f"ext ✗{отстаёт}"
+        assert {x["what"] for x in ext["links"] if x["state"] == "behind"} == {
+            "windows-latest", "macos-latest"}
+
+
+@pytest.mark.parametrize("файл", [".rules/bindings.json", ".github/badges/facts.json"])
+def test_файл_дерева_не_объект_не_роняет_разбор(tmp_path, файл):
+    """Ответ и факты не той формы (список вместо объекта) — сверять нечего,
+    а не исключение: значок соседа собирается и с битым файлом."""
+    root = дерево(tmp_path)
+    (root / файл).parent.mkdir(parents=True, exist_ok=True)
+    (root / файл).write_text("[1]", encoding="utf-8")
+    разбор = fc.разобрать(root, сводка(издатель(КАТАЛОГ, bindings="1.9", export="1.9")), "o/p")
+    assert not [x for x in разбор["segments"]["family"]["links"]
+                if x["where"] == файл]
