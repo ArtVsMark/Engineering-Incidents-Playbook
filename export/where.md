@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 61 | 36 | 217 | 0 | 0 | 201 | 155 | 10 | 5 | 23 | 8 | 129 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 217 | 0 | 0 | 212 | 95 | 43 | 0 | 74 | 0 | 156 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 172 | 136 | 28 | 0 | 8 | 0 | 61 |  |
+| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 172 | 136 | 28 | 0 | 8 | 0 | 62 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 217 | 0 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 173 | 85 | 17 | 0 | 59 | 12 | 117 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 217 | 0 | 0 | 209 | 185 | 18 | 2 | 4 | 0 | 251 |  |
@@ -262,7 +262,7 @@
 | `ArtVsMark` | `scripts/push_guard.py` | 2 |
 | `ArtVsMark` | `scripts/reauthor_deps.py` | 2 |
 | `ArtVsMark` | `scripts/work_plan.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 10 механизмов по одному правилу; без названного адреса: 0 из 172 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 11 механизмов по одному правилу; без названного адреса: 0 из 172 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 39 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 38 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 17 |
