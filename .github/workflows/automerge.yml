@@ -226,7 +226,7 @@ jobs:
           #
           # `python-next` исключён по той же причине с другой стороны: он
           # спрашивает о следующей версии Python, а не судит ветку на текущей,
-          # и его красное на 3.15 не основание держать слияния на 3.14 (051).
+          # и его красное на 3.16 не основание держать слияния на 3.14 и 3.15 (051).
           rc=0
           python3 scripts/merge_ready.py --freeze-only --base-exclude release,python-next \
             --base-runs base-runs.json --labels "$LABELS" </dev/null || rc=$?
