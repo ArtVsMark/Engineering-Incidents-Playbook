@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-14T14:41:34+00:00",
+  "generated_at": "2026-10-14T14:43:19+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -17,9 +17,9 @@
       },
       "by_mechanism": {
         "gate": 156,
-        "pipeline": 10,
+        "pipeline": 11,
         "skill": 5,
-        "document": 22,
+        "document": 21,
         "none": 8
       },
       "rules": {
@@ -1563,15 +1563,15 @@
           "origin_kind": "own"
         },
         "132": {
-          "mechanism": "document",
-          "where": "AGENTS.md § Критические запреты — «не везти в одном изменении две темы» стоит запретом наравне с остальными, и признак назван: заголовок изменения не описывается одной строкой без союза «и». ГРАНИЦА: одна ли это тема — судит автор и приёмка; машинная половина — СКОЛЬКО «зачем» объявила сама работа фрагментами журнала — не построена, причина в why.",
-          "holdable": "not-yet",
+          "mechanism": "pipeline",
+          "where": "scripts/collect_changelog.py — функция сборное(): шаг «починка ответила, тянет ли она на правило» в .github/workflows/ci.yml с ключом --added-since печатает ::warning::, когда изменение добавляет больше одного ВНЕШНЕГО фрагмента журнала (внутренний темой не считается), и называет их поимённо. Каждое добавленное правило даёт одну тему сверх нормы: правило и его механизм — одна тема (решение владельца 14.10). Исход шага предупреждение не меняет — этого требует само правило (051). Набор — tests/test_collect_changelog.py. ГРАНИЦА: одна ли это тема по смыслу — судит автор и приёмка; запрет стоит в AGENTS.md § Критические запреты",
+          "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-25",
-          "decided": "2026-09-25",
+          "analysed": "2026-10-14",
+          "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": ""
+          "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms:scripts/check_journal.py@ffac499d89eb",
+          "origin_kind": "adapted"
         },
         "133": {
           "mechanism": "pipeline",
