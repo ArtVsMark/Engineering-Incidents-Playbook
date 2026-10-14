@@ -373,14 +373,20 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--family", default=СВОДКА, help="адрес или путь сводки семьи")
     ap.add_argument("--repo", default=family.своё_имя(), help="владелец/имя проекта")
+    ap.add_argument("--out", type=Path, default=None,
+                    help=f"куда положить SVG (по умолчанию {SVG} под --root); "
+                         f"разбор {РАЗБОР.name} ложится рядом с ним")
     args = ap.parse_args(argv)
     сводка, беда = прочесть_сводку(args.family)
     if сводка is None:
         print(f"значок не собран: {беда}", file=sys.stderr)
         return 2
     разбор = разобрать(args.root, сводка, args.repo)
-    family.записать(args.root / РАЗБОР, разбор)
-    (args.root / SVG).write_text(значок(разбор), encoding="utf-8")
+    # Разбор — рядом с картинкой, а не вторым входом: у каталога это та же
+    # папка значков, и потребителю незачем называть два пути к одному.
+    svg = args.out or args.root / SVG
+    family.записать(svg.with_name(РАЗБОР.name), разбор)
+    svg.write_text(значок(разбор), encoding="utf-8")
     print("издатели: " + " ".join(f"{и['code']} {ЗНАК[и['state']]}"
                                   for и in разбор["publishers"]))
     for с, д in разбор["segments"].items():
