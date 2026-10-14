@@ -160,9 +160,20 @@
       "links": []
     },
     "external": {
-      "state": "unknown",
-      "why": "внешние зависимости на этой ступени не сверяются",
-      "links": []
+      "state": "ok",
+      "why": "",
+      "links": [
+        {
+          "segment": "external",
+          "publisher": "runner",
+          "what": "ubuntu-26.04",
+          "mine": "ubuntu-26.04",
+          "latest": "ubuntu-26.04",
+          "where": ".github/badges/facts.json:python.os",
+          "state": "ok",
+          "why": ""
+        }
+      ]
     }
   },
   "publishers": [
