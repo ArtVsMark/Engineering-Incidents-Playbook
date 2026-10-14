@@ -173,16 +173,16 @@
       "why": "свой: состояние отдачи"
     },
     {
-      "code": "EPM",
-      "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
-      "state": "ok",
-      "why": ""
-    },
-    {
       "code": "AVM",
       "repo": "ArtVsMark/ArtVsMark",
       "state": "behind",
       "why": "facts: 1.5 → 1.6"
+    },
+    {
+      "code": "EPM",
+      "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "state": "ok",
+      "why": ""
     }
   ]
 }
