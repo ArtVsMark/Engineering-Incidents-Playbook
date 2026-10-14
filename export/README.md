@@ -607,6 +607,33 @@ catalogue assigns the number; the verdict key is `owner/repo:merge/slug`. An
 admitted merge lists the replaced rules in `replaces`; each stays readable with
 `superseded_by`, and the gate checks it against the corpus.
 
+**Данные к гипотезе — тем же каналом (формат `1.4`, #798).** Замер «за» или
+«против» кандидата из `candidates`, не дотягивающий до инцидента, — запись
+`kind: evidence`:
+
+| Поле · Field | Что значит · Meaning |
+|---|---|
+| `slug` | имя записи у вас · the record's name at home |
+| `hypothesis` | слаг кандидата из `candidates` выгрузки · the candidate slug from the export |
+| `direction` | `for` · `against` · `neutral` — куда данные двигают гипотезу · where the data moves the hypothesis |
+| `data` | что измерено, с числами · what was measured, with numbers |
+| `source` | адрес: `https://…` либо `владелец/репозиторий#номер` · an address, not prose |
+| `measured_at` | дата замера, `2026-10-14` · the measurement date |
+
+**Канал доставляет, кандидат хранит.** Принятое каталог вносит разделом
+«Данные потребителей» у самой гипотезы, с меткой
+`<!-- evidence: владелец/репозиторий:evidence/слаг -->`. Ответ — ключ
+`владелец/репозиторий:evidence/слаг`: `admitted` называет кандидата полем
+`candidate`, и гейт находит метку в его разделе; `rejected` — причину. Других
+ответов у данных нет: «влито» и «соседи» спрашивают о правилах.
+
+**Evidence for a hypothesis uses the same channel (format `1.4`).** A
+`kind: evidence` record names the candidate (`hypothesis`), the `direction`,
+the `data`, a resolvable `source` and `measured_at`. The channel delivers, the
+candidate keeps: an admitted record lands in the candidate's «Данные
+потребителей» section with a key marker, and the verdict (`admitted` with
+`candidate`, or `rejected` with `why`) is checked against it.
+
 Без ответа отправитель не узнаёт исход — ровно та асимметрия, ради которой
 заведён `bindings.json` вниз по течению. Держится гейтом
 `scripts/collect_proposals.py --check`; опрос — тем же скриптом без ключа, из
@@ -977,7 +1004,7 @@ repository settings.
 {
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
-    "export": "1.7", "bindings": "1.9", "consumers": "1.1", "proposals": "1.3",
+    "export": "1.7", "bindings": "1.9", "consumers": "1.1", "proposals": "1.4",
     "showcase": "1.1", "where": "1.7", "family": "1.1"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
