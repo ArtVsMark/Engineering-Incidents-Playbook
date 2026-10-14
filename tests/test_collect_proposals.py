@@ -480,6 +480,9 @@ def test_вердикт_данным(tmp_path, capsys, вердикт, канд�
     # тот же замер, вердикт внёс не к тому кандидату
     ({"status": "admitted", "candidate": "the-repository-root-is-a-showcase",
       "measured_at": "2026-10-09"}, False, "к кандидату 'the-repository-root-is-a-showcase'"),
+    # пробелы вокруг имени кандидата — тот же кандидат, как у гейта вердиктов
+    ({"status": "admitted", "candidate": " newer-is-a-contract-not-a-speedup ",
+      "measured_at": "2026-10-09"}, False, ""),
     # отказ — кандидата не называет, и сверять нечего
     ({"status": "rejected", "why": "x", "measured_at": "2026-10-09"}, False, ""),
     # новый замер под старым слагом — не пропадает, ждёт вердикта
