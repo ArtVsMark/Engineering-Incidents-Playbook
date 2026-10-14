@@ -76,7 +76,7 @@ permissions:
 
 jobs:
   watch:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     env:
       GH_TOKEN: ${{ github.token }}
@@ -147,7 +147,7 @@ jobs:
   # только код 3: трекер не ответил, и ни находка, ни отказ не дошли ни до кого
   # (обзор #693) — тогда адресата нет, и молчать нельзя.
   python-next-drift:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     env:
       GH_TOKEN: ${{ github.token }}

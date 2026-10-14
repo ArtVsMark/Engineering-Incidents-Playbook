@@ -54,7 +54,7 @@ jobs:
     # Изменение из форка: секрета там нет по построению, и шаг агента сломался бы
     # молча. Явный пропуск делает ограничение видимым.
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       # КЛЮЧА МОЖЕТ НЕ БЫТЬ, И ЭТО ОБЪЯВЛЕННОЕ СОСТОЯНИЕ, А НЕ ДЕФЕКТ. Красное
       # здесь приучало бы читать красное как фон (051): секрет добавляет

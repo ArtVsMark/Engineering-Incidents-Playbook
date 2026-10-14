@@ -110,7 +110,7 @@ concurrency:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       # Счётчик считает по всей истории и по тегам: мелкий клон даст неверное

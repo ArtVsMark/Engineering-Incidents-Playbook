@@ -72,7 +72,7 @@ concurrency:
 
 jobs:
   inbox:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5

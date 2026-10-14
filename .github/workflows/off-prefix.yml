@@ -36,7 +36,7 @@ concurrency:
 
 jobs:
   notice:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     steps:
       - name: изменение по этой ветке не откроется

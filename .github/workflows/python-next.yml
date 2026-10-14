@@ -41,7 +41,7 @@ permissions:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     # Серия в пробе и в python-version одна и та же; разошлись — проба
     # отвечала бы о другой версии, чем ставится (держит tests/test_python_badge.py).
