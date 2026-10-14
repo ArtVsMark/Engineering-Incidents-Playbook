@@ -416,8 +416,8 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/build_facts.py` | 15 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_version.py` | 14 |
 | `Engineering-Pipeline-Mechanisms` | `docs/agent/behaviour.md` | 13 |
+| `Engineering-Pipeline-Mechanisms` | `.github/workflows/ci.yml` | 12 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_bindings.py` | 12 |
-| `Engineering-Pipeline-Mechanisms` | `.github/workflows/ci.yml` | 11 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/bindings.json` | 11 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_journal.py` | 11 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/drift.py` | 11 |

@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-14T10:32:40+00:00",
+  "generated_at": "2026-10-14T11:42:42+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -6158,7 +6158,7 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/check_attribution.py@5d10def7c6c86224c4e162422aa2f933c2808f68",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/check_attribution.py@b577c644d62b08a8b5a1bc27180ea84ed8363c28",
           "origin_kind": "called"
         },
         "124": {
@@ -6224,7 +6224,7 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/sync_inbox.py@5d10def7c6c86224c4e162422aa2f933c2808f68",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/sync_inbox.py@b577c644d62b08a8b5a1bc27180ea84ed8363c28",
           "origin_kind": "called"
         },
         "130": {
@@ -6235,7 +6235,7 @@
           "analysed": "2026-10-09",
           "decided": "2026-10-09",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/sync_inbox.py@5d10def7c6c86224c4e162422aa2f933c2808f68",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/sync_inbox.py@b577c644d62b08a8b5a1bc27180ea84ed8363c28",
           "origin_kind": "called"
         },
         "131": {
@@ -6367,7 +6367,7 @@
           "analysed": "",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/main_red.py@5d10def7c6c86224c4e162422aa2f933c2808f68",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/main_red.py@b577c644d62b08a8b5a1bc27180ea84ed8363c28",
           "origin_kind": "called"
         },
         "144": {
@@ -7137,7 +7137,7 @@
           "analysed": "2026-10-08",
           "decided": "2026-10-08",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/check_python_version.py@5d10def7c6c86224c4e162422aa2f933c2808f68",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:scripts/check_python_version.py@b577c644d62b08a8b5a1bc27180ea84ed8363c28",
           "origin_kind": "called"
         },
         "218": {
@@ -13142,14 +13142,14 @@
         },
         "129": {
           "mechanism": "gate",
-          "where": ".rules/bindings.json — ответ по каждой записи каталога; scripts/pipeline_checks.py повторяет ту же форму для классов проверок; tests/test_bindings.py держит полноту ответа. Контракт назван целиком, а не одной его частью: `.rules/bindings.json` несёт `schema` — версию формы ответа, `answers_to` — версию ВЫГРУЗКИ, по которой ответы построены, `project` и `catalogue` — обратную ссылку на источник. Все четыре сверяются с живым каталогом: scripts/drift.py::catalogue_moved печатает отставание по каждому номеру порознь, а scripts/drift.py::reader_is_behind — по номеру, под который написан наш читатель чужой сводки",
+          "where": ".github/workflows/ci.yml, джоб answer — действие каталога .github/actions/answer сверяет .rules/bindings.json с формой контракта ответа и прогоняет по дереву пробы «не применимо» (refuted_by); форму проверяет тот, кто её задаёт, а не наша копия (090). .rules/bindings.json — ответ по каждой записи каталога; scripts/pipeline_checks.py повторяет ту же форму для классов проверок; tests/test_bindings.py держит полноту ответа. Контракт назван целиком, а не одной его частью: `.rules/bindings.json` несёт `schema` — версию формы ответа, `answers_to` — версию ВЫГРУЗКИ, по которой ответы построены, `project` и `catalogue` — обратную ссылку на источник. Все четыре сверяются с живым каталогом: scripts/drift.py::catalogue_moved печатает отставание по каждому номеру порознь, а scripts/drift.py::reader_is_behind — по номеру, под который написан наш читатель чужой сводки",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-26",
+          "analysed": "2026-10-14",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": "own"
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/answer/action.yml@v1.11.0",
+          "origin_kind": "called"
         },
         "130": {
           "mechanism": "pipeline",
