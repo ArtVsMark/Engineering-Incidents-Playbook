@@ -624,7 +624,9 @@ admitted merge lists the replaced rules in `replaces`; each stays readable with
 «Данные потребителей» у самой гипотезы, с меткой
 `<!-- evidence: владелец/репозиторий:evidence/слаг -->`. Ответ — ключ
 `владелец/репозиторий:evidence/слаг`: `admitted` называет кандидата полем
-`candidate`, и гейт находит метку в его разделе; `rejected` — причину. Других
+`candidate`, и гейт находит метку в его разделе; `rejected` — причину. Оба
+называют `measured_at` замера, на который отвечают: новый замер под старым
+слагом не пропадает, а снова ждёт вердикта. Других
 ответов у данных нет: «влито» и «соседи» спрашивают о правилах.
 
 **Evidence for a hypothesis uses the same channel (format `1.4`).** A
@@ -632,7 +634,9 @@ admitted merge lists the replaced rules in `replaces`; each stays readable with
 the `data`, a resolvable `source` and `measured_at`. The channel delivers, the
 candidate keeps: an admitted record lands in the candidate's «Данные
 потребителей» section with a key marker, and the verdict (`admitted` with
-`candidate`, or `rejected` with `why`) is checked against it.
+`candidate`, or `rejected` with `why`) is checked against it. Both name the
+`measured_at` they answer, so a new measurement under an old slug waits for
+its own verdict instead of vanishing.
 
 Без ответа отправитель не узнаёт исход — ровно та асимметрия, ради которой
 заведён `bindings.json` вниз по течению. Держится гейтом

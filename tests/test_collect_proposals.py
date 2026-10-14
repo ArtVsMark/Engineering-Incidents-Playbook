@@ -404,7 +404,7 @@ def test_данные_читаются_и_ложатся_во_входящие(m
 
 def test_вердикт_снимает_данные_своим_ключом(monkeypatch):
     подменить(monkeypatch, [ДАННЫЕ, ГОДНОЕ | {"slug": "py314-no-speedup"}])
-    pending, _ = cp.gather(ПОТРЕБИТЕЛЬ, {"o/r:evidence/py314-no-speedup": {}}, None, ГИПОТЕЗЫ)
+    pending, _ = cp.gather(ПОТРЕБИТЕЛЬ, {"o/r:evidence/py314-no-speedup": {"measured_at": "2026-10-09"}}, None, ГИПОТЕЗЫ)
     assert [p.get("kind", "rule") for p in pending] == ["rule"]
 
 
@@ -432,6 +432,9 @@ def вердикты_данным(tmp_path, вердикт: dict, кандида
     if кандидат is not None:
         (tmp_path / "candidates").mkdir(exist_ok=True)
         (tmp_path / "candidates" / "hyp-one.md").write_text(кандидат, encoding="utf-8")
+    # Вердикт отвечает на замер: дата по умолчанию; None — поля нет вовсе.
+    вердикт = {к: з for к, з in ({"measured_at": "2026-10-09"} | вердикт).items()
+               if з is not None}
     (tmp_path / ".rules" / "proposals.json").write_text(
         json.dumps({"verdicts": {"o/r:evidence/e-one": вердикт}}), encoding="utf-8")
     return cp.check_verdicts(tmp_path)
@@ -456,7 +459,38 @@ def вердикты_данным(tmp_path, вердикт: dict, кандида
     ({"status": "rejected"}, None, 1, "назвать причину"),
     ({"status": "neighbours", "why": "x"}, None, 1, "ответов два"),
     ({"status": "merged-into", "rule": "001", "why": "x"}, None, 1, "ответов два"),
+    ({"status": "rejected", "why": "x", "measured_at": None}, None, 1, "назвать measured_at"),
+    ({"status": "rejected", "why": "x", "measured_at": "вчера"}, None, 1, "назвать measured_at"),
 ])
 def test_вердикт_данным(tmp_path, capsys, вердикт, кандидат, исход, слово):
     assert вердикты_данным(tmp_path, вердикт, кандидат) == исход
     assert слово in capsys.readouterr().err
+
+
+
+# ── вердикт отвечает на замер, а не на слаг (обзор #822) ─────────────────
+
+КЛЮЧ = "o/r:evidence/py314-no-speedup"
+
+
+@pytest.mark.parametrize("вердикт, в_очереди, слово", [
+    # тот же замер, тот же кандидат — разобрано, молчит
+    ({"status": "admitted", "candidate": "newer-is-a-contract-not-a-speedup",
+      "measured_at": "2026-10-09"}, False, ""),
+    # тот же замер, вердикт внёс не к тому кандидату
+    ({"status": "admitted", "candidate": "the-repository-root-is-a-showcase",
+      "measured_at": "2026-10-09"}, False, "к кандидату 'the-repository-root-is-a-showcase'"),
+    # отказ — кандидата не называет, и сверять нечего
+    ({"status": "rejected", "why": "x", "measured_at": "2026-10-09"}, False, ""),
+    # новый замер под старым слагом — не пропадает, ждёт вердикта
+    ({"status": "admitted", "candidate": "newer-is-a-contract-not-a-speedup",
+      "measured_at": "2026-09-01"}, True, "слаг уже разобран для замера '2026-09-01'"),
+])
+def test_вердикт_данным_сверяется_с_записью(monkeypatch, вердикт, в_очереди, слово):
+    подменить(monkeypatch, [ДАННЫЕ])
+    pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {КЛЮЧ: вердикт}, None, ГИПОТЕЗЫ)
+    assert bool(pending) is в_очереди
+    if слово:
+        assert any(слово in p for p in problems), problems
+    else:
+        assert problems == []
