@@ -15,6 +15,10 @@ def без_площадки(monkeypatch):
     """Выпуск и PyPI в наборе не спрашиваются у сети: выпусков нет."""
     monkeypatch.setattr(pb, "релиз_площадки", lambda: None)
     monkeypatch.setattr(pb, "версия_pypi", lambda пакет: None)
+    # Манифест сборок setup-python: в наборе вышли все серии, которые
+    # встречаются в деревьях, — невышедшую задаёт тест явно.
+    monkeypatch.setattr(pb, "сборки_площадки",
+                        lambda: {(3, м) for м in range(10, 20)})
 
 
 def прогон(conclusion: str, когда: str, id_: int = 1) -> dict:
@@ -506,3 +510,52 @@ def test_отдельная_работа_со_скобками_не_матриц
     jobs = [job("e2e", "success"), job("e2e (smoke)", "failure")]
     assert pb.по_наборам([("e2e", "e2e")], работы, jobs) == [("e2e", "pass")]
     assert pb.по_наборам([("smoke", "smoke")], работы, jobs) == [("smoke", "fail")]
+
+
+# ── несколько основных версий и предварительная, которой ещё нет ──────────
+# Решение владельца 14 октября: планка 3.14, обязательная 3.15 в основном
+# CI, совещательная 3.16 — серая, пока её сборки у setup-python нет.
+
+def _ci_две_версии(tmp_path):
+    дерево(tmp_path, "3.14", "3.16")
+    (tmp_path / ".github" / "workflows" / "ci.yml").write_text(
+        "jobs:\n  a:\n    steps:\n      - uses: actions/setup-python@v6\n"
+        "        with:\n          python-version: \"3.14\"\n"
+        "  b:\n    name: тесты на 3.15\n    steps:\n"
+        "      - uses: actions/setup-python@v6\n"
+        "        with:\n          python-version: \"3.15\"\n", encoding="utf-8")
+    return tmp_path
+
+
+def test_основных_версий_несколько_по_возрастанию(tmp_path):
+    assert pb.версии(_ci_две_версии(tmp_path)) == [
+        ("3.14", "ci.yml"), ("3.15", "ci.yml"), ("3.16", "python-next.yml")]
+
+
+def test_версия_красится_своей_работой():
+    """Источник подделки (правило 170): поля `name` и `conclusion` — форма
+    ответа /repos/{owner}/{repo}/actions/runs/{id}/jobs, docs.github.com."""
+    jobs = [{"name": "catalogue", "conclusion": "success"},
+            {"name": "тесты на 3.15", "conclusion": "failure"}]
+    assert pb.по_версиям(["3.14", "3.15"], jobs) == {"3.14": "pass", "3.15": "fail"}
+
+
+def test_невышедшая_предварительная_серая_со_словом(tmp_path):
+    root = _ci_две_версии(tmp_path)
+    out = tmp_path / "p.svg"
+    jobs = [{"name": "a", "conclusion": "success", "labels": ["ubuntu-latest"]},
+            {"name": "тесты на 3.15", "conclusion": "success", "labels": ["ubuntu-latest"]}]
+    assert pb.main(["--root", str(root), "--out", str(out)],
+                   прогоны=lambda f: [прогон("success", "2026-10-14T10:00Z")], работы=lambda i: jobs,
+                   релиз=lambda: None, сборки=lambda: {(3, 14), (3, 15)}) == 0
+    svg = out.read_text(encoding="utf-8")
+    assert "3.16: версия ещё не вышла" in svg and "3.15: CI пройден" in svg
+
+
+def test_серия_пробы_совпадает_с_версией_прогона():
+    """python-next.yml: серия в пробе манифеста и в python-version одна."""
+    import re
+    текст = (pb.ROOT / ".github" / "workflows" / "python-next.yml").read_text(encoding="utf-8")
+    проба = re.search(r'NEXT:\s*"(\d+\.\d+)"', текст)
+    ставится = re.search(r'python-version:\s*"(\d+\.\d+)"', текст)
+    assert проба and ставится and проба[1] == ставится[1]

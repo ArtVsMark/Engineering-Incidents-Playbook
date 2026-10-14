@@ -58,12 +58,20 @@ def test_progon_nizhe_planki_nahodka():
     assert найдено and "ci.yml" in найдено[0]
 
 
-def test_progony_razoshlis_mezhdu_soboy_nahodka():
-    """Зелёное на одной версии не переносится на другую, и какая из них
-    закрывает изменение — не сказано нигде."""
-    найдено = cv.findings(ПЛАНКА, [("a.yml", (3, 12)), ("b.yml", (3, 13))],
+def test_progony_razoshlis_bez_planki_nahodka():
+    """Разные версии без планки среди них: обещание потребителю не проверяет
+    ни один прогон."""
+    найдено = cv.findings(ПЛАНКА, [("a.yml", (3, 13)), ("b.yml", (3, 14))],
                           (3, 13))
     assert any("разные версии" in n for n in найдено)
+
+
+def test_planka_i_obyazatelnaya_vyshe_ne_nahodka():
+    """Планка и обязательная версия выше неё — законно (решение владельца
+    14 октября: планка 3.14, обязательная 3.15)."""
+    найдено = cv.findings(ПЛАНКА, [("ci.yml", (3, 12)), ("ci.yml", (3, 13))],
+                          (3, 12))
+    assert not найдено
 
 
 def test_predvaritelnyy_ne_vyshe_progonov_nahodka():

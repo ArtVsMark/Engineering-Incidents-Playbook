@@ -1,6 +1,14 @@
-# Следующая версия Python — вопрос, а не проверка. Решение владельца 1 октября:
-# планка семьи 3.14, а 3.15 гоняется только затем, чтобы заранее знать, будет
-# ли каталог на ней работать.
+# Следующая версия Python — вопрос, а не проверка. Решение владельца 1 октября,
+# сдвинуто 14 октября: 3.15 вышла и стала обязательной (работа в ci.yml),
+# совещательной стала 3.16 — гоняется затем, чтобы заранее знать, будет ли
+# каталог на ней работать.
+#
+# ПОКА СБОРКИ 3.16 НЕТ, ПРОВЕРЯТЬ НЕЧЕМ, И ЭТО НЕ КРАСНОЕ. Первый шаг смотрит в
+# манифест сборок setup-python: версии там нет — тесты пропускаются, а значок
+# рисует «3.16» серым со словом «ещё не вышла» (python_badge.сборки_площадки
+# читает тот же манифест). Вышла альфа — прогон начинает проверять сам, без
+# правки. Проба читает манифест jq, а не python: до setup-python python раннера
+# не той версии (217).
 #
 # ПОЧЕМУ НЕ НА ИЗМЕНЕНИИ. Необязательный канал на изменении не просыпается: его
 # отказ не должен ни задерживать слияние, ни ронять его (084). Красное на
@@ -19,7 +27,7 @@
 name: python-next
 
 on:
-  # Толчок в общую ветку — затем, чтобы значок «Python 3.15» в README отвечал о
+  # Толчок в общую ветку — затем, чтобы значок «Python 3.16» в README отвечал о
   # текущем дереве, а не о прошлой неделе. Это уже после слияния: изменение он
   # по-прежнему не будит и не держит (084).
   push:
@@ -35,17 +43,35 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # Серия в пробе и в python-version одна и та же; разошлись — проба
+    # отвечала бы о другой версии, чем ставится (держит tests/test_python_badge.py).
+    env:
+      NEXT: "3.16"
     steps:
+      - name: вышла ли следующая версия
+        id: released
+        run: |
+          set -euo pipefail
+          if curl -fsSL https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json \
+              | jq -e --arg v "$NEXT." 'any(.[]; .version | startswith($v))' >/dev/null; then
+            echo "ok=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::сборки $NEXT у setup-python ещё нет — проверять нечем, значок серый"
+          fi
       - uses: actions/checkout@v5
+        if: steps.released.outputs.ok == '1'
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6
+        if: steps.released.outputs.ok == '1'
         with:
-          python-version: "3.15"
+          python-version: "3.16"
           allow-prereleases: true
 
       - name: обвязка тестов
+        if: steps.released.outputs.ok == '1'
         run: python -m pip install --quiet -r requirements-test.txt
 
       - name: тесты проходят на следующей версии
+        if: steps.released.outputs.ok == '1'
         run: python -m pytest -q -rs
