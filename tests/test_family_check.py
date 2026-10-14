@@ -289,6 +289,10 @@ def _факты(root: Path, doc: object) -> None:
     ({"python": {"os": ["ubuntu-26.04", "windows-latest", "macos-latest"]}},
      "behind", 2, ""),                                               # грейдер на 14.10
     (["не объект"], "unknown", 0, "нет python.os"),                  # не той формы
+    ({"python": ["ubuntu-26.04"]}, "unknown", 0, "нет python.os"),   # python не объект
+    ({"python": "3.14"}, "unknown", 0, "нет python.os"),             # python строкой
+    ({"python": {"os": "ubuntu-26.04"}}, "unknown", 0, "нет python.os"),  # os не список
+    ({"python": {"os": ["ubuntu-26.04", 42]}}, "unknown", 0, "не строка"),  # метка не строка
 ])
 def test_ext_по_своим_фактам(tmp_path, факты, состояние, отстаёт, причина):
     """Все формы входа сегмента ext (решение владельца 14.10, #816): плавающая
