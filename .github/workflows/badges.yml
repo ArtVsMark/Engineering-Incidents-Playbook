@@ -242,7 +242,7 @@ jobs:
           fi
           [ "$rc" -eq 0 ] || exit 1
 
-      # ФАКТЫ СВЕРЯЮТСЯ ПРОВЕРКОЙ ВИТРИНЫ ДО ПУБЛИКАЦИИ (договор 1.5). Шаг взят
+      # ФАКТЫ СВЕРЯЮТСЯ ПРОВЕРКОЙ ВИТРИНЫ ДО ПУБЛИКАЦИИ (договор 1.6). Шаг взят
       # из договора (ArtVsMark/ArtVsMark:.rules/facts-contract.md, метки
       # `facts-ci-step`), и к нему добавлена сверка sha256: красный шаг — файл
       # не уезжает на ветку.
@@ -253,7 +253,9 @@ jobs:
       # подвижен: пересобранный выпуск под тем же именем исполнился бы молча.
       # Поэтому три файла сверяются с хэшами; не сошлось — скрипт не
       # запускается. Хэши повторяются одной командой: `sha256sum` над тремя
-      # файлами страницы выпуска facts-v1.5.0 (тег на d03fcebe3d9c).
+      # файлами страницы выпуска facts-v1.6.0.
+      # С 1.6 проверка советует о манифесте семьи `contracts.json` рядом с
+      # фактами: его кладёт `family.py --manifest` выше, в ту же папку.
       # Тег и SCHEMA в build_facts.py сверяет tests/test_build_facts.py; что
       # хэши сняты именно с этого тега — сверить без сети нечем, это граница.
       # ЧТО КОД ПРОЧИТАН ДО ТОГО, КАК ХЭШ ВПИСАН, — обязанность поднимающего
@@ -261,7 +263,7 @@ jobs:
       # не «хороший код». Учётных данных этот шаг не видит — см. checkout.
       - name: Факты отвечают договору витрины
         env:
-          FACTS_CONTRACT: facts-v1.5.0
+          FACTS_CONTRACT: facts-v1.6.0
         run: |
           set -euo pipefail
           dir="$RUNNER_TEMP/facts-contract"
@@ -271,9 +273,9 @@ jobs:
               "https://github.com/ArtVsMark/ArtVsMark/releases/download/$FACTS_CONTRACT/$f"
           done
           (cd "$dir" && sha256sum --check --strict - <<'SUMS'
-          dbb929e0b98546d28b9fca870a672f3a72d778213357b127dbc91971c9bc18b4  check_facts.py
-          2823795deedf77abb06f69feb0a78cbc046c78de609b07c9a9bcd11188715412  facts.schema.json
-          acb57a7135b2d7d6e665f67f056e21353023b93835f54def1ae523bf76f1bfb3  facts.version
+          65d5bffd86a954e825b68ab89315c420c947c31b4de609628f29930993d1924d  check_facts.py
+          fbfa6564cce767aff0ab9d753e6a085af3966a5a922fa186fb839b5c8bdb7684  facts.schema.json
+          cb1d9a30bc4ab8a397f39b7d786bb82aca0b816077eefc35d7c822017d75f6a5  facts.version
           SUMS
           )
           python "$dir/check_facts.py" --file .github/badges/facts.json --repo "$GITHUB_REPOSITORY"
