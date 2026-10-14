@@ -3,6 +3,7 @@
 > **Reader:** visitor — what this is and whether to take it.
 
 [![Status: Python and versions, OS linux / windows / mac, coverage, release and PyPI, version](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/python.svg)](.github/workflows/python-next.yml)
+[![Family: what the catalogue gives and takes, whether it drifts from the family's contracts and from the outside world](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/family.svg)](#the-project-family)
 
 **A catalogue of <!--m:rules-->217<!--/m:rules--> rules for Claude Code and GitHub,
 where every one grew out of a real failure.** Agent sessions and the project rulebook (`CLAUDE.md`), the
@@ -10,16 +11,6 @@ GitHub delivery pipeline, parallel executors, audits. Every record comes with it
 history: what broke, how it surfaced, what it cost.
 
 > 🇷🇺 [Русская версия](README.md) · Unofficial, not affiliated with Anthropic.
-
-> **What the showcase does not answer, and why.** The question set is one and the
-> same across projects ([`.rules/showcase.json`](.rules/showcase.json)), and a gap
-> in it is named rather than omitted: there is no **PyPI** badge because the
-> catalogue is not a package and the subject does not exist; there is no **CI**
-> badge because the platform reports run state itself, and a second source of the
-> same thing drifts from the first silently
-> ([022](rules/en/022-one-canonical-document.md)). A missing badge and a frozen
-> badge look identical from the outside — hence the named gap
-> ([046](rules/en/046-name-the-gaps-do-not-level-them.md)).
 
 **Start here:** [ten rules to start with](TOP-10.md) ·
 [day-one order](START.md) ·
@@ -35,6 +26,12 @@ So this is not a requirements list. It is a catalogue of post-mortems: read what
 broke, recognise your own situation, take the rule together with its reason.
 
 ## How to use it
+
+**Connecting a project** — [`CONNECT.md`](CONNECT.md): one command assembles
+the answer for every rule, the channel back and the daily "inbox" run. The
+catalogue ships mechanisms, not only text: the inbox action, answer and
+authorship checks, the unified Python badge and the family badge, skills for
+the agent session — the full list is there, and it is the only one.
 
 **Starting a new project** — walk through [`START.md`](START.md): what to set up
 on day one and what can wait. Boilerplate lives in [`templates/`](templates/).
@@ -93,6 +90,27 @@ languages** and generated from the files themselves. A rule added in only one
 language fails the build: that is the mechanism keeping the trees from diverging.
 Two separate indexes would not do this — each looks complete on its own.
 
+## The project family
+
+The catalogue is one of the family projects that exchange contracts. Each has its own
+role, and the family badge shows whether a project agrees with the rest:
+
+| Project | Role in the family |
+|---|---|
+| **Engineering-Incidents-Playbook** (`EIP`, here) | the rules and their export, the answer contract, the upstream proposals channel, the family summary |
+| [Engineering-Pipeline-Mechanisms](https://github.com/ArtVsMark/Engineering-Pipeline-Mechanisms) (`EPM`) | pipeline steps called by a tagged address: facts, drift, automerge |
+| [ArtVsMark](https://github.com/ArtVsMark/ArtVsMark) (`AVM`) | the profile showcase and the `facts.json` contract every project uses to describe itself |
+| [Stepik-Python-Grader](https://github.com/ArtVsMark/Stepik-Python-Grader) | consumer; most of the catalogue's rules were born here |
+| [Glossary-Python](https://github.com/ArtVsMark/Glossary-Python) | consumer, paired with the grader |
+| [Claude-Code_Usage-Token](https://github.com/ArtVsMark/Claude-Code_Usage-Token) | consumer |
+
+**The family badge** has segments `gives` (what the project offers), `family`
+(what it takes from the publishers), `pairs` (paired links) and `ext` (the
+outside world, judged from the project's own facts: a floating `…-latest`
+runner label is red), with the publishers block `EIP · EPM · AVM` on the right.
+Each project puts it up itself with the `family-badge` action; how to read the
+colours is in the [contract](export/README.md).
+
 ## Consumers
 
 <picture>
@@ -101,7 +119,10 @@ Two separate indexes would not do this — each looks complete on its own.
   <img src="https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/consumers-en-dark.svg" alt="How rules are enforced across consumers" width="100%">
 </picture>
 
-Drawn by a workflow from [`export/where.json`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.json) — the projects' own answers, not our assessment of them. One row per project, columns aligned: the eye can only compare what sits in the same place. Each pill names **how many rules** that mechanism holds — a share you have to measure by eye reads as nothing at all. The third number, “born”, answers a different question: not how the project consumes the catalogue, but how many rules **originated** there. The catalogue is shared, but it does not grow evenly. The full report, including "who already solved what a neighbour holds by nothing", is in [`export/where.md`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.md).
+Drawn by a workflow from the projects' own answers, not our assessment of them:
+one row per project, the number of rules each mechanism holds, and "born" —
+how many rules originated there. The full report, including "who already
+solved what a neighbour holds by nothing", is in [`export/where.md`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.md).
 
 **You are not in that summary — and the catalogue will not find out on its
 own.** The rules are public and taken without asking; but the other direction —
