@@ -498,8 +498,10 @@ def gather(consumers: list[dict], verdicts: dict,
                     # Вердикт отвечает на ЗАМЕР, а не на слаг (обзор #822):
                     # новый замер под старым слагом молча пропал бы.
                     if isinstance(решено, dict) and решено.get("measured_at") == данные["measured_at"]:
+                        # Пробелы снимаются, как в `вердикт_данным` (обзор #824).
                         if (решено.get("status") == "admitted"
-                                and решено.get("candidate") != данные["hypothesis"]):
+                                and str(решено.get("candidate") or "").strip()
+                                != данные["hypothesis"]):
                             problems.append(
                                 f"{repo}:evidence/{slug}: вердикт внёс данные к кандидату "
                                 f"{решено.get('candidate')!r}, а запись относится к "
