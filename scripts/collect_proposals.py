@@ -343,6 +343,11 @@ def вердикт_данным(root: Path, key: str, v: dict) -> list[str]:
     if status not in ДАННЫМ:
         return [f"{key}: у данных к гипотезе ответов два — admitted или "
                 f"rejected; «{status}» спрашивает о правилах"]
+    # Вердикт отвечает на замер: без даты новый замер под тем же слагом
+    # неотличим от разобранного (обзор #822).
+    if not ДАТА_RE.match(str(v.get("measured_at") or "")):
+        return [f"{key}: вердикт данным обязан назвать measured_at замера, на "
+                "который отвечает, — дату вида 2026-10-14"]
     if status == "rejected":
         return [] if why else [f"{key}: отказ данным обязан назвать причину"]
     кандидат = str(v.get("candidate") or "").strip()
@@ -488,9 +493,23 @@ def gather(consumers: list[dict], verdicts: dict,
                 pending.append(слияние)
                 continue
             if вид == "evidence":
-                if key_of(repo, slug, "evidence") in verdicts:
-                    continue              # решение уже вынесено
                 данные, возражения = разобрать_данные(repo, slug, item, кандидаты)
+                if (решено := verdicts.get(key_of(repo, slug, "evidence"))) is not None:
+                    # Вердикт отвечает на ЗАМЕР, а не на слаг (обзор #822):
+                    # новый замер под старым слагом молча пропал бы.
+                    if isinstance(решено, dict) and решено.get("measured_at") == данные["measured_at"]:
+                        if (решено.get("status") == "admitted"
+                                and решено.get("candidate") != данные["hypothesis"]):
+                            problems.append(
+                                f"{repo}:evidence/{slug}: вердикт внёс данные к кандидату "
+                                f"{решено.get('candidate')!r}, а запись относится к "
+                                f"{данные['hypothesis']!r}")
+                        continue          # решение по этому замеру вынесено
+                    problems.append(
+                        f"{repo}:evidence/{slug}: слаг уже разобран для замера "
+                        f"{(решено or {}).get('measured_at')!r}, а запись несёт "
+                        f"{данные['measured_at']!r} — новый замер ждёт вердикта; "
+                        "у нового замера лучше новый слаг")
                 problems += возражения
                 pending.append(данные)
                 continue
