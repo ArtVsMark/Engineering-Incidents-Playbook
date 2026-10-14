@@ -134,6 +134,17 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq .body > "$RUNNER_TEMP/pr-body.md"
           python scripts/pr_body.py --check --body-file "$RUNNER_TEMP/pr-body.md"
 
+      # Правило 215: пересказ своей работы сверяется с источником. Машине
+      # доступна полнота — путь из тела, которого нет ни в изменении, ни в
+      # дереве, и число находок против строк «Разобрано:». Предупреждение, а не
+      # отказ (051): по замеру 14.10 на 99 слитых телах ложных 0, верный — #631.
+      # Тело — то же живое, что прочитал шаг выше.
+      - name: пересказ работы сверен с составом
+        if: github.event_name == 'pull_request'
+        run: |
+          python scripts/check_retelling.py --paths-from "$RUNNER_TEMP/pr-paths.txt" \
+            --body-file "$RUNNER_TEMP/pr-body.md"
+
       # Правило 064 объявляло себя обеспеченным гейтом, а держало ДРУГУЮ свою
       # половину: `labels-sync.yml` применяет НАБОР меток к репозиторию, а
       # `pr_body.py` проверяет связь с задачей. Того, что изменение несёт зону,

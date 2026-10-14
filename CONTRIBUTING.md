@@ -322,6 +322,7 @@ python scripts/check_py_style.py
 python scripts/check_exclusive.py --check
 python scripts/check_labels.py --paths-from <файл со списком путей> --have <метки>
 python scripts/check_fix_check.py --paths-from <файл со списком путей> --base <коммит базы> --body-file <файл с телом изменения>
+python scripts/check_retelling.py --paths-from <файл со списком путей> --body-file <файл с телом изменения>
 python scripts/pr_body.py --check --body-file <файл с телом изменения>
 ```
 
