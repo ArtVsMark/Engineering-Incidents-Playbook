@@ -174,3 +174,35 @@ jobs:
             *) echo "::error::трекер не ответил (код $rc): ни находка, ни отказ сверки не дошли до задачи"; exit 1 ;;
           esac
           exit 0
+
+  # Правило 124: зелёное со второй попытки — находка, а не починка, и записывается
+  # фрагментом журнала с номером прогона. Число «сколько раз зелёное пришло не с
+  # первой попытки» площадка отдаёт полем run_attempt, а не собирал его никто.
+  # Совещательно: пункт в одной живой задаче, слияние не держит (084). Тема та же,
+  # что у дежурного, — исходы прогонов общей ветки, — поэтому работа здесь, а не
+  # новым расписанием.
+  flaky-reruns:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: зелёное со второй попытки записано
+        env:
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -uo pipefail
+          rc=0
+          python scripts/flaky_reruns.py --apply --run-url "$RUN" || rc=$?
+          case "$rc" in
+            0) ;;
+            1) echo "::notice::зелёное со второй попытки без записи — названо в задаче" ;;
+            *) echo "::error::сверка повторных прогонов не отработала (код $rc)"; exit 1 ;;
+          esac
+          exit 0
