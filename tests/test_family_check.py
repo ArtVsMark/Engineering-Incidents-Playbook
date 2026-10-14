@@ -260,3 +260,17 @@ def test_спор_о_витрине_серый_а_не_первый_попавш
     assert сегмент["state"] == "unknown"
     почему = " ".join(x["why"] for x in сегмент["links"])
     assert "o/в2, o/в3" in почему and "AVM не выбран" in почему
+
+
+@pytest.mark.parametrize("второй", ["o/в2", fc.ВИТРИНА])
+def test_при_споре_факты_не_сверяются_ни_с_кем(tmp_path, второй):
+    """Обе формы спора, «два чужих» и «умолчание среди двух»: связь facts
+    серая, а не ok/behind против одного из претендентов (обзор #819)."""
+    root = дерево(tmp_path)
+    (root / ".github" / "badges").mkdir()
+    (root / ".github" / "badges" / "facts.json").write_text('{"schema": "1.5"}',
+                                                            encoding="utf-8")
+    с = сводка(издатель(второй, facts="1.6"), издатель("o/в3", facts="1.5"))
+    связи = fc.разобрать(root, с, "o/p")["segments"]["family"]["links"]
+    факты = [x for x in связи if x["what"] == "facts"]
+    assert факты and all(x["state"] == "unknown" for x in факты)
