@@ -121,7 +121,7 @@ def test_zadacha_ishchetsya_po_vsem_stranitsam(monkeypatch, capsys):
         return 0, "ok"
 
     monkeypatch.setattr(cp, "read_json", lambda p: {"consumers": ["o/r"], "verdicts": {}})
-    monkeypatch.setattr(cp, "gather", lambda c, v, н=None: (["o/r:slug"], []))
+    monkeypatch.setattr(cp, "gather", lambda c, v, н=None, к=None: (["o/r:slug"], []))
     monkeypatch.setattr(cp, "body_for", lambda p, q: "тело")
     monkeypatch.setattr(cp, "gh", gh)
     monkeypatch.setenv("GH_TOKEN", "x")
@@ -380,3 +380,83 @@ def test_форма_слияния_возражает_но_не_теряет_п�
     pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, {"131", "135"})
     assert len(pending) == 1
     assert any(слово in p for p in problems), problems
+
+
+# ── данные к гипотезе (формат 1.4, #798) ─────────────────────────────────
+# Источник подделки: запись `kind: evidence` — форма из templates/proposals.json,
+# слаг гипотезы — кандидат каталога `newer-is-a-contract-not-a-speedup`.
+
+ДАННЫЕ = {"kind": "evidence", "slug": "py314-no-speedup",
+          "hypothesis": "newer-is-a-contract-not-a-speedup", "direction": "against",
+          "data": "3.13.14 — 495/487 с, 3.14.8 — 490/493 с",
+          "source": "ArtVsMark/Stepik-Python-Grader#1570", "measured_at": "2026-10-09"}
+ГИПОТЕЗЫ = {"newer-is-a-contract-not-a-speedup"}
+
+
+def test_данные_читаются_и_ложатся_во_входящие(monkeypatch):
+    подменить(monkeypatch, [ДАННЫЕ])
+    pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, None, ГИПОТЕЗЫ)
+    assert problems == []
+    assert pending[0]["kind"] == "evidence" and pending[0]["direction"] == "against"
+    текст = cp.body_for(pending, problems)
+    assert "данные `py314-no-speedup` к гипотезе `newer-is-a-contract-not-a-speedup`" in текст
+
+
+def test_вердикт_снимает_данные_своим_ключом(monkeypatch):
+    подменить(monkeypatch, [ДАННЫЕ, ГОДНОЕ | {"slug": "py314-no-speedup"}])
+    pending, _ = cp.gather(ПОТРЕБИТЕЛЬ, {"o/r:evidence/py314-no-speedup": {}}, None, ГИПОТЕЗЫ)
+    assert [p.get("kind", "rule") for p in pending] == ["rule"]
+
+
+@pytest.mark.parametrize("порча, слово", [
+    ({"hypothesis": ""}, "hypothesis пусто"),
+    ({"hypothesis": "no-such-candidate"}, "кандидата 'no-such-candidate'"),
+    ({"direction": "maybe"}, "direction 'maybe'"),
+    ({"data": " "}, "data пусто"),
+    ({"source": "сказали в чате"}, "source не адрес"),
+    ({"measured_at": "вчера"}, "measured_at 'вчера'"),
+    ({"number": "201"}, "у данных номера нет"),
+])
+def test_форма_данных_возражает_но_не_теряет_запись(monkeypatch, порча, слово):
+    подменить(monkeypatch, [ДАННЫЕ | порча])
+    pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, None, ГИПОТЕЗЫ)
+    assert len(pending) == 1
+    assert any(слово in p for p in problems), problems
+
+
+def вердикты_данным(tmp_path, вердикт: dict, кандидат: str | None) -> int:
+    """Дерево с одним кандидатом (текст или None — файла нет) и вердиктом."""
+    import json
+    (tmp_path / "rules" / "ru").mkdir(parents=True, exist_ok=True)
+    (tmp_path / ".rules").mkdir(exist_ok=True)
+    if кандидат is not None:
+        (tmp_path / "candidates").mkdir(exist_ok=True)
+        (tmp_path / "candidates" / "hyp-one.md").write_text(кандидат, encoding="utf-8")
+    (tmp_path / ".rules" / "proposals.json").write_text(
+        json.dumps({"verdicts": {"o/r:evidence/e-one": вердикт}}), encoding="utf-8")
+    return cp.check_verdicts(tmp_path)
+
+
+МЕТКА = "<!-- evidence: o/r:evidence/e-one -->"
+С_РАЗДЕЛОМ = f"# Г\n\n## Данные потребителей\n\n{МЕТКА}\n**o/r** …\n\n## Применимость\n\nx\n"
+
+
+@pytest.mark.parametrize("вердикт, кандидат, исход, слово", [
+    ({"status": "admitted", "candidate": "hyp-one"}, С_РАЗДЕЛОМ, 0, ""),
+    ({"status": "admitted"}, С_РАЗДЕЛОМ, 1, "назвать кандидата"),
+    ({"status": "admitted", "candidate": "hyp-one"}, None, 1, "кандидата 'hyp-one' нет"),
+    ({"status": "admitted", "candidate": "hyp-one"}, "# Г\n\n## Применимость\n\nx\n", 1,
+     "нет раздела «Данные потребителей»"),
+    ({"status": "admitted", "candidate": "hyp-one"},
+     С_РАЗДЕЛОМ.replace(МЕТКА, ""), 1, "внесённое не найдено"),
+    # метка вне раздела — не внесено: раздел и есть место хранения
+    ({"status": "admitted", "candidate": "hyp-one"},
+     f"# Г\n\n{МЕТКА}\n\n## Данные потребителей\n\nx\n", 1, "внесённое не найдено"),
+    ({"status": "rejected", "why": "замер на другой машине"}, None, 0, ""),
+    ({"status": "rejected"}, None, 1, "назвать причину"),
+    ({"status": "neighbours", "why": "x"}, None, 1, "ответов два"),
+    ({"status": "merged-into", "rule": "001", "why": "x"}, None, 1, "ответов два"),
+])
+def test_вердикт_данным(tmp_path, capsys, вердикт, кандидат, исход, слово):
+    assert вердикты_данным(tmp_path, вердикт, кандидат) == исход
+    assert слово in capsys.readouterr().err

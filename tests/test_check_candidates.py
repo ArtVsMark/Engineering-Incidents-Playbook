@@ -15,6 +15,8 @@
 
 from pathlib import Path
 
+import pytest
+
 import check_candidates as cc
 from conftest import write
 
@@ -265,3 +267,44 @@ def test_prinyatoe_predlozhenie_s_tem_zhe_slagom_otkaz(tmp_path):
     отказы, _ = cc.promoted(tmp_path, sorted((tmp_path / "candidates").glob("*.md")))
     assert отказы and "принято как правило" in отказы[0]
 
+
+
+# ── раздел «Данные потребителей» (#798): необязателен, но с формой ─────────
+
+РАЗДЕЛ = """
+## Данные потребителей
+
+**o/other** (9 октября 2026, o/other#5). Замер: 495 против 490 с.
+
+**Куда это сдвигает гипотезу.** К ветке «опровергнется».
+"""
+
+
+def с_данными(раздел: str) -> str:
+    return GOOD.replace("## Применимость", раздел.strip() + "\n\n## Применимость")
+
+
+
+@pytest.mark.parametrize("раздел", [
+    РАЗДЕЛ,
+    РАЗДЕЛ.replace("9 октября 2026", "2026-10-09"),                 # ISO-дата
+    РАЗДЕЛ.replace("o/other#5", "https://example.org/run/5"),       # адрес
+    РАЗДЕЛ.replace("К ветке «опровергнется».", "Не сдвигает."),     # регистр
+])
+def test_данные_по_форме_проходят(repo, раздел):
+    prepare(repo, {"model-per-task.md": с_данными(раздел)})
+    assert run(repo) == 0
+
+
+@pytest.mark.parametrize("порча, слово", [
+    (lambda r: "\n## Данные потребителей\n\n   \n", "пуст"),
+    (lambda r: r.replace("o/other#5", "сказали в чате"), "нет разрешимого источника"),
+    (lambda r: r.replace("9 октября 2026", "недавно"), "нет даты замера"),
+    (lambda r: r.replace("**Куда это сдвигает гипотезу.** К ветке «опровергнется».",
+                         "Похоже, против."), "Куда это сдвигает гипотезу"),
+    (lambda r: r.replace("«опровергнется»", "«скорее против»"), "Куда это сдвигает гипотезу"),
+])
+def test_данные_не_по_форме_отказ(repo, capsys, порча, слово):
+    prepare(repo, {"model-per-task.md": с_данными(порча(РАЗДЕЛ))})
+    assert run(repo) == 1
+    assert слово in capsys.readouterr().err

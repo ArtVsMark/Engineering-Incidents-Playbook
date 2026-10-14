@@ -51,6 +51,18 @@
 пометку именно на него; `rejected` — с причиной; `neighbours` — правила
 остаются раздельными, причина названа. Ключ — `repo:merge/слаг`.
 
+ДАННЫЕ К ГИПОТЕЗЕ ЕДУТ ТЕМ ЖЕ КАНАЛОМ (формат 1.4, `kind: evidence`;
+решение владельца 14 октября, #798). Замер «за» или «против» кандидата, не
+дотягивающий до инцидента, раньше отправить было некуда, кроме задачи. Запись
+называет гипотезу (`hypothesis` — слаг кандидата), направление (`direction`:
+for · against · neutral), сами данные (`data`), адрес источника (`source`) и
+дату замера (`measured_at`). Канал ДОСТАВЛЯЕТ, кандидат ХРАНИТ: принятое
+ложится разделом «Данные потребителей» у гипотезы, а вердикт `admitted`
+называет кандидата в поле `candidate`, и гейт находит в его разделе метку
+ключа — принятое не теряется по дороге. Перенос текста делает окно: случай
+пока один, и механизм переноса заводится по третьему (093). Ключ —
+`repo:evidence/слаг`; ответов два — `admitted` и `rejected` с причиной.
+
 Реализует правила каталога:
   080 — правило, родившееся в проекте, записывается в общий каталог;
   086 — оценку находке ставит НЕ нашедший: проект шлёт предложение без
@@ -107,6 +119,11 @@ from check_bindings import НАВЫКИ_ОКНА, навык, навык_в_де
 from version import TAG_RE  # noqa: E402
 #: Пометка «Заменено» разбирается тем же, что строит выгрузку (214).
 from build_rules_index import superseded_of  # noqa: E402
+#: Источник данных разрешается той же формой, что у кандидата: адрес либо
+#: задача `владелец/репозиторий#номер` (214). Раздел ищется тем же разбором.
+from check_candidates import SOURCE_RE, section  # noqa: E402
+#: Дата замера — ISO, той же формой, что дата в ответе о правилах (214).
+from answer_form import ДАТА_RE  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -133,6 +150,15 @@ STATUSES = {"admitted", "rejected", "merged-into", "neighbours"}
 #: Сколько правил сводится в одно. Одно — не слияние, а правка; больше трёх —
 #: уже не «целостное», а свод, и он читается хуже частей.
 СЛИВАЕТСЯ = (2, 3)
+#: Ответы данным к гипотезе: внесено к кандидату или нет, с причиной. «Влито в»
+#: и «соседи» спрашивают о правилах, а у данных вопрос один — легли ли они.
+ДАННЫМ = {"admitted", "rejected"}
+#: Куда данные двигают гипотезу. Закрытый список: «скорее за» без слова
+#: неотличимо от непрочитанного.
+НАПРАВЛЕНИЯ = ("for", "against", "neutral")
+#: Метка принятых данных в разделе кандидата — по ней гейт находит внесённое.
+МЕТКА_ДАННЫХ = "<!-- evidence: {key} -->"
+КАНДИДАТЫ = "candidates"
 
 #: Отправитель не присваивает номер. Поле с номером в предложении — это не
 #: мелочь формата, а попытка занять номер снаружи канона.
@@ -140,9 +166,9 @@ FORBIDDEN_IN_PROPOSAL = ("id", "number", "rule")
 
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]{2,80}$")
 
-#: Виды предложения (формат 1.3). Без поля — правило: так читается каждый файл
+#: Виды предложения (формат 1.4). Без поля — правило: так читается каждый файл
 #: формата 1.1, и подъём ничего у отправителя не ломает.
-ВИДЫ = ("rule", "skill", "merge")
+ВИДЫ = ("rule", "skill", "merge", "evidence")
 
 #: НАВЫК ЧИТАЕТСЯ НА НАЗВАННОМ КОММИТЕ, А НЕ НА ВЕТКЕ. Ветка двигается, и
 #: принятый текст разошёлся бы с тем, что читал владелец, выносивший вердикт.
@@ -160,7 +186,8 @@ def key_of(repo: str, slug: str, kind: str = "rule") -> str:
     `repo:merge/слаг`. Проект может предложить правило, навык и слияние с одним
     слагом, и вердикт одного не должен снимать другое.
     """
-    return f"{repo}:{kind}/{slug}" if kind in ("skill", "merge") else f"{repo}:{slug}"
+    return (f"{repo}:{kind}/{slug}" if kind in ("skill", "merge", "evidence")
+            else f"{repo}:{slug}")
 
 
 def пометка_замены(root: Path, номер: str) -> str | None:
@@ -221,6 +248,9 @@ def check_verdicts(root: Path) -> int:
         # разошёлся бы с первым — у навыка не ловился повтор принятого (214).
         навык = ":skill/" in key
         слияние = ":merge/" in key
+        if ":evidence/" in key:
+            findings += вердикт_данным(root, key, v)
+            continue
         if status in ТОЛЬКО_СЛИЯНИЮ and not слияние:
             findings.append(f"{key}: статус «{status}» есть только у слияния — "
                             "у правила и навыка вопроса «одно ли это целое» нет")
@@ -302,6 +332,73 @@ def check_verdicts(root: Path) -> int:
     return 0
 
 
+def вердикт_данным(root: Path, key: str, v: dict) -> list[str]:
+    """Находки к вердикту по данным к гипотезе. Пустой список — сходится.
+
+    Принятое обязано лечь к кандидату: файл есть, раздел «Данные
+    потребителей» есть, и в нём метка этого ключа. Иначе вердикт говорит
+    «внесено», а у гипотезы данных нет — и следующий разбор её не увидит.
+    """
+    status, why = v.get("status"), (v.get("why") or "").strip()
+    if status not in ДАННЫМ:
+        return [f"{key}: у данных к гипотезе ответов два — admitted или "
+                f"rejected; «{status}» спрашивает о правилах"]
+    if status == "rejected":
+        return [] if why else [f"{key}: отказ данным обязан назвать причину"]
+    кандидат = str(v.get("candidate") or "").strip()
+    if not кандидат:
+        return [f"{key}: принятые данные обязаны назвать кандидата в поле candidate"]
+    файл = root / КАНДИДАТЫ / f"{кандидат}.md"
+    if not SLUG_RE.match(кандидат) or not файл.is_file():
+        return [f"{key}: кандидата {кандидат!r} нет в {КАНДИДАТЫ}/"]
+    раздел = section(файл.read_text(encoding="utf-8"), "Данные потребителей")
+    if раздел is None:
+        return [f"{key}: у кандидата {кандидат} нет раздела «Данные потребителей»"]
+    if МЕТКА_ДАННЫХ.format(key=key) not in раздел:
+        return [f"{key}: в разделе «Данные потребителей» кандидата {кандидат} "
+                f"нет метки {МЕТКА_ДАННЫХ.format(key=key)} — внесённое не найдено"]
+    return []
+
+
+def гипотезы(root: Path) -> set[str]:
+    """Слаги кандидатов каталога — то, к чему данные могут относиться."""
+    return {f.stem for f in (root / КАНДИДАТЫ).glob("*.md") if f.name != "README.md"}
+
+
+def разобрать_данные(repo: str, slug: str, item: dict,
+                     известные: set[str] | None) -> tuple[dict, list[str]]:
+    """Данные к гипотезе и возражения к форме. Запись не отбрасывается:
+    решение по ней человеческое, возражения печатаются рядом."""
+    кто = f"{repo}:evidence/{slug}"
+    возражения: list[str] = []
+    taken = [f for f in FORBIDDEN_IN_PROPOSAL if item.get(f)]
+    if taken:
+        возражения.append(f"{кто}: несёт {', '.join(taken)} — у данных номера нет")
+    гипотеза = str(item.get("hypothesis") or "").strip()
+    if not гипотеза:
+        возражения.append(f"{кто}: hypothesis пусто — не названо, к какому кандидату данные")
+    elif известные is not None and гипотеза not in известные:
+        возражения.append(f"{кто}: кандидата {гипотеза!r} в каталоге нет — "
+                          "слаг берётся из export/rules.json → candidates")
+    направление = str(item.get("direction") or "")
+    if направление not in НАПРАВЛЕНИЯ:
+        возражения.append(f"{кто}: direction {направление!r} не из "
+                          f"{', '.join(НАПРАВЛЕНИЯ)}")
+    данные = str(item.get("data") or "").strip()
+    if not данные:
+        возражения.append(f"{кто}: data пусто — нечего вносить")
+    источник = str(item.get("source") or "").strip()
+    if not SOURCE_RE.search(источник):
+        возражения.append(f"{кто}: source не адрес — нужен https://… либо "
+                          "«владелец/репозиторий#номер»; проза источником не считается")
+    дата = str(item.get("measured_at") or "")
+    if not ДАТА_RE.match(дата):
+        возражения.append(f"{кто}: measured_at {дата!r} — нужна дата вида 2026-10-14")
+    return ({"kind": "evidence", "repo": repo, "slug": slug, "hypothesis": гипотеза,
+             "direction": направление, "data": данные, "source": источник,
+             "measured_at": дата}, возражения)
+
+
 def адрес_навыка(цель: str) -> tuple[Path, str] | None:
     """Где лежит навык, названный вердиктом, и как он зовётся; None — не адрес.
 
@@ -339,11 +436,13 @@ def где_навык(цель: str, root: Path) -> str | None:
 
 
 def gather(consumers: list[dict], verdicts: dict,
-           номера: set[str] | None = None) -> tuple[list[dict], list[str]]:
+           номера: set[str] | None = None,
+           кандидаты: set[str] | None = None) -> tuple[list[dict], list[str]]:
     """Тянет предложения потребителей. Возвращает (не разобранные, проблемы).
 
     `номера` — правила каталога, по которым сверяется `holds` навыка; без них
-    сверяется только форма номера.
+    сверяется только форма номера. `кандидаты` — слаги гипотез каталога, к
+    которым относятся данные; без них сверяется только форма записи.
     """
     pending: list[dict] = []
     problems: list[str] = []
@@ -387,6 +486,13 @@ def gather(consumers: list[dict], verdicts: dict,
                 слияние, возражения = разобрать_слияние(repo, slug, item, номера)
                 problems += возражения
                 pending.append(слияние)
+                continue
+            if вид == "evidence":
+                if key_of(repo, slug, "evidence") in verdicts:
+                    continue              # решение уже вынесено
+                данные, возражения = разобрать_данные(repo, slug, item, кандидаты)
+                problems += возражения
+                pending.append(данные)
                 continue
             if вид == "skill":
                 if key_of(repo, slug, "skill") in verdicts:
@@ -581,6 +687,17 @@ def body_for(pending: list[dict], problems: list[str]) -> str:
                 out.append(f"**Новое утверждение.** {quote(p['claim'])}")
                 out.append("")
                 continue
+            if p.get("kind") == "evidence":
+                out.append(f"### `{p['repo']}` · данные `{p['slug']}` к гипотезе "
+                           f"`{p['hypothesis'] or '—'}`")
+                out.append("")
+                out.append(f"**Направление.** {p['direction'] or '—'} · "
+                           f"**замер** {p['measured_at'] or '—'} · "
+                           f"**источник** {quote(p['source'], 200)}")
+                out.append("")
+                out.append(f"**Данные.** {quote(p['data'])}")
+                out.append("")
+                continue
             if p.get("kind") == "skill":
                 out.append(f"### `{p['repo']}` · навык `{p['slug']}`")
                 out.append("")
@@ -660,7 +777,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"проверка не отработала: правила каталога не прочитаны — {exc}",
               file=sys.stderr)
         return 2
-    pending, problems = gather(consumers, verdicts, номера)
+    pending, problems = gather(consumers, verdicts, номера, гипотезы(args.root))
     body = body_for(pending, problems)
 
     if args.dry_run:
