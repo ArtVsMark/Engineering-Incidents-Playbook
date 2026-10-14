@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 61 | 36 | 217 | 0 | 0 | 201 | 155 | 10 | 5 | 23 | 8 | 129 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 217 | 0 | 0 | 212 | 95 | 43 | 0 | 74 | 0 | 156 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 171 | 135 | 28 | 0 | 8 | 0 | 61 |  |
+| `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 172 | 136 | 28 | 0 | 8 | 0 | 61 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 217 | 0 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 173 | 85 | 17 | 0 | 59 | 12 | 117 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 217 | 0 | 0 | 209 | 185 | 18 | 2 | 4 | 0 | 251 |  |
@@ -211,12 +211,12 @@
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 95 механизмов по одному правилу; без названного адреса: 0 из 212 |
-| `ArtVsMark` | `scripts/build_metrics.py` | 68 |
+| `ArtVsMark` | `scripts/build_metrics.py` | 69 |
 | `ArtVsMark` | `scripts/check_mechanisms.py` | 59 |
-| `ArtVsMark` | `.github/workflows/pr-check.yml` | 55 |
+| `ArtVsMark` | `.github/workflows/pr-check.yml` | 56 |
 | `ArtVsMark` | `CLAUDE.md` | 28 |
 | `ArtVsMark` | `scripts/check_bindings.py` | 23 |
-| `ArtVsMark` | `scripts/checks.py` | 21 |
+| `ArtVsMark` | `scripts/checks.py` | 22 |
 | `ArtVsMark` | `.github/workflows/agent-pr.yml` | 17 |
 | `ArtVsMark` | `scripts/check_page.py` | 17 |
 | `ArtVsMark` | `.github/workflows/automerge.yml` | 16 |
@@ -262,7 +262,7 @@
 | `ArtVsMark` | `scripts/push_guard.py` | 2 |
 | `ArtVsMark` | `scripts/reauthor_deps.py` | 2 |
 | `ArtVsMark` | `scripts/work_plan.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 10 механизмов по одному правилу; без названного адреса: 0 из 171 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 10 механизмов по одному правилу; без названного адреса: 0 из 172 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 39 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 38 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 17 |
@@ -645,7 +645,7 @@
 | 098 | действует | действует | нет предмета | действует | действует | действует |
 | 099 | действует | действует | нет предмета | действует | действует | действует |
 | 100 | действует | действует | действует | действует | действует | действует |
-| 101 | действует | действует | нет предмета | действует | нет предмета | действует |
+| 101 | действует | действует | действует | действует | нет предмета | действует |
 | 102 | действует | действует | действует | действует | действует | действует |
 | 103 | нет предмета | действует | нет предмета | нет предмета | нет предмета | нет предмета |
 | 104 | действует | действует | действует | действует | действует | действует |

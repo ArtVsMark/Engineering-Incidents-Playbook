@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-14T11:45:59+00:00",
+  "generated_at": "2026-10-14T11:47:43+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -5041,12 +5041,12 @@
       "read_at": "2026-10-14",
       "answered": 217,
       "by_status": {
-        "active": 171,
-        "not-applicable": 45,
+        "active": 172,
+        "not-applicable": 44,
         "rejected": 1
       },
       "by_mechanism": {
-        "gate": 135,
+        "gate": 136,
         "pipeline": 28,
         "document": 8
       },
@@ -5151,7 +5151,7 @@
         "098": "not-applicable",
         "099": "not-applicable",
         "100": "active",
-        "101": "not-applicable",
+        "101": "active",
         "102": "active",
         "103": "not-applicable",
         "104": "active",
@@ -6003,6 +6003,17 @@
           "awaiting": "",
           "analysed": "",
           "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "101": {
+          "mechanism": "gate",
+          "where": "scripts/checks.py::patiently — единственный повтор вокруг обращения к площадке: им идут scripts/checks.py::_request (сторожа) и scripts/build_metrics.py::_fetch и ::_graphql (сборка). Повторяются только временные отказы — коды TRANSIENT (429, 500, 502, 503, 504) и обрыв связи; 404, 401 и 403 без квоты — ответ, а не молчание, и не повторяются. Запись (POST и PATCH задач) не повторяется вовсе: дважды созданная задача хуже упавшего прогона. Пауза из Retry-After (секунды или HTTP-дата) берёт верх над расчётной 2–4 с; длиннее PAUSE_CAP — отказ сразу. Держит набор scripts/checks.py --selftest в .github/workflows/pr-check.yml: восемь случаев на обе стороны. ВЕРДИКТ ИСПРАВЛЕН 14 ОКТЯБРЯ, И ОПРОВЕРГ ЕГО ИНЦИДЕНТ: стояло «повторов у сборки нет: отказ источника роняет прогон». 12 октября суточная сборка упала на одном 502 площадки (запрос прогонов грейдера), витрина сутки не обновлялась, и сработали оба сторожа — #277 и #334; следующий прогон прошёл без правки. Проба refuted_by, поставленная 9 октября (#322), опровергла прежний ответ сама, как только повтор появился в дереве.",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-14",
+          "decided": "2026-10-14",
           "skill": "",
           "origin": "",
           "origin_kind": "own"

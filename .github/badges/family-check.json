@@ -99,7 +99,7 @@
       ]
     },
     "family": {
-      "state": "behind",
+      "state": "ok",
       "why": "",
       "links": [
         {
@@ -146,10 +146,10 @@
           "segment": "family",
           "publisher": "ArtVsMark/ArtVsMark",
           "what": "facts",
-          "mine": "1.5",
+          "mine": "1.6",
           "latest": "1.6",
           "where": ".github/badges/facts.json",
-          "state": "behind",
+          "state": "ok",
           "why": ""
         }
       ]
@@ -175,8 +175,8 @@
     {
       "code": "AVM",
       "repo": "ArtVsMark/ArtVsMark",
-      "state": "behind",
-      "why": "facts: 1.5 → 1.6"
+      "state": "ok",
+      "why": ""
     },
     {
       "code": "EPM",
