@@ -53,7 +53,7 @@ permissions:
 
 jobs:
   first-parents:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     steps:
       # Первопредки — это вся история общей ветки, мелкого клона мало.

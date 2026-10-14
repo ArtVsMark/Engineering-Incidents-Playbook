@@ -37,7 +37,7 @@ concurrency:
 
 jobs:
   catalogue:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Предел выше принятых у прочих прогонов десяти: здесь единственная работа,
     # которая ставит зависимости и гоняет набор с покрытием. Без предела
     # зависшая проверка держала бы очередь до умолчания площадки — молчание
@@ -644,7 +644,7 @@ jobs:
   # «3.15» исходом именно этой работы, а не всего прогона (python_badge.по_версиям).
   catalogue-next-stable:
     name: тесты на 3.15
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5

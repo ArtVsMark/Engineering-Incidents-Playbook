@@ -843,7 +843,7 @@ permissions:
   # at pull requests also needs pull-requests: write
 jobs:
   inbox:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
       - uses: ArtVsMark/Engineering-Incidents-Playbook@<!--m:ref-->v1.12.0<!--/m:ref-->
