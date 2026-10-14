@@ -734,3 +734,23 @@ def test_выпуск_дозавершается_проверенными_реж
     толчок = wf.split("- name: тег и релиз")[1]
     assert толчок.index('if [ "$FINISH" = true ]') < толчок.index("git push origin")
     assert "--verify-tag" in толчок
+
+
+# ── одна тема на изменение (132): предупреждение, а не отказ ─────────────
+
+@pytest.mark.parametrize("имена, правил, предупредить", [
+    (["a.fixed.md"], 0, False),                                   # одна тема
+    (["a.fixed.md", "b.internal.md"], 0, False),                  # внутренний не тема
+    (["a.fixed.md", "b.added.md"], 0, True),                      # две внешних — сборное
+    (["a.added.md", "b.internal.md", "c.changed.md"], 0, True),   # две внешних среди трёх
+    (["rule.added.md", "mechanism.added.md"], 1, False),          # правило + его механизм
+    (["rule.added.md", "mech.added.md", "other.fixed.md"], 1, True),  # и ещё одна тема
+    ([], 0, False),                                               # фрагментов нет
+])
+def test_сборное_изменение(имена, правил, предупредить):
+    """Внешние фрагменты сверх нормы называются поимённо; внутренние и пара
+    «правило + механизм» нормы не съедают (решение владельца 14.10)."""
+    темы = cc.сборное(имена, правил)
+    assert bool(темы) is предупредить
+    if предупредить:
+        assert all(not т.endswith(".internal.md") for т in темы)
