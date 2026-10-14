@@ -52,8 +52,13 @@ jobs:
         id: released
         run: |
           set -euo pipefail
-          if curl -fsSL https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json \
-              | jq -e --arg v "$NEXT." 'any(.[]; .version | startswith($v))' >/dev/null; then
+          # Чтение манифеста и ответ «сборки нет» — разные исходы (обзор #813):
+          # упавший curl под `if` читался бы как «не вышла», и прогон
+          # зеленел бы, ничего не проверив. Сбой чтения роняет шаг.
+          manifest="$RUNNER_TEMP/versions-manifest.json"
+          curl -fsSL -o "$manifest" \
+            https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
+          if jq -e --arg v "$NEXT." 'any(.[]; .version | startswith($v))' "$manifest" >/dev/null; then
             echo "ok=1" >> "$GITHUB_OUTPUT"
           else
             echo "::notice::сборки $NEXT у setup-python ещё нет — проверять нечем, значок серый"

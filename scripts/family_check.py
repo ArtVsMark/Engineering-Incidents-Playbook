@@ -86,6 +86,21 @@ USES_RE = re.compile(r"^\s*-?\s*uses:\s*([\w.-]+)/([\w.-]+)(?:/[^@\s]*)?@([^\s#]
 ИЗДАТЕЛИ = {family.своё_имя(): "EIP",
             "ArtVsMark/Engineering-Pipeline-Mechanisms": "EPM",
             ВИТРИНА: "AVM"}
+#: Чем издатель узнаётся в сводке, когда его имя разошлось с умолчанием
+#: (обзор #809): витрина — тот, кто отдаёт `facts`, механизмы — `steps`.
+#: Каталог узнаётся своим именем из выгрузки, ему отдельный признак не нужен.
+ПРИЗНАК_ИЗДАТЕЛЯ = {"AVM": "facts", "EPM": "steps"}
+
+
+def издатели_семьи(сводка: dict) -> dict[str, str]:
+    """`владелец/имя` → код издателя; переименованного узнаёт по контракту."""
+    out = dict(ИЗДАТЕЛИ)
+    for код, контракт in ПРИЗНАК_ИЗДАТЕЛЯ.items():
+        кто = next((p["repo"] for p in издатели(сводка).values()
+                    if контракт in p.get("gives", {})), None)
+        if кто is not None:
+            out = {r: к for r, к in out.items() if к != код} | {кто: код}
+    return out
 
 
 @dataclass(frozen=True)
@@ -179,7 +194,8 @@ def семья(root: Path, сводка: dict, свой: str) -> list[Связь
                              ответ.get("answers_to"), каталог.get("export"), str(ОТВЕТ)))
     if (факты := _json(root / ФАКТЫ)) is not None:
         витрина = next((p for p in опубликовано.values() if "facts" in p.get("gives", {})), {})
-        связи.append(сверить("family", витрина.get("repo", ВИТРИНА), "facts",
+        витрина_имя = next((r for r, к in издатели_семьи(сводка).items() if к == "AVM"), ВИТРИНА)
+        связи.append(сверить("family", витрина.get("repo", витрина_имя), "facts",
                              факты.get("schema"), витрина.get("gives", {}).get("facts"),
                              str(ФАКТЫ)))
     return связи
@@ -248,12 +264,15 @@ def итог(связи: list[Связь]) -> str:
 def разобрать(root: Path, сводка: dict, свой: str) -> dict[str, Any]:
     """Разбор по сегментам: состояние и связи, из которых оно сложилось."""
     манифест = _json(root / family.MANIFEST)
+    издатели_ = издатели_семьи(сводка)
     по_сегментам = {
         "gives": отдаю(root, сводка, свой, манифест),
         "family": семья(root, сводка, свой),
         "pairs": пары(root, сводка, манифест),
         "external": [],
     }
+    по_сегментам["gives"] += изъяны_отказов(
+        манифест, издатели_, по_сегментам["family"] + по_сегментам["pairs"])
     причины = {"gives": "манифеста нет — проект не издатель" if манифест is None else "",
                "pairs": "парных связей не объявлено" if not по_сегментам["pairs"] else "",
                "external": "внешние зависимости на этой ступени не сверяются"}
@@ -262,7 +281,7 @@ def разобрать(root: Path, сводка: dict, свой: str) -> dict[st
                                "why": причины.get(с, "") if not по_сегментам[с] else "",
                                "links": [asdict(x) for x in по_сегментам[с]]}
                            for с in СЕГМЕНТЫ}}
-    разбор["publishers"] = по_издателям(разбор, свой, манифест)
+    разбор["publishers"] = по_издателям(разбор, свой, манифест, издатели_)
     return разбор
 
 
@@ -273,7 +292,29 @@ def надпись(сегмент: str, данные: dict) -> str:
     return f"{ПОДПИСЬ_СЕГМЕНТА[сегмент]} {ЗНАК[данные['state']]}{хвост}"
 
 
-def по_издателям(разбор: dict, свой: str, манифест: dict | None) -> list[dict]:
+def изъяны_отказов(манифест: dict | None, издатели_: dict[str, str],
+                   связи: list[Связь]) -> list[Связь]:
+    """Отказы `skips`, которые молча не работали бы (обзор #809): ключ вне
+    списка издателей — опечатка, отказ при живой связи — противоречие."""
+    out = []
+    коды = {к.lower(): r for r, к in издатели_.items()}
+    имена = {r.lower(): r for r in издатели_}
+    for ключ, причина in ((манифест or {}).get("skips") or {}).items():
+        repo = коды.get(str(ключ).lower()) or имена.get(str(ключ).lower())
+        if repo is None:
+            out.append(Связь("gives", str(ключ), "skips", str(ключ), None,
+                             str(family.MANIFEST), "behind",
+                             f"отказ от «{ключ}», а такого издателя нет: "
+                             f"{', '.join(sorted(издатели_.values()))}"))
+        elif any(с.publisher.lower() == repo.lower() for с in связи):
+            out.append(Связь("gives", repo, "skips", "отказ", "связь есть",
+                             str(family.MANIFEST), "behind",
+                             f"отказ от {ключ} объявлен, а связь с ним в дереве есть"))
+    return out
+
+
+def по_издателям(разбор: dict, свой: str, манифест: dict | None,
+                 издатели_: dict[str, str] | None = None) -> list[dict]:
     """Состояние связи проекта с каждым издателем семьи (решение владельца 09.10).
 
     Связи — из сегментов `family` и `pairs`. Нет ни одной — красный `—`, если
@@ -283,7 +324,7 @@ def по_издателям(разбор: dict, свой: str, манифест:
     отказы = {str(k).lower(): v for k, v in ((манифест or {}).get("skips") or {}).items()}
     связи = [x for с in ("family", "pairs") for x in разбор["segments"][с]["links"]]
     out = []
-    for repo, код in ИЗДАТЕЛИ.items():
+    for repo, код in (издатели_ or ИЗДАТЕЛИ).items():
         if repo.lower() == свой.lower():
             out.append({"code": код, "repo": repo, "state": разбор["segments"]["gives"]["state"],
                         "why": "свой: состояние отдачи"})
