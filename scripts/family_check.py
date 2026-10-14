@@ -247,12 +247,17 @@ def внешние(root: Path) -> tuple[list[Связь], str]:
     факты = _json(root / ФАКТЫ)
     if факты is None:
         return [], f"фактов нет: {ФАКТЫ} не прочитан"
-    метки = (факты.get("python") or {}).get("os") if isinstance(факты, dict) else None
+    # Формы входа (210, обзор #821): факты не объект · `python` нет или не
+    # объект · `os` нет, не список или пуст · метка не строка. Любая из них —
+    # серый с причиной, а не исключение: значок соседа собирается и с битым файлом.
+    python = факты.get("python") if isinstance(факты, dict) else None
+    метки = python.get("os") if isinstance(python, dict) else None
     if not isinstance(метки, list) or not метки:
         return [], "в фактах нет python.os — меток исполнителей"
+    if not all(isinstance(м, str) for м in метки):
+        return [], "python.os не той формы: метка исполнителя не строка"
     связи = []
     for метка in метки:
-        метка = str(метка)
         if ПЛАВАЕТ_RE.search(метка):
             связи.append(Связь("external", "runner", метка, метка, None, f"{ФАКТЫ}:python.os",
                                "behind", "плавающая метка: ОС сменится без изменения в дереве"))
