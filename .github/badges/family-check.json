@@ -10,8 +10,8 @@
           "segment": "gives",
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
           "what": "release",
-          "mine": "v1.12.0",
-          "latest": "v1.12.0",
+          "mine": "v1.13.0",
+          "latest": "v1.13.0",
           "where": ".github/badges/contracts.json",
           "state": "ok",
           "why": ""
