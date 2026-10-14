@@ -158,6 +158,22 @@ def test_main_пишет_значок_и_разбор(tmp_path, capsys):
 
 
 
+def test_main_кладёт_значок_и_разбор_по_out(tmp_path):
+    """Действие `family-badge` у соседа: имя — своё, путь — его вход `out`,
+    а разбор ложится рядом с картинкой, а не в папку значков каталога."""
+    root = дерево(tmp_path / "p", f"{МЕХ}/.github/workflows/step-x.yml@v1.5.0")
+    файл = tmp_path / "family.json"
+    файл.write_text(json.dumps(сводка(издатель(МЕХ))), encoding="utf-8")
+    out = root / "img" / "семья.svg"
+    assert fc.main(["--root", str(root), "--family", str(файл), "--repo", "o/p",
+                    "--out", str(out)]) == 0
+    разбор = json.loads((root / "img" / fc.РАЗБОР.name).read_text(encoding="utf-8"))
+    assert разбор["project"] == "o/p"
+    assert разбор["segments"]["family"]["state"] == "ok"
+    assert "family ✓" in out.read_text(encoding="utf-8")
+    assert not (root / fc.SVG).exists()
+
+
 def test_номер_разошёлся_со_сводкой_серый(tmp_path, monkeypatch):
     """Сводка ещё не перечитала манифест — видно, но это не отставание (обзор #808)."""
     monkeypatch.setattr(fc, "latest_tag", lambda root: "v2.0.0")
