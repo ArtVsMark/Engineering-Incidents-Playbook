@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-15T10:15:47+00:00",
+  "generated_at": "2026-10-15T12:58:34+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -1729,7 +1729,7 @@
         },
         "148": {
           "mechanism": "gate",
-          "where": "scripts/check_record_cache.py — шаг «поле слияния записи не служит доказательством» в .github/workflows/ci.yml: чтение .merged / .merged_at / .merged_by или ключа \"merged\" в коде scripts/*.py и .github/workflows/*.yml — отказ, кроме мест, названных поимённо с причиной. ЗАСЛОН (146): мест, где поле решает ожидание, нет; законное чтение одно — сбор находок обзора (ЗАКОННЫЕ в самом гейте) отбирает тела слитых изменений, и отставание поля откладывает снятие находки до следующего захода. Прежний ответ называл таких мест 0, замер 14.10 нашёл это одно. Образец исполнения — .github/workflows/automerge.yml: ждёт коммита в общей ветке. Набор — tests/test_check_record_cache.py. Решение владельца 14.10 (#816)",
+          "where": "scripts/check_record_cache.py — шаг «поле слияния записи не служит доказательством» в .github/workflows/ci.yml: чтение поля слияния в пяти формах (путь .merged*, ключ в кавычках, голое merged_at/merged_by, верблюжье mergedAt/mergedBy, состояние \"MERGED\") в scripts/**, .github/workflows/**, .github/actions/**, .claude/hooks/** — отказ, кроме мест, названных поимённо парой «файл, выражение» с причиной. ЗАСЛОН (146): мест, где поле решает ожидание, нет; законных мест четыре — сбор находок обзора отбирает тела слитых изменений, а состояние задачи узнаёт своё изменение по merge_commit_sha и о подмене источника говорит вслух. Замер 14.10 нашёл одно, обзор #836 — ещё три в прогоне состояния задачи, скрытых исключением гейтов целиком. Образец исполнения — .github/workflows/automerge.yml: ждёт коммита в общей ветке. Набор — tests/test_check_record_cache.py. Решение владельца 14.10 (#816)",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-10-14",
