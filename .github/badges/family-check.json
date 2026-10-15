@@ -99,7 +99,7 @@
       ]
     },
     "family": {
-      "state": "unknown",
+      "state": "ok",
       "why": "",
       "links": [
         {
@@ -146,11 +146,11 @@
           "segment": "family",
           "publisher": "ArtVsMark/ArtVsMark",
           "what": "facts",
-          "mine": "2.0",
+          "mine": "1.6",
           "latest": "1.6",
           "where": ".github/badges/facts.json",
-          "state": "unknown",
-          "why": "опережает опубликованное — сводка отстала от издателя"
+          "state": "ok",
+          "why": ""
         }
       ]
     },
@@ -186,8 +186,8 @@
     {
       "code": "AVM",
       "repo": "ArtVsMark/ArtVsMark",
-      "state": "unknown",
-      "why": "facts: 2.0 → 1.6"
+      "state": "ok",
+      "why": ""
     },
     {
       "code": "EPM",
