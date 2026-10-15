@@ -242,6 +242,25 @@ jobs:
           fi
           [ "$rc" -eq 0 ] || exit 1
 
+      # ЗНАЧОК ПРОЕКТА В ДВЕ СТРОКИ (#844): сверху зоны python.svg (python.zones.json),
+      # снизу правила машиной — свои и взятые — и зоны семьи по разбору family-check.json. Стоит
+      # ПОСЛЕ обоих: склеивает нарисованное, а не считает второй раз (214).
+      # Прежние python.svg и family.svg остаются, пока соседи не перешли (#845).
+      # Нет одной из частей — серая часть с причиной (исход 1), не отказ.
+      - name: значок проекта в две строки
+        run: |
+          set -uo pipefail
+          rc=0
+          python scripts/project_badge.py \
+            --python-zones .github/badges/python.zones.json \
+            --family-json .github/badges/family-check.json \
+            --out .github/badges/project.svg || rc=$?
+          case "$rc" in
+            0) ;;
+            1) echo "::warning::значок проекта собран с серыми частями — причины выше" ;;
+            *) echo "::error::значок проекта не собран (код $rc)"; exit 1 ;;
+          esac
+
       # ФАКТЫ СВЕРЯЮТСЯ ДО ПУБЛИКАЦИИ: красный шаг — файл не уезжает на ветку.
       #
       # ДОГОВОР ФАКТОВ — СВОЙ С 2.0 (#843): проверка лежит в этом же дереве,
