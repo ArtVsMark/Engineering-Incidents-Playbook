@@ -21,11 +21,11 @@ history: what broke, how it surfaced, what it cost.
 **To an outside project the catalogue hands out rules.** Badges and the facts
 contract are optional; connecting does not require them.
 
-**For the family the catalogue is the main contract holder, its brain:** every
-agreement between the projects, the code of the unified badge and the reference
-to check against. It counts no one else's numbers — every project publishes facts
-about itself. The cost is stated: when the catalogue breaks, everyone's badge goes
-grey ([#842](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/842)).
+**For the family the catalogue is the main contract holder, its brain:** the
+export, the answer, proposals, the manifest and facts, the code of the unified
+badge and the reference to check against; pipeline steps are held by the
+mechanisms. The cost: with no catalogue summary
+everyone's badge step goes red and the picture freezes on the last one ([#842](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/842)).
 
 ## Why
 
