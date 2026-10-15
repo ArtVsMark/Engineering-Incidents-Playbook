@@ -191,12 +191,18 @@ def _издатели(root, свод, свой="o/p", манифест=None):
 
 
 def test_блок_издателей(tmp_path):
-    """Шаг механизмов без `.pipeline.yml` — частичная связь `◐` (решение
+    """Свежий шаг механизмов без `.pipeline.yml` — частичная связь `◐` (решение
     владельца 14.10), с витриной связи нет и отказ не объявлен — красный «—»,
     каталог без манифеста в сводке — нет связи тоже."""
-    root = дерево(tmp_path, f"{МЕХ}/.github/workflows/step-x.yml@v1.4.0")
+    root = дерево(tmp_path, f"{МЕХ}/.github/workflows/step-x.yml@v1.5.0")
     состояния = _издатели(root, сводка(издатель(МЕХ)))
     assert состояния == {"EIP": "none", "EPM": "partial", "AVM": "none"}
+
+
+def test_отставший_пин_без_конвейера_остаётся_красным(tmp_path):
+    """◐ решает, когда ставить ✓, а не прячет ✗ (обзор #839)."""
+    root = дерево(tmp_path, f"{МЕХ}/.github/workflows/step-x.yml@v1.4.0")
+    assert _издатели(root, сводка(издатель(МЕХ)))["EPM"] == "behind"
 
 
 @pytest.mark.parametrize("пин, steps, итог_", [
@@ -211,10 +217,10 @@ def test_механизмы_с_конвейером_судятся_по_свеж
     assert состояния["EPM"] == итог_
 
 
-def test_частичная_связь_называет_число_шагов(tmp_path):
+def test_частичная_связь_называет_число_связей(tmp_path):
     root = дерево(tmp_path, f"{МЕХ}/.github/workflows/step-x.yml@v1.5.0")
     блок = {и["code"]: и for и in fc.разобрать(root, сводка(издатель(МЕХ)), "o/p")["publishers"]}
-    assert блок["EPM"]["state"] == "partial" and "взято шагов 1" in блок["EPM"]["why"]
+    assert блок["EPM"]["state"] == "partial" and "связей с механизмами 1" in блок["EPM"]["why"]
     assert "EPM ◐" in fc.значок(fc.разобрать(root, сводка(издатель(МЕХ)), "o/p"))
 
 
