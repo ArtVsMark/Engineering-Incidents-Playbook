@@ -99,7 +99,7 @@
       ]
     },
     "family": {
-      "state": "ok",
+      "state": "behind",
       "why": "",
       "links": [
         {
@@ -107,9 +107,9 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.5.0",
-          "latest": "v1.5.0",
+          "latest": "v1.6.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "ok",
+          "state": "behind",
           "why": ""
         },
         {
@@ -117,9 +117,9 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.5.0",
-          "latest": "v1.5.0",
+          "latest": "v1.6.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "ok",
+          "state": "behind",
           "why": ""
         },
         {
@@ -192,8 +192,8 @@
     {
       "code": "EPM",
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
-      "state": "partial",
-      "why": "связей с механизмами 2, конвейер не подключён (.pipeline.yml нет)"
+      "state": "behind",
+      "why": "release: v1.5.0 → v1.6.0; release: v1.5.0 → v1.6.0"
     }
   ]
 }
