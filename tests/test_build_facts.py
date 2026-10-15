@@ -169,7 +169,7 @@ def test_обязательный_минимум_есть_всегда(monkeypat
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     факты, _, беда = bf.build()
     assert беда == ""
-    assert факты["schema"] == "1.6" and isinstance(факты["schema"], str)
+    assert факты["schema"] == "2.0" and isinstance(факты["schema"], str)
     assert факты["repo"] == "своё/имя"
     assert факты["generated_at"].endswith("+00:00")
     assert факты["commit"] == "deadbeef"
@@ -196,7 +196,7 @@ def test_записанный_файл_разбирается_и_несёт_об
     assert bf.main([]) == 0
     записано = json.loads((repo / ".github/badges/facts.json")
                           .read_text(encoding="utf-8"))
-    assert записано["schema"] == "1.6"
+    assert записано["schema"] == "2.0"
     # Номер схемы обязан сказать, ЧЕГО он: ключ `schema` носят четыре предмета.
     assert "164" in записано["schema_of"]
 
@@ -327,25 +327,23 @@ def test_без_коммита_файл_не_пишется(monkeypatch, repo, c
     assert not (repo / ".github/badges/facts.json").exists()
 
 
-def test_тег_договора_в_прогоне_сходится_со_схемой():
-    """Подъём договора — три правки: тег, хэши и SCHEMA (обзор #804).
+def test_договор_фактов_свой_и_номер_один():
+    """С 2.0 договор держит каталог (#843): номер и список берутся из его дерева.
 
-    Серия тега `facts-vX.Y.Z` в badges.yml обязана совпасть с SCHEMA, а хэши
-    стоят ровно у трёх файлов, которые шаг скачивает. Что хэши сняты именно с
-    этого тега, без сети не сверить — это названная граница в самом прогоне.
+    Файл выходит той серии, что в `export/facts/facts.version`, список причин —
+    тот, что в схеме, а шаг проверки в badges.yml зовёт свою проверку, а не
+    скачивает чужую.
     """
-    import re
+    номер = (bf.ROOT / "export" / "facts" / "facts.version").read_text(encoding="utf-8")
+    # не проза: номер версии «мажор.минор[.патч]».
+    assert bf.SCHEMA == ".".join(номер.strip().split(".")[:2])
     прогон = (bf.ROOT / ".github" / "workflows" / "badges.yml").read_text(encoding="utf-8")
-    тег = re.search(r"FACTS_CONTRACT: facts-v(\d+)\.(\d+)\.\d+", прогон)
-    assert тег, "шаг проверки фактов не называет тег договора"
-    assert f"{тег[1]}.{тег[2]}" == bf.SCHEMA
-    скачиваем = re.search(r"for f in ([\w. ]+); do", прогон)[1].split()
-    хэши = re.findall(r"^\s*[0-9a-f]{64}  (\S+)$", прогон, re.M)
-    assert sorted(хэши) == sorted(скачиваем)
+    assert "python scripts/check_facts.py --file .github/badges/facts.json" in прогон
+    assert "releases/download" not in прогон
 
 
 def test_токен_записи_живёт_только_в_шаге_публикации():
-    """Скачанная проверка витрины не видит токена (обзор #805): checkout его
+    """Проверка фактов не видит токена (обзор #805): checkout его
     не оставляет, прописывает его шаг публикации — после проверки — и снимает
     на выходе из шага."""
     import re
@@ -360,4 +358,4 @@ def test_токен_записи_живёт_только_в_шаге_публи�
     assert re.search(r"trap '[^']*--unset-all http\.https://github\.com/\.extraheader[^']*' EXIT",
                      с_токеном[0])
     assert шаги.index(с_токеном[0]) > next(
-        i for i, ш in enumerate(шаги) if ш.startswith("name: Факты отвечают договору витрины"))
+        i for i, ш in enumerate(шаги) if ш.startswith("name: Факты отвечают договору семьи"))
