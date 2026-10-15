@@ -251,7 +251,6 @@
 | `ArtVsMark` | `.github/workflows/ci-complete.yml` | 3 |
 | `ArtVsMark` | `.github/workflows/family-manifest.yml` | 3 |
 | `ArtVsMark` | `.github/workflows/stuck-prs.yml` | 3 |
-| `ArtVsMark` | `automerge.yml` | 3 |
 | `ArtVsMark` | `scripts/family_manifest.py` | 3 |
 | `ArtVsMark` | `scripts/staleness.py` | 3 |
 | `ArtVsMark` | `.github/workflows/review.yml` | 2 |
@@ -260,6 +259,7 @@
 | `ArtVsMark` | `.pipeline.yml` | 2 |
 | `ArtVsMark` | `.rules/review-roles.json` | 2 |
 | `ArtVsMark` | `CHANGELOG.md` | 2 |
+| `ArtVsMark` | `automerge.yml` | 2 |
 | `ArtVsMark` | `docs/agent/review.md` | 2 |
 | `ArtVsMark` | `pyproject.toml` | 2 |
 | `ArtVsMark` | `scripts/check_branch.py` | 2 |

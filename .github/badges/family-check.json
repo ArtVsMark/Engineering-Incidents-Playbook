@@ -3,7 +3,7 @@
   "project": "ArtVsMark/Engineering-Incidents-Playbook",
   "segments": {
     "gives": {
-      "state": "unknown",
+      "state": "ok",
       "why": "",
       "links": [
         {
@@ -61,10 +61,10 @@
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
           "what": "facts",
           "mine": "2.0",
-          "latest": null,
+          "latest": "2.0",
           "where": "сводка семьи",
-          "state": "unknown",
-          "why": "сводка ещё не перечитала манифест"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "gives",
@@ -157,10 +157,10 @@
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
           "what": "facts",
           "mine": "1.6",
-          "latest": null,
+          "latest": "2.0",
           "where": ".github/badges/facts.json",
           "state": "unknown",
-          "why": "у издателя не опубликовано"
+          "why": "договор переехал в каталог (2.0), форма та же: подъём номера ждёт, пока витрина читает мажор 2 (#845)"
         }
       ]
     },
@@ -190,7 +190,7 @@
     {
       "code": "EIP",
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
-      "state": "unknown",
+      "state": "ok",
       "why": "свой: состояние отдачи"
     },
     {
