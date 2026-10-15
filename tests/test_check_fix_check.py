@@ -81,6 +81,8 @@ def test_выход_без_причины_не_выход(tmp_path, дерево
 def test_починка_с_проверкой_проходит(tmp_path, дерево):
     root, base = дерево
     код(root)
+    (root / "tests").mkdir()
+    (root / "tests" / "test_a.py").write_text("def test_a():\n    pass\n", encoding="utf-8")
     assert прогон(tmp_path, root, base, [ПОЧИНКА, "scripts/a.py", "tests/test_a.py"]) == 0
 
 
@@ -132,3 +134,25 @@ def test_нет_списка_путей_третий_исход(tmp_path, дер
                     "--paths-from", str(tmp_path / "нет.txt"),
                     "--body-file", str(tmp_path / "нет.md")]) == 2
     assert "нет.txt" in capsys.readouterr().err
+
+
+# ── находки обзора #830 ──────────────────────────────────────────────────
+
+def test_пустая_причина_не_берёт_следующую_строку(tmp_path, дерево):
+    root, base = дерево
+    код(root)
+    assert прогон(tmp_path, root, base, [ПОЧИНКА, "scripts/a.py"],
+                  "Проверка: не требуется —\nPart of #816\n") == 1
+
+
+def test_удалённый_тест_не_проверка(tmp_path, дерево):
+    root, base = дерево
+    код(root)
+    assert прогон(tmp_path, root, base, [ПОЧИНКА, "scripts/a.py", "tests/test_gone.py"]) == 1
+
+
+def test_неизвестная_база_третий_исход(tmp_path, дерево, capsys):
+    root, _ = дерево
+    код(root)
+    assert прогон(tmp_path, root, "0" * 40, [ПОЧИНКА, "scripts/a.py"]) == 2
+    assert "не найдена" in capsys.readouterr().err

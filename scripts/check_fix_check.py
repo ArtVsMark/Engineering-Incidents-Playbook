@@ -63,8 +63,10 @@ FIXED_RE = re.compile(r"^changelog\.d/[^/]+\.fixed\.md$")
 CODE_RE = re.compile(r"^scripts/.+\.py$")
 TESTS = "tests/"
 #: Названный выход: «Проверка: не требуется — причина». Причина обязательна.
+#: Пробелы — только внутри строки: `\s` перешагнул бы перевод строки, и пустая
+#: причина взяла бы следующую строку тела (обзор #830).
 WAIVER_RE = re.compile(
-    r"(?m)^\s*Проверка:\s*не\s+требуется\s*[—–-]\s*(?P<why>\S.*?)\s*$")
+    r"(?m)^[ \t]*Проверка:[ \t]*не[ \t]+требуется[ \t]*[—–-][ \t]*(?P<why>\S[^\n]*?)[ \t]*$")
 
 
 class NotRun(Exception):
@@ -88,15 +90,25 @@ def без_прозы(текст: str, имя: str) -> str:
     return ast.dump(дерево, include_attributes=False)
 
 
+def git(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(["git", "-C", str(root), *args],
+                          capture_output=True, text=True, encoding="utf-8")
+
+
 def прежний(root: Path, base: str, путь: str) -> str | None:
-    """Текст файла на базе; None — файла на базе не было."""
-    run = subprocess.run(["git", "-C", str(root), "show", f"{base}:{путь}"],
-                         capture_output=True, text=True, encoding="utf-8")
-    if run.returncode == 0:
-        return run.stdout
-    if "does not exist" in run.stderr or "exists on disk, but not in" in run.stderr:
+    """Текст файла на базе; None — файла на базе не было.
+
+    Наличие спрашивается кодом `git cat-file -e`, а не разбором текста ошибки
+    (обзор #830): сообщение `git` переводится и меняется от версии к версии.
+    """
+    if git(root, "cat-file", "-e", f"{base}^{{commit}}").returncode != 0:
+        raise NotRun(f"база {base} не найдена в дереве {root}")
+    if git(root, "cat-file", "-e", f"{base}:{путь}").returncode != 0:
         return None
-    raise NotRun(f"база {base} не прочитана для {путь}: {run.stderr.strip()}")
+    run = git(root, "show", f"{base}:{путь}")
+    if run.returncode != 0:
+        raise NotRun(f"база {base} не прочитана для {путь}: {run.stderr.strip()}")
+    return run.stdout
 
 
 def код_тронут(root: Path, base: str, путь: str) -> bool:
@@ -137,8 +149,12 @@ def main(argv: list[str] | None = None) -> int:
     if not починка:
         print("изменение не объявлено починкой — фрагмента *.fixed.md нет, спрашивать нечего")
         return 0
-    if any(p.startswith(TESTS) for p in пути):
-        print(f"починка принесла проверку: {', '.join(p for p in пути if p.startswith(TESTS))}")
+    # Проверкой считается живой файл под tests/: удалённый тест — это убранная
+    # проверка, а не принесённая (обзор #830). Та ли это проверка — граница
+    # гейта: судит приёмка, а не машина.
+    проверки = [p for p in пути if p.startswith(TESTS) and (args.root / p).is_file()]
+    if проверки:
+        print(f"починка принесла проверку: {', '.join(проверки)}")
         return 0
 
     try:
