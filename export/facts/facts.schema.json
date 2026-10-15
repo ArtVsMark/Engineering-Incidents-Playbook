@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/export/facts/facts.schema.json",
+  "title": "facts.json — факты проекта семьи, договор 2.0",
+  "$comment": "Один файл, единые требования: всё, что показывается о проекте, лежит здесь. Решение владельца 1 октября 2026; с 2.0 договор держит каталог (#843). Проза к схеме — export/facts/facts-contract.md; проверка — scripts/check_facts.py. Схема — единственное место, где требования записаны: проза её объясняет, проверка её читает. Долей механизмов правил здесь нет намеренно: их считает каталог по ответу каждого проекта и публикует одной сводкой на всех — второй источник того же числа разошёлся бы с первым (правило 090). Номер договора — в export/facts/facts.version и только там: заголовок схемы и прозы сверяет с ним scripts/check_facts.py --contract. Выпуск договора — тег facts-vX.Y.Z каталога, к странице прикреплены схема, проза, проверка и образец.",
+  "type": "object",
+  "required": [
+    "schema",
+    "schema_of",
+    "repo",
+    "generated_at",
+    "commit",
+    "ci"
+  ],
+  "properties": {
+    "schema": {
+      "description": "версия формата строкой: мажор.минор. Мажор 1 — та же форма у прежнего держателя, витрины: в 2.0 договор переехал в каталог без смены формы (решение владельца 15.10, #843)",
+      "type": "string",
+      "pattern": "^[12]\\.[0-9]+$"
+    },
+    "schema_of": {
+      "description": "одна строка о том, ЧЕГО эта версия (правило 164)",
+      "type": "string",
+      "minLength": 1
+    },
+    "repo": {
+      "description": "владелец/имя — тот репозиторий, о котором файл",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "generated_at": {
+      "description": "когда собран файл: ISO 8601 с часовым поясом",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2}(\\.[0-9]+)?)?(Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "commit": {
+      "description": "полный SHA коммита, по которому собран файл",
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "ci": {
+      "description": "файл прогона CI; статус витрина спрашивает у площадки — свой красный файл честно сказать не может",
+      "type": "object",
+      "required": [
+        "workflow"
+      ],
+      "properties": {
+        "workflow": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+\\.ya?ml$"
+        }
+      }
+    },
+    "version": {
+      "description": "версия — конкретная сборка, три числа X.Y.Z: 1.11.157",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "release": {
+      "description": "выпуск — серия, два числа X.Y: 1.11. Третья цифра тега выпуска всегда 0 и смысла не несёт, буква v — запись тега, а не выпуска (договор 1.3)",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "coverage_percent": {
+      "description": "покрытие кода тестами, доля в процентах",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "tests": {
+      "type": "object",
+      "required": [
+        "functions",
+        "modules"
+      ],
+      "properties": {
+        "functions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "modules": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "python": {
+      "type": "object",
+      "required": [
+        "supported"
+      ],
+      "properties": {
+        "supported": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "experimental": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "os": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "checks_per_pr": {
+      "type": "object",
+      "required": [
+        "count",
+        "names"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "exchange": {
+      "description": "обмен между проектами (с 1.4): то, что проект публикует о себе СВЕРХ договора, — по темам. У темы своя версия строкой, соседи собирают по имени темы. Корень файла — только договор",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "schema"
+        ],
+        "properties": {
+          "schema": {
+            "description": "версия формата ТЕМЫ строкой: мажор.минор",
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+$"
+          },
+          "schema_of": {
+            "description": "одна строка о том, чего эта версия (правило 164)",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "none": {
+      "description": "предмета нет — и причина. Ключ — имя показателя, значение — непустая причина",
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "version",
+          "release",
+          "coverage_percent",
+          "tests",
+          "python",
+          "checks_per_pr"
+        ]
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "allOf": [
+    {
+      "description": "версия — поле version либо причина в none.version",
+      "anyOf": [
+        {
+          "required": [
+            "version"
+          ]
+        },
+        {
+          "required": [
+            "none"
+          ],
+          "properties": {
+            "none": {
+              "required": [
+                "version"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "выпуск — поле release либо причина в none.release",
+      "anyOf": [
+        {
+          "required": [
+            "release"
+          ]
+        },
+        {
+          "required": [
+            "none"
+          ],
+          "properties": {
+            "none": {
+              "required": [
+                "release"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "покрытие — поле coverage_percent либо причина в none.coverage_percent",
+      "anyOf": [
+        {
+          "required": [
+            "coverage_percent"
+          ]
+        },
+        {
+          "required": [
+            "none"
+          ],
+          "properties": {
+            "none": {
+              "required": [
+                "coverage_percent"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "тесты — раздел tests либо причина в none.tests",
+      "anyOf": [
+        {
+          "required": [
+            "tests"
+          ]
+        },
+        {
+          "required": [
+            "none"
+          ],
+          "properties": {
+            "none": {
+              "required": [
+                "tests"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "версии Python — раздел python либо причина в none.python",
+      "anyOf": [
+        {
+          "required": [
+            "python"
+          ]
+        },
+        {
+          "required": [
+            "none"
+          ],
+          "properties": {
+            "none": {
+              "required": [
+                "python"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "проверки на изменение — раздел checks_per_pr либо причина в none.checks_per_pr",
+      "anyOf": [
+        {
+          "required": [
+            "checks_per_pr"
+          ]
+        },
+        {
+          "required": [
+            "none"
+          ],
+          "properties": {
+            "none": {
+              "required": [
+                "checks_per_pr"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
