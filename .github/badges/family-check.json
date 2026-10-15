@@ -3,7 +3,7 @@
   "project": "ArtVsMark/Engineering-Incidents-Playbook",
   "segments": {
     "gives": {
-      "state": "ok",
+      "state": "unknown",
       "why": "",
       "links": [
         {
@@ -55,6 +55,16 @@
           "where": "сводка семьи",
           "state": "ok",
           "why": ""
+        },
+        {
+          "segment": "gives",
+          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
+          "what": "facts",
+          "mine": "2.0",
+          "latest": null,
+          "where": "сводка семьи",
+          "state": "unknown",
+          "why": "сводка ещё не перечитала манифест"
         },
         {
           "segment": "gives",
@@ -144,13 +154,13 @@
         },
         {
           "segment": "family",
-          "publisher": "ArtVsMark/ArtVsMark",
+          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
           "what": "facts",
           "mine": "1.6",
-          "latest": "1.6",
+          "latest": null,
           "where": ".github/badges/facts.json",
-          "state": "ok",
-          "why": ""
+          "state": "unknown",
+          "why": "у издателя не опубликовано"
         }
       ]
     },
@@ -180,14 +190,8 @@
     {
       "code": "EIP",
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
-      "state": "ok",
+      "state": "unknown",
       "why": "свой: состояние отдачи"
-    },
-    {
-      "code": "AVM",
-      "repo": "ArtVsMark/ArtVsMark",
-      "state": "ok",
-      "why": ""
     },
     {
       "code": "EPM",
