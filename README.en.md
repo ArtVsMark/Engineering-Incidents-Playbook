@@ -117,7 +117,7 @@ project agrees with the rest:
 **The family badge** has segments `gives` (what the project offers), `family`
 (what it takes from the publishers), `pairs` (paired links) and `ext` (the
 outside world, judged from the project's own facts: a floating `…-latest`
-runner label is red), with the publishers block `EIP · EPM · AVM` on the right.
+runner label is red), with the publishers block `EIP · EPM` on the right.
 Each project puts it up itself with the `family-badge` action; how to read the
 colours is in the [contract](export/README.md).
 
