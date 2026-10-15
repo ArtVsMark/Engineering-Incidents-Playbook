@@ -192,8 +192,8 @@
     {
       "code": "EPM",
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
-      "state": "ok",
-      "why": ""
+      "state": "partial",
+      "why": "взято шагов 2, конвейер не подключён (.pipeline.yml нет)"
     }
   ]
 }
