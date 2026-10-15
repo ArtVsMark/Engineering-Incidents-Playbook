@@ -22,7 +22,7 @@
       "cron": "41 7 * * *",
       "role": "main",
       "gh_calls_per_run": 12,
-      "how": "gh run list, gh issue list и gh issue edit|create из main_red.py; ещё gh issue list и gh issue edit|create из check_python_next.py (работа python-next-drift); ещё до 4 страниц gh api actions/runs за двое суток, gh issue list и gh issue edit|create из flaky_reruns.py (работа flaky-reruns, правило 124). Манифест версий читается по обычному HTTPS с raw.githubusercontent.com и квоты API не расходует. Верхняя оценка: правка задач условна.",
+      "how": "gh run list, gh issue list и gh issue edit|create из main_red.py; ещё gh issue list и gh issue edit|create из check_python_next.py (работа python-next-drift); ещё gh api actions/runs за двое суток — все страницы, оценка около 4 при сотне прогонов в сутки, предела в коде нет и число растёт с прогонами; gh issue list, gh api issues/N и gh issue edit|create из flaky_reruns.py (работа flaky-reruns, правило 124). Манифест версий читается по обычному HTTPS с raw.githubusercontent.com и квоты API не расходует. Верхняя оценка: правка задач условна.",
       "why": "Основной путь: дежурного по красной общей ветке больше нет ни у кого. Час выбран через час после consumers-sync намеренно — если покраснел он, дежурный увидит состоявшийся отказ, а не гонку с ним; арифметика это подтверждает с другой стороны: в один час два прогона не складываются."
     },
     "python-next.yml": {
