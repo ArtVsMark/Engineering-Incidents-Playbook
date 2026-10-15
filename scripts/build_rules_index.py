@@ -101,7 +101,7 @@ CONTRACTS_MARKER_RE = re.compile(
     r"(<!--m:contracts-->).*?(<!--/m:contracts-->)", re.S)
 #: Порядок ключей в примере — тот же, что в выгрузке: читатель сверяет глазами.
 CONTRACTS_ORDER = ("export", "bindings", "consumers", "proposals",
-                   "showcase", "where", "family")
+                   "showcase", "where", "family", "facts")
 
 #: ЗНАЧКА С ЧИСЛОМ ПРАВИЛ БОЛЬШЕ НЕТ, и это решение владельца 1 октября, а
 #: не пропажа. Первая строка обоих README несёт то же число маркером
@@ -945,6 +945,9 @@ CONTRACT_FILES = {
 #:
 #: Формат принадлежит тому, кто его пишет, а не тому месту, где лежит файл.
 #: Поэтому номер спрашивается у сборщика — там же, где он и объявлен (035).
+#: Номер договора фактов семьи — тремя числами, одно место (035, #843).
+FACTS_VERSION = Path("export") / "facts" / "facts.version"
+
 CONTRACT_MODULES = {
     "where": ("aggregate_bindings", "SUMMARY_SCHEMA"),
     # Манифест и сводка семьи — тоже на ветке `badges`, номер у сборщика.
@@ -983,6 +986,15 @@ def contracts_now(root: Path | None = None) -> dict[str, str]:
         номер = данные.get("schema")
         if isinstance(номер, str) and номер:
             out[имя] = номер
+    # ДОГОВОР ФАКТОВ — С 2.0 У КАТАЛОГА (#843). Номер живёт в
+    # export/facts/facts.version тремя числами, контракт отдаётся серией: её
+    # же издатель пишет в `schema` своего facts.json.
+    try:
+        # не проза: номер версии «мажор.минор.патч».
+        out["facts"] = ".".join((база / FACTS_VERSION).read_text(encoding="utf-8")
+                                .strip().split(".")[:2])
+    except OSError:
+        pass
     for имя, (модуль, поле) in CONTRACT_MODULES.items():
         try:
             номер = getattr(__import__(модуль), поле)
