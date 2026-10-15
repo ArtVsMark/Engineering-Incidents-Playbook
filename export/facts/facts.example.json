@@ -1,0 +1,46 @@
+{
+  "_": "Образец facts.json по договору фактов семьи: всё, что показывается о проекте, — значение или причина в none; своё сверх договора — в exchange по темам. Проверка — check_facts.py из того же выпуска.",
+  "schema": "2.0",
+  "schema_of": "договор фактов семьи ArtVsMark/Engineering-Incidents-Playbook — export/facts/facts-contract.md",
+  "repo": "Owner/Project",
+  "generated_at": "2026-10-09T09:00:00+00:00",
+  "commit": "0123456789abcdef0123456789abcdef01234567",
+  "ci": {
+    "workflow": "ci.yml"
+  },
+  "version": "1.4.12",
+  "release": "1.4",
+  "coverage_percent": 91.5,
+  "tests": {
+    "functions": 120,
+    "modules": 14
+  },
+  "python": {
+    "supported": [
+      "3.14"
+    ],
+    "experimental": [
+      "3.15"
+    ],
+    "os": [
+      "ubuntu-26.04"
+    ]
+  },
+  "checks_per_pr": {
+    "count": 3,
+    "names": [
+      "lint",
+      "tests",
+      "facts"
+    ]
+  },
+  "none": {},
+  "exchange": {
+    "glossary": {
+      "schema": "1.0",
+      "schema_of": "карточки глоссария: сколько их и полнота по версии языка",
+      "cards": 2817,
+      "completeness_percent": 100.0
+    }
+  }
+}

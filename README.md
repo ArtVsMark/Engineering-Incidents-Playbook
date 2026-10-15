@@ -109,9 +109,9 @@
 
 | Проект | Роль в семье |
 |---|---|
-| **Engineering-Incidents-Playbook** (`EIP`, здесь) | правила и их выгрузка, контракт ответа, канал предложений снизу, сводка семьи |
+| **Engineering-Incidents-Playbook** (`EIP`, здесь) | правила и их выгрузка, контракт ответа, канал предложений снизу, договор фактов `facts.json`, сводка семьи |
 | [Engineering-Pipeline-Mechanisms](https://github.com/ArtVsMark/Engineering-Pipeline-Mechanisms) (`EPM`) | шаги конвейера, которые зовут по адресу с тегом: факты, дрейф, автомерж |
-| [ArtVsMark](https://github.com/ArtVsMark/ArtVsMark) (`AVM`) | витрина профиля и договор фактов `facts.json`, по которому каждый проект говорит о себе |
+| [ArtVsMark](https://github.com/ArtVsMark/ArtVsMark) (`AVM`) | витрина профиля — читает факты каждого проекта; договор фактов с 2.0 держит каталог |
 | [Stepik-Python-Grader](https://github.com/ArtVsMark/Stepik-Python-Grader) | потребитель; здесь родилось большинство правил каталога |
 | [Glossary-Python](https://github.com/ArtVsMark/Glossary-Python) | потребитель и пара грейдера |
 | [Claude-Code_Usage-Token](https://github.com/ArtVsMark/Claude-Code_Usage-Token) | потребитель |

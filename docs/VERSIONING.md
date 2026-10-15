@@ -90,6 +90,7 @@ one — and no fallback through package metadata.
 | `schema` в [`.rules/showcase.json`](../.rules/showcase.json) | формат набора вопросов витрины | каталог и потребители витрины | когда меняется состав вопроса |
 | `schema` в [`export/where.json`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/where.json) | формат сводки «где действует» | тот, кто читает сводку машинно | когда меняется состав среза потребителя |
 | `schema` в [`export/family.json`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/export/family.json) и в манифесте `.github/badges/contracts.json` каждого проекта | формат манифеста семьи: что проект отдаёт и что берёт парно | каждый проект семьи, сверяющий себя для значка | когда меняется состав манифеста |
+| номер в [`export/facts/facts.version`](../export/facts/facts.version) и `schema` в `facts.json` каждого проекта и в образце [`export/facts/facts.example.json`](../export/facts/facts.example.json) | договор фактов семьи: что проект публикует о себе (с 2.0 — у каталога, до того — у витрины) | каждый издатель фактов и их читатели — витрина, значок | каждой корректировкой договора — минор; смена держателя или строгость — мажор |
 | версия плагина [`catalogue`](../plugins/catalogue/README.md) | навыки, которые проект ставит плагином | площадка, решая, обновлять ли кеш | каждым коммитом витрины: поля `version` нет, версией служит коммит |
 
 **Версию плагина не пишет никто, и это не пропуск.** Без поля `version`
