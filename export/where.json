@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-14T16:09:53+00:00",
+  "generated_at": "2026-10-15T09:48:04+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,7 +9,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-14",
+      "read_at": "2026-10-15",
       "answered": 217,
       "by_status": {
         "active": 201,
@@ -2464,7 +2464,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-14",
+      "read_at": "2026-10-15",
       "answered": 217,
       "by_status": {
         "active": 212,
@@ -5038,7 +5038,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-14",
+      "read_at": "2026-10-15",
       "answered": 217,
       "by_status": {
         "active": 173,
@@ -7184,7 +7184,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-14",
+      "read_at": "2026-10-15",
       "answered": 217,
       "by_status": {
         "active": 184,
@@ -9452,7 +9452,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-14",
+      "read_at": "2026-10-15",
       "answered": 217,
       "by_status": {
         "active": 173,
@@ -11599,7 +11599,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-14",
+      "read_at": "2026-10-15",
       "answered": 217,
       "by_status": {
         "active": 209,
@@ -12774,7 +12774,7 @@
           "analysed": "2026-09-26",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v1.12.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v1.13.0",
           "origin_kind": "called"
         },
         "091": {
@@ -13104,7 +13104,7 @@
           "analysed": "2026-09-26",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v1.12.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v1.13.0",
           "origin_kind": "called"
         },
         "124": {
@@ -13170,7 +13170,7 @@
           "analysed": "2026-10-14",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/answer/action.yml@v1.12.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/answer/action.yml@v1.13.0",
           "origin_kind": "called"
         },
         "130": {
@@ -13181,7 +13181,7 @@
           "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.12.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.13.0",
           "origin_kind": "called"
         },
         "131": {
@@ -13236,7 +13236,7 @@
           "analysed": "2026-09-26",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v1.12.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v1.13.0",
           "origin_kind": "called"
         },
         "136": {
@@ -13522,7 +13522,7 @@
           "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.12.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.13.0",
           "origin_kind": "called"
         },
         "163": {
@@ -13698,7 +13698,7 @@
           "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.12.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.13.0",
           "origin_kind": "called"
         },
         "179": {
@@ -13824,14 +13824,14 @@
         },
         "190": {
           "mechanism": "pipeline",
-          "where": ".rules/bindings.json и .rules/proposals.json собраны scripts/onboard_consumer.py каталога, .github/workflows/rules-inbox.yml подключён его действием — форма ответа спрошена у соседа, а не воспроизведена по памяти. ВИТРИНА ЧУЖИХ ЧИСЕЛ — scripts/family.py и scripts/build_facts.py: разрез по сводке каталога спрашивает источник, а не помнит его форму. Расхождение здесь НАХОДКА, А НЕ ОТКАЗ СБОРКИ: непрочитанная сводка даёт `read: false` с названной причиной, а не ноль (family.NotRun), разошедшаяся форма печатается рядом с числами и заводит запись дрейфа `family-schema` (scripts/drift.py::reader_is_behind). Право остановить наш конвейер правкой у себя сосед таким образом не получает",
+          "where": "ВИТРИНА ЧУЖИХ ЧИСЕЛ — scripts/family.py и scripts/build_facts.py: разрез по сводке каталога спрашивает источник, а не помнит его форму. Расхождение здесь НАХОДКА, А НЕ ОТКАЗ СБОРКИ: непрочитанная сводка даёт `read: false` с названной причиной, а не ноль (family.NotRun), разошедшаяся форма печатается рядом с числами и заводит запись дрейфа `family-schema` (scripts/drift.py::reader_is_behind). Право остановить наш конвейер правкой у себя сосед таким образом не получает. Канал подключения тоже спрошен у соседа, а не воспроизведён по памяти: .rules/bindings.json и .rules/proposals.json собраны scripts/onboard_consumer.py каталога, .github/workflows/rules-inbox.yml подключён его действием",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-09",
+          "analysed": "2026-10-15",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.12.0",
-          "origin_kind": "called"
+          "origin": "",
+          "origin_kind": "own"
         },
         "191": {
           "mechanism": "gate",
@@ -13868,10 +13868,10 @@
         },
         "194": {
           "mechanism": "pipeline",
-          "where": "scripts/check_facts_schema.py::pinned_on_trunk — sha в адресе схемы витрины признаётся её коммитом только по ответу `compare <sha>...main` её же истории: коммит из форка той же сети — отказ (tests/test_check_facts_schema.py::test_the_pinned_commit_is_asked_about_and_a_foreign_one_is_rejected, tests/test_check_facts_schema.py::test_on_trunk_reads_the_compare_answer); scripts/drift.py::pin_mislabelled — хеш действия с пометкой-тегом сверяется `compare/<хеш>...<тег>` в репозитории самого действия, а не равенством строк (tests/test_drift.py::test_a_hash_that_left_its_label_is_named)",
+          "where": "scripts/drift.py::pin_mislabelled — хеш действия с пометкой-тегом сверяется `compare/<хеш>...<тег>` в репозитории самого действия, а не равенством строк (tests/test_drift.py::test_a_hash_that_left_its_label_is_named)",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-05",
+          "analysed": "2026-10-14",
           "decided": "2026-10-05",
           "skill": "",
           "origin": "",

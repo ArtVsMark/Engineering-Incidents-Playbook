@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 29 | 18 | 217 | 0 | 0 | 173 | 138 | 29 | 0 | 6 | 0 | 70 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 217 | 0 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 0 | 0 | 173 | 85 | 17 | 0 | 59 | 12 | 117 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 217 | 0 | 0 | 209 | 185 | 18 | 2 | 4 | 0 | 251 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 18 | 15 | 217 | 0 | 0 | 209 | 185 | 18 | 2 | 4 | 0 | 249 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -543,7 +543,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_roles.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_steps_speak_outward.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 118 механизмов по одному правилу; без названного адреса: 0 из 209 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 116 механизмов по одному правилу; без названного адреса: 0 из 209 |
 
 ## Правила · Rules
 
