@@ -30,7 +30,12 @@ def журнал(root: Path, текст: str) -> Path:
     ([прогон(2, 2)], "", [2]),                                   # повторный, не записан
     ([прогон(3, 2)], "нестабильность, прогон 3 упал на checkout", []),  # записан номером
     ([прогон(4, 3, "failure")], "", []),                         # красный — не этот случай
-    ([прогон(5, 2), прогон(6, 1), прогон(7, 2)], "прогон 7", [5]),  # смесь
+    ([прогон(5, 2), прогон(6, 1), прогон(7, 2)], "нестабильность: прогон 7", [5]),  # смесь
+    ([прогон(8, 2)], "умерла до первого теста, прогон 8 — checkout", []),  # второй законный случай
+    # Обзор #833: номер без слова записи — не запись; слово в соседнем абзаце — тоже.
+    ([прогон(13, 2)], "ссылка https://example.invalid/runs/13", [13]),
+    ([прогон(14, 2)], "нестабильность у соседа\n\nпрогон 14 упал", [14]),
+    ([прогон(15, 2)], "нестабильность, прогон 151", [15]),      # номер — целым числом
 ])
 def test_незаписанные(tmp_path, прогоны, текст, незаписано):
     root = журнал(tmp_path, текст)
@@ -39,7 +44,8 @@ def test_незаписанные(tmp_path, прогоны, текст, неза
 
 def test_номер_ищется_и_в_вышедших_фрагментах(tmp_path):
     (tmp_path / "changelog.d" / "released").mkdir(parents=True)
-    (tmp_path / "changelog.d" / "released" / "y.fixed.md").write_text("прогон 9", encoding="utf-8")
+    (tmp_path / "changelog.d" / "released" / "y.fixed.md").write_text(
+        "нестабильность: прогон 9", encoding="utf-8")
     assert fr.незаписанные([прогон(9, 2)], fr.журнал(tmp_path)) == []
 
 
@@ -51,7 +57,7 @@ def test_main_находка_без_записи_трекера(tmp_path, monkey
 
 def test_main_всё_записано_чисто(tmp_path, monkeypatch):
     monkeypatch.setattr(fr.ghcli, "список", lambda *a, **k: (0, [прогон(12, 2)], ""))
-    assert fr.main(["--root", str(журнал(tmp_path, "прогон 12"))]) == 0
+    assert fr.main(["--root", str(журнал(tmp_path, "нестабильность: прогон 12"))]) == 0
 
 
 def test_main_площадка_молчит_третий_исход(tmp_path, monkeypatch, capsys):
@@ -63,7 +69,36 @@ def test_main_площадка_молчит_третий_исход(tmp_path, mo
 def test_main_задачи_нет_и_находок_нет_не_заводит(tmp_path, monkeypatch):
     monkeypatch.setattr(fr.ghcli, "список", lambda *a, **k: (0, [], ""))
     monkeypatch.setattr(fr.main_red, "find_issue", lambda m: (None, None))
-    вызовы = []
+    вызовы: list[tuple] = []
     monkeypatch.setattr(fr.ghcli, "run", lambda *a: вызовы.append(a) or (0, ""))
     assert fr.main(["--root", str(журнал(tmp_path, "")), "--apply"]) == 0
     assert вызовы == []
+
+
+def test_пункт_тела_переносится_пока_не_записан(tmp_path, monkeypatch):
+    """Обзор #833: прогон, выпавший из окна, остаётся в задаче, пока его не запишут."""
+    прежнее = fr.тело([прогон(21, 2)], "")
+    assert [п["id"] for п in fr.прежние(прежнее)] == [21]
+    monkeypatch.setattr(fr.ghcli, "список", lambda *a, **k: (0, [], ""))
+    monkeypatch.setattr(fr.main_red, "find_issue", lambda m: (77, None))
+    записи: list[str] = []
+
+    def run(*a: str) -> tuple[int, str]:
+        if "--jq" in a:
+            return 0, прежнее
+        записи.append(next(x for x in a if x.startswith("body=")))
+        return 0, ""
+
+    monkeypatch.setattr(fr.ghcli, "run", run)
+    assert fr.main(["--root", str(журнал(tmp_path, "")), "--apply"]) == 1
+    assert "[21]" in записи[-1] and "каждый повторный зелёный записан" not in записи[-1]
+    assert fr.main(["--root", str(журнал(tmp_path, "нестабильность: прогон 21")), "--apply"]) == 0
+    assert "каждый повторный зелёный записан" in записи[-1]
+
+
+def test_тело_задачи_не_прочитано_третий_исход(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(fr.ghcli, "список", lambda *a, **k: (0, [], ""))
+    monkeypatch.setattr(fr.main_red, "find_issue", lambda m: (77, None))
+    monkeypatch.setattr(fr.ghcli, "run", lambda *a: (1, "HTTP 502"))
+    assert fr.main(["--root", str(журнал(tmp_path, "")), "--apply"]) == 2
+    assert "HTTP 502" in capsys.readouterr().err
