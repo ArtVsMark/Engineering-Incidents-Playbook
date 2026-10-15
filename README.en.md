@@ -16,6 +16,17 @@ history: what broke, how it surfaced, what it cost.
 [day-one order](START.md) ·
 [the whole catalogue, by area](rules/README.md)
 
+## Two roles — for outside projects and for the family
+
+**To an outside project the catalogue hands out rules.** Badges and the facts
+contract are optional; connecting does not require them.
+
+**For the family the catalogue is the main contract holder, its brain:** every
+agreement between the projects, the code of the unified badge and the reference
+to check against. It counts no one else's numbers — every project publishes facts
+about itself. The cost is stated: when the catalogue breaks, everyone's badge goes
+grey ([#842](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/842)).
+
 ## Why
 
 A list of "do this" gets copied wholesale and followed by nobody. A rule holds
@@ -28,10 +39,8 @@ broke, recognise your own situation, take the rule together with its reason.
 ## How to use it
 
 **Connecting a project** — [`CONNECT.md`](CONNECT.md): one command assembles
-the answer for every rule, the channel back and the daily "inbox" run. The
-catalogue ships mechanisms, not only text: the inbox action, answer and
-authorship checks, the unified Python badge and the family badge, skills for
-the agent session — the full list is there, and it is the only one.
+the answer for every rule, the channel back and the daily "inbox" run. Optional
+mechanisms — actions, checks, badges, skills — are listed there, in one list.
 
 **Starting a new project** — walk through [`START.md`](START.md): what to set up
 on day one and what can wait. Boilerplate lives in [`templates/`](templates/).
@@ -92,8 +101,9 @@ Two separate indexes would not do this — each looks complete on its own.
 
 ## The project family
 
-The catalogue is one of the family projects that exchange contracts. Each has its own
-role, and the family badge shows whether a project agrees with the rest:
+The family projects exchange contracts, and the catalogue holds them — see "Two
+roles" above. Each project has its own role, and the family badge shows whether a
+project agrees with the rest:
 
 | Project | Role in the family |
 |---|---|
