@@ -782,3 +782,26 @@ def test_granitsa_otkata_nerazbiraemaya_stroka():
     """`a";"b` не разбирается без posix, и откатываться не к чему: `'&&'`
     становится настоящим `&&`, а хвост — толчком. Ложный отказ, а не пропуск."""
     assert pg.толкает("echo a\";\"b '&&' git push origin agent/чужая") is False
+
+
+# ── зависший вызов не превращается в пропуск (обзор #882) ──────────────────
+
+def _завис():
+    raise pg.subprocess.TimeoutExpired(["git", "rev-parse", "--abbrev-ref", "HEAD"], 60)
+
+
+def test_тайм_аут_при_толчке_закрывает(окно, monkeypatch, capsys):
+    """Не пойманный TimeoutExpired дал бы код 1 — площадка пропустила бы толчок."""
+    окно("git push -u origin agent/своя")
+    monkeypatch.setattr(pg, "current_branch", _завис)
+    assert pg.main() == 2
+    err = capsys.readouterr().err
+    assert "git rev-parse" in err and "60" in err
+
+
+def test_тайм_аут_на_прочей_команде_пропускает(окно, monkeypatch, capsys):
+    """Страж стоит на каждой команде: зависший git не обездвиживает окно."""
+    окно("ls -la")
+    monkeypatch.setattr(pg, "current_branch", _завис)
+    assert pg.main() == 0
+    assert "не толчок" in capsys.readouterr().err

@@ -332,6 +332,7 @@ def test_cherez_dver_chisto():
     "import subprocess\nsubprocess.run(['git', 'status'])\n",
     "import subprocess as sp\nsp.check_output(['gh', 'api', 'x'])\n",
     "from subprocess import call\ncall(['sh', '-c', 'true'])\n",
+    "import subprocess\nsubprocess.run(['git'], timeout=None)\n",      # умолчание явно — не дедлайн
     "import subprocess\nsubprocess.check_call(['make'], cwd='.')\n",
 ])
 def test_без_дедлайна_находка(вызов):

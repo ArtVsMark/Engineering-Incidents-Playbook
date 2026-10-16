@@ -219,7 +219,9 @@ def no_deadline(source: str) -> list[tuple[int, str]]:
             continue
         if any(kw.arg is None for kw in node.keywords):
             continue
-        if "timeout" not in {kw.arg for kw in node.keywords}:
+        срок = next((kw.value for kw in node.keywords if kw.arg == "timeout"), None)
+        # `timeout=None` — умолчание, записанное явно, а не дедлайн (обзор #882).
+        if срок is None or (isinstance(срок, ast.Constant) and срок.value is None):
             found.append((node.lineno, имя))
     return found
 
@@ -512,7 +514,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     print("вызовы наружу задают своё явно: просмотрено файлов "
-          f"{len(файлы)} — дедлайн у каждого вызова, кодировка у текстовых, -z у списков путей, "
+          f"{len(файлы)} — дедлайн у каждого вызова, кроме Popen и **kwargs, кодировка у текстовых, -z у списков путей, "
           "площадка через одну дверь")
     return 0
 
