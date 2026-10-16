@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-16T14:12:47+00:00",
+  "generated_at": "2026-10-16T14:28:20+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,9 +10,9 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-16",
-      "answered": 217,
+      "answered": 218,
       "by_status": {
-        "active": 201,
+        "active": 202,
         "not-applicable": 16
       },
       "by_mechanism": {
@@ -20,7 +20,7 @@
         "pipeline": 12,
         "skill": 5,
         "document": 18,
-        "none": 8
+        "none": 9
       },
       "rules": {
         "001": "active",
@@ -239,7 +239,8 @@
         "215": "active",
         "216": "not-applicable",
         "217": "active",
-        "218": "not-applicable"
+        "218": "not-applicable",
+        "219": "active"
       },
       "holds": {
         "001": {
@@ -2452,6 +2453,17 @@
           "skill": "",
           "origin": "",
           "origin_kind": "own"
+        },
+        "219": {
+          "mechanism": "none",
+          "where": "",
+          "holdable": "refused",
+          "awaiting": "",
+          "analysed": "2026-10-16",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
         }
       },
       "notes": {},
@@ -14099,8 +14111,8 @@
         }
       },
       "notes": {},
-      "trails": 18,
-      "born": 15
+      "trails": 19,
+      "born": 16
     }
   ]
 }
