@@ -86,8 +86,11 @@ jobs:
           NUMBER: ${{ steps.plan.outputs.number }}
         run: |
           set -euo pipefail
+          # --latest=false: «последний выпуск» площадки — выпуск КАТАЛОГА
+          # vX.Y.0. 15.10 facts-v2.0.0 встал «последним», и зона выпуска на
+          # значке показала его вместо v1.13.0.
           gh release create "$TAG" "$RUNNER_TEMP"/facts-release/* \
-            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --latest=false \
             --title "Договор фактов $NUMBER" --notes-file "$RUNNER_TEMP/facts-notes.md"
           echo "::notice::Выпуск $TAG поставлен на $GITHUB_SHA, файлов: $(ls "$RUNNER_TEMP"/facts-release | wc -l)."
 
