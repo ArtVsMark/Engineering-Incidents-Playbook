@@ -2,8 +2,7 @@
 
 > **Читатель:** посетитель — что это такое и стоит ли брать.
 
-[![Состояние: Python и версии, ОС linux / windows / mac, покрытие, выпуск и PyPI, версия](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/python.svg)](.github/workflows/python-next.yml)
-[![Семья: что каталог отдаёт и берёт, расходится ли с контрактами семьи и с внешним миром](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/family.svg)](#семья-проектов)
+[![Проект: сверху проверки, Python, ОС, покрытие, выпуск и версия; снизу правила механизмом — свои и взятые — и сверка с семьёй](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/project.svg)](#семья-проектов)
 
 **Каталог из <!--m:rules-->217<!--/m:rules--> правил для Claude Code и GitHub,
 где каждое выросло из реальной поломки.** Работа с агентскими окнами и сводом проекта (`CLAUDE.md`),

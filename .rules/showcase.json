@@ -7,7 +7,7 @@
       "id": "ci",
       "ask": "зелены ли обязательные проверки на общей ветке",
       "for": "visitor",
-      "badge": ".github/badges/python.svg",
+      "badge": ".github/badges/project.svg",
       "branch": "badges",
       "zone": "Python",
       "why": "прежний отказ стоял на 022 — второй источник того же расходится с первым молча. Зона «Python» не второй источник: она рисуется из ответа той же площадки о тех же прогонах (actions/workflows/*/runs) и показывает больше вкладки — версии и ОС одной строкой. Решение владельца 1 октября"
@@ -16,7 +16,7 @@
       "id": "release",
       "ask": "какой выпуск последний",
       "for": "visitor",
-      "badge": ".github/badges/python.svg",
+      "badge": ".github/badges/project.svg",
       "branch": "badges",
       "zone": "release / PyPI"
     },
@@ -24,7 +24,7 @@
       "id": "version",
       "ask": "какая версия у текущей головы",
       "for": "visitor",
-      "badge": ".github/badges/python.svg",
+      "badge": ".github/badges/project.svg",
       "branch": "badges",
       "zone": "version"
     },
@@ -32,7 +32,7 @@
       "id": "coverage",
       "ask": "какая доля кода покрыта тестами",
       "for": "visitor",
-      "badge": ".github/badges/python.svg",
+      "badge": ".github/badges/project.svg",
       "branch": "badges",
       "zone": "coverage"
     },
