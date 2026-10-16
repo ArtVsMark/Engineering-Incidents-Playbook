@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-16T18:52:04+00:00",
+  "generated_at": "2026-10-16T19:06:54+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,9 +10,9 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-16",
-      "answered": 218,
+      "answered": 219,
       "by_status": {
-        "active": 202,
+        "active": 203,
         "not-applicable": 16
       },
       "by_mechanism": {
@@ -20,7 +20,7 @@
         "pipeline": 12,
         "skill": 5,
         "document": 18,
-        "none": 9
+        "none": 10
       },
       "rules": {
         "001": "active",
@@ -240,7 +240,8 @@
         "216": "not-applicable",
         "217": "active",
         "218": "not-applicable",
-        "219": "active"
+        "219": "active",
+        "220": "active"
       },
       "holds": {
         "001": {
@@ -2464,11 +2465,22 @@
           "skill": "",
           "origin": "",
           "origin_kind": ""
+        },
+        "220": {
+          "mechanism": "none",
+          "where": "",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-16",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
         }
       },
       "notes": {},
-      "trails": 61,
-      "born": 36
+      "trails": 62,
+      "born": 37
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
