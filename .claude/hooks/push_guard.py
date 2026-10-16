@@ -256,7 +256,7 @@ REDIRECT = re.compile(r"[<>]")
 
 def current_branch() -> str | None:
     done = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+                          capture_output=True, text=True, encoding="utf-8", timeout=5)
     return done.stdout.strip() or None if done.returncode == 0 else None
 
 
@@ -484,14 +484,14 @@ def первый_коммит_ветки(корень: Path) -> str | None:
         return None                     # чужое дерево — не наш предмет
     названо = subprocess.run(
         [sys.executable, str(выбор), "--root", str(корень), "--base", "origin/main"],
-        capture_output=True, text=True, encoding="utf-8", timeout=600)
+        capture_output=True, text=True, encoding="utf-8", timeout=30)
     if названо.returncode != 0:
         return None                     # коммитов нет либо выбор не отработал
     sha = названо.stdout.strip()
     if not sha:
         return None
     тело = subprocess.run(["git", "-C", str(корень), "log", "-1", "--format=%B", sha],
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+                          capture_output=True, text=True, encoding="utf-8", timeout=5)
     return тело.stdout if тело.returncode == 0 else None
 
 
@@ -522,7 +522,7 @@ def тело_не_проходит(корень: Path) -> str | None:
     if тело is None:
         return None
     done = subprocess.run([sys.executable, str(скрипт), "--check", "--body-file", "-"],
-                          input=тело, capture_output=True, text=True, encoding="utf-8", timeout=600)
+                          input=тело, capture_output=True, text=True, encoding="utf-8", timeout=30)
     if done.returncode == 0:
         return None
     if done.returncode == 2:
@@ -666,6 +666,12 @@ def main() -> int:
     со строкой в stderr — страж стоит на каждой команде оболочки, и закрыть всё
     из-за зависшего git значило бы обездвижить окно. Та же развилка, что у
     обёртки без интерпретатора планки.
+
+    БЮДЖЕТ (обзор #883). Развилка работает, только если дедлайны внутри короче
+    предела самого хука в `.claude/settings.json`: иначе площадка убьёт хук
+    раньше, и это снова неблокирующий пропуск. Сумма дедлайнов на пути толчка
+    — `git` 5 + 5 с, площадка 20 с, проверочные скрипты 30 + 30 с — 90 с при
+    пределе хука 120 с; сверяет набор.
     """
     try:
         event = json.load(sys.stdin)
@@ -676,6 +682,16 @@ def main() -> int:
     command = (event.get("tool_input") or {}).get("command") or ""
     try:
         return решить(command)
+    except OSError as exc:
+        # Нет git или скрипта — тот же тихий пропуск, что и у тайм-аута: код 1
+        # площадка считает неблокирующим (обзор #883).
+        if толкает(command):
+            print(f"страж толчка не смог запустить проверку — {exc} — толчок закрыт: "
+                  "без неё он ушёл бы непроверенным (220).", file=sys.stderr)
+            return 2
+        print(f"страж толчка: проверка не запустилась — {exc}; команда не толчок и "
+              "пропущена без проверки ветки", file=sys.stderr)
+        return 0
     except subprocess.TimeoutExpired as exc:
         вызов = " ".join(map(str, exc.cmd))[:120] if isinstance(exc.cmd, (list, tuple)) else str(exc.cmd)[:120]
         if толкает(command):

@@ -805,3 +805,25 @@ def test_тайм_аут_на_прочей_команде_пропускает(�
     monkeypatch.setattr(pg, "current_branch", _завис)
     assert pg.main() == 0
     assert "не толчок" in capsys.readouterr().err
+
+
+def test_дедлайны_стража_короче_предела_хука():
+    """Сумма дедлайнов внутри меньше предела хука — иначе площадка убьёт хук раньше (#883)."""
+    import json
+    import re
+    корень = ХУК.parent.parent.parent
+    настройки = json.loads((корень / ".claude" / "settings.json").read_text(encoding="utf-8"))
+    предел = next(h["timeout"] for g in настройки["hooks"]["PreToolUse"]
+                  for h in g["hooks"] if "push_guard" in h["command"])
+    сроки = [int(x) for x in re.findall(r"timeout=(\d+)", ХУК.read_text(encoding="utf-8"))]
+    assert сроки and sum(сроки) < предел, (сроки, предел)
+
+
+def test_нет_git_при_толчке_закрывает(окно, monkeypatch, capsys):
+    """OSError давал код 1 — неблокирующий пропуск толчка (#883)."""
+    окно("git push -u origin agent/своя")
+    def нет_git():
+        raise FileNotFoundError(2, "No such file", "git")
+    monkeypatch.setattr(pg, "current_branch", нет_git)
+    assert pg.main() == 2
+    assert "закрыт" in capsys.readouterr().err
