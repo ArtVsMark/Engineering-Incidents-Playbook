@@ -1737,12 +1737,10 @@
     },
     "220": {
       "status": "active",
-      "mechanism": "none",
-      "why": "часть правил о механизмах держат мета-гейты по всему дереву (check_copies, check_orphans, check_subprocess, check_third_outcome, check_verdict_order, check_gates, check_paging, check_transport, check_py_style, check_skips, check_hook_interpreter), но списка «правило о механизмах → мета-гейт → охват» нет, и полноту охвата не сверяет ничто. Замер 16.10 (#879) нашёл три правила, чей охват уже дерева: 100 (46 вызовов без дедлайна), 214 (копии функций), 016.",
-      "holdable": "not-yet",
-      "machine_half": "ЕСТЬ И НЕ ПОСТРОЕНА: перепись правил о механизмах с их мета-гейтом и охватом данными, и гейт, сверяющий, что охват каждого включает scripts/, .claude/hooks/ и .github/. Строится после починки трёх находок #879 — иначе гейт родится красным.",
-      "analysed": "2026-10-16",
-      "awaiting": "починены находки 214 и 016 из ArtVsMark/Engineering-Incidents-Playbook#879 — на дереве с ними гейт охвата родился бы красным (146)"
+      "mechanism": "gate",
+      "where": "scripts/check_mechanism_scope.py — шаг «правила о механизмах держатся по всему дереву» в .github/workflows/ci.yml: перепись .rules/mechanism-rules.json (12 правил, места scripts, .claude/hooks, .github) сверяется с охватом в коде гейтов; проверено откатом scripts/check_subprocess.py к состоянию до #882 — краснеет на хуках у 100, 165, 176. ГРАНИЦА: полноту самой переписи гейт не судит — правило о механизмах, не внесённое в неё, он не увидит; четыре правила (016, 045, 070, 084) держит суждение, долг «не построено» — 159 и 167 в хуках",
+      "origin_kind": "own",
+      "analysed": "2026-10-16"
     }
   }
 }

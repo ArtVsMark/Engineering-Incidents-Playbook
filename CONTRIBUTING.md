@@ -296,6 +296,7 @@ python scripts/check_paging.py
 python scripts/check_record_cache.py
 python scripts/check_invisible.py
 python scripts/check_hook_interpreter.py
+python scripts/check_mechanism_scope.py
 python scripts/check_asked_family.py --paths-from <список путей> --base origin/main
 python scripts/check_facts.py --contract
 python scripts/check_orphans.py
