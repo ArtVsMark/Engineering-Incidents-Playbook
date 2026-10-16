@@ -97,8 +97,7 @@ def прогон(root: Path, окружение: dict[str, str]) -> tuple[int, l
         text=True,
         encoding="utf-8",
         cwd=root,
-        env=окружение,
-    )
+        env=окружение, timeout=600)
     отказали = sorted({m.group(2) for m in ОТКАЗ.finditer(сказано.stdout + сказано.stderr)})
     return сказано.returncode, отказали
 

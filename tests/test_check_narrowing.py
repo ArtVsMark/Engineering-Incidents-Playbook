@@ -16,7 +16,7 @@ from conftest import write
 
 def git(repo: Path, *args: str) -> None:
     subprocess.run(["git", "-C", str(repo), *args], check=True,
-                   capture_output=True, text=True, encoding="utf-8")
+                   capture_output=True, text=True, encoding="utf-8", timeout=60)
 
 
 def дерево(repo: Path, было: str, стало: str, фрагмент: str | None) -> str:
@@ -30,7 +30,7 @@ def дерево(repo: Path, было: str, стало: str, фрагмент: s
     git(repo, "commit", "-qm", "основание")
     основание = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
                                check=True, capture_output=True, text=True,
-                               encoding="utf-8").stdout.strip()
+                               encoding="utf-8", timeout=60).stdout.strip()
     write(repo / "scripts" / "предмет.py", стало + "\n")
     if фрагмент is not None:
         write(repo / "changelog.d" / "fix.fixed.md", фрагмент)

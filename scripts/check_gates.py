@@ -181,7 +181,7 @@ AUDIT_CASES = [
 
 
 def run(*args: str, cwd: Path) -> subprocess.CompletedProcess:
-    return subprocess.run(args, cwd=cwd, capture_output=True, text=True, encoding="utf-8")
+    return subprocess.run(args, cwd=cwd, capture_output=True, text=True, encoding="utf-8", timeout=300)
 
 
 def build_catalogue(root: Path, spoil: list[tuple[str, str, str]]) -> str | None:

@@ -27,8 +27,8 @@ def repo_with(tmp_path: Path, files: dict[str, str]) -> Path:
         p = tmp_path / name
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(body, encoding="utf-8")
-    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
-    subprocess.run(["git", "add", "-A"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True, timeout=60)
+    subprocess.run(["git", "add", "-A"], cwd=tmp_path, check=True, timeout=60)
     return tmp_path
 
 

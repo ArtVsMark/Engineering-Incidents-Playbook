@@ -24,7 +24,7 @@ def f(x):
 
 def git(root: Path, *args: str) -> str:
     return subprocess.run(["git", "-C", str(root), *args], check=True,
-                          capture_output=True, text=True, encoding="utf-8").stdout.strip()
+                          capture_output=True, text=True, encoding="utf-8", timeout=60).stdout.strip()
 
 
 @pytest.fixture

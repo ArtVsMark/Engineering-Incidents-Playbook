@@ -266,7 +266,7 @@ GUARD_SH = ROOT / ".claude" / "hooks" / "push_guard.sh"
 
 def планка_sed(pyproject: Path) -> str:
     return subprocess.run(["sh", "-c", f'. "{FLOOR_SH}"; planka_floor "$1"', "_", str(pyproject)],
-                          capture_output=True, text=True, encoding="utf-8").stdout.strip()
+                          capture_output=True, text=True, encoding="utf-8", timeout=60).stdout.strip()
 
 
 @НУЖЕН_BASH
@@ -321,7 +321,7 @@ def test_строка_окружения_не_копится(tmp_path):
     assert запуск(база).returncode == 0
     assert env_file.read_text(encoding="utf-8").count(".venv/bin") == 2  # одна строка, два упоминания
     путь = subprocess.run(["bash", "-c", f'. "{env_file}"; . "{env_file}"; echo "$PATH"'],
-                          capture_output=True, text=True, encoding="utf-8").stdout
+                          capture_output=True, text=True, encoding="utf-8", timeout=60).stdout
     assert путь.count(f"{корень}/.venv/bin") == 1
 
 
@@ -333,7 +333,7 @@ def _страж(tmp_path, планка: str, команда: str,
     вход = json.dumps({"cwd": cwd, "tool_name": "Bash",
                        "tool_input": {"command": команда, **поля}})
     return subprocess.run(["sh", str(GUARD_SH)], input=вход, capture_output=True, text=True,
-                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)})
+                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)}, timeout=60)
 
 
 @НУЖЕН_BASH
@@ -376,7 +376,7 @@ def test_без_интерпретатора_планки_слово_command_р�
     вход = ('{"cwd":"/w","tool_name":"Bash","tool_input":{"description":"command",'
             '"command":"git push origin main"}}')
     итог = subprocess.run(["sh", str(GUARD_SH)], input=вход, capture_output=True, text=True,
-                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)})
+                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)}, timeout=60)
     assert итог.returncode == 2
 
 
@@ -386,7 +386,7 @@ def test_без_интерпретатора_планки_без_ключа_ре
     корень = проект(tmp_path, pyproject='requires-python = ">=3.99"\n')
     вход = '{"tool_name":"Bash","tool_input":{"cmd":"git push origin main"}}'
     итог = subprocess.run(["sh", str(GUARD_SH)], input=вход, capture_output=True, text=True,
-                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)})
+                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)}, timeout=60)
     assert итог.returncode == 2
 
 
@@ -401,7 +401,7 @@ def test_без_интерпретатора_планки_граница_без_
     сторону закрытия; без `git…push` во входе ничего не закрывается."""
     корень = проект(tmp_path, pyproject='requires-python = ">=3.99"\n')
     итог = subprocess.run(["sh", str(GUARD_SH)], input=вход, capture_output=True, text=True,
-                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)})
+                          encoding="utf-8", env={**os.environ, "CLAUDE_PROJECT_DIR": str(корень)}, timeout=60)
     assert итог.returncode == код
 
 

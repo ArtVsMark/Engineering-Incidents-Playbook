@@ -98,7 +98,7 @@ def changed(rng: str, root: Path) -> tuple[list[str] | None, str]:
     # `--diff-filter=d` — строчная буква исключает удалённые.
     done = subprocess.run(["git", "-C", str(root), "diff", "--name-only", "-z",
                            "--diff-filter=d", rng],
-                          capture_output=True, text=True, encoding="utf-8")
+                          capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return None, (done.stderr or "").strip()
     # По NUL, а не по строкам: имя с не-ASCII символами git отдаёт
@@ -123,7 +123,7 @@ def tracked_paths(root: Path) -> set[str]:
     """Что git отслеживает в дереве. Пусто — спросить не удалось."""
     done = subprocess.run(  # noqa: S603 — аргументы свои
         ["git", "-C", str(root), "ls-files", "-z", "--", "export/"],
-        capture_output=True, text=True, encoding="utf-8")
+        capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return set()
     return {p for p in done.stdout.split("\0") if p}

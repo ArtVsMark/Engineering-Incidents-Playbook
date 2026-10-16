@@ -75,6 +75,9 @@ NUL без `%x00` в формате, молча перестал находит�
 Реализует правила каталога:
   176 — умолчание, взятое из окружения, задаётся явно;
   165 — список путей из git читается по NUL, а проверка называет охват;
+  100 — у вызова назван дедлайн: `timeout-minutes` работы CI вызов не
+        покрывает, зависнуть можно на одной команде;
+  220 — охват — все механизмы дерева, включая хуки окна;
   039 — три исхода: чисто · есть находки · проверка не отработала;
   075 — ноль просмотренных файлов это отказ, а не чистый прогон;
   165 — печатается ОХВАТ: сколько файлов просмотрено, а не только находки;
@@ -188,6 +191,36 @@ def offenders(source: str) -> list[tuple[int, str]]:
         if "encoding" in ключи:
             continue
         found.append((node.lineno, имя))
+    return found
+
+
+def no_deadline(source: str) -> list[tuple[int, str]]:
+    """Строки вызовов subprocess без названного дедлайна `timeout=` (100).
+
+    `timeout-minutes` работы CI вызов не покрывает: это предел на весь прогон,
+    а зависнуть можно на одной команде, и локально нет и его. Требуется, чтобы
+    значение было НАЗВАНО, а не одинаковое: локальному git секунды, прогону
+    набора минуты. Приём взят у Token (`scripts/subprocess_timeout.py`, 162).
+
+    Воздерживается: `Popen` — у конструктора параметра нет, он у `wait` и
+    `communicate`; вызов с `**kwargs` — дедлайн может прийти оттуда.
+    """
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return []
+    модули, функции = resolve_calls(tree)
+    found: list[tuple[int, str]] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        имя = called_name(node, модули, функции)
+        if имя not in CALLS or имя == "Popen":
+            continue
+        if any(kw.arg is None for kw in node.keywords):
+            continue
+        if "timeout" not in {kw.arg for kw in node.keywords}:
+            found.append((node.lineno, имя))
     return found
 
 
@@ -429,9 +462,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--root", type=Path, default=ROOT)
     args = ap.parse_args(argv)
 
+    # Хуки окна — тоже механизмы: охват мета-гейта — все механизмы дерева, а
+    # не место рождения правила (220). До 16.10 их здесь не было.
     файлы = sorted(list((args.root / "scripts").glob("*.py"))
                    + list((args.root / "tests").glob("*.py"))
-                   + list((args.root / "templates").glob("*.py")))
+                   + list((args.root / "templates").glob("*.py"))
+                   + list((args.root / ".claude" / "hooks").glob("*.py")))
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not файлы:
         print(f"проверка не отработала: в {args.root}/{{scripts,tests,"
@@ -445,6 +481,9 @@ def main(argv: list[str] | None = None) -> int:
         for строка, имя in offenders(текст):
             находки.append(f"{f.relative_to(args.root)}:{строка} — "
                            f"subprocess.{имя} в текстовом режиме без encoding=")
+        for строка, имя in no_deadline(текст):
+            находки.append(f"{f.relative_to(args.root)}:{строка} — "
+                           f"subprocess.{имя} без timeout=")
         for строка, подкоманда in unseparated(текст):
             находки.append(f"{f.relative_to(args.root)}:{строка} — "
                            f"git {подкоманда} отдаёт список путей без -z")
@@ -473,7 +512,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     print("вызовы наружу задают своё явно: просмотрено файлов "
-          f"{len(файлы)} — кодировка у текстовых, -z у списков путей, "
+          f"{len(файлы)} — дедлайн у каждого вызова, кодировка у текстовых, -z у списков путей, "
           "площадка через одну дверь")
     return 0
 

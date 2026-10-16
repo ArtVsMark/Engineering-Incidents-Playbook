@@ -92,7 +92,7 @@ def без_прозы(текст: str, имя: str) -> str:
 
 def git(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(["git", "-C", str(root), *args],
-                          capture_output=True, text=True, encoding="utf-8")
+                          capture_output=True, text=True, encoding="utf-8", timeout=60)
 
 
 def прежний(root: Path, base: str, путь: str) -> str | None:

@@ -292,7 +292,7 @@ def test_настоящая_сводка_рисуется(repo):
     корень = Path(cp.ROOT)
     out = repo / "живая"
     subprocess.run([sys.executable, str(корень / "scripts" / "aggregate_bindings.py")],
-                   check=True, capture_output=True, cwd=корень)
+                   check=True, capture_output=True, cwd=корень, timeout=600)
 
     assert cp.main(["--root", str(корень), "--out-dir", str(out)]) == 0
     for name in cp.NAMES.values():

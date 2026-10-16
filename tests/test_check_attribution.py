@@ -21,7 +21,7 @@ AGREED = "Claude <noreply@anthropic.com>"
 
 def run(repo: Path, *args: str) -> None:
     subprocess.run(["git", "-C", str(repo), *args], check=True,
-                   capture_output=True, text=True, encoding="utf-8")
+                   capture_output=True, text=True, encoding="utf-8", timeout=60)
 
 
 def commit(repo: Path, subject: str, body: str = "",
@@ -36,7 +36,7 @@ def commit(repo: Path, subject: str, body: str = "",
                         "GIT_AUTHOR_NAME": author[0],
                         "GIT_AUTHOR_EMAIL": author[1],
                         "GIT_COMMITTER_NAME": "Владелец",
-                        "GIT_COMMITTER_EMAIL": "owner@example.com"})
+                        "GIT_COMMITTER_EMAIL": "owner@example.com"}, timeout=60)
 
 
 def make_repo(repo: Path) -> Path:
@@ -182,7 +182,7 @@ def test_объявленное_начало_подрезает_долг(repo, c
     make_repo(repo)
     commit(repo, "старый без подписи")
     old = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
-                         capture_output=True, text=True, encoding="utf-8", check=True).stdout.strip()
+                         capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout.strip()
     commit(repo, "новый", f"Co-Authored-By: {AGREED}")
     # Без --since долг виден числом; с ним — спрашивается только новое.
     assert ca.first_parents(repo, "main", None, {AGREED}) == 1
@@ -200,7 +200,7 @@ def test_пустой_диапазон_это_третий_исход(repo, caps
     make_repo(repo)
     commit(repo, "один", f"Co-Authored-By: {AGREED}")
     head = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
-                          capture_output=True, text=True, encoding="utf-8", check=True).stdout.strip()
+                          capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout.strip()
     # Диапазон от головы до головы пуст. Зелёное здесь означало бы, что гейт
     # подтвердил историю, которую не смотрел.
     assert ca.first_parents(repo, "main", head, {AGREED}) == 2

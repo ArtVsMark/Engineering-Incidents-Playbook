@@ -46,7 +46,7 @@ LIMIT = 50
 
 def current_branch(root: Path) -> str:
     done = subprocess.run(["git", "-C", str(root), "rev-parse",
-                           "--abbrev-ref", "HEAD"], capture_output=True, text=True, encoding="utf-8")
+                           "--abbrev-ref", "HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
     return done.stdout.strip()
 
 
@@ -123,7 +123,7 @@ def main(argv: list[str] | None = None) -> int:
     done = subprocess.run(
         ["git", "-C", str(root), "diff", "--name-only", "-z",
          f"origin/main...{branch}"],
-        capture_output=True, text=True, encoding="utf-8")
+        capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode == 0:
         # ПО NUL, А НЕ `split()` (165, #762): NUL не пробел, и голый `split()`
         # склеивал весь список в одно имя с `\0` внутри — оно не совпадало ни

@@ -99,7 +99,7 @@ def test_пустая_сборка_это_пустая_строка(monkeypatch,
 
 def git(repo: Path, *args: str) -> None:
     subprocess.run(["git", "-C", str(repo), *args], check=True,
-                   capture_output=True, text=True, encoding="utf-8")
+                   capture_output=True, text=True, encoding="utf-8", timeout=60)
 
 
 def выпуск(repo: Path, *теги: str) -> None:
@@ -479,7 +479,7 @@ def test_bez_tegov_eto_tretiy_ishod(monkeypatch, repo, capsys):
     было», а это ровно то молчание, из-за которого 1.1.0 и потерялся (039)."""
     cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--check")
     subprocess.run(["git", "-C", str(repo), "tag", "-d", "0.1.0"],
-                   check=True, capture_output=True)
+                   check=True, capture_output=True, timeout=60)
 
     assert cc.main() == 2
     assert "не отработала" in capsys.readouterr().err
@@ -561,7 +561,7 @@ def ветка_с_фрагментом(repo: Path, имя: str, текст: str)
     git(repo, "commit", "-qm", "основание")
     основание = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
                                check=True, capture_output=True, text=True,
-                               encoding="utf-8").stdout.strip()
+                               encoding="utf-8", timeout=60).stdout.strip()
     write(repo / "changelog.d" / имя, текст)
     git(repo, "add", "-A")
     git(repo, "commit", "-qm", "починка")

@@ -173,7 +173,7 @@ def тронутые_фрагменты(диапазон: str) -> tuple[list[Pat
     done = subprocess.run(
         ["git", "diff", "--name-only", "-z", "--diff-filter=AM",
          диапазон, "--", "changelog.d"],
-        cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
+        cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return None, (done.stderr or "").strip()
     return [ROOT / имя for имя in done.stdout.split("\0") if имя], ""
@@ -183,7 +183,7 @@ def diff_of(диапазон: str) -> tuple[str | None, str]:
     """Дифф изменения. Без контекста: контекст дал бы чужие строки за свои."""
     done = subprocess.run(
         ["git", "diff", "-U0", диапазон, "--", "*.py"],
-        cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
+        cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return None, (done.stderr or "").strip()
     return done.stdout, ""

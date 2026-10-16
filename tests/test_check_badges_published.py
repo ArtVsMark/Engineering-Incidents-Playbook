@@ -93,9 +93,9 @@ def test_своё_имя_берётся_у_origin_а_не_вписано(repo: P
     """Ключа `--slug` нет: имя обязано прийти из адреса origin (005)."""
     дерево = repo / "дерево"
     дерево.mkdir()
-    subprocess.run(["git", "-C", str(дерево), "init", "-q"], check=True)
+    subprocess.run(["git", "-C", str(дерево), "init", "-q"], check=True, timeout=60)
     subprocess.run(["git", "-C", str(дерево), "remote", "add", "origin",
-                    f"https://github.com/{СВОЁ}.git"], check=True)
+                    f"https://github.com/{СВОЁ}.git"], check=True, timeout=60)
     write(дерево / "README.md", адрес(НЕТ_НА_ВЕТКЕ))
     снимок = ветка(repo / "ветка", НА_ВЕТКЕ)
     assert прогон(дерево, снимок) == 1
