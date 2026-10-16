@@ -2,8 +2,7 @@
 
 > **Reader:** visitor — what this is and whether to take it.
 
-[![Status: Python and versions, OS linux / windows / mac, coverage, release and PyPI, version](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/python.svg)](.github/workflows/python-next.yml)
-[![Family: what the catalogue gives and takes, whether it drifts from the family's contracts and from the outside world](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/family.svg)](#the-project-family)
+[![Project: checks, Python, OS, coverage, release and version on top; rules held by mechanisms — own and taken — and the family check below](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/project.svg)](#the-project-family)
 
 **A catalogue of <!--m:rules-->217<!--/m:rules--> rules for Claude Code and GitHub,
 where every one grew out of a real failure.** Agent sessions and the project rulebook (`CLAUDE.md`), the
