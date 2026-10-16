@@ -63,9 +63,11 @@ there is never a verdict on an equal diff, and the key compares the new diff
 with nothing. So there are two halves and they are required together: a key by
 subject and a queue that waits for the verdict.
 
-The asymmetry of cost sets the form. A key error towards "equal" hands out an
-old verdict on a changed subject — a defect the review will miss. An error
-towards "not equal" costs one extra run. So the key is built conservatively:
+The asymmetry of cost sets the form — **and this is reasoning, not a
+measurement**: the incident never checked a reused verdict for correctness; the
+sample of 15 of 105 confirmed only that the skip fired. A key error towards
+"equal" would hand out an old verdict on a changed subject — a defect the review
+will miss. An error towards "not equal" costs one extra run. So the key is built conservatively:
 everything that can change the verdict goes into the key; only what the verdict
 certainly does not read is dropped (line numbers in hunk headers).
 
@@ -78,6 +80,11 @@ certainly does not read is dropped (line numbers in hunk headers).
 - the second half is easy to miss: a key without waiting gives skips by ones,
   not by dozens — two in a day and a half for the mechanisms against a hundred
   and five in a week;
+- waiting has its own cost, and it is **not measured**: the base pull into the
+  branch is delayed for the length of the review, and the change joins the queue
+  later. The windows before and after the second measure were not compared by
+  load — 2 skips against 105 speaks of both measures together, not of waiting
+  alone;
 - **this does not override 179.** A required check is keyed by the head: its
   subject is the commit that will land in the shared branch, and a verdict
   about another commit is false for it. This rule is about an expensive
