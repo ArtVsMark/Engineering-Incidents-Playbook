@@ -57,7 +57,7 @@ import argparse
 import ast
 import json
 import re
-import shlex
+import shell_words
 import sys
 from pathlib import Path
 
@@ -225,16 +225,11 @@ def логические_строки(текст: str) -> list[tuple[int, str]]:
 
 
 def слова_оболочки(хвост: str) -> list[str]:
-    """Слова до первого места, которое не разбирается. Прочитанное — верно."""
-    лексер = shlex.shlex(хвост, posix=True, punctuation_chars="|&;")
-    лексер.whitespace_split = True
-    слова: list[str] = []
-    try:
-        for слово in лексер:
-            слова.append(слово)
-    except ValueError:
-        pass
-    return слова
+    """Слова до первого неразбираемого места, команды режутся `|&;`.
+
+    Разбор — `shell_words.слова_оболочки`, один на каталог (214).
+    """
+    return shell_words.слова_оболочки(хвост, "|&;")
 
 
 def в_оболочке(текст: str, файл: str) -> list[tuple[str, str]]:
