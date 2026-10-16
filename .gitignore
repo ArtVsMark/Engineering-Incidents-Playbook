@@ -48,3 +48,7 @@ export/family.json
 # Окружение проверки облачного окна: собирает .claude/hooks/session-start.sh,
 # в дереве не хранится.
 .venv/
+
+# Журнал вызовов навыков — данные окна, а не дерева: его пишет хук
+# .claude/hooks/skill_log.py на каждом вызове (#866).
+.claude/state/

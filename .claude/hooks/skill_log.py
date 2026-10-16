@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+"""Каждый вызов навыка пишется строкой журнала: невызванный становится виден.
+
+ЗАЧЕМ. Навыки каталога держат правила, у 195 навык — единственная опора, а
+навык не краснеет: невызванный неотличим от вызванного (решение 031
+механизмов). Журнал вызовов делает второе наблюдаемым, и по нему видно, какой
+навык не зовут вовсе. Приём взят у ECC (`scripts/hooks/skill-run-tracker.js`,
+MIT), код — нет (разбор #863, правило 085). У них же второй случай к 211:
+писатель журнала был, а ни одного вызова к нему не вело, и сводка годами
+показывала ноль (ECC #2463). Поэтому здесь писатель и его вызов приезжают
+одним изменением, и тест спрашивает хук через его вход, а не функцию записи.
+
+ЧТО ПИШЕТСЯ. Время, имя навыка, исход и номер сессии — и ничего из текста
+запроса: аргументы навыка несут слова владельца. Имя навыка — идентификатор,
+поэтому всё, что на него не похоже, отбрасывается, а не пишется как есть.
+
+КУДА. `.claude/state/skill-runs.jsonl` в дереве проекта, под `.gitignore`:
+журнал — данные окна, а не дерева. ГРАНИЦА: облачное окно эфемерно, и журнал
+умирает вместе с контейнером; куда он уезжает из облака — не решено здесь.
+
+Вход: JSON события PostToolUse или PostToolUseFailure на stdin; аргумент
+`ok` или `fail` называет событие. Выход всегда 0: журнал не держит вызов (084).
+
+Реализует правила каталога:
+  211 — механизм жив, если к нему ведёт рабочий путь: хук и его подключение в
+        `.claude/settings.json` едут вместе, и набор зовёт хук через вход;
+  084 — необязательный канал не задерживает основной путь;
+  016 — обрезанное не выдаётся за целое: вход больше предела не разбирается.
+"""
+
+import json
+import os
+import re
+import sys
+from datetime import UTC, datetime
+from pathlib import Path
+
+ЖУРНАЛ = Path(".claude") / "state" / "skill-runs.jsonl"
+#: Имя навыка — идентификатор, а не текст: `плагин:навык`, буквы, цифры, `-_./`.
+ИМЯ_RE = re.compile(r"[\w.:/-]{1,100}")
+#: Больше этого вход не разбирается: событие с телом ответа навыка бывает
+#: велико, а журналу нужно одно поле.
+ПРЕДЕЛ = 1024 * 1024
+ИСХОДЫ = {"ok", "fail"}
+
+
+def запись(событие: object, исход: str, сейчас: datetime) -> dict | None:
+    """Строка журнала из события площадки или None, если записывать нечего."""
+    if not isinstance(событие, dict) or событие.get("tool_name") != "Skill":
+        return None
+    вход = событие.get("tool_input")
+    имя = вход.get("skill") if isinstance(вход, dict) else None
+    if not isinstance(имя, str) or not ИМЯ_RE.fullmatch(имя):
+        return None
+    сессия = событие.get("session_id")
+    return {"ts": сейчас.isoformat(timespec="seconds"), "skill": имя, "outcome": исход,
+            "session": сессия if isinstance(сессия, str) and ИМЯ_RE.fullmatch(сессия) else None}
+
+
+def main(argv: list[str] | None = None, stdin=None, сейчас: datetime | None = None) -> int:
+    """Записать вызов; при любом отказе — строка в stderr и код 0."""
+    argv = sys.argv[1:] if argv is None else argv
+    исход = argv[0] if argv and argv[0] in ИСХОДЫ else "ok"
+    сырое = (stdin or sys.stdin).read(ПРЕДЕЛ + 1)
+    if len(сырое) > ПРЕДЕЛ:
+        print("журнал навыков: вход больше предела, вызов не записан", file=sys.stderr)
+        return 0
+    try:
+        строка = запись(json.loads(сырое), исход, сейчас or datetime.now(UTC))
+    except ValueError:
+        print("журнал навыков: вход не JSON, вызов не записан", file=sys.stderr)
+        return 0
+    if строка is None:
+        return 0
+    путь = Path(os.environ.get("CLAUDE_PROJECT_DIR", ".")) / ЖУРНАЛ
+    try:
+        путь.parent.mkdir(parents=True, exist_ok=True)
+        with путь.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(строка, ensure_ascii=False) + "\n")
+    except OSError as exc:
+        print(f"журнал навыков: {путь} не записан — {exc.strerror}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
