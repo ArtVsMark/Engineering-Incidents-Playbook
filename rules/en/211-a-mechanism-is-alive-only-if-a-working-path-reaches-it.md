@@ -105,6 +105,21 @@ read, and this record has no run where an agent change with a wrong signature
 turned red. By this same rule liveness is shown by a working path, not by
 reading, so the record claims only how the chain is built in the tree.
 
+**An outside case and our own near miss on one mechanism** (the skill call
+log, 16 October; review ArtVsMark/Engineering-Incidents-Playbook#863). ECC
+(affaan-m/ECC, MIT) had a writer for its skill call log and not a single
+production call to it: the summary always showed zero calls. This is stated in
+the description of their hook `scripts/hooks/skill-run-tracker.js`, citing
+their issue #2463; this record did not read the issue itself. The catalogue
+took the technique (#866) and repeated the same break one floor down. The suite
+called the hook's parser through `main()` and never ran the chain
+`.claude/settings.json` → `skill_log.sh` → `floor.sh` → interpreter →
+`skill_log.py`. Without the floor interpreter the wrapper exited 0 and the log
+stayed silently empty. An outside review of
+ArtVsMark/Engineering-Incidents-Playbook#868 found it before the first live
+call; no cost was measured, so it is a near miss. The fix is #869: a fallback
+`python3` and a suite case that walks the whole path.
+
 ## Why
 
 **The break is not in the mechanism but between it and its caller.** Reading
