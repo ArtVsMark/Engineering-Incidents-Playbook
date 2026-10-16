@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-16T15:29:03+00:00",
+  "generated_at": "2026-10-16T18:38:47+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -2445,10 +2445,10 @@
         },
         "217": {
           "mechanism": "gate",
-          "where": "scripts/check_py_style.py — стиль кода выводится из requires-python, цель ruff не вписана, версия ruff закреплена в requirements-test.txt; scripts/check_python_version.py — работа И составное действие (action.yml, .github/actions/*) с версией ниже планки, с python раньше шага setup-python или с шагом setup-python без числа — находка (второй инцидент, #678); .claude/hooks/session-start.sh переключает python3 окна на планку, .claude/hooks/push_guard.sh зовёт стража интерпретатором планки и без него закрывает git push кодом 2. ГРАНИЦА: хук окна, исполняемый площадкой, гейтом не сверяется — его держит тест tests/test_session_start_hook.py; замер скорости до/после гейтом не держится вовсе — это практическая граница правила, исполняемая рукой; исполнение, не объявляющее версию числом, — запуск рукой, шебанг `#!/usr/bin/env python3`, бит исполнения (в scripts/ он есть у пяти: check_attribution, check_bindings, check_labels, collect_changelog, refresh_derived), — гейтом не сверяется вовсе: версию ему назначает PATH запускающего, а не дерево. Граница названа категорией, а не перечнем ненайденного (обзоры #711 и #713: перечень опровергался следующим пропущенным местом). В окне такой запуск идёт интерпретатором планки — python3 окна переключает хук старта",
+          "where": "scripts/check_py_style.py — стиль кода выводится из requires-python, цель ruff не вписана, версия ruff закреплена в requirements-test.txt; scripts/check_python_version.py — работа И составное действие (action.yml, .github/actions/*) с версией ниже планки, с python раньше шага setup-python или с шагом setup-python без числа — находка (второй инцидент, #678); .claude/hooks/session-start.sh переключает python3 окна на планку, .claude/hooks/push_guard.sh зовёт стража интерпретатором планки и без него закрывает git push кодом 2. scripts/check_hook_interpreter.py — команда хука в .claude/settings.json и обёртки .claude/hooks/*.sh не зовут интерпретатор мимо планки; второй инцидент 16.10: запасной python3 журнала навыков (#869, #875), снят в #877, гейт проверен откатом. ГРАНИЦА: сам хук старта, исполняемый площадкой до появления планки, гейтом не сверяется — его держит тест tests/test_session_start_hook.py; замер скорости до/после гейтом не держится вовсе — это практическая граница правила, исполняемая рукой; исполнение, не объявляющее версию числом, — запуск рукой, шебанг `#!/usr/bin/env python3`, бит исполнения (в scripts/ он есть у пяти: check_attribution, check_bindings, check_labels, collect_changelog, refresh_derived), — гейтом не сверяется вовсе: версию ему назначает PATH запускающего, а не дерево. Граница названа категорией, а не перечнем ненайденного (обзоры #711 и #713: перечень опровергался следующим пропущенным местом). В окне такой запуск идёт интерпретатором планки — python3 окна переключает хук старта",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-02",
+          "analysed": "2026-10-16",
           "decided": "",
           "skill": "",
           "origin": "",

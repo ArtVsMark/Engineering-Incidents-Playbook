@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 61 | 36 | 218 | 0 | 0 | 202 | 158 | 12 | 5 | 18 | 9 | 139 |  |
+| `Engineering-Incidents-Playbook` | подключён | 61 | 36 | 218 | 0 | 0 | 202 | 158 | 12 | 5 | 18 | 9 | 140 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 217 | 1 | 0 | 212 | 95 | 43 | 0 | 74 | 0 | 156 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 217 | 1 | 0 | 170 | 134 | 30 | 0 | 6 | 0 | 66 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 217 | 1 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
@@ -124,6 +124,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/version.py` | 3 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 3 |
 | `Engineering-Incidents-Playbook` | `tests/test_sync_inbox.py` | 3 |
+| `Engineering-Incidents-Playbook` | `.claude/settings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/off-prefix.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/release.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/task-state.yml` | 2 |
