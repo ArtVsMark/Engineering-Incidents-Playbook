@@ -105,3 +105,21 @@ def test_путь_целиком_через_обёртку(tmp_path):
         assert "не записан" in итог.stderr and not журнал.exists()
     else:
         assert json.loads(журнал.read_text(encoding="utf-8"))["skill"] == "close-a-finding"
+
+
+def test_запасной_python3_младше_3_11_не_зовётся(tmp_path):
+    """Системный 3.9 упал бы на `datetime.UTC` кодом 1 — запись пропала бы молча (#869)."""
+    import subprocess
+
+    bin_ = tmp_path / "bin"
+    bin_.mkdir()
+    старый = bin_ / "python3"
+    # Подделка: на пробе версии отвечает «младше», на запуск разбора — следом в stderr.
+    старый.write_text('#!/bin/sh\n[ "$1" = "-c" ] && exit 1\necho ЗАПУЩЕН >&2\n', encoding="utf-8")
+    старый.chmod(0o755)
+    итог = subprocess.run(
+        ["sh", str(КОРЕНЬ / ".claude" / "hooks" / "skill_log.sh"), "ok"],
+        input="{}", capture_output=True, text=True, encoding="utf-8", timeout=30,
+        env={"PATH": f"{bin_}:/usr/bin:/bin", "CLAUDE_PROJECT_DIR": str(tmp_path / "проект")})
+    assert итог.returncode == 0
+    assert "ЗАПУЩЕН" not in итог.stderr and "не младше 3.11" in итог.stderr
