@@ -581,3 +581,20 @@ def test_выпуски_не_прочитаны_третий_исход(monkeypa
     monkeypatch.setattr(pb.ghcli, "список", lambda *a, **k: (1, [], "HTTP 502"))
     with pytest.raises(pb.НеОтветила):
         НАСТОЯЩИЙ_РЕЛИЗ()
+
+
+def test_лесенка_семьи_та_же_что_у_каталога():
+    """Лесенка — версии самого каталога, второй её записи нет (владелец 16.10)."""
+    assert pb.лесенка() == [п for п, _ in pb.версии(pb.ROOT)]
+    assert pb.лесенка()[0] == ".".join(map(str, pb.cv.floor((pb.ROOT / "pyproject.toml").read_text(encoding="utf-8"))))
+
+
+@pytest.mark.parametrize("свои, ждём", [
+    ([("3.14", "pass")], [("3.14", "pass"), ("3.15", "absent"), ("3.16", "absent")]),
+    ([("3.14", "pass"), ("3.16", "unreleased")], [("3.14", "pass"), ("3.15", "absent"), ("3.16", "unreleased")]),
+    ([("3.14", "pass"), ("3.15", "fail"), ("3.16", "none")], [("3.14", "pass"), ("3.15", "fail"), ("3.16", "none")]),
+    ([("3.13", "pass")], [("3.13", "pass"), ("3.14", "absent"), ("3.15", "absent"), ("3.16", "absent")]),
+])
+def test_недостающие_ступени_серым_по_возрастанию(свои, ждём):
+    assert pb.на_лесенке(свои, ["3.14", "3.15", "3.16"]) == ждём
+    assert pb.СОСТОЯНИЯ["absent"][0] == pb.СОСТОЯНИЯ["none"][0]
