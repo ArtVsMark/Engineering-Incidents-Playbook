@@ -416,7 +416,7 @@ def unparsable_shell(text: str) -> list[str]:
         if not код.strip():
             continue
         r = subprocess.run(["bash", "-n"], input=код, text=True,
-                           capture_output=True, encoding="utf-8")
+                           capture_output=True, encoding="utf-8", timeout=60)
         if r.returncode != 0:
             причина = (r.stderr or "").strip().splitlines()
             плохо.append(f"{имя}: {причина[0] if причина else 'не разобран'}")

@@ -103,7 +103,7 @@ def tail(body: str) -> str:
 
 def git(repo: Path, *args: str) -> str:
     return subprocess.run(["git", "-C", str(repo), *args],
-                          capture_output=True, text=True, encoding="utf-8", check=True).stdout
+                          capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
 
 
 #: Заголовок, после которого перечисляются АВТОРЫ, а не соавторы. До него —
@@ -384,8 +384,7 @@ def main() -> int:
         same = low and git(repo, "rev-parse", low).strip() == git(repo, "rev-parse", baseline).strip()
         if low and not same and subprocess.run(
             ["git", "-C", str(repo), "merge-base", "--is-ancestor", low, baseline],
-            capture_output=True,
-        ).returncode == 0:
+            capture_output=True, timeout=60).returncode == 0:
             rng = f"{baseline}..{high or 'HEAD'}"
             print(f"диапазон подрезан до объявленного начала: {rng}")
     except subprocess.CalledProcessError:

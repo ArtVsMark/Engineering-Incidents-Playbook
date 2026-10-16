@@ -19,7 +19,7 @@ import pr_source_commit as psc  # noqa: E402
 
 def git(root: Path, *args: str) -> str:
     done = subprocess.run(["git", "-C", str(root), *args], capture_output=True,
-                          text=True, encoding="utf-8", check=True)
+                          text=True, encoding="utf-8", check=True, timeout=60)
     return done.stdout.strip()
 
 

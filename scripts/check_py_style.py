@@ -57,7 +57,7 @@ FUTURE = re.compile(r"^from __future__ import annotations\s*$", re.M)
 def файлы(root: Path) -> list[str]:
     """Отслеживаемые .py — то, что поедет, а не то, что лежит рядом."""
     done = subprocess.run(["git", "ls-files", "-z", "*.py"], cwd=root,
-                          capture_output=True, text=True, encoding="utf-8")
+                          capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         raise RuntimeError(f"git ls-files не отработал: {done.stderr.strip()}")
     return sorted(п for п in done.stdout.split("\0") if п)
@@ -124,7 +124,7 @@ def находки_ruff(root: Path, пути: list[str], планка: tuple[int
     done = subprocess.run(
         [ruff, "check", "--isolated", "--no-cache", "--output-format", "json",
          "--target-version", f"py{планка[0]}{планка[1]}", "--select", "UP,FURB188",
-         *пути], cwd=root, capture_output=True, text=True, encoding="utf-8")
+         *пути], cwd=root, capture_output=True, text=True, encoding="utf-8", timeout=300)
     if done.returncode not in (0, 1):
         raise RuntimeError(f"ruff не отработал: {done.stderr.strip()[:300]}")
     return [f"{Path(d['filename']).relative_to(root.resolve())}:{d['location']['row']}: "

@@ -447,7 +447,7 @@ def test_дата_появления_не_зависит_от_пояса_авт�
         subprocess.run(["git", "-C", str(tmp_path), "-c", "commit.gpgsign=false",
                         "-c", "user.name=Владелец", "-c", "user.email=o@example.com",
                         *args], check=True, capture_output=True,
-                       env={**os.environ, **env})
+                       env={**os.environ, **env}, timeout=60)
 
     git("init", "-q")
     (tmp_path / "rules" / "ru").mkdir(parents=True)

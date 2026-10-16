@@ -324,3 +324,35 @@ def test_sosednyaya_komanda_ne_trogaetsya():
 def test_cherez_dver_chisto():
     assert cs.мимо_двери('import ghcli\nghcli.run("issue", "list")\n') == []
 
+
+
+# ── дедлайн вызова (100, #879) ─────────────────────────────────────────────
+
+@pytest.mark.parametrize("вызов", [
+    "import subprocess\nsubprocess.run(['git', 'status'])\n",
+    "import subprocess as sp\nsp.check_output(['gh', 'api', 'x'])\n",
+    "from subprocess import call\ncall(['sh', '-c', 'true'])\n",
+    "import subprocess\nsubprocess.check_call(['make'], cwd='.')\n",
+])
+def test_без_дедлайна_находка(вызов):
+    assert cs.no_deadline(вызов)
+
+
+@pytest.mark.parametrize("вызов", [
+    "import subprocess\nsubprocess.run(['git', 'status'], timeout=60)\n",
+    "import subprocess\np = subprocess.Popen(['x'])\n",                 # у конструктора нет
+    "import subprocess\nsubprocess.run(['x'], **опции)\n",               # мог прийти оттуда
+    "def run(*a):\n    pass\nrun('x')\n",                                 # своя функция (180)
+])
+def test_с_дедлайном_или_воздержание_чисто(вызов):
+    assert cs.no_deadline(вызов) == []
+
+
+def test_хуки_окна_в_охвате(tmp_path):
+    """Охват мета-гейта — все механизмы, включая хуки окна (220)."""
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts" / "ok.py").write_text("x = 1\n", encoding="utf-8")
+    хук = tmp_path / ".claude" / "hooks"
+    хук.mkdir(parents=True)
+    (хук / "h.py").write_text("import subprocess\nsubprocess.run(['git'])\n", encoding="utf-8")
+    assert cs.main(["--root", str(tmp_path)]) == 1

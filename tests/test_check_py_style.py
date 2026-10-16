@@ -70,8 +70,8 @@ def _дерево(repo, pyproject: str, файлы: dict[str, str]):
     write(repo / "pyproject.toml", pyproject)
     for путь, текст in файлы.items():
         write(repo / путь, текст)
-    subprocess.run(["git", "init", "-q"], cwd=repo, check=True, capture_output=True)
-    subprocess.run(["git", "add", "-A"], cwd=repo, check=True, capture_output=True)
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True, capture_output=True, timeout=60)
+    subprocess.run(["git", "add", "-A"], cwd=repo, check=True, capture_output=True, timeout=60)
     return repo
 
 

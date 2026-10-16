@@ -32,9 +32,9 @@ def дерево(root: Path, text: str, реестр: dict | None = None) -> Pat
           json.dumps(реестр if реестр is not None else РЕЕСТР, ensure_ascii=False))
     write(root / "README.md", text)
     subprocess.run(["git", "-C", str(root), "init", "-q", "-b", "main"],
-                   check=True, capture_output=True)
+                   check=True, capture_output=True, timeout=60)
     subprocess.run(["git", "-C", str(root), "add", "-A"], check=True,
-                   capture_output=True)
+                   capture_output=True, timeout=60)
     return root
 
 
@@ -100,9 +100,9 @@ def test_reestr_otstal_ot_ploshchadki_eto_nahodka(repo, capsys):
 def test_reestra_net_eto_tretiy_ishod(repo, capsys):
     write(repo / "README.md", "# К\n")
     subprocess.run(["git", "-C", str(repo), "init", "-q", "-b", "main"],
-                   check=True, capture_output=True)
+                   check=True, capture_output=True, timeout=60)
     subprocess.run(["git", "-C", str(repo), "add", "-A"], check=True,
-                   capture_output=True)
+                   capture_output=True, timeout=60)
 
     assert run(repo) == 2
     assert "не прочитан" in capsys.readouterr().err
@@ -122,7 +122,7 @@ def test_bez_origin_imya_ne_vydumyvaetsya(repo, capsys):
     не должно (005), и молчаливого запасного пути здесь нет."""
     write(repo / ".rules" / "consumers.json", json.dumps(РЕЕСТР))
     subprocess.run(["git", "-C", str(repo), "init", "-q", "-b", "main"],
-                   check=True, capture_output=True)
+                   check=True, capture_output=True, timeout=60)
 
     assert co.main(["--root", str(repo)]) == 2
     assert "origin" in capsys.readouterr().err

@@ -110,9 +110,9 @@ def дерево_с_веткой(tmp_path, *files: str) -> None:
     """
     def git(*args: str) -> None:
         subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
-                       capture_output=True)
+                       capture_output=True, timeout=60)
 
-    subprocess.run(["git", "init", "-q", "-b", "main", str(tmp_path)], check=True)
+    subprocess.run(["git", "init", "-q", "-b", "main", str(tmp_path)], check=True, timeout=60)
     git("config", "user.email", "проба@пример")
     git("config", "user.name", "проба")
     (tmp_path / "README.md").write_text("основание\n", encoding="utf-8")

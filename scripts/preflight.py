@@ -110,14 +110,14 @@ def branch_body(root: Path, base: str = "origin/main") -> tuple[str, str]:
     ответы, и путать их значит врать прогоном (039).
     """
     done = subprocess.run(["git", "-C", str(root), "rev-list", "--reverse",
-                           f"{base}..HEAD"], capture_output=True, text=True, encoding="utf-8")
+                           f"{base}..HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return "", f"не спросить коммиты ветки: {done.stderr.strip()}"
     first = done.stdout.split("\n")[0].strip()
     if not first:
         return "", f"ветка не несёт своих коммитов поверх {base}"
     done = subprocess.run(["git", "-C", str(root), "log", "-1", "--format=%b",
-                           first], capture_output=True, text=True, encoding="utf-8")
+                           first], capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return "", f"не спросить тело коммита {first[:7]}: {done.stderr.strip()}"
     return done.stdout, ""
@@ -220,7 +220,7 @@ def run_step(step: Step, root: Path) -> tuple[int, str]:
 def branch_paths(root: Path, base: str = "origin/main") -> tuple[list[str], str]:
     """Пути, которые изменение тронет, — тот же вопрос, что задаёт прогон."""
     done = subprocess.run(["git", "-C", str(root), "diff", "--name-only", "-z",
-                           f"{base}...HEAD"], capture_output=True, text=True, encoding="utf-8")
+                           f"{base}...HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return [], f"не спросить изменённые пути: {done.stderr.strip()}"
     return [s for s in done.stdout.split("\0") if s.strip()], ""
@@ -348,7 +348,7 @@ def main(argv: list[str] | None = None) -> int:
             continue
         done = subprocess.run(  # noqa: S603 — команда собрана таблицей замен
             [sys.executable, *argv_],
-            cwd=root, input=stdin_, capture_output=True, text=True, encoding="utf-8")
+            cwd=root, input=stdin_, capture_output=True, text=True, encoding="utf-8", timeout=600)
         подменено.append(step.name)
         mark = {0: "✓"}.get(done.returncode, "✗")
         print(f"{mark} {step.name}  ({откуда})")
@@ -430,7 +430,7 @@ def толкнуть(root: Path) -> int:
     """
     ветка = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
                            cwd=root, capture_output=True, text=True,
-                           encoding="utf-8").stdout.strip()
+                           encoding="utf-8", timeout=60).stdout.strip()
     try:
         можно = приставки(root)
     except OSError as e:

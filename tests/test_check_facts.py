@@ -12,7 +12,7 @@ import check_facts as cf
 
 def запуск(*args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run([sys.executable, str(Path(cf.__file__)), *args],
-                          capture_output=True, text=True, encoding="utf-8")
+                          capture_output=True, text=True, encoding="utf-8", timeout=600)
 
 
 def test_самопроверка_двусторонняя():

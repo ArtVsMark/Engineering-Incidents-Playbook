@@ -256,7 +256,7 @@ REDIRECT = re.compile(r"[<>]")
 
 def current_branch() -> str | None:
     done = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
-                          capture_output=True, text=True)
+                          capture_output=True, text=True, encoding="utf-8", timeout=60)
     return done.stdout.strip() or None if done.returncode == 0 else None
 
 
@@ -484,14 +484,14 @@ def первый_коммит_ветки(корень: Path) -> str | None:
         return None                     # чужое дерево — не наш предмет
     названо = subprocess.run(
         [sys.executable, str(выбор), "--root", str(корень), "--base", "origin/main"],
-        capture_output=True, text=True, encoding="utf-8")
+        capture_output=True, text=True, encoding="utf-8", timeout=600)
     if названо.returncode != 0:
         return None                     # коммитов нет либо выбор не отработал
     sha = названо.stdout.strip()
     if not sha:
         return None
     тело = subprocess.run(["git", "-C", str(корень), "log", "-1", "--format=%B", sha],
-                          capture_output=True, text=True, encoding="utf-8")
+                          capture_output=True, text=True, encoding="utf-8", timeout=60)
     return тело.stdout if тело.returncode == 0 else None
 
 
@@ -522,7 +522,7 @@ def тело_не_проходит(корень: Path) -> str | None:
     if тело is None:
         return None
     done = subprocess.run([sys.executable, str(скрипт), "--check", "--body-file", "-"],
-                          input=тело, capture_output=True, text=True, encoding="utf-8")
+                          input=тело, capture_output=True, text=True, encoding="utf-8", timeout=600)
     if done.returncode == 0:
         return None
     if done.returncode == 2:
@@ -649,7 +649,7 @@ def ветка_воскресает(branch: str) -> bool:
 def _вывод(argv: list[str]) -> str | None:
     """Вывод команды или None, если она не отработала. Третий исход не молчит."""
     try:
-        p = subprocess.run(argv, capture_output=True, text=True, timeout=20)
+        p = subprocess.run(argv, capture_output=True, text=True, encoding="utf-8", timeout=20)
     except OSError, subprocess.SubprocessError:
         return None
     return p.stdout if p.returncode == 0 else None

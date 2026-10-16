@@ -179,8 +179,8 @@ def test_vernuvshiysya_znachok_nahodka(tmp_path):
     badge = tmp_path / ".github" / "badges" / "consumers-light.svg"
     badge.parent.mkdir(parents=True)
     badge.write_text("<svg/>", encoding="utf-8")
-    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
-    subprocess.run(["git", "add", "-f", "-A"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True, timeout=60)
+    subprocess.run(["git", "add", "-f", "-A"], cwd=tmp_path, check=True, timeout=60)
 
     assert cs.badges_in_tree(tmp_path) == [".github/badges/consumers-light.svg"]
 
@@ -192,7 +192,7 @@ def test_nrisovannyy_no_neotslezhivaemyy_ne_nahodka(tmp_path):
     badge = tmp_path / ".github" / "badges" / "consumers-light.svg"
     badge.parent.mkdir(parents=True)
     badge.write_text("<svg/>", encoding="utf-8")
-    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True, timeout=60)
 
     assert cs.badges_in_tree(tmp_path) == []
 
@@ -210,8 +210,8 @@ def test_gate_otvergaet_vernuvshiysya_artefakt(repo):
     import subprocess
     prepare(repo, [{"id": "q", "absent": "предмета нет: проверять нечего"}])
     write(repo / ".github" / "badges" / "consumers-light.svg", "<svg/>")
-    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
-    subprocess.run(["git", "add", "-f", "-A"], cwd=repo, check=True)
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True, timeout=60)
+    subprocess.run(["git", "add", "-f", "-A"], cwd=repo, check=True, timeout=60)
 
     assert run(repo) == 1
 
@@ -220,8 +220,8 @@ def test_gate_nazyvaet_vernuvshiysya_fayl(repo, capsys):
     import subprocess
     prepare(repo, [{"id": "q", "absent": "предмета нет: проверять нечего"}])
     write(repo / ".github" / "badges" / "consumers-dark.svg", "<svg/>")
-    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
-    subprocess.run(["git", "add", "-f", "-A"], cwd=repo, check=True)
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True, timeout=60)
+    subprocess.run(["git", "add", "-f", "-A"], cwd=repo, check=True, timeout=60)
     run(repo)
 
     assert "consumers-dark.svg" in capsys.readouterr().err
@@ -232,8 +232,8 @@ def test_chistoe_derevo_gate_propuskaet(repo):
     краснеть на нём значило бы требовать того, чего быть не должно."""
     import subprocess
     prepare(repo, [{"id": "q", "absent": "предмета нет: проверять нечего"}])
-    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
-    subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True, timeout=60)
+    subprocess.run(["git", "add", "-A"], cwd=repo, check=True, timeout=60)
 
     assert run(repo) == 0
 

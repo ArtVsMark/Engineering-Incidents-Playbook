@@ -184,7 +184,7 @@ def git(*args: str) -> tuple[int, str]:
     """Вызов git с прочитанным выводом. Отказ — значение, а не исключение."""
     try:
         done = subprocess.run(["git", "-C", str(ROOT), *args],
-                              capture_output=True, text=True, encoding="utf-8")
+                              capture_output=True, text=True, encoding="utf-8", timeout=60)
     except OSError as exc:
         return 1, str(exc)
     return done.returncode, (done.stdout or done.stderr).strip()

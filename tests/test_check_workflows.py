@@ -325,7 +325,7 @@ def test_dosloznost_byla_svyorena_s_istoriey():
     import subprocess
     из_истории = subprocess.run(
         ["git", "show", "3e05f4a:.rules/bindings.json"],
-        cwd=cw.ROOT, capture_output=True, text=True, encoding="utf-8")
+        cwd=cw.ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
     if из_истории.returncode != 0:
         import pytest
         pytest.skip("истории нет: мелкий клон — сверять дословность не с чем")
@@ -362,7 +362,7 @@ def правило_179(язык: str, ревизия: str | None = None) -> str 
     путь = файл.relative_to(cw.ROOT).as_posix()
     из_истории = subprocess.run(["git", "show", f"{ревизия}:{путь}"],
                                 cwd=cw.ROOT, capture_output=True, text=True,
-                                encoding="utf-8")
+                                encoding="utf-8", timeout=60)
     return из_истории.stdout if из_истории.returncode == 0 else None
 
 

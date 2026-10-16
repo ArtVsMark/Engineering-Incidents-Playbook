@@ -100,7 +100,7 @@ def test_выпуск_берётся_из_того_же_дерева(tmp_path):
     """Выпуск и номера одного манифеста — из одного дерева (обзор #801):
     в клоне без тегов выпуска нет, хотя у каталога рядом он есть."""
     import subprocess
-    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True, timeout=60)
     assert family.выпуск(tmp_path) is None
     assert family.манифест(tmp_path)["release"] is None
 
@@ -113,7 +113,7 @@ def test_выпуск_свой_тег_у_своего_дерева(tmp_path):
     def git(*a: str) -> str:
         return subprocess.run(["git", "-C", str(tmp_path), *a], check=True,
                               capture_output=True, text=True,
-                              encoding="utf-8").stdout.strip()
+                              encoding="utf-8", timeout=60).stdout.strip()
     git("init", "-q")
     git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q",
         "--allow-empty", "-m", "первый")

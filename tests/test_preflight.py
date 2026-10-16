@@ -181,7 +181,7 @@ import subprocess
 def репо(tmp_path: Path, *тела: str) -> Path:
     def git(*args):
         subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
-                       capture_output=True, text=True, encoding="utf-8")
+                       capture_output=True, text=True, encoding="utf-8", timeout=60)
     git("init", "-q", "-b", "main")
     git("config", "user.name", "Владелец")
     git("config", "user.email", "owner@example.com")
@@ -288,7 +288,7 @@ def test_push_s_only_eto_dva(tmp_path):
 def _для_толчка(tmp_path: Path, ветка: str, сторож_код: int) -> Path:
     root = репо(tmp_path)
     subprocess.run(["git", "-C", str(root), "checkout", "-q", "-b", ветка],
-                   check=True, capture_output=True)
+                   check=True, capture_output=True, timeout=60)
     work = root / ".github" / "workflows"
     work.mkdir(parents=True, exist_ok=True)
     (work / "agent-pr.yml").write_text(

@@ -894,8 +894,7 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
     try:
         shallow = subprocess.run(
             ["git", "-C", str(ROOT), "rev-parse", "--is-shallow-repository"],
-            capture_output=True, text=True, encoding="utf-8", check=True,
-        ).stdout.strip()
+            capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout.strip()
         if shallow == "true":
             return {}, [("клон мелкий: истории нет, а дата появления взялась бы от "
                         "единственного коммита — правдоподобная и неверная. "
@@ -904,8 +903,7 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
             ["git", "-C", str(ROOT), "log", "--diff-filter=A", "--name-only",
              "-z", "--format=%aI%x00", "--",
              "rules/ru/[0-9][0-9][0-9]-*.md"],
-            capture_output=True, text=True, encoding="utf-8", check=True,
-        ).stdout
+            capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
     except (OSError, subprocess.CalledProcessError) as e:
         return {}, [f"история недоступна, дату появления взять неоткуда: {e}"]
 

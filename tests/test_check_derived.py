@@ -65,11 +65,11 @@ def test_ukazatel_pod_ohranoy_ne_stoit():
 def test_tretiy_ishod_na_nerazobrannom_diapazone(tmp_path):
     """Исход «проверка не отработала» объявлен и прогоняется (145): диапазона
     нет — это код 2, а не чистый прогон (075)."""
-    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True, timeout=60)
     done = subprocess.run(
         [sys.executable, str(Path(cd.__file__)), "--root", str(tmp_path),
          "--range", "нет-такого...HEAD"],
-        capture_output=True, text=True, encoding="utf-8")
+        capture_output=True, text=True, encoding="utf-8", timeout=600)
     assert done.returncode == 2
     assert "не отработала" in done.stderr
 
@@ -80,9 +80,9 @@ def test_gejt_otvechaet_otkazom_cherez_main(tmp_path):
     изменении: `main` обязан ответить единицей."""
     def git(*args):
         subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
-                       capture_output=True)
+                       capture_output=True, timeout=60)
 
-    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True, timeout=60)
     git("config", "user.email", "проба@пример")
     git("config", "user.name", "проба")
     (tmp_path / "README.md").write_text("основание\n", encoding="utf-8")

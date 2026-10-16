@@ -88,7 +88,7 @@ def остаток() -> tuple[str, bool]:
     try:
         done = subprocess.run(  # noqa: S603 — аргументы свои
             ["gh", "api", "rate_limit"],
-            capture_output=True, text=True, encoding="utf-8")
+            capture_output=True, text=True, encoding="utf-8", timeout=120)
     except OSError as e:
         return f"остаток не измерен: {NO_GH_WHY} ({e.strerror or e})", False
     if done.returncode != 0:
@@ -122,7 +122,7 @@ def run(*args: str) -> tuple[int, str]:
     """
     global _замер
     try:
-        done = subprocess.run(["gh", *args], capture_output=True, text=True, encoding="utf-8")
+        done = subprocess.run(["gh", *args], capture_output=True, text=True, encoding="utf-8", timeout=120)
     except OSError as e:
         return NO_GH, f"{NO_GH_WHY} ({e.strerror or e})"
     вывод = (done.stdout or done.stderr).strip()
