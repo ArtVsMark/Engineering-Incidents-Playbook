@@ -7,8 +7,8 @@
       "state": "published",
       "schema": "1.2",
       "release": {
-        "tag": "v1.13.0",
-        "sha": "8ef5bc9d96fb8026426b07d5d1e2b18b442a5895"
+        "tag": "v2.0.0",
+        "sha": "cf7fc6f746dfca251a8b0686593ab42f34df050c"
       },
       "gives": {
         "export": "1.7",
