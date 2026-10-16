@@ -497,3 +497,25 @@ def test_вердикт_данным_сверяется_с_записью(monkey
         assert any(слово in p for p in problems), problems
     else:
         assert problems == []
+
+
+# ── невидимые символы в канале (#873) ──────────────────────────────────────
+
+@pytest.mark.parametrize("символ", [
+    "\U000E0041",   # блок Tag: «ASCII smuggling»
+    "​",       # нулевая ширина
+    "‮",       # переворот направления
+    "ㅤ",       # заполнитель хангыля, категория Lo
+])
+def test_невидимое_в_предложении_канал_пропущен(monkeypatch, символ):
+    подменить(monkeypatch, [{**ГОДНОЕ, "claim": f"утвер{символ}ждение"}])
+    pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {})
+    assert pending == []
+    assert len(problems) == 1 and f"U+{ord(символ):04X}" in problems[0]
+    assert ".proposals[0].claim" in problems[0]
+
+
+def test_невидимое_в_ключе_тоже_найдено(monkeypatch):
+    подменить(monkeypatch, [{**ГОДНОЕ, "cla​im": "x"}])
+    pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {})
+    assert pending == [] and "U+200B" in problems[0]
