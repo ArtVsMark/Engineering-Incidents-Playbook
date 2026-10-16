@@ -2,15 +2,15 @@
   "schema": "1.6",
   "schema_of": "формат ЭТОГО файла — факты каталога по договору фактов семьи (export/facts/facts-contract.md). Не версия каталога, не номер выпуска и не схема выгрузки правил: ключ `schema` в этой экосистеме носят четыре разных предмета (выгрузка, ответ потребителя, сводка, факты) — правило 164",
   "repo": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-16T12:43:20+00:00",
-  "commit": "cf7fc6f746dfca251a8b0686593ab42f34df050c",
+  "generated_at": "2026-10-16T13:23:27+00:00",
+  "commit": "e55ceabd96e54ed4f31305fff418f0c614a13e64",
   "ci": {
     "workflow": "ci.yml"
   },
-  "version": "2.0.0",
+  "version": "2.0.1",
   "release": "2.0",
   "tests": {
-    "functions": 1690,
+    "functions": 1693,
     "modules": 75
   },
   "checks_per_pr": {
