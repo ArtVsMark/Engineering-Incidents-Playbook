@@ -1,5 +1,5 @@
 {
-  "schema": "1.1",
+  "schema": "1.2",
   "project": "ArtVsMark/Engineering-Incidents-Playbook",
   "release": {
     "tag": "v1.13.0",
@@ -13,7 +13,7 @@
     "showcase": "1.1",
     "facts": "2.0",
     "where": "1.7",
-    "family": "1.1"
+    "family": "1.2"
   },
   "takes": []
 }
