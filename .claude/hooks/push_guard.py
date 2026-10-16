@@ -656,6 +656,17 @@ def _вывод(argv: list[str]) -> str | None:
 
 
 def main() -> int:
+    """Событие площадки → решение стража; зависший вызов не превращается в пропуск.
+
+    ДЕДЛАЙН БЕЗ РАЗВИЛКИ — ТИХИЙ ОБХОД (обзор #882). У вызовов стража с 16.10
+    назван `timeout=` (100), и зависший git бросает `TimeoutExpired`. Не
+    пойманный, он ронял бы хук кодом 1, а ненулевой код, кроме 2, площадка
+    считает НЕблокирующей ошибкой: толчок ушёл бы непроверенным, молча (220).
+    Толчок поэтому закрывается кодом 2 с причиной; прочая команда пропускается
+    со строкой в stderr — страж стоит на каждой команде оболочки, и закрыть всё
+    из-за зависшего git значило бы обездвижить окно. Та же развилка, что у
+    обёртки без интерпретатора планки.
+    """
     try:
         event = json.load(sys.stdin)
     except ValueError, OSError:
@@ -663,6 +674,22 @@ def main() -> int:
     if event.get("tool_name") != "Bash":
         return 0
     command = (event.get("tool_input") or {}).get("command") or ""
+    try:
+        return решить(command)
+    except subprocess.TimeoutExpired as exc:
+        вызов = " ".join(map(str, exc.cmd))[:120] if isinstance(exc.cmd, (list, tuple)) else str(exc.cmd)[:120]
+        if толкает(command):
+            print(f"страж толчка не дождался «{вызов}» за {exc.timeout} с — толчок закрыт: "
+                  "без проверки он ушёл бы непроверенным (100, 220). Повторите, когда "
+                  "git снова отвечает.", file=sys.stderr)
+            return 2
+        print(f"страж толчка: «{вызов}» не ответил за {exc.timeout} с; команда не "
+              "толчок и пропущена без проверки ветки", file=sys.stderr)
+        return 0
+
+
+def решить(command: str) -> int:
+    """Решение по команде оболочки: 0 — пропустить, 2 — отвергнуть с причиной."""
     branch = current_branch()
     if branch is None or branch == "HEAD":
         return 0                        # отделённая голова — сравнивать не с чем
