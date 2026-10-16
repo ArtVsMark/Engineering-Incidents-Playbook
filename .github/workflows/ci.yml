@@ -201,6 +201,15 @@ jobs:
           python scripts/check_fix_check.py --paths-from "$RUNNER_TEMP/pr-paths.txt" \
             --base "$BASE" --body-file "$RUNNER_TEMP/pr-body.md"
 
+      # Правило 162, вторая половина: механизм, ДОБАВЛЕННЫЙ изменением, пишет,
+      # у кого из семьи спросили. Метрика check_bindings спрашивает только
+      # очередь «держится ничем»; механизм строят и по другим поводам.
+      - name: новый механизм назвал семью
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ steps.pr_files.outputs.base }}
+        run: python scripts/check_asked_family.py --paths-from "$RUNNER_TEMP/pr-paths.txt" --base "$BASE"
+
       # Правило 138: решение оседает артефактом ТЕМ ЖЕ заходом, а не перед
       # выпуском. Отложенная запись означает, что следующее окно разбирает тот
       # же вопрос заново.
