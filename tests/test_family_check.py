@@ -373,11 +373,13 @@ def test_uptake_у_издателя_по_связям_сводки():
                {**издатель("o/a"), "links": {"EIP": "ok"}},
                {**издатель("o/b"), "links": {"EIP": "partial", "EPM": "ok"}},
                {**издатель("o/c"), "links": {"EIP": "none"}},
+               {**издатель("o/e"), "links": {"EIP": "unknown"}},  # связь есть, свежесть не сверена
+               {**издатель("o/f"), "links": {"EIP": "skipped"}},  # отказ — не перешёл
                издатель("o/d"))                                   # не прочитан
     п = fc.uptake(с, КАТАЛОГ, fc.издатели_семьи(с))
-    assert п == {"code": "EIP", "taken": 2, "of": 4, "unread": 1, "by": ["o/a", "o/b"]}
+    assert п == {"code": "EIP", "taken": 3, "of": 6, "unread": 1, "by": ["o/a", "o/b", "o/e"]}
     подпись, число = fc.зона_uptake(п)
-    assert число[0] == "2/4" and "не прочитано у 1" in число[2]
+    assert число[0] == "3/6" and "не прочитано у 1" in число[2]
 
 
 def test_uptake_нет_у_не_издателя(tmp_path):
