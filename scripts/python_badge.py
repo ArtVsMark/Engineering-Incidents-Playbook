@@ -95,6 +95,7 @@ import check_python_version as cv  # noqa: E402
 import coverage_badge  # noqa: E402
 import ghcli  # noqa: E402
 import text_width  # noqa: E402
+import version  # noqa: E402
 from aggregate_bindings import fetch  # noqa: E402
 
 OUT = ROOT / ".github" / "badges" / "python.svg"
@@ -531,13 +532,23 @@ def зона_выпуска(релиз: str | None, pypi: str | None, объяв
 
 
 def релиз_площадки() -> str | None:
-    """Тег последнего выпуска; None — выпусков нет (404 — ответ, а не молчание)."""
-    код, вывод = ghcli.run("api", "repos/{owner}/{repo}/releases/latest", "--jq", ".tag_name")
-    if код == 0:
-        return вывод.strip() or None
-    if "HTTP 404" in вывод:
-        return None
-    raise НеОтветила(вывод)
+    """Старший выпуск ПРОЕКТА — тег `vX.Y.Z`; None — таких выпусков нет.
+
+    НЕ `releases/latest`. «Последний» у площадки — самая свежая страница
+    выпуска, чей бы тег она ни несла: 15.10 каталог выпустил договор фактов
+    `facts-v2.0.0`, и зона выпуска на значке показала его вместо `v1.13.0`.
+    Выпуском проекта считается только тег формы `version.TAG_RE` — та же
+    форма, по которой считается версия (214); список читается до конца (212),
+    черновики и предварительные выпуски не в счёт.
+    """
+    код, теги, почему = ghcli.список(
+        "repos/{owner}/{repo}/releases?per_page=100",
+        ".[] | select((.draft | not) and (.prerelease | not)) | .tag_name")
+    if код != 0:
+        raise НеОтветила(почему)
+    свои = [т for т in теги if isinstance(т, str) and version.TAG_RE.match(т)]
+    # не проза: тег выпуска «vX.Y.Z».
+    return max(свои, key=lambda т: tuple(int(ч) for ч in т[1:].split("."))) if свои else None
 
 
 #: Ответ PyPI «пакета нет». fetch отдаёт отказ строкой с `str(HTTPError)`,
