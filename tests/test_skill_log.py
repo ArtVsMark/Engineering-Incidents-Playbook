@@ -6,6 +6,7 @@
 """
 
 import importlib.util
+import os
 import io
 import json
 from datetime import UTC, datetime
@@ -80,3 +81,27 @@ def test_хук_подключён_на_оба_события():
 
 def test_журнал_вне_дерева():
     assert ".claude/state/" in (КОРЕНЬ / ".gitignore").read_text(encoding="utf-8").splitlines()
+
+
+def test_путь_целиком_через_обёртку(tmp_path):
+    """settings.json → skill_log.sh → floor.sh → интерпретатор → skill_log.py (211).
+
+    Без этого случая набор звал `main()` напрямую, и поломка обёртки или
+    разбора планки оставляла журнал пустым при зелёном наборе (находка #868).
+    """
+    import shutil
+    import subprocess
+
+    (tmp_path / "pyproject.toml").write_text(
+        (КОРЕНЬ / "pyproject.toml").read_text(encoding="utf-8"), encoding="utf-8")
+    событие = json.dumps({"tool_name": "Skill", "tool_input": {"skill": "close-a-finding"}})
+    итог = subprocess.run(
+        ["sh", str(КОРЕНЬ / ".claude" / "hooks" / "skill_log.sh"), "ok"],
+        input=событие, capture_output=True, text=True, encoding="utf-8", timeout=30,
+        env={"PATH": os.environ["PATH"], "CLAUDE_PROJECT_DIR": str(tmp_path)})
+    assert итог.returncode == 0
+    журнал = tmp_path / sl.ЖУРНАЛ
+    if shutil.which("python3") is None:
+        assert "не записан" in итог.stderr and not журнал.exists()
+    else:
+        assert json.loads(журнал.read_text(encoding="utf-8"))["skill"] == "close-a-finding"
