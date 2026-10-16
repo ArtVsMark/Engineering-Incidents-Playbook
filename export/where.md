@@ -88,9 +88,9 @@
 | `Engineering-Incidents-Playbook` | `action.yml` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_prose.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 6 |
+| `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/audit_catalogue.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/check_attribution.py` | 5 |
-| `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/main_red.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/review_findings.py` | 5 |

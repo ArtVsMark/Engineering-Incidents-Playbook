@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-16T19:10:13+00:00",
+  "generated_at": "2026-10-16T19:27:05+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -1247,14 +1247,14 @@
         },
         "100": {
           "mechanism": "gate",
-          "where": "scripts/check_workflows.py — предел времени обязателен у каждой работы конвейера. ГРАНИЦА: дедлайна на СТАРТ площадка не даёт, timeout-minutes идёт с момента, когда работа получила машину, — вторая половина правила на этой поверхности не обеспечена",
+          "where": "scripts/check_workflows.py — предел времени обязателен у каждой работы конвейера; scripts/check_subprocess.py — у каждого вызова subprocess в scripts/, tests/, templates/ и .claude/hooks/ назван timeout= (кроме Popen и **kwargs). Вторая половина — с 16.10: замер нашёл 100 вызовов без дедлайна (#879), ответ прежде называл только прогоны (182, 220); приём взят у гейта дедлайнов Token (162; адрес — в origin). ГРАНИЦА: дедлайна на СТАРТ площадка не даёт, timeout-minutes идёт с момента, когда работа получила машину",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-17",
+          "analysed": "2026-10-16",
           "decided": "",
           "skill": "",
-          "origin": "",
-          "origin_kind": "own"
+          "origin": "ArtVsMark/Claude-Code_Usage-Token:scripts/subprocess_timeout.py@52efb3ac7dcc",
+          "origin_kind": "adapted"
         },
         "101": {
           "mechanism": "gate",
@@ -2459,7 +2459,7 @@
           "mechanism": "none",
           "where": "",
           "holdable": "refused",
-          "awaiting": "",
+          "awaiting": "заход .github/workflows/review.yml станет длиннее 10 минут или очередь начнёт подтягивать базу в ветки изменений",
           "analysed": "2026-10-16",
           "decided": "",
           "skill": "",
@@ -2470,7 +2470,7 @@
           "mechanism": "none",
           "where": "",
           "holdable": "not-yet",
-          "awaiting": "",
+          "awaiting": "починены находки 214 и 016 из ArtVsMark/Engineering-Incidents-Playbook#879 — на дереве с ними гейт охвата родился бы красным (146)",
           "analysed": "2026-10-16",
           "decided": "",
           "skill": "",
