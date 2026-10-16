@@ -86,3 +86,24 @@ def test_база_не_разобрана_третий_исход(репо, caps
 def test_список_не_прочитан_третий_исход(tmp_path):
     assert af.main(["--root", str(tmp_path), "--paths-from", str(tmp_path / "нет.txt"),
                     "--base", "HEAD"]) == 2
+
+
+def test_голое_число_не_запись(репо):
+    """«162» в замере или списке правил — не запись о семье (обзор #884)."""
+    root, base = репо
+    (root / "scripts" / "check_new.py").write_text(
+        '"""Реализует правила: 001, 162, 214."""\n', encoding="utf-8")
+    assert запуск(root, base, ["scripts/check_new.py"]) == 1
+
+
+@pytest.mark.parametrize("путь, виден", [
+    (".github/workflows/deps-pins.yml", True),      # свой прогон подъёма закреплений
+    ("scripts/check_hook_interpreter.py", True),    # гейт интерпретатора хуков
+    ("scripts/check_old.py", False),                # расширение старого: граница
+])
+def test_три_случая_16_10(репо, путь, виден):
+    """Охват сверен со случаями, ради которых гейт заведён (обзор #884)."""
+    root, base = репо
+    (root / путь).parent.mkdir(parents=True, exist_ok=True)
+    (root / путь).write_text("# без записи\n", encoding="utf-8")
+    assert запуск(root, base, [путь]) == (1 if виден else 0)
