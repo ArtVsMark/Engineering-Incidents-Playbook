@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-16T20:16:09+00:00",
+  "generated_at": "2026-10-16T20:22:57+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -16,11 +16,11 @@
         "not-applicable": 16
       },
       "by_mechanism": {
-        "gate": 158,
+        "gate": 159,
         "pipeline": 12,
         "skill": 5,
         "document": 18,
-        "none": 10
+        "none": 9
       },
       "rules": {
         "001": "active",
@@ -2467,15 +2467,15 @@
           "origin_kind": ""
         },
         "220": {
-          "mechanism": "none",
-          "where": "",
-          "holdable": "not-yet",
-          "awaiting": "починены находки 214 и 016 из ArtVsMark/Engineering-Incidents-Playbook#879 — на дереве с ними гейт охвата родился бы красным (146)",
+          "mechanism": "gate",
+          "where": "scripts/check_mechanism_scope.py — шаг «правила о механизмах держатся по всему дереву» в .github/workflows/ci.yml: перепись .rules/mechanism-rules.json (12 правил, места scripts, .claude/hooks, .github) сверяется с охватом в коде гейтов; проверено откатом scripts/check_subprocess.py к состоянию до #882 — краснеет на хуках у 100, 165, 176. ГРАНИЦА: полноту самой переписи гейт не судит — правило о механизмах, не внесённое в неё, он не увидит; четыре правила (016, 045, 070, 084) держит суждение, долг «не построено» — 159 и 167 в хуках",
+          "holdable": "",
+          "awaiting": "",
           "analysed": "2026-10-16",
           "decided": "",
           "skill": "",
           "origin": "",
-          "origin_kind": ""
+          "origin_kind": "own"
         }
       },
       "notes": {},
