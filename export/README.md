@@ -1009,7 +1009,7 @@ repository settings.
   <!--m:contracts-->"schema": "1.7",
   "contracts": {
     "export": "1.7", "bindings": "1.9", "consumers": "1.1", "proposals": "1.4",
-    "showcase": "1.1", "where": "1.7", "family": "1.1", "facts": "2.0"
+    "showcase": "1.1", "where": "1.7", "family": "1.2", "facts": "2.0"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
                                                // build time, example value
@@ -1065,6 +1065,13 @@ formats that never moved.
 `absent` — файла нет, `unreadable` — не прочитан, и причина названа. Последние
 два не равны «всё сходится»: сегмент значка у сверяющего будет серым.
 
+**Связи с издателями (с 1.2).** У опубликованного проекта в сводке поле
+`links` — `{код издателя: состояние}` из блока издателей его же опубликованного
+разбора `family-check.json`. Разбор не прочитан — поля нет, а не пустой
+словарь. По `links` значок издателя рисует зону `uptake N/M`: сколько проектов
+семьи перешли на него — со связью `✓`, `✗` или `◐`, — из всех остальных; не
+прочитанные в «перешли» не идут и названы в подсказке (владелец 15.10, #844).
+
 **Семейный значок.** Проект сверяет себя сам: `scripts/family_check.py`
 находит в своём дереве, на чём он стоит (`uses: <издатель>/…@<ссылка>`,
 номера `.rules/bindings.json`, номер своих фактов, диапазон контракта
@@ -1089,7 +1096,10 @@ formats that never moved.
 
 Every family project publishes `.github/badges/contracts.json` on its `badges`
 branch: what it gives, its latest release and the pairwise links that cannot
-be discovered automatically. The catalogue collects them into `family.json`.
+be discovered automatically. The catalogue collects them into `family.json`;
+since 1.2 each published project there also carries `links` — its publisher
+states from its own published `family-check.json` — and a publisher's badge
+shows `uptake N/M`: how many family projects took it.
 
 ## Сводная таблица · The summary table
 

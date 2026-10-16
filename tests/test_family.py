@@ -70,7 +70,9 @@ def test_сводка_берёт_свой_без_сети_а_соседей_по
     doc = family.сводка([{"repo": "o/self"}, {"repo": "o/a"}, {"repo": "o/b"}],
                         свой, прочесть)
     assert [p["state"] for p in doc["projects"]] == ["published", "published", "absent"]
-    assert прочитано == [family.АДРЕС.format(repo=r) for r in ("o/a", "o/b")]
+    # Разбор читается только у опубликованного: у отсутствующего его нет (#844).
+    assert прочитано == [family.АДРЕС.format(repo="o/a"), family.РАЗБОР_АДРЕС.format(repo="o/a"),
+                         family.АДРЕС.format(repo="o/b")]
     assert doc["schema"] == family.FAMILY_SCHEMA
 
 
@@ -117,3 +119,26 @@ def test_выпуск_свой_тег_у_своего_дерева(tmp_path):
         "--allow-empty", "-m", "первый")
     git("tag", "v7.3.0")
     assert family.выпуск(tmp_path) == {"tag": "v7.3.0", "sha": git("rev-parse", "HEAD")}
+
+
+def test_связи_из_разбора_соседа_и_своего():
+    """links — блок издателей опубликованного разбора; не прочитан — поля нет (#844)."""
+    def прочесть(url: str):
+        if url.endswith("contracts.json"):
+            return {**ХОРОШИЙ, "project": url.split("/")[3] + "/" + url.split("/")[4]}, None
+        if "/o/a/" in url:
+            return {"publishers": [{"code": "EIP", "state": "ok"}, {"code": "EPM", "state": "none"}]}, None
+        return None, "не прочитан: HTTP Error 404: Not Found"
+
+    свой = {**ХОРОШИЙ, "project": "o/self"}
+    doc = family.сводка([{"repo": "o/self"}, {"repo": "o/a"}, {"repo": "o/b"}], свой, прочесть,
+                        свой_разбор={"publishers": [{"code": "EIP", "state": "ok"}]})
+    по_имени = {p["repo"]: p for p in doc["projects"]}
+    assert по_имени["o/a"]["links"] == {"EIP": "ok", "EPM": "none"}
+    assert "links" not in по_имени["o/b"]
+    assert по_имени["o/self"]["links"] == {"EIP": "ok"}
+
+
+@pytest.mark.parametrize("разбор", [None, [], {"publishers": "x"}])
+def test_связи_не_той_формы_не_пустые(разбор):
+    assert family.связи(разбор) is None

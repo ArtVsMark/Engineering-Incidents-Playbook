@@ -425,7 +425,32 @@ def разобрать(root: Path, сводка: dict, свой: str) -> dict[st
                                "links": [asdict(x) for x in по_сегментам[с]]}
                            for с in СЕГМЕНТЫ}}
     разбор["publishers"] = по_издателям(разбор, свой, манифест, издатели_)
+    if (переход := uptake(сводка, свой, издатели_)) is not None:
+        разбор["uptake"] = переход
     return разбор
+
+
+#: Состояния связи, при которых проект на издателя перешёл: связь есть,
+#: свежая, отставшая или частичная. `none` и `skipped` — не перешёл.
+ПЕРЕШЁЛ = {"ok", "behind", "partial"}
+
+
+def uptake(сводка: dict, свой: str, издатели_: dict[str, str]) -> dict | None:
+    """Сколько проектов семьи перешли на издателя `свой` (владелец 15.10, #844).
+
+    Только у издателя: у проекта, который семье ничего не издаёт, вопроса нет.
+    Считается по полю `links` сводки — тому, что каждый проект опубликовал о
+    своих связях. Проект без `links` — не прочитан: в «перешли» не идёт, но и
+    «не перешёл» о нём не утверждается — его число названо отдельно (039).
+    """
+    код = next((к for r, к in издатели_.items() if r.lower() == свой.lower()), None)
+    if код is None:
+        return None
+    другие = [p for p in сводка.get("projects", []) if p.get("repo", "").lower() != свой.lower()]
+    прочитаны = [p for p in другие if isinstance(p.get("links"), dict)]
+    перешли = sorted(p["repo"] for p in прочитаны if p["links"].get(код) in ПЕРЕШЁЛ)
+    return {"code": код, "taken": len(перешли), "of": len(другие),
+            "unread": len(другие) - len(прочитаны), "by": перешли}
 
 
 def надпись(сегмент: str, данные: dict) -> str:
@@ -506,11 +531,22 @@ def по_издателям(разбор: dict, свой: str, манифест:
 
 def зоны(разбор: dict) -> list[list[python_badge.Часть]]:
     """Зоны семейного значка: подпись, сегменты, издатели. Их же берёт единый значок."""
-    return [[("family", python_badge.ПОДПИСЬ, "")],
-            [(надпись(с, д), ЦВЕТ[д["state"]], д["why"] or д["state"])
-             for с, д in разбор["segments"].items()],
-            [(f"{и['code']} {ЗНАК[и['state']]}", ЦВЕТ[и["state"]], и["why"] or и["state"])
-             for и in разбор["publishers"]]]
+    зоны_ = [[("family", python_badge.ПОДПИСЬ, "")],
+             [(надпись(с, д), ЦВЕТ[д["state"]], д["why"] or д["state"])
+              for с, д in разбор["segments"].items()],
+             [(f"{и['code']} {ЗНАК[и['state']]}", ЦВЕТ[и["state"]], и["why"] or и["state"])
+              for и in разбор["publishers"]]]
+    if (п := разбор.get("uptake")) is not None:
+        зоны_.append(зона_uptake(п))
+    return зоны_
+
+
+def зона_uptake(п: dict) -> list[python_badge.Часть]:
+    """`uptake │ 3/5`: сколько проектов семьи перешли на этого издателя."""
+    почему = (f"перешли на {п['code']}: {', '.join(п['by']) or 'никто'}"
+              + (f"; не прочитано у {п['unread']}" if п["unread"] else ""))
+    цвет = ЦВЕТ["unknown"] if п["unread"] == п["of"] else python_badge.СИНИЙ
+    return [("uptake", python_badge.ПОДПИСЬ, ""), (f"{п['taken']}/{п['of']}", цвет, почему)]
 
 
 def значок(разбор: dict) -> str:

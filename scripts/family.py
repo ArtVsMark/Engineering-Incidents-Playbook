@@ -27,6 +27,14 @@
 проектов реестра `.rules/consumers.json` одним файлом: свежие версии
 издателей, с которыми сверяется каждый проект.
 
+СВЯЗИ С ИЗДАТЕЛЯМИ (с 1.2, #844, владелец 15.10): у опубликованного проекта
+в сводке поле `links` — `{код издателя: состояние}` из блока издателей его же
+опубликованного разбора `family-check.json`. Из них значок издателя считает,
+сколько проектов семьи на него перешли (uptake). Каталог тут ничего не
+считает: он собирает то, что проект сам опубликовал о себе, как и манифест.
+Разбор не прочитан — поля нет, а не пустой словарь: «не прочитано» не равно
+«связей нет» (039).
+
 СОСТОЯНИЕ У КАЖДОГО ПРОЕКТА ОДНО ИЗ ТРЁХ, И ОНИ НЕ СКЛАДЫВАЮТСЯ (039):
   published  — манифест прочитан и имеет форму;
   absent     — площадка ответила «файла нет» (404): манифест не заведён;
@@ -62,12 +70,16 @@ ROOT = Path(__file__).resolve().parent.parent
 
 #: Номер формата манифеста и сводки семьи — один на оба: сводка есть список
 #: манифестов, и разойтись им не в чем.
-FAMILY_SCHEMA = "1.1"
+FAMILY_SCHEMA = "1.2"
 MANIFEST = Path(".github") / "badges" / "contracts.json"
 SUMMARY = Path("export") / "family.json"
 REGISTRY = Path(".rules") / "consumers.json"
 #: Где манифест соседа: та же ветка и тот же путь, что у каталога.
 АДРЕС = "https://raw.githubusercontent.com/{repo}/badges/.github/badges/contracts.json"
+#: Где разбор значка соседа: та же ветка, рядом с манифестом.
+РАЗБОР_АДРЕС = "https://raw.githubusercontent.com/{repo}/badges/.github/badges/family-check.json"
+#: Свой разбор — в дереве сборки, на месте, где его кладёт family_check.py.
+РАЗБОР = Path(".github") / "badges" / "family-check.json"
 #: Ключи манифеста и их тип. Форма проверяется этим, а не схемой JSON:
 #: зависимостей набора каталог не заводит (тесты — только от объявленного).
 ФОРМА: dict[str, type | tuple[type, ...]] = {
@@ -138,18 +150,33 @@ def запись(repo: str, doc: Any, err: str | None) -> dict[str, Any]:
             **{k: doc[k] for k in ("schema", "release", "gives", "takes")}}
 
 
+def связи(разбор: Any) -> dict[str, str] | None:
+    """`{код издателя: состояние}` из блока издателей разбора; None — не той формы."""
+    if not isinstance(разбор, dict) or not isinstance(разбор.get("publishers"), list):
+        return None
+    out = {и.get("code"): и.get("state") for и in разбор["publishers"] if isinstance(и, dict)}
+    return {к: v for к, v in out.items() if isinstance(к, str) and isinstance(v, str)}
+
+
 def сводка(реестр: list[dict], свой: dict[str, Any],
            прочесть: Callable[[str], tuple[Any, str | None]] | None = None,
-           ) -> dict[str, Any]:
-    """Манифесты всех проектов реестра; свой берётся без сети."""
+           свой_разбор: Any = None) -> dict[str, Any]:
+    """Манифесты всех проектов реестра со связями; свой берётся без сети."""
     прочесть = прочесть or fetch
     проекты = []
     for c in реестр:
         repo = c["repo"]
         if repo == свой["project"]:
-            проекты.append(запись(repo, свой, None))
+            строка, разбор = запись(repo, свой, None), свой_разбор
         else:
-            проекты.append(запись(repo, *прочесть(АДРЕС.format(repo=repo))))
+            строка = запись(repo, *прочесть(АДРЕС.format(repo=repo)))
+            разбор = None
+            if строка["state"] == "published":
+                doc, err = прочесть(РАЗБОР_АДРЕС.format(repo=repo))
+                разбор = doc if err is None else None
+        if строка["state"] == "published" and (с := связи(разбор)) is not None:
+            строка["links"] = с
+        проекты.append(строка)
     return {"schema": FAMILY_SCHEMA,
             "generated": dt.date.today().isoformat(),
             "projects": проекты}
@@ -184,7 +211,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"сводка не собрана: реестр {args.root / REGISTRY} — {e}",
               file=sys.stderr)
         return 2
-    doc = сводка(реестр["consumers"], свой)
+    try:
+        свой_разбор = json.loads((args.root / РАЗБОР).read_text(encoding="utf-8"))
+    except OSError, ValueError:
+        свой_разбор = None            # первый прогон: разбор ещё не нарисован
+    doc = сводка(реестр["consumers"], свой, свой_разбор=свой_разбор)
     записать(args.root / SUMMARY, doc)
     счёт = {s: sum(p["state"] == s for p in doc["projects"])
             for s in ("published", "absent", "unreadable")}

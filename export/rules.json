@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-15T15:20:23+00:00",
+  "generated_at": "2026-10-16T09:04:28+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.9",
@@ -10,7 +10,7 @@
     "showcase": "1.1",
     "facts": "2.0",
     "where": "1.7",
-    "family": "1.1"
+    "family": "1.2"
   },
   "count": 217,
   "rules": [
