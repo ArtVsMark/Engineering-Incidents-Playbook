@@ -117,8 +117,14 @@ called the hook's parser through `main()` and never ran the chain
 `skill_log.py`. Without the floor interpreter the wrapper exited 0 and the log
 stayed silently empty. An outside review of
 ArtVsMark/Engineering-Incidents-Playbook#868 found it before the first live
-call; no cost was measured, so it is a near miss. The fix is #869: a fallback
-`python3` and a suite case that walks the whole path.
+call; no cost was measured, so it is a near miss. The fix is #869: a suite case
+that walks the whole path. Along with it #869 added a fallback system `python3`,
+and that was a mistake: the window hook again ran on something other than the
+floor interpreter — exactly the incident of
+[217](217-a-version-move-is-done-in-the-code.md). The owner noticed it on 16
+October, and the fallback was removed. Without the floor the hook now names the
+broken window in stderr instead of looking for a detour: repairing a broken path
+must not route it around another rule.
 
 ## Why
 
