@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 62 | 37 | 219 | 0 | 0 | 203 | 158 | 12 | 5 | 18 | 10 | 140 |  |
+| `Engineering-Incidents-Playbook` | подключён | 62 | 37 | 219 | 0 | 0 | 203 | 158 | 12 | 5 | 18 | 10 | 141 |  |
 | `Stepik-Python-Grader` | подключён | 190 | 133 | 217 | 2 | 0 | 212 | 95 | 43 | 0 | 74 | 0 | 156 |  |
 | `ArtVsMark` | подключён | 29 | 18 | 217 | 2 | 0 | 170 | 134 | 30 | 0 | 6 | 0 | 66 |  |
 | `Claude-Code_Usage-Token` | подключён | 17 | 15 | 217 | 2 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
@@ -70,8 +70,8 @@
 
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
+| `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 19 |
 | `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 19 |
-| `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 18 |
 | `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 16 |
 | `Engineering-Incidents-Playbook` | `AGENTS.md` | 15 |
 | `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 14 |
@@ -149,7 +149,7 @@
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
 | `Engineering-Incidents-Playbook` | `templates/bindings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_aggregate_bindings.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 61 механизмов по одному правилу; без названного адреса: 0 из 193 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 62 механизмов по одному правилу; без названного адреса: 0 из 193 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 48 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 21 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 19 |
