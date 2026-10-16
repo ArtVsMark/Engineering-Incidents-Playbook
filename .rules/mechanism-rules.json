@@ -1,0 +1,76 @@
+{
+  "_": "Перепись правил о механизмах (220): для каждого правила — чем держится каждое место дерева, где живут механизмы. Значение — путь гейта, объект {гейт, признак} либо строка «исключено: причина» или «не построено: что». Сверяет scripts/check_mechanism_scope.py: гейт существует, называет правило, а место стоит в его коде (или в коде модуля проекта, который он импортирует). Анализ, из которого перепись выросла, — ArtVsMark/Engineering-Incidents-Playbook#879.",
+  "места": {
+    "scripts": "\"scripts\"",
+    ".claude/hooks": "hooks\"",
+    ".github": "\".github\""
+  },
+  "rules": {
+    "001": {
+      "scripts": "scripts/check_transport.py",
+      ".claude/hooks": "исключено: хуки окна к API площадки не ходят — страж толчка спрашивает git ls-remote",
+      ".github": "scripts/check_transport.py"
+    },
+    "100": {
+      "scripts": "scripts/check_subprocess.py",
+      ".claude/hooks": "scripts/check_subprocess.py",
+      ".github": "scripts/check_workflows.py"
+    },
+    "140": {
+      "scripts": "scripts/check_gates.py",
+      ".claude/hooks": "исключено: предмет правила — гейты; хук отвечает площадке, а не отвергает изменение, и его отказ прогоняет свой набор (tests/test_push_guard.py)",
+      ".github": "исключено: прогон не гейт с предметом, его исходы держит check_workflows.py по 145"
+    },
+    "158": {
+      "scripts": "scripts/check_third_outcome.py",
+      ".claude/hooks": "исключено: хук отвечает площадке кодом 0 или 2, третьего исхода у контракта хука нет",
+      ".github": "исключено: исход работы прогона — её цвет, его держит check_workflows.py по 145"
+    },
+    "159": {
+      "scripts": "scripts/check_verdict_order.py",
+      ".claude/hooks": "не построено: check_verdict_order.py смотрит scripts/ и tests/; перебора случаев с вердиктом в хуках при чтении 16.10 нет, но это чтение, а не гейт",
+      ".github": "исключено: перебор случаев с вердиктом — код Python, в YAML прогонов его нет"
+    },
+    "165": {
+      "scripts": "scripts/check_subprocess.py",
+      ".claude/hooks": "scripts/check_subprocess.py",
+      ".github": "исключено: шаги прогонов зовут git оболочкой, а не subprocess; разбор -z держит Python-код, который они зовут"
+    },
+    "167": {
+      "scripts": "исключено: правило об именах переменных оболочки, а scripts/ — Python",
+      ".claude/hooks": "не построено: обёртки .claude/hooks/*.sh не сверяются на латиницу имён; замер 16.10 — 0 нарушений",
+      ".github": "scripts/check_workflows.py"
+    },
+    "176": {
+      "scripts": "scripts/check_subprocess.py",
+      ".claude/hooks": "scripts/check_subprocess.py",
+      ".github": "исключено: в прогонах вызовов subprocess нет, только шаги оболочки"
+    },
+    "211": {
+      "scripts": "scripts/check_orphans.py",
+      ".claude/hooks": "scripts/check_orphans.py",
+      ".github": "исключено: прогон — точка входа, а не имя кода, до которого должен доходить путь"
+    },
+    "212": {
+      "scripts": "scripts/check_paging.py",
+      ".claude/hooks": "исключено: хуки окна списков площадки не читают",
+      ".github": "scripts/check_paging.py"
+    },
+    "214": {
+      "scripts": "scripts/check_copies.py",
+      ".claude/hooks": "scripts/check_copies.py",
+      ".github": "исключено: регулярных выражений Python в YAML прогонов нет; копию функции check_copies не видит вовсе — граница, названная в #879"
+    },
+    "217": {
+      "scripts": {"гейт": "scripts/check_py_style.py", "признак": "\"*.py\""},
+      ".claude/hooks": "scripts/check_hook_interpreter.py",
+      ".github": "scripts/check_python_version.py"
+    }
+  },
+  "суждение": {
+    "016": "обрезка списка со счётом — суждение о том, список ли режется или цитата; замер #879 разобрал 59 срезов глазом",
+    "045": "молчит ли откат — суждение; 34 места по форме разобраны выборкой в #879",
+    "070": "записан ли риск честно — суждение обзора",
+    "084": "держит ли канал основную работу — суждение обзора"
+  }
+}
