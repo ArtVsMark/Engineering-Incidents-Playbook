@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-16T15:16:25+00:00",
+  "generated_at": "2026-10-16T18:58:50+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.9",
@@ -12,7 +12,7 @@
     "where": "1.7",
     "family": "1.2"
   },
-  "count": 218,
+  "count": 219,
   "rules": [
     {
       "id": "001",
@@ -810,7 +810,8 @@
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentioned_by": [
-        "116"
+        "116",
+        "220"
       ]
     },
     {
@@ -3534,7 +3535,8 @@
       ],
       "mentioned_by": [
         "081",
-        "085"
+        "085",
+        "220"
       ]
     },
     {
@@ -4283,7 +4285,8 @@
       ],
       "mentioned_by": [
         "101",
-        "187"
+        "187",
+        "220"
       ]
     },
     {
@@ -5088,7 +5091,8 @@
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentioned_by": [
         "109",
-        "115"
+        "115",
+        "220"
       ]
     },
     {
@@ -7314,7 +7318,8 @@
         "170",
         "193",
         "195",
-        "206"
+        "206",
+        "220"
       ]
     },
     {
@@ -7594,7 +7599,8 @@
         "206",
         "207",
         "208",
-        "213"
+        "213",
+        "220"
       ]
     },
     {
@@ -8414,7 +8420,8 @@
         "153"
       ],
       "mentioned_by": [
-        "161"
+        "161",
+        "220"
       ]
     },
     {
@@ -9489,7 +9496,8 @@
         "014",
         "204",
         "205",
-        "213"
+        "213",
+        "220"
       ]
     },
     {
@@ -10304,6 +10312,9 @@
       ],
       "refined_by": [
         "155"
+      ],
+      "mentioned_by": [
+        "220"
       ]
     },
     {
@@ -11065,7 +11076,8 @@
       ],
       "mentioned_by": [
         "214",
-        "218"
+        "218",
+        "220"
       ]
     },
     {
@@ -11216,6 +11228,9 @@
         "204",
         "209",
         "211"
+      ],
+      "mentioned_by": [
+        "220"
       ]
     },
     {
@@ -11382,7 +11397,8 @@
         "157"
       ],
       "mentioned_by": [
-        "211"
+        "211",
+        "220"
       ]
     },
     {
@@ -11490,6 +11506,62 @@
         "052",
         "078",
         "179"
+      ]
+    },
+    {
+      "id": "220",
+      "slug": "a-mechanism-is-also-subject-to-the-rules-on-mechanisms",
+      "title": {
+        "ru": "Механизм — тоже предмет правил о механизмах",
+        "en": "A mechanism is also subject to the rules on mechanisms"
+      },
+      "areas": {
+        "ru": [
+          "гейты"
+        ],
+        "en": [
+          "gates"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Гейт, хук, прогон или навык, построенный ради одного правила, обязан соблюдать и остальные правила о механизмах: дедлайн вызова, одна реализация, интерпретатор планки, обрезка со счётом, третий исход. Держат это не гейты самих правил, а мета-гейты, и охват каждого — все механизмы дерева: `scripts/`, `.claude/hooks/`, `.github/`. Охват «там, где правило родилось» не годится. Гейт смотрит на свой предмет и не смотрит на себя, поэтому нарушение внутри механизма не видит ни он сам, ни гейт нарушенного правила, если его охват уже.",
+        "en": "A gate, hook, run or skill built for one rule must also obey the other rules on mechanisms: a deadline on a call, one implementation, the floor interpreter, truncation with a count, the third outcome. This is held not by the gates of those rules but by meta-gates, and each one's scope is every mechanism in the tree: `scripts/`, `.claude/hooks/`, `.github/`. A scope of \"where the rule was born\" will not do. A gate looks at its subject and not at itself, so a violation inside a mechanism is seen neither by that gate nor by the gate of the broken rule if its scope is narrower."
+      },
+      "applies": {
+        "ru": "**Работает** в проекте, который держит свои правила собственным кодом\nпроверок: гейты, хуки окна, прогоны, навыки.\n\n**Не работает** для проверок, взятых у другого проекта целиком и закреплённых\nтегом: их код правит владелец, и правила к нему предъявляет он\n([162](162-a-gap-asks-the-neighbours-first.md) — сообщить ему найденное). Не\nработает и для правил о содержании (тексты записей, договоры): их предмет —\nне механизм.\n\n**Признак нарушения:** у правила о механизмах ответ «держится гейтом», а замер\nпредиката по `scripts/`, `.claude/hooks/` и `.github/` находит нарушения в\nсамих гейтах.",
+        "en": "**Works** in a project that holds its rules with its own check code: gates,\nwindow hooks, runs, skills.\n\n**Does not work** for checks taken whole from another project and pinned by a\ntag: their owner edits that code and holds it to the rules\n([162](162-a-gap-asks-the-neighbours-first.md) — report what was found to\nthem). Nor for rules on content (record texts, contracts): their subject is\nnot a mechanism.\n\n**Sign of a violation:** a rule on mechanisms is answered \"held by a gate\",\nwhile measuring its predicate over `scripts/`, `.claude/hooks/` and\n`.github/` finds violations in the gates themselves."
+      },
+      "added": "2026-10-16",
+      "files": {
+        "ru": "rules/ru/220-a-mechanism-is-also-subject-to-the-rules-on-mechanisms.md",
+        "en": "rules/en/220-a-mechanism-is-also-subject-to-the-rules-on-mechanisms.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "879"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes",
+      "mentions": [
+        "016",
+        "070",
+        "084",
+        "100",
+        "140",
+        "146",
+        "162",
+        "182",
+        "197",
+        "211",
+        "214",
+        "217"
       ]
     }
   ],
