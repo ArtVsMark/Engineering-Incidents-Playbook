@@ -124,4 +124,6 @@ ArtVsMark/Engineering-Incidents-Playbook#879
 [146](146-a-green-gate-does-not-verify-its-premise.md) — зелёный гейт не
 подтверждает свою посылку; здесь зелёный гейт не подтверждает и собственный код.
 [162](162-a-gap-asks-the-neighbours-first.md) — спросить семью, прежде чем
-строить; у Token мета-гейт на дедлайн уже был.
+строить; у Token мета-гейт на дедлайн уже был — `scripts/subprocess_timeout.py` в
+ArtVsMark/Claude-Code_Usage-Token на `52efb3a`, и каталог взял его приём в
+`scripts/check_subprocess.py` (ответ каталога по 100, поле `origin`).

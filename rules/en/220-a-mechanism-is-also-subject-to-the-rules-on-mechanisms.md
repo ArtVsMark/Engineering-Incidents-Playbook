@@ -127,4 +127,7 @@ a requirement; this is the path by which the gap in 100 stayed invisible.
 [146](146-a-green-gate-does-not-verify-its-premise.md) — a green gate does not
 confirm its premise; here a green gate does not confirm its own code either.
 [162](162-a-gap-asks-the-neighbours-first.md) — ask the family before
-building; Token already had a meta-gate for the deadline.
+building; Token already had a meta-gate for the deadline —
+`scripts/subprocess_timeout.py` in ArtVsMark/Claude-Code_Usage-Token at
+`52efb3a`, and the catalogue took its technique into
+`scripts/check_subprocess.py` (the catalogue's answer to 100, field `origin`).
