@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-16T09:04:28+00:00",
+  "generated_at": "2026-10-16T14:12:54+00:00",
   "contracts": {
     "export": "1.7",
     "bindings": "1.9",
@@ -12,7 +12,7 @@
     "where": "1.7",
     "family": "1.2"
   },
-  "count": 217,
+  "count": 218,
   "rules": [
     {
       "id": "001",
@@ -995,7 +995,8 @@
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentioned_by": [
         "060",
-        "087"
+        "087",
+        "219"
       ]
     },
     {
@@ -2616,7 +2617,8 @@
         "124",
         "126",
         "179",
-        "202"
+        "202",
+        "219"
       ]
     },
     {
@@ -3960,7 +3962,8 @@
         "109",
         "113",
         "147",
-        "179"
+        "179",
+        "219"
       ]
     },
     {
@@ -9324,7 +9327,8 @@
       ],
       "mentioned_by": [
         "187",
-        "199"
+        "199",
+        "219"
       ]
     },
     {
@@ -11434,6 +11438,54 @@
         "195",
         "210",
         "211"
+      ]
+    },
+    {
+      "id": "219",
+      "slug": "an-expensive-run-is-keyed-by-its-subject-not-the-head",
+      "title": {
+        "ru": "Дорогой прогон ключуется по своему предмету, а не по голове",
+        "en": "An expensive run is keyed by its subject, not by the head"
+      },
+      "areas": {
+        "ru": [
+          "конвейер"
+        ],
+        "en": [
+          "pipeline"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "claim": {
+        "ru": "Дорогой прогон, вердикт которого зависит только от собственного диффа изменения против базы (внешний взгляд агента, долгий разбор), ключуется по этому диффу, а не по голове. Новая голова с тем же диффом получает прежний вердикт, а не новый заход. И подтяжка базы в ветку не снимает идущий дорогой прогон, а ждёт его вердикта: иначе вердикту на равном диффе не дают родиться, и ключ остаётся без значений, которые можно переиспользовать.",
+        "en": "An expensive run whose verdict depends only on the change's own diff against the base (an agent's outside review, a long analysis) is keyed by that diff, not by the head. A new head with the same diff gets the earlier verdict instead of a new run. And pulling the base into the branch does not cancel a running expensive run; it waits for its verdict. Otherwise a verdict on an equal diff is never allowed to exist, and the key has nothing to reuse."
+      },
+      "applies": {
+        "ru": "**Работает** для дорогих прогонов, вердикт которых зависит только от\nсобственного диффа: внешний взгляд агента, долгий разбор изменения, при частой\nподтяжке базы очередью.\n\n**Не работает** для обязательной проверки, чей предмет — коммит (там 179), и\nдля дешёвого прогона, где ключ и его сопровождение стоят дороже повторного\nзахода. У каталога предмет есть, но мал: за 09–16.10 из 100 заходов обзора 9\nповторных на одной ветке при среднем заходе 1,2 минуты — ответ каталога это\nназывает.\n\n**Признак нарушения:** в списке прогонов дорогого взгляда — заходы на разных\nголовах одного изменения с одинаковым диффом против базы, или `cancelled`\nзаходы взгляда сразу за подтяжкой базы.",
+        "en": "**Works** for expensive runs whose verdict depends only on their own diff: an\nagent's outside review, a long analysis of a change, with frequent base pulls\nby a queue.\n\n**Does not work** for a required check whose subject is a commit (that is 179),\nor for a cheap run where the key and its upkeep cost more than a repeated run.\nThe catalogue has the subject, but a small one: over 9–16 October, 9 of 100\nreview runs were repeats on the same branch, with an average run of 1.2\nminutes — the catalogue's answer says so.\n\n**Sign of a violation:** among the expensive review runs, runs on different\nheads of one change with the same diff against the base, or `cancelled` review\nruns right after a base pull."
+      },
+      "added": "2026-10-16",
+      "files": {
+        "ru": "rules/ru/219-an-expensive-run-is-keyed-by-its-subject-not-the-head.md",
+        "en": "rules/en/219-an-expensive-run-is-keyed-by-its-subject-not-the-head.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "scripts/look_mode.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "partly",
+      "mentions": [
+        "020",
+        "052",
+        "078",
+        "179"
       ]
     }
   ],
