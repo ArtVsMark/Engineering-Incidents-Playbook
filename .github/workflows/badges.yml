@@ -125,12 +125,12 @@ jobs:
       # подмены её файлов, но не от того, что исполняемый код видит токен.
       # Токен нужен одной операции — толчку на ветку `badges`, — и шаг
       # публикации прописывает его сам, из своего GH_TOKEN.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.event_name == 'workflow_run' && 'main' || github.ref }}
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.14"
 

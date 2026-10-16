@@ -161,7 +161,7 @@ def test_opasnoe_sobytie_s_zakrepleniem_chisto(tmp_path):
     workflow(tmp_path, "risky.yml",
              "on:\n  pull_request_target:\n  workflow_dispatch:\n"
              "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
-             "      - uses: actions/checkout@v4\n        with:\n          ref: main\n")
+             "      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09\n        with:\n          ref: main\n")
     assert cw.main(["--root", str(tmp_path)]) == 0
 
 
@@ -924,3 +924,42 @@ def test_vyzov_chuzhogo_progona_predela_ne_trebuet():
     text = (BUTTON + "jobs:\n  a:\n    uses: o/r/.github/workflows/s.yml@v1\n"
             "  b:\n    runs-on: x\n")
     assert cw.jobs_without_timeout(text) == ["b"]
+
+
+# ── чужое действие по SHA (#865) ───────────────────────────────────────────
+
+SHA = "fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09"
+
+
+@pytest.mark.parametrize("цель", [
+    "actions/checkout@v5",                       # подвижный мажор
+    "actions/checkout@v5.1.0",                   # точный тег тоже переставляем
+    "anthropics/claude-code-action@v1",          # действие при секретах
+    "actions/checkout@fbc6f39",                  # короткий SHA — не закрепление
+    "actions/checkout@main",                     # ветка
+])
+def test_chuzhoe_ne_po_sha_otkaz(tmp_path, capsys, цель):
+    workflow(tmp_path, "w.yml", f"{BUTTON}jobs:\n  a:\n    timeout-minutes: 5\n"
+             f"    steps:\n      - uses: {цель}\n")
+    assert cw.main(["--root", str(tmp_path)]) == 1
+    assert "#865" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("цель", [
+    f"actions/checkout@{SHA} # v5.1.0",
+    "ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-facts.yml@v1.5.0",
+    "./.github/actions/answer",
+    "docker://alpine:3.20",
+])
+def test_po_sha_i_svoi_chisto(цель):
+    assert cw.unpinned_actions(f"    steps:\n      - uses: {цель}\n") == []
+
+
+def test_sostavnoe_deystvie_tozhe(tmp_path):
+    """Действие каталога исполняет `uses:` в прогоне потребителя — мерка та же."""
+    workflow(tmp_path, "w.yml", f"{BUTTON}jobs:\n  a:\n    timeout-minutes: 5\n")
+    д = tmp_path / ".github" / "actions" / "x" / "action.yml"
+    д.parent.mkdir(parents=True)
+    д.write_text("runs:\n  using: composite\n  steps:\n    - uses: actions/setup-python@v6\n",
+                 encoding="utf-8")
+    assert cw.main(["--root", str(tmp_path)]) == 1

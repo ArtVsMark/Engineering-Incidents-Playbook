@@ -116,7 +116,7 @@ jobs:
           echo "SKIP=1" >> "$GITHUB_ENV"
 
       # Трейлеры берутся из коммитов ветки, значит нужна история.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         if: env.SKIP != '1'
         with:
           fetch-depth: 0
@@ -126,7 +126,7 @@ jobs:
       # и после переезда на 3.14 конвейер слияния гонял бы наш код на другой
       # версии, а гейт версий этого не видел: он читает только python-version.
       # Замер 02.10: так жили три задания — agent-pr, automerge, task-state.
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         if: env.SKIP != '1'
         with:
           python-version: "3.14"
