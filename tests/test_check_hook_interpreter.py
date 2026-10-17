@@ -112,3 +112,10 @@ def test_echo_с_решёткой_чисто(tmp_path):
     """`#` внутри слова и echo без вызова после него — не находка."""
     guard = ПЛАНКА + 'echo "шаг #2: python$floor" >&2\n'
     assert hi.main(["--root", str(дерево(tmp_path, guard))]) == 0
+
+
+def test_обёртка_с_именем_на_python_чисто(tmp_path):
+    """`python-guard.sh` — имя обёртки, а не интерпретатор (обзор #906)."""
+    настройки = {"hooks": {**НАСТРОЙКИ["hooks"], "PostToolUse": [
+        {"hooks": [{"command": '"$CLAUDE_PROJECT_DIR/.claude/hooks/python-guard.sh"'}]}]}}
+    assert hi.main(["--root", str(дерево(tmp_path, ПЛАНКА, настройки))]) == 0

@@ -502,3 +502,14 @@ def test_номер_договора_фактов_не_той_формы_тре�
         b.contracts_now(tmp_path)
     assert выход.value.code == 2
     assert "facts.version" in capsys.readouterr().err
+
+
+def test_нечитаемый_номер_договора_не_той_формы_не_называется(tmp_path, capsys):
+    """Не UTF-8 — «не прочитан», а не «не той формы» (обзор #907)."""
+    import pytest
+    (tmp_path / "export" / "facts").mkdir(parents=True)
+    (tmp_path / "export" / "facts" / "facts.version").write_bytes(b"\xff\xfe2.0.0")
+    with pytest.raises(SystemExit) as выход:
+        b.contracts_now(tmp_path)
+    assert выход.value.code == 2
+    assert "не прочитан как UTF-8" in capsys.readouterr().err

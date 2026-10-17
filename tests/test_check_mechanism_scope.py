@@ -113,3 +113,12 @@ def test_исключения_на_веру_печатаются_числом(tm
     правила = {"100": {"scripts": "scripts/check_x.py", ".claude/hooks": "исключено: нет вызовов"}}
     assert ms.main(["--root", str(дерево(tmp_path, правила))]) == 0
     assert "исключений на веру 1" in capsys.readouterr().out
+
+
+def test_заголовок_объявлений_в_комментарии_не_засчитан(tmp_path, capsys):
+    """Блок объявлений — в докстроке модуля; в комментарии он не объявление (обзор #908)."""
+    правила = {"100": {"scripts": "scripts/check_x.py", ".claude/hooks": "scripts/check_x.py"}}
+    гейт = ('# Реализует правила каталога:\n#   100 — дедлайн.\n'
+            'ПАПКИ = ("scripts", ".claude/hooks")\n')
+    assert ms.main(["--root", str(дерево(tmp_path, правила, гейт=гейт))]) == 1
+    assert "не называет правило 100" in capsys.readouterr().err
