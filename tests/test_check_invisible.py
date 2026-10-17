@@ -82,3 +82,18 @@ def test_экранированный_символ_в_json_отказ(tmp_path, 
 
 def test_неразбираемый_json_третий_исход(tmp_path):
     assert ci.main(["--root", str(дерево(tmp_path, {"export/rules.json": "{не json"}))]) == 2
+
+
+# Обзор #905: кейкап законен, цепочка за значком и прочие основные селекторы — нет.
+def test_кейкап_чисто(tmp_path):
+    файлы = {"AGENTS.md": "шаг 1️⃣ и #️⃣\n"}
+    assert ci.main(["--root", str(дерево(tmp_path, файлы))]) == 0
+
+
+@pytest.mark.parametrize("строка", [
+    "⚖️️\n",       # за значком цепочка селекторов
+    "⚖︁\n",             # за значком основной селектор, не FE0E/FE0F — полбайта
+    "x️⃣\n",            # кейкап на не-цифре
+])
+def test_селектор_вне_формы_эмодзи_отказ(tmp_path, строка):
+    assert ci.main(["--root", str(дерево(tmp_path, {"rules/ru/001-x.md": строка}))]) == 1
