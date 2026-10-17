@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-16T20:37:18+00:00",
+  "generated_at": "2026-10-17T05:30:03+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,7 +9,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-16",
+      "read_at": "2026-10-17",
       "answered": 219,
       "by_status": {
         "active": 203,
@@ -2488,7 +2488,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-16",
+      "read_at": "2026-10-17",
       "answered": 217,
       "by_status": {
         "active": 212,
@@ -5062,7 +5062,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-16",
+      "read_at": "2026-10-17",
       "answered": 217,
       "by_status": {
         "active": 170,
@@ -7175,7 +7175,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-16",
+      "read_at": "2026-10-17",
       "answered": 217,
       "by_status": {
         "active": 184,
@@ -9443,7 +9443,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-16",
+      "read_at": "2026-10-17",
       "answered": 217,
       "by_status": {
         "active": 173,
@@ -11590,7 +11590,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-16",
+      "read_at": "2026-10-17",
       "answered": 217,
       "by_status": {
         "active": 209,
@@ -12765,7 +12765,7 @@
           "analysed": "2026-09-26",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v1.13.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v2.0.0",
           "origin_kind": "called"
         },
         "091": {
@@ -13095,7 +13095,7 @@
           "analysed": "2026-09-26",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v1.13.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v2.0.0",
           "origin_kind": "called"
         },
         "124": {
@@ -13161,7 +13161,7 @@
           "analysed": "2026-10-14",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/answer/action.yml@v1.13.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/answer/action.yml@v2.0.0",
           "origin_kind": "called"
         },
         "130": {
@@ -13172,7 +13172,7 @@
           "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.13.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v2.0.0",
           "origin_kind": "called"
         },
         "131": {
@@ -13227,7 +13227,7 @@
           "analysed": "2026-09-26",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v1.13.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v2.0.0",
           "origin_kind": "called"
         },
         "136": {
@@ -13513,7 +13513,7 @@
           "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.13.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v2.0.0",
           "origin_kind": "called"
         },
         "163": {
@@ -13689,7 +13689,7 @@
           "analysed": "2026-10-09",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v1.13.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v2.0.0",
           "origin_kind": "called"
         },
         "179": {
