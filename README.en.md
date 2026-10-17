@@ -26,6 +26,9 @@ badge and the reference to check against; pipeline steps are held by the
 mechanisms. The cost: with no catalogue summary
 everyone's badge step goes red and the picture freezes on the last one ([#842](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/842)).
 
+**Boundary** (17 October): the catalogue checks what is submitted to it —
+answers, facts, proposals; general code hygiene is held by the mechanisms.
+
 ## Why
 
 A list of "do this" gets copied wholesale and followed by nobody. A rule holds
