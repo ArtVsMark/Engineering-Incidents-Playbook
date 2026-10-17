@@ -28,7 +28,7 @@
     },
     "159": {
       "scripts": "scripts/check_verdict_order.py",
-      ".claude/hooks": "не построено: check_verdict_order.py смотрит scripts/ и tests/; перебора случаев с вердиктом в хуках при чтении 16.10 нет, но это чтение, а не гейт",
+      ".claude/hooks": "не построено: check_verdict_order.py смотрит scripts/ и tests/; перебора случаев с вердиктом в хуках при чтении 16.10 нет. Общая гигиена кода — у механизмов (решение владельца 17.10), ждёт их шага: ArtVsMark/Engineering-Pipeline-Mechanisms#1439",
       ".github": "исключено: перебор случаев с вердиктом — код Python, в YAML прогонов его нет"
     },
     "165": {
@@ -38,7 +38,7 @@
     },
     "167": {
       "scripts": "исключено: правило об именах переменных оболочки, а scripts/ — Python",
-      ".claude/hooks": "не построено: обёртки .claude/hooks/*.sh не сверяются на латиницу имён; замер 16.10 — 0 нарушений",
+      ".claude/hooks": "не построено: обёртки .claude/hooks/*.sh не сверяются на латиницу имён; замер 16.10 — 0 нарушений. Общая гигиена кода — у механизмов (решение владельца 17.10), ждёт их шага: ArtVsMark/Engineering-Pipeline-Mechanisms#1439",
       ".github": "scripts/check_workflows.py"
     },
     "176": {
@@ -62,7 +62,10 @@
       ".github": "исключено: регулярных выражений Python в YAML прогонов нет; копию функции check_copies не видит вовсе — граница, названная в #879"
     },
     "217": {
-      "scripts": {"гейт": "scripts/check_py_style.py", "признак": "\"*.py\""},
+      "scripts": {
+        "гейт": "scripts/check_py_style.py",
+        "признак": "\"*.py\""
+      },
       ".claude/hooks": "scripts/check_hook_interpreter.py",
       ".github": "scripts/check_python_version.py"
     }
