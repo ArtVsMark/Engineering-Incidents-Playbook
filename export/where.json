@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-17T10:56:10+00:00",
+  "generated_at": "2026-10-17T13:18:42+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -12963,7 +12963,7 @@
         },
         "100": {
           "mechanism": "gate",
-          "where": "scripts/ci_complete.py — дедлайна два, и они разной длины: отсутствие записи проверки на голове означает «прогон не стартовал» и отвергается СРАЗУ, не дожидаясь предела ожидания, а предел (--timeout) относится только к тем, кто уже идёт. Третий, на работу джоба, задан в .github/workflows/ci.yml полем timeout-minutes у каждого шага. ДЕДЛАЙН У ВЫЗОВА ПРОЦЕССА В САМИХ МЕХАНИЗМАХ (220, ArtVsMark/Engineering-Pipeline-Mechanisms#1439): tests/test_subprocess_deadline.py — каждый вызов процесса в paths.SOURCES и .claude/hooks/ несёт timeout= и ловит TimeoutExpired тем же исходом, что OSError; пределы названы один раз — scripts/gitcall.py (LOCAL, NETWORK)",
+          "where": "scripts/ci_complete.py — дедлайна два, и они разной длины: отсутствие записи проверки на голове означает «прогон не стартовал» и отвергается СРАЗУ, не дожидаясь предела ожидания, а предел (--timeout) относится только к тем, кто уже идёт. Третий, на работу джоба, задан в .github/workflows/ci.yml полем timeout-minutes у каждого шага. ДЕДЛАЙН У ВЫЗОВА ПРОЦЕССА В САМИХ МЕХАНИЗМАХ (220, ArtVsMark/Engineering-Pipeline-Mechanisms#1439): tests/test_subprocess_deadline.py — каждый вызов процесса в paths.SOURCES и .claude/hooks/ несёт timeout= и ловит TimeoutExpired тем же исходом, что OSError; общие пределы git названы один раз — scripts/gitcall.py (LOCAL, NETWORK); вызов со своим предметом несёт свой именованный предел в своём модуле — scripts/preflight.py (STEP_TIMEOUT — шаг целиком, BUILD_TIMEOUT — сборка окружения), scripts/family_uptake.py (TIMEOUT — внутри общего бюджета обхода), scripts/version.py (ASK_TIMEOUT), .claude/hooks/push_guard.py (GIT_DEADLINE — меньше предела хука). Гейт держит НАЛИЧИЕ timeout= и поимку истечения, а не то, где предел назван: литерал вместо имени он не отвергнет (замер 17.10.2026 — литералов ноль)",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-10-17",
@@ -14239,12 +14239,12 @@
         },
         "220": {
           "mechanism": "gate",
-          "where": "Мета-гейты с охватом по механизмам дерева: tests/test_one_parse.py (214, корни paths.SOURCES), tests/test_report.py (016, корни paths.SOURCES), tests/test_py_style.py (217, включая хук окна .claude/hooks/push_guard.py), tests/test_python_after_setup.py (217, все работы .github/workflows/), .claude/hooks/push_guard.sh (217: хук окна зовётся интерпретатором планки). tests/test_subprocess_deadline.py (100 — дедлайн и его поимка у каждого вызова процесса в paths.SOURCES и .claude/hooks/). ДЫРА НАЗВАНА, а не выровнена (046, 182): охват paths.SOURCES у мета-гейтов 214 и 016 не берёт .claude/hooks/",
-          "holdable": "not-yet",
+          "where": "Мета-гейты с охватом по механизмам дерева: tests/test_one_parse.py (214, корни paths.SOURCES и .claude/hooks/), tests/test_report.py (016, корни paths.SOURCES и .claude/hooks/), tests/test_source_hygiene.py (176 и 165 — кодировка текстового вызова и -z у списка путей, корни paths.SOURCES, tests/ и .claude/hooks/), tests/test_py_style.py (217, включая хук окна .claude/hooks/push_guard.py), tests/test_python_after_setup.py (217, все работы .github/workflows/), .claude/hooks/push_guard.sh (217: хук окна зовётся интерпретатором планки). tests/test_subprocess_deadline.py (100 — дедлайн и его поимка у каждого вызова процесса в paths.SOURCES и .claude/hooks/), tests/test_git_refuses.py (039 — вызов git ловит своё отсутствие), tests/test_one_body.py (071 — одно тело на модули). Охват каждого — все места его предмета в дереве (182): гейты кода берут paths.SOURCES и .claude/hooks/ ПО УМОЛЧАНИЮ обходчика tests/conftest.py::code_files, а исключить хуки можно только явным with_hooks=False; гейты 217 — хук окна и все работы прогонов. Дыра охвата закрывалась дважды: словом у 214, 016, 176 и 165 (ArtVsMark/Engineering-Pipeline-Mechanisms#1439), и следующий взгляд нашёл ту же у 039 и 071 — поэтому вторая починка классом, умолчанием обходчика (210). Вторая половина — суждение там, где мета-гейта нет: перепись .rules/mechanism-rules.json называет по каждому правилу и месту гейт, исключение с причиной или «не построено» с замером, а навык .claude/skills/a-gate-obeys-every-rule проходит по ней новый или починенный механизм перед толчком; форму переписи и живость её гейтов держит tests/test_mechanism_rules.py",
+          "holdable": "",
           "awaiting": "",
           "analysed": "2026-10-17",
           "decided": "",
-          "skill": "",
+          "skill": ".claude/skills/a-gate-obeys-every-rule",
           "origin": "",
           "origin_kind": "own"
         }
