@@ -146,10 +146,10 @@
           "segment": "family",
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
           "what": "export",
-          "mine": "1.7",
+          "mine": "1.8",
           "latest": "1.8",
           "where": ".rules/bindings.json",
-          "state": "behind",
+          "state": "ok",
           "why": ""
         },
         {
