@@ -22,8 +22,23 @@
   • правило из переписи существует в каталоге.
 «Не построено» — законный ответ, но это долг: печатается числом.
 
+ЧТО ЗНАЧИТ «СТОИТ В КОДЕ» (обзор #891). Признак места ищется среди строковых
+литералов кода — без докстрингов и комментариев: упоминание места в прозе
+охватом не считается. Кавычка с обеих сторон признака (`"scripts"`) — литерал
+равен слову, только в конце (`hooks"`) — литерал им кончается. Модули проекта,
+которые гейт импортирует, читаются транзитивно. «Называет правило» — номер в
+блоке «Реализует правила каталога» докстроки, тем же разбором, что у
+check_bindings (214), а не любое число в тексте.
+
 ГРАНИЦА. Полноту самой переписи гейт не судит: правило о механизмах, не
-внесённое в неё, он не увидит. Перечень взят замером #879.
+внесённое в неё, он не увидит. Перечень взят замером #879. Литерал в коде
+показывает, что гейт ЗНАЕТ о месте, но не что обходит его целиком: чтение
+`.github/workflows` засчитывается охватом всего `.github`. Относительные
+импорты (`from . import x`) не читаются — пакетов в scripts/ нет. ИСКЛЮЧЕНИЯ
+ПРИНИМАЮТСЯ НА ВЕРУ: «исключено: причина» с деревом не сверяется — утверждение
+вроде «в прогонах вызовов subprocess нет» перечитывается при обзоре, а их
+число гейт печатает каждым прогоном, чтобы вера была видна, а не умолчана
+(182).
 
 Исходы: 0 — перепись сходится с кодом · 1 — расхождение · 2 — перепись не
 прочитана или пуста.
@@ -37,9 +52,10 @@
 import argparse
 import ast
 import json
-import re
 import sys
 from pathlib import Path
+
+from check_bindings import declares
 
 ROOT = Path(__file__).resolve().parent.parent
 ПЕРЕПИСЬ = Path(".rules") / "mechanism-rules.json"
@@ -48,16 +64,49 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def импортируемые(root: Path, текст: str) -> list[str]:
-    """Тексты модулей проекта из scripts/, которые импортирует гейт."""
-    out = []
-    for узел in ast.walk(ast.parse(текст)):
-        имена = ([a.name for a in узел.names] if isinstance(узел, ast.Import)
-                 else [узел.module] if isinstance(узел, ast.ImportFrom) and узел.module else [])
-        for имя in имена:
-            путь = root / "scripts" / f"{имя}.py"
-            if путь.is_file():
-                out.append(путь.read_text(encoding="utf-8"))
+    """Тексты модулей проекта из scripts/, которые гейт импортирует, — транзитивно."""
+    out: list[str] = []
+    видел: set[str] = set()
+    очередь = [текст]
+    while очередь:
+        for узел in ast.walk(ast.parse(очередь.pop())):
+            имена = ([a.name for a in узел.names] if isinstance(узел, ast.Import)
+                     else [узел.module] if isinstance(узел, ast.ImportFrom) and узел.module
+                     else [])
+            for имя in имена:
+                путь = root / "scripts" / f"{имя}.py"
+                if имя in видел or not путь.is_file():
+                    continue
+                видел.add(имя)
+                модуль = путь.read_text(encoding="utf-8")
+                out.append(модуль)
+                очередь.append(модуль)
     return out
+
+
+def литералы(текст: str) -> set[str]:
+    """Строковые литералы кода без докстрингов: проза охватом не считается."""
+    дерево = ast.parse(текст)
+    докстроки = {id(узел.body[0].value) for узел in ast.walk(дерево)
+                 if isinstance(узел, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef,
+                                      ast.ClassDef))
+                 and узел.body and isinstance(узел.body[0], ast.Expr)
+                 and isinstance(узел.body[0].value, ast.Constant)}
+    return {узел.value for узел in ast.walk(дерево)
+            if isinstance(узел, ast.Constant) and isinstance(узел.value, str)
+            and id(узел) not in докстроки}
+
+
+def место_в_коде(признак: str, тексты: list[str]) -> bool:
+    """Есть ли признак места среди литералов кода гейта и его модулей."""
+    слово = признак.strip('"')
+    if признак.startswith('"') and признак.endswith('"'):
+        годится = lambda л: л == слово  # noqa: E731
+    elif признак.endswith('"'):
+        годится = lambda л: л.endswith(слово)  # noqa: E731
+    else:
+        годится = lambda л: слово in л  # noqa: E731
+    return any(годится(л) for т in тексты for л in литералы(т))
 
 
 def сверить(root: Path, перепись: dict) -> tuple[list[str], list[str]]:
@@ -87,9 +136,11 @@ def сверить(root: Path, перепись: dict) -> tuple[list[str], list[
                 находки.append(f"{номер}: {место} — гейта {гейт} нет")
                 continue
             текст = путь.read_text(encoding="utf-8")
-            if not re.search(rf"(?<!\d){номер}(?!\d)", текст):
-                находки.append(f"{номер}: {гейт} не называет правило {номер}")
-            if not any(признак in т for т in [текст, *импортируемые(root, текст)]):
+            объявлено = declares(путь)
+            if not объявлено or номер not in объявлено:
+                находки.append(f"{номер}: {гейт} не называет правило {номер} в блоке "
+                               "«Реализует правила каталога»")
+            if not место_в_коде(признак, [текст, *импортируемые(root, текст)]):
                 находки.append(f"{номер}: {место} — в коде {гейт} места нет (признак {признак}); "
                                "перепись разошлась с охватом")
     return list(dict.fromkeys(находки)), долги
@@ -116,9 +167,11 @@ def main(argv: list[str] | None = None) -> int:
         for н in находки:
             print(f"  • {н}", file=sys.stderr)
         return 1
+    исключений = sum(1 for ответ in перепись["rules"].values() for з in ответ.values()
+                     if isinstance(з, str) and з.startswith(ИСКЛЮЧЕНО))
     print(f"правила о механизмах держатся по всему дереву: правил {len(перепись['rules'])}, "
           f"мест {len(перепись['места'])}, на суждении {len(перепись.get('суждение', {}))}, "
-          f"не построено {len(долги)}")
+          f"не построено {len(долги)}, исключений на веру {исключений}")
     for д in долги:
         print(f"  · не построено: {д}")
     return 0
