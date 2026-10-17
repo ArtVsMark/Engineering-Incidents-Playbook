@@ -55,6 +55,7 @@
 """
 
 
+import ast
 import datetime as dt
 import json
 import re
@@ -677,9 +678,11 @@ def declares(path) -> set[str] | None:
     значит повторять ошибку, ради которой написано 154.
     """
     try:
-        text = path.read_text(encoding="utf-8")
-    except OSError:
+        text = ast.get_docstring(ast.parse(path.read_text(encoding="utf-8"))) or ""
+    except OSError, SyntaxError, ValueError:
         return None
+    # Блок ищется в докстроке модуля, а не во всём тексте: заголовок в
+    # комментарии или строке кода объявлением не считается (обзор #908).
     at = text.find(DECLARES_HEAD)
     if at < 0:
         return None

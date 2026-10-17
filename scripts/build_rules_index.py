@@ -1036,6 +1036,12 @@ def contracts_now(root: Path | None = None) -> dict[str, str]:
             (база / FACTS_VERSION).read_text(encoding="utf-8"))
     except OSError:
         pass
+    except UnicodeDecodeError as exc:
+        # Не прочитан — не «не той формы»: UnicodeDecodeError — подкласс
+        # ValueError и иначе попал бы в ветку ниже с чужой причиной (обзор #907).
+        print(f"проверка не отработала: {FACTS_VERSION} не прочитан как UTF-8 — {exc}",
+              file=sys.stderr)
+        raise SystemExit(2) from exc
     except ValueError as exc:
         # Номер есть, но не той формы — это не «договора нет», а сломанный
         # предмет: молчать нельзя (039), трассировка вместо причины — тоже
