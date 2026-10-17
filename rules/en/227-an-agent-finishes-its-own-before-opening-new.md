@@ -5,8 +5,9 @@
 **Tier.** 3 — gates and processes
 
 **The rule.** An agent window does not open a new change when it already has
-as many open as the set limit allows: its own open work — findings, a
-conflict, red — is brought home before new work. The limit is held by a
+as many open as the limit allows, a number named in the project's rulebook
+(three open changes per window at the mechanisms project): its own open work —
+findings, a conflict, red — is brought home before new work. The limit is held by a
 mechanism before the push, not by the window's memory: the number open is the
 platform's answer, not a guess. A push to the branch of an already open change
 does not add to the limit — that is repairing one's own.

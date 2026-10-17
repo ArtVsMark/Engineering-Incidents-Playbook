@@ -1,7 +1,7 @@
 {
   "schema": "1.8",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-17T06:40:13+00:00",
+  "generated_at": "2026-10-17T07:14:28+00:00",
   "contracts": {
     "export": "1.8",
     "bindings": "1.9",
@@ -12059,8 +12059,8 @@
         "en": "gates and processes"
       },
       "claim": {
-        "ru": "Агентское окно не открывает новое изменение, когда у него открыто уже столько, сколько разрешает заданный предел: своё открытое — находки, конфликт, красное — доводится раньше новой работы. Предел держит механизм перед толчком, а не память окна: число открытых — ответ площадки, а не догадка. Толчок в ветку уже открытого изменения предела не прибавляет — это починка своего.",
-        "en": "An agent window does not open a new change when it already has as many open as the set limit allows: its own open work — findings, a conflict, red — is brought home before new work. The limit is held by a mechanism before the push, not by the window's memory: the number open is the platform's answer, not a guess. A push to the branch of an already open change does not add to the limit — that is repairing one's own."
+        "ru": "Агентское окно не открывает новое изменение, когда у него открыто уже столько, сколько разрешает предел, названный числом в своде проекта (у проекта механизмов — три открытых изменения на окно): своё открытое — находки, конфликт, красное — доводится раньше новой работы. Предел держит механизм перед толчком, а не память окна: число открытых — ответ площадки, а не догадка. Толчок в ветку уже открытого изменения предела не прибавляет — это починка своего.",
+        "en": "An agent window does not open a new change when it already has as many open as the limit allows, a number named in the project's rulebook (three open changes per window at the mechanisms project): its own open work — findings, a conflict, red — is brought home before new work. The limit is held by a mechanism before the push, not by the window's memory: the number open is the platform's answer, not a guess. A push to the branch of an already open change does not add to the limit — that is repairing one's own."
       },
       "applies": {
         "ru": "**Работает** в проекте, где агентское окно само открывает изменения, а сливает\nих очередь с проверками и внешним взглядом.\n\n**Не работает** там, где окно не может спросить площадку о числе открытых (нет\nтокена, мелкий клон) или не опознаётся по своим коммитам: предел там\nнепроверен. Не работает и для неразобранных находок на своих изменениях — их\nчисло гейт перед толчком не видит.\n\n**Признак нарушения:** окно открывает новое изменение, когда у него уже открыто\nстолько, сколько разрешает предел, а слияний за то же время нет.",

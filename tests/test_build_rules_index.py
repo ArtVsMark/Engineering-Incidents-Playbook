@@ -480,3 +480,14 @@ def test_predshestvenniki_chitayut_pometku_zameny(tmp_path):
                      ("003", ""), ("004", "")):
         (папка / f"{н}-r.md").write_text(f"# П\n\n**Правило.** x\n\n{хвост}", encoding="utf-8")
     assert b.предшественники(tmp_path) == {"003": {"001", "002"}}
+
+
+def test_predshestvenniki_tranzitivny(tmp_path):
+    """Вторая замена не теряет первого предка: механизм, называющий 001, держит и 004 (обзор #897)."""
+    папка = tmp_path / "rules" / "ru"
+    папка.mkdir(parents=True)
+    for н, хвост in (("001", "**Заменено.** 003\n"), ("002", "**Заменено.** 003\n"),
+                     ("003", "**Заменено.** 004\n"), ("004", "")):
+        (папка / f"{н}-r.md").write_text(f"# П\n\n**Правило.** x\n\n{хвост}", encoding="utf-8")
+    assert b.предшественники(tmp_path) == {"003": {"001", "002"},
+                                          "004": {"001", "002", "003"}}
