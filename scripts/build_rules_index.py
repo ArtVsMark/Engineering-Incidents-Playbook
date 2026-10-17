@@ -1036,6 +1036,12 @@ def contracts_now(root: Path | None = None) -> dict[str, str]:
             (база / FACTS_VERSION).read_text(encoding="utf-8"))
     except OSError:
         pass
+    except ValueError as exc:
+        # Номер есть, но не той формы — это не «договора нет», а сломанный
+        # предмет: молчать нельзя (039), трассировка вместо причины — тоже
+        # (обзор #904). Исход 2: чинится правкой файла, а не правил.
+        print(f"проверка не отработала: {FACTS_VERSION} — {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
     for имя, (модуль, поле) in CONTRACT_MODULES.items():
         try:
             номер = getattr(__import__(модуль), поле)
