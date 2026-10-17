@@ -169,7 +169,7 @@ def test_обязательный_минимум_есть_всегда(monkeypat
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     факты, _, беда = bf.build()
     assert беда == ""
-    assert факты["schema"] == "1.6" and isinstance(факты["schema"], str)
+    assert факты["schema"] == "2.0" and isinstance(факты["schema"], str)
     assert факты["repo"] == "своё/имя"
     assert факты["generated_at"].endswith("+00:00")
     assert факты["commit"] == "deadbeef"
@@ -196,7 +196,7 @@ def test_записанный_файл_разбирается_и_несёт_об
     assert bf.main([]) == 0
     записано = json.loads((repo / ".github/badges/facts.json")
                           .read_text(encoding="utf-8"))
-    assert записано["schema"] == "1.6"
+    assert записано["schema"] == "2.0"
     # Номер схемы обязан сказать, ЧЕГО он: ключ `schema` носят четыре предмета.
     assert "164" in записано["schema_of"]
 
@@ -328,18 +328,15 @@ def test_без_коммита_файл_не_пишется(monkeypatch, repo, c
 
 
 def test_договор_фактов_свой_и_номер_один():
-    """С 2.0 договор держит каталог (#843): список причин и проверка — из его дерева.
+    """С 2.0 договор держит каталог (#843): номер и список берутся из его дерева.
 
-    Номер файла пока отстаёт от договора (обзор #846): витрина читает только
-    мажор 1. Шаг проверки в badges.yml зовёт свою проверку, а не скачивает чужую.
+    Файл выходит той серии, что в `export/facts/facts.version`, список причин —
+    тот, что в схеме, а шаг проверки в badges.yml зовёт свою проверку, а не
+    скачивает чужую.
     """
     номер = (bf.ROOT / "export" / "facts" / "facts.version").read_text(encoding="utf-8")
     # не проза: номер версии «мажор.минор[.патч]».
-    assert bf.SCHEMA != ".".join(номер.strip().split(".")[:2])
-    # Пока витрина читает только мажор 1, файл публикуется 1.x (обзор #846):
-    # мажор 2 она откладывает как «не ответил». Номер файла отстаёт от договора.
-    # не проза: номер версии «мажор.минор».
-    assert bf.SCHEMA.split(".")[0] == "1"
+    assert bf.SCHEMA == ".".join(номер.strip().split(".")[:2])
     прогон = (bf.ROOT / ".github" / "workflows" / "badges.yml").read_text(encoding="utf-8")
     assert "python scripts/check_facts.py --file .github/badges/facts.json" in прогон
     assert "releases/download" not in прогон
