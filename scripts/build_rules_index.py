@@ -64,6 +64,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import check_facts
+
 ROOT = Path(__file__).resolve().parent.parent
 RULES = ROOT / "rules"
 LANGS = ("ru", "en")
@@ -1030,9 +1032,8 @@ def contracts_now(root: Path | None = None) -> dict[str, str]:
     # export/facts/facts.version тремя числами, контракт отдаётся серией: её
     # же издатель пишет в `schema` своего facts.json.
     try:
-        # не проза: номер версии «мажор.минор.патч».
-        out["facts"] = ".".join((база / FACTS_VERSION).read_text(encoding="utf-8")
-                                .strip().split(".")[:2])
+        out["facts"] = check_facts.contract_series(
+            (база / FACTS_VERSION).read_text(encoding="utf-8"))
     except OSError:
         pass
     for имя, (модуль, поле) in CONTRACT_MODULES.items():

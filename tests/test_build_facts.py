@@ -359,3 +359,12 @@ def test_токен_записи_живёт_только_в_шаге_публи�
                      с_токеном[0])
     assert шаги.index(с_токеном[0]) > next(
         i for i, ш in enumerate(шаги) if ш.startswith("name: Факты отвечают договору семьи"))
+
+
+def test_серия_договора_одна_и_без_перевода_строки():
+    """Номер ``2.0\\n`` и ``2.0.0\\n`` разбирает один код, и серия не несёт перевода строки (обзор #901)."""
+    import pytest
+    import check_facts
+    assert check_facts.contract_series("2.0.0\n") == "2.0"
+    with pytest.raises(ValueError):
+        check_facts.contract_series("2.0\n")       # форма X.Y.Z обязательна — отказ, а не «2.0\n»
