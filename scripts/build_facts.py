@@ -65,6 +65,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import check_facts  # noqa: E402
 import check_own_name  # noqa: E402
 import check_python_version  # noqa: E402
 import check_workflows  # noqa: E402
@@ -123,9 +124,8 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 #: 15–17.10 файл публиковался 1.6 (#850): витрина читала только мажор 1 и
 #: откладывала 2.0 как «не ответил». С ArtVsMark/ArtVsMark#359 она читает
 #: мажор 2, и номер файла снова равен номеру договора.
-# не проза: номер версии «мажор.минор[.патч]».
-SCHEMA = ".".join((ROOT / "export" / "facts" / "facts.version")
-                  .read_text(encoding="utf-8").split(".")[:2])
+SCHEMA = check_facts.contract_series((ROOT / "export" / "facts" / "facts.version")
+                                     .read_text(encoding="utf-8"))
 
 #: Прогон CI, чей статус витрина спрашивает у площадки. Файл называется, а не
 #: выводится: обязательная проверка у каталога одна, и живёт она здесь (168).
