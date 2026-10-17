@@ -156,11 +156,11 @@
           "segment": "family",
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
           "what": "facts",
-          "mine": "1.6",
+          "mine": "2.0",
           "latest": "2.0",
           "where": ".github/badges/facts.json",
-          "state": "unknown",
-          "why": "договор переехал в каталог (2.0), форма та же: подъём номера ждёт, пока витрина читает мажор 2 (#845)"
+          "state": "ok",
+          "why": ""
         }
       ]
     },
