@@ -9,7 +9,6 @@ import importlib.util
 import io
 import json
 import os
-import re
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -102,10 +101,14 @@ def test_путь_целиком_через_обёртку(tmp_path):
         env={"PATH": os.environ["PATH"], "CLAUDE_PROJECT_DIR": str(tmp_path)})
     assert итог.returncode == 0
     журнал = tmp_path / sl.ЖУРНАЛ
-    # Планка — из `requires-python`, как её читает `floor.sh`, а не из версии,
-    # на которой идёт набор: на прогоне 3.15 они расходятся.
-    планка = re.search(r'requires-python\s*=\s*">=(\d+\.\d+)',
-                       (КОРЕНЬ / "pyproject.toml").read_text(encoding="utf-8"))[1]
+    # Планка — из `requires-python` самим `floor.sh`, а не из версии, на которой
+    # идёт набор (на прогоне 3.15 они расходятся), и не своим выражением: второй
+    # разбор того же поля уже́ sed'а в floor.sh (обзор #877, 214).
+    планка = subprocess.run(
+        ["sh", "-c", '. "$1"; planka_floor "$2"', "sh",
+         str(КОРЕНЬ / ".claude" / "hooks" / "floor.sh"), str(КОРЕНЬ / "pyproject.toml")],
+        capture_output=True, text=True, encoding="utf-8", timeout=10).stdout.strip()
+    assert планка, "floor.sh не прочитал планку из pyproject.toml"
     if shutil.which(f"python{планка}") is None:
         assert "Перезапустите окно" in итог.stderr and not журнал.exists()
     else:
