@@ -12,12 +12,12 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 62 | 37 | 219 | 0 | 0 | 203 | 159 | 12 | 5 | 18 | 9 | 143 |  |
-| `Stepik-Python-Grader` | подключён | 190 | 133 | 217 | 2 | 0 | 212 | 95 | 43 | 0 | 74 | 0 | 156 |  |
-| `ArtVsMark` | подключён | 29 | 18 | 217 | 2 | 0 | 170 | 134 | 30 | 0 | 6 | 0 | 66 |  |
-| `Claude-Code_Usage-Token` | подключён | 17 | 15 | 217 | 2 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
-| `Glossary-Python` | подключён | 2 | 0 | 217 | 2 | 0 | 173 | 85 | 17 | 0 | 59 | 12 | 117 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 19 | 16 | 217 | 2 | 0 | 209 | 185 | 18 | 2 | 4 | 0 | 249 |  |
+| `Engineering-Incidents-Playbook` | подключён | 76 | 44 | 226 | 0 | 0 | 210 | 165 | 12 | 5 | 18 | 10 | 143 |  |
+| `Stepik-Python-Grader` | подключён | 195 | 133 | 217 | 9 | 0 | 212 | 95 | 43 | 0 | 74 | 0 | 156 |  |
+| `ArtVsMark` | подключён | 33 | 18 | 217 | 9 | 0 | 170 | 134 | 30 | 0 | 6 | 0 | 66 |  |
+| `Claude-Code_Usage-Token` | подключён | 18 | 15 | 217 | 9 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
+| `Glossary-Python` | подключён | 2 | 0 | 217 | 9 | 0 | 173 | 85 | 17 | 0 | 59 | 12 | 117 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 21 | 16 | 217 | 9 | 0 | 209 | 185 | 18 | 2 | 4 | 0 | 249 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -70,63 +70,64 @@
 
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
-| `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 20 |
-| `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 19 |
-| `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 16 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 21 |
+| `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 21 |
+| `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 19 |
 | `Engineering-Incidents-Playbook` | `AGENTS.md` | 15 |
 | `Engineering-Incidents-Playbook` | `scripts/aggregate_bindings.py` | 14 |
-| `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 13 |
+| `Engineering-Incidents-Playbook` | `scripts/check_gates.py` | 14 |
 | `Engineering-Incidents-Playbook` | `scripts/check_workflows.py` | 10 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/automerge.yml` | 9 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/agent-pr.yml` | 8 |
 | `Engineering-Incidents-Playbook` | `export/README.md` | 8 |
 | `Engineering-Incidents-Playbook` | `scripts/check_charter.py` | 8 |
-| `Engineering-Incidents-Playbook` | `.github/workflows/agent-pr.yml` | 7 |
+| `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/link_trails.py` | 7 |
 | `Engineering-Incidents-Playbook` | `.rules/consumers.json` | 6 |
 | `Engineering-Incidents-Playbook` | `CONTRIBUTING.md` | 6 |
 | `Engineering-Incidents-Playbook` | `action.yml` | 6 |
+| `Engineering-Incidents-Playbook` | `scripts/check_attribution.py` | 6 |
 | `Engineering-Incidents-Playbook` | `scripts/check_prose.py` | 6 |
-| `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 6 |
+| `Engineering-Incidents-Playbook` | `scripts/sync_inbox.py` | 6 |
+| `Engineering-Incidents-Playbook` | `README.md` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/audit_catalogue.py` | 5 |
-| `Engineering-Incidents-Playbook` | `scripts/check_attribution.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/collect_changelog.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/main_red.py` | 5 |
 | `Engineering-Incidents-Playbook` | `scripts/review_findings.py` | 5 |
-| `Engineering-Incidents-Playbook` | `scripts/sync_inbox.py` | 5 |
 | `Engineering-Incidents-Playbook` | `.claude/hooks/push_guard.py` | 4 |
 | `Engineering-Incidents-Playbook` | `.claude/skills/parallel-waves/SKILL.md` | 4 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/attribution-history.yml` | 4 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/main-red.yml` | 4 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/review.yml` | 4 |
 | `Engineering-Incidents-Playbook` | `.rules/schedules.json` | 4 |
 | `Engineering-Incidents-Playbook` | `.rules/transport.json` | 4 |
 | `Engineering-Incidents-Playbook` | `CLAUDE.md` | 4 |
-| `Engineering-Incidents-Playbook` | `README.md` | 4 |
 | `Engineering-Incidents-Playbook` | `docs/HISTORY.md` | 4 |
+| `Engineering-Incidents-Playbook` | `scripts/check_links.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/check_transport.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/ghcli.py` | 4 |
+| `Engineering-Incidents-Playbook` | `scripts/history_metrics.py` | 4 |
 | `Engineering-Incidents-Playbook` | `scripts/refresh_derived.py` | 4 |
+| `Engineering-Incidents-Playbook` | `tests/test_sync_inbox.py` | 4 |
 | `Engineering-Incidents-Playbook` | `.github/labels.yml` | 3 |
-| `Engineering-Incidents-Playbook` | `.github/workflows/attribution-history.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/badges.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/consumers-sync.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/mechanisms.yml` | 3 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/release.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `docs/VERSIONING.md` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/answer_form.py` | 3 |
-| `Engineering-Incidents-Playbook` | `scripts/check_links.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_locale.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_python_version.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/check_schedules.py` | 3 |
-| `Engineering-Incidents-Playbook` | `scripts/history_metrics.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/merge_ready.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/pr_body.py` | 3 |
+| `Engineering-Incidents-Playbook` | `scripts/preflight.py` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/version.py` | 3 |
 | `Engineering-Incidents-Playbook` | `tests/test_ghcli.py` | 3 |
-| `Engineering-Incidents-Playbook` | `tests/test_sync_inbox.py` | 3 |
 | `Engineering-Incidents-Playbook` | `.claude/settings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/off-prefix.yml` | 2 |
-| `Engineering-Incidents-Playbook` | `.github/workflows/release.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/task-state.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/thaw.yml` | 2 |
 | `Engineering-Incidents-Playbook` | `.rules/bindings.json` | 2 |
@@ -137,19 +138,21 @@
 | `Engineering-Incidents-Playbook` | `export/rules.json` | 2 |
 | `Engineering-Incidents-Playbook` | `export/where.json` | 2 |
 | `Engineering-Incidents-Playbook` | `rules/README.md` | 2 |
+| `Engineering-Incidents-Playbook` | `scripts/check_candidates.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_copies.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_duplicates.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_forgeries.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_own_name.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_readers.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_skips.py` | 2 |
+| `Engineering-Incidents-Playbook` | `scripts/check_templates.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_test_deps.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/check_verdict_order.py` | 2 |
-| `Engineering-Incidents-Playbook` | `scripts/preflight.py` | 2 |
 | `Engineering-Incidents-Playbook` | `scripts/sync_labels.py` | 2 |
+| `Engineering-Incidents-Playbook` | `templates/README.md` | 2 |
 | `Engineering-Incidents-Playbook` | `templates/bindings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_aggregate_bindings.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 64 механизмов по одному правилу; без названного адреса: 0 из 194 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 61 механизмов по одному правилу; без названного адреса: 0 из 200 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 48 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 21 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 19 |
@@ -765,3 +768,10 @@
 | 218 | нет предмета | нет предмета | действует | нет предмета | действует | действует |
 | 219 | действует | — | — | — | — | — |
 | 220 | действует | — | — | — | — | — |
+| 221 | действует | — | — | — | — | — |
+| 222 | действует | — | — | — | — | — |
+| 223 | действует | — | — | — | — | — |
+| 224 | действует | — | — | — | — | — |
+| 225 | действует | — | — | — | — | — |
+| 226 | действует | — | — | — | — | — |
+| 227 | действует | — | — | — | — | — |
