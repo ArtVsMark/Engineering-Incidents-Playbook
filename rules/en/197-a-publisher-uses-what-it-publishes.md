@@ -12,6 +12,8 @@ why home is different. Anything published and not used by its publisher drifts
 from practice silently: everything is green on the publisher's side because
 there is nothing there to check, and the consumer is the first to notice.
 
+**Superseded by.** 223
+
 ## The incident
 
 Three cases in two weeks, all at the publisher of a rules catalogue, and none

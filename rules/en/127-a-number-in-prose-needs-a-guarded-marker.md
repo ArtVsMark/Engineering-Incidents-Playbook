@@ -9,6 +9,8 @@ inside a **named marker**, a **build rewrites it from the source that produces
 it**, and **a missing marker fails the build**. Without the third condition there
 is no mechanism — only a hand-written number with an extra step.
 
+**Superseded by.** 222
+
 ## The incident
 
 A profile storefront was rebuilt. Nine numbers sit **in prose**: test modules,

@@ -30,7 +30,12 @@ edited by hand.
                                       // контрактов, и его пишет сборка ·
                                       // an EXAMPLE, not the live number
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "count": 130,                       // пример · example value
+  "count": 130,                       // длина списка rules, замещённые
+                                      // включены · length of the rules list,
+                                      // superseded ones included
+  "active": 124,                      // с 1.8: действующие, без
+                                      // superseded_by · since 1.8: rules in
+                                      // force, without superseded_by
   "rules": [
     {
       "id": "129",                        // номер, не переиспользуется · never reused
@@ -88,6 +93,15 @@ edited by hand.
 Ключа нет — запись действует. `null` означал бы «отвечали и не знаем», а не
 отвечали вовсе. Ответ потребителя о заменённом правиле — **состояние, а не
 находка**: он отвечает о том, что было, и упрекать его не в чем.
+
+**В общий счёт заменённое не входит.** Число правил в витринах и поле
+`active` (с 1.8) считают только записи без `superseded_by`: после слияния
+старые номера перестают быть правилами, хотя файлы остаются. `count` — длина
+списка и смысла не меняет: смена смысла поля была бы MAJOR (#645).
+
+**Superseded records are not counted.** The rule count in the READMEs and the
+`active` field (since 1.8) count only records without `superseded_by`; `count`
+stays the length of the list, since repurposing a field would be MAJOR.
 
 Цена, из-за которой поле появилось: [043](../rules/ru/043-decisions-are-superseded-not-edited.md)
 и [120](../rules/ru/120-how-to-run-a-rule-catalogue.md) требовали пометки оба,
@@ -1006,9 +1020,9 @@ repository settings.
 
 ```jsonc
 {
-  <!--m:contracts-->"schema": "1.7",
+  <!--m:contracts-->"schema": "1.8",
   "contracts": {
-    "export": "1.7", "bindings": "1.9", "consumers": "1.1", "proposals": "1.4",
+    "export": "1.8", "bindings": "1.9", "consumers": "1.1", "proposals": "1.4",
     "showcase": "1.1", "where": "1.7", "family": "1.2", "facts": "2.0"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример

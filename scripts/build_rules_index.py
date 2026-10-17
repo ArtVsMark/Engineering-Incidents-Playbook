@@ -72,8 +72,9 @@ OUT = RULES / "README.md"
 #: без GitHub API и без клона. Формат и правила его эволюции — export/README.md.
 EXPORT = ROOT / "export" / "rules.json"
 #: Версия контракта выгрузки. Поле `candidates` добавлено — по правилам
-#: эволюции (export/README.md) добавление поля это MINOR.
-EXPORT_SCHEMA = "1.7"
+#: эволюции (export/README.md) добавление поля это MINOR. 1.8 — поле `active`:
+#: число действующих правил рядом с `count`, длиной списка (#645).
+EXPORT_SCHEMA = "1.8"
 CATALOGUE_URL = "https://github.com/ArtVsMark/Engineering-Incidents-Playbook"
 
 #: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
@@ -583,6 +584,31 @@ def refines_of(path: Path, lang: str) -> str | None:
     """
     m = REFINES_RE[lang].search(path.read_text(encoding="utf-8"))
     return m.group(1) if m else None
+
+
+def предшественники(root: Path) -> dict[str, set[str]]:
+    """Новый номер → номера, которые он заменил по пометке «Заменено» (ru).
+
+    Один разбор пометки на каталог (214): гейты ответа и соседей спрашивают
+    цепочку здесь, а не читают пометку своим выражением.
+    """
+    out: dict[str, set[str]] = {}
+    for path in sorted((root / "rules" / "ru").glob("[0-9][0-9][0-9]-*.md")):
+        if (куда := superseded_of(path, "ru")):
+            out.setdefault(куда, set()).add(path.name[:3])
+    return out
+
+
+def действующие(found: dict[str, dict[str, Path]]) -> list[str]:
+    """Номера правил без пометки «Заменено» — те, что идут в общий счёт.
+
+    ЗАМЕЩЁННОЕ СЛИЯНИЕМ ПРАВИЛОМ БОЛЬШЕ НЕ ЯВЛЯЕТСЯ. Файл остаётся ради
+    ответов семьи и старых ссылок (043), но число «правил в каталоге» с ним
+    врало бы: шесть слияний #645 дали бы +7 новых и ни одного выбывшего, и
+    каталог «вырос», сжавшись. Решение владельца 17.10.
+    """
+    return [n for n in sorted(found)
+            if not (found[n].get("ru") and superseded_of(found[n]["ru"], "ru"))]
 
 
 def superseded_of(path: Path, lang: str) -> str | None:
@@ -1113,7 +1139,11 @@ def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]]
         # Все номера форматов разом — чтобы смену контракта было ВИДНО одним
         # чтением, а перечитывать заставлял только тот, что двинулся (157, 164).
         "contracts": contracts_now(),
+        # `count` — длина списка, и смысл его не меняется: смена смысла поля —
+        # MAJOR. Замещённые записи в списке остаются с `superseded_by`, а число
+        # действующих отдаётся рядом отдельным полем (#645).
         "count": len(rules),
+        "active": sum(1 for r in rules if not r.get("superseded_by")),
         "rules": rules,
         "candidates": candidates_export(),
     }
@@ -1582,18 +1612,26 @@ def area_stats(areas: dict[str, list[str]]) -> tuple[int, int]:
 def render(found: dict[str, dict[str, Path]], gaps: list[int],
            areas: dict[str, list[str]]) -> str:
     rows = []
+    в_силе = set(действующие(found))
     for num in sorted(found):
         slot = found[num]
         ru = slot.get("ru")
         en = slot.get("en")
         t_ru = title_of(ru) if ru else "—"
         t_en = title_of(en) if en else "—"
+        if num not in в_силе and ru:
+            куда = superseded_of(ru, "ru")
+            t_ru += f" · *заменено → {куда}*"
+            t_en += f" · *superseded → {куда}*"
         l_ru = f"[ru](ru/{ru.name})" if ru else "—"
         l_en = f"[en](en/{en.name})" if en else "—"
         names = areas.get(num, [])
         both = f"{', '.join(names)} · {', '.join(AREAS[a]['en'] for a in names)}" if names else ""
         rows.append(f"| {num} | {t_ru} | {t_en} | {l_ru} {l_en} | {both} |")
 
+    выбыли = len(found) - len(в_силе)
+    замещено = (f" (ещё {выбыли} заменены и остаются ради старых ссылок ·"
+                f" {выбыли} more superseded, kept for old links)") if выбыли else ""
     gap_note = ""
     if gaps:
         gap_note = (
@@ -1621,7 +1659,7 @@ Shape: rule → incident → why → where it applies → trace.
 > edited by hand. A rule added in only one language fails the build — that is the
 > mechanism keeping the two trees from diverging.
 {gap_note}
-Всего правил · rules in total: **{len(found)}**
+Действующих правил · rules in force: **{len(в_силе)}**{замещено}
 
 | № | Правило | Rule | Файлы · Files | Область · Area |
 |---|---|---|---|---|
@@ -1636,7 +1674,7 @@ Shape: rule → incident → why → where it applies → trace.
 правил. Порядок — по числу правил: крупные области сверху, одиночные внизу.
 Ссылки ведут в русское дерево.
 
-{by_area(areas, "ru")}
+{by_area({n: a for n, a in areas.items() if n in в_силе}, "ru")}
 
 ## By area
 
@@ -1645,7 +1683,7 @@ areas when it belongs to several, so the areas add up to more than the number of
 rules. Ordered by rule count: the large areas first, the singletons last. Links
 point at the English tree.
 
-{by_area(areas, "en")}
+{by_area({n: a for n, a in areas.items() if n in в_силе}, "en")}
 
 ---
 
@@ -1742,7 +1780,7 @@ def main() -> int:
     export = render_export(found, areas, dates, trails, tiers)
     marks: dict[Path, str] = {}
     for path in MARKERS:
-        body, gap = marked(path, len(found))
+        body, gap = marked(path, len(действующие(found)))
         if gap:
             problems.append(gap)
         else:

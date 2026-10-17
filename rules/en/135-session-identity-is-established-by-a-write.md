@@ -13,6 +13,8 @@ is signed with. Until that probe, the ban from
 [131](131-no-writes-from-a-cloud-session.md) holds: an operation carrying a
 human's identity moves into the pipeline.
 
+**Superseded by.** 221
+
 ## The incident
 
 Rule [131](131-no-writes-from-a-cloud-session.md) was paid for twice, in two

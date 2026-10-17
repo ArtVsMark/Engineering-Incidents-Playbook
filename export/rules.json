@@ -1,9 +1,9 @@
 {
-  "schema": "1.7",
+  "schema": "1.8",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-16T20:05:29+00:00",
+  "generated_at": "2026-10-17T06:40:13+00:00",
   "contracts": {
-    "export": "1.7",
+    "export": "1.8",
     "bindings": "1.9",
     "consumers": "1.1",
     "proposals": "1.4",
@@ -12,7 +12,8 @@
     "where": "1.7",
     "family": "1.2"
   },
-  "count": 219,
+  "count": 226,
+  "active": 214,
   "rules": [
     {
       "id": "001",
@@ -62,7 +63,8 @@
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentioned_by": [
         "125",
-        "212"
+        "212",
+        "225"
       ]
     },
     {
@@ -111,6 +113,7 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
+      "superseded_by": "224",
       "refined_by": [
         "057"
       ],
@@ -137,7 +140,12 @@
         "177",
         "191",
         "196",
-        "208"
+        "208",
+        "221",
+        "222",
+        "223",
+        "224",
+        "226"
       ]
     },
     {
@@ -285,6 +293,7 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
+      "superseded_by": "222",
       "mentions": [
         "127"
       ],
@@ -296,7 +305,10 @@
         "127",
         "160",
         "197",
-        "217"
+        "217",
+        "222",
+        "223",
+        "225"
       ]
     },
     {
@@ -443,7 +455,8 @@
       ],
       "origin": "ArtVsMark/ArtVsMark",
       "mentioned_by": [
-        "127"
+        "127",
+        "222"
       ]
     },
     {
@@ -1045,7 +1058,8 @@
         "092",
         "099",
         "155",
-        "163"
+        "163",
+        "223"
       ]
     },
     {
@@ -1102,7 +1116,8 @@
         "201",
         "203",
         "209",
-        "214"
+        "214",
+        "223"
       ]
     },
     {
@@ -1151,7 +1166,8 @@
       ],
       "mentioned_by": [
         "050",
-        "127"
+        "127",
+        "222"
       ]
     },
     {
@@ -1534,7 +1550,8 @@
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
       "mentioned_by": [
-        "060"
+        "060",
+        "227"
       ]
     },
     {
@@ -1930,7 +1947,8 @@
         "198",
         "203",
         "207",
-        "208"
+        "208",
+        "226"
       ]
     },
     {
@@ -2122,7 +2140,9 @@
         "094",
         "131",
         "135",
-        "154"
+        "154",
+        "221",
+        "226"
       ]
     },
     {
@@ -2287,7 +2307,8 @@
         "158",
         "160",
         "174",
-        "175"
+        "175",
+        "226"
       ]
     },
     {
@@ -2456,7 +2477,8 @@
         "190",
         "194",
         "202",
-        "203"
+        "203",
+        "225"
       ]
     },
     {
@@ -2866,6 +2888,7 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
+      "superseded_by": "224",
       "refines": "002",
       "mentions": [
         "002"
@@ -2874,7 +2897,9 @@
         "128",
         "182",
         "197",
-        "204"
+        "204",
+        "223",
+        "224"
       ]
     },
     {
@@ -3806,7 +3831,10 @@
         "175",
         "198",
         "206",
-        "212"
+        "212",
+        "222",
+        "225",
+        "226"
       ]
     },
     {
@@ -4077,7 +4105,8 @@
       "mentioned_by": [
         "120",
         "129",
-        "131"
+        "131",
+        "221"
       ]
     },
     {
@@ -4646,7 +4675,8 @@
         "049"
       ],
       "mentioned_by": [
-        "130"
+        "130",
+        "227"
       ]
     },
     {
@@ -5251,7 +5281,8 @@
         "119",
         "124",
         "141",
-        "149"
+        "149",
+        "225"
       ]
     },
     {
@@ -5460,7 +5491,8 @@
       "mentioned_by": [
         "131",
         "135",
-        "139"
+        "139",
+        "221"
       ]
     },
     {
@@ -6029,7 +6061,8 @@
       "mentioned_by": [
         "122",
         "125",
-        "153"
+        "153",
+        "225"
       ]
     },
     {
@@ -6074,8 +6107,12 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
+      "superseded_by": "225",
       "mentions": [
         "103"
+      ],
+      "mentioned_by": [
+        "225"
       ]
     },
     {
@@ -6132,7 +6169,8 @@
         "129",
         "134",
         "154",
-        "204"
+        "204",
+        "225"
       ]
     },
     {
@@ -6287,7 +6325,8 @@
       "mentioned_by": [
         "131",
         "135",
-        "156"
+        "156",
+        "221"
       ]
     },
     {
@@ -6391,6 +6430,7 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "superseded_by": "225",
       "mentions": [
         "001",
         "005",
@@ -6404,7 +6444,9 @@
         "127",
         "160",
         "181",
-        "196"
+        "196",
+        "222",
+        "225"
       ]
     },
     {
@@ -6510,6 +6552,7 @@
         }
       ],
       "origin": "ArtVsMark/ArtVsMark",
+      "superseded_by": "222",
       "mentions": [
         "002",
         "005",
@@ -6521,7 +6564,8 @@
       "mentioned_by": [
         "005",
         "023",
-        "200"
+        "200",
+        "222"
       ]
     },
     {
@@ -6780,6 +6824,7 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
+      "superseded_by": "221",
       "mentions": [
         "002",
         "043",
@@ -6789,7 +6834,8 @@
         "135"
       ],
       "mentioned_by": [
-        "135"
+        "135",
+        "221"
       ]
     },
     {
@@ -7018,6 +7064,7 @@
         }
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "superseded_by": "221",
       "mentions": [
         "043",
         "107",
@@ -7025,7 +7072,8 @@
         "131"
       ],
       "mentioned_by": [
-        "131"
+        "131",
+        "221"
       ]
     },
     {
@@ -7319,7 +7367,8 @@
         "193",
         "195",
         "206",
-        "220"
+        "220",
+        "223"
       ]
     },
     {
@@ -7430,7 +7479,8 @@
         "169",
         "173",
         "191",
-        "197"
+        "197",
+        "223"
       ]
     },
     {
@@ -7600,7 +7650,8 @@
         "207",
         "208",
         "213",
-        "220"
+        "220",
+        "226"
       ]
     },
     {
@@ -7945,7 +7996,8 @@
       "mentioned_by": [
         "155",
         "162",
-        "194"
+        "194",
+        "223"
       ]
     },
     {
@@ -8000,7 +8052,8 @@
       ],
       "mentioned_by": [
         "205",
-        "208"
+        "208",
+        "226"
       ]
     },
     {
@@ -8046,6 +8099,7 @@
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes",
+      "superseded_by": "223",
       "refines": "197",
       "mentions": [
         "002",
@@ -8056,7 +8110,8 @@
       ],
       "mentioned_by": [
         "163",
-        "197"
+        "197",
+        "223"
       ]
     },
     {
@@ -9111,11 +9166,15 @@
       ],
       "origin": "ArtVsMark/Claude-Code_Usage-Token",
       "portable": "yes",
+      "superseded_by": "226",
       "mentions": [
         "002",
         "039",
         "046",
         "075"
+      ],
+      "mentioned_by": [
+        "226"
       ]
     },
     {
@@ -9220,7 +9279,8 @@
       "mentioned_by": [
         "182",
         "207",
-        "213"
+        "213",
+        "227"
       ]
     },
     {
@@ -9497,7 +9557,9 @@
         "204",
         "205",
         "213",
-        "220"
+        "220",
+        "224",
+        "226"
       ]
     },
     {
@@ -9595,7 +9657,8 @@
       "portable": "yes",
       "mentioned_by": [
         "204",
-        "205"
+        "205",
+        "226"
       ]
     },
     {
@@ -10303,6 +10366,7 @@
       ],
       "origin": "ArtVsMark/Engineering-Incidents-Playbook",
       "portable": "yes",
+      "superseded_by": "223",
       "mentions": [
         "005",
         "022",
@@ -10314,7 +10378,8 @@
         "155"
       ],
       "mentioned_by": [
-        "220"
+        "220",
+        "223"
       ]
     },
     {
@@ -10743,11 +10808,15 @@
       ],
       "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
       "portable": "yes",
+      "superseded_by": "226",
       "mentions": [
         "146",
         "154",
         "182",
         "184"
+      ],
+      "mentioned_by": [
+        "226"
       ]
     },
     {
@@ -11562,6 +11631,462 @@
         "211",
         "214",
         "217"
+      ],
+      "mentioned_by": [
+        "223"
+      ]
+    },
+    {
+      "id": "221",
+      "slug": "a-human-identity-write-waits-for-a-probe",
+      "title": {
+        "ru": "Запись, несущая личность человека, ждёт пробы записи из этого окна",
+        "en": "A write carrying a human's identity waits for a probing write from this session"
+      },
+      "areas": {
+        "ru": [
+          "агентские сессии",
+          "конвейер"
+        ],
+        "en": [
+          "agent sessions",
+          "pipeline"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "claim": {
+        "ru": "Операция, несущая личность человека, уходит в конвейер, пока проба записи того же класса из этого окна не показала подпись человека. Опрос токена личности на записи не показывает — на чтении он отвечает владельцем, — а признак «окно агентское и облачное» её не определяет: она свойство учётных данных, которыми снабжено именно это окно, и не объявлены они нигде.",
+        "en": "An operation carrying a human's identity moves into the pipeline until a probing write of the same class from this session has shown the human's signature. Asking the token does not reveal identity on writes — on reads it answers with the owner — and the criterion \"the session is an agent session in the cloud\" does not determine it: it belongs to the credentials this particular session was handed, and they are announced nowhere."
+      },
+      "applies": {
+        "ru": "**Работает** там, где окно ходит на площадку через посредника, который\nснабжает его учётными данными снаружи и состав их не объявляет — в том числе\nчерез прокси с подменой учётных данных на записи.\n\n**Не работает** там, где окно действует выданным явно токеном с известным\nсоставом прав: личность одна и на чтении, и на записи, признак объявлен,\nпробовать нечего. Внутренняя ветка: где пробная запись дешёвой не бывает —\nоперация площадки одна и необратима, — пробы нет, и операция уходит в\nконвейер всегда.\n\n**Признак нарушения:** в истории общей ветки есть коммиты, автором которых\nзначится служебная учётная запись, хотя работу вёл человек; или два окна\nодного проекта оставили записи разными именами; или правило про агентские окна\nопирается на класс окружения, а замера по окнам за ним нет.",
+        "en": "**Works** wherever a session reaches a platform through an intermediary that\nhands it credentials from the outside and does not announce what they are —\nincluding a proxy that substitutes credentials on writes.\n\n**Does not work** where the session acts with an explicitly issued token whose\npermissions are known: the identity is the same on reads and writes, the\ncriterion is announced, there is nothing to probe. An inner branch: where a\nprobing write is never cheap — the platform offers a single irreversible\noperation — there is no probe, and the operation always moves into the\npipeline.\n\n**Sign of a violation:** the shared branch contains commits authored by a\nservice account although the work was done by a person; or two sessions of one\nproject left records under different names; or a rule about agent sessions\nleans on the class of environment with no per-session measurement behind it."
+      },
+      "added": "2026-10-17",
+      "files": {
+        "ru": "rules/ru/221-a-human-identity-write-waits-for-a-probe.md",
+        "en": "rules/en/221-a-human-identity-write-waits-for-a-probe.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "645"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1302"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "20"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "34"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "36"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "partly",
+      "mentions": [
+        "002",
+        "043",
+        "080",
+        "107",
+        "123",
+        "131",
+        "135"
+      ]
+    },
+    {
+      "id": "222",
+      "slug": "a-number-in-prose-is-built-or-absent",
+      "title": {
+        "ru": "Число в прозе либо стоит в маркере, который переписывает сборка под гейтом, либо его нет",
+        "en": "A number in prose either sits in a marker a guarded build rewrites, or it is absent"
+      },
+      "areas": {
+        "ru": [
+          "документация",
+          "гейты"
+        ],
+        "en": [
+          "documentation",
+          "gates"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Число в прозе стоит только внутри именованного маркера, который переписывает сборка из источника, порождающего это число, а пропавший маркер роняет сборку; иначе числа в тексте нет. Число, вписанное руками, устаревает молча, и маркер без гейта на его пропажу механизмом не становится — это то же ручное число с лишним шагом. Исключение одно: числу, которое пересчитывать неоткуда, — неизменной по смыслу константе, — маркер не нужен.",
+        "en": "A number sits in prose only inside a named marker that a build rewrites from the source producing that number, and a missing marker fails the build; otherwise there is no number in the text. A number typed by hand goes stale in silence, and a marker without a gate on its loss is not a mechanism — it is the same hand-written number with an extra step. There is one exception: a number with nothing to be recomputed from — a constant fixed by meaning — needs no marker."
+      },
+      "applies": {
+        "ru": "**Работает** для любых метрик в README, витринах и отчётах — число тестов,\nпокрытие, количество релизов, размер, — и для страниц, которые кто-то\nпересобирает: витрины профиля и проекта, сводные отчёты, страницы состояния.\n\n**Не работает** для чисел, которые не порождаются ничем и потому\nпересчитываться неоткуда: неизменные по смыслу — год основания, номер версии\nпротокола, константы предметной области — стоят в тексте как есть; оценка, план,\nобещание — тоже, и маркер вокруг них лишь украшение.\n\n**Ветка:** где сборки нет и не предвидится — разовая страница, чужой\nрепозиторий, документ в переписке. Маркер там ставить некому, и правило\nдействует половиной «иначе числа нет»: число либо отсутствует, либо протухнет.\n\n**Признак нарушения:** на вопрос «чем это число переписывается» приходится\nотвечать «руками, когда заметим» — или сборка с маркерами ни разу не падала,\nхотя маркер из страницы уже пропадал.",
+        "en": "**Works** for any metric on front pages, dashboards and reports — number of\ntests, coverage, release count, size — and for pages somebody rebuilds: profile\nand project storefronts, summary reports, status pages.\n\n**Does not work** for numbers that nothing produces and that therefore have\nnowhere to be recomputed from: those fixed by meaning — founding year, protocol\nversion, domain constants — stand in text as they are; an estimate, a plan, a\npromise likewise, and a marker around them is only decoration.\n\n**Branch:** where there is no build and none is coming — a one-off page,\nsomebody else's repository, a document in an email. Nobody is there to place\na marker, and the rule applies through its \"otherwise there is no number\" half:\nthe number is either absent or rotting.\n\n**Sign of a violation:** answering \"what rewrites this number\" requires saying\n\"by hand, when we notice\" — or the build with markers has never failed although\na marker has already disappeared from the page."
+      },
+      "added": "2026-10-17",
+      "files": {
+        "ru": "rules/ru/222-a-number-in-prose-is-built-or-absent.md",
+        "en": "rules/en/222-a-number-in-prose-is-built-or-absent.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "645"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "7"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "8"
+        },
+        {
+          "repo": "ArtVsMark/ArtVsMark",
+          "issue": "12"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "005",
+        "008",
+        "023",
+        "075",
+        "125",
+        "127"
+      ]
+    },
+    {
+      "id": "223",
+      "slug": "what-is-published-is-used-by-the-publisher",
+      "title": {
+        "ru": "Опубликованное для чужого использования издатель применяет у себя тем же механизмом",
+        "en": "What is published for others is applied by the publisher at home by the same mechanism"
+      },
+      "areas": {
+        "ru": [
+          "контракты",
+          "процесс"
+        ],
+        "en": [
+          "contracts",
+          "process"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "claim": {
+        "ru": "Опубликованное для чужого использования — заготовка, форма, требование, число — применяется и проверяется у издателя **тем же механизмом**, каким предлагается потребителю, либо названо, почему у себя иначе. Проверка «оно запускается» этой границей не считается: она отвечает на другой вопрос. Опубликованное и не используемое издателем расходится с практикой молча: на его стороне всё зелено, потому что проверять нечего, а расхождение первым замечает потребитель.",
+        "en": "Anything published for somebody else's use — a template, a form, a requirement, a number — is applied and checked at the publisher **by the same mechanism** it is offered to the consumer with, or it is stated why home is different. A check that \"it runs\" does not count as that boundary: it answers a different question. Anything published and not used by its publisher drifts from practice silently: everything is green on the publisher's side because there is nothing there to check, and the consumer is the first to notice."
+      },
+      "applies": {
+        "ru": "**Работает** у любого, кто публикует наружу заготовку, форму, требование или\nчисло для сверки: каталог правил, библиотека со схемой, сервис с контрактом\nAPI, владелец общего конвейера, проект, раздающий шаблоны и образцы\nконфигурации, — и особенно там, где заготовка называет правило, которое она\nисполняет: такая заготовка утверждает о себе больше, чем «вот пример».\n\n**Не работает** там, где предмет публикации у издателя не воспроизводим:\nтребование к среде, которой у него нет, к масштабу, которого он не достигает,\nк роли, которой в его проекте не существует, — в том числе заготовка, чей\nпредмет у проекта отсутствует физически: образец под чужой язык или чужую\nплощадку. Там симметрия невозможна, и честный ответ — назвать это, а не\nимитировать проверку на подделке: выдуманный предмет хуже отсутствующего — он\nвыглядит опытом.\n\n**Не работает** и для требований, у которых нет машинной формы вовсе:\nприменить у себя «код должен быть понятным» тем же механизмом нельзя, потому\nчто механизма нет ни у кого ([057](057-unmechanizable-rules-are-named-explicitly.md)).\n\n**Признак нарушения:** требование к потребителю сформулировано строже, чем\nпроверка того же предмета у себя; частный случай — в документации проекта\nстоит ровно то, что его же заготовка предлагает заменить. Быстрая проба — взять\nсвой самый свежий контракт и спросить, что случится, если издатель нарушит его\nсам.",
+        "en": "**Works** for anyone publishing a template, a form, a requirement or a number\nfor others to compare against: a rules catalogue, a library with a schema, a\nservice with an API contract, the owner of a shared pipeline, a project handing\nout templates and config samples — and especially where a template names the\nrule it implements: such a template claims more about itself than \"here is an\nexample\".\n\n**Does not work** where the published subject is not reproducible at the\npublisher: a requirement about an environment it does not have, a scale it\nnever reaches, a role its project does not contain — including a template\nwhose subject is physically absent at home: a sample for another language or\nanother platform. Symmetry is impossible there, and the honest answer is to say\nso rather than fake a check against a forgery: an invented subject is worse\nthan a missing one — it looks like experience.\n\n**Does not work** for requirements that have no machine form at all either:\n\"the code must be readable\" cannot be applied at home by the same mechanism,\nbecause nobody has one ([057](057-unmechanizable-rules-are-named-explicitly.md)).\n\n**Sign of a violation:** the requirement placed on a consumer is stricter than\nthe check of the same subject at home; a special case — the project's own\ndocumentation contains exactly what its template offers to replace. A quick\nprobe: take your most recent contract and ask what happens if the publisher\nbreaks it."
+      },
+      "added": "2026-10-17",
+      "files": {
+        "ru": "rules/ru/223-what-is-published-is-used-by-the-publisher.md",
+        "en": "rules/en/223-what-is-published-is-used-by-the-publisher.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "645"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "213"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": "scripts/check_reread.py",
+          "section": "Издатель освободил себя от требования"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": "scripts/sync_inbox.py",
+          "section": "СВОИ_КОНТРАКТЫ"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "doc": "scripts/build_rules_index.py",
+          "section": "CONTRACTS_MARKER_RE"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "005",
+        "021",
+        "022",
+        "057",
+        "140",
+        "142",
+        "153",
+        "155",
+        "197",
+        "220"
+      ]
+    },
+    {
+      "id": "224",
+      "slug": "a-rule-is-held-by-a-mechanism-or-named-unheld",
+      "title": {
+        "ru": "Требование держит механизм, а не держащееся ничем названо явно с причиной",
+        "en": "A requirement is held by a mechanism, and what nothing holds is named explicitly with a reason"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "CI"
+        ],
+        "en": [
+          "process",
+          "CI"
+        ]
+      },
+      "tier": {
+        "n": 2,
+        "ru": "конвейер и CI",
+        "en": "the pipeline and CI"
+      },
+      "claim": {
+        "ru": "Требование держит машина: гейт или исполняемый шаг, который нельзя забыть, потому что он исполняется. То, что машинно не держится, записывается явно как не держащееся ничем — с причиной, проверенной попыткой построить механизм, а не объявленной. Требование без механизма и без такой записи — обещание: соблюдаться оно не будет, и снаружи этого не видно.",
+        "en": "A requirement is held by a machine: a gate or an executable step that cannot be forgotten because it runs. What no machine holds is written down explicitly as held by nothing — with a reason established by trying to build a mechanism, not by declaring it. A requirement with neither a mechanism nor such a record is a promise: it will not be followed, and from outside nobody can see that."
+      },
+      "applies": {
+        "ru": "**Работает** везде, где есть CI, — для требований, которые машина держать\nможет; второй половиной — для правил про намерение, порядок действий и способ\nдоказательства, которые она держать не может.\n\n**Не работает** как отговорка: «механизм невозможен» проверяется попыткой, а\nне объявляется. Ветка внутри: требования вкуса без инцидента — «код должен быть\nпонятным», «архитектура должна быть простой» — правилами не становятся вовсе;\nих место — в ревью, и в раздел не держащихся ничем они не входят, притворяться\nправилами им не стоит.\n\n**Признак нарушения:** требование записано, а ни гейта, ни пометки «держится\nничем» с причиной у него нет; или свод правил целиком состоит из того, что и\nтак проверяет сборка.",
+        "en": "**Works** anywhere with continuous integration — for requirements a machine\ncan hold; and, as the second half, for rules about intent, order of actions\nand manner of proof, which it cannot.\n\n**Does not work** as an excuse: \"no mechanism is possible\" is established by\ntrying, not by declaring. A branch inside: requirements of taste without an\nincident — \"code should be readable\", \"the architecture should be simple\" —\ndo not become rules at all; they belong in review, they do not go into the\nsection of things held by nothing, and they should not pretend to be rules.\n\n**Sign of a violation:** a requirement is written down, and it has neither a\ngate nor a \"held by nothing\" note with a reason; or the rulebook consists\nentirely of what the build already checks."
+      },
+      "added": "2026-10-17",
+      "files": {
+        "ru": "rules/ru/224-a-rule-is-held-by-a-mechanism-or-named-unheld.md",
+        "en": "rules/en/224-a-rule-is-held-by-a-mechanism-or-named-unheld.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "645"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1296"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "issue": "1329"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "docs/agent/preflight.md",
+          "section": "Что гейты не ловят"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "057",
+        "182"
+      ]
+    },
+    {
+      "id": "225",
+      "slug": "a-tool-never-reads-its-own-output",
+      "title": {
+        "ru": "Инструмент не читает собственный вывод — ни через маску входа, ни как хранилище",
+        "en": "A tool never reads its own output — neither through its input mask nor as a store"
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "данные"
+        ],
+        "en": [
+          "code",
+          "data"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "claim": {
+        "ru": "Вход инструмента — только источники: он не читает собственный вывод ни через маску отбора входов, ни как хранилище данных. Свои артефакты отличаются от входов именем или каталогом с записанной причиной, а данные живут в источнике, из которого производное собирается; отсутствие обязательного значения роняет сборку, а не оставляет пустоту.",
+        "en": "A tool's input is sources only: it does not read its own output, neither through its input selection mask nor as a data store. Its own artefacts differ from inputs by name or directory, with the reason written down, and data lives in the source the derived file is built from; a missing mandatory value fails the build instead of leaving an empty spot."
+      },
+      "applies": {
+        "ru": "**Работает** для инструментов, которые и читают, и пишут в одном каталоге —\nсборщики, проверяющие, конвертеры, индексаторы, — и везде, где есть\nгенератор и производный артефакт: указатели, оглавления, сводные таблицы,\nвитрины, агрегированные отчёты.\n\n**Не работает**, если вывод по замыслу становится входом следующего прогона, —\nтам нужен явный признак поколения, а не разделение имён. Не работает и для\nкэша, полностью вычислимого из источника: там производный файл законно\nсодержит всё, потому что пересборка его восстанавливает. Правило — про данные,\nкоторых **больше негде взять**.\n\n**Признак нарушения:** число обработанных единиц растёт от прогона к прогону\nбез внешних изменений; или на вопрос «откуда берётся это значение» приходится\nоткрывать сгенерированный файл.",
+        "en": "**Works** for tools that both read and write in one directory — builders,\ncheckers, converters, indexers — and anywhere there is a generator and a\nderived artefact: indexes, tables of contents, summary tables, storefronts,\naggregated reports.\n\n**Does not work** if the output becomes the next run's input by design — there\nyou need an explicit generation marker rather than name separation. Nor for a\ncache fully computable from its source: there the derived file legitimately\nholds everything, because a rebuild restores it. This rule is about data that\nis **available nowhere else**.\n\n**Sign of a violation:** the number of processed units grows from run to run\nwith no external changes; or answering \"where does this value come from\"\nrequires opening a generated file."
+      },
+      "added": "2026-10-17",
+      "files": {
+        "ru": "rules/ru/225-a-tool-never-reads-its-own-output.md",
+        "en": "rules/en/225-a-tool-never-reads-its-own-output.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "645"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "2"
+        },
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "core/submission_archive.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes",
+      "mentions": [
+        "001",
+        "005",
+        "049",
+        "075",
+        "103",
+        "118",
+        "119",
+        "120",
+        "125"
+      ]
+    },
+    {
+      "id": "226",
+      "slug": "an-absence-answer-carries-a-predicate-over-the-tree",
+      "title": {
+        "ru": "Ответ «предмета нет» несёт предикат по дереву, делающий его ложным",
+        "en": "An answer of \"there is nothing here\" carries a predicate over the tree that would make it false"
+      },
+      "areas": {
+        "ru": [
+          "каталог",
+          "гейты"
+        ],
+        "en": [
+          "catalogue",
+          "gates"
+        ]
+      },
+      "tier": {
+        "n": 1,
+        "ru": "правила и роли",
+        "en": "rules and roles"
+      },
+      "claim": {
+        "ru": "Отрицательный ответ — «предмета нет», «неприменимо» — это **утверждение о действительности**, а не оборот речи: он называет **предикат по дереву** — путь, имя, команду, — появление которого делает ответ ложным, и держится ровно тем, чем этот предикат проверяется. Предикат, опровергаемый одной командой без сети, прогоняет гейт, а не перечитывающий глаз. Ответ, для которого предикат написать нельзя, объявляется таким вслух и стоит в очереди на перечитывание первым: его неприменимость держится рассуждением, а не деревом.",
+        "en": "A negative answer — \"there is nothing here\", \"not applicable\" — is a **claim about reality**, not a turn of phrase: it names a **predicate over the tree** — a path, a name, a command — whose appearance makes the answer false, and it is held exactly by whatever checks that predicate. A predicate refutable by a single command with no network is run by a gate, not by a re-reading eye. An answer for which no predicate can be written says so out loud and goes first in the re-reading queue: its inapplicability rests on reasoning rather than on the tree."
+      },
+      "applies": {
+        "ru": "**Работает** там, где документ отвечает «этого у нас нет» или свод принимают\nчастично и по каждому правилу фиксируют ответ, а дерево проекта доступно для\nчтения командой: каталог и его потребители, витрина, чужой стандарт с картой\nсоответствия.\n\n**Не работает** там, где неприменимость следует из ПРИРОДЫ проекта, а не из\nсостояния его дерева: «правило о мобильном приложении, а приложения нет вовсе»,\n«у нас нет процесса ревью», «мы не ведём метрику удовлетворённости». Предикат\nтам выродится в событие («появится приложение»), и честнее назвать его\nсобытием, чем выдавать за проверку; гейту проверять нечего, и правило сводится\nк обычной редактуре. Такой ответ законен — но граница названа, а не обойдена.\nГейт не работает и в мелком клоне без истории: команда там отвечает «нет» на\nвсё, и он стал бы генератором ложных находок — ровно поэтому у него\nодносторонний отказ.\n\n**Признак нарушения:** отрицательный ответ, не несущий НИ ОДНОЙ из двух законных\nформ — ни пути, имени или команды, которые можно прогнать, ни названного события\nс причиной, почему предикат вырождается; либо фраза «предмета нет»,\nопровергаемая одной командой без сети, которую не читает ни один прогон.\nОтсутствие одного лишь предиката признаком не является: у ответа, работающего\nпо границе выше, его законно нет.",
+        "en": "**Works** where a document answers \"we don't have this\", or a body of rules is\nadopted in part with an answer recorded per rule, and the project's tree can be\nread by a command: the catalogue and its consumers, a showcase, someone else's\nstandard with a conformance map.\n\n**Does not work** where the inapplicability follows from the project's NATURE\nrather than from the state of its tree: \"a rule about a mobile app, and there is\nno app at all\", \"we have no review process\", \"we don't track satisfaction\". A\npredicate there degenerates into an event (\"an app appears\"), and it is more\nhonest to call it an event than to pass it off as a check; a gate has nothing\nto check, and the rule collapses into ordinary editing. Such an answer is\nlegitimate — but the boundary is named, not stepped around. Nor does the gate\nwork in a shallow clone with no history: the command answers \"no\" to everything\nthere, and the gate would become a generator of false findings — which is\nexactly why its refusal is one-sided.\n\n**Sign of a violation:** a negative answer carrying NEITHER of the two\nlegitimate forms — no path, name or command that can be run, and no named event\nwith the reason the predicate degenerates; or a \"there is nothing here\" refutable\nby one command with no network that no job reads. A missing predicate alone is\nnot the sign: an answer working under the boundary above legitimately has none."
+      },
+      "added": "2026-10-17",
+      "files": {
+        "ru": "rules/ru/226-an-absence-answer-carries-a-predicate-over-the-tree.md",
+        "en": "rules/en/226-an-absence-answer-carries-a-predicate-over-the-tree.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "645"
+        },
+        {
+          "repo": "ArtVsMark/Claude-Code_Usage-Token",
+          "issue": "59"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": ".rules/bindings.json"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "yes",
+      "mentions": [
+        "002",
+        "039",
+        "043",
+        "046",
+        "075",
+        "146",
+        "154",
+        "175",
+        "182",
+        "184",
+        "205"
+      ]
+    },
+    {
+      "id": "227",
+      "slug": "an-agent-finishes-its-own-before-opening-new",
+      "title": {
+        "ru": "Агентское окно доводит своё открытое, прежде чем открыть новое",
+        "en": "An agent window finishes its own open work before opening new"
+      },
+      "areas": {
+        "ru": [
+          "процесс",
+          "агентские сессии"
+        ],
+        "en": [
+          "process",
+          "agent sessions"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Агентское окно не открывает новое изменение, когда у него открыто уже столько, сколько разрешает заданный предел: своё открытое — находки, конфликт, красное — доводится раньше новой работы. Предел держит механизм перед толчком, а не память окна: число открытых — ответ площадки, а не догадка. Толчок в ветку уже открытого изменения предела не прибавляет — это починка своего.",
+        "en": "An agent window does not open a new change when it already has as many open as the set limit allows: its own open work — findings, a conflict, red — is brought home before new work. The limit is held by a mechanism before the push, not by the window's memory: the number open is the platform's answer, not a guess. A push to the branch of an already open change does not add to the limit — that is repairing one's own."
+      },
+      "applies": {
+        "ru": "**Работает** в проекте, где агентское окно само открывает изменения, а сливает\nих очередь с проверками и внешним взглядом.\n\n**Не работает** там, где окно не может спросить площадку о числе открытых (нет\nтокена, мелкий клон) или не опознаётся по своим коммитам: предел там\nнепроверен. Не работает и для неразобранных находок на своих изменениях — их\nчисло гейт перед толчком не видит.\n\n**Признак нарушения:** окно открывает новое изменение, когда у него уже открыто\nстолько, сколько разрешает предел, а слияний за то же время нет.",
+        "en": "**Works** in a project where an agent window opens changes itself and a queue\nwith checks and an outside review merges them.\n\n**Does not work** where the window cannot ask the platform for the number open\n(no token, a shallow clone) or is not identified by its commits: the limit is\nunchecked there. Nor for unresolved findings on one's own changes — the gate\nbefore the push does not see their number.\n\n**Sign of a violation:** a window opens a new change when it already has as\nmany open as the limit allows, and there are no merges over the same time."
+      },
+      "added": "2026-10-17",
+      "files": {
+        "ru": "rules/ru/227-an-agent-finishes-its-own-before-opening-new.md",
+        "en": "rules/en/227-an-agent-finishes-its-own-before-opening-new.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Incidents-Playbook",
+          "issue": "645"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "issue": "1085"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Incidents-Playbook",
+      "portable": "partly",
+      "mentions": [
+        "031",
+        "091",
+        "177"
       ]
     }
   ],

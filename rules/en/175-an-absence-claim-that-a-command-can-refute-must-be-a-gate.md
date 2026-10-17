@@ -12,6 +12,8 @@ of an object — a tag, a file, a registry entry — and that subclass must be
 checked. The test of applicability is simple: if a claim can be refuted by a
 single command with no network, it should be a gate rather than text.
 
+**Superseded by.** 226
+
 **Portable beyond Claude Code.** yes — the subject belongs to any document that
 answers "we don't have this": a showcase, a project card, a coverage report.
 

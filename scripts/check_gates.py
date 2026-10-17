@@ -711,6 +711,10 @@ NEAR_CASES = [
     ("ответ по несуществующему правилу", "ghost", 1,
      "номер опечатан либо запись удалена — иначе ответы станут вторым "
      "источником правды о составе каталога"),
+    ("сосед заменён самой новой записью", "superseded", 0,
+     "слияние #645: сводная запись несёт текст сводимых, и они встают ей в "
+     "верхушку; требовать ответа о собственных предшественниках — шум. "
+     "Пара к «верхний сосед не рассмотрен»: тот же ответ без пометки краснеет"),
     ("правило старше baseline без ответа", "old", 0,
      "долг объявлен, а не забыт: краснеть на 144 записях, написанных до "
      "вопроса, значит требовать 144 отписки за присест (051)"),
@@ -740,8 +744,11 @@ def suite_near() -> tuple[list[str], int]:
             tree = root / "rules" / "ru"
             tree.mkdir(parents=True)
             for num, claim in NEAR_RULES.items():
-                (tree / f"{num}-fixture.md").write_text(rule(num, claim),
-                                                        encoding="utf-8")
+                текст = rule(num, claim)
+                if spoil == "superseded" and num == "003":
+                    текст = текст.replace("## Инцидент",
+                                          f"**Заменено.** {NEAR_NEW}\n\n## Инцидент")
+                (tree / f"{num}-fixture.md").write_text(текст, encoding="utf-8")
             new_num = "144" if spoil == "old" else NEAR_NEW
             (tree / f"{new_num}-fresh.md").write_text(
                 rule(new_num, "учётные данные подменяются, и автором "
@@ -753,7 +760,7 @@ def suite_near() -> tuple[list[str], int]:
                                         "verdict": verdict}}
             if spoil == "drop" or spoil == "old":
                 answers = {}
-            elif spoil == "partial":
+            elif spoil in ("partial", "superseded"):
                 answers[NEAR_NEW]["considered"] = ["001", "002"]
             elif spoil == "terse":
                 answers[NEAR_NEW]["verdict"] = "не дубль"

@@ -519,3 +519,35 @@ def test_невидимое_в_ключе_тоже_найдено(monkeypatch):
     подменить(monkeypatch, [{**ГОДНОЕ, "cla​im": "x"}])
     pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {})
     assert pending == [] and "U+200B" in problems[0]
+
+
+# ── одно слияние от двух проектов (#645) ──────────────────────────────────
+
+def вердикты_слиянию(tmp_path, вердикты: dict) -> int:
+    """Дерево: 001 и 002 заменены на 004, 003 — на 005; 004 и 005 действуют."""
+    import json
+    папка = tmp_path / "rules" / "ru"
+    папка.mkdir(parents=True, exist_ok=True)
+    for н, куда in (("001", "004"), ("002", "004"), ("003", "005"), ("004", None),
+                    ("005", None)):
+        пометка = f"\n**Заменено.** {куда}\n" if куда else ""
+        (папка / f"{н}-r.md").write_text(f"# П\n\n**Правило.** x\n{пометка}",
+                                         encoding="utf-8")
+    (tmp_path / ".rules").mkdir(exist_ok=True)
+    (tmp_path / ".rules" / "proposals.json").write_text(
+        json.dumps({"verdicts": вердикты}), encoding="utf-8")
+    return cp.check_verdicts(tmp_path)
+
+
+def test_одно_слияние_от_двух_проектов_принимается_одним_номером(tmp_path):
+    принято = {"status": "admitted", "rule": "004", "replaces": ["001", "002"]}
+    assert вердикты_слиянию(tmp_path, {"a/x:merge/m": принято,
+                                       "b/y:merge/n": принято}) == 0
+
+
+def test_разные_слияния_под_одним_номером_отвергаются(tmp_path, capsys):
+    assert вердикты_слиянию(tmp_path, {
+        "a/x:merge/m": {"status": "admitted", "rule": "004", "replaces": ["001", "002"]},
+        "b/y:merge/n": {"status": "admitted", "rule": "004", "replaces": ["002", "001", "003"]},
+    }) == 1
+    assert "уже занят" in capsys.readouterr().err

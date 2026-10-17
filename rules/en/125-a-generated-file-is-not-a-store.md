@@ -8,6 +8,8 @@
 generator reads **sources only**, never its own output: otherwise the sole
 source of a value is its own previous copy.
 
+**Superseded by.** 225
+
 ## The incident
 
 The catalogue index carried an "Area" column — a subject classification: 124

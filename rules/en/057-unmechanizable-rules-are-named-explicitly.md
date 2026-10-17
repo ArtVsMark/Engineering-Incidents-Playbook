@@ -10,6 +10,8 @@
 treated as obvious — it is written into its own section, marked as having no
 gate and saying why.
 
+**Superseded by.** 224
+
 ## The incident
 
 A review of one session left three breakages, none of which any automatic check

@@ -12,6 +12,8 @@ a misreading is the most common kind of wrong "not applicable". A predicate you
 cannot write is itself a finding: it means the inapplicability rests on reasoning
 rather than on the tree.
 
+**Superseded by.** 226
+
 **Portable beyond Claude Code.** yes — the subject exists in any body of rules
 adopted in part, with an answer recorded per item: someone else's standard, an
 industry checklist, another team's rulebook.
