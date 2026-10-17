@@ -63,11 +63,11 @@
       "state": "published",
       "schema": "1.1",
       "release": {
-        "tag": "v1.6.0",
-        "sha": "817255779cdd01caeeb01a3f804fa145c9e1217d"
+        "tag": "v1.7.0",
+        "sha": "18940e3c9dcd4fdc553a09c331ce5c91236803c8"
       },
       "gives": {
-        "steps": "0.8"
+        "steps": "0.9"
       },
       "takes": []
     }
