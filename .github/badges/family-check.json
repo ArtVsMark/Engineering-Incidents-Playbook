@@ -3,7 +3,7 @@
   "project": "ArtVsMark/Engineering-Incidents-Playbook",
   "segments": {
     "gives": {
-      "state": "unknown",
+      "state": "ok",
       "why": "",
       "links": [
         {
@@ -51,10 +51,10 @@
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
           "what": "export",
           "mine": "1.8",
-          "latest": "1.7",
+          "latest": "1.8",
           "where": "сводка семьи",
-          "state": "unknown",
-          "why": "сводка ещё не перечитала манифест"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "gives",
@@ -117,7 +117,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.5.0",
-          "latest": "v1.6.0",
+          "latest": "v1.7.0",
           "where": ".github/workflows/mechanisms.yml",
           "state": "behind",
           "why": ""
@@ -127,7 +127,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.5.0",
-          "latest": "v1.6.0",
+          "latest": "v1.7.0",
           "where": ".github/workflows/mechanisms.yml",
           "state": "behind",
           "why": ""
@@ -147,9 +147,9 @@
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
           "what": "export",
           "mine": "1.7",
-          "latest": "1.7",
+          "latest": "1.8",
           "where": ".rules/bindings.json",
-          "state": "ok",
+          "state": "behind",
           "why": ""
         },
         {
@@ -190,14 +190,14 @@
     {
       "code": "EIP",
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
-      "state": "unknown",
+      "state": "ok",
       "why": "свой: состояние отдачи"
     },
     {
       "code": "EPM",
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
       "state": "behind",
-      "why": "release: v1.5.0 → v1.6.0; release: v1.5.0 → v1.6.0"
+      "why": "release: v1.5.0 → v1.7.0; release: v1.5.0 → v1.7.0"
     }
   ],
   "uptake": {
