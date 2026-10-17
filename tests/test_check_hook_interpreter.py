@@ -82,3 +82,33 @@ def test_нет_хуков_третий_исход(tmp_path):
 
 def test_живое_дерево_чисто():
     assert hi.main([]) == 0
+
+
+# Обзор #878: формы, которые первая редакция пропускала.
+@pytest.mark.parametrize("guard", [
+    '[ $# -gt 0 ] && python3 "$dir/guard.py"\n',          # `$#` не комментарий
+    'n=${#args[@]}; python3 "$dir/guard.py"\n',           # `${#x}` не комментарий
+    'echo run; python3 "$dir/guard.py"\n',                # echo снимает только себя
+    'echo x && python3 "$dir/guard.py"\n',
+])
+def test_обход_комментарием_и_echo_отказ(tmp_path, capsys, guard):
+    assert hi.main(["--root", str(дерево(tmp_path, guard))]) == 1
+    assert "guard.sh" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("команда", [
+    '/usr/bin/python3 "$CLAUDE_PROJECT_DIR/.claude/hooks/x.py"',      # путём
+    'env python3 "$CLAUDE_PROJECT_DIR/.claude/hooks/x.py"',           # через env
+    'bash -c "python3 $CLAUDE_PROJECT_DIR/.claude/hooks/x.py"',       # через bash -c
+])
+def test_команда_хука_интерпретатором_в_любой_позиции_отказ(tmp_path, capsys, команда):
+    настройки = {"hooks": {**НАСТРОЙКИ["hooks"],
+                           "PostToolUse": [{"hooks": [{"command": команда}]}]}}
+    assert hi.main(["--root", str(дерево(tmp_path, ПЛАНКА, настройки))]) == 1
+    assert "PostToolUse" in capsys.readouterr().err
+
+
+def test_echo_с_решёткой_чисто(tmp_path):
+    """`#` внутри слова и echo без вызова после него — не находка."""
+    guard = ПЛАНКА + 'echo "шаг #2: python$floor" >&2\n'
+    assert hi.main(["--root", str(дерево(tmp_path, guard))]) == 0
