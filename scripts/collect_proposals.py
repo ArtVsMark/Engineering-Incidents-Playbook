@@ -311,12 +311,22 @@ def check_verdicts(root: Path) -> int:
                     место = ("skill", (папка / имя).as_posix())
                 else:
                     место = ("rule", цель)
-                if место in claimed:
+                # ОДНО СЛИЯНИЕ ОТ ДВУХ ПРОЕКТОВ — НЕ ПОВТОР. Два проекта
+                # независимо предложили свести одни и те же номера (#645:
+                # 005+127 от витрины и от механизмов); принять оба под одним
+                # номером честнее, чем отказать второму в том, что принято.
+                # Законно только при том же наборе замещённых: иначе это два
+                # разных слияния, спорящих за номер.
+                тот_же_набор = (слияние and место in claimed
+                                and ":merge/" in claimed[место]
+                                and sorted(v.get("replaces") or [])
+                                == sorted(verdicts[claimed[место]].get("replaces") or []))
+                if место in claimed and not тот_же_набор:
                     findings.append(
                         f"{key}: {'навык' if навык else 'номер'} {цель} уже "
                         f"занят предложением {claimed[место]} — второе, "
                         f"влитое в него, отвечается merged-into с причиной")
-                else:
+                elif место not in claimed:
                     claimed[место] = key
         if status in NEEDS_WHY and not why:
             findings.append(f"{key}: статус «{status}» обязан назвать причину — "

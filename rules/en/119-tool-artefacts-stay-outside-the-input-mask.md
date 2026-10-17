@@ -7,6 +7,8 @@
 **The rule.** Files the tool creates are named so that they **do not fall under
 its own input selection rule**. Otherwise it starts processing its own output.
 
+**Superseded by.** 225
+
 ## The incident
 
 The tool selects solution files by a name pattern. Separately it saves a history

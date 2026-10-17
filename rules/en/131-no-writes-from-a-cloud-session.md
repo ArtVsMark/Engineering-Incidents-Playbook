@@ -16,6 +16,8 @@ becomes the author. You cannot detect this by asking the token who it is — on
 reads it answers with the owner. So either the action moves into the pipeline, or
 a gate refuses it by environment.
 
+**Superseded by.** 221
+
 ## The incident
 
 A profile storefront had just fixed attribution: commits authored by the owner,

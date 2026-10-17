@@ -458,3 +458,25 @@ def test_дата_появления_не_зависит_от_пояса_авт�
     monkeypatch.setattr(b, "ROOT", tmp_path)
     dates, problems = b.added_dates()
     assert not problems and dates == {"218": "2026-10-07"}
+
+
+def test_zameshchyonnoe_ne_vkhodit_v_obshchiy_schyot(tmp_path):
+    """Правило с пометкой «Заменено» — не правило: в счёт идут только действующие (#645)."""
+    старое = tmp_path / "001-old.md"
+    старое.write_text("# Старое\n\n**Правило.** x\n\n**Заменено.** 003\n", encoding="utf-8")
+    второе = tmp_path / "002-other.md"
+    второе.write_text("# Второе\n\n**Правило.** y\n", encoding="utf-8")
+    новое = tmp_path / "003-new.md"
+    новое.write_text("# Новое\n\n**Правило.** z\n", encoding="utf-8")
+    found = {"001": {"ru": старое}, "002": {"ru": второе}, "003": {"ru": новое}}
+    assert b.действующие(found) == ["002", "003"]
+
+
+def test_predshestvenniki_chitayut_pometku_zameny(tmp_path):
+    """Цепочка «новое → заменённые» строится из пометок, один разбор на каталог (#645)."""
+    папка = tmp_path / "rules" / "ru"
+    папка.mkdir(parents=True)
+    for н, хвост in (("001", "**Заменено.** 003\n"), ("002", "**Заменено.** 003\n"),
+                     ("003", ""), ("004", "")):
+        (папка / f"{н}-r.md").write_text(f"# П\n\n**Правило.** x\n\n{хвост}", encoding="utf-8")
+    assert b.предшественники(tmp_path) == {"003": {"001", "002"}}

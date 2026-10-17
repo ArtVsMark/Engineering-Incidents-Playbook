@@ -70,6 +70,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_rules_index import предшественники  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 
 RULES_RU = "rules/ru"
@@ -250,7 +253,15 @@ def mode_check(root: Path) -> int:
     findings: list[str] = []
     notes: list[str] = []
 
-    owed = sorted(n for n in rules if int(n) > baseline)
+    # ЗАМЕЩЁННОЕ ПРАВИЛОМ НЕ ЯВЛЯЕТСЯ, И ВОПРОСА О СОСЕДЯХ К НЕМУ НЕТ (#645).
+    # Сводная запись несёт его текст и встаёт ему в верхушку, но ответ о
+    # соседях задан при рождении записи; переспрашивать выбывшую — шум.
+    # Обратно: соседа, сведённого в новую запись, ответ уже рассмотрел, если
+    # назвал любого из сводимых. Цепочку читает сборка — разбор один (214).
+    предки = предшественники(root)
+    преемник = {старое: новое for новое, старые in предки.items() for старое in старые}
+    выбыли = set(преемник)
+    owed = sorted(n for n in rules if int(n) > baseline and n not in выбыли)
 
     # Ответ по правилу, которого нет: номер опечатан либо запись удалена, а
     # ответ остался. Молча пропустить — значит завести второй источник правды.
@@ -291,7 +302,10 @@ def mode_check(root: Path) -> int:
                 f"{num}: в «considered» правил не существует: "
                 f"{', '.join(sorted(unknown))}")
 
-        missed = sorted(must - set(considered))
+        рассмотрено = set(considered) | {num}
+        missed = sorted(n for n in must - рассмотрено
+                        if not (предки.get(n, set()) & рассмотрено)
+                        and преемник.get(n) not in рассмотрено)
         if missed:
             shown = ", ".join(f"{n} ({s:.3f})" for s, n in top[:REQUIRED_TOP])
             findings.append(

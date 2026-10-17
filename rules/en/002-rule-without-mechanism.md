@@ -7,6 +7,8 @@
 **The rule.** A requirement that cannot be checked by machine will not be
 followed. Either build a gate, or do not write it down.
 
+**Superseded by.** 224
+
 ## The incident
 
 A review of one working session: **nine incidents out of eleven were not

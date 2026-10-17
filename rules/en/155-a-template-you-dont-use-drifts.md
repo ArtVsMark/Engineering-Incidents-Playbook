@@ -11,6 +11,8 @@ process outline — is used at home the same way it is offered to the consumer, 
 it says why home is different. "It runs" is not that check: it answers a
 different question.
 
+**Superseded by.** 223
+
 **Portable beyond Claude Code.** yes — the subject is what a project publishes
 for others, and it has nothing to do with agent sessions.
 
