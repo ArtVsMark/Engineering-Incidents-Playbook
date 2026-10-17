@@ -259,8 +259,11 @@ def mode_check(root: Path) -> int:
     # Обратно: соседа, сведённого в новую запись, ответ уже рассмотрел, если
     # назвал любого из сводимых. Цепочку читает сборка — разбор один (214).
     предки = предшественники(root)
-    преемник = {старое: новое for новое, старые in предки.items() for старое in старые}
-    выбыли = set(преемник)
+    преемники: dict[str, set[str]] = {}
+    for новое, старые in предки.items():
+        for старое in старые:
+            преемники.setdefault(старое, set()).add(новое)
+    выбыли = set(преемники)
     owed = sorted(n for n in rules if int(n) > baseline and n not in выбыли)
 
     # Ответ по правилу, которого нет: номер опечатан либо запись удалена, а
@@ -305,7 +308,7 @@ def mode_check(root: Path) -> int:
         рассмотрено = set(considered) | {num}
         missed = sorted(n for n in must - рассмотрено
                         if not (предки.get(n, set()) & рассмотрено)
-                        and преемник.get(n) not in рассмотрено)
+                        and not (преемники.get(n, set()) & рассмотрено))
         if missed:
             shown = ", ".join(f"{n} ({s:.3f})" for s, n in top[:REQUIRED_TOP])
             findings.append(
