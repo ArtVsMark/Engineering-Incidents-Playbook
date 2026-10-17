@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-17T08:37:10+00:00",
+  "generated_at": "2026-10-17T10:56:10+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -11694,13 +11694,13 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-17",
-      "answered": 217,
+      "answered": 219,
       "by_status": {
-        "active": 209,
+        "active": 211,
         "not-applicable": 8
       },
       "by_mechanism": {
-        "gate": 185,
+        "gate": 187,
         "pipeline": 18,
         "document": 4,
         "skill": 2
@@ -11922,7 +11922,9 @@
         "215": "active",
         "216": "active",
         "217": "active",
-        "218": "active"
+        "218": "active",
+        "219": "active",
+        "220": "active"
       },
       "holds": {
         "001": {
@@ -12961,10 +12963,10 @@
         },
         "100": {
           "mechanism": "gate",
-          "where": "scripts/ci_complete.py — дедлайна два, и они разной длины: отсутствие записи проверки на голове означает «прогон не стартовал» и отвергается СРАЗУ, не дожидаясь предела ожидания, а предел (--timeout) относится только к тем, кто уже идёт. Третий, на работу джоба, задан в .github/workflows/ci.yml полем timeout-minutes у каждого шага",
+          "where": "scripts/ci_complete.py — дедлайна два, и они разной длины: отсутствие записи проверки на голове означает «прогон не стартовал» и отвергается СРАЗУ, не дожидаясь предела ожидания, а предел (--timeout) относится только к тем, кто уже идёт. Третий, на работу джоба, задан в .github/workflows/ci.yml полем timeout-minutes у каждого шага. ДЕДЛАЙН У ВЫЗОВА ПРОЦЕССА В САМИХ МЕХАНИЗМАХ (220, ArtVsMark/Engineering-Pipeline-Mechanisms#1439): tests/test_subprocess_deadline.py — каждый вызов процесса в paths.SOURCES и .claude/hooks/ несёт timeout= и ловит TimeoutExpired тем же исходом, что OSError; пределы названы один раз — scripts/gitcall.py (LOCAL, NETWORK)",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-26",
+          "analysed": "2026-10-17",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -14219,6 +14221,28 @@
           "holdable": "",
           "awaiting": "",
           "analysed": "",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "219": {
+          "mechanism": "gate",
+          "where": "scripts/look_mode.py::diff_key — ключ взгляда — собственный дифф изменения против базы: строки заплатки с контекстом без заголовков ханков, у файла без заплатки — блоб; scripts/look_mode.py::same_diff — равный дифф с уже вынесенным вердиктом даёт пропуск захода, а не новый; scripts/automerge.py::awaits_look — отставшую голову с идущим взглядом очередь не подтягивает до вердикта. Держат tests/test_look_mode.py::test_the_diff_key_ignores_hunk_numbers_but_sees_the_place, tests/test_look_mode.py::test_a_merged_main_with_the_same_own_diff_skips_the_look и tests/test_automerge.py::test_a_head_behind_the_base_waits_for_its_running_look",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-17",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "220": {
+          "mechanism": "gate",
+          "where": "Мета-гейты с охватом по механизмам дерева: tests/test_one_parse.py (214, корни paths.SOURCES), tests/test_report.py (016, корни paths.SOURCES), tests/test_py_style.py (217, включая хук окна .claude/hooks/push_guard.py), tests/test_python_after_setup.py (217, все работы .github/workflows/), .claude/hooks/push_guard.sh (217: хук окна зовётся интерпретатором планки). tests/test_subprocess_deadline.py (100 — дедлайн и его поимка у каждого вызова процесса в paths.SOURCES и .claude/hooks/). ДЫРА НАЗВАНА, а не выровнена (046, 182): охват paths.SOURCES у мета-гейтов 214 и 016 не берёт .claude/hooks/",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-17",
           "decided": "",
           "skill": "",
           "origin": "",

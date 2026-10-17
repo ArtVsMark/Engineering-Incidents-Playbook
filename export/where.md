@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 33 | 18 | 217 | 9 | 0 | 170 | 134 | 30 | 0 | 6 | 0 | 66 |  |
 | `Claude-Code_Usage-Token` | подключён | 18 | 15 | 217 | 9 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 217 | 9 | 0 | 173 | 85 | 17 | 0 | 59 | 12 | 117 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 21 | 16 | 217 | 9 | 0 | 209 | 185 | 18 | 2 | 4 | 0 | 249 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 21 | 16 | 219 | 7 | 0 | 211 | 187 | 18 | 2 | 4 | 0 | 251 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -61,6 +61,7 @@
 | 210 | `Engineering-Incidents-Playbook` — документ: AGENTS.md § Границы прохода — вторая находка по одному месту названа границей фазы: следующая правка начинается с перечня форм из дерева и, если место разбирает чужой язык, из его справки; каждая форма названа и получает проверку, перечень с числом едет в тело изменения. ГРАНИЦА: исполняется окном при чтении ядра, ни порога, ни перечня машина не проверяет; `Stepik-Python-Grader` — документ: docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте; предмет: CONTRIBUTING.md § Когда дефект считается исправленным — близкий п.2 (все вызовы класса), но перечня форм при второй находке не требует; `ArtVsMark` — конвейер: scripts/check_neighbours.py::repeated в .github/workflows/pr-check.yml — имя верхнего уровня в scripts/*.py, которое правили оба последних изменения общей ветки, тронувшие его файл, и правит этот заход, — третья правка одного места подряд; если сообщения захода не несут перечня форм с числом (формы взяты замером по истории: «Итого форм N», «**N формы**», «Перечень форм:»), — ПРЕДУПРЕЖДЕНИЕ, а не отказ (051). Сборщики main и selftest местом не считаются: их правит каждый новый признак (замер: check_mechanisms.main в #327 и #329). ПОСТРОЕНО 9 ОКТЯБРЯ. ПРОЗОЙ: CLAUDE.md § Соседи починки — вторая находка по одному месту названа стопом: следующая правка начинается с перечня форм из дерева и, если место разбирает чужой язык, из его справки; каждая форма названа и получает проверку, перечень с числом едет в тело изменения. Место — вопрос, который решает код, а не файл. Живой предмет рядом: разбор 206 нашёл невидимые формы у шести гейтов, и их починки пойдут перечнем, а не по форме за заход.; `Glossary-Python` — документ: docs/dev/contributing.md § «Правка кода» — вторая находка по одному месту останавливает починку по одной форме: сначала перечень форм с замером; `Engineering-Pipeline-Mechanisms` — навык: .claude/skills/close-a-finding/SKILL.md — шаг 2а; из build-a-gate, шаг 3а, туда ведёт указатель. Кандидатов называет замер scripts/finding_chains.py, глубина — NAMED_FROM | `Claude-Code_Usage-Token` |
 | 211 | `Engineering-Incidents-Playbook` — гейт: scripts/check_orphans.py с .rules/orphans.json — имена верхнего уровня рабочего кода (scripts/, .claude/hooks/) разбираются ast, и живо только то, до чего доходит цепочка от корня; набор (tests/) в счёт не идёт. Законный сосед — закрытая роспись для набора, граница для человека — назван поимённо с причиной, и запись без предмета — тоже отказ. Что считается корнем и где граница гейта, описано в его докстроке, и только там: пересказ здесь расходился с ней на каждой правке — три находки обзора подряд (022); `Stepik-Python-Grader` — гейт: scripts/check_rule_bindings.py — reachable_gates()/_unreachable(): скрипт, заявленный гейтом, обязан достигаться рабочим путём (workflow, pre-commit, preflight, с пересадками), иначе отказ; долг — только в GATE_DEBT с причиной. Шаг .github/workflows/ci.yml на каждый PR. Держит часть предиката про гейты, не про любые функции; `ArtVsMark` — гейт: scripts/check_mechanisms.py::unreached_names — имя верхнего уровня рабочего кода, до которого не доходит рабочий путь, краснит изменение. Корни — main и код верхнего уровня каждого модуля; живо то, до чего доходит цепочка ссылок, в том числе между модулями (checks.clip, from x import y); ссылки из selftest в счёт не идут. Импорт, который модуль не читает, — тоже имя без читателя. Законные соседи — помощники и образцы набора — названы поимённо с причиной в scripts/check_mechanisms.py::REACH_EXEMPT, и запись без предмета тоже находка. ЦЕНА, РАДИ КОТОРОЙ ГЕЙТ ЗАВЕДЁН: scripts/check_author.py::offenders проверял набор, а рабочий main делал ту же проверку своей встроенной копией — сломайся копия, набор остался бы зелёным; теперь main зовёт саму функцию. Замер 29 сентября: имён 489, без рабочего пути 14 — пять находок разбора 211, четыре законных соседа и пять осиротевших констант, оставленных двумя прошлыми починками (#235, #237); импортов без читателя — один. После починки — ноль. ГРАНИЦА НАЗВАНА: локальные переменные, вычисленные и не прочитанные, гейт не судит — две такие в сборке (titles, flagship) и одна в самом гейте нашлись pyflakes и убраны тем же изменением. Путь до сборки журнала изменений (scripts/collect_changelog.py::merge под `--collect`) рабочим путём достигается, а не запускается никем — это предмет отдельного изменения.; `Glossary-Python` — документ: CLAUDE.md § «Чего не делать» — зелёный набор на подделках не утверждение о дереве; у гейта две половины, и живую требует tests/test_live_surface.py; `Engineering-Pipeline-Mechanisms` — гейт: scripts/check_reached_by_work.py — добавленное изменением имя обязано достигаться рабочим путём, а не только прогоном набора; зовётся шагом .github/workflows/step-journal.yml. Закрытые росписи для набора и пределы для человека гейт не судит и называет законными соседями. Держит tests/test_reached_by_work.py | `Claude-Code_Usage-Token` |
 | 215 | `Engineering-Incidents-Playbook` — гейт: scripts/check_retelling.py — шаг «пересказ работы сверен с составом» в .github/workflows/ci.yml на изменении: путь в обратных кавычках из тела, которого нет ни в составе изменения, ни в дереве, и число находок перед словом «находк…» против строк «Разобрано:» — ::warning::, исход шага не меняется. Решение владельца 14.10 (#816) строить вопреки рекомендации окна; поэтому только предупреждение (051). Замер 14.10: на 99 слитых телах ложных 0, на #631 — верное. Набор — tests/test_check_retelling.py. ГРАНИЦА: верность пересказа — суждение о смысле; 33 из 34 случаев замера 01.10 машина не прочтёт, их держит AGENTS.md § Перед толчком; `Stepik-Python-Grader` — документ: docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте; `ArtVsMark` — конвейер: scripts/check_journal.py::unnumbered в .github/workflows/pr-check.yml (флаг --pr из события площадки) — фрагмент журнала, добавленный изменением, называет номер ЭТОГО изменения; заготовка #НОМЕР или чужой номер — предупреждение, а не отказ: фрагмент законно называет и задачу, а первый прогон всегда видит заготовку (051). Машина сработает, изменение не остановится — потому pipeline, а не gate. ПРОЗОЙ: CLAUDE.md § Заготовка и стоп-кран — пересказ своей работы снимается с источника: число, перечень и «что тронуто» в теле, фрагменте и why снимаются командой в момент записи, команда стоит рядом, номер изменения во фрагмент пишется после открытия, а не угадывается; строка в чек-листе «Перед PR». ПРЕДМЕТ ЖИВОЙ, И ЭТО ЗАМЕР, А НЕ ОПАСЕНИЕ: 1 октября в #255 стояло «снято −843 строки» рядом со списком функций сборки — 843 оказалось суммой удалений по девяти файлам, у самой сборки −709 при +148 (git show --numstat на слиянии 6cc0b5c); то же число ушло владельцу в отчёт. В тот же день номера трёх фрагментов (#253, #255, #259) вписаны ДО открытия изменений — совпали, но угадыванием, а не снятием. Слитое не переписывается: случай записан здесь и в своде. ВТОРОЙ СЛУЧАЙ — ТОТ ЖЕ ДЕНЬ, И НАЙДЕН ЭТИМ ПРАВИЛОМ: в теле #259 стояли «+118/−13», «+6/−0», «+9/−0» — числа из git diff --stat, где столбец есть сумма добавленного и удалённого, прочитаны как добавленное; git diff --numstat дал 108/10, 5/1, 7/2. Тело исправлено таблицей с командой до слияния — перечитыванием опубликованного против источника, как правило и требует.; `Glossary-Python` — документ: docs/dev/contributing.md § «Оформление коммитов и pull request» — числа и перечни в теле изменения и фрагменте журнала снимаются командой в момент записи, и команда названа рядом; `Engineering-Pipeline-Mechanisms` — гейт: scripts/check_journal.py — шаг журнала сверяет шапку фрагмента internal «Потребителю безразлично: …» с составом изменения: путь, названный в шапке (header_paths), которого изменение не трогает, — отказ (stray_in_header); тронутый механизм scripts/, не названный шапкой, — предупреждение (unnamed_mechanisms, 051: правка докстроки законно описывается словами). Держит tests/test_journal_fragments.py, обе половины. Остальной пересказ — тело коммита, перечни, числа, поле why — держит навык .claude/skills/retell-from-the-source: состав по git diff --stat, находка по реестру, число командой с закреплённым концом, пересказ заново после самоправки. Прежние части держатся как держались: тело изменения собирается из тел коммитов (scripts/agent_pr.py::describe_from), «Закрывает пункт» сверяется с пунктом задачи (scripts/items.py::names_of), счёт «Правил на документах» — tests/test_counted_numbers.py::test_the_last_move_is_written_down | `Claude-Code_Usage-Token` |
+| 219 | `Engineering-Pipeline-Mechanisms` — гейт: scripts/look_mode.py::diff_key — ключ взгляда — собственный дифф изменения против базы: строки заплатки с контекстом без заголовков ханков, у файла без заплатки — блоб; scripts/look_mode.py::same_diff — равный дифф с уже вынесенным вердиктом даёт пропуск захода, а не новый; scripts/automerge.py::awaits_look — отставшую голову с идущим взглядом очередь не подтягивает до вердикта. Держат tests/test_look_mode.py::test_the_diff_key_ignores_hunk_numbers_but_sees_the_place, tests/test_look_mode.py::test_a_merged_main_with_the_same_own_diff_skips_the_look и tests/test_automerge.py::test_a_head_behind_the_base_waits_for_its_running_look | `Engineering-Incidents-Playbook` |
 
 ## Сколько держит механизм · How much each mechanism holds
 
@@ -423,12 +424,12 @@
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/ci.yml` | 12 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_bindings.py` | 12 |
 | `Engineering-Pipeline-Mechanisms` | `.rules/bindings.json` | 11 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/automerge.py` | 11 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_journal.py` | 11 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/drift.py` | 11 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/unlooked.py` | 11 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_complete.py` | 11 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_review_safety.py` | 11 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/automerge.py` | 10 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_contract.py` | 10 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_ghrest.py` | 10 |
 | `Engineering-Pipeline-Mechanisms` | `CLAUDE.md` | 9 |
@@ -439,6 +440,7 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/build_changelog.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_pr_meta.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/pipeline_checks.py` | 7 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_automerge.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_docs_shape.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_drift.py` | 7 |
 | `Engineering-Pipeline-Mechanisms` | `CHANGELOG.md` | 6 |
@@ -446,7 +448,7 @@
 | `Engineering-Pipeline-Mechanisms` | `facts.json` | 6 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/debt.py` | 6 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/work_plan.py` | 6 |
-| `Engineering-Pipeline-Mechanisms` | `tests/test_automerge.py` | 6 |
+| `Engineering-Pipeline-Mechanisms` | `.claude/hooks/push_guard.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/agent-pr.yml` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `docs/dev/directions.md` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `docs/use/pipeline.md` | 5 |
@@ -456,7 +458,6 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/preflight.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_review_findings.py` | 5 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_showcase.py` | 5 |
-| `Engineering-Pipeline-Mechanisms` | `.claude/hooks/push_guard.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.github/labels.yml` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/claude.yml` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/rules-inbox.yml` | 4 |
@@ -480,6 +481,7 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/arm.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_derived_refs.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_pipeline.py` | 3 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/look_mode.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/paths.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/release.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/version.py` | 3 |
@@ -489,6 +491,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_directions_map.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gaps_section.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_journal_fragments.py` | 3 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_look_mode.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_outcomes_run.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_pipeline_checks.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_platform_shape.py` | 3 |
@@ -521,7 +524,6 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/contract.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/items.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/journal.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/look_mode.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/onboard.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/squash_body.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/task_shape.py` | 2 |
@@ -534,16 +536,20 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_declared_numbers.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_family_pinning.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_pass.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `tests/test_look_mode.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_main_red.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_new_is_tested.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_one_parse.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_package_at_the_consumer.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_protection.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_py_style.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_python_after_setup.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_release.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_report.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_roles.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_steps_speak_outward.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 116 механизмов по одному правилу; без названного адреса: 0 из 209 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_subprocess_deadline.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 113 механизмов по одному правилу; без названного адреса: 0 из 211 |
 
 ## Правила · Rules
 
@@ -766,8 +772,8 @@
 | 216 | нет предмета | действует | нет предмета | нет предмета | нет предмета | действует |
 | 217 | действует | действует | действует | действует | действует | действует |
 | 218 | нет предмета | нет предмета | действует | нет предмета | действует | действует |
-| 219 | действует | — | — | — | — | — |
-| 220 | действует | — | — | — | — | — |
+| 219 | действует | — | — | — | — | действует |
+| 220 | действует | — | — | — | — | действует |
 | 221 | действует | — | — | — | — | — |
 | 222 | действует | — | — | — | — | — |
 | 223 | действует | — | — | — | — | — |
