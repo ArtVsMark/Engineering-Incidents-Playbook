@@ -16,6 +16,7 @@
 """
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -24,7 +25,11 @@ import invisible
 ROOT = Path(__file__).resolve().parent.parent
 #: Что раздаётся окнам: путь от корня и маска.
 ОХВАТ = (("rules", "**/*.md"), ("candidates", "*.md"), ("export", "**/*.json"),
-         (".claude/skills", "**/*.md"))
+         (".claude/skills", "**/*.md"),
+         # Читаются первыми или раздаются потребителям (обзор #874): свод и
+         # корневые документы, docs/, заготовки и плагин каталога.
+         (".", "*.md"), ("docs", "**/*.md"), ("templates", "**/*"),
+         ("plugins", "**/*.md"), ("plugins", "**/*.json"))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -40,9 +45,22 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     находки = []
     for путь in файлы:
-        for n, строка in enumerate(путь.read_text(encoding="utf-8").splitlines(), 1):
+        текст = путь.read_text(encoding="utf-8")
+        for n, строка in enumerate(текст.splitlines(), 1):
             for _, c in invisible.невидимые(строка):
                 находки.append(f"{путь.relative_to(args.root)}:{n}: {invisible.назвать(c)}")
+        # JSON читают разобранным: запись `\u200b` в сыром тексте невинна, а
+        # после разбора — тот же невидимый символ (обзор #874).
+        if путь.suffix == ".json":
+            try:
+                данные = json.loads(текст)
+            except ValueError as exc:
+                print(f"проверка не отработала: {путь.relative_to(args.root)} не "
+                      f"разобран как JSON — {exc}", file=sys.stderr)
+                return 2
+            for поле, c in invisible.в_данных(данные):
+                находки.append(f"{путь.relative_to(args.root)}: {поле}: "
+                               f"{invisible.назвать(c)} (после разбора JSON)")
     if находки:
         print("в тексте, который читают окна, есть невидимые символы — человек их "
               "не видит, а модель читает (085, #873):", file=sys.stderr)
