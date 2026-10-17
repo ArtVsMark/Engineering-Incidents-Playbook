@@ -16,8 +16,21 @@ def test_без_разделителей_знак_остаётся_в_слове
     assert sw.слова_оболочки("a|b") == ["a|b"]
 
 
-def test_оба_гейта_зовут_один_разбор():
-    """Копии больше нет: оба гейта идут через shell_words."""
+def test_оба_гейта_зовут_один_разбор(monkeypatch):
+    """Обе обёртки зовут shell_words — проверяется вызов, а не отсутствие импорта (обзор #886).
+
+    Своя реализация без `shlex` — ручной цикл по символам — прошла бы проверку
+    «shlex не импортирован»; заглушку она не позовёт.
+    """
     import check_paging
     import check_workflows
-    assert "shlex" not in vars(check_paging) and "shlex" not in vars(check_workflows)
+    позвали: list[str] = []
+
+    def заглушка(хвост: str, разделители: str = "") -> list[str]:
+        позвали.append(хвост)
+        return ["ЗАГЛУШКА"]
+
+    monkeypatch.setattr(sw, "слова_оболочки", заглушка)
+    assert check_paging.слова_оболочки("a b") == ["ЗАГЛУШКА"]
+    assert check_workflows.слова_оболочки("c d") == ["ЗАГЛУШКА"]
+    assert позвали == ["a b", "c d"]

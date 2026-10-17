@@ -809,14 +809,31 @@ def test_тайм_аут_на_прочей_команде_пропускает(�
 
 def test_дедлайны_стража_короче_предела_хука():
     """Сумма дедлайнов внутри меньше предела хука — иначе площадка убьёт хук раньше (#883)."""
+    import ast
     import json
     import re
     корень = ХУК.parent.parent.parent
     настройки = json.loads((корень / ".claude" / "settings.json").read_text(encoding="utf-8"))
     предел = next(h["timeout"] for g in настройки["hooks"]["PreToolUse"]
                   for h in g["hooks"] if "push_guard" in h["command"])
-    сроки = [int(x) for x in re.findall(r"timeout=(\d+)", ХУК.read_text(encoding="utf-8"))]
-    assert сроки and sum(сроки) < предел, (сроки, предел)
+    # Дедлайн считается столько раз, сколько вызывается функция, где он стоит:
+    # `_вывод` идёт дважды, и по литералам сумма выходила 90 с вместо 110 с
+    # (обзор #887). Прямые литералы в тексте без функции — по разу.
+    дерево = ast.parse(ХУК.read_text(encoding="utf-8"))
+    вызовы: dict[str, int] = {}
+    for узел in ast.walk(дерево):
+        if isinstance(узел, ast.Call):
+            f = узел.func
+            имя = f.id if isinstance(f, ast.Name) else getattr(f, "attr", "")
+            вызовы[имя] = вызовы.get(имя, 0) + 1
+    сроки = [(ф.name, к.value.value * max(1, вызовы.get(ф.name, 0)))
+             for ф in ast.walk(дерево) if isinstance(ф, ast.FunctionDef)
+             for к in ast.walk(ф)
+             if isinstance(к, ast.keyword) and к.arg == "timeout"
+             and isinstance(к.value, ast.Constant)]
+    литералов = len(re.findall(r"timeout=(\d+)", ХУК.read_text(encoding="utf-8")))
+    assert len(сроки) == литералов, "дедлайн вне функции или не числом — посчитайте его"
+    assert сроки and sum(с for _, с in сроки) < предел, (сроки, предел)
 
 
 def test_нет_git_при_толчке_закрывает(окно, monkeypatch, capsys):

@@ -107,3 +107,14 @@ def test_три_случая_16_10(репо, путь, виден):
     (root / путь).parent.mkdir(parents=True, exist_ok=True)
     (root / путь).write_text("# без записи\n", encoding="utf-8")
     assert запуск(root, base, [путь]) == (1 if виден else 0)
+
+
+@pytest.mark.parametrize("строка", [
+    '"""Реализует правила: 162, 214 — семь проверок."""\n',     # числительное
+    '"""162 — спрос на гейт велик."""\n',                       # потребность
+])
+def test_соседнее_слово_не_запись(репо, строка):
+    """«Семь» и «спрос» рядом с 162 — не запись о семье (обзор #888)."""
+    root, base = репо
+    (root / "scripts" / "check_new.py").write_text(строка, encoding="utf-8")
+    assert запуск(root, base, ["scripts/check_new.py"]) == 1
