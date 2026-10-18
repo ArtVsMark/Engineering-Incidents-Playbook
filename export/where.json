@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-17T15:37:04+00:00",
+  "generated_at": "2026-10-18T11:22:19+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,7 +9,7 @@
       "schema": "1.9",
       "answers_to": "1.8",
       "state": "подключён",
-      "read_at": "2026-10-17",
+      "read_at": "2026-10-18",
       "answered": 226,
       "by_status": {
         "active": 210,
@@ -2575,7 +2575,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-17",
+      "read_at": "2026-10-18",
       "answered": 217,
       "by_status": {
         "active": 212,
@@ -5153,7 +5153,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-17",
+      "read_at": "2026-10-18",
       "answered": 217,
       "by_status": {
         "active": 170,
@@ -7270,7 +7270,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-17",
+      "read_at": "2026-10-18",
       "answered": 217,
       "by_status": {
         "active": 184,
@@ -9542,7 +9542,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-17",
+      "read_at": "2026-10-18",
       "answered": 217,
       "by_status": {
         "active": 173,
@@ -11691,17 +11691,17 @@
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
       "role": "потребитель",
       "schema": "1.9",
-      "answers_to": "1.7",
+      "answers_to": "1.8",
       "state": "подключён",
-      "read_at": "2026-10-17",
-      "answered": 219,
+      "read_at": "2026-10-18",
+      "answered": 226,
       "by_status": {
-        "active": 211,
+        "active": 218,
         "not-applicable": 8
       },
       "by_mechanism": {
-        "gate": 187,
-        "pipeline": 18,
+        "gate": 195,
+        "pipeline": 17,
         "document": 4,
         "skill": 2
       },
@@ -11924,7 +11924,14 @@
         "217": "active",
         "218": "active",
         "219": "active",
-        "220": "active"
+        "220": "active",
+        "221": "active",
+        "222": "active",
+        "223": "active",
+        "224": "active",
+        "225": "active",
+        "226": "active",
+        "227": "active"
       },
       "holds": {
         "001": {
@@ -13611,15 +13618,15 @@
           "origin_kind": "own"
         },
         "162": {
-          "mechanism": "pipeline",
-          "where": ".github/workflows/rules-inbox.yml — ночной прогон каталога приносит в задачу-«входящие» раздел «У соседей это уже решено»: по каждому правилу, признанному действующим и не держащемуся ничем, названы соседи по своду и АДРЕС их механизма. Вторая ось — scripts/family.py: разрез по сводке каталога показывает, что соседи держат машиной там, где мы отвечаем документом; из него вырос список переноса (ArtVsMark/Engineering-Pipeline-Mechanisms#117). Спрашивается сводка каталога, а не поход по чужим репозиториям (001). Прежний ответ говорил «документ» и отстал от дерева: механизм стоял, ответ его не называл.",
+          "mechanism": "gate",
+          "where": "scripts/check_asked_family.py (шаг «новый механизм назвал семью» в .github/workflows/step-journal.yml) — механизм, ДОБАВЛЕННЫЙ изменением (гейт, хук, прогон, действие, навык), называет абзацем, у кого из семьи спросили и что нашли: номер 162, кого спросили и исход — подключили, взяли приём, у соседа только для себя, ни у кого. Приём и места механизмов взяты у гейта каталога ArtVsMark/Engineering-Incidents-Playbook:scripts/check_asked_family.py — своим файлом, а не копией; как спрашивать, говорит шаг «сначала семья» навыка .claude/skills/build-a-gate. Вторая половина — .github/workflows/rules-inbox.yml: ночной прогон каталога приносит в задачу-«входящие» раздел «У соседей это уже решено» по правилам, которые у нас не держатся ничем, и scripts/family.py — разрез по сводке каталога (ArtVsMark/Engineering-Pipeline-Mechanisms#117). Гейт видит, что ответ записан, а не что он верен: верность судит взгляд.",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-09",
+          "analysed": "2026-10-17",
           "decided": "",
-          "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v2.0.0",
-          "origin_kind": "called"
+          "skill": ".claude/skills/build-a-gate",
+          "origin": "",
+          "origin_kind": "own"
         },
         "163": {
           "mechanism": "gate",
@@ -14247,14 +14254,127 @@
           "skill": ".claude/skills/a-gate-obeys-every-rule",
           "origin": "",
           "origin_kind": "own"
+        },
+        "221": {
+          "mechanism": "gate",
+          "where": ".github/workflows/agent-pr.yml и scripts/agent_pr.py — изменение открывает конвейер токеном владельца MERGE_QUEUE_TOKEN и на токен прогона не переходит (tests/test_token_paths.py::test_missing_token_is_a_different_outcome). .claude/hooks/push_guard.py — прямой толчок в общую ветку отвергается до вызова git (tests/test_push_guard.py::test_a_push_to_the_shared_branch_is_always_refused, tests/test_push_guard.py::test_the_shared_branch_is_refused_even_blind). scripts/automerge.py — слияние токеном владельца (tests/test_automerge.py::test_the_run_token_is_never_taken_for_the_merge). .github/workflows/attribution-history.yml — подпись сверяется по итоговой истории общей ветки. CLAUDE.md — раздел «Подпись и открытие изменения»: личность записи узнаётся записью",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-17",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "222": {
+          "mechanism": "gate",
+          "where": "scripts/check_version.py::check — версия контракта вне маркера и устаревший маркер краснеют (tests/test_gates_reject.py::test_version_written_by_hand_is_a_finding, tests/test_gates_reject.py::test_stale_marker_is_a_finding), шагом .github/workflows/step-journal.yml. scripts/build_facts.py — метрики собираются в facts.json и значки, а не вписываются в прозу; scripts/check_derived_refs.py — ссылка на ненарисованное производное краснеет. tests/test_counted_numbers.py::test_the_last_move_is_written_down — счёт пересчитывается по .rules/bindings.json. docs/dev/release.md — раздел «Маркер в прозе»",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-17",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "223": {
+          "mechanism": "gate",
+          "where": "scripts/onboard.py::own_kit и scripts/onboard.py::thin_ci — заготовка потребителя вырезается из наших же прогонов, адрес ./ переписывается на адрес по тегу. .github/workflows/ci.yml зовёт свои шаги файлами step-*.yml, .github/workflows/handover-probe.yml — внешним путём по тегу (tests/test_handover_probe.py::test_the_probe_says_what_the_kit_prints, tests/test_handover_probe.py::test_the_gap_of_the_probe_is_named_not_silent). tests/test_rulebook_kit.py::test_the_common_part_of_the_kit_stands_in_our_rulebook — общая часть kit/ дословно стоит в нашем своде. tests/test_onboard.py::test_the_live_data_kit_is_what_the_review_map_reads — заготовку данных судит тот же scripts/review_map.py. .github/workflows/step-pipeline.yml — наш .pipeline.yml читает тот же scripts/check_pipeline.py, что и потребительский. scripts/check_facts_contract.py — на наших фактах исполняется настоящий шаг фактов. tests/test_family_pinning.py::test_every_family_use_is_pinned_to_a_version",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-17",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "224": {
+          "mechanism": "gate",
+          "where": "tests/test_bindings.py::test_active_names_its_mechanism_and_address — у каждого действующего ответа назван механизм, у mechanism none — причина. tests/test_bindings.py::test_every_unheld_answer_names_its_limit и tests/test_bindings.py::test_a_named_limit_carries_its_reason — у document, skill и none стоит holdable с причиной. tests/test_bindings.py::test_a_refusal_carries_its_measurement — у отказа держать машиной требуется замер. tests/test_gates_reject.py — каждый гейт проверен тем, что обязан отвергнуть. scripts/debt.py::rules_debt — число держащихся ничем ставится перед планом. .rules/mechanism-rules.json и tests/test_mechanism_rules.py — «не построено» без замера с датой и числом краснеет. Вторая половина — навык .claude/skills/build-a-gate: попытка построить механизм",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-17",
+          "decided": "",
+          "skill": ".claude/skills/build-a-gate",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "225": {
+          "mechanism": "gate",
+          "where": "scripts/journal.py — маска входа PATH_RE не рекурсивна: перенесённые выпуском фрагменты changelog.d/released/ под неё не попадают. scripts/build_changelog.py::read_fragments — на входе только фрагменты, пустой или неразбираемый роняет сборку, а --check читает вывод только для сверки после сборки. scripts/check_journal.py — изменение, тронувшее собранный журнал, отвергается (tests/test_gates_reject.py::test_a_change_that_touches_the_built_journal_is_rejected). scripts/facts_common.py — facts.json собирается из источников, прежний не читается. Накопители с признаком поколения — законная ветка правила: scripts/findings_archive.py (tests/test_findings_archive.py::test_pending_changes_are_taken_by_merge_time_and_skip_the_counted), scripts/unlooked.py (tests/test_unlooked.py::test_the_watermark_stops_a_second_look_at_the_same_change), scripts/runs_series.py::merge (tests/test_runs_series.py::test_a_recounted_day_replaces_the_old_row)",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-17",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "226": {
+          "mechanism": "gate",
+          "where": "tests/test_bindings.py::test_every_inapplicable_answer_names_a_predicate_over_the_tree и tests/test_bindings.py::test_an_event_alone_is_not_a_predicate — у ответа «неприменимо» требуется предикат по дереву, одного события мало. .rules/inapplicable.json и tests/test_inapplicable.py::test_the_condition_of_entry_has_not_arrived — предикаты, опровергаемые одной командой без сети, прогоняет набор на каждом изменении; tests/test_inapplicable.py::test_a_planted_condition_turns_the_gate_red — гейт краснеет на вставленном предмете. Раздел unmechanized в .rules/inapplicable.json — ответ без предиката объявлен вслух с причиной. tests/test_gaps_section.py::test_the_catalogue_gap_matches_the_answer — проза «чего нет» в docs/dev/gaps.md. Вторая половина — навык .claude/skills/answer-a-rule, шаг 5: отвечает ли предикат на вопрос правила",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-17",
+          "decided": "",
+          "skill": ".claude/skills/answer-a-rule",
+          "origin": "",
+          "origin_kind": "own"
+        },
+        "227": {
+          "mechanism": "gate",
+          "where": "scripts/check_open_limit.py::look — число открытых изменений окна спрашивается у площадки по трейлеру сессии в коммитах ветки. scripts/preflight.py — заход --push не толкает новую ветку при трёх открытых (tests/test_open_limit.py::test_preflight_holds_the_push_at_the_limit). tests/test_open_limit.py::test_three_open_changes_of_the_window_refuse_a_new_branch, tests/test_open_limit.py::test_a_push_to_an_open_change_is_a_fix_not_a_new_one, tests/test_open_limit.py::test_no_token_is_not_clean. CLAUDE.md — «Не больше трёх открытых изменений окна»",
+          "holdable": "",
+          "awaiting": "",
+          "analysed": "2026-10-17",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": "own"
         }
       },
-      "notes": {},
+      "notes": {
+        "002": {
+          "note": "Правило заменено правилом 224 в выгрузке 1.8 (superseded_by): действующий ответ — запись 224, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 224, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "005": {
+          "note": "Правило заменено правилом 222 в выгрузке 1.8 (superseded_by): действующий ответ — запись 222, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 222, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "057": {
+          "note": "Правило заменено правилом 224 в выгрузке 1.8 (superseded_by): действующий ответ — запись 224, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 224, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "119": {
+          "note": "Правило заменено правилом 225 в выгрузке 1.8 (superseded_by): действующий ответ — запись 225, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 225, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "125": {
+          "note": "Правило заменено правилом 225 в выгрузке 1.8 (superseded_by): действующий ответ — запись 225, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 225, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "127": {
+          "note": "Правило заменено правилом 222 в выгрузке 1.8 (superseded_by): действующий ответ — запись 222, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 222, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "131": {
+          "note": "Правило заменено правилом 221 в выгрузке 1.8 (superseded_by): действующий ответ — запись 221, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 221, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "135": {
+          "note": "Правило заменено правилом 221 в выгрузке 1.8 (superseded_by): действующий ответ — запись 221, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 221, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "155": {
+          "note": "Правило заменено правилом 223 в выгрузке 1.8 (superseded_by): действующий ответ — запись 223, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 223, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "175": {
+          "note": "Правило заменено правилом 226 в выгрузке 1.8 (superseded_by): действующий ответ — запись 226, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 226, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "197": {
+          "note": "Правило заменено правилом 223 в выгрузке 1.8 (superseded_by): действующий ответ — запись 223, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 223, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        },
+        "205": {
+          "note": "Правило заменено правилом 226 в выгрузке 1.8 (superseded_by): действующий ответ — запись 226, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 226, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
+        }
+      },
       "trails": 21,
       "born": 16,
       "findings": [
-        "отвечает о заменённых правилах — 002 → 224, 005 → 222, 057 → 224, 119 → 225, 125 → 225, 127 → 222, 131 → 221, 135 → 221, 155 → 223, 175 → 226, 197 → 223, 205 → 226. Это состояние, а не находка: ответ верен для того, что было. Перенести его или нет, решает потребитель",
-        "ответ построен на выгрузке 1.7, у нас 1.8 — записи валидны, а составленные по ним ответы отвечают на другой вопрос (157)"
+        "отвечает о заменённых правилах — 002 → 224, 005 → 222, 057 → 224, 119 → 225, 125 → 225, 127 → 222, 131 → 221, 135 → 221, 155 → 223, 175 → 226, 197 → 223, 205 → 226. Это состояние, а не находка: ответ верен для того, что было. Перенести его или нет, решает потребитель"
       ]
     }
   ]
