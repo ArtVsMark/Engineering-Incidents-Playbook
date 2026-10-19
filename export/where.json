@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-18T11:23:48+00:00",
+  "generated_at": "2026-10-19T13:21:57+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,7 +9,7 @@
       "schema": "1.9",
       "answers_to": "1.8",
       "state": "подключён",
-      "read_at": "2026-10-18",
+      "read_at": "2026-10-19",
       "answered": 226,
       "by_status": {
         "active": 210,
@@ -2575,7 +2575,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-18",
+      "read_at": "2026-10-19",
       "answered": 217,
       "by_status": {
         "active": 212,
@@ -5153,7 +5153,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-18",
+      "read_at": "2026-10-19",
       "answered": 217,
       "by_status": {
         "active": 170,
@@ -7270,7 +7270,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-18",
+      "read_at": "2026-10-19",
       "answered": 217,
       "by_status": {
         "active": 184,
@@ -9542,7 +9542,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-18",
+      "read_at": "2026-10-19",
       "answered": 217,
       "by_status": {
         "active": 173,
@@ -11693,7 +11693,7 @@
       "schema": "1.9",
       "answers_to": "1.8",
       "state": "подключён",
-      "read_at": "2026-10-18",
+      "read_at": "2026-10-19",
       "answered": 226,
       "by_status": {
         "active": 218,
@@ -13619,7 +13619,7 @@
         },
         "162": {
           "mechanism": "gate",
-          "where": "scripts/check_asked_family.py (шаг «новый механизм назвал семью» в .github/workflows/step-journal.yml) — механизм, ДОБАВЛЕННЫЙ изменением (гейт, хук, прогон, действие, навык), называет абзацем, у кого из семьи спросили и что нашли: номер 162, кого спросили и исход — подключили, взяли приём, у соседа только для себя, ни у кого. Приём и места механизмов взяты у гейта каталога ArtVsMark/Engineering-Incidents-Playbook:scripts/check_asked_family.py — своим файлом, а не копией; как спрашивать, говорит шаг «сначала семья» навыка .claude/skills/build-a-gate. Вторая половина — .github/workflows/rules-inbox.yml: ночной прогон каталога приносит в задачу-«входящие» раздел «У соседей это уже решено» по правилам, которые у нас не держатся ничем, и scripts/family.py — разрез по сводке каталога (ArtVsMark/Engineering-Pipeline-Mechanisms#117). Гейт видит, что ответ записан, а не что он верен: верность судит взгляд.",
+          "where": "scripts/check_asked_family.py (шаг «новый механизм назвал семью» в .github/workflows/step-journal.yml) — механизм, ДОБАВЛЕННЫЙ изменением (гейт, хук, прогон, действие, навык), называет абзацем, у кого из семьи спросили и что нашли: номер 162, кого спросили и что нашли: взятое и «только для себя» — в одном предложении с тем, у кого нашли («приём взят у каталога», «у соседа только для себя»), «ни у кого» несёт источник в себе, подключённое — со словом «готовый» («подключили готовый шаг каталога»). Приём и места механизмов взяты у гейта каталога ArtVsMark/Engineering-Incidents-Playbook:scripts/check_asked_family.py — своим файлом, а не копией; как спрашивать, говорит шаг «сначала семья» навыка .claude/skills/build-a-gate. Вторая половина — .github/workflows/rules-inbox.yml: ночной прогон каталога приносит в задачу-«входящие» раздел «У соседей это уже решено» по правилам, которые у нас не держатся ничем, и scripts/family.py — разрез по сводке каталога (ArtVsMark/Engineering-Pipeline-Mechanisms#117). Гейт видит, что ответ записан, а не что он верен: верность судит взгляд.",
           "holdable": "",
           "awaiting": "",
           "analysed": "2026-10-17",
