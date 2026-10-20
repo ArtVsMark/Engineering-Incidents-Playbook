@@ -117,7 +117,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.5.0",
-          "latest": "v1.7.0",
+          "latest": "v1.8.0",
           "where": ".github/workflows/mechanisms.yml",
           "state": "behind",
           "why": ""
@@ -127,7 +127,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.5.0",
-          "latest": "v1.7.0",
+          "latest": "v1.8.0",
           "where": ".github/workflows/mechanisms.yml",
           "state": "behind",
           "why": ""
@@ -197,7 +197,7 @@
       "code": "EPM",
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
       "state": "behind",
-      "why": "release: v1.5.0 → v1.7.0; release: v1.5.0 → v1.7.0"
+      "why": "release: v1.5.0 → v1.8.0; release: v1.5.0 → v1.8.0"
     }
   ],
   "uptake": {

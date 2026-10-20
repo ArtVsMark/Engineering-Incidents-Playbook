@@ -16,7 +16,7 @@
 | `Stepik-Python-Grader` | подключён | 195 | 133 | 217 | 9 | 0 | 212 | 95 | 43 | 0 | 74 | 0 | 156 |  |
 | `ArtVsMark` | подключён | 33 | 18 | 217 | 9 | 0 | 170 | 134 | 30 | 0 | 6 | 0 | 66 |  |
 | `Claude-Code_Usage-Token` | подключён | 18 | 15 | 217 | 9 | 0 | 184 | 100 | 9 | 0 | 58 | 17 | 107 |  |
-| `Glossary-Python` | подключён | 2 | 0 | 217 | 9 | 0 | 173 | 85 | 17 | 0 | 59 | 12 | 117 |  |
+| `Glossary-Python` | подключён | 2 | 0 | 217 | 9 | 0 | 173 | 85 | 17 | 0 | 59 | 12 | 118 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 21 | 16 | 226 | 0 | 0 | 218 | 195 | 17 | 2 | 4 | 0 | 269 |  |
 
 ## Чем держат другие · How others enforce it
@@ -411,7 +411,7 @@
 | `Glossary-Python` | `tests/test_roles.py` | 2 |
 | `Glossary-Python` | `tests/test_schedule_alarm.py` | 2 |
 | `Glossary-Python` | `tests/test_window_guard.py` | 2 |
-| `Glossary-Python` | _остальные_ · _the rest_ | 52 механизмов по одному правилу; без названного адреса: 0 из 161 |
+| `Glossary-Python` | _остальные_ · _the rest_ | 53 механизмов по одному правилу; без названного адреса: 0 из 161 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_gates_reject.py` | 28 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/agent_pr.py` | 20 |
 | `Engineering-Pipeline-Mechanisms` | `.pipeline.yml` | 19 |
