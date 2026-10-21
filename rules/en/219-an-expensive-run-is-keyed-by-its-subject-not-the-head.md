@@ -42,7 +42,8 @@ measurement 7–14 October, 7.2 days: **406** runs, **14** cancelled (3%), about
 **28** cancelled minutes a day. **105** skips on an equal diff, about 15 a day;
 in a sample of 15 of the 105, every one passed the "diff already reviewed"
 step. An average full run is **18.8** minutes, so the skips saved about **275**
-minutes a day.
+minutes a day — gross: the cost of waiting for the verdict is not measured
+(see "In practice").
 
 **Only the first measure was measured on its own.** The second was never
 switched on alone: what waiting without the key would give is not measured,
