@@ -319,6 +319,7 @@ LANG = {
 #: берутся у сборщика сводки, который их пишет, а не переписываются буквами:
 #: переименуй он состояние — картинка молча показала бы его непереведённым (209).
 from aggregate_bindings import NOT_CONNECTED, UNKNOWN  # noqa: E402
+from build_rules_index import действующие_в_выгрузке  # noqa: E402
 STATE = {NOT_CONNECTED: "off", UNKNOWN: "unknown"}
 
 
@@ -563,8 +564,12 @@ def main(argv: list[str] | None = None) -> int:
               file=sys.stderr)
         return 2
     try:
-        total = len(json.loads(
-            (root / "export" / "rules.json").read_text(encoding="utf-8"))["rules"])
+        # Подпись «каждое из N правил» — по действующим (17.10).
+        выгрузка = json.loads(
+            (root / "export" / "rules.json").read_text(encoding="utf-8"))
+        if "rules" not in выгрузка:  # третий исход, а не «правил 0»
+            raise KeyError("rules")
+        total = len(действующие_в_выгрузке(выгрузка))
     except (OSError, ValueError, KeyError) as e:
         print(f"рисовать нечем: экспорт правил не прочитан — {e}", file=sys.stderr)
         return 2

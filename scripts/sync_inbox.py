@@ -57,6 +57,7 @@ import subprocess
 import sys
 
 import ghcli
+from build_rules_index import действующие_в_выгрузке
 import urllib.error
 import urllib.request
 
@@ -746,6 +747,13 @@ def main() -> int:
               file=sys.stderr)
         return 2
 
+    # ЗАМЕЩЁННОЕ В СЧЁТ НЕ ВХОДИТ (17.10): ответа о нём не требуют, в
+    # «правил в каталоге» и «ничем» оно не идёт. Лишним ответ о нём не
+    # считается — сверка лишних берёт ВСЕ записи выгрузки.
+    все_записи = rules
+    в_силе = действующие_в_выгрузке(выгрузка)
+    rules = [r for r in все_записи if r["id"] in в_силе]
+
     try:
         with open(args.bindings, encoding="utf-8") as fh:
             свой_ответ = json.load(fh)
@@ -776,7 +784,7 @@ def main() -> int:
     unreviewed = [r for r in rules
                   if answered.get(r["id"], {}).get("status") == "unreviewed"]
 
-    stale = stale_here(answered, rules)
+    stale = stale_here(answered, все_записи)
     # СОСЕДСКИЙ МЕХАНИЗМ — ДОПОЛНЕНИЕ, И ОНО НЕ РОНЯЕТ ОСНОВНУЮ РАБОТУ (084).
     # Сводка лежит в чужом репозитории; её недоступность делает раздел пустым,
     # а не задачу — неоткрытой. Отказ называет адрес (158) и печатается, чтобы
@@ -805,7 +813,9 @@ def main() -> int:
               file=sys.stderr)
     candidates = candidates_here(unreviewed, свои_задачи)
     начатое = started_here(свои_задачи)
-    ничем = held_by_nothing(answered)
+    заменены = {r["id"] for r in все_записи} - в_силе
+    ничем = held_by_nothing({rid: rec for rid, rec in answered.items()
+                             if rid not in заменены})
     # ФАЙЛА НЕТ — КАНАЛ НЕ ПОДКЛЮЧЁН, И ЭТО НЕ НАХОДКА. Отличие от «файл
     # есть, номера нет» несущее: второе сверить нельзя, а притворяться
     # сошедшимся оно не должно (075).
