@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-21T10:12:01+00:00",
+  "generated_at": "2026-10-21T10:36:28+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,13 +10,13 @@
       "answers_to": "1.8",
       "state": "подключён",
       "read_at": "2026-10-21",
-      "answered": 226,
+      "answered": 214,
       "by_status": {
-        "active": 210,
+        "active": 198,
         "not-applicable": 16
       },
       "by_mechanism": {
-        "gate": 165,
+        "gate": 153,
         "pipeline": 12,
         "skill": 5,
         "document": 18,
@@ -2576,15 +2576,15 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-21",
-      "answered": 217,
+      "answered": 205,
       "by_status": {
-        "active": 212,
+        "active": 200,
         "not-applicable": 5
       },
       "by_mechanism": {
-        "gate": 95,
+        "gate": 85,
         "pipeline": 43,
-        "document": 74
+        "document": 72
       },
       "rules": {
         "001": "active",
@@ -5154,15 +5154,15 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-21",
-      "answered": 217,
+      "answered": 205,
       "by_status": {
-        "active": 170,
-        "not-applicable": 46,
+        "active": 159,
+        "not-applicable": 45,
         "rejected": 1
       },
       "by_mechanism": {
-        "gate": 134,
-        "pipeline": 30,
+        "gate": 124,
+        "pipeline": 29,
         "document": 6
       },
       "rules": {
@@ -7271,15 +7271,15 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-21",
-      "answered": 217,
+      "answered": 205,
       "by_status": {
-        "active": 184,
-        "not-applicable": 28,
+        "active": 174,
+        "not-applicable": 26,
         "rejected": 5
       },
       "by_mechanism": {
-        "gate": 100,
-        "document": 58,
+        "gate": 93,
+        "document": 55,
         "none": 17,
         "pipeline": 9
       },
@@ -9543,17 +9543,17 @@
       "answers_to": "1.7",
       "state": "подключён",
       "read_at": "2026-10-21",
-      "answered": 217,
+      "answered": 205,
       "by_status": {
-        "active": 173,
-        "not-applicable": 43,
+        "active": 162,
+        "not-applicable": 42,
         "rejected": 1
       },
       "by_mechanism": {
-        "gate": 85,
-        "pipeline": 17,
+        "gate": 77,
         "document": 59,
-        "none": 12
+        "none": 12,
+        "pipeline": 14
       },
       "rules": {
         "001": "active",
@@ -11694,13 +11694,13 @@
       "answers_to": "1.8",
       "state": "подключён",
       "read_at": "2026-10-21",
-      "answered": 226,
+      "answered": 214,
       "by_status": {
-        "active": 218,
+        "active": 206,
         "not-applicable": 8
       },
       "by_mechanism": {
-        "gate": 195,
+        "gate": 183,
         "pipeline": 17,
         "document": 4,
         "skill": 2
