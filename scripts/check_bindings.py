@@ -502,7 +502,7 @@ def держимость(rec: dict, schema: object) -> str | None:
 НАВЫК_ПЛАГИНА_RE = re.compile(r"^([\w-]+):([\w.-]+)$")
 #: Папку плагинов называет гейт витрины.
 from check_plugins import PLUGINS  # noqa: E402
-from build_rules_index import предшественники  # noqa: E402
+from build_rules_index import действующие_в_выгрузке, предшественники  # noqa: E402
 
 #: Заголовок навыка разбирается СТАНДАРТНОЙ БИБЛИОТЕКОЙ, и это не упрощение.
 #: PyYAML лежит только в requirements-test.txt: шаг гейта идёт без него, и
@@ -889,8 +889,11 @@ def print_tier_zero(answer: dict, export: dict) -> None:
     Третий исход исключён намеренно: там не разобран сам ответ, и печатать
     было бы нечего — счёт по неразобранному был бы выдумкой, а не нулём.
     """
+    # Замещённое в долг не идёт: правилом оно больше не является (17.10).
+    в_силе = действующие_в_выгрузке(export)
     строки, долг = tier_zero(
-        answer.get("rules", {}), {r["id"] for r in export.get("rules", [])},
+        {rid: rec for rid, rec in answer.get("rules", {}).items() if rid in в_силе},
+        в_силе,
         answer.get("schema"), (export.get("contracts") or {}).get("bindings"))
     print()
     for line in строки:
@@ -929,7 +932,10 @@ def main() -> int:
     #: утверждение обязано быть названо числом, иначе оно неотличимо от
     #: проверенного (правила 075, 165).
     unproved: list[str] = []
-    for rid in sorted(set(known) - set(rules)):
+    в_силе = действующие_в_выгрузке(export)
+    # ОТВЕТ ОБЯЗАТЕЛЕН ПО ДЕЙСТВУЮЩИМ. Ответ о замещённом законен — он держит
+    # цепочку механизмов, — но долгом его отсутствие не считается.
+    for rid in sorted(в_силе - set(rules)):
         problems.append(f"{rid}: ответа нет. «Не дошли руки» — это статус "
                         "unreviewed, а не отсутствующая запись")
     for rid in sorted(set(rules) - set(known)):
@@ -1275,11 +1281,16 @@ def main() -> int:
         return 1
 
     # ── исход 0 плюс метрика ───────────────────────────────────────────────
-    by_status = Counter(r["status"] for r in rules.values())
-    by_mech = Counter(r.get("mechanism") for r in rules.values()
+    # СЧЁТ — ПО ДЕЙСТВУЮЩИМ. Ответ о замещённом в дереве остаётся, но в число
+    # правил и механизмов не входит: иначе шесть слияний #645 «добавили» бы
+    # двенадцать механизмов, ничего не построив.
+    счёт = {rid: r for rid, r in rules.items() if rid in в_силе}
+    выбыли = len(rules) - len(счёт)
+    by_status = Counter(r["status"] for r in счёт.values())
+    by_mech = Counter(r.get("mechanism") for r in счёт.values()
                       if r["status"] == "active")
 
-    unreviewed = [rid for rid, r in rules.items() if r["status"] == "unreviewed"]
+    unreviewed = [rid for rid, r in счёт.items() if r["status"] == "unreviewed"]
     oldest = ""
     if unreviewed:
         dates = [known[rid]["added"] for rid in unreviewed if known[rid].get("added")]
@@ -1296,21 +1307,22 @@ def main() -> int:
               f"{len(unproved) + sum(1 for r in REFUTED_BY if r in rules)} — "
               "утверждение о проекте, которое ничем не перечитывается (175)")
 
-    print(f"ответ каталога о себе полон: {len(rules)} правил")
+    заменены = f" (ещё {выбыли} заменены — в счёт не входят)" if выбыли else ""
+    print(f"ответ каталога о себе полон: {len(счёт)} правил{заменены}")
     legacy = by_mech["process-step"]
     tail = f", шагом процесса {legacy} (слово устарело)" if legacy else ""
     print(f"  действует {by_status['active']}: "
           f"гейтом {by_mech['gate']}, конвейером {by_mech['pipeline']}, "
           f"навыком {by_mech['skill']}, документом {by_mech['document']}, "
           f"НИЧЕМ {by_mech['none']}{tail}")
-    by_why, other = why_split(rules)
+    by_why, other = why_split(счёт)
     if by_why or other:
         parts = [f"{label} {n}" for label, n in
                  sorted(by_why.items(), key=lambda kv: -kv[1])]
         if other:
             parts.append(f"прочее {other}")
         print("    из них: " + " · ".join(parts))
-    for line in next_door(rules):
+    for line in next_door(счёт):
         print(f"    {line}")
     print(f"  отклонено {by_status['rejected']}, "
           f"нет предмета {by_status['not-applicable']}")

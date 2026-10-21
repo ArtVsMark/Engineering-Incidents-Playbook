@@ -12,6 +12,7 @@
 """
 
 
+import json
 import subprocess
 from pathlib import Path
 
@@ -337,3 +338,19 @@ def test_дата_раздела_в_utc_а_не_в_поясе_коммита(rep
     дата, ошибка = hm.tag_date(repo, "v9.9.9")
 
     assert not ошибка and дата == "7 октября 2026"
+
+
+def test_замещённое_в_метрики_выпуска_не_входит():
+    """Строка эволюции считает правила и «ничем» по действующим: слияние каталог не растит (17.10)."""
+    files = {
+        "rules/ru/001-old.md": "# a\n\n**Область.** код\n\n**Заменено.** 003\n",
+        "rules/ru/002-b.md": "# b\n\n**Область.** код\n",
+        "rules/ru/003-c.md": "# c\n\n**Область.** код\n",
+        ".rules/bindings.json": json.dumps({"rules": {
+            "001": {"status": "active", "mechanism": "none"},
+            "002": {"status": "active", "mechanism": "gate"},
+            "003": {"status": "active", "mechanism": "none"}}}),
+    }
+    снимок = hm.snapshot(files)
+    assert снимок["правил"] == "2"
+    assert снимок["ничем"] == "1 из 2"

@@ -168,6 +168,18 @@ def neighbours(num: str, rules: dict[str, dict], limit: int) -> list[tuple[float
     return scored[:limit]
 
 
+def корпус(root: Path, rules: dict[str, dict]) -> dict[str, dict]:
+    """Действующие записи: замещённая в соседи и в счёт не идёт.
+
+    Её текст живёт в сводной записи, и в верхушке она стояла бы рядом с
+    собственным преемником — «самой близкой парой корпуса» становилась пара
+    «запись ↔ её же сводная» (197 ↔ 223, 0,638), а число правил росло со
+    слиянием (17.10). Цепочку читает сборка — разбор один (214).
+    """
+    выбыли = set().union(*предшественники(root).values())
+    return {n: r for n, r in rules.items() if n not in выбыли}
+
+
 def read_answers(root: Path) -> tuple[int, dict]:
     path = root / ANSWERS
     if not path.is_file():
@@ -226,15 +238,17 @@ def mode_near(root: Path, target: str) -> int:
         print(f"проверка не отработала: {text}", file=sys.stderr)
         return 2
 
+    в_счёте = корпус(root, rules)
     if num is not None:
-        scored = neighbours(num, rules, NEAR)
+        # Спросить можно и о замещённой — себя она в верхушке не встретит.
+        scored = neighbours(num, в_счёте | {num: rules[num]}, NEAR)
     else:
         # Черновика в корпусе нет, значит и исключать нечего: сравниваем со
         # всеми. Тот же порядок сортировки, что и у соседей записи, — иначе
         # верхушка «до» и «после» коммита разъехалась бы (правило 049).
         target_sh = shingles(text)
         scored = sorted(
-            ((jaccard(target_sh, r["shingles"]), n) for n, r in rules.items()),
+            ((jaccard(target_sh, r["shingles"]), n) for n, r in в_счёте.items()),
             key=lambda p: (-p[0], p[1]))[:NEAR]
 
     print(label)
@@ -264,6 +278,7 @@ def mode_check(root: Path) -> int:
         for старое in старые:
             преемники.setdefault(старое, set()).add(новое)
     выбыли = set(преемники)
+    в_счёте = {n: r for n, r in rules.items() if n not in выбыли}
     owed = sorted(n for n in rules if int(n) > baseline and n not in выбыли)
 
     # Ответ по правилу, которого нет: номер опечатан либо запись удалена, а
@@ -276,7 +291,7 @@ def mode_check(root: Path) -> int:
 
     for num in owed:
         answer = answers.get(num)
-        top = neighbours(num, rules, NEAR)
+        top = neighbours(num, в_счёте, NEAR)
         must = {n for _, n in top[:REQUIRED_TOP]}
 
         if answer is None:
@@ -325,10 +340,10 @@ def mode_check(root: Path) -> int:
     # это измерено (см. заголовок файла).
     hottest = 0.0
     hot_pair = ("", "")
-    nums = sorted(rules)
+    nums = sorted(в_счёте)
     for i, a in enumerate(nums):
         for b in nums[i + 1:]:
-            s = jaccard(rules[a]["shingles"], rules[b]["shingles"])
+            s = jaccard(в_счёте[a]["shingles"], в_счёте[b]["shingles"])
             if s > hottest:
                 hottest, hot_pair = s, (a, b)
 
@@ -347,7 +362,7 @@ def mode_check(root: Path) -> int:
             print(f"  ~ {n}")
 
     print(f"вопрос о соседях задан по каждому новому правилу: "
-          f"правил {len(rules)}, с ответом {len(owed)}, "
+          f"правил {len(в_счёте)} (ещё {len(выбыли)} заменены), с ответом {len(owed)}, "
           f"объявлено долгом {baseline}")
     print(f"  самая близкая пара корпуса: {hot_pair[0]} ↔ {hot_pair[1]} "
           f"({hottest:.3f}) — законная, порогом не отсекается")

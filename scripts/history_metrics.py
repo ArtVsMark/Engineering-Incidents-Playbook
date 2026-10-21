@@ -109,7 +109,7 @@ HEADER_RE = re.compile(r"^\|\s*-{3,}")
 RULE_PATH_RE = re.compile(r"^rules/ru/\d{3}-[a-z0-9-]+\.md$")
 #: Строка «Область» разбирается там, где её разбирает указатель каталога (214).
 from build_rules_index import AREA_RE as _AREA_RE  # noqa: E402
-from build_rules_index import день_utc  # noqa: E402
+from build_rules_index import день_utc, заменено_в_тексте  # noqa: E402
 AREA_RE = _AREA_RE["ru"]
 #: Ячейка «Ключевое» со ссылкой — см. заголовок: строка сверяется по дереву,
 #: в котором сама и лежит.
@@ -201,7 +201,12 @@ def snapshot(files: dict[str, str]) -> dict[str, str]:
     полем `where` — витрина отвечает на вопрос сопровождающего источником, а не
     «значка нет» (правило 049).
     """
-    rules = [n for n in files if RULE_PATH_RE.match(n)]
+    # ЗАМЕЩЁННОЕ В СЧЁТ НЕ ВХОДИТ (17.10): файл остаётся ради ссылок, но
+    # правилом больше не является — иначе слияние «растило» бы каталог.
+    rules = [n for n in files if RULE_PATH_RE.match(n)
+             and not заменено_в_тексте(files[n], "ru")]
+    выбыли = {n.split("/")[-1][:3] for n in files if RULE_PATH_RE.match(n)
+              and заменено_в_тексте(files[n], "ru")}
 
     areas: set[str] = set()
     for name in rules:
@@ -224,7 +229,8 @@ def snapshot(files: dict[str, str]) -> dict[str, str]:
     raw = files.get(".rules/bindings.json")
     if raw:
         try:
-            answers = json.loads(raw)["rules"].values()
+            answers = [a for rid, a in json.loads(raw)["rules"].items()
+                       if rid not in выбыли]
         except ValueError, KeyError, TypeError, AttributeError:
             answers = []
         active = [a for a in answers if isinstance(a, dict)
