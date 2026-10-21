@@ -513,3 +513,19 @@ def test_нечитаемый_номер_договора_не_той_формы
         b.contracts_now(tmp_path)
     assert выход.value.code == 2
     assert "не прочитан как UTF-8" in capsys.readouterr().err
+
+
+def test_deystvuyushchie_v_vygruzke_ne_berut_zameshchyonnye():
+    """Кто читает экспорт, а не дерево, считает тем же правилом: без `superseded_by` (17.10)."""
+    export = {"count": 3, "rules": [{"id": "001", "superseded_by": "003"},
+                                    {"id": "002"}, {"id": "003"}]}
+    assert b.действующие_в_выгрузке(export) == {"002", "003"}
+
+
+def test_zameneno_v_tekste_tot_zhe_razbor_chto_po_puti(tmp_path):
+    """Текстовый вариант пометки — для архива тега; путь и текст дают один ответ (214)."""
+    текст = "# Старое\n\n**Правило.** x\n\n**Заменено.** 221\n"
+    файл = tmp_path / "131-old.md"
+    файл.write_text(текст, encoding="utf-8")
+    assert b.заменено_в_тексте(текст, "ru") == b.superseded_of(файл, "ru") == "221"
+    assert b.заменено_в_тексте("# Живое\n\n**Правило.** y\n", "ru") is None

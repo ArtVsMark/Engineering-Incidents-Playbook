@@ -1584,3 +1584,29 @@ def test_вердикт_с_перебором_проходит(monkeypatch, repo
             export_of("001"))
     cb.main()
     assert "без перебора" not in capsys.readouterr().err
+
+
+def test_замещённое_в_счёт_механизмов_не_входит(monkeypatch, repo, capsys):
+    """Слияние не «строит» механизмов: ответ о замещённом в метрику не идёт (17.10)."""
+    write(repo / "scripts/check_probe.py",
+          '"""Проба.\n\nРеализует правила каталога:\n  001 — держит его целиком.\n'
+          '  002 — держит его целиком.\n"""\n')
+    гейт = {"status": "active", "mechanism": "gate",
+            "where": "scripts/check_probe.py — держит правило"}
+    prepare(monkeypatch, repo, {"rules": {"001": гейт, "002": гейт}},
+            {"rules": [{"id": "001", "superseded_by": "002"}, {"id": "002"}]})
+    assert cb.main() == 0
+    out = capsys.readouterr().out
+    assert "полон: 1 правил (ещё 1 заменены" in out
+    assert "действует 1: гейтом 1," in out
+
+
+def test_ответа_о_замещённом_не_требуют(monkeypatch, repo):
+    """Ответ обязателен по действующим; без ответа о замещённом ответ полон."""
+    write(repo / "scripts/check_probe.py",
+          '"""Проба.\n\nРеализует правила каталога:\n  002 — держит его целиком.\n"""\n')
+    prepare(monkeypatch, repo,
+            {"rules": {"002": {"status": "active", "mechanism": "gate",
+                               "where": "scripts/check_probe.py — держит правило"}}},
+            {"rules": [{"id": "001", "superseded_by": "002"}, {"id": "002"}]})
+    assert cb.main() == 0

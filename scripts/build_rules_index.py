@@ -629,6 +629,16 @@ def действующие(found: dict[str, dict[str, Path]]) -> list[str]:
             if not (found[n].get("ru") and superseded_of(found[n]["ru"], "ru"))]
 
 
+def действующие_в_выгрузке(export: dict) -> set[str]:
+    """Номера без `superseded_by` в выгрузке — то же, что `действующие`, по экспорту.
+
+    Для тех, кто читает не дерево, а `export/rules.json`: гейт ответа, сводка
+    «где действует», входящие потребителя, значок. Счёт по `count` или по всем
+    записям включал бы замещённые, и слияние «растило» бы каталог (17.10).
+    """
+    return {r["id"] for r in export.get("rules", []) if not r.get("superseded_by")}
+
+
 def superseded_of(path: Path, lang: str) -> str | None:
     """Номер записи, заменившей эту, или None. Форма узкая и проверяется.
 
@@ -636,7 +646,16 @@ def superseded_of(path: Path, lang: str) -> str | None:
     причина перехода живёт в ней, и это её главная работа. Тот, кто пришёл по
     старой ссылке, должен увидеть, куда идти дальше, а не пустоту.
     """
-    m = SUPERSEDED_RE[lang].search(path.read_text(encoding="utf-8"))
+    return заменено_в_тексте(path.read_text(encoding="utf-8"), lang)
+
+
+def заменено_в_тексте(text: str, lang: str) -> str | None:
+    """То же, что `superseded_of`, по тексту, а не по пути.
+
+    Для тех, кто читает дерево не с диска: метрики выпуска берут файлы из
+    архива тега. Разбор пометки один на каталог (214).
+    """
+    m = SUPERSEDED_RE[lang].search(text)
     return m.group(1) if m else None
 
 
@@ -1825,7 +1844,12 @@ def main() -> int:
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
         return 1
-    total_areas, singles = area_stats(areas)
+    # ОБЩИЙ СЧЁТ — ПО ДЕЙСТВУЮЩИМ, как у витрины и указателя: замещённое
+    # остаётся файлом ради ссылок, но правилом больше не числится (17.10).
+    в_силе = действующие(found)
+    выбыли = len(found) - len(в_силе)
+    total_areas, singles = area_stats({n: areas[n] for n in в_силе if n in areas})
+    заменены = f" (ещё {выбыли} заменены)" if выбыли else ""
 
     if args.check:
         stale = [OUT] if (OUT.read_text(encoding="utf-8") if OUT.exists() else "") != text else []
@@ -1842,7 +1866,7 @@ def main() -> int:
             print("устарело — пересоберите (python scripts/build_rules_index.py): "
                   + ", ".join(str(p.relative_to(ROOT)) for p in stale), file=sys.stderr)
             return 1
-        print(f"указатель актуален: {len(found)} правил на {len(LANGS)} языках,"
+        print(f"указатель актуален: {len(в_силе)} правил{заменены} на {len(LANGS)} языках,"
               f" областей {total_areas} (с одним правилом {singles})")
         return 0
 
@@ -1851,7 +1875,7 @@ def main() -> int:
     EXPORT.write_text(export, encoding="utf-8")
     for path, body in marks.items():
         path.write_text(body, encoding="utf-8")
-    print(f"собрано: {len(found)} правил, языков {len(LANGS)},"
+    print(f"собрано: {len(в_силе)} правил{заменены}, языков {len(LANGS)},"
           f" областей {total_areas} (с одним правилом {singles}),"
           f" пропуски в нумерации: {gaps or 'нет'}")
     return 0
