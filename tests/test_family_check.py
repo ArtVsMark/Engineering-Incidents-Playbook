@@ -393,3 +393,16 @@ def test_uptake_все_не_прочитаны_серый():
     с = сводка(издатель(КАТАЛОГ), издатель("o/a"))
     п = fc.uptake(с, КАТАЛОГ, fc.издатели_семьи(с))
     assert fc.зона_uptake(п)[1][1] == fc.ЦВЕТ["unknown"]
+
+
+def test_одно_отставание_названо_один_раз_с_числом_и_файлом():
+    """Два uses: на одном старом выпуске — одна строка подсказки, а не повтор (21.10)."""
+    связь = {"what": "release", "mine": "v1.5.0", "latest": "v1.8.0",
+             "where": ".github/workflows/mechanisms.yml", "state": "behind"}
+    свежая = {**связь, "mine": "v1.8.0", "where": "a.yml", "state": "ok"}
+    другая = {**связь, "where": "b.yml", "mine": "v1.4.0"}
+    assert fc.отставание([связь, dict(связь), свежая]) == (
+        "release: v1.5.0 → v1.8.0 (связей 2, .github/workflows/mechanisms.yml)")
+    assert fc.отставание([связь, другая]) == (
+        "release: v1.5.0 → v1.8.0 (.github/workflows/mechanisms.yml); "
+        "release: v1.4.0 → v1.8.0 (b.yml)")
