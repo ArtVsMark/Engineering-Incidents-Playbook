@@ -53,17 +53,25 @@ bytecode cache validates a `.pyc` against its source by the pair "modification
 time in whole seconds, size" (`importlib` documentation, "Cached bytecode
 invalidation"). An edit of the same length — `<` to `>`, two lines swapped, one
 name for another — made within the same second as the previous one leaves the
-pair unchanged, and the interpreter runs the old code. So both runs, the
-rollback and the restore, go without the cache: `__pycache__` is cleared before
-them, and `PYTHONDONTWRITEBYTECODE=1` keeps them from writing a new one. An
-outcome that disagrees with the file's text is first checked for a stale cache,
-and only then taken as evidence about the check. The green side is the more
-dangerous one: stale bytecode during the rollback itself gives a green run on
-rolled-back code — and people start repairing a sound check. This arrived as a
-second proposal from the mechanisms project
-(ArtVsMark/Engineering-Pipeline-Mechanisms#846,
-ArtVsMark/Engineering-Pipeline-Mechanisms#1499) and was merged in here too: it
-is the same branch, "the rollback did not happen", only in execution rather than
+pair unchanged, and the interpreter runs the old code. The mechanisms project
+has two cases: ArtVsMark/Engineering-Pipeline-Mechanisms#846 (25 September) —
+the copy was restored within the same second and the run kept the old line
+order; ArtVsMark/Engineering-Pipeline-Mechanisms#1499 (18 October) — rollback
+by `sed` and restore by `cp` within one second, the full suite gave 1 failed
+against 14,063 passed in 7 min 31 s, and the traceback showed a call that was
+no longer in the file. So both runs, the rollback and the restore, go without
+the cache, and that takes two measures: `__pycache__` is cleared before them —
+`PYTHONDONTWRITEBYTECODE=1` forbids writing a new `.pyc` but not reading one
+already there; and the variable itself, so the rollback run leaves no cache for
+the restore run. An outcome that disagrees with the file's text is first
+checked for a stale cache, and only then taken as evidence about the check. The
+green side works the same way but has never been caught — this is an inference,
+not a measurement: stale bytecode during the rollback itself would give a green
+run on rolled-back code, and people would start repairing a sound check. This
+paragraph is about Python; another runtime has its own cache and its own
+freshness test, and those have to be looked up separately. This arrived as a
+second proposal from the mechanisms project and was merged in here too: it is
+the same branch, "the rollback did not happen", only in execution rather than
 in the text.
 
 **SECOND: THE CHECK IS WEAKER THAN YOU THOUGHT.** It holds something other than
