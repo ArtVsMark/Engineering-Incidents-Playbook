@@ -54,6 +54,8 @@ edited by hand.
       "trails": [                          // структурно, а не строкой · structured
         { "repo": "ArtVsMark/Engineering-Incidents-Playbook", "issue": "15" }
       ],
+      "status": "superseded",              // с 1.9, есть ВСЕГДА: active · superseded
+                                           // since 1.9, ALWAYS present
       "portable": "partly",                // ключа может НЕ БЫТЬ · key may be ABSENT
                                            // да · нет · частично → yes · no · partly
       "superseded_by": "154",              // ключа может НЕ БЫТЬ · key may be ABSENT
@@ -94,8 +96,17 @@ edited by hand.
 отвечали вовсе. Ответ потребителя о заменённом правиле — **состояние, а не
 находка**: он отвечает о том, что было, и упрекать его не в чем.
 
+**Статус — словом (с 1.9).** У каждой записи поле `status`: `active` —
+действует, `superseded` — заменена, номер преемника в `superseded_by`. До 1.9
+статус выводился из отсутствия ключа, и читатель, не знавший договора, считал
+правилами все записи. Считайте правила по `status`, а не по длине списка.
+
+**Status in words (since 1.9).** Every record carries `status`: `active` or
+`superseded`, with the successor in `superseded_by`. Count rules by `status`,
+not by the length of the list.
+
 **В общий счёт заменённое не входит.** Число правил в витринах и поле
-`active` (с 1.8) считают только записи без `superseded_by`: после слияния
+`active` (с 1.8) считают только записи со `status: active`: после слияния
 старые номера перестают быть правилами, хотя файлы остаются. `count` — длина
 списка и смысла не меняет: смена смысла поля была бы MAJOR (#645).
 
@@ -1020,9 +1031,9 @@ repository settings.
 
 ```jsonc
 {
-  <!--m:contracts-->"schema": "1.8",
+  <!--m:contracts-->"schema": "1.9",
   "contracts": {
-    "export": "1.8", "bindings": "1.9", "consumers": "1.1", "proposals": "1.4",
+    "export": "1.9", "bindings": "1.9", "consumers": "1.1", "proposals": "1.4",
     "showcase": "1.1", "where": "1.7", "family": "1.2", "facts": "2.0"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример

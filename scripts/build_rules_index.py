@@ -75,8 +75,13 @@ OUT = RULES / "README.md"
 EXPORT = ROOT / "export" / "rules.json"
 #: Версия контракта выгрузки. Поле `candidates` добавлено — по правилам
 #: эволюции (export/README.md) добавление поля это MINOR. 1.8 — поле `active`:
-#: число действующих правил рядом с `count`, длиной списка (#645).
-EXPORT_SCHEMA = "1.8"
+#: число действующих правил рядом с `count`, длиной списка (#645). 1.9 — поле
+#: `status` у каждой записи: действует она или заменена, словом, а не
+#: отсутствием ключа — читатель, не знавший про `superseded_by`, считал все
+#: записи правилами (владелец 21.10).
+EXPORT_SCHEMA = "1.9"
+#: Значения `status` записи выгрузки.
+СТАТУС_ДЕЙСТВУЕТ, СТАТУС_ЗАМЕНЕНО = "active", "superseded"
 CATALOGUE_URL = "https://github.com/ArtVsMark/Engineering-Incidents-Playbook"
 
 #: Значки берут число из этой же сборки: раздельно на язык, потому что подпись
@@ -644,7 +649,10 @@ def действующие_в_выгрузке(export: dict) -> set[str]:
     """
     if not isinstance(export, dict) or not isinstance(export.get("rules"), list):
         raise KeyError("в выгрузке нет списка «rules»")
-    return {r["id"] for r in export["rules"] if not r.get("superseded_by")}
+    # Выгрузка 1.9 называет статус словом; до 1.9 — отсутствием `superseded_by`.
+    return {r["id"] for r in export["rules"]
+            if r.get("status", СТАТУС_ЗАМЕНЕНО if r.get("superseded_by")
+                     else СТАТУС_ДЕЙСТВУЕТ) == СТАТУС_ДЕЙСТВУЕТ}
 
 
 def superseded_of(path: Path, lang: str) -> str | None:
@@ -1154,6 +1162,10 @@ def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]]
         # Тот же принцип: ключа нет — запись действует. `null` означал бы
         # «отвечали и не знаем», а мы не отвечали вовсе (128).
         sup = superseded_of(ru, "ru")
+        # СТАТУС — СЛОВОМ У КАЖДОЙ ЗАПИСИ (1.9). Отсутствие ключа как «действует»
+        # понимает только тот, кто прочёл договор; счёт по длине списка без
+        # него включал замещённые (владелец 21.10, #916).
+        rules[-1]["status"] = СТАТУС_ЗАМЕНЕНО if sup else СТАТУС_ДЕЙСТВУЕТ
         if sup:
             rules[-1]["superseded_by"] = sup
         # Своя пометка — от автора записи; обратная сторона ниже — от сборки.
@@ -1675,15 +1687,15 @@ def render(found: dict[str, dict[str, Path]], gaps: list[int],
         en = slot.get("en")
         t_ru = title_of(ru) if ru else "—"
         t_en = title_of(en) if en else "—"
+        статус = "действует · active"
         if num not in в_силе and ru:
             куда = superseded_of(ru, "ru")
-            t_ru += f" · *заменено → {куда}*"
-            t_en += f" · *superseded → {куда}*"
+            статус = f"заменено → {куда} · superseded → {куда}"
         l_ru = f"[ru](ru/{ru.name})" if ru else "—"
         l_en = f"[en](en/{en.name})" if en else "—"
         names = areas.get(num, [])
         both = f"{', '.join(names)} · {', '.join(AREAS[a]['en'] for a in names)}" if names else ""
-        rows.append(f"| {num} | {t_ru} | {t_en} | {l_ru} {l_en} | {both} |")
+        rows.append(f"| {num} | {статус} | {t_ru} | {t_en} | {l_ru} {l_en} | {both} |")
 
     выбыли = len(found) - len(в_силе)
     замещено = (f" (ещё {выбыли} заменены и остаются ради старых ссылок ·"
@@ -1717,8 +1729,8 @@ Shape: rule → incident → why → where it applies → trace.
 {gap_note}
 Действующих правил · rules in force: **{len(в_силе)}**{замещено}
 
-| № | Правило | Rule | Файлы · Files | Область · Area |
-|---|---|---|---|---|
+| № | Статус · Status | Правило | Rule | Файлы · Files | Область · Area |
+|---|---|---|---|---|---|
 {chr(10).join(rows)}
 
 ---
