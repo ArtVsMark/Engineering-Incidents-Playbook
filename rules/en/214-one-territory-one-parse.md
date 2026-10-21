@@ -52,7 +52,7 @@ six sat right under a comment saying that a second parse would drift from the
 first silently. The other two are generic markdown grammar: a section heading
 and a table separator.
 
-**17–21 OCTOBER, THE RULE COUNT: ONE QUESTION, NINE ANSWERS.** The merges of
+**17–21 OCTOBER, THE RULE COUNT: ONE QUESTION, TEN STRAY ANSWERS.** The merges of
 #645 (#897) superseded twelve records with six combined ones, and the question
 "what counts as a rule" got an answer — `действующие()` in
 `scripts/build_rules_index.py`. The showcase and the index counted by it. Ten
