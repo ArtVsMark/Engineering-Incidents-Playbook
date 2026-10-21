@@ -349,3 +349,74 @@ def test_одинарные_кавычки_видит_и_сверка_прого
         "jobs:\n  t:\n    steps:\n      - uses: actions/setup-python@v6\n"
         "        with:\n          python-version: '3.13'\n", encoding="utf-8")
     assert cv.in_workflows(tmp_path) == [("a.yml", (3, 13))]
+
+
+# ── версия из матрицы работы (#926) ─────────────────────────────────────────
+# Формы — из справки площадки «Using a matrix for your jobs» (210): список в
+# строку с любыми кавычками, список столбцом, одно значение, ячейки include;
+# отказ — выражение вместо списка, ячейка не формы X.Y, оси нет, матрицы нет.
+
+def _матрица(tmp_path, матрица: str, установка: str = "") -> object:
+    (tmp_path / ".github" / "workflows").mkdir(parents=True, exist_ok=True)
+    (tmp_path / ".github" / "workflows" / "ci.yml").write_text(
+        "on: push\njobs:\n  test-matrix:\n    runs-on: ubuntu-latest\n"
+        "    strategy:\n      fail-fast: false\n" + матрица +
+        "    steps:\n      - uses: actions/setup-python@v6\n        with:\n"
+        "          python-version: ${{ matrix.python }}\n" + установка,
+        encoding="utf-8")
+    return tmp_path
+
+
+@pytest.mark.parametrize("матрица, версии", [
+    ('      matrix:\n        python: ["3.14", "3.15"]\n', [(3, 14), (3, 15)]),
+    ("      matrix:\n        python: ['3.14', '3.15']\n", [(3, 14), (3, 15)]),
+    ("      matrix:\n        python: [3.14, 3.15]\n", [(3, 14), (3, 15)]),
+    ('      matrix:\n        python:\n          - "3.14"\n          - "3.15"\n', [(3, 14), (3, 15)]),
+    ('      matrix:\n        python: [\n          "3.14",\n          "3.15"]\n', [(3, 14), (3, 15)]),
+    ('      matrix:\n        python: "3.14"\n', [(3, 14)]),
+    ('      matrix:\n        os: [ubuntu-latest]\n        python: ["3.14"]\n'
+     '        include:\n          - python: "3.15"\n            os: ubuntu-latest\n',
+     [(3, 14), (3, 15)]),
+    ('      matrix:\n        include:\n          - os: ubuntu-latest\n            python: "3.14"\n',
+     [(3, 14)]),
+])
+def test_ось_матрицы_разбирается_во_всех_формах(tmp_path, матрица, версии):
+    корень = _матрица(tmp_path, матрица)
+    assert sorted(в for _, в in cv.in_workflows(корень)) == версии
+    assert cv.отказы_матриц(корень) == []
+    assert not cv.мимо_планки(корень)   # шаг с разобранной осью — с числом
+
+
+@pytest.mark.parametrize("матрица, причина", [
+    ("      matrix:\n        python: ${{ fromJSON(needs.a.outputs.v) }}\n", "выражение"),
+    ('      matrix:\n        python: ["3.14", "3.x"]\n', "не формы X.Y"),
+    ('      matrix:\n        py: ["3.14"]\n', "оси python в матрице нет"),
+    ("      runs-on2: x\n", "матрицы у работы нет"),
+])
+def test_ось_матрицы_не_разобралась_отказ_с_адресом(tmp_path, матрица, причина):
+    """Ячейка иной формы — отказ с адресом, а не молчаливый пропуск (#926)."""
+    корень = _матрица(tmp_path, матрица)
+    отказы = cv.отказы_матриц(корень)
+    assert len(отказы) == 1 and причина in отказы[0]
+    assert отказы[0].startswith(".github/workflows/ci.yml: работа test-matrix:")
+    assert cv.in_workflows(корень) == []
+    assert any("без числа" in н for н in cv.мимо_планки(корень))
+
+
+def test_предрелизная_матрица_читается_предварительной(tmp_path):
+    """allow-prereleases в том же with: — предварительная, число буквой не нужно (#926)."""
+    корень = _матрица(tmp_path, '      matrix:\n        python: ["3.16"]\n',
+                      "          allow-prereleases: true\n")
+    assert cv.in_workflows(корень) == []
+    assert cv.in_workflows(корень, preview=True) == [("ci.yml", (3, 16))]
+
+
+def test_гейт_называет_отказ_матрицы(tmp_path, capsys):
+    корень = _матрица(tmp_path, '      matrix:\n        python: ["3.14", "3.x"]\n'
+                      )
+    (корень / "pyproject.toml").write_text('requires-python = ">=3.14"\n', encoding="utf-8")
+    with open(корень / ".github" / "workflows" / "ci.yml", "a", encoding="utf-8") as f:
+        f.write('  lint:\n    runs-on: ubuntu-latest\n    steps:\n'
+                '      - uses: actions/setup-python@v6\n        with:\n          python-version: "3.14"\n')
+    assert cv.main(["--root", str(корень)]) == 1
+    assert "не формы X.Y" in capsys.readouterr().err

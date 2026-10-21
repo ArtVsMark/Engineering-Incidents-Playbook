@@ -610,3 +610,22 @@ def test_четыре_состояния_различимы_цветом():
     цвета = [pb.СОСТОЯНИЯ[с][0] for с in ("none", "absent", "unreleased", "pass", "fail")]
     assert len(set(цвета)) == len(цвета)
     assert pb.СОСТОЯНИЯ["unreleased"][0] != pb.ПОДПИСЬ
+
+
+def test_буквальная_планка_и_матрица_обе_на_значке_своими_работами(tmp_path):
+    """Приёмка #926: планка буквой рядом с матрицей ["3.14", "3.15"] — обе
+    версии видны значку и окрашены каждая своей работой."""
+    (tmp_path / ".github" / "workflows").mkdir(parents=True)
+    (tmp_path / ".github" / "workflows" / "ci.yml").write_text(
+        "on: push\njobs:\n  lint:\n    runs-on: ubuntu-latest\n    steps:\n"
+        "      - uses: actions/setup-python@v6\n        with:\n          python-version: \"3.14\"\n"
+        "  test-matrix:\n    runs-on: ubuntu-latest\n    strategy:\n      matrix:\n"
+        "        python: [\"3.14\", \"3.15\"]\n    steps:\n"
+        "      - uses: actions/setup-python@v6\n        with:\n"
+        "          python-version: ${{ matrix.python }}\n", encoding="utf-8")
+    подписи = [п for п, _ in pb.версии(tmp_path)]
+    assert подписи == ["3.14", "3.15"]
+    jobs = [{"name": "lint", "conclusion": "success"},
+            {"name": "test-matrix (3.14)", "conclusion": "success"},
+            {"name": "test-matrix (3.15)", "conclusion": "failure"}]
+    assert pb.по_версиям(подписи, jobs) == {"3.14": "pass", "3.15": "fail"}

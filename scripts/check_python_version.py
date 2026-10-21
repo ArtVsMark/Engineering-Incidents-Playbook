@@ -72,6 +72,15 @@ CI_RE = re.compile(r"""^\s*python-version:\s*["']?(\d+)\.(\d+)["']?""", re.M)
 #: условие работы: снять её значит сломать прогон, а не обойти гейт.
 PREVIEW_RE = re.compile(r'^\s*allow-prereleases:\s*"?true"?\s*$')
 
+#: `python-version: ${{ matrix.<ось> }}` — версия из матрицы работы (#926).
+#: Буквальным образцом `CI_RE` она не видна, и значок рисовал гоняемую ячейку
+#: «проектом не проверяется», а гейт считал шаг «без числа».
+MATRIX_RE = re.compile(
+    r"""^\s*python-version:\s*["']?\$\{\{\s*matrix\.([\w-]+)\s*\}\}["']?\s*(?:#.*)?$""",
+    re.M)
+#: Ячейка матрицы: «3.14», '3.14', 3.14 — тот же номер, что у `CI_RE`.
+ЯЧЕЙКА_RE = re.compile(r"""^["']?(\d+)\.(\d+)["']?$""")
+
 
 def floor(pyproject: str) -> tuple[int, int] | None:
     """Объявленная нижняя планка; None — не объявлена."""
@@ -102,12 +111,101 @@ def _в_том_же_with(text: str, конец: int) -> list[str]:
     return строки[верх:низ]
 
 
+def _отступ(строка: str) -> int:
+    return len(строка) - len(строка.lstrip())
+
+
+def _блок(строки: list[str], i: int) -> list[str]:
+    """Строки под ключом `строки[i]` — с отступом больше, до первой меньше или равной."""
+    out = []
+    for строка in строки[i + 1:]:
+        if строка.strip() and _отступ(строка) <= _отступ(строки[i]):
+            break
+        out.append(строка)
+    return out
+
+
+def _значения(строки: list[str], i: int) -> list[str] | None:
+    """Значение ключа `строки[i]`: список в строку, столбцом или одно; None — выражение."""
+    после = строки[i].split(":", 1)[1].split(" #")[0].strip()
+    if после.startswith("${{"):
+        return None
+    if после.startswith("["):
+        текст, j = после, i
+        while "]" not in текст and j + 1 < len(строки):   # список в скобках на нескольких строках
+            j += 1
+            текст += " " + строки[j].strip()
+        return [х.strip() for х in текст.strip("[]").split(",") if х.strip()]
+    if после:
+        return [после]
+    return [с.strip()[1:].strip() for с in _блок(строки, i) if с.strip().startswith("- ")]
+
+
+def ось(тело: str, имя: str) -> tuple[list[tuple[int, int]], str | None]:
+    """Номера оси `strategy.matrix.<имя>` работы и её ячеек `include:`; (номера, отказ).
+
+    Формы (210, справка площадки «Using a matrix»): список в строку с любыми
+    кавычками, список столбцом, одно значение, ячейки `include:` с этой осью.
+    Отказ с адресом, а не молчание: оси нет, значение — выражение
+    (`fromJSON(…)`), ячейка не формы X.Y. `exclude:` не разбирается — это
+    граница: вычеркнуть версию целиком им можно, но так не пишут.
+    """
+    строки = тело.splitlines()
+    матрица = next((i for i, с in enumerate(строки) if с.strip() == "matrix:"), None)
+    if матрица is None:
+        return [], f"python-version из matrix.{имя}, а матрицы у работы нет"
+    под = _блок(строки, матрица)
+    ключи = [с for с in под if с.strip()]
+    if not ключи:
+        return [], "матрица пуста"
+    уровень = min(_отступ(с) for с in ключи)
+    сырые: list[str] = []
+    нашлась = False
+    for j, с in enumerate(под):
+        if _отступ(с) != уровень or ":" not in с:
+            continue
+        ключ = с.strip().split(":", 1)[0].lstrip("- ").strip()
+        if ключ == имя:
+            нашлась = True
+            значения = _значения(под, j)
+            if значения is None:
+                return [], f"matrix.{имя} — выражение, а не список: версии не с чем сверить"
+            сырые += значения
+        elif ключ == "include":
+            for к, ячейка in enumerate(блок := _блок(под, j)):
+                строка = ячейка.strip().lstrip("- ").strip()
+                if строка.split(":", 1)[0].strip() == имя:
+                    нашлась = True
+                    сырые += _значения(блок, к) or []
+    if not нашлась:
+        return [], f"python-version из matrix.{имя}, а оси {имя} в матрице нет"
+    номера = []
+    for сырое in сырые:
+        if (м := ЯЧЕЙКА_RE.match(сырое)) is None:
+            return [], f"ячейка matrix.{имя} «{сырое}» не формы X.Y"
+        номера.append((int(м.group(1)), int(м.group(2))))
+    return номера, None
+
+
+def _матричные(text: str) -> list[tuple[str, int, str, list[tuple[int, int]], str | None]]:
+    """(работа, смещение в теле, тело, номера, отказ) для каждой матричной python-version."""
+    # Работы разбирает check_runtime_deps — один разбор на территорию (214).
+    from check_runtime_deps import работы
+    out = []
+    for имя, тело in работы(text).items():
+        for m in MATRIX_RE.finditer(тело):
+            номера, отказ = ось(тело, m.group(1))
+            out.append((имя, m.end(), тело, номера, отказ))
+    return out
+
+
 def in_workflows(root: Path, *, preview: bool = False
                  ) -> list[tuple[str, tuple[int, int]]]:
     """Версия, объявленная каждым прогоном: (файл, версия).
 
     preview=False — прогоны, закрывающие изменение; True — только
-    предварительные (`allow-prereleases: true` в том же `with:`)."""
+    предварительные (`allow-prereleases: true` в том же `with:`). Версия из
+    матрицы — каждой ячейкой оси (#926); неразобранная ось — в `отказы_матриц`."""
     out: list[tuple[str, tuple[int, int]]] = []
     for p in sorted((root / ".github" / "workflows").glob("*.yml")):
         text = p.read_text(encoding="utf-8")
@@ -115,7 +213,19 @@ def in_workflows(root: Path, *, preview: bool = False
             помечен = any(PREVIEW_RE.match(l) for l in _в_том_же_with(text, m.end()))
             if помечен == preview:
                 out.append((p.name, (int(m.group(1)), int(m.group(2)))))
+        for _, конец, тело, номера, _ in _матричные(text):
+            помечен = any(PREVIEW_RE.match(l) for l in _в_том_же_with(тело, конец))
+            if помечен == preview:
+                out += [(p.name, номер) for номер in номера]
     return out
+
+
+def отказы_матриц(root: Path) -> list[str]:
+    """Матричные python-version, ось которых не разобралась, — с адресом (#926)."""
+    return [f".github/workflows/{p.name}: работа {работа}: {отказ}"
+            for p in sorted((root / ".github" / "workflows").glob("*.yml"))
+            for работа, _, _, _, отказ in _матричные(p.read_text(encoding="utf-8"))
+            if отказ]
 
 
 #: Вызов интерпретатора в теле шага: `python3 scripts/x.py`, `python -m …`,
@@ -155,11 +265,16 @@ def шаги_установки(text: str) -> list[tuple[int, list[str]]]:
     return out
 
 
-def без_числа(шаги: list[tuple[int, list[str]]]) -> int:
+def без_числа(шаги: list[tuple[int, list[str]]], тело: str = "") -> int:
     """Сколько шагов установки не называют версию числом: `${{ … }}`, файл
-    `.python-version` или версия раннера — гейту не с чем сверять (#678)."""
-    return sum(1 for _, строки in шаги
-               if not any(CI_RE.match(л) for л in строки))
+    `.python-version` или версия раннера — гейту не с чем сверять (#678).
+    Ось матрицы работы, которая разобралась, — число (#926); не разобралась —
+    шаг остаётся без числа, а адрес отказа называет `отказы_матриц`."""
+    def с_числом(строки: list[str]) -> bool:
+        if any(CI_RE.match(л) for л in строки):
+            return True
+        return any((м := MATRIX_RE.match(л)) and ось(тело, м.group(1))[0] for л in строки)
+    return sum(1 for _, строки in шаги if not с_числом(строки))
 
 
 def мимо_планки(root: Path) -> list[str]:
@@ -177,7 +292,7 @@ def мимо_планки(root: Path) -> list[str]:
     for p in sorted((root / ".github" / "workflows").glob("*.yml")):
         for имя, тело in работы(p.read_text(encoding="utf-8")).items():
             шаги = шаги_установки(тело)
-            if без_числа(шаги):
+            if без_числа(шаги, тело):
                 out.append(
                     f".github/workflows/{p.name}: работа {имя} ставит python "
                     "шагом setup-python без числа в python-version — версию не с "
@@ -315,7 +430,8 @@ def main(argv: list[str] | None = None) -> int:
     окно = sys.version_info[:2]
     предварительные = in_workflows(args.root, preview=True)
     найдено = (findings(планка, прогоны, окно, предварительные)
-              + мимо_планки(args.root) + действия_мимо_планки(args.root, планка))
+              + мимо_планки(args.root) + действия_мимо_планки(args.root, планка)
+              + отказы_матриц(args.root))
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if найдено:
