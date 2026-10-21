@@ -20,7 +20,11 @@
         "where": "1.7",
         "family": "1.2"
       },
-      "takes": []
+      "takes": [],
+      "links": {
+        "EIP": "ok",
+        "EPM": "partial"
+      }
     },
     {
       "repo": "ArtVsMark/Stepik-Python-Grader",
