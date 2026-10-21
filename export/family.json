@@ -22,7 +22,7 @@
       },
       "takes": [],
       "links": {
-        "EIP": "unknown",
+        "EIP": "ok",
         "EPM": "partial"
       }
     },
