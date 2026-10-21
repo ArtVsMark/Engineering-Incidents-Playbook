@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-21T10:40:59+00:00",
+  "generated_at": "2026-10-21T10:42:45+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,16 +10,16 @@
       "answers_to": "1.8",
       "state": "подключён",
       "read_at": "2026-10-21",
-      "answered": 214,
+      "answered": 215,
       "by_status": {
-        "active": 198,
+        "active": 199,
         "not-applicable": 16
       },
       "by_mechanism": {
         "gate": 153,
         "pipeline": 12,
         "skill": 5,
-        "document": 18,
+        "document": 19,
         "none": 10
       },
       "rules": {
@@ -248,7 +248,8 @@
         "224": "active",
         "225": "active",
         "226": "active",
-        "227": "active"
+        "227": "active",
+        "228": "active"
       },
       "holds": {
         "001": {
@@ -2560,11 +2561,22 @@
           "skill": "",
           "origin": "",
           "origin_kind": ""
+        },
+        "228": {
+          "mechanism": "document",
+          "where": "AGENTS.md § Границы прохода — с третьего круга обзора по одному месту кодом чинится только находка с путём от реального входа; остальные снимает строка «Разобрано: <отпечаток> пути нет — <что проверено>». ГРАНИЦА: исполняется окном при чтении ядра; есть ли у находки путь, машина не судит",
+          "holdable": "not-yet",
+          "awaiting": "",
+          "analysed": "2026-10-21",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
         }
       },
       "notes": {},
-      "trails": 76,
-      "born": 44,
+      "trails": 77,
+      "born": 45,
       "findings": [
         "отвечает о заменённых правилах — 002 → 224, 005 → 222, 057 → 224, 119 → 225, 125 → 225, 127 → 222, 131 → 221, 135 → 221, 155 → 223, 175 → 226, 197 → 223, 205 → 226. Это состояние, а не находка: ответ верен для того, что было. Перенести его или нет, решает потребитель"
       ]
