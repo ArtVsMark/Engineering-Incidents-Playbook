@@ -936,6 +936,16 @@ def происхождение_неверно(s: dict) -> list[str]:
     return out
 
 
+def правила_выгрузки(path: Path) -> tuple[list[str], set[str]]:
+    """Все номера выгрузки и действующие из них — одним чтением.
+
+    Все нужны сверке лишних, действующие — счёту (17.10). Одна функция, а не
+    две строки в main: сквозной набор `tests/test_one_count.py` зовёт её же.
+    """
+    выгрузка = json.loads(path.read_text(encoding="utf-8"))
+    return [r["id"] for r in выгрузка["rules"]], действующие_в_выгрузке(выгрузка)
+
+
 def census(slices: list[dict], rule_ids: list[str],
            в_силе: set[str] | None = None) -> list[str]:
     """Сколько правил сейчас и сколько из них разобрано — по каждому.
@@ -1247,10 +1257,7 @@ def main() -> int:
               file=sys.stderr)
         return 2
     try:
-        выгрузка = json.loads(RULES.read_text(encoding="utf-8"))
-        rule_ids = [r["id"] for r in выгрузка["rules"]]
-        # Счёт — по действующим; все записи нужны сверке лишних (17.10).
-        в_силе = действующие_в_выгрузке(выгрузка)
+        rule_ids, в_силе = правила_выгрузки(RULES)
     except (OSError, ValueError, KeyError) as e:
         print(f"проверка не отработала: экспорт правил не прочитан — {e}",
               file=sys.stderr)
