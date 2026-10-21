@@ -635,8 +635,15 @@ def действующие_в_выгрузке(export: dict) -> set[str]:
     Для тех, кто читает не дерево, а `export/rules.json`: гейт ответа, сводка
     «где действует», входящие потребителя, значок. Счёт по `count` или по всем
     записям включал бы замещённые, и слияние «растило» бы каталог (17.10).
+
+    ВЫГРУЗКА БЕЗ СПИСКА ПРАВИЛ — НЕ «ДЕЙСТВУЮЩИХ НОЛЬ». `.get` с пустым
+    списком по умолчанию отдал бы пустое множество, и значок нарисовал бы
+    «0/0» вместо серой зоны с причиной (обзор #917). Поэтому KeyError или
+    TypeError: вызывающий отвечает третьим исходом (039).
     """
-    return {r["id"] for r in export.get("rules", []) if not r.get("superseded_by")}
+    if not isinstance(export, dict) or not isinstance(export.get("rules"), list):
+        raise KeyError("в выгрузке нет списка «rules»")
+    return {r["id"] for r in export["rules"] if not r.get("superseded_by")}
 
 
 def superseded_of(path: Path, lang: str) -> str | None:

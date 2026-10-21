@@ -1031,6 +1031,7 @@ def as_markdown(slices: list[dict], rule_ids: list[str],
     ]
     все = set(rule_ids)
     known = все if в_силе is None else все & в_силе
+    заменены = все - known
     for s in slices:
         answered = s.get("answered")
         m = s.get("by_mechanism") or {}
@@ -1048,7 +1049,7 @@ def as_markdown(slices: list[dict], rule_ids: list[str],
                 str((s.get("by_status") or {}).get("active", 0)),
                 *(str(m.get(k, 0)) for k in cols),
                 str(len({a for rid, h in (s.get("holds") or {}).items()
-                         if rid not in все - known and h.get("mechanism") != "none"
+                         if rid not in заменены and h.get("mechanism") != "none"
                          for a in ADDRESS_RE.findall(h.get("where") or "")})),
             ]
         # ТОЛЬКО ИМЯ ПРОЕКТА. Владелец у всех строк один и тот же, и в таблице
