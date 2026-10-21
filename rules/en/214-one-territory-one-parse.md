@@ -52,6 +52,22 @@ six sat right under a comment saying that a second parse would drift from the
 first silently. The other two are generic markdown grammar: a section heading
 and a table separator.
 
+**17–21 OCTOBER, THE RULE COUNT: ONE QUESTION, NINE ANSWERS.** The merges of
+#645 (#897) superseded twelve records with six combined ones, and the question
+"what counts as a rule" got an answer — `действующие()` in
+`scripts/build_rules_index.py`. The showcase and the index counted by it. Nine
+more places answered in their own wording, the length of the list of all
+records: the answer gate, the neighbours gate, the "where it applies" summary,
+the consumers picture, a consumer's inbox and starter answer, the badge, the
+release metrics, the audit's label. Before 17 October that wording was right,
+and it drifted silently. For four days, while 15 changes landed on the shared
+branch, the answer gate printed "complete: 226 rules, by gate 165" and the
+badge `177/226`, instead of 214, 153 and `165/214`. The neighbours gate named
+the superseded 197 and its own combined record 223 as the closest pair of the
+corpus. The owner noticed: a merge had "grown" the catalogue. The fix — #916
+and #917: all nine places ask one point. The copies gate was silent here by
+design — the repeat was code, not a regular expression.
+
 ## Why
 
 **Equal today is not one.** Two implementations are identical on the day they
@@ -88,7 +104,12 @@ the two covers its duplicate.
 - a literal copy is machine-visible: the same regular expression in two
   modules of working code is a finding until named in a closed list. A near
   copy — the same idea with another capture group — and a duplicated
-  predicate written as code are not.
+  predicate written as code are not;
+- a number is the same kind of subject as a parse: "how many rules" comes from
+  `действующие()` or `действующие_в_выгрузке()`, not from a list's length on
+  the spot. A literal `len(...)` cannot be told from a legitimate one by a
+  machine, so an invariant holds it: `tests/test_one_count.py` runs every
+  counter on the live tree and checks its number against one source.
 
 ## Where it applies
 
