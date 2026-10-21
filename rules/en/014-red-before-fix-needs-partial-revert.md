@@ -48,6 +48,24 @@ the fix stays untouched: the experiment did not fail, it did not happen. Until
 this is ruled out, the second explanation cannot be considered — you would start
 repairing a check that may be sound.
 
+**A ROLLBACK CAN APPLY IN THE FILE AND NOT IN EXECUTION.** By default Python's
+bytecode cache validates a `.pyc` against its source by the pair "modification
+time in whole seconds, size" (`importlib` documentation, "Cached bytecode
+invalidation"). An edit of the same length — `<` to `>`, two lines swapped, one
+name for another — made within the same second as the previous one leaves the
+pair unchanged, and the interpreter runs the old code. So both runs, the
+rollback and the restore, go without the cache: `__pycache__` is cleared before
+them, and `PYTHONDONTWRITEBYTECODE=1` keeps them from writing a new one. An
+outcome that disagrees with the file's text is first checked for a stale cache,
+and only then taken as evidence about the check. The green side is the more
+dangerous one: stale bytecode during the rollback itself gives a green run on
+rolled-back code — and people start repairing a sound check. This arrived as a
+second proposal from the mechanisms project
+(ArtVsMark/Engineering-Pipeline-Mechanisms#846,
+ArtVsMark/Engineering-Pipeline-Mechanisms#1499) and was merged in here too: it
+is the same branch, "the rollback did not happen", only in execution rather than
+in the text.
+
 **SECOND: THE CHECK IS WEAKER THAN YOU THOUGHT.** It holds something other than
 what it promises — comparing files instead of functions, names instead of
 behaviour. That is
