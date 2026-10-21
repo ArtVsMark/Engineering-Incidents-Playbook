@@ -561,9 +561,21 @@ def test_deystvuyushchie_chitayut_status_i_staruyu_formu(запись, дейс�
     assert (b.действующие_в_выгрузке({"rules": [запись]}) == {"001"}) is действует
 
 
-def test_ukazatel_nazyvaet_status_stolbtsom():
-    """Указатель: столбец «Статус», а не хвост названия (владелец 21.10)."""
-    текст = (b.ROOT / "rules" / "README.md").read_text(encoding="utf-8")
+def test_ukazatel_nazyvaet_status_stolbtsom(tmp_path):
+    """Указатель: столбец «Статус», а не хвост названия (владелец 21.10).
+
+    Синтетический набор, а не живые данные: тест судит формат столбца, а не
+    нынешнюю цепочку замещения каталога (обзор #932)."""
+    found = {}
+    for номер, хвост in (("001", "**Заменено.** 002\n"), ("002", "")):
+        slot = {}
+        for lang in b.LANGS:
+            путь = tmp_path / lang / f"{номер}-r.md"
+            путь.parent.mkdir(parents=True, exist_ok=True)
+            путь.write_text(f"# Запись {номер}\n\n**Правило.** x\n\n{хвост}", encoding="utf-8")
+            slot[lang] = путь
+        found[номер] = slot
+    текст = b.render(found, [], {})
     assert "| № | Статус · Status | Правило |" in текст
-    assert "| 131 | заменено → 221 · superseded → 221 |" in текст
-    assert "| 221 | действует · active |" in текст
+    assert "| 001 | заменено → 002 · superseded → 002 |" in текст
+    assert "| 002 | действует · active |" in текст
