@@ -32,10 +32,10 @@ ones — on the same gate. Measured from change bodies and reviews:
 | asking the family | #884 — 2 | #888 — 1 | #910 — 1 | — |
 
 **For every finding from round two on, the path from a real input to a wrong
-result was read.** In round two it exists for 1 of 15: a 10 s hook deadline
+result was read.** In round two it exists for 1 of 12: a 10 s hook deadline
 shorter than subprocesses of 60 and 600 s (#883) — a setting of the tree on a
 real push. One more is conditional: `OSError` if `git` is missing. The other
-13 named a `python-guard.sh` hook that is not in `.claude/hooks`, an invented
+10 named a `python-guard.sh` hook that is not in `.claude/hooks`, an invented
 `echo` line with `;` inside quotes, a "broken `facts.version`" while the file
 holds a valid `2.0.0`, a hand-written number in a fragment. From round three
 on, no path was found for any of 7. One says that "only which selector is
@@ -69,7 +69,7 @@ the next round.
 **Why the third round and not the second.** Round one is the review of a new
 gate, round two the review of its first fix; real paths still turn up there.
 By round three the gate has passed the outside eye twice and been
-fixed twice. The round-two measurement — 1 of 15 — says the threshold may
+fixed twice. The round-two measurement — 1 of 12 — says the threshold may
 belong earlier; that is a question for the next measurement, not this one.
 
 **Closing without code is a decision, not a skip**
