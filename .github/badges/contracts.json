@@ -6,7 +6,7 @@
     "sha": "cf7fc6f746dfca251a8b0686593ab42f34df050c"
   },
   "gives": {
-    "export": "1.8",
+    "export": "1.9",
     "bindings": "1.9",
     "consumers": "1.1",
     "proposals": "1.4",
