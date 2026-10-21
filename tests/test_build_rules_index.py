@@ -538,3 +538,32 @@ def test_deystvuyushchie_bez_spiska_eto_otkaz_a_ne_nol(выгрузка):
     """Нет списка правил — KeyError, а не «действующих ноль» (обзор #917)."""
     with pytest.raises(KeyError):
         b.действующие_в_выгрузке(выгрузка)
+
+
+def test_status_slovom_u_kazhdoy_zapisi_vygruzki():
+    """1.9: статус каждой записи назван словом, а не отсутствием ключа (владелец 21.10)."""
+    import json
+    выгрузка = json.loads((b.ROOT / "export" / "rules.json").read_text(encoding="utf-8"))
+    статусы = {r["id"]: r.get("status") for r in выгрузка["rules"]}
+    assert set(статусы.values()) == {b.СТАТУС_ДЕЙСТВУЕТ, b.СТАТУС_ЗАМЕНЕНО}
+    for r in выгрузка["rules"]:
+        assert (r["status"] == b.СТАТУС_ЗАМЕНЕНО) == ("superseded_by" in r), r["id"]
+    assert sum(с == b.СТАТУС_ДЕЙСТВУЕТ for с in статусы.values()) == выгрузка["active"]
+
+
+@pytest.mark.parametrize("запись, действует", [
+    ({"id": "001", "status": "active"}, True),
+    ({"id": "001", "status": "superseded", "superseded_by": "002"}, False),
+    ({"id": "001"}, True),                                   # до 1.9: ключа нет — действует
+    ({"id": "001", "superseded_by": "002"}, False),          # до 1.9: по ключу
+])
+def test_deystvuyushchie_chitayut_status_i_staruyu_formu(запись, действует):
+    assert (b.действующие_в_выгрузке({"rules": [запись]}) == {"001"}) is действует
+
+
+def test_ukazatel_nazyvaet_status_stolbtsom():
+    """Указатель: столбец «Статус», а не хвост названия (владелец 21.10)."""
+    текст = (b.ROOT / "rules" / "README.md").read_text(encoding="utf-8")
+    assert "| № | Статус · Status | Правило |" in текст
+    assert "| 131 | заменено → 221 · superseded → 221 |" in текст
+    assert "| 221 | действует · active |" in текст
