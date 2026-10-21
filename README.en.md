@@ -20,11 +20,13 @@ history: what broke, how it surfaced, what it cost.
 **To an outside project the catalogue hands out rules.** Badges and the facts
 contract are optional; connecting does not require them.
 
-**Boundary** (21 October): the catalogue is rules and skills, it defines;
-the [mechanisms](https://github.com/ArtVsMark/Engineering-Pipeline-Mechanisms)
-are the family's platform and execute: the pipeline, badges, facts, checks. The
-catalogue is moving onto it as a consumer —
-[#930](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/930).
+**Boundary** (21 October): the catalogue is rules, skills and the contracts
+about rules, it defines; the [mechanisms](https://github.com/ArtVsMark/Engineering-Pipeline-Mechanisms)
+are the family's platform and execute. The pipeline, badges, facts and checks
+are moving to them, and the catalogue onto them as a consumer
+([#930](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/930)).
+Until then the family badges are drawn by the catalogue: no summary here — the
+picture freezes (#842).
 
 ## Why
 
