@@ -3,7 +3,7 @@
   "project": "ArtVsMark/Engineering-Incidents-Playbook",
   "segments": {
     "gives": {
-      "state": "unknown",
+      "state": "ok",
       "why": "",
       "links": [
         {
@@ -51,10 +51,10 @@
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
           "what": "export",
           "mine": "1.9",
-          "latest": "1.8",
+          "latest": "1.9",
           "where": "сводка семьи",
-          "state": "unknown",
-          "why": "сводка ещё не перечитала манифест"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "gives",
@@ -109,7 +109,7 @@
       ]
     },
     "family": {
-      "state": "unknown",
+      "state": "ok",
       "why": "",
       "links": [
         {
@@ -147,10 +147,10 @@
           "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
           "what": "export",
           "mine": "1.9",
-          "latest": "1.8",
+          "latest": "1.9",
           "where": ".rules/bindings.json",
-          "state": "unknown",
-          "why": "опережает опубликованное — сводка отстала от издателя"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "family",
@@ -190,7 +190,7 @@
     {
       "code": "EIP",
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
-      "state": "unknown",
+      "state": "ok",
       "why": "свой: состояние отдачи"
     },
     {
@@ -202,9 +202,11 @@
   ],
   "uptake": {
     "code": "EIP",
-    "taken": 0,
+    "taken": 1,
     "of": 5,
-    "unread": 5,
-    "by": []
+    "unread": 4,
+    "by": [
+      "ArtVsMark/Engineering-Pipeline-Mechanisms"
+    ]
   }
 }
