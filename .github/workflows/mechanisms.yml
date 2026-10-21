@@ -15,8 +15,9 @@
 # и тогда тот же прогон возьмёт другой код без единой правки у нас.
 # Неподвижным был бы только полный SHA вместо тега в `uses:`; его здесь нет
 # сознательно — выпуски соседа не переставляются, и это доверие, а не
-# проверка (039). На 09.10 v1.5.0 указывает на
-# c36d16b1abe889e16be1b4a4b2fbd7a165a2e147.
+# проверка (039). На 21.10 v1.8.0 указывает на
+# 7cd39af2005ceb7564cba9324a42b375331fa4c8; файлы обоих шагов на нём те же,
+# что на v1.5.0, — входы и права не менялись.
 name: mechanisms
 
 on:
@@ -40,6 +41,6 @@ concurrency:
 
 jobs:
   window-lifetime:
-    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-window-lifetime.yml@v1.5.0
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-window-lifetime.yml@v1.8.0
   rulebook-fresh:
-    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-rulebook-fresh.yml@v1.5.0
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-rulebook-fresh.yml@v1.8.0
