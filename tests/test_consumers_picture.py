@@ -778,3 +778,12 @@ def test_каталог_не_всплывает_по_праву_рождения
     каталог = {**подключён("Engineering-Incidents-Playbook", gate=1), "role": "каталог"}
     assert _имена([каталог, подключён("потребитель", gate=5)]) == [
         "потребитель", "Engineering-Incidents-Playbook"]
+
+
+def test_подпись_считает_действующие(repo, capsys):
+    """«Правил N» на картинке — по действующим: замещённые в счёт не входят (17.10)."""
+    срез(repo, [подключён("one")])
+    write(repo / "export" / "rules.json", json.dumps({"rules": [
+        {"id": "001", "superseded_by": "002"}, {"id": "002"}]}))
+    рисуй(repo)
+    assert "правил 1;" in capsys.readouterr().out

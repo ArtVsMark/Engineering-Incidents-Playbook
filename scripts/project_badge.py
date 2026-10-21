@@ -63,10 +63,14 @@ from pathlib import Path
 import answer_form
 import family_check
 import python_badge
+from build_rules_index import действующие_в_выгрузке
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / ".github" / "badges" / "project.svg"
 ОТВЕТ = Path(".rules") / "bindings.json"
+#: Выгрузка каталога — из дерева, откуда исполняется скрипт: у соседа это
+#: дерево действия на закреплённом теге, у каталога — он сам. Сети не нужно.
+ВЫГРУЗКА = ROOT / "export" / "rules.json"
 #: Вид происхождения, который значит «механизм взят у другого проекта».
 ВЗЯТО = {"called", "copied", "adapted"}
 #: Высота строки и просвет между строками — тот же, что между зонами.
@@ -97,12 +101,21 @@ def серая(подпись: str, почему: str) -> Зоны:
     return [[(подпись, python_badge.ПОДПИСЬ, ""), ("n/a", СЕРЫЙ, почему)]]
 
 
-def зоны_правил(ответ: object) -> tuple[Зоны, str]:
-    """Зона «rules»: сколько правил держится механизмом, из них свои и взятые."""
+def зоны_правил(ответ: object, в_силе: set[str] | None) -> tuple[Зоны, str]:
+    """Зона «rules»: сколько правил держится механизмом, из них свои и взятые.
+
+    Знаменатель — действующие правила каталога: ответ о замещённом законен,
+    но правилом оно больше не является, и слияние не «строит» механизмов
+    (17.10). `в_силе` None — выгрузка не прочитана, и зона серая с причиной.
+    """
     if not isinstance(ответ, dict) or not isinstance(ответ.get("rules"), dict):
         почему = f"ответа каталогу {ОТВЕТ} нет или он не той формы"
         return серая("rules", почему), почему
-    все = [r for r in ответ["rules"].values() if isinstance(r, dict)]
+    if в_силе is None:
+        почему = f"выгрузка каталога {ВЫГРУЗКА.name} не прочитана — действующих не отличить"
+        return серая("rules", почему), почему
+    все = [r for rid, r in ответ["rules"].items()
+           if isinstance(r, dict) and rid in в_силе]
     машинные = [r for r in все if r.get("mechanism") in answer_form.МАШИННЫЕ]
     взяты = sum(1 for r in машинные if r.get("origin_kind") in ВЗЯТО)
     return [[
@@ -171,7 +184,12 @@ def собрать(root: Path, python_zones: Path, family_json: Path) -> tuple[s
         ответ: object = json.loads((root / ОТВЕТ).read_text(encoding="utf-8"))
     except OSError, ValueError:
         ответ = None
-    правила, почему_2 = зоны_правил(ответ)
+    try:
+        в_силе: set[str] | None = действующие_в_выгрузке(
+            json.loads(ВЫГРУЗКА.read_text(encoding="utf-8")))
+    except OSError, ValueError:
+        в_силе = None
+    правила, почему_2 = зоны_правил(ответ, в_силе)
     семья, почему_3 = зоны_семьи(family_json)
     низ = правила + семья
     о1, о2 = выровнять(верх, низ)

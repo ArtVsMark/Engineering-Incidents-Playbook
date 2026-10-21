@@ -65,6 +65,7 @@ from typing import Any
 # Словарь механизмов живёт в одном месте (правило 209). Импорт, а не копия:
 # копия расходится молча, и первым это увидит потребитель, а не гейт.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_rules_index import действующие_в_выгрузке  # noqa: E402
 from check_bindings import (MECHANISM_ORDER, addressed,  # noqa: E402
                             навык, навык_в_дереве, происхождение,
                             слово_держимости)
@@ -278,8 +279,15 @@ def read_local(path: str) -> tuple[dict | None, str | None]:
         return None, f"не прочитан: {e}"
 
 
-def collect(consumers: list[dict]) -> tuple[list[dict], list[str]]:
-    """Читает ответ каждого потребителя. Возвращает срезы и находки."""
+def collect(consumers: list[dict],
+            заменены: set[str] = frozenset()) -> tuple[list[dict], list[str]]:
+    """Читает ответ каждого потребителя. Возвращает срезы и находки.
+
+    `заменены` — замещённые номера каталога: в счёт ответов, статусов и
+    механизмов они не идут (17.10). Ответ о номере, которого нет вовсе,
+    считается — он лишний, и его видно. Сами ответы (`rules`, `holds`) срез
+    несёт полностью: по ним сверяются лишние и заменённые.
+    """
     slices: list[dict] = []
     problems: list[str] = []
     today = dt.date.today().isoformat()
@@ -316,14 +324,17 @@ def collect(consumers: list[dict]) -> tuple[list[dict], list[str]]:
         holds: dict[str, dict] = {}
         for rid, rec in rules.items():
             st = rec.get("status", "?")
-            by_status[st] = by_status.get(st, 0) + 1
+            в_счёт = rid not in заменены
+            if в_счёт:
+                by_status[st] = by_status.get(st, 0) + 1
             if st != "active":
                 continue
             # `mechanism` отсутствует и `mechanism: none` — одно и то же
             # состояние: правило признано действующим и не держится ничем.
             # Разводить их значило бы делать вид, что второе хуже первого.
             mech = rec.get("mechanism") or "none"
-            by_mechanism[mech] = by_mechanism.get(mech, 0) + 1
+            if в_счёт:
+                by_mechanism[mech] = by_mechanism.get(mech, 0) + 1
             holds[rid] = держание(rec)
         entry["schema"] = data.get("schema") or ""
         # ВТОРОЙ НОМЕР ПЕРЕНОСИТСЯ ЗДЕСЬ, И ЭТОГО НЕ БЫЛО. export_lag() ниже
@@ -338,7 +349,7 @@ def collect(consumers: list[dict]) -> tuple[list[dict], list[str]]:
         entry["state"] = "подключён"
         # ЭТО ПОЛЕ МЕНЯЕТСЯ КАЖДЫМ ПРОГОНОМ САМО ПО СЕБЕ — см. VOLATILE ниже.
         entry["read_at"] = today
-        entry["answered"] = len(rules)
+        entry["answered"] = sum(1 for rid in rules if rid not in заменены)
         entry["by_status"] = by_status
         entry["by_mechanism"] = by_mechanism
         entry["rules"] = {rid: rec.get("status") for rid, rec in rules.items()}
@@ -856,7 +867,7 @@ def superseded_map() -> dict[str, str]:
 def answers_superseded(s: dict, superseded: dict[str, str]) -> list[str]:
     """Потребитель отвечает о ЗАМЕНЁННОМ правиле. Состояние, а не находка.
 
-    Заменённая запись остаётся в выгрузке и остаётся действующей — значит в
+    Заменённая запись остаётся в выгрузке, но в счёт не входит (17.10) — и в
     «лишние» такой ответ не попадёт и не должен: потребитель отвечает о том,
     что было, и упрекать его не в чем. Но и молчать нельзя: он не знает, что
     появилась смена, а узнать может только отсюда.
@@ -925,15 +936,21 @@ def происхождение_неверно(s: dict) -> list[str]:
     return out
 
 
-def census(slices: list[dict], rule_ids: list[str]) -> list[str]:
+def census(slices: list[dict], rule_ids: list[str],
+           в_силе: set[str] | None = None) -> list[str]:
     """Сколько правил сейчас и сколько из них разобрано — по каждому.
 
     Печатается КАЖДЫМ прогоном, а не только красным. Число, которое видно
     лишь при поломке, отвечает на вопрос «что сломалось», но не на вопрос
     «куда мы движемся»; второй здесь и есть предмет.
     """
-    known = set(rule_ids)
-    out = [f"правил в каталоге: {len(known)}"]
+    # Разобрано и «без ответа» — по действующим, «лишних» — по всем записям:
+    # ответ о замещённом законен и лишним не считается (17.10).
+    все = set(rule_ids)
+    known = все if в_силе is None else все & в_силе
+    выбыли = len(все) - len(known)
+    out = [f"правил в каталоге: {len(known)}"
+           + (f" (ещё {выбыли} заменены)" if выбыли else "")]
     for s in slices:
         answers = s.get("rules")
         if answers is None:
@@ -945,7 +962,7 @@ def census(slices: list[dict], rule_ids: list[str]) -> list[str]:
             f"  {s['repo']}: разобрано {len(known & set(answers)) - by.get('unreviewed', 0)}"
             f" из {len(known)} · не рассмотрено {by.get('unreviewed', 0)}"
             f" · без ответа {len(known - set(answers))}"
-            f" · лишних {len(set(answers) - known)}"
+            f" · лишних {len(set(answers) - все)}"
             f" · действует {by.get('active', 0)} (ничем {mech.get('none', 0)})")
     # КТО ДЕРЖИТ ПРАВИЛА НАВЫКОМ ПЛАГИНА КАТАЛОГА. Каталог держит плагин и
     # принимает навыки снизу; без этой строки он не знал бы, пользуется ли
@@ -980,7 +997,8 @@ def _notes(connected: list[dict]) -> list[str]:
             *строки]
 
 
-def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
+def as_markdown(slices: list[dict], rule_ids: list[str],
+                в_силе: set[str] | None = None) -> str:
     """Таблица «где действует». Файл производный и руками не правится."""
     lines = [
         "# Где действует правило · Where a rule applies",
@@ -1011,7 +1029,8 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
         f"Действует · Active | {head} | Механизмов · Mechanisms | Почему · Why |",
         "|" + "---|" * (9 + len(cols)),
     ]
-    known = set(rule_ids)
+    все = set(rule_ids)
+    known = все if в_силе is None else все & в_силе
     for s in slices:
         answered = s.get("answered")
         m = s.get("by_mechanism") or {}
@@ -1025,11 +1044,11 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
             # «ответов», и увидеть её можно было только вычитанием в уме.
             cells = [
                 str(len(known - set(answers))),
-                str(len(set(answers) - known)),
+                str(len(set(answers) - все)),
                 str((s.get("by_status") or {}).get("active", 0)),
                 *(str(m.get(k, 0)) for k in cols),
-                str(len({a for h in (s.get("holds") or {}).values()
-                         if h.get("mechanism") != "none"
+                str(len({a for rid, h in (s.get("holds") or {}).items()
+                         if rid not in все - known and h.get("mechanism") != "none"
                          for a in ADDRESS_RE.findall(h.get("where") or "")})),
             ]
         # ТОЛЬКО ИМЯ ПРОЕКТА. Владелец у всех строк один и тот же, и в таблице
@@ -1063,14 +1082,15 @@ def as_markdown(slices: list[dict], rule_ids: list[str]) -> str:
     head = " | ".join(f"`{s['repo'].split('/')[-1]}`" for s in connected)
     lines += ["", "## Правила · Rules", "",
               f"| № | {head} |", "|---" * (len(connected) + 1) + "|"]
-    for rid in rule_ids:
+    for rid in (r for r in rule_ids if r in known):
         cells = " | ".join(STATUS_RU.get(s["rules"].get(rid), "—") for s in connected)
         lines.append(f"| {rid} | {cells} |")
     return "\n".join(lines) + "\n"
 
 
 def check_offline(consumers: list[dict], rule_ids: list[str],
-                  compare_summary: bool = True) -> int:
+                  compare_summary: bool = True,
+                  в_силе: set[str] | None = None) -> int:
     """Сверка без сети: сводка на диске согласована и покрывает весь реестр.
 
     Сюда не ходят наружу сознательно. Обязательная проверка изменения не должна
@@ -1171,7 +1191,7 @@ def check_offline(consumers: list[dict], rule_ids: list[str],
                   file=sys.stderr)
             return 1
 
-    if as_markdown(slices, rule_ids) != stored_md:
+    if as_markdown(slices, rule_ids, в_силе) != stored_md:
         print(f"устарело — пересоберите: {EXPORT_MD.relative_to(ROOT)} не "
               f"соответствует {EXPORT_JSON.relative_to(ROOT)}", file=sys.stderr)
         return 1
@@ -1197,7 +1217,7 @@ def check_offline(consumers: list[dict], rule_ids: list[str],
         for w in свои_схемы:
             print(w, file=sys.stderr)
         return 1
-    for line in census(slices, rule_ids):
+    for line in census(slices, rule_ids, в_силе):
         print(line)
     print(f"сводка согласована: потребителей {len(slices)}, из них подключено "
           f"{connected}; сеть не опрашивалась")
@@ -1226,7 +1246,10 @@ def main() -> int:
               file=sys.stderr)
         return 2
     try:
-        rule_ids = [r["id"] for r in json.loads(RULES.read_text(encoding="utf-8"))["rules"]]
+        выгрузка = json.loads(RULES.read_text(encoding="utf-8"))
+        rule_ids = [r["id"] for r in выгрузка["rules"]]
+        # Счёт — по действующим; все записи нужны сверке лишних (17.10).
+        в_силе = действующие_в_выгрузке(выгрузка)
     except (OSError, ValueError, KeyError) as e:
         print(f"проверка не отработала: экспорт правил не прочитан — {e}",
               file=sys.stderr)
@@ -1234,9 +1257,10 @@ def main() -> int:
 
     if args.check:
         return check_offline(consumers, rule_ids,
-                             compare_summary=not args.not_my_summary)
+                             compare_summary=not args.not_my_summary,
+                             в_силе=в_силе)
 
-    slices, problems = collect(consumers)
+    slices, problems = collect(consumers, set(rule_ids) - в_силе)
     try:
         counts = trail_counts(json.loads(RULES.read_text(encoding="utf-8"))["rules"])
     except OSError, ValueError, KeyError:
@@ -1329,12 +1353,12 @@ def main() -> int:
         "consumers": slices,
     }
     text_json = json.dumps(doc, ensure_ascii=False, indent=2) + "\n"
-    text_md = as_markdown(slices, rule_ids)
+    text_md = as_markdown(slices, rule_ids, в_силе)
 
     EXPORT_JSON.write_text(text_json, encoding="utf-8")
     EXPORT_MD.write_text(text_md, encoding="utf-8")
 
-    for line in census(slices, rule_ids):
+    for line in census(slices, rule_ids, в_силе):
         print(line)
 
     # Чужая находка печатается ВСЕГДА и до нашей: её проще всего потерять.
@@ -1362,7 +1386,8 @@ def main() -> int:
     # ── исход 0 ────────────────────────────────────────────────────────────
     connected = sum(1 for s in slices if s.get("rules"))
     print(f"сводка собрана: потребителей {len(slices)}, из них подключено "
-          f"{connected}; правил в экспорте {len(rule_ids)}")
+          f"{connected}; правил в экспорте {len(в_силе)} "
+          f"(записей {len(rule_ids)}, заменены {len(rule_ids) - len(в_силе)})")
     for s in slices:
         if not s.get("rules"):
             print(f"  · {s['repo']}: {s['state']} — {s.get('why', '')}")

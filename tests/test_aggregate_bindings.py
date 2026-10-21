@@ -1153,3 +1153,39 @@ def test_пауза_датой_и_неразборчивая():
         dt.datetime.now(dt.UTC) + dt.timedelta(seconds=30), usegmt=True)
     assert 0 < ab.пауза_сервера(_с_паузой(503, будущее)) <= 30
     assert ab.пауза_сервера(_с_паузой(503, "скоро")) is None
+
+
+# ── замещённые в счёт не входят (17.10) ─────────────────────────────────────
+
+def test_замещённое_не_считается_ни_без_ответа_ни_лишним(repo):
+    """«Без ответа» — по действующим, «лишних» — по всем: ответ о замещённом законен."""
+    slices = [{"repo": "owner/one", "state": "подключён", "answered": 1,
+               "rules": {"001": "active", "003": "active"},
+               "by_status": {"active": 1}, "by_mechanism": {"gate": 1}}]
+    строки = ab.census(slices, ["001", "002", "003"], {"002", "003"})
+    assert строки[0] == "правил в каталоге: 2 (ещё 1 заменены)"
+    assert "разобрано 1 из 2" in строки[1]
+    assert "без ответа 1" in строки[1] and "лишних 0" in строки[1]
+
+
+def test_таблица_не_перечисляет_замещённые(repo):
+    slices = [{"repo": "owner/one", "state": "подключён", "answered": 1,
+               "rules": {"001": "active", "002": "active"}}]
+    text = ab.as_markdown(slices, ["001", "002"], {"002"})
+    assert "| 002 |" in text and "| 001 |" not in text
+
+
+def test_счёт_среза_по_действующим_ответы_целиком(repo):
+    """Срез несёт все ответы (по ним сверка лишних), а считает только действующие."""
+    src = "answers.json"
+    write(repo / src, json.dumps({"rules": {
+        "001": {"status": "active", "mechanism": "gate", "where": "scripts/x.py"},
+        "002": {"status": "active", "mechanism": "none"},
+        "999": {"status": "unreviewed"}}}))
+    slices, _ = ab.collect([{"repo": "owner/one", "bindings": str(repo / src)}], {"001"})
+    s = slices[0]
+    # 001 замещено и не считается; 999 — лишний ответ, и он считается: его видно.
+    assert s["answered"] == 2
+    assert s["by_status"] == {"active": 1, "unreviewed": 1}
+    assert s["by_mechanism"] == {"none": 1}
+    assert set(s["rules"]) == {"001", "002", "999"} and set(s["holds"]) == {"001", "002"}

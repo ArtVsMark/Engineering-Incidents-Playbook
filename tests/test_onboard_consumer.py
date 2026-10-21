@@ -115,3 +115,14 @@ def test_пустой_экспорт_это_находка(repo, capsys):
     c = write(repo / "export" / "README.md", CONTRACT)
     assert oc.main(["--repo", "o/n", "--out", str(repo / "out"),
                     "--export", str(e), "--contract", str(c)]) == 1
+
+
+def test_заготовка_без_замещённых(repo):
+    """Новому потребителю о замещённом отвечать незачем (17.10)."""
+    e = write(repo / "export" / "rules.json", json.dumps({
+        **EXPORT, "rules": [{"id": "001", "superseded_by": "002"}, {"id": "002"}]}))
+    c = write(repo / "export" / "README.md", CONTRACT)
+    assert oc.main(["--repo", "owner/name", "--out", str(repo / "out"),
+                    "--export", str(e), "--contract", str(c)]) == 0
+    d = json.loads((repo / "out" / ".rules" / "bindings.json").read_text(encoding="utf-8"))
+    assert set(d["rules"]) == {"002"}

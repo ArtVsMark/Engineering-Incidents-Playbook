@@ -36,6 +36,8 @@ import re
 import sys
 from pathlib import Path
 
+from build_rules_index import действующие_в_выгрузке
+
 ROOT = Path(__file__).resolve().parent.parent
 EXPORT = ROOT / "export" / "rules.json"
 CONTRACT = ROOT / "export" / "README.md"
@@ -156,7 +158,10 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     try:
         doc = json.loads(args.export.read_text(encoding="utf-8"))
-        ids = [r["id"] for r in doc["rules"]]
+        # Заготовка ответа — по действующим: о замещённом новому потребителю
+        # отвечать незачем, правилом оно больше не является (17.10).
+        в_силе = действующие_в_выгрузке(doc)
+        ids = [r["id"] for r in doc["rules"] if r["id"] in в_силе]
         контракты = {к: str(doc["contracts"][к]) for к in ("bindings", "proposals")}
     except (OSError, ValueError, KeyError, TypeError) as e:
         print(f"проверка не отработала: экспорт каталога не разобран — {e}",

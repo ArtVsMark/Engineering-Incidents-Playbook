@@ -585,3 +585,17 @@ def test_строки_списка_и_listed_читают_одно():
     текст = "| Навык | Когда |\n|---|---|\n| `a-b` | когда-то |\n"
     assert check_skills.строки_списка(текст) == [("a-b", "когда-то")]
     assert check_skills.listed(текст) == ["a-b"]
+
+
+def test_замещённое_не_требует_ответа_и_не_лишнее(monkeypatch, capsys):
+    """Ответа о замещённом не ждут, а данный — не лишний: счёт по действующим (17.10)."""
+    правила = [{"id": "001", "title": {"ru": "старое"}, "superseded_by": "002"},
+               {"id": "002", "title": {"ru": "сводное"}}]
+    arm(monkeypatch, правила, {"002": {"status": "active", "mechanism": "gate"}},
+        issue=("52", "OPEN"))
+    assert si.main() == 0
+    assert "правил 1, разобрано 1, ответа нет у 0" in capsys.readouterr().out
+    arm(monkeypatch, правила, {"001": {"status": "active"}, "002": {"status": "active"}},
+        issue=("52", "OPEN"))
+    assert si.main() == 0
+    assert "лишних 0" in capsys.readouterr().out

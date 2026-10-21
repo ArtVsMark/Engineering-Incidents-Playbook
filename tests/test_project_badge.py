@@ -20,7 +20,8 @@ def test_счёт_правил_по_всем_и_одна_зона():
         **{"001": {"status": "active", "mechanism": "gate", "origin_kind": "own"},
            "002": {"status": "active", "mechanism": "pipeline", "origin_kind": "called"},
            "003": {"status": "active", "mechanism": "document"},
-           "004": {"status": "not-applicable", "mechanism": "none"}}))
+           "004": {"status": "not-applicable", "mechanism": "none"}}),
+        {"001", "002", "003", "004"})
     assert почему == "" and len(зоны) == 1
     надписи = [т for т, _, _ in зоны[0]]
     assert надписи == ["rules", "machine 2/4 · 50%", "own 1", "taken 1"]
@@ -28,8 +29,25 @@ def test_счёт_правил_по_всем_и_одна_зона():
 
 @pytest.mark.parametrize("плохой", [None, [], {"rules": []}, {"schema": "1.9"}])
 def test_нет_ответа_серое_с_причиной(плохой):
-    зоны, почему = pb.зоны_правил(плохой)
+    зоны, почему = pb.зоны_правил(плохой, {"001"})
     assert почему and any(цвет == pb.СЕРЫЙ for з in зоны for _, цвет, _ in з)
+
+
+def test_замещённое_в_долю_механизмов_не_входит():
+    """Ответ о замещённом в знаменатель и в «machine» не идёт (17.10)."""
+    зоны, почему = pb.зоны_правил(ответ(
+        **{"001": {"status": "active", "mechanism": "gate", "origin_kind": "own"},
+           "002": {"status": "active", "mechanism": "gate", "origin_kind": "own"},
+           "003": {"status": "active", "mechanism": "none"}}),
+        {"002", "003"})
+    assert почему == ""
+    assert [т for т, _, _ in зоны[0]][1:3] == ["machine 1/2 · 50%", "own 1"]
+
+
+def test_выгрузка_не_прочитана_серое_с_причиной():
+    """Действующих не отличить — серое с причиной, а не счёт по всем (075)."""
+    зоны, почему = pb.зоны_правил(ответ(**{"001": {"status": "active"}}), None)
+    assert "выгрузка" in почему and any(цвет == pb.СЕРЫЙ for з in зоны for _, цвет, _ in з)
 
 
 def test_без_знаменателя_процента_нет():
