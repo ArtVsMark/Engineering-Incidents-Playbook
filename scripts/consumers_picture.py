@@ -567,8 +567,6 @@ def main(argv: list[str] | None = None) -> int:
         # Подпись «каждое из N правил» — по действующим (17.10).
         выгрузка = json.loads(
             (root / "export" / "rules.json").read_text(encoding="utf-8"))
-        if "rules" not in выгрузка:  # третий исход, а не «правил 0»
-            raise KeyError("rules")
         total = len(действующие_в_выгрузке(выгрузка))
     except (OSError, ValueError, KeyError) as e:
         print(f"рисовать нечем: экспорт правил не прочитан — {e}", file=sys.stderr)

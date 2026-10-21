@@ -153,3 +153,18 @@ def test_рисунок_без_сдвига_и_отступов_прежний()
     зоны = [[("a", "#000", "w")]]
     assert python_badge.рисунок(зоны) == python_badge.рисунок(зоны, 0, None) \
         == python_badge.рисунок(зоны, 0, {})
+
+
+@pytest.mark.parametrize("выгрузка", ['{"schema": "1.8"}', "[]", "не json"])
+def test_выгрузка_без_правил_серая_а_не_ноль(tmp_path, monkeypatch, выгрузка):
+    """Прочитанная выгрузка без списка «rules» — серое с причиной, а не «0/0» (обзор #917)."""
+    путь = tmp_path / "rules.json"
+    путь.write_text(выгрузка, encoding="utf-8")
+    monkeypatch.setattr(pb, "ВЫГРУЗКА", путь)
+    (tmp_path / ".rules").mkdir()
+    (tmp_path / ".rules" / "bindings.json").write_text(
+        json.dumps(ответ(**{"001": {"status": "active", "mechanism": "gate"}})),
+        encoding="utf-8")
+    svg, почему = pb.собрать(tmp_path, tmp_path / "нет.json", tmp_path / "нет.json")
+    assert any("выгрузка" in п for п in почему)
+    assert "0/0" not in svg

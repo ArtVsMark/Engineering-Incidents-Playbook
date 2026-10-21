@@ -187,7 +187,7 @@ def собрать(root: Path, python_zones: Path, family_json: Path) -> tuple[s
     try:
         в_силе: set[str] | None = действующие_в_выгрузке(
             json.loads(ВЫГРУЗКА.read_text(encoding="utf-8")))
-    except OSError, ValueError:
+    except OSError, ValueError, KeyError:
         в_силе = None
     правила, почему_2 = зоны_правил(ответ, в_силе)
     семья, почему_3 = зоны_семьи(family_json)

@@ -21,6 +21,8 @@ import os
 import subprocess
 from pathlib import Path
 
+import pytest
+
 import build_rules_index as b
 
 
@@ -529,3 +531,10 @@ def test_zameneno_v_tekste_tot_zhe_razbor_chto_po_puti(tmp_path):
     файл.write_text(текст, encoding="utf-8")
     assert b.заменено_в_тексте(текст, "ru") == b.superseded_of(файл, "ru") == "221"
     assert b.заменено_в_тексте("# Живое\n\n**Правило.** y\n", "ru") is None
+
+
+@pytest.mark.parametrize("выгрузка", [{}, {"rules": None}, {"rules": {}}, []])
+def test_deystvuyushchie_bez_spiska_eto_otkaz_a_ne_nol(выгрузка):
+    """Нет списка правил — KeyError, а не «действующих ноль» (обзор #917)."""
+    with pytest.raises(KeyError):
+        b.действующие_в_выгрузке(выгрузка)
