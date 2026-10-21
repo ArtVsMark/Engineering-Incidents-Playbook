@@ -71,7 +71,10 @@ def test_сводка_берёт_свой_без_сети_а_соседей_по
                         свой, прочесть)
     assert [p["state"] for p in doc["projects"]] == ["published", "published", "absent"]
     # Разбор читается только у опубликованного: у отсутствующего его нет (#844).
-    assert прочитано == [family.АДРЕС.format(repo="o/a"), family.РАЗБОР_АДРЕС.format(repo="o/a"),
+    # Свой манифест — без сети; своего разбора на диске нет — он читается по
+    # адресу ветки badges, как у соседей (обзор #856).
+    assert прочитано == [family.РАЗБОР_АДРЕС.format(repo="o/self"),
+                         family.АДРЕС.format(repo="o/a"), family.РАЗБОР_АДРЕС.format(repo="o/a"),
                          family.АДРЕС.format(repo="o/b")]
     assert doc["schema"] == family.FAMILY_SCHEMA
 
@@ -142,3 +145,21 @@ def test_связи_из_разбора_соседа_и_своего():
 @pytest.mark.parametrize("разбор", [None, [], {"publishers": "x"}])
 def test_связи_не_той_формы_не_пустые(разбор):
     assert family.связи(разбор) is None
+
+
+def test_свой_разбор_на_чистом_клоне_читается_с_ветки_badges():
+    """Своего разбора на диске нет (сводка собирается до него) — links не пустые (обзор #856)."""
+    def прочесть(url: str):
+        if url == family.РАЗБОР_АДРЕС.format(repo="o/self"):
+            return {"publishers": [{"code": "EIP", "state": "unknown"}]}, None
+        return None, "не прочитан: HTTP Error 404: Not Found"
+
+    свой = {**ХОРОШИЙ, "project": "o/self"}
+    doc = family.сводка([{"repo": "o/self"}], свой, прочесть)
+    assert doc["projects"][0]["links"] == {"EIP": "unknown"}
+    # Диск важнее сети: свой разбор есть — по адресу не ходят.
+    прочитано: list[str] = []
+    family.сводка([{"repo": "o/self"}], свой,
+                  lambda url: (прочитано.append(url), (None, "x"))[1],
+                  свой_разбор={"publishers": [{"code": "EIP", "state": "ok"}]})
+    assert прочитано == []
