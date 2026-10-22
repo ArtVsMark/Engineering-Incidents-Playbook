@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 33 | 18 | 205 | 10 | 0 | 159 | 124 | 29 | 0 | 6 | 0 | 66 |  |
 | `Claude-Code_Usage-Token` | подключён | 18 | 15 | 205 | 10 | 0 | 174 | 93 | 9 | 0 | 55 | 17 | 106 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 205 | 10 | 0 | 162 | 77 | 14 | 0 | 59 | 12 | 116 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 21 | 16 | 214 | 1 | 0 | 206 | 183 | 17 | 2 | 4 | 0 | 266 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 21 | 16 | 215 | 0 | 0 | 207 | 183 | 17 | 3 | 4 | 0 | 266 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -505,6 +505,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_rulebook_fresh.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_third_outcome.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_window_preflight.py` | 3 |
+| `Engineering-Pipeline-Mechanisms` | `.claude/skills/close-a-finding/SKILL.md` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/attribution-history.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/automerge.yml` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `.github/workflows/step-agent-pr.yml` | 2 |
@@ -530,6 +531,7 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_rulebook_fresh.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_window_lifetime.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/contract.py` | 2 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/finding_chains.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/findings_archive.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/items.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/review_map.py` | 2 |
@@ -561,7 +563,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_steps_speak_outward.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_subprocess_deadline.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_token_paths.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 120 механизмов по одному правилу; без названного адреса: 0 из 218 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 118 механизмов по одному правилу; без названного адреса: 0 из 219 |
 
 ## Заметки и замеры проектов · Project notes and metrics
 
@@ -800,4 +802,4 @@
 | 225 | действует | — | — | — | — | действует |
 | 226 | действует | — | — | — | — | действует |
 | 227 | действует | — | — | — | — | действует |
-| 228 | действует | — | — | — | — | — |
+| 228 | действует | — | — | — | — | действует |

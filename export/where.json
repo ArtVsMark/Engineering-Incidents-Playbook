@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-22T08:10:21+00:00",
+  "generated_at": "2026-10-22T13:52:30+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -11706,16 +11706,16 @@
       "answers_to": "1.8",
       "state": "подключён",
       "read_at": "2026-10-22",
-      "answered": 214,
+      "answered": 215,
       "by_status": {
-        "active": 206,
+        "active": 207,
         "not-applicable": 8
       },
       "by_mechanism": {
         "gate": 183,
         "pipeline": 17,
         "document": 4,
-        "skill": 2
+        "skill": 3
       },
       "rules": {
         "001": "active",
@@ -11943,7 +11943,8 @@
         "224": "active",
         "225": "active",
         "226": "active",
-        "227": "active"
+        "227": "active",
+        "228": "active"
       },
       "holds": {
         "001": {
@@ -12886,10 +12887,10 @@
           "where": ".github/workflows/ci.yml — джоб attribution подключён действием каталога, а не переписан здесь; packages/transport/ghrest.py — общий транспорт вместо пяти копий, и tests/test_ghrest.py краснеет на появлении шестой",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-26",
+          "analysed": "2026-10-22",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v2.0.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v2.1.0",
           "origin_kind": "called"
         },
         "091": {
@@ -12897,7 +12898,7 @@
           "where": "scripts/work_plan.py — ПОРЯДОК ПОКАЗАН ЦЕЛИКОМ ОДНИМ МЕХАНИЗМОМ: сборщик ведёт план работ — живую задачу с маркером work-plan — разделами в порядке контура 1: краснота общей ветки (0), конфликт и красное на своём открытом изменении (1, 2), дефекты и совещательное красное по слитому (3), указание владельца (4), правила каталога, дрейф и копящиеся риски и замечания на слитом (5; debt.ACCRUED, решение владельца 08.10.2026), план автора (6). Разделы 0–3 и 5 собираются из источников; 4 и 6 ведёт владелец, а сборщик лишь уносит из них строки с закрытым адресом и отвергает строку без адреса. Отказ одного источника называется в его разделе, а не выдаётся за пустоту. Пересобирает план прогон .github/workflows/work-plan.yml — после ci на любой голове, после слияния и после дрейфа. КАК план читать — первый непустой раздел и есть работа, указание владельца 0–3 не отменяет — суждение окна, машиной не проверяемое; его держит навык .claude/skills/work-the-plan. scripts/debt.py остаётся шагом долга на изменении и печатает источники 1, 2, 3, 5 в том же порядке; сборщик плана читает их ЕГО функциями, а не считает заново (022). Плюс AGENTS.md и docs/agent/behaviour.md — контур 1. ВТОРАЯ ПОЛОВИНА ПРИТЯЗАНИЯ — «статусы живут только в трекере и не дублируются файлами» — исполнена планом ПО УСТРОЙСТВУ: план живёт задачей трекера, а не файлом дерева, и его строки — зеркало источников с адресом, а не второе место правды. Числа долга читаются из задачи-«входящих» и живой задачи находок, а не считаются. Файлов со статусом работ в дереве нет ни одного: .rules/outcomes.json несёт долг ИСХОДОВ и сверяется с живым разбором в обе стороны, а строки раздела пробелов ведут в задачи адресом, а не хранят их состояние. Тревога о застрявшем остаётся предметом службы (docs/decisions/004-schedules-stay-service-observes.md) — план читает СВОЁ состояние, это порядок работ, а не тревога",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-09",
+          "analysed": "2026-10-22",
           "decided": "2026-10-08",
           "skill": ".claude/skills/work-the-plan",
           "origin": "",
@@ -13216,10 +13217,10 @@
           "where": ".github/workflows/ci.yml — джоб attribution с отметкой cb26ec48dd6a53c0b47af7dd0ec7cda2e07a748b; отпечаток ЦЕЛИКОМ, а не короткий: короткий однажды перестаёт быть однозначным, и отметка тогда указывает не туда. Тот же полный отпечаток стоит в .github/workflows/ci.yml и в docs/decisions/001-attribution-of-merged-1.md — три места, одно написание. .github/authors.txt — список согласованных имён",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-26",
+          "analysed": "2026-10-22",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v2.0.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v2.1.0",
           "origin_kind": "called"
         },
         "124": {
@@ -13282,10 +13283,10 @@
           "where": ".github/workflows/ci.yml, джоб answer — действие каталога .github/actions/answer сверяет .rules/bindings.json с формой контракта ответа и прогоняет по дереву пробы «не применимо» (refuted_by); форму проверяет тот, кто её задаёт, а не наша копия (090). .rules/bindings.json — ответ по каждой записи каталога; scripts/pipeline_checks.py повторяет ту же форму для классов проверок; tests/test_bindings.py держит полноту ответа. Контракт назван целиком, а не одной его частью: `.rules/bindings.json` несёт `schema` — версию формы ответа, `answers_to` — версию ВЫГРУЗКИ, по которой ответы построены, `project` и `catalogue` — обратную ссылку на источник. Все четыре сверяются с живым каталогом: scripts/drift.py::catalogue_moved печатает отставание по каждому номеру порознь, а scripts/drift.py::reader_is_behind — по номеру, под который написан наш читатель чужой сводки",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-14",
+          "analysed": "2026-10-22",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/answer/action.yml@v2.0.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/answer/action.yml@v2.1.0",
           "origin_kind": "called"
         },
         "130": {
@@ -13293,10 +13294,10 @@
           "where": ".github/workflows/rules-inbox.yml — новое правило каталога приходит не в чужой репозиторий, а ЗАДАЧЕЙ в трекер этого проекта, вместе с тремя числами долга по 177: без ответа, действующих без механизма, и разошедшийся контракт. Вторая половина правила — подбирать к новому правилу кандидатов из открытых задач — пока не сделана: список кандидатов проходная не собирает, и связывает правило с предметом окно",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-09",
+          "analysed": "2026-10-22",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v2.0.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v2.1.0",
           "origin_kind": "called"
         },
         "131": {
@@ -13348,10 +13349,10 @@
           "where": ".github/workflows/attribution-history.yml — личность записи узнаётся ЗАПИСЬЮ: первопредками общей ветки, а не тем, что окно объявило о себе. Гейт на изменении этого не видит по построению — он спрашивает коммиты ветки, а в общую ветку едет уплотнение, тело которому составляет очередь. Замер 10.09.2026: из ста первопредков после объявленной отметки шестнадцать шли без строки соавтора, и все они старше того дня, когда очередь научилась переносить трейлеры. Отметка `since` объявлена в прогоне: старый хвост переписать нечем, а вечное красное — фон, а не сигнал (051). Плюс CLAUDE.md, раздел «Подпись и открытие изменения».",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-09-26",
+          "analysed": "2026-10-22",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v2.0.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:.github/actions/attribution/action.yml@v2.1.0",
           "origin_kind": "called"
         },
         "136": {
@@ -13810,10 +13811,10 @@
           "where": ".github/workflows/rules-inbox.yml и scripts/debt.py — числа об одной величине приходят с двух сторон: каталог считает по своей выгрузке, проект — по .rules/bindings.json. При расхождении первым проверяется СВОЁ чтение: поле answers_to называет версию выгрузки, по которой построены ответы, и сверяется каталогом. Именно так расхождение и всплыло — schema была вписана по разумению окна вместо заготовки каталога, а не потому, что величины разные; scripts/drift.py — «один снимок старее другого» проверяется механизмом, а не гипотезой: сводка семьи сверяется с живым ответом дерева, и расхождение называется правилами поимённо",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-09",
+          "analysed": "2026-10-22",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v2.0.0",
+          "origin": "ArtVsMark/Engineering-Incidents-Playbook:action.yml@v2.1.0",
           "origin_kind": "called"
         },
         "179": {
@@ -14343,6 +14344,17 @@
           "skill": "",
           "origin": "",
           "origin_kind": "own"
+        },
+        "228": {
+          "mechanism": "skill",
+          "where": ".claude/skills/close-a-finding/SKILL.md — шаг 2б, рядом с шагом 2а (210). Кандидатов — места с находками на нескольких изменениях — называет замер scripts/finding_chains.py. Круг изменения ограничен решением владельца 18.10.2026 (комментарий плана ArtVsMark/Engineering-Pipeline-Mechanisms#639): изменение сливается не позже третьего круга взгляда, замечания последнего круга возвращаются в раздел 5",
+          "holdable": "no",
+          "awaiting": "",
+          "analysed": "2026-10-22",
+          "decided": "2026-10-22",
+          "skill": ".claude/skills/close-a-finding",
+          "origin": "",
+          "origin_kind": ""
         }
       },
       "notes": {
