@@ -52,10 +52,10 @@ ArtVsMark/ArtVsMark#56 — `attribution-history` покраснел, и увид
 import argparse
 import json
 import subprocess
-import proc
 import sys
 
 import ghcli
+import proc
 
 #: По этой строке задача находится снова. Заголовок для этого не годится: его
 #: правят руками, и тогда прогон заведёт вторую задачу вместо обновления.
@@ -241,7 +241,7 @@ def selftest() -> int:
         broken.append("тело задачи не несёт ни списка работ, ни шаблона потребителя")
 
     probe = proc.run([sys.executable, __file__, "--body-file", "/nonexistent"],
-                           capture_output=True, text=True, encoding="utf-8", timeout=600)
+                     capture_output=True, text=True, encoding="utf-8", timeout=600)
     if probe.returncode != 2:
         broken.append(f"исход «дежурный не отработал» дал код {probe.returncode}, а не 2")
     print(f"  код {probe.returncode}                            — шаблон не прочитан")

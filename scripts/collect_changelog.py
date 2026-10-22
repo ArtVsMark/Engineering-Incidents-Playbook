@@ -47,9 +47,10 @@ import argparse
 import datetime as dt
 import re
 import subprocess
-import proc
 import sys
 from pathlib import Path
+
+import proc
 
 # Что считается тегом выпуска, решает одно место на весь каталог: у второго
 # выражения разъехались бы границы, а разъехавшись — молча (правило 090).

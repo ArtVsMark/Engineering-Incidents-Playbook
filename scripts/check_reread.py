@@ -59,9 +59,10 @@ import argparse
 import json
 import re
 import subprocess
-import proc
 import sys
 from pathlib import Path
+
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 ОТВЕТ = ".rules/bindings.json"
@@ -79,7 +80,7 @@ ROOT = Path(__file__).resolve().parent.parent
 def git(root: Path, *args: str) -> tuple[int, str, str]:
     """Вызов git с явной кодировкой (176)."""
     done = proc.run(["git", "-C", str(root), *args],
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+                    capture_output=True, text=True, encoding="utf-8", timeout=60)
     return done.returncode, done.stdout, done.stderr
 
 

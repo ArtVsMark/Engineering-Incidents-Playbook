@@ -45,12 +45,13 @@ import argparse
 import json
 import re
 import subprocess
-import proc
 import sys
 import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
+
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -356,7 +357,8 @@ def main(argv: list[str] | None = None) -> int:
         if done.returncode != 0:
             tail = (done.stdout or "") + (done.stderr or "")
             print("\n".join(f"    {ln}" for ln in tail.strip().splitlines()))
-            (broken if done.returncode == 2 else findings).append(step.name)
+            # Истёкший дедлайн — «не проверил», а не «проверил и нашёл» (039).
+            (broken if done.returncode in (2, proc.TIMED_OUT) else findings).append(step.name)
     skipped = остались
 
     # ЧЕГО НЕ ЗАПУСКАЛИ — ГОВОРИТСЯ ВСЕГДА, и говорится в конце, рядом с
@@ -429,9 +431,16 @@ def толкнуть(root: Path) -> int:
     назван (154); неназванный стоил соседу трёх толчков при красном из
     пятнадцати.
     """
-    ветка = proc.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
-                           cwd=root, capture_output=True, text=True,
-                           encoding="utf-8", timeout=60).stdout.strip()
+    названа = proc.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                       cwd=root, capture_output=True, text=True,
+                       encoding="utf-8", timeout=60)
+    if названа.returncode != 0:
+        # Истечение и отказ git — «ветку не узнать», а не «ветка без приставки»:
+        # пустое имя под чужой причиной было бы тем же враньём прогоном (039).
+        print(f"толчок не сделан: ветка не названа — {названа.stderr.strip()}",
+              file=sys.stderr)
+        return 2
+    ветка = названа.stdout.strip()
     try:
         можно = приставки(root)
     except OSError as e:

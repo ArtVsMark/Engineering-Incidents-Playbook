@@ -46,10 +46,10 @@ import os
 import pathlib
 import shutil
 import subprocess
-import proc
 import sys
 
 import check_facts
+import proc
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -72,7 +72,7 @@ def listed(out: str, tag: str) -> bool:
 def tag_exists(tag: str) -> bool:
     """Стоит ли такой тег — точной сверкой, а не по образцу."""
     out = proc.run(["git", "tag", "--list", tag], cwd=ROOT, capture_output=True,
-                         text=True, encoding="utf-8", check=True, timeout=60).stdout
+                   text=True, encoding="utf-8", check=True, timeout=60).stdout
     return listed(out, tag)
 
 
@@ -95,7 +95,7 @@ def verify(dist: pathlib.Path, repo: str) -> list[str]:
     for name, args in runs:
         run = proc.run([sys.executable, "-I", pathlib.Path(check_facts.__file__).name,
                               *args], cwd=dist, capture_output=True, text=True,
-                             encoding="utf-8", timeout=600)
+                       encoding="utf-8", timeout=600)
         if run.returncode != 0:
             last = (run.stderr.strip().splitlines() or run.stdout.strip().splitlines()
                     or ["вывода нет"])[-1]

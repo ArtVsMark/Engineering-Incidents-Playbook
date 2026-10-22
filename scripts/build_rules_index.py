@@ -61,11 +61,11 @@ import datetime as dt
 import json
 import re
 import subprocess
-import proc
 import sys
 from pathlib import Path
 
 import check_facts
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 RULES = ROOT / "rules"

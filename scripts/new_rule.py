@@ -35,9 +35,10 @@ import argparse
 import json
 import re
 import subprocess
-import proc
 import sys
 from pathlib import Path
+
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 LANGS = ("ru", "en")

@@ -49,10 +49,11 @@ import argparse
 import os
 import re
 import subprocess
-import proc
 import sys
 import tempfile
 from pathlib import Path
+
+import proc
 
 ЧИСТО, НАХОДКИ, СЛОМАНО = 0, 1, 2
 

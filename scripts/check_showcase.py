@@ -100,7 +100,7 @@ def badges_in_tree(root) -> list[str]:
     import proc                                                # noqa: PLC0415
     try:
         out = proc.run(["git", "-C", str(root), "ls-files", "-z", BADGES_DIR],
-                             capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
+                       capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
     except OSError, subprocess.CalledProcessError:
         return []
     return sorted(line for line in out.split("\0") if line.strip())

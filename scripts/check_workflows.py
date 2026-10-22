@@ -68,9 +68,10 @@ import argparse
 import re
 import shell_words
 import subprocess
-import proc
 import sys
 from pathlib import Path
+
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -417,7 +418,7 @@ def unparsable_shell(text: str) -> list[str]:
         if not код.strip():
             continue
         r = proc.run(["bash", "-n"], input=код, text=True,
-                           capture_output=True, encoding="utf-8", timeout=60)
+                     capture_output=True, encoding="utf-8", timeout=60)
         if r.returncode != 0:
             причина = (r.stderr or "").strip().splitlines()
             плохо.append(f"{имя}: {причина[0] if причина else 'не разобран'}")

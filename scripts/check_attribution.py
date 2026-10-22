@@ -58,9 +58,10 @@
 import argparse
 import re
 import subprocess
-import proc
 import sys
 from pathlib import Path
+
+import proc
 
 #: Дом самого скрипта. От него берутся ТОЛЬКО умолчания: список имён и начало
 #: отсчёта принадлежат проверяемому проекту, а не инструменту, и у третьего
@@ -104,7 +105,7 @@ def tail(body: str) -> str:
 
 def git(repo: Path, *args: str) -> str:
     return proc.run(["git", "-C", str(repo), *args],
-                          capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
+                    capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
 
 
 #: Заголовок, после которого перечисляются АВТОРЫ, а не соавторы. До него —

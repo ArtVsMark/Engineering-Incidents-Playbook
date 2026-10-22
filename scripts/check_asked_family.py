@@ -48,9 +48,10 @@
 import argparse
 import re
 import subprocess
-import proc
 import sys
 from pathlib import Path
+
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 #: Что считается механизмом — те же места, что у мета-гейтов (220).
@@ -85,7 +86,7 @@ def проверить_базу(root: Path, base: str) -> None:
     """
     done = proc.run(["git", "-C", str(root), "rev-parse", "--verify", "--quiet",
                            f"{base}^{{commit}}"],
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+                    capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         raise НеОтработал(f"база {base} не разобрана как коммит в {root}")
 
@@ -93,7 +94,7 @@ def проверить_базу(root: Path, base: str) -> None:
 def на_базе(root: Path, base: str, путь: str) -> bool:
     """Есть ли путь на базе изменения; база уже проверена."""
     done = proc.run(["git", "-C", str(root), "cat-file", "-e", f"{base}:{путь}"],
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+                    capture_output=True, text=True, encoding="utf-8", timeout=60)
     return done.returncode == 0
 
 

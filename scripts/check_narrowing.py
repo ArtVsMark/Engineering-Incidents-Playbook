@@ -66,9 +66,10 @@
 import argparse
 import re
 import subprocess
-import proc
 import sys
 from pathlib import Path
+
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 FRAGMENTS = ROOT / "changelog.d"

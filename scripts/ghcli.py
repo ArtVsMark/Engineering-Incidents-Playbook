@@ -48,8 +48,9 @@
 import json
 import re
 import subprocess
-import proc
 from collections.abc import Callable
+
+import proc
 
 #: Код, которым сообщается «инструмента нет». Не из набора кодов gh.
 NO_GH = 127

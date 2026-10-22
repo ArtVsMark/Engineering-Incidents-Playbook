@@ -39,10 +39,11 @@ import json
 import re
 import shutil
 import subprocess
-import proc
 import sys
 import tokenize
 from pathlib import Path
+
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -58,7 +59,7 @@ FUTURE = re.compile(r"^from __future__ import annotations\s*$", re.M)
 def файлы(root: Path) -> list[str]:
     """Отслеживаемые .py — то, что поедет, а не то, что лежит рядом."""
     done = proc.run(["git", "ls-files", "-z", "*.py"], cwd=root,
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+                    capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         raise RuntimeError(f"git ls-files не отработал: {done.stderr.strip()}")
     return sorted(п for п in done.stdout.split("\0") if п)

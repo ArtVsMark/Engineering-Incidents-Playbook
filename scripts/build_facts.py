@@ -61,9 +61,10 @@ import datetime as dt
 import json
 import re
 import subprocess
-import proc
 import sys
 from pathlib import Path
+
+import proc
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_facts  # noqa: E402
@@ -182,7 +183,7 @@ def git(*args: str) -> tuple[int, str]:
     """Вызов git с прочитанным выводом. Отказ — значение, а не исключение."""
     try:
         done = proc.run(["git", "-C", str(ROOT), *args],
-                              capture_output=True, text=True, encoding="utf-8", timeout=60)
+                        capture_output=True, text=True, encoding="utf-8", timeout=60)
     except OSError as exc:
         return 1, str(exc)
     return done.returncode, (done.stdout or done.stderr).strip()

@@ -68,10 +68,11 @@ import io
 import json
 import re
 import subprocess
-import proc
 import sys
 import tarfile
 from pathlib import Path
+
+import proc
 
 # Определение локальной ссылки берётся у гейта ссылок, а не переписывается:
 # две формулировки одной территории расходятся молча, а разойдясь
@@ -125,7 +126,7 @@ def release(tag: str) -> str:
 
 def git(root: Path, *args: str) -> subprocess.CompletedProcess:
     return proc.run(["git", "-C", str(root), *args],
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+                    capture_output=True, text=True, encoding="utf-8", timeout=60)
 
 
 def tags(root: Path) -> tuple[list[str] | None, str | None]:
@@ -144,7 +145,7 @@ def tags(root: Path) -> tuple[list[str] | None, str | None]:
 def files_at_tag(root: Path, tag: str) -> tuple[dict[str, str] | None, str | None]:
     """Дерево тега целиком: путь → текст. Вторым — причина отказа с адресом."""
     done = proc.run(["git", "-C", str(root), "archive", tag],
-                          capture_output=True, timeout=60)
+                    capture_output=True, timeout=60)
     if done.returncode != 0:
         return None, (f"тег {tag} — дерево не выгрузилось: "
                       f"{done.stderr.decode('utf-8', 'replace').strip()[:120]}")

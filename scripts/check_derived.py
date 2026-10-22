@@ -42,9 +42,10 @@ scripts/aggregate_bindings.py». Запрет читался как «не пр�
 
 import argparse
 import subprocess
-import proc
 import sys
 from pathlib import Path
+
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -99,7 +100,7 @@ def changed(rng: str, root: Path) -> tuple[list[str] | None, str]:
     # `--diff-filter=d` — строчная буква исключает удалённые.
     done = proc.run(["git", "-C", str(root), "diff", "--name-only", "-z",
                            "--diff-filter=d", rng],
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+                    capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return None, (done.stderr or "").strip()
     # По NUL, а не по строкам: имя с не-ASCII символами git отдаёт

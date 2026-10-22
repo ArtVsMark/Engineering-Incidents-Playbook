@@ -47,10 +47,11 @@
 
 import json
 import subprocess
-import proc
 import sys
 import tempfile
 from pathlib import Path
+
+import proc
 
 #: Сборка указателя проверяется вызовом функций, а не запуском: у неё нет ключа
 #: «работай в другом корне», а заводить его ради проверки — менять предмет под
