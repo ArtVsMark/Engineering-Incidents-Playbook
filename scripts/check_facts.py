@@ -564,7 +564,7 @@ def selftest() -> int:
                 ("испорченный образец", spoiled.name, 1, True),
                 ("образец с манифестом рядом", "family/facts.json", 0, False)):
             run = proc.run([sys.executable, "-I", "check_facts.py", "--file", target,
-                                  "--repo", str(example["repo"])], cwd=tmp,
+                            "--repo", str(example["repo"])], cwd=tmp,
                            capture_output=True, text=True, encoding="utf-8", timeout=600)
             warned = "манифеста семьи нет" in run.stdout
             ok = run.returncode == expected and warned == warns

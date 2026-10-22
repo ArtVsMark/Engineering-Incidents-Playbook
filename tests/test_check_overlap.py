@@ -146,3 +146,16 @@ def test_lokalnyy_put_bez_obshchego_chisto(tmp_path, monkeypatch, capsys):
 
     assert co.main(["--root", str(tmp_path), "--branch", МОЙ]) == 0
     assert "пересечений нет" in capsys.readouterr().out
+
+
+def test_istechenie_git_nazyvaet_prichinu(monkeypatch, capsys):
+    """Зависший git — исход 2 с причиной истечения, а не голое «не назвал ветку» (обзор #942)."""
+    import proc
+
+    def завис(args, *, timeout, **kw):
+        return subprocess.CompletedProcess(args, proc.TIMED_OUT, "",
+                                           f"не ответил за {timeout:g} с: git (100)")
+    monkeypatch.setattr(co.proc, "run", завис)
+    assert co.main([]) == 2
+    err = capsys.readouterr().err
+    assert "не назвал ветку — не ответил за 60 с" in err

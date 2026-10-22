@@ -94,7 +94,7 @@ def verify(dist: pathlib.Path, repo: str) -> list[str]:
             ("номер сходится с заголовками", ["--contract"]))
     for name, args in runs:
         run = proc.run([sys.executable, "-I", pathlib.Path(check_facts.__file__).name,
-                              *args], cwd=dist, capture_output=True, text=True,
+                        *args], cwd=dist, capture_output=True, text=True,
                        encoding="utf-8", timeout=600)
         if run.returncode != 0:
             last = (run.stderr.strip().splitlines() or run.stdout.strip().splitlines()

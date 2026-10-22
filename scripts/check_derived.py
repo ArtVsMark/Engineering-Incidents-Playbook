@@ -99,7 +99,7 @@ def changed(rng: str, root: Path) -> tuple[list[str] | None, str]:
     # работе (051), и притом на единственной работе, которая гейт удовлетворяет.
     # `--diff-filter=d` — строчная буква исключает удалённые.
     done = proc.run(["git", "-C", str(root), "diff", "--name-only", "-z",
-                           "--diff-filter=d", rng],
+                     "--diff-filter=d", rng],
                     capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return None, (done.stderr or "").strip()

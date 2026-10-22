@@ -85,7 +85,7 @@ def проверить_базу(root: Path, base: str) -> None:
     16.10), и битая база молча превратила бы каждый механизм в новый.
     """
     done = proc.run(["git", "-C", str(root), "rev-parse", "--verify", "--quiet",
-                           f"{base}^{{commit}}"],
+                     f"{base}^{{commit}}"],
                     capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         raise НеОтработал(f"база {base} не разобрана как коммит в {root}")

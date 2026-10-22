@@ -283,7 +283,7 @@ MONTHS = ("января", "февраля", "марта", "апреля", "ма�
 def tag_date(root: Path, tag: str) -> tuple[str, str]:
     """Дата тега словами. Ошибка возвращается строкой, а не трассировкой."""
     done = proc.run(["git", "-C", str(root), "log", "-1", "--format=%cI",
-                           tag], capture_output=True, text=True, encoding="utf-8", timeout=60)
+                     tag], capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0 or not done.stdout.strip():
         return "", f"у тега {tag} не спросить дату: {done.stderr.strip()}"
     # В UTC, как дата появления правила: пояс коммита — пояс машины (#706).

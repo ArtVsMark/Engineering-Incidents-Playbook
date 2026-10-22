@@ -45,10 +45,13 @@ ROOT = Path(__file__).resolve().parent.parent
 LIMIT = 50
 
 
-def current_branch(root: Path) -> str:
+def current_branch(root: Path) -> tuple[str, str]:
+    """Имя текущей ветки; вторым — причина, если git его не назвал (истечение в том числе)."""
     done = proc.run(["git", "-C", str(root), "rev-parse",
-                           "--abbrev-ref", "HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
-    return done.stdout.strip()
+                     "--abbrev-ref", "HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
+    if done.returncode != 0:
+        return "", done.stderr.strip()
+    return done.stdout.strip(), ""
 
 
 def open_changes() -> tuple[list[dict] | None, str | None]:
@@ -98,12 +101,13 @@ def main(argv: list[str] | None = None) -> int:
                                          "пересечение; по умолчанию текущая")
     args = parser.parse_args(argv)
     root: Path = args.root
-    branch = args.branch or current_branch(root)
+    branch, почему = (args.branch, "") if args.branch else current_branch(root)
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not branch:
         print(f"проверка не отработала: `git -C {args.root} rev-parse "
-              "--abbrev-ref HEAD` не назвал ветку", file=sys.stderr)
+              f"--abbrev-ref HEAD` не назвал ветку{' — ' + почему if почему else ''}",
+              file=sys.stderr)
         return 2
     changes, err = open_changes()
     if err:
