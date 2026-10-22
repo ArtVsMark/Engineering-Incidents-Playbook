@@ -126,6 +126,11 @@ def frozen(base_runs: list[dict], labels: list[str], thaw: str,
             "на сломанном основании и ничего не значат (правило 053)"), ""
 
 
+#: Начало причины «ещё идут» у verdict(): по ней взвод отличает «рано
+#: сливать» от «нельзя сливать».
+ИДУТ = "проверки ещё идут: "
+
+
 def awaited(runs: list[dict], names: list[str]) -> tuple[bool, str]:
     """Дождались ли ВЕРДИКТА необязательных каналов. Второе — причина.
 
@@ -198,7 +203,7 @@ def verdict(runs: list[dict], required: list[str],
                       if r.get("status") != "completed"
                       or r.get("conclusion") in PENDING})
     if waiting:
-        return False, "проверки ещё идут: " + ", ".join(waiting)
+        return False, ИДУТ + ", ".join(waiting)
     green = {r.get("name") for r in runs if r.get("conclusion") == "success"}
     missing = [n for n in required if n not in green]
     if missing:
@@ -294,6 +299,17 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     if ok:
         print(f"сливать можно: {основание}, {why}; {почему_ждём}")
+        return 0
+    # ВЗВОД НЕ ЖДЁТ ИДУЩИХ ПРОВЕРОК, А ТОЛЬКО ВЕРДИКТА (`--await`). Автомерж
+    # включают, пока проверки идут: в чистом состоянии площадка его не
+    # включает вовсе (шапка automerge.yml), а обязательные он дождётся сам.
+    # Здесь стоял общий отказ «ещё идут», и прогон читал его как «жду
+    # вердикта»: 22.10 #942 трижды не взвёлся — при открытии, по вердикту и
+    # на разморозке, — потому что `catalogue` ещё шла, а позже повода
+    # перевзвести не было. Красное по-прежнему держит: verdict() отвечает
+    # «незелёные» раньше, чем «ещё идут».
+    if ждать and дождались and why.startswith(ИДУТ):
+        print(f"взводить можно: {почему_ждём}; {why} — их дождётся автомерж площадки")
         return 0
     # ── исход 1 ────────────────────────────────────────────────────────────
     print(f"сливать нельзя: {why}", file=sys.stderr)

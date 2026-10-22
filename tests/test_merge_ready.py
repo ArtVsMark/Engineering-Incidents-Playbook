@@ -462,3 +462,41 @@ def test_sovetniki_skhodyatsya_s_rabotami_mechanisms_yml():
         r"^  ([\w-]+):\n    uses: [^\n]*/step-([\w-]+)\.yml@", прогон, re.M)
     assert работы, "в mechanisms.yml не найдено ни одной работы-вызова"
     assert set(mr.СОВЕТНИКИ) == {f"{работа} / {шаг}" for работа, шаг in работы}
+
+
+def test_vzvod_ne_zhdyot_idushchih_proverok(monkeypatch, capsys):
+    """Вердикт обзора есть, `catalogue` ещё идёт — взводить можно (#942).
+
+    Автомерж включают, пока проверки идут: в чистом состоянии площадка его не
+    включает, а обязательные он дождётся сам. Прежде общий отказ «ещё идут»
+    читался прогоном как «жду вердикта», и изменение не взводилось вовсе.
+    """
+    import io
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
+        прогон("catalogue", статус="in_progress", исход=None),
+        прогон("review", исход="success")]})))
+
+    assert mr.main(["--required", "catalogue", "--await", "review"]) == 0
+    assert "взводить можно" in capsys.readouterr().out
+
+
+def test_vzvod_krasnoe_derzhit_i_pri_idushchih(monkeypatch, capsys):
+    """Граница: красная проверка держит взвод, даже если другие ещё идут."""
+    import io
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
+        прогон("catalogue", статус="in_progress", исход=None),
+        прогон("other", исход="failure"),
+        прогон("review", исход="success")]})))
+
+    assert mr.main(["--required", "catalogue", "--await", "review"]) == 1
+    assert "незелёные" in capsys.readouterr().err
+
+
+def test_bez_await_idushchie_po_prezhnemu_ne_slivayutsya(monkeypatch, capsys):
+    """Слияние сразу (без `--await`) по-прежнему ждёт все проверки."""
+    import io
+    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
+        прогон("catalogue", статус="in_progress", исход=None)]})))
+
+    assert mr.main(["--required", "catalogue"]) == 1
+    assert "ещё идут" in capsys.readouterr().err
