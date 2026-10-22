@@ -40,7 +40,9 @@
 Запуск:
   gh api …/check-runs | python scripts/merge_ready.py --required catalogue \
       --base-runs base.json --labels "$LABELS"
-Коды:    0 сливать можно · 1 сливать нельзя · 2 проверка не отработала
+Коды:    0 сливать можно (с `--await` — взводить: вердикт есть, красных нет,
+         идущие обязательные дождётся автомерж) · 1 сливать нельзя или рано ·
+         2 проверка не отработала
 
 Реализует правила каталога:
   010 — пустой список проверок трактуется как «не стартовало», а не «всё хорошо»;
@@ -126,9 +128,17 @@ def frozen(base_runs: list[dict], labels: list[str], thaw: str,
             "на сломанном основании и ничего не значат (правило 053)"), ""
 
 
-#: Начало причины «ещё идут» у verdict(): по ней взвод отличает «рано
-#: сливать» от «нельзя сливать».
-ИДУТ = "проверки ещё идут: "
+def красные(runs: list[dict]) -> list[str]:
+    """Имена проверок с отказом — одна мера для слияния и для взвода."""
+    return sorted({r.get("name", "?") for r in runs
+                   if (r.get("conclusion") or "") in BAD})
+
+
+def идущие(runs: list[dict]) -> list[str]:
+    """Имена проверок без вердикта — одна мера для слияния и для взвода."""
+    return sorted({r.get("name", "?") for r in runs
+                   if r.get("status") != "completed"
+                   or r.get("conclusion") in PENDING})
 
 
 def awaited(runs: list[dict], names: list[str]) -> tuple[bool, str]:
@@ -195,15 +205,12 @@ def verdict(runs: list[dict], required: list[str],
         return False, ("проверок нет НИ ОДНОЙ — это «не стартовало», а не «всё "
                        "хорошо» (правило 010). Частая причина: у изменения "
                        "конфликт, и площадка не собрала ссылку слияния")
-    bad = sorted({r.get("name", "?") for r in runs
-                  if (r.get("conclusion") or "") in BAD})
+    bad = красные(runs)
     if bad:
         return False, "незелёные проверки: " + ", ".join(bad)
-    waiting = sorted({r.get("name", "?") for r in runs
-                      if r.get("status") != "completed"
-                      or r.get("conclusion") in PENDING})
+    waiting = идущие(runs)
     if waiting:
-        return False, ИДУТ + ", ".join(waiting)
+        return False, "проверки ещё идут: " + ", ".join(waiting)
     green = {r.get("name") for r in runs if r.get("conclusion") == "success"}
     missing = [n for n in required if n not in green]
     if missing:
@@ -308,7 +315,8 @@ def main(argv: list[str] | None = None) -> int:
     # на разморозке, — потому что `catalogue` ещё шла, а позже повода
     # перевзвести не было. Красное по-прежнему держит: verdict() отвечает
     # «незелёные» раньше, чем «ещё идут».
-    if ждать and дождались and why.startswith(ИДУТ):
+    свои = [r for r in runs if r.get("name") not in {*ждать, *СОВЕТНИКИ}]
+    if ждать and дождались and свои and not красные(свои) and идущие(свои):
         print(f"взводить можно: {почему_ждём}; {why} — их дождётся автомерж площадки")
         return 0
     # ── исход 1 ────────────────────────────────────────────────────────────
