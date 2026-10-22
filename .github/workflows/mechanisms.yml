@@ -4,6 +4,12 @@
 #   006 — срок жизни окна, открывшего изменение (трейлер Claude-Session);
 #   047, 134 — свод (AGENTS.md / CLAUDE.md) правился под уже работающим окном.
 #
+# НАБЛЮДЕНИЕ ЭТАПА 1 ПЕРЕЕЗДА (#930). Шаги `pr-meta`, `journal`, `pipeline`
+# идут рядом со своим `ci` совещательно: их вердикт сверяется с гейтами
+# каталога, расхождения записываются в #930, пока их не наберётся десять
+# слияний. Класс каждой проверки — `.pipeline.yml`; `lint` не подключён —
+# состава ruff и mypy каталог не объявлял, и красное было бы о составе.
+#
 # ОТДЕЛЬНЫМ ПРОГОНОМ, А НЕ ДЖОБОМ ci.yml. Обязательная работа у каталога одна
 # (084, 168), а оба шага сосед сам объявляет необязательными: их красное
 # правкой изменения не чинится — окно стареет, а не код (051). Ставить их в
@@ -15,9 +21,10 @@
 # и тогда тот же прогон возьмёт другой код без единой правки у нас.
 # Неподвижным был бы только полный SHA вместо тега в `uses:`; его здесь нет
 # сознательно — выпуски соседа не переставляются, и это доверие, а не
-# проверка (039). На 21.10 v1.8.0 указывает на
-# 7cd39af2005ceb7564cba9324a42b375331fa4c8; файлы обоих шагов на нём те же,
-# что на v1.5.0, — входы и права не менялись.
+# проверка (039). На 22.10 v1.9.0 указывает на
+# 7502e2d68926f6aff2d2036360907f8692b63e40; права шагов те же четыре, что
+# объявлены ниже, входы шагов оставлены по умолчанию — мета-гейты
+# `pipeline` предупреждают, а не отказывают.
 name: mechanisms
 
 on:
@@ -41,6 +48,12 @@ concurrency:
 
 jobs:
   window-lifetime:
-    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-window-lifetime.yml@v1.8.0
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-window-lifetime.yml@v1.9.0
   rulebook-fresh:
-    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-rulebook-fresh.yml@v1.8.0
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-rulebook-fresh.yml@v1.9.0
+  pr-meta:
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-pr-meta.yml@v1.9.0
+  journal:
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-journal.yml@v1.9.0
+  pipeline:
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-pipeline.yml@v1.9.0

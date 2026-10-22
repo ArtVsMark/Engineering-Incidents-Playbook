@@ -1,0 +1,119 @@
+# Ответ каталога конвейеру механизмов: класс каждой проверки дерева.
+#
+# ЭТАП 1 ПЕРЕЕЗДА (#930) — НАБЛЮДЕНИЕ. Каталог подключён к шагам механизмов
+# совещательно: свой `ci` остаётся единственным, что держит слияние, а шаги
+# механизмов идут рядом (`.github/workflows/mechanisms.yml`) и дают замер
+# расхождений двух конвейеров на живых изменениях. Сводного гейта механизмов
+# (`ci-complete`) у каталога нет — он придёт с этапом 4, — поэтому этот файл
+# пока читает только их шаг `pipeline`: ответ полон и сходится с деревом.
+#
+# ИМЕНА — ТЕ, ЧТО ВИДИТ СВЕРКА, А НЕ ЗАГОТОВКА. Шаг, вызванный по тегу, сверка
+# механизмов называет голым именем джоба (`pr-meta`): файла вызванного прогона
+# в дереве нет, и составное имя площадки (`pr-meta / pr-meta`) ей не видно.
+# Заготовка `onboard.py` печатает составное — расхождение передано механизмам
+# (#930). Пока сводного гейта нет, имя записи на площадке ни на что не влияет.
+#
+# Форма — договор механизмов `docs/use/pipeline.md` на теге из `contract`.
+schema: 4
+contract: ">=0.11,<0.12"
+
+checks:
+  # Единственная обязательная работа каталога (084, 168) и её вторая версия
+  # Python (решение владельца 14.10) — обе в защите ветки.
+  catalogue: required
+  "тесты на 3.15": required
+
+  review:
+    class: advisory
+    why: внешний взгляд советует, а не запрещает; находка переживает слияние в реестре
+    addressee: "#473"
+
+  arm:
+    class: off
+    why: управляющий прогон — включает автомерж и вердикта о коде не даёт; к шагу механизмов переезжает на этапе 4 #930
+
+  # Шаги механизмов. Срок окна и свежесть свода краснеют о том, что правкой
+  # изменения не чинится (051): решает человек, записи у них нет.
+  window-lifetime:
+    class: advisory
+    why: окно стареет, а не код; перезапуск решает человек (CLAUDE.md, 006)
+    addressee: none
+  rulebook-fresh:
+    class: advisory
+    why: свод правился под живым окном; перечитывает окно, слияние это не держит (047)
+    addressee: none
+
+  # Наблюдение этапа 1: расхождение с `ci` каталога записывается в план
+  # переезда, пока их не наберётся десять слияний.
+  pr-meta:
+    class: advisory
+    why: этап 1 #930 — замер расхождений с гейтами формы изменения у каталога
+    addressee: "#930"
+  journal:
+    class: advisory
+    why: этап 1 #930 — замер расхождений с гейтами журнала у каталога
+    addressee: "#930"
+  pipeline:
+    class: advisory
+    why: этап 1 #930 — сверка этого ответа, невидимые символы и дедлайн; перейдёт в обязательные по одному гейту на этапе 2
+    addressee: "#930"
+
+# Прогоны вне изменения — свои у каталога, пока этап 4 #930 не заменит их
+# шагами механизмов. Запись каждого ведёт он сам; адрес — его файл.
+beyond_the_change:
+  open:
+    class: advisory
+    why: открывает изменение из ветки окна токеном владельца (131)
+    addressee: .github/workflows/agent-pr.yml
+  first-parents:
+    class: advisory
+    why: сверяет авторство первопредков общей ветки (123)
+    addressee: .github/workflows/attribution-history.yml
+  publish:
+    class: advisory
+    why: рисует значки на ветке badges; до этапа 3 #930
+    addressee: .github/workflows/badges.yml
+  aggregate:
+    class: advisory
+    why: сводка «где действует» по ответам потребителей
+    addressee: .github/workflows/consumers-sync.yml
+  facts-release:
+    class: advisory
+    why: кнопка выпуска договора фактов; до этапа 3 #930
+    addressee: .github/workflows/facts-release.yml
+  apply:
+    class: advisory
+    why: метки площадки из дерева
+    addressee: .github/workflows/labels-sync.yml
+  watch:
+    class: advisory
+    why: красная общая ветка — задача дежурному
+    addressee: .github/workflows/main-red.yml
+  python-next-drift:
+    class: advisory
+    why: расхождение следующей версии Python с планкой
+    addressee: .github/workflows/main-red.yml
+  flaky-reruns:
+    class: advisory
+    why: счёт перезапусков нестабильного
+    addressee: .github/workflows/main-red.yml
+  notice:
+    class: advisory
+    why: толчок в ветку без приставки agent/ — изменение не откроется (003)
+    addressee: .github/workflows/off-prefix.yml
+  tests:
+    class: advisory
+    why: совещательная следующая версия Python
+    addressee: .github/workflows/python-next.yml
+  verify:
+    class: advisory
+    why: кнопка выпуска каталога
+    addressee: .github/workflows/release.yml
+  check:
+    class: advisory
+    why: состояние задачи после слияния
+    addressee: .github/workflows/task-state.yml
+  rearm:
+    class: advisory
+    why: разморозка очереди автомержа
+    addressee: .github/workflows/thaw.yml
