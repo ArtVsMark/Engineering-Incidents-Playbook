@@ -50,6 +50,8 @@ import re
 import subprocess
 from collections.abc import Callable
 
+import proc
+
 #: Код, которым сообщается «инструмента нет». Не из набора кодов gh.
 NO_GH = 127
 #: Код, которым сообщается «квота исчерпана». Тоже вне набора кодов gh (1 и 2) и
@@ -86,7 +88,7 @@ def остаток() -> tuple[str, bool]:
     того, что хотя бы один счётчик на нуле.
     """
     try:
-        done = subprocess.run(  # noqa: S603 — аргументы свои
+        done = proc.run(  # noqa: S603 — аргументы свои
             ["gh", "api", "rate_limit"],
             capture_output=True, text=True, encoding="utf-8", timeout=120)
     except OSError as e:
@@ -122,7 +124,7 @@ def run(*args: str) -> tuple[int, str]:
     """
     global _замер
     try:
-        done = subprocess.run(["gh", *args], capture_output=True, text=True, encoding="utf-8", timeout=120)
+        done = proc.run(["gh", *args], capture_output=True, text=True, encoding="utf-8", timeout=120)
     except OSError as e:
         return NO_GH, f"{NO_GH_WHY} ({e.strerror or e})"
     вывод = (done.stdout or done.stderr).strip()
@@ -146,8 +148,12 @@ def run(*args: str) -> tuple[int, str]:
 
 
 def failed(code: int) -> bool:
-    """Вызов не отработал — это третий исход, а не находка."""
-    return code in (NO_GH, QUOTA_OUT)
+    """Вызов не отработал — это третий исход, а не находка.
+
+    Истёкший дедлайн (`proc.TIMED_OUT`) — тоже: площадка не ответила, и
+    читать это отказом `gh` значило бы выдать незнание за ответ (039, #942).
+    """
+    return code in (NO_GH, QUOTA_OUT, proc.TIMED_OUT)
 
 
 def список(путь: str, элемент: str = ".[]", *,

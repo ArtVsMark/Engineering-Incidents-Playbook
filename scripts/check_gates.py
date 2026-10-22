@@ -51,6 +51,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+import proc
+
 #: Сборка указателя проверяется вызовом функций, а не запуском: у неё нет ключа
 #: «работай в другом корне», а заводить его ради проверки — менять предмет под
 #: проверку. Байт-код при этом писать запрещено: производный файл в репозитории
@@ -181,7 +183,7 @@ AUDIT_CASES = [
 
 
 def run(*args: str, cwd: Path) -> subprocess.CompletedProcess:
-    return subprocess.run(args, cwd=cwd, capture_output=True, text=True, encoding="utf-8", timeout=300)
+    return proc.run(args, cwd=cwd, capture_output=True, text=True, encoding="utf-8", timeout=300)
 
 
 def build_catalogue(root: Path, spoil: list[tuple[str, str, str]]) -> str | None:

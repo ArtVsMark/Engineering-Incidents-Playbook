@@ -61,6 +61,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import proc
+
 ROOT = Path(__file__).resolve().parent.parent
 BADGES = ROOT / ".github" / "badges"
 
@@ -90,8 +92,8 @@ SYNC_MERGE_RE = re.compile(
 def git(*args: str, root: Path = ROOT) -> str | None:
     """stdout git-команды без хвостового перевода строки; None при любой ошибке."""
     try:
-        done = subprocess.run(("git", "-C", str(root), *args),
-                              capture_output=True, text=True, encoding="utf-8", check=False, timeout=60)
+        done = proc.run(("git", "-C", str(root), *args),
+                        capture_output=True, text=True, encoding="utf-8", check=False, timeout=60)
     except OSError:
         return None
     return done.stdout.strip() if done.returncode == 0 else None

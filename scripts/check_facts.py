@@ -547,6 +547,7 @@ def selftest() -> int:
     # Обе стороны: образец — исход 0, испорченный образец — исход 1.
     import shutil                                              # noqa: PLC0415
     import subprocess                                          # noqa: PLC0415
+    import proc                                                # noqa: PLC0415
     with tempfile.TemporaryDirectory(dir=os.environ.get("RUNNER_TEMP")) as tmp:
         for source in (pathlib.Path(__file__), SCHEMA_PATH, VERSION_PATH, EXAMPLE_PATH):
             shutil.copy(source, tmp)
@@ -562,9 +563,9 @@ def selftest() -> int:
                 ("образец", EXAMPLE_PATH.name, 0, True),
                 ("испорченный образец", spoiled.name, 1, True),
                 ("образец с манифестом рядом", "family/facts.json", 0, False)):
-            run = subprocess.run([sys.executable, "-I", "check_facts.py", "--file", target,
-                                  "--repo", str(example["repo"])], cwd=tmp,
-                                 capture_output=True, text=True, encoding="utf-8", timeout=600)
+            run = proc.run([sys.executable, "-I", "check_facts.py", "--file", target,
+                            "--repo", str(example["repo"])], cwd=tmp,
+                           capture_output=True, text=True, encoding="utf-8", timeout=600)
             warned = "манифеста семьи нет" in run.stdout
             ok = run.returncode == expected and warned == warns
             if not ok:

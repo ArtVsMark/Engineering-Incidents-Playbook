@@ -398,3 +398,23 @@ def test_vtoroy_spisok_branches_ne_teryaetsya(tmp_path):
         '  pull_request:\n    branches:\n      - "bot/**"\n      - "agent/**"\n',
         encoding="utf-8")
     assert preflight.приставки(root) == ("agent/", "bot/")
+
+
+def test_istechenie_git_pri_tolchke_nazvano(tmp_path, monkeypatch, capsys):
+    """Зависший git — «ветка не названа» с причиной, а не «ветка без приставки» (039, #942).
+
+    Сквозной случай вызывающего обёртки `proc`: истечение приходит кодом
+    `TIMED_OUT`, и место обязано его разобрать, а не читать пустой вывод.
+    """
+    import subprocess
+
+    import proc
+    root = _для_толчка(tmp_path, "agent/x", 0)
+    def завис(args, *, timeout, **kw):
+        return subprocess.CompletedProcess(args, proc.TIMED_OUT, "",
+                                           f"не ответил за {timeout:g} с: git (100)")
+    monkeypatch.setattr(preflight.proc, "run", завис)
+    assert preflight.толкнуть(root) == 2
+    err = capsys.readouterr().err
+    assert "ветка не названа" in err and "не ответил за 60 с" in err
+    assert "без приставки" not in err

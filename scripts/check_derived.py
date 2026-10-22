@@ -45,6 +45,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import proc
+
 ROOT = Path(__file__).resolve().parent.parent
 
 #: Производные, которыми владеет прогон, и кто именно их пересобирает.
@@ -96,9 +98,9 @@ def changed(rng: str, root: Path) -> tuple[list[str] | None, str]:
     # потому что путь стоит в разнице в обе стороны. Ложный отказ на верной
     # работе (051), и притом на единственной работе, которая гейт удовлетворяет.
     # `--diff-filter=d` — строчная буква исключает удалённые.
-    done = subprocess.run(["git", "-C", str(root), "diff", "--name-only", "-z",
-                           "--diff-filter=d", rng],
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(["git", "-C", str(root), "diff", "--name-only", "-z",
+                     "--diff-filter=d", rng],
+                    capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return None, (done.stderr or "").strip()
     # По NUL, а не по строкам: имя с не-ASCII символами git отдаёт
@@ -121,7 +123,7 @@ def findings(paths: list[str], branch: str, tracked: set[str] | None = None) -> 
 
 def tracked_paths(root: Path) -> set[str]:
     """Что git отслеживает в дереве. Пусто — спросить не удалось."""
-    done = subprocess.run(  # noqa: S603 — аргументы свои
+    done = proc.run(  # noqa: S603 — аргументы свои
         ["git", "-C", str(root), "ls-files", "-z", "--", "export/"],
         capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:

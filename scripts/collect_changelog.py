@@ -50,6 +50,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import proc
+
 # Что считается тегом выпуска, решает одно место на весь каталог: у второго
 # выражения разъехались бы границы, а разъехавшись — молча (правило 090).
 import history_metrics
@@ -210,7 +212,7 @@ def verdict_problems(paths: list[Path]) -> list[str]:
 def added_since(ref: str) -> tuple[list[Path], str | None]:
     """Фрагменты, ДОБАВЛЕННЫЕ этим изменением. Спрашивать со всех нельзя."""
     try:
-        done = subprocess.run(
+        done = proc.run(
             ["git", "diff", "--name-only", "-z", "--diff-filter=A",
              f"{ref}...HEAD", "--", FRAGMENTS.name],
             cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
@@ -254,7 +256,7 @@ def сборное(имена: list[str], новых_правил: int) -> list[
 def новые_правила(ref: str) -> tuple[int, str | None]:
     """Сколько записей `rules/ru/` добавило изменение."""
     try:
-        done = subprocess.run(
+        done = proc.run(
             ["git", "diff", "--name-only", "-z", "--diff-filter=A",
              f"{ref}...HEAD", "--", "rules/ru"],
             cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)

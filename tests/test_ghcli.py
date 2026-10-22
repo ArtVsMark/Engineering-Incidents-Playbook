@@ -70,6 +70,22 @@ def test_обычный_отказ_gh_отсутствием_не_считает
     assert "остаток не измерен" in out
 
 
+def test_истечение_gh_это_третий_исход(monkeypatch):
+    """Зависшая площадка — «не отработал», а не отказ `gh` и не находка (039, #942).
+
+    Подделывается сам `subprocess.run`: истечение проходит настоящий путь —
+    обёртку `proc`, затем `ghcli.run`, затем `failed`.
+    """
+    import proc
+
+    def завис(args, **kw):
+        raise ghcli.subprocess.TimeoutExpired(args, kw.get("timeout"))
+    monkeypatch.setattr(ghcli.subprocess, "run", завис)
+    code, out = ghcli.run("api", "repos/o/r/issues")
+    assert code == proc.TIMED_OUT and ghcli.failed(code)
+    assert "не ответил за 120 с" in out
+
+
 def test_успех_проходит(monkeypatch):
     class Done:
         returncode, stdout, stderr = 0, "[]", ""

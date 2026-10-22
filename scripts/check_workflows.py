@@ -71,6 +71,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import proc
+
 ROOT = Path(__file__).resolve().parent.parent
 
 #: Ключ верхнего уровня: начинается с буквы в первой колонке.
@@ -415,8 +417,8 @@ def unparsable_shell(text: str) -> list[str]:
         код = ПОДСТАНОВКА.sub("substituted", "\n".join(тело))
         if not код.strip():
             continue
-        r = subprocess.run(["bash", "-n"], input=код, text=True,
-                           capture_output=True, encoding="utf-8", timeout=60)
+        r = proc.run(["bash", "-n"], input=код, text=True,
+                     capture_output=True, encoding="utf-8", timeout=60)
         if r.returncode != 0:
             причина = (r.stderr or "").strip().splitlines()
             плохо.append(f"{имя}: {причина[0] if причина else 'не разобран'}")

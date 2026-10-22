@@ -65,6 +65,7 @@ import sys
 from pathlib import Path
 
 import check_facts
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 RULES = ROOT / "rules"
@@ -971,14 +972,14 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
     появилось тогда, когда появился его файл (правило 049).
     """
     try:
-        shallow = subprocess.run(
+        shallow = proc.run(
             ["git", "-C", str(ROOT), "rev-parse", "--is-shallow-repository"],
             capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout.strip()
         if shallow == "true":
             return {}, [("клон мелкий: истории нет, а дата появления взялась бы от "
                         "единственного коммита — правдоподобная и неверная. "
                         "Нужен полный клон (fetch-depth: 0)")]
-        out = subprocess.run(
+        out = proc.run(
             ["git", "-C", str(ROOT), "log", "--diff-filter=A", "--name-only",
              "-z", "--format=%aI%x00", "--",
              "rules/ru/[0-9][0-9][0-9]-*.md"],

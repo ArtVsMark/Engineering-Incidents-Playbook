@@ -69,6 +69,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import proc
+
 ROOT = Path(__file__).resolve().parent.parent
 FRAGMENTS = ROOT / "changelog.d"
 
@@ -181,7 +183,7 @@ def сужения(diff: str) -> list[str]:
 
 def тронутые_фрагменты(диапазон: str) -> tuple[list[Path] | None, str]:
     """Фрагменты журнала, тронутые этим изменением, — там и ищется ответ."""
-    done = subprocess.run(
+    done = proc.run(
         ["git", "diff", "--name-only", "-z", "--diff-filter=AM",
          диапазон, "--", "changelog.d"],
         cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
@@ -192,7 +194,7 @@ def тронутые_фрагменты(диапазон: str) -> tuple[list[Pat
 
 def diff_of(диапазон: str) -> tuple[str | None, str]:
     """Дифф изменения. Без контекста: контекст дал бы чужие строки за свои."""
-    done = subprocess.run(
+    done = proc.run(
         ["git", "diff", "-U0", диапазон, "--", "*.py"],
         cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:

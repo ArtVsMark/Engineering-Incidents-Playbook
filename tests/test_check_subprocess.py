@@ -357,3 +357,15 @@ def test_хуки_окна_в_охвате(tmp_path):
     хук.mkdir(parents=True)
     (хук / "h.py").write_text("import subprocess\nsubprocess.run(['git'])\n", encoding="utf-8")
     assert cs.main(["--root", str(tmp_path)]) == 1
+
+
+def test_obyortka_proc_suditsya_kak_subprocess():
+    """Вызов через обёртку каталога `proc` — тот же вызов процесса (этап 2 #930).
+
+    Без этого перевод мест на обёртку молча вывел бы их из-под гейта: кодировка,
+    `-z` и дверь площадки не судились бы у 44 вызовов (146).
+    """
+    код = "import proc\nproc.run(['git', 'log'], capture_output=True, text=True, timeout=60)\n"
+    assert [n for n, _ in cs.offenders(код)] == [2]
+    код = "from proc import run\nrun(['git', 'log'], capture_output=True, text=True, timeout=60)\n"
+    assert [n for n, _ in cs.offenders(код)] == [2]

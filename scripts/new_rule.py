@@ -38,6 +38,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import proc
+
 ROOT = Path(__file__).resolve().parent.parent
 LANGS = ("ru", "en")
 
@@ -221,7 +223,7 @@ def след_предложения(repo: str, свой: str) -> str:
 
 def neighbours(root: Path, path: Path) -> str:
     """Верхушка соседей по ЧЕРНОВИКУ — как подсказка, а не как ответ."""
-    done = subprocess.run(
+    done = proc.run(
         [sys.executable, str(root / "scripts" / "check_duplicates.py"),
          "--near", str(path)], capture_output=True, text=True, encoding="utf-8", timeout=600)
     return (done.stdout or done.stderr).strip()

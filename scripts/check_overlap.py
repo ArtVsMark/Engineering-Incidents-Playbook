@@ -37,6 +37,7 @@ import sys
 from pathlib import Path
 
 import ghcli
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 #: Сколько открытых изменений спрашивается. Больше полусотни у каталога не
@@ -44,10 +45,13 @@ ROOT = Path(__file__).resolve().parent.parent
 LIMIT = 50
 
 
-def current_branch(root: Path) -> str:
-    done = subprocess.run(["git", "-C", str(root), "rev-parse",
-                           "--abbrev-ref", "HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
-    return done.stdout.strip()
+def current_branch(root: Path) -> tuple[str, str]:
+    """Имя текущей ветки; вторым — причина, если git его не назвал (истечение в том числе)."""
+    done = proc.run(["git", "-C", str(root), "rev-parse",
+                     "--abbrev-ref", "HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
+    if done.returncode != 0:
+        return "", done.stderr.strip()
+    return done.stdout.strip(), ""
 
 
 def open_changes() -> tuple[list[dict] | None, str | None]:
@@ -97,12 +101,13 @@ def main(argv: list[str] | None = None) -> int:
                                          "пересечение; по умолчанию текущая")
     args = parser.parse_args(argv)
     root: Path = args.root
-    branch = args.branch or current_branch(root)
+    branch, почему = (args.branch, "") if args.branch else current_branch(root)
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not branch:
         print(f"проверка не отработала: `git -C {args.root} rev-parse "
-              "--abbrev-ref HEAD` не назвал ветку", file=sys.stderr)
+              f"--abbrev-ref HEAD` не назвал ветку{' — ' + почему if почему else ''}",
+              file=sys.stderr)
         return 2
     changes, err = open_changes()
     if err:
@@ -120,7 +125,7 @@ def main(argv: list[str] | None = None) -> int:
     # исходом там, где `origin/main` не разрешается: мелкий клон в прогоне,
     # чужое рабочее дерево. Поэтому площадка осталась запасным путём — она
     # дороже, но она есть тогда, когда локальной истории нет.
-    done = subprocess.run(
+    done = proc.run(
         ["git", "-C", str(root), "diff", "--name-only", "-z",
          f"origin/main...{branch}"],
         capture_output=True, text=True, encoding="utf-8", timeout=60)

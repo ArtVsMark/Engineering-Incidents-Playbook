@@ -61,6 +61,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import proc
+
 #: Дом самого скрипта. От него берутся ТОЛЬКО умолчания: список имён и начало
 #: отсчёта принадлежат проверяемому проекту, а не инструменту, и у третьего
 #: потребителя они другие (задача #54, правило 090 — общее уезжает вверх, а не
@@ -102,8 +104,8 @@ def tail(body: str) -> str:
 
 
 def git(repo: Path, *args: str) -> str:
-    return subprocess.run(["git", "-C", str(repo), *args],
-                          capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
+    return proc.run(["git", "-C", str(repo), *args],
+                    capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
 
 
 #: Заголовок, после которого перечисляются АВТОРЫ, а не соавторы. До него —
@@ -382,7 +384,7 @@ def main() -> int:
         # Сравниваем разрешённые хеши, а не строки: «d1297ff» и полный хеш —
         # один коммит, и сообщать о подрезке там, где её нет, значит шуметь.
         same = low and git(repo, "rev-parse", low).strip() == git(repo, "rev-parse", baseline).strip()
-        if low and not same and subprocess.run(
+        if low and not same and proc.run(
             ["git", "-C", str(repo), "merge-base", "--is-ancestor", low, baseline],
             capture_output=True, timeout=60).returncode == 0:
             rng = f"{baseline}..{high or 'HEAD'}"

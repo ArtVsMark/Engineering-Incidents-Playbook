@@ -55,6 +55,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import proc
+
 ROOT = Path(__file__).resolve().parent.parent
 
 #: Фрагмент журнала, объявляющий изменение починкой.
@@ -91,8 +93,8 @@ def без_прозы(текст: str, имя: str) -> str:
 
 
 def git(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(["git", "-C", str(root), *args],
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+    return proc.run(["git", "-C", str(root), *args],
+                    capture_output=True, text=True, encoding="utf-8", timeout=60)
 
 
 def прежний(root: Path, base: str, путь: str) -> str | None:
