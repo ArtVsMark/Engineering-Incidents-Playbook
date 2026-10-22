@@ -48,6 +48,7 @@
 import json
 import re
 import subprocess
+import proc
 from collections.abc import Callable
 
 #: Код, которым сообщается «инструмента нет». Не из набора кодов gh.
@@ -86,7 +87,7 @@ def остаток() -> tuple[str, bool]:
     того, что хотя бы один счётчик на нуле.
     """
     try:
-        done = subprocess.run(  # noqa: S603 — аргументы свои
+        done = proc.run(  # noqa: S603 — аргументы свои
             ["gh", "api", "rate_limit"],
             capture_output=True, text=True, encoding="utf-8", timeout=120)
     except OSError as e:
@@ -122,7 +123,7 @@ def run(*args: str) -> tuple[int, str]:
     """
     global _замер
     try:
-        done = subprocess.run(["gh", *args], capture_output=True, text=True, encoding="utf-8", timeout=120)
+        done = proc.run(["gh", *args], capture_output=True, text=True, encoding="utf-8", timeout=120)
     except OSError as e:
         return NO_GH, f"{NO_GH_WHY} ({e.strerror or e})"
     вывод = (done.stdout or done.stderr).strip()

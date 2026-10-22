@@ -68,6 +68,7 @@ import argparse
 import re
 import shell_words
 import subprocess
+import proc
 import sys
 from pathlib import Path
 
@@ -415,7 +416,7 @@ def unparsable_shell(text: str) -> list[str]:
         код = ПОДСТАНОВКА.sub("substituted", "\n".join(тело))
         if not код.strip():
             continue
-        r = subprocess.run(["bash", "-n"], input=код, text=True,
+        r = proc.run(["bash", "-n"], input=код, text=True,
                            capture_output=True, encoding="utf-8", timeout=60)
         if r.returncode != 0:
             причина = (r.stderr or "").strip().splitlines()

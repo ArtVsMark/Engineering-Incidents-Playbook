@@ -45,6 +45,7 @@
 import argparse
 import re
 import subprocess
+import proc
 import sys
 from pathlib import Path
 
@@ -155,7 +156,7 @@ def prose_words(text: str) -> int:
 def tracked(root: Path) -> list[Path]:
     """Отслеживаемые файлы. Непрослеживаемый мусор проверять незачем."""
     try:
-        out = subprocess.run(["git", "-C", str(root), "ls-files", "-z"],
+        out = proc.run(["git", "-C", str(root), "ls-files", "-z"],
                              capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
     except OSError, subprocess.CalledProcessError:
         return []

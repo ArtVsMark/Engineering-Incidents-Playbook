@@ -44,6 +44,7 @@ import argparse
 import json
 import os
 import subprocess
+import proc
 import sys
 from pathlib import Path
 
@@ -92,7 +93,7 @@ PUBLISHED_REF = os.environ.get("DERIVED_PUBLISHED_REF", "origin/badges")
 def run(args: list[str], cwd: Path) -> tuple[int, str]:
     """Запуск с прочитанным выводом. Отказ — значение, а не исключение."""
     try:
-        p = subprocess.run(args, cwd=cwd, capture_output=True, text=True, encoding="utf-8", timeout=300)
+        p = proc.run(args, cwd=cwd, capture_output=True, text=True, encoding="utf-8", timeout=300)
     except OSError as e:
         return 127, str(e)
     return p.returncode, (p.stdout or "") + (p.stderr or "")

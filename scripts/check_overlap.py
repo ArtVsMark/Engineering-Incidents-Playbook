@@ -33,6 +33,7 @@
 import argparse
 import json
 import subprocess
+import proc
 import sys
 from pathlib import Path
 
@@ -45,7 +46,7 @@ LIMIT = 50
 
 
 def current_branch(root: Path) -> str:
-    done = subprocess.run(["git", "-C", str(root), "rev-parse",
+    done = proc.run(["git", "-C", str(root), "rev-parse",
                            "--abbrev-ref", "HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
     return done.stdout.strip()
 
@@ -120,7 +121,7 @@ def main(argv: list[str] | None = None) -> int:
     # исходом там, где `origin/main` не разрешается: мелкий клон в прогоне,
     # чужое рабочее дерево. Поэтому площадка осталась запасным путём — она
     # дороже, но она есть тогда, когда локальной истории нет.
-    done = subprocess.run(
+    done = proc.run(
         ["git", "-C", str(root), "diff", "--name-only", "-z",
          f"origin/main...{branch}"],
         capture_output=True, text=True, encoding="utf-8", timeout=60)

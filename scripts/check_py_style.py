@@ -39,6 +39,7 @@ import json
 import re
 import shutil
 import subprocess
+import proc
 import sys
 import tokenize
 from pathlib import Path
@@ -56,7 +57,7 @@ FUTURE = re.compile(r"^from __future__ import annotations\s*$", re.M)
 
 def файлы(root: Path) -> list[str]:
     """Отслеживаемые .py — то, что поедет, а не то, что лежит рядом."""
-    done = subprocess.run(["git", "ls-files", "-z", "*.py"], cwd=root,
+    done = proc.run(["git", "ls-files", "-z", "*.py"], cwd=root,
                           capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         raise RuntimeError(f"git ls-files не отработал: {done.stderr.strip()}")
@@ -121,7 +122,7 @@ def находки_ruff(root: Path, пути: list[str], планка: tuple[int
     if ruff is None:
         raise RuntimeError("ruff не найден — ни рядом с интерпретатором, ни в PATH "
                            "(он в requirements-test.txt)")
-    done = subprocess.run(
+    done = proc.run(
         [ruff, "check", "--isolated", "--no-cache", "--output-format", "json",
          "--target-version", f"py{планка[0]}{планка[1]}", "--select", "UP,FURB188",
          *пути], cwd=root, capture_output=True, text=True, encoding="utf-8", timeout=300)

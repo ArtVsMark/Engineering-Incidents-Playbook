@@ -49,6 +49,7 @@ import argparse
 import os
 import re
 import subprocess
+import proc
 import sys
 import tempfile
 from pathlib import Path
@@ -91,7 +92,7 @@ socket.create_connection = _обёртка(_cc, 0)
 
 def прогон(root: Path, окружение: dict[str, str]) -> tuple[int, list[str]]:
     """Набор под данным окружением. Второй элемент — файлы, которые отказали."""
-    сказано = subprocess.run(
+    сказано = proc.run(
         [sys.executable, "-m", "pytest", "-q", "--no-header"],
         capture_output=True,
         text=True,

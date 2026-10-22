@@ -48,6 +48,7 @@
 import argparse
 import re
 import subprocess
+import proc
 import sys
 from pathlib import Path
 
@@ -82,7 +83,7 @@ def проверить_базу(root: Path, base: str) -> None:
     базу, и на отсутствующий путь — «path does not exist», код 128 (замер
     16.10), и битая база молча превратила бы каждый механизм в новый.
     """
-    done = subprocess.run(["git", "-C", str(root), "rev-parse", "--verify", "--quiet",
+    done = proc.run(["git", "-C", str(root), "rev-parse", "--verify", "--quiet",
                            f"{base}^{{commit}}"],
                           capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
@@ -91,7 +92,7 @@ def проверить_базу(root: Path, base: str) -> None:
 
 def на_базе(root: Path, base: str, путь: str) -> bool:
     """Есть ли путь на базе изменения; база уже проверена."""
-    done = subprocess.run(["git", "-C", str(root), "cat-file", "-e", f"{base}:{путь}"],
+    done = proc.run(["git", "-C", str(root), "cat-file", "-e", f"{base}:{путь}"],
                           capture_output=True, text=True, encoding="utf-8", timeout=60)
     return done.returncode == 0
 

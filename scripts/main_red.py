@@ -52,6 +52,7 @@ ArtVsMark/ArtVsMark#56 — `attribution-history` покраснел, и увид
 import argparse
 import json
 import subprocess
+import proc
 import sys
 
 import ghcli
@@ -239,7 +240,7 @@ def selftest() -> int:
     if "ci" not in body or "Текст потребителя." not in body:
         broken.append("тело задачи не несёт ни списка работ, ни шаблона потребителя")
 
-    probe = subprocess.run([sys.executable, __file__, "--body-file", "/nonexistent"],
+    probe = proc.run([sys.executable, __file__, "--body-file", "/nonexistent"],
                            capture_output=True, text=True, encoding="utf-8", timeout=600)
     if probe.returncode != 2:
         broken.append(f"исход «дежурный не отработал» дал код {probe.returncode}, а не 2")

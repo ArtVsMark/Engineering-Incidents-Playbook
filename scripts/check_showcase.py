@@ -97,8 +97,9 @@ def badges_in_tree(root) -> list[str]:
     рисует их локально и обязан это делать — он кладёт их на свою ветку.
     """
     import subprocess
+    import proc                                                # noqa: PLC0415
     try:
-        out = subprocess.run(["git", "-C", str(root), "ls-files", "-z", BADGES_DIR],
+        out = proc.run(["git", "-C", str(root), "ls-files", "-z", BADGES_DIR],
                              capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
     except OSError, subprocess.CalledProcessError:
         return []

@@ -61,6 +61,7 @@ import datetime as dt
 import json
 import re
 import subprocess
+import proc
 import sys
 from pathlib import Path
 
@@ -180,7 +181,7 @@ RUNS_ON_RE = re.compile(r"^\s*runs-on:\s*\"?([\w.-]+)\"?\s*$", re.M)
 def git(*args: str) -> tuple[int, str]:
     """Вызов git с прочитанным выводом. Отказ — значение, а не исключение."""
     try:
-        done = subprocess.run(["git", "-C", str(ROOT), *args],
+        done = proc.run(["git", "-C", str(ROOT), *args],
                               capture_output=True, text=True, encoding="utf-8", timeout=60)
     except OSError as exc:
         return 1, str(exc)

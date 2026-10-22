@@ -52,6 +52,7 @@ import argparse
 import ast
 import re
 import subprocess
+import proc
 import sys
 from pathlib import Path
 
@@ -91,7 +92,7 @@ def без_прозы(текст: str, имя: str) -> str:
 
 
 def git(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(["git", "-C", str(root), *args],
+    return proc.run(["git", "-C", str(root), *args],
                           capture_output=True, text=True, encoding="utf-8", timeout=60)
 
 

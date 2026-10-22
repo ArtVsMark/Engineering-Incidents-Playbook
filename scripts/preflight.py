@@ -45,6 +45,7 @@ import argparse
 import json
 import re
 import subprocess
+import proc
 import sys
 import tempfile
 import time
@@ -109,14 +110,14 @@ def branch_body(root: Path, base: str = "origin/main") -> tuple[str, str]:
     Ошибка возвращается строкой: «спросить не вышло» и «строки нет» — разные
     ответы, и путать их значит врать прогоном (039).
     """
-    done = subprocess.run(["git", "-C", str(root), "rev-list", "--reverse",
+    done = proc.run(["git", "-C", str(root), "rev-list", "--reverse",
                            f"{base}..HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return "", f"не спросить коммиты ветки: {done.stderr.strip()}"
     first = done.stdout.split("\n")[0].strip()
     if not first:
         return "", f"ветка не несёт своих коммитов поверх {base}"
-    done = subprocess.run(["git", "-C", str(root), "log", "-1", "--format=%b",
+    done = proc.run(["git", "-C", str(root), "log", "-1", "--format=%b",
                            first], capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return "", f"не спросить тело коммита {first[:7]}: {done.stderr.strip()}"
@@ -219,7 +220,7 @@ def run_step(step: Step, root: Path) -> tuple[int, str]:
 
 def branch_paths(root: Path, base: str = "origin/main") -> tuple[list[str], str]:
     """Пути, которые изменение тронет, — тот же вопрос, что задаёт прогон."""
-    done = subprocess.run(["git", "-C", str(root), "diff", "--name-only", "-z",
+    done = proc.run(["git", "-C", str(root), "diff", "--name-only", "-z",
                            f"{base}...HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return [], f"не спросить изменённые пути: {done.stderr.strip()}"
@@ -346,7 +347,7 @@ def main(argv: list[str] | None = None) -> int:
             остались.append(step)
             print(f"~ {step.name}: замена не сработала — {ошибка}")
             continue
-        done = subprocess.run(  # noqa: S603 — команда собрана таблицей замен
+        done = proc.run(  # noqa: S603 — команда собрана таблицей замен
             [sys.executable, *argv_],
             cwd=root, input=stdin_, capture_output=True, text=True, encoding="utf-8", timeout=600)
         подменено.append(step.name)
@@ -428,7 +429,7 @@ def толкнуть(root: Path) -> int:
     назван (154); неназванный стоил соседу трёх толчков при красном из
     пятнадцати.
     """
-    ветка = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+    ветка = proc.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
                            cwd=root, capture_output=True, text=True,
                            encoding="utf-8", timeout=60).stdout.strip()
     try:

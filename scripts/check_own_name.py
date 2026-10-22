@@ -53,6 +53,7 @@ import argparse
 import json
 import re
 import subprocess
+import proc
 import sys
 from pathlib import Path
 
@@ -83,7 +84,7 @@ ASIDE = {
 
 def own_slug(root: Path) -> tuple[str, str]:
     """«владелец/имя» по адресу origin. Ошибка строкой, а не трассировкой."""
-    done = subprocess.run(["git", "-C", str(root), "remote", "get-url", "origin"],
+    done = proc.run(["git", "-C", str(root), "remote", "get-url", "origin"],
                           capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0 or not done.stdout.strip():
         return "", ("не спросить адрес origin: "
@@ -119,7 +120,7 @@ OWN_SUITE = "tests/test_check_own_name.py"
 
 
 def files(root: Path) -> list[Path]:
-    done = subprocess.run(["git", "-C", str(root), "ls-files", "-z"],
+    done = proc.run(["git", "-C", str(root), "ls-files", "-z"],
                           capture_output=True, text=True, encoding="utf-8", timeout=60)
     if done.returncode != 0:
         return []

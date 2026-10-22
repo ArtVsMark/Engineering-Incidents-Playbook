@@ -120,6 +120,14 @@ LISTING = ("ls-files", "--name-only", "--porcelain", "--diff-filter")
 
 
 
+#: Модули, чей `run` — это `subprocess.run`. `proc` — обёртка каталога с
+#: обязательным дедлайном и поимкой его истечения (100): вызов через неё —
+#: тот же вызов процесса, и кодировка, `-z` и дверь площадки судятся у него
+#: так же. Без этой строки перевод 44 мест на обёртку (22.10, этап 2 #930)
+#: молча вывел бы их из-под гейта (146).
+ОБЁРТКИ = ("subprocess", "proc")
+
+
 def resolve_calls(tree: ast.AST) -> tuple[set[str], dict[str, str]]:
     """Как subprocess назван В ЭТОМ ФАЙЛЕ: имена модуля и псевдонимы функций.
 
@@ -143,9 +151,9 @@ def resolve_calls(tree: ast.AST) -> tuple[set[str], dict[str, str]]:
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for a in node.names:
-                if a.name == "subprocess":
-                    модули.add(a.asname or "subprocess")
-        elif isinstance(node, ast.ImportFrom) and node.module == "subprocess":
+                if a.name in ОБЁРТКИ:
+                    модули.add(a.asname or a.name)
+        elif isinstance(node, ast.ImportFrom) and node.module in ОБЁРТКИ:
             for a in node.names:
                 функции[a.asname or a.name] = a.name
     return модули, функции
