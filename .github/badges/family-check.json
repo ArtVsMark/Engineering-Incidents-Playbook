@@ -116,8 +116,8 @@
           "segment": "family",
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
-          "mine": "v1.8.0",
-          "latest": "v1.8.0",
+          "mine": "v1.9.0",
+          "latest": "v1.9.0",
           "where": ".github/workflows/mechanisms.yml",
           "state": "ok",
           "why": ""
@@ -126,8 +126,38 @@
           "segment": "family",
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
-          "mine": "v1.8.0",
-          "latest": "v1.8.0",
+          "mine": "v1.9.0",
+          "latest": "v1.9.0",
+          "where": ".github/workflows/mechanisms.yml",
+          "state": "ok",
+          "why": ""
+        },
+        {
+          "segment": "family",
+          "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "what": "release",
+          "mine": "v1.9.0",
+          "latest": "v1.9.0",
+          "where": ".github/workflows/mechanisms.yml",
+          "state": "ok",
+          "why": ""
+        },
+        {
+          "segment": "family",
+          "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "what": "release",
+          "mine": "v1.9.0",
+          "latest": "v1.9.0",
+          "where": ".github/workflows/mechanisms.yml",
+          "state": "ok",
+          "why": ""
+        },
+        {
+          "segment": "family",
+          "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "what": "release",
+          "mine": "v1.9.0",
+          "latest": "v1.9.0",
           "where": ".github/workflows/mechanisms.yml",
           "state": "ok",
           "why": ""
@@ -159,6 +189,16 @@
           "mine": "2.0",
           "latest": "2.0",
           "where": ".github/badges/facts.json",
+          "state": "ok",
+          "why": ""
+        },
+        {
+          "segment": "family",
+          "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "what": "steps",
+          "mine": ">=0.11,<0.12",
+          "latest": "0.11",
+          "where": ".pipeline.yml:contract",
           "state": "ok",
           "why": ""
         }
@@ -196,8 +236,8 @@
     {
       "code": "EPM",
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
-      "state": "partial",
-      "why": "связей с механизмами 2, конвейер не подключён (.pipeline.yml нет)"
+      "state": "ok",
+      "why": ""
     }
   ],
   "uptake": {
