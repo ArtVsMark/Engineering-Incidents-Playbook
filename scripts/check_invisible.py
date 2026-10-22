@@ -29,7 +29,11 @@ ROOT = Path(__file__).resolve().parent.parent
          # Читаются первыми или раздаются потребителям (обзор #874): свод и
          # корневые документы, docs/, заготовки и плагин каталога.
          (".", "*.md"), ("docs", "**/*.md"), ("templates", "**/*"),
-         ("plugins", "**/*.md"), ("plugins", "**/*.json"))
+         ("plugins", "**/*.md"), ("plugins", "**/*.json"),
+         # Фрагменты журнала: из них выпуск собирает CHANGELOG.md коммитом
+         # `[skip ci]`, и символ, не пойманный во фрагменте, всплывает уже на
+         # общей ветке — так U+200B доехал до v2.1.0 (CHANGELOG.md:67).
+         ("changelog.d", "*.md"))
 
 
 def main(argv: list[str] | None = None) -> int:

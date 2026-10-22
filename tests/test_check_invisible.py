@@ -61,6 +61,7 @@ def test_живое_дерево_чисто():
     {"AGENTS.md": "свод​\n"},                               # свод в охвате
     {"templates/CLAUDE.md": "заготовка​\n"},                # заготовки в охвате
     {"plugins/p/skills/s/SKILL.md": "плагин​\n"},           # плагин в охвате
+    {"changelog.d/x.added.md": "фрагмент​\n"},             # фрагмент журнала в охвате
 ])
 def test_новые_формы_отказ(tmp_path, capsys, файлы):
     assert ci.main(["--root", str(дерево(tmp_path, файлы))]) == 1
