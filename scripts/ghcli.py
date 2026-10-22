@@ -148,8 +148,12 @@ def run(*args: str) -> tuple[int, str]:
 
 
 def failed(code: int) -> bool:
-    """Вызов не отработал — это третий исход, а не находка."""
-    return code in (NO_GH, QUOTA_OUT)
+    """Вызов не отработал — это третий исход, а не находка.
+
+    Истёкший дедлайн (`proc.TIMED_OUT`) — тоже: площадка не ответила, и
+    читать это отказом `gh` значило бы выдать незнание за ответ (039, #942).
+    """
+    return code in (NO_GH, QUOTA_OUT, proc.TIMED_OUT)
 
 
 def список(путь: str, элемент: str = ".[]", *,
