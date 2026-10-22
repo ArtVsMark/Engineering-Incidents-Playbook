@@ -473,6 +473,7 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_pipeline.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/check_rule_links.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/labels.py` | 4 |
+| `Engineering-Pipeline-Mechanisms` | `scripts/release.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/version.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `tests/conftest.py` | 4 |
 | `Engineering-Pipeline-Mechanisms` | `tests/outcomes.py` | 4 |
@@ -491,7 +492,6 @@
 | `Engineering-Pipeline-Mechanisms` | `scripts/look_mode.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/onboard.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `scripts/paths.py` | 3 |
-| `Engineering-Pipeline-Mechanisms` | `scripts/release.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_decisions_format.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_declared_versions.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_directions_map.py` | 3 |
@@ -501,6 +501,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_outcomes_run.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_pipeline_checks.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_platform_shape.py` | 3 |
+| `Engineering-Pipeline-Mechanisms` | `tests/test_release.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_rulebook_fresh.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_third_outcome.py` | 3 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_window_preflight.py` | 3 |
@@ -554,7 +555,6 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_protection.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_py_style.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_python_after_setup.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | `tests/test_release.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_report.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_roles.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_settings_anchor.py` | 2 |

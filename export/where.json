@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-21T15:51:55+00:00",
+  "generated_at": "2026-10-22T07:25:47+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -9,7 +9,7 @@
       "schema": "1.9",
       "answers_to": "1.9",
       "state": "подключён",
-      "read_at": "2026-10-21",
+      "read_at": "2026-10-22",
       "answered": 215,
       "by_status": {
         "active": 199,
@@ -2587,7 +2587,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-21",
+      "read_at": "2026-10-22",
       "answered": 205,
       "by_status": {
         "active": 200,
@@ -5165,7 +5165,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-21",
+      "read_at": "2026-10-22",
       "answered": 205,
       "by_status": {
         "active": 159,
@@ -7282,7 +7282,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-21",
+      "read_at": "2026-10-22",
       "answered": 205,
       "by_status": {
         "active": 174,
@@ -9554,7 +9554,7 @@
       "schema": "1.9",
       "answers_to": "1.7",
       "state": "подключён",
-      "read_at": "2026-10-21",
+      "read_at": "2026-10-22",
       "answered": 205,
       "by_status": {
         "active": 162,
@@ -11705,7 +11705,7 @@
       "schema": "1.9",
       "answers_to": "1.8",
       "state": "подключён",
-      "read_at": "2026-10-21",
+      "read_at": "2026-10-22",
       "answered": 214,
       "by_status": {
         "active": 206,
@@ -14280,10 +14280,10 @@
         },
         "222": {
           "mechanism": "gate",
-          "where": "scripts/check_version.py::check — версия контракта вне маркера и устаревший маркер краснеют (tests/test_gates_reject.py::test_version_written_by_hand_is_a_finding, tests/test_gates_reject.py::test_stale_marker_is_a_finding), шагом .github/workflows/step-journal.yml. scripts/build_facts.py — метрики собираются в facts.json и значки, а не вписываются в прозу; scripts/check_derived_refs.py — ссылка на ненарисованное производное краснеет. tests/test_counted_numbers.py::test_the_last_move_is_written_down — счёт пересчитывается по .rules/bindings.json. docs/dev/release.md — раздел «Маркер в прозе»",
+          "where": "scripts/check_version.py::check — версия контракта вне маркера и устаревший маркер краснеют (tests/test_gates_reject.py::test_version_written_by_hand_is_a_finding, tests/test_gates_reject.py::test_stale_marker_is_a_finding), шагом .github/workflows/step-journal.yml. scripts/check_version.py::rewrite_markers — выпуск переписывает маркер из CONTRACT_VERSION тем же коммитом (scripts/release.py::do_release; tests/test_release.py::test_a_marker_of_the_current_contract_rides_the_release). scripts/build_facts.py — метрики собираются в facts.json и значки, а не вписываются в прозу; scripts/check_derived_refs.py — ссылка на ненарисованное производное краснеет. tests/test_counted_numbers.py::test_the_last_move_is_written_down — счёт пересчитывается по .rules/bindings.json. docs/dev/release.md — раздел «Маркер в прозе»",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-17",
+          "analysed": "2026-10-21",
           "decided": "",
           "skill": "",
           "origin": "",
