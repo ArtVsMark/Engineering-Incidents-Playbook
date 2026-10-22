@@ -70,6 +70,16 @@ SUMMARY_BRANCH = "badges"
 MARKER = "<!-- rules-inbox: не удаляйте, по этой строке задача находится снова -->"
 
 
+def export_url(catalogue: str, ref: str) -> str:
+    """Адрес выгрузки — одна точка для чтения и для сообщения о ней (214).
+
+    Сообщение о пустой выгрузке называло адрес константой `RULES_URL`, которой
+    в модуле не было: пустой список правил давал `NameError` и код 1 вместо
+    названного исхода 2. Нашёл `ruff` при замере этапа 1 #930 (F821).
+    """
+    return f"https://raw.githubusercontent.com/{catalogue}/{ref}/export/rules.json"
+
+
 def fetch_export(catalogue: str, ref: str) -> tuple[dict | None, str | None]:
     """Выгрузка целиком: нужны и правила, и объявленные номера контрактов.
 
@@ -77,7 +87,7 @@ def fetch_export(catalogue: str, ref: str) -> tuple[dict | None, str | None]:
     второй запрос за ними был бы лишним обращением к сети ради данных, которые
     уже приехали.
     """
-    url = f"https://raw.githubusercontent.com/{catalogue}/{ref}/export/rules.json"
+    url = export_url(catalogue, ref)
     try:
         with urllib.request.urlopen(url, timeout=30) as resp:
             return json.loads(resp.read().decode("utf-8")), None
@@ -540,7 +550,7 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
         lines += [f"- {x}" for x in расхождения]
         lines += [
             "",
-            "Это [правило 157](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/157-a-contract-bump-is-a-re-read.md): "
+            "Это [правило 157](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/157-a-contract-version-bump-is-a-re-read.md): "
             "смена версии чужого контракта — повод перечитать ОТВЕТЫ, а не "
             "только поправить формат. Пока номера расходятся, ответы ниже "
             "собраны под другой контракт.",
@@ -742,7 +752,8 @@ def main() -> int:
               file=sys.stderr)
         return 2
     if not rules:
-        print(f"проверка не отработала: {RULES_URL} отдал пустой список "
+        print(f"проверка не отработала: {export_url(args.catalogue, args.ref)} "
+              "отдал пустой список "
               "правил — сверять не с чем, а молча пропускать нельзя",
               file=sys.stderr)
         return 2
