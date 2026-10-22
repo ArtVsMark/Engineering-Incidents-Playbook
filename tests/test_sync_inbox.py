@@ -599,3 +599,28 @@ def test_замещённое_не_требует_ответа_и_не_лишн�
         issue=("52", "OPEN"))
     assert si.main() == 0
     assert "лишних 0" in capsys.readouterr().out
+
+
+def test_пустая_выгрузка_названный_исход_2(monkeypatch, capsys):
+    """Пустой список правил — исход 2 с адресом выгрузки, а не NameError (F821, #930)."""
+    arm(monkeypatch, [], {})
+    assert si.main() == 2
+    err = capsys.readouterr().err
+    assert si.export_url("ArtVsMark/Engineering-Incidents-Playbook", "main") in err
+    assert "пустой список" in err
+
+
+def test_ссылки_на_правила_в_тексте_входящих_ведут_в_файл():
+    """Адрес правила в тексте задачи потребителя называет живой файл каталога.
+
+    Ссылка на 157 вела на прежнее имя файла и не открывалась; гейт ссылок
+    каталога смотрит только относительные адреса, а этот абсолютный (нашёл
+    шаг журнала механизмов при замере этапа 1 #930).
+    """
+    import re
+    from pathlib import Path
+    корень = Path(si.__file__).resolve().parent.parent
+    текст = Path(si.__file__).read_text(encoding="utf-8")
+    адреса = re.findall(r"/blob/main/(rules/(?:ru|en)/[\w.-]+\.md)", текст)
+    assert адреса, "в тексте входящих не найдено ни одной ссылки на правило"
+    assert [a for a in адреса if not (корень / a).is_file()] == []
