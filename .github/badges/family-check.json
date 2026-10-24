@@ -109,7 +109,7 @@
       ]
     },
     "family": {
-      "state": "unknown",
+      "state": "ok",
       "why": "",
       "links": [
         {
@@ -117,50 +117,50 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.10.0",
-          "latest": "v1.9.0",
+          "latest": "v1.10.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "unknown",
-          "why": "опережает опубликованное — сводка отстала от издателя"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "family",
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.10.0",
-          "latest": "v1.9.0",
+          "latest": "v1.10.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "unknown",
-          "why": "опережает опубликованное — сводка отстала от издателя"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "family",
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.10.0",
-          "latest": "v1.9.0",
+          "latest": "v1.10.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "unknown",
-          "why": "опережает опубликованное — сводка отстала от издателя"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "family",
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.10.0",
-          "latest": "v1.9.0",
+          "latest": "v1.10.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "unknown",
-          "why": "опережает опубликованное — сводка отстала от издателя"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "family",
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.10.0",
-          "latest": "v1.9.0",
+          "latest": "v1.10.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "unknown",
-          "why": "опережает опубликованное — сводка отстала от издателя"
+          "state": "ok",
+          "why": ""
         },
         {
           "segment": "family",
@@ -197,10 +197,10 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "steps",
           "mine": ">=0.12,<0.13",
-          "latest": "0.11",
+          "latest": "0.12",
           "where": ".pipeline.yml:contract",
-          "state": "unknown",
-          "why": "диапазон опережает опубликованное — сводка отстала от издателя"
+          "state": "ok",
+          "why": ""
         }
       ]
     },
@@ -236,8 +236,8 @@
     {
       "code": "EPM",
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
-      "state": "unknown",
-      "why": "release: v1.10.0 → v1.9.0 (связей 5, .github/workflows/mechanisms.yml); steps: >=0.12,<0.13 → 0.11 (.pipeline.yml:contract)"
+      "state": "ok",
+      "why": ""
     }
   ],
   "uptake": {
