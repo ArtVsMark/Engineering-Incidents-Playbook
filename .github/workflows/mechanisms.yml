@@ -21,8 +21,8 @@
 # и тогда тот же прогон возьмёт другой код без единой правки у нас.
 # Неподвижным был бы только полный SHA вместо тега в `uses:`; его здесь нет
 # сознательно — выпуски соседа не переставляются, и это доверие, а не
-# проверка (039). На 22.10 v1.9.0 указывает на
-# 7502e2d68926f6aff2d2036360907f8692b63e40; права шагов те же четыре, что
+# проверка (039). На 24.10 v1.10.0 указывает на
+# 6d8f241b19868c9b04a4a2f7919610a1e3f73d69; права шагов те же четыре, что
 # объявлены ниже, входы шагов оставлены по умолчанию — мета-гейты
 # `pipeline` предупреждают, а не отказывают.
 name: mechanisms
@@ -48,12 +48,12 @@ concurrency:
 
 jobs:
   window-lifetime:
-    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-window-lifetime.yml@v1.9.0
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-window-lifetime.yml@v1.10.0
   rulebook-fresh:
-    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-rulebook-fresh.yml@v1.9.0
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-rulebook-fresh.yml@v1.10.0
   pr-meta:
-    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-pr-meta.yml@v1.9.0
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-pr-meta.yml@v1.10.0
   journal:
-    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-journal.yml@v1.9.0
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-journal.yml@v1.10.0
   pipeline:
-    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-pipeline.yml@v1.9.0
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-pipeline.yml@v1.10.0

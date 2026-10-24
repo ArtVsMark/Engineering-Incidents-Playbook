@@ -62,6 +62,13 @@ python scripts/collect_changelog.py --collect   # собрать в [Unreleased]
 `--check` runs in CI. An empty fragment is a finding, not a nicety: a file with
 nothing in it looks like work that was done.
 
+## Связь с задачей
+
+Фрагмент называет задачу, к которой относится: «Part of #N» или «Refs #N» в
+тексте. Этого требует шаг `journal` механизмов (раздел `journal` в
+`.pipeline.yml`): фрагмент без связи он отвергает. Решение владельца
+24.10 — [#930](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/930).
+
 ## Починка отвечает, тянет ли она на правило
 
 Фрагмент в секции `fixed` несёт **строку вердикта** — она начинается с `>`, в
