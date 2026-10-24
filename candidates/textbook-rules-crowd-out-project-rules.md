@@ -9,7 +9,7 @@
 
 ## Источник
 
-https://github.com/Hedgehogues/awesome-claude/blob/main/docs/RULES_GUIDE.md
+https://github.com/esurvanov/awesome-claude/blob/main/docs/RULES_GUIDE.md
 
 ## Предполагаемая причина
 
