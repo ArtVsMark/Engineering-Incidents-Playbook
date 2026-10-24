@@ -1,6 +1,6 @@
 {
   "schema": "1.2",
-  "generated": "2026-10-23",
+  "generated": "2026-10-24",
   "projects": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -67,11 +67,11 @@
       "state": "published",
       "schema": "1.1",
       "release": {
-        "tag": "v1.9.0",
-        "sha": "7502e2d68926f6aff2d2036360907f8692b63e40"
+        "tag": "v1.10.0",
+        "sha": "6d8f241b19868c9b04a4a2f7919610a1e3f73d69"
       },
       "gives": {
-        "steps": "0.11"
+        "steps": "0.12"
       },
       "takes": [],
       "links": {

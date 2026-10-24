@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `Engineering-Incidents-Playbook` | подключён | 77 | 45 | 215 | 0 | 0 | 199 | 153 | 12 | 5 | 19 | 10 | 145 |  |
 | `Stepik-Python-Grader` | подключён | 195 | 133 | 205 | 10 | 0 | 200 | 85 | 43 | 0 | 72 | 0 | 146 |  |
-| `ArtVsMark` | подключён | 33 | 18 | 205 | 10 | 0 | 159 | 124 | 29 | 0 | 6 | 0 | 66 |  |
+| `ArtVsMark` | подключён | 33 | 18 | 215 | 0 | 0 | 168 | 130 | 31 | 0 | 7 | 0 | 66 |  |
 | `Claude-Code_Usage-Token` | подключён | 18 | 15 | 205 | 10 | 0 | 174 | 93 | 9 | 0 | 55 | 17 | 106 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 205 | 10 | 0 | 162 | 77 | 14 | 0 | 59 | 12 | 116 |  |
 | `Engineering-Pipeline-Mechanisms` | подключён | 21 | 16 | 215 | 0 | 0 | 208 | 183 | 18 | 3 | 4 | 0 | 271 |  |
@@ -61,8 +61,8 @@
 | 210 | `Engineering-Incidents-Playbook` — документ: AGENTS.md § Границы прохода — вторая находка по одному месту названа границей фазы: следующая правка начинается с перечня форм из дерева и, если место разбирает чужой язык, из его справки; каждая форма названа и получает проверку, перечень с числом едет в тело изменения. ГРАНИЦА: исполняется окном при чтении ядра, ни порога, ни перечня машина не проверяет; `Stepik-Python-Grader` — документ: docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте; предмет: CONTRIBUTING.md § Когда дефект считается исправленным — близкий п.2 (все вызовы класса), но перечня форм при второй находке не требует; `ArtVsMark` — конвейер: scripts/check_neighbours.py::repeated в .github/workflows/pr-check.yml — имя верхнего уровня в scripts/*.py, которое правили оба последних изменения общей ветки, тронувшие его файл, и правит этот заход, — третья правка одного места подряд; если сообщения захода не несут перечня форм с числом (формы взяты замером по истории: «Итого форм N», «**N формы**», «Перечень форм:»), — ПРЕДУПРЕЖДЕНИЕ, а не отказ (051). Сборщики main и selftest местом не считаются: их правит каждый новый признак (замер: check_mechanisms.main в #327 и #329). ПОСТРОЕНО 9 ОКТЯБРЯ. ПРОЗОЙ: CLAUDE.md § Соседи починки — вторая находка по одному месту названа стопом: следующая правка начинается с перечня форм из дерева и, если место разбирает чужой язык, из его справки; каждая форма названа и получает проверку, перечень с числом едет в тело изменения. Место — вопрос, который решает код, а не файл. Живой предмет рядом: разбор 206 нашёл невидимые формы у шести гейтов, и их починки пойдут перечнем, а не по форме за заход.; `Glossary-Python` — документ: docs/dev/contributing.md § «Правка кода» — вторая находка по одному месту останавливает починку по одной форме: сначала перечень форм с замером; `Engineering-Pipeline-Mechanisms` — навык: .claude/skills/close-a-finding/SKILL.md — шаг 2а; из build-a-gate, шаг 3а, туда ведёт указатель. Кандидатов называет замер scripts/finding_chains.py, глубина — NAMED_FROM | `Claude-Code_Usage-Token` |
 | 211 | `Engineering-Incidents-Playbook` — гейт: scripts/check_orphans.py с .rules/orphans.json — имена верхнего уровня рабочего кода (scripts/, .claude/hooks/) разбираются ast, и живо только то, до чего доходит цепочка от корня; набор (tests/) в счёт не идёт. Законный сосед — закрытая роспись для набора, граница для человека — назван поимённо с причиной, и запись без предмета — тоже отказ. Что считается корнем и где граница гейта, описано в его докстроке, и только там: пересказ здесь расходился с ней на каждой правке — три находки обзора подряд (022); `Stepik-Python-Grader` — гейт: scripts/check_rule_bindings.py — reachable_gates()/_unreachable(): скрипт, заявленный гейтом, обязан достигаться рабочим путём (workflow, pre-commit, preflight, с пересадками), иначе отказ; долг — только в GATE_DEBT с причиной. Шаг .github/workflows/ci.yml на каждый PR. Держит часть предиката про гейты, не про любые функции; `ArtVsMark` — гейт: scripts/check_mechanisms.py::unreached_names — имя верхнего уровня рабочего кода, до которого не доходит рабочий путь, краснит изменение. Корни — main и код верхнего уровня каждого модуля; живо то, до чего доходит цепочка ссылок, в том числе между модулями (checks.clip, from x import y); ссылки из selftest в счёт не идут. Импорт, который модуль не читает, — тоже имя без читателя. Законные соседи — помощники и образцы набора — названы поимённо с причиной в scripts/check_mechanisms.py::REACH_EXEMPT, и запись без предмета тоже находка. ЦЕНА, РАДИ КОТОРОЙ ГЕЙТ ЗАВЕДЁН: scripts/check_author.py::offenders проверял набор, а рабочий main делал ту же проверку своей встроенной копией — сломайся копия, набор остался бы зелёным; теперь main зовёт саму функцию. Замер 29 сентября: имён 489, без рабочего пути 14 — пять находок разбора 211, четыре законных соседа и пять осиротевших констант, оставленных двумя прошлыми починками (#235, #237); импортов без читателя — один. После починки — ноль. ГРАНИЦА НАЗВАНА: локальные переменные, вычисленные и не прочитанные, гейт не судит — две такие в сборке (titles, flagship) и одна в самом гейте нашлись pyflakes и убраны тем же изменением. Путь до сборки журнала изменений (scripts/collect_changelog.py::merge под `--collect`) рабочим путём достигается, а не запускается никем — это предмет отдельного изменения.; `Glossary-Python` — документ: CLAUDE.md § «Чего не делать» — зелёный набор на подделках не утверждение о дереве; у гейта две половины, и живую требует tests/test_live_surface.py; `Engineering-Pipeline-Mechanisms` — гейт: scripts/check_reached_by_work.py — добавленное изменением имя обязано достигаться рабочим путём, а не только прогоном набора; зовётся шагом .github/workflows/step-journal.yml. Закрытые росписи для набора и пределы для человека гейт не судит и называет законными соседями. Держит tests/test_reached_by_work.py | `Claude-Code_Usage-Token` |
 | 215 | `Engineering-Incidents-Playbook` — гейт: scripts/check_retelling.py — шаг «пересказ работы сверен с составом» в .github/workflows/ci.yml на изменении: путь в обратных кавычках из тела, которого нет ни в составе изменения, ни в дереве, и число находок перед словом «находк…» против строк «Разобрано:» — ::warning::, исход шага не меняется. Решение владельца 14.10 (#816) строить вопреки рекомендации окна; поэтому только предупреждение (051). Замер 14.10: на 99 слитых телах ложных 0 — выборка и команда не сохранены, замер не воспроизводим, на #631 — верное. Набор — tests/test_check_retelling.py. ГРАНИЦА: верность пересказа — суждение о смысле; 33 из 34 случаев замера 01.10 машина не прочтёт, их держит AGENTS.md § Перед толчком; `Stepik-Python-Grader` — документ: docs/agent/rules/DIGEST.md — утверждение правила в разделе «Держится документом», окно читает его на старте; `ArtVsMark` — конвейер: scripts/check_journal.py::unnumbered в .github/workflows/pr-check.yml (флаг --pr из события площадки) — фрагмент журнала, добавленный изменением, называет номер ЭТОГО изменения; заготовка #НОМЕР или чужой номер — предупреждение, а не отказ: фрагмент законно называет и задачу, а первый прогон всегда видит заготовку (051). Машина сработает, изменение не остановится — потому pipeline, а не gate. ПРОЗОЙ: CLAUDE.md § Заготовка и стоп-кран — пересказ своей работы снимается с источника: число, перечень и «что тронуто» в теле, фрагменте и why снимаются командой в момент записи, команда стоит рядом, номер изменения во фрагмент пишется после открытия, а не угадывается; строка в чек-листе «Перед PR». ПРЕДМЕТ ЖИВОЙ, И ЭТО ЗАМЕР, А НЕ ОПАСЕНИЕ: 1 октября в #255 стояло «снято −843 строки» рядом со списком функций сборки — 843 оказалось суммой удалений по девяти файлам, у самой сборки −709 при +148 (git show --numstat на слиянии 6cc0b5c); то же число ушло владельцу в отчёт. В тот же день номера трёх фрагментов (#253, #255, #259) вписаны ДО открытия изменений — совпали, но угадыванием, а не снятием. Слитое не переписывается: случай записан здесь и в своде. ВТОРОЙ СЛУЧАЙ — ТОТ ЖЕ ДЕНЬ, И НАЙДЕН ЭТИМ ПРАВИЛОМ: в теле #259 стояли «+118/−13», «+6/−0», «+9/−0» — числа из git diff --stat, где столбец есть сумма добавленного и удалённого, прочитаны как добавленное; git diff --numstat дал 108/10, 5/1, 7/2. Тело исправлено таблицей с командой до слияния — перечитыванием опубликованного против источника, как правило и требует.; `Glossary-Python` — документ: docs/dev/contributing.md § «Оформление коммитов и pull request» — числа и перечни в теле изменения и фрагменте журнала снимаются командой в момент записи, и команда названа рядом; `Engineering-Pipeline-Mechanisms` — гейт: scripts/check_journal.py — шаг журнала сверяет шапку фрагмента internal «Потребителю безразлично: …» с составом изменения: путь, названный в шапке (header_paths), которого изменение не трогает, — отказ (stray_in_header); тронутый механизм scripts/, не названный шапкой, — предупреждение (unnamed_mechanisms, 051: правка докстроки законно описывается словами). Держит tests/test_journal_fragments.py, обе половины. Остальной пересказ — тело коммита, перечни, числа, поле why — держит навык .claude/skills/retell-from-the-source: состав по git diff --stat, находка по реестру, число командой с закреплённым концом, пересказ заново после самоправки. Прежние части держатся как держались: тело изменения собирается из тел коммитов (scripts/agent_pr.py::describe_from), «Закрывает пункт» сверяется с пунктом задачи (scripts/items.py::names_of), счёт «Правил на документах» — tests/test_counted_numbers.py::test_the_last_move_is_written_down | `Claude-Code_Usage-Token` |
-| 219 | `Engineering-Pipeline-Mechanisms` — гейт: scripts/look_mode.py::diff_key — ключ взгляда — собственный дифф изменения против базы: строки заплатки с контекстом без заголовков ханков, у файла без заплатки — блоб; scripts/look_mode.py::same_diff — равный дифф с уже вынесенным вердиктом даёт пропуск захода, а не новый; scripts/automerge.py::awaits_look — отставшую голову с идущим взглядом очередь не подтягивает до вердикта. Держат tests/test_look_mode.py::test_the_diff_key_ignores_hunk_numbers_but_sees_the_place, tests/test_look_mode.py::test_a_merged_main_with_the_same_own_diff_skips_the_look и tests/test_automerge.py::test_a_head_behind_the_base_waits_for_its_running_look | `Engineering-Incidents-Playbook` |
-| 227 | `Engineering-Pipeline-Mechanisms` — гейт: scripts/check_open_limit.py::look — число открытых изменений окна спрашивается у площадки по трейлеру сессии в коммитах ветки. scripts/preflight.py — заход --push не толкает новую ветку при трёх открытых (tests/test_open_limit.py::test_preflight_holds_the_push_at_the_limit). tests/test_open_limit.py::test_three_open_changes_of_the_window_refuse_a_new_branch, tests/test_open_limit.py::test_a_push_to_an_open_change_is_a_fix_not_a_new_one, tests/test_open_limit.py::test_no_token_is_not_clean. CLAUDE.md — «Не больше трёх открытых изменений окна» | `Engineering-Incidents-Playbook` |
+| 219 | `ArtVsMark` — конвейер: .github/workflows/review.yml — дорогой прогон витрины один, внешний взгляд агента, и обе половины правила держит вызванный шаг механизмов: step-review пропускает заход на голове, чей собственный дифф против базы совпал с уже просмотренным (look_mode.same_diff), а step-automerge, который зовёт .github/workflows/automerge.yml, не подтягивает базу в голову с идущим взглядом (ожидание вердикта у шага автомержа того же выпуска механизмов). Своя половина — группа concurrency в review.yml: голова входит в имя группы, поэтому новая голова идущий заход не снимает, а снимает только перезапуск той же головы.; `Engineering-Pipeline-Mechanisms` — гейт: scripts/look_mode.py::diff_key — ключ взгляда — собственный дифф изменения против базы: строки заплатки с контекстом без заголовков ханков, у файла без заплатки — блоб; scripts/look_mode.py::same_diff — равный дифф с уже вынесенным вердиктом даёт пропуск захода, а не новый; scripts/automerge.py::awaits_look — отставшую голову с идущим взглядом очередь не подтягивает до вердикта. Держат tests/test_look_mode.py::test_the_diff_key_ignores_hunk_numbers_but_sees_the_place, tests/test_look_mode.py::test_a_merged_main_with_the_same_own_diff_skips_the_look и tests/test_automerge.py::test_a_head_behind_the_base_waits_for_its_running_look | `Engineering-Incidents-Playbook` |
+| 227 | `ArtVsMark` — конвейер: scripts/push_guard.py через хук окна .claude/hooks/pre-push.sh — толчок НОВОЙ ветки agent/* при двух открытых изменениях этого окна отменяется до git (push_guard.over_limit). Окно — трейлер Claude-Session самого нового коммита толкаемой ветки; изменение — окна, если трейлер несёт хоть один его коммит (ответ площадки, а не память). Толчок в ветку уже открытого изменения — починка своего, предела не трогает. Предел назван числом в CLAUDE.md § Ветки — «Не больше 2 открытых изменений окна», решение владельца 23.10; совпадение строки с push_guard.LIMIT держит самопроверка (214). Окно не опознано или площадка молчит — толчок проходит с причиной (039). ГРАНИЦА, как у правила: неразобранные находки и конфликт на своих изменениях сторож не видит — их держит чтение плана; толчок мимо хука (не из окна) не судится.; `Engineering-Pipeline-Mechanisms` — гейт: scripts/check_open_limit.py::look — число открытых изменений окна спрашивается у площадки по трейлеру сессии в коммитах ветки. scripts/preflight.py — заход --push не толкает новую ветку при трёх открытых (tests/test_open_limit.py::test_preflight_holds_the_push_at_the_limit). tests/test_open_limit.py::test_three_open_changes_of_the_window_refuse_a_new_branch, tests/test_open_limit.py::test_a_push_to_an_open_change_is_a_fix_not_a_new_one, tests/test_open_limit.py::test_no_token_is_not_clean. CLAUDE.md — «Не больше трёх открытых изменений окна» | `Engineering-Incidents-Playbook` |
 
 ## Сколько держит механизм · How much each mechanism holds
 
@@ -217,25 +217,25 @@
 | `Stepik-Python-Grader` | `tests/test_runner.py` | 2 |
 | `Stepik-Python-Grader` | `tests/test_runs.py` | 2 |
 | `Stepik-Python-Grader` | _остальные_ · _the rest_ | 95 механизмов по одному правилу; без названного адреса: 0 из 212 |
-| `ArtVsMark` | `scripts/build_metrics.py` | 67 |
-| `ArtVsMark` | `scripts/check_mechanisms.py` | 60 |
-| `ArtVsMark` | `.github/workflows/pr-check.yml` | 55 |
-| `ArtVsMark` | `CLAUDE.md` | 29 |
-| `ArtVsMark` | `scripts/check_bindings.py` | 23 |
+| `ArtVsMark` | `scripts/build_metrics.py` | 70 |
+| `ArtVsMark` | `scripts/check_mechanisms.py` | 63 |
+| `ArtVsMark` | `.github/workflows/pr-check.yml` | 56 |
+| `ArtVsMark` | `CLAUDE.md` | 34 |
+| `ArtVsMark` | `scripts/check_bindings.py` | 25 |
 | `ArtVsMark` | `scripts/checks.py` | 23 |
+| `ArtVsMark` | `.github/workflows/agent-pr.yml` | 19 |
 | `ArtVsMark` | `.github/workflows/metrics.yml` | 19 |
-| `ArtVsMark` | `.github/workflows/agent-pr.yml` | 18 |
+| `ArtVsMark` | `.github/workflows/automerge.yml` | 17 |
 | `ArtVsMark` | `scripts/check_page.py` | 17 |
-| `ArtVsMark` | `.github/workflows/automerge.yml` | 16 |
 | `ArtVsMark` | `scripts/check_labels.py` | 16 |
+| `ArtVsMark` | `scripts/check_author.py` | 15 |
 | `ArtVsMark` | `.github/workflows/release-hold.yml` | 14 |
 | `ArtVsMark` | `README.md` | 14 |
-| `ArtVsMark` | `scripts/check_author.py` | 14 |
 | `ArtVsMark` | `scripts/hold.py` | 14 |
 | `ArtVsMark` | `scripts/check_roles.py` | 13 |
 | `ArtVsMark` | `scripts/gh_outcome.py` | 12 |
+| `ArtVsMark` | `.rules/README.md` | 11 |
 | `ArtVsMark` | `HISTORY.md` | 11 |
-| `ArtVsMark` | `.rules/README.md` | 10 |
 | `ArtVsMark` | `docs/agent/roles.md` | 10 |
 | `ArtVsMark` | `scripts/check_journal.py` | 10 |
 | `ArtVsMark` | `.rules/bindings.json` | 8 |
@@ -248,13 +248,15 @@
 | `ArtVsMark` | `pr-check.yml` | 5 |
 | `ArtVsMark` | `.rules/proposals.json` | 4 |
 | `ArtVsMark` | `scripts/check_neighbours.py` | 4 |
+| `ArtVsMark` | `scripts/push_guard.py` | 4 |
 | `ArtVsMark` | `scripts/stuck_prs.py` | 4 |
 | `ArtVsMark` | `.github/workflows/attribution-history.yml` | 3 |
 | `ArtVsMark` | `.github/workflows/ci-complete.yml` | 3 |
+| `ArtVsMark` | `.github/workflows/review.yml` | 3 |
 | `ArtVsMark` | `.github/workflows/stuck-prs.yml` | 3 |
 | `ArtVsMark` | `scripts/staleness.py` | 3 |
+| `ArtVsMark` | `scripts/work_plan.py` | 3 |
 | `ArtVsMark` | `.github/labels.yml` | 2 |
-| `ArtVsMark` | `.github/workflows/review.yml` | 2 |
 | `ArtVsMark` | `.github/workflows/snake.yml` | 2 |
 | `ArtVsMark` | `.github/workflows/staleness.yml` | 2 |
 | `ArtVsMark` | `.pipeline.yml` | 2 |
@@ -263,12 +265,11 @@
 | `ArtVsMark` | `automerge.yml` | 2 |
 | `ArtVsMark` | `docs/agent/review.md` | 2 |
 | `ArtVsMark` | `pyproject.toml` | 2 |
+| `ArtVsMark` | `review.yml` | 2 |
 | `ArtVsMark` | `scripts/check_branch.py` | 2 |
 | `ArtVsMark` | `scripts/check_window.py` | 2 |
-| `ArtVsMark` | `scripts/push_guard.py` | 2 |
 | `ArtVsMark` | `scripts/reauthor_deps.py` | 2 |
-| `ArtVsMark` | `scripts/work_plan.py` | 2 |
-| `ArtVsMark` | _остальные_ · _the rest_ | 15 механизмов по одному правилу; без названного адреса: 0 из 170 |
+| `ArtVsMark` | _остальные_ · _the rest_ | 14 механизмов по одному правилу; без названного адреса: 0 из 179 |
 | `Claude-Code_Usage-Token` | `CLAUDE.md` | 39 |
 | `Claude-Code_Usage-Token` | `scripts/preflight.py` | 38 |
 | `Claude-Code_Usage-Token` | `docs/spec.md` | 17 |
@@ -793,13 +794,13 @@
 | 216 | нет предмета | действует | нет предмета | нет предмета | нет предмета | действует |
 | 217 | действует | действует | действует | действует | действует | действует |
 | 218 | нет предмета | нет предмета | действует | нет предмета | действует | действует |
-| 219 | действует | — | — | — | — | действует |
-| 220 | действует | — | — | — | — | действует |
-| 221 | действует | — | — | — | — | действует |
-| 222 | действует | — | — | — | — | действует |
-| 223 | действует | — | — | — | — | действует |
-| 224 | действует | — | — | — | — | действует |
-| 225 | действует | — | — | — | — | действует |
-| 226 | действует | — | — | — | — | действует |
-| 227 | действует | — | — | — | — | действует |
-| 228 | действует | — | — | — | — | действует |
+| 219 | действует | — | действует | — | — | действует |
+| 220 | действует | — | действует | — | — | действует |
+| 221 | действует | — | действует | — | — | действует |
+| 222 | действует | — | действует | — | — | действует |
+| 223 | действует | — | нет предмета | — | — | действует |
+| 224 | действует | — | действует | — | — | действует |
+| 225 | действует | — | действует | — | — | действует |
+| 226 | действует | — | действует | — | — | действует |
+| 227 | действует | — | действует | — | — | действует |
+| 228 | действует | — | действует | — | — | действует |
