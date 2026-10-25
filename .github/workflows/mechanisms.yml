@@ -57,3 +57,10 @@ jobs:
     uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-journal.yml@v1.11.0
   pipeline:
     uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-pipeline.yml@v1.11.0
+    # Дедлайн вызова процесса — отказ, а не предупреждение: шаг держит
+    # слияние (#930), и без ключа его гейт дедлайна только советовал бы.
+    # Места — умолчание гейта (`scripts`, `.claude/hooks`): там 0 находок.
+    # `tests/` и `templates/` пока держит свой check_subprocess.py — у шага
+    # там 60 мест без поимки истечения, это отдельное решение.
+    with:
+      mechanism-gates-enforce: true
