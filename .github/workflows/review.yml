@@ -83,6 +83,7 @@ jobs:
         if: steps.token.outputs.present == 'yes'
         with:
           fetch-depth: 1
+          persist-credentials: false
 
       # РАЗРЕШЁННЫЙ ПРОГОН ОБЯЗАН БЫТЬ ВОЗМОЖЕН (032). Ревьюеру разрешён
       # `python -m pytest`, а интерпретатора и проверок в этой работе не было.
