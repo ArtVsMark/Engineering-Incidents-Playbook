@@ -79,7 +79,7 @@ def named(node: ast.Call) -> bool:
         ):
             return True
     args = [a for a in node.args if isinstance(a, ast.Constant) and isinstance(a.value, str)]
-    return bool(args and args[-1].value.strip())
+    return bool(args and str(args[-1].value).strip())
 
 
 def skips(path: Path) -> tuple[list[tuple[int, str]], str | None]:

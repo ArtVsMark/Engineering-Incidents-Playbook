@@ -18,6 +18,7 @@
 import glob
 import os
 import subprocess
+from collections.abc import Set as AbstractSet
 from pathlib import Path
 
 import build_rules_index as b
@@ -108,7 +109,7 @@ def подделка(tmp_path: Path, номер: str, тело: str) -> Path:
 
 
 def дерево(
-    tmp_path: Path, уточнения: dict[str, str | None], только_ru: set[str] = frozenset()
+    tmp_path: Path, уточнения: dict[str, str | None], только_ru: AbstractSet[str] = frozenset()
 ) -> dict[str, dict[str, Path]]:
     """Оба дерева подделкой: номер → кого уточняет (None — пометки нет).
 

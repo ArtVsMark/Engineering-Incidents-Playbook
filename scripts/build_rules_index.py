@@ -62,6 +62,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 import check_facts
 import proc
@@ -1195,7 +1196,7 @@ def render_export(
     trails: dict[str, list],
     tiers: dict[str, int],
 ) -> str:
-    rules = []
+    rules: list[dict[str, Any]] = []
     for num in sorted(found):
         ru, en = found[num]["ru"], found[num]["en"]
         names = areas.get(num, [])

@@ -53,6 +53,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 СПИСОК = ROOT / ".rules" / "transport.json"
@@ -70,7 +71,7 @@ ROOT = Path(__file__).resolve().parent.parent
 ВЫЗОВ_В_ОБОЛОЧКЕ = re.compile(r"^\s*(?:[\w.]+=\$\()?\s*gh\s+([a-z-]+)\b")
 
 
-def исключения() -> tuple[dict[str, str] | None, str]:
+def исключения() -> tuple[dict[str, dict[str, Any]] | None, str]:
     """Закрытый список названных поимённо. Вторая строка — причина отказа."""
     if not СПИСОК.exists():
         return None, f"{СПИСОК.relative_to(ROOT)} не найден — список исключений ведёт человек"
@@ -178,7 +179,7 @@ def main(argv: list[str] | None = None) -> int:
         return selftest()
 
     названы, err = исключения()
-    if err:
+    if err or названы is None:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
 

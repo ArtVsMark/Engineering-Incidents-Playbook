@@ -60,6 +60,7 @@ import time
 import urllib.error
 import urllib.request
 from collections.abc import Callable
+from collections.abc import Set as AbstractSet
 from pathlib import Path
 from typing import Any
 
@@ -297,7 +298,7 @@ def read_local(path: str) -> tuple[dict | None, str | None]:
 
 
 def collect(
-    consumers: list[dict], заменены: set[str] = frozenset()
+    consumers: list[dict], заменены: AbstractSet[str] = frozenset()
 ) -> tuple[list[dict], list[str]]:
     """Читает ответ каждого потребителя. Возвращает срезы и находки.
 
@@ -328,7 +329,7 @@ def collect(
             continue
 
         data, err = read_local(source) if not source.startswith("http") else fetch(source)
-        if err:
+        if err or data is None:
             # Потребитель объявлен и обещал ответ. Молчать об этом нельзя:
             # молчание неотличимо от «у него всё в порядке» (правило 075).
             problems.append(f"{repo}: {source} {err}")
@@ -888,7 +889,11 @@ def навыки_плагина(s: dict) -> list[str]:
     """
     нет = []
     for rid, адрес in навыки_плагина_в(s).items():
-        папка, имя = навык({"skill": адрес})
+        найден = навык({"skill": адрес})
+        if найден is None:
+            # Адрес из навыки_плагина_в() — всегда путь; None был бы чужим полем.
+            continue
+        папка, имя = найден
         if (чего := навык_в_дереве(имя, ROOT, папка)) is not None:
             нет.append(f"{rid} → {адрес} ({чего})")
     if not нет:
@@ -1162,8 +1167,8 @@ def as_markdown(slices: list[dict], rule_ids: list[str], в_силе: set[str] |
     head = " | ".join(f"`{s['repo'].split('/')[-1]}`" for s in connected)
     lines += ["", "## Правила · Rules", "", f"| № | {head} |", "|---" * (len(connected) + 1) + "|"]
     for rid in (r for r in rule_ids if r in known):
-        cells = " | ".join(STATUS_RU.get(s["rules"].get(rid), "—") for s in connected)
-        lines.append(f"| {rid} | {cells} |")
+        ячейки = " | ".join(STATUS_RU.get(s["rules"].get(rid), "—") for s in connected)
+        lines.append(f"| {rid} | {ячейки} |")
     return "\n".join(lines) + "\n"
 
 
@@ -1220,7 +1225,7 @@ def check_offline(
         if not source or source.startswith("http"):
             continue
         data, err = read_local(source)
-        if err:
+        if err or data is None:
             print(
                 f"объявленный местный ответ не читается: {c['repo']}: {source} {err}",
                 file=sys.stderr,
@@ -1373,8 +1378,8 @@ def main() -> int:
     except OSError, ValueError, KeyError:
         born = {}
     for entry in slices:
-        entry["trails"] = counts.get(entry.get("repo"), 0)
-        entry["born"] = born.get(entry.get("repo"), 0)
+        entry["trails"] = counts.get(entry.get("repo", ""), 0)
+        entry["born"] = born.get(entry.get("repo", ""), 0)
     warnings = stale(slices)
     # ЧИНИТ НЕ ТОТ, КТО НАШЁЛ. Находки делятся по тому, чьей правкой они
     # снимаются, а не по тому, насколько они серьёзны.
@@ -1467,8 +1472,8 @@ def main() -> int:
     # Чужая находка печатается ВСЕГДА и до нашей: её проще всего потерять.
     if elsewhere:
         print("находки в чужих репозиториях — правятся не здесь:")
-        for e in elsewhere:
-            print(f"  • {e}")
+        for находка in elsewhere:
+            print(f"  • {находка}")
         print(
             "  Прогон от этого не краснеет: снять такое красное отсюда "
             "нечем.\n  Адресаты — задача в этом трекере и раздел во "

@@ -53,6 +53,7 @@ import os
 import pathlib
 import re
 import sys
+from typing import Any
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -394,7 +395,7 @@ def selftest() -> int:
         "python": {"supported": ["3.12"]},
         "checks_per_pr": {"count": 3, "names": ["a", "b", "c"]},
     }
-    reasons = {
+    reasons: dict[str, Any] = {
         k: v for k, v in good.items() if k not in ("version", "release", "tests", "checks_per_pr")
     }
     reasons["none"] = {
@@ -529,15 +530,11 @@ def selftest() -> int:
         ("формат новее договора — не отставание", with_(schema="1.5"), []),
         ("двузначный минор — сравнение числом", with_(schema="1.10"), []),
     ]
-    for name, facts, expected in advise_cases:
+    for name, facts, части in advise_cases:
         said = advise(facts, schema, "1.4")
-        ok = (
-            (not said)
-            if not expected
-            else all(any(part in line for line in said) for part in expected)
-        )
+        ok = (not said) if not части else all(any(part in line for line in said) for part in части)
         if not ok:
-            broken.append(f"совет, {name}: ждали {expected or 'молчание'}, вышло {said}")
+            broken.append(f"совет, {name}: ждали {части or 'молчание'}, вышло {said}")
         print(f"  {'да ' if ok else 'НЕТ'} — совет: {name}")
     # Мажор 1 при договоре 2.0 — та же форма у прежнего держателя: совет
     # называет, куда переехал договор, а не только что файл отстал (#843).

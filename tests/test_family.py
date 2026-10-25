@@ -7,12 +7,19 @@
 """
 
 import json
+from typing import Any
 
 import build_rules_index as bri
 import family
 import pytest
 
-ХОРОШИЙ = {"schema": "1.0", "project": "o/a", "release": None, "gives": {"x": "1.0"}, "takes": []}
+ХОРОШИЙ: dict[str, Any] = {
+    "schema": "1.0",
+    "project": "o/a",
+    "release": None,
+    "gives": {"x": "1.0"},
+    "takes": [],
+}
 
 
 def test_манифест_отдаёт_номера_выгрузки_и_свой():

@@ -73,3 +73,23 @@ include = ["scripts/**/*.py", "tests/**/*.py", ".claude/hooks/**/*.py"]
 # снимать их можно только с `lint.external`.
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
+
+# ТИПЫ — ПО ДОГОВОРУ ШАГА `lint` МЕХАНИЗМОВ (#958, пункт 1). `step-lint` зовёт
+# `mypy` без путей, и состав — отсюда, тем же швом, что у ruff выше. Скрипты —
+# исполняемые файлы, а не пакет: тесты и сами скрипты импортируют друг друга по
+# имени модуля из `scripts/` (так их кладёт на путь conftest.py), поэтому путь
+# поиска назван явно. Ступень — без `strict`: строгость поднимается следующими
+# изменениями, как у ruff.
+[tool.mypy]
+python_version = "3.14"
+files = ["scripts", "tests", ".claude/hooks"]
+mypy_path = ["scripts", ".claude/hooks", "tests"]
+scripts_are_modules = true
+explicit_package_bases = true
+
+# В окружении шага `lint` механизмов стоят ruff, mypy и pyyaml — без заглушек
+# типов и без pytest. Те же имена, что у механизмов: их отсутствие — свойство
+# окружения шага, а не находка о коде.
+[[tool.mypy.overrides]]
+module = ["yaml", "pytest", "_pytest.*", "fontTools.*"]
+ignore_missing_imports = true

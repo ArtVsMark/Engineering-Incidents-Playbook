@@ -638,7 +638,7 @@ def test_slagaemye_ostayutsya_v_stroke():
 def линии(svg: str) -> list[int]:
     """Разделители: тонкие прямоугольники во всю ширину карточки."""
     return [
-        int(r.get("y"))
+        int(r.attrib["y"])
         for r in ET.fromstring(svg).iter()
         if r.tag.endswith("rect") and r.get("height") == "1"
     ]
@@ -779,7 +779,7 @@ def test_raznaya_dlina_chisla_kolonku_ne_dvigaet(repo):
 
 def нижняя_линия(svg: str, size) -> int:
     return max(
-        int(e.get("y"))
+        int(e.attrib["y"])
         for e in ET.fromstring(svg).iter()
         if e.tag.endswith("text") and e.get("font-size") == str(size)
     )

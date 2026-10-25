@@ -97,6 +97,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from typing import cast
 
 import ghcli
 
@@ -320,7 +321,8 @@ def check_verdicts(root: Path) -> int:
                 # Навык занимает МЕСТО в дереве, а не строку вердикта: две
                 # записи одного места разными формами — тот же повтор.
                 if навык:
-                    папка, имя = адрес_навыка(цель)
+                    # где_навык() выше вернул None — значит, адрес разобран.
+                    папка, имя = cast(tuple[Path, str], адрес_навыка(цель))
                     место = ("skill", (папка / имя).as_posix())
                 else:
                     место = ("rule", цель)
@@ -949,7 +951,7 @@ def main(argv: list[str] | None = None) -> int:
     # сошло бы за задачу.
     # ВСЕ СТРАНИЦЫ (212): изменения лежат в том же списке и съедают сотню;
     # берётся первое совпадение, как и прежде.
-    code, номера, почему = ghcli.список(
+    code, задачи, почему = ghcli.список(
         "repos/{owner}/{repo}/issues?state=open&per_page=100",
         f".[] | select(.pull_request == null) "
         f'| select(.body // "" | contains("{MARKER}")) | .number',
@@ -958,7 +960,7 @@ def main(argv: list[str] | None = None) -> int:
     if code != 0:
         print(f"проверка не отработала: трекер не ответил — {почему}", file=sys.stderr)
         return 2
-    found = str(номера[0]) if номера else ""
+    found = str(задачи[0]) if задачи else ""
 
     if found:
         # ПО REST (001) — см. отбор задач выше.

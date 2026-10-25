@@ -237,7 +237,7 @@ def собрать(monkeypatch, repo: Path) -> dict:
     monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     факты, _, беда = bf.build()
-    assert беда == ""
+    assert беда == "" and факты is not None
     return факты
 
 

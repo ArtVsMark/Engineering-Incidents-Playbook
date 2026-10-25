@@ -60,7 +60,9 @@ def test_vyzov_v_znachenii_prisvaivaniya_zhivoy(дерево: Path) -> None:
     # сирота здесь — X (находка обзора на #611)
     код(дерево, "def f(): return 1\nX = f()\n" + ГЛАВНЫЙ.replace("f()", "pass"))
     соседи(дерево, [])
-    найдено = {имя for _, имя in co.сироты(co.модули(дерево)[0], дерево)}
+    мод = co.модули(дерево)[0]
+    assert мод is not None
+    найдено = {имя for _, имя in co.сироты(мод, дерево)}
     assert найдено == {"X"}
 
 

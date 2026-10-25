@@ -212,7 +212,7 @@ def строка_аргумента(узел: ast.expr) -> str | None:
     if isinstance(узел, ast.Constant) and isinstance(узел.value, str):
         return узел.value
     if isinstance(узел, ast.JoinedStr):
-        return "".join(ч.value if isinstance(ч, ast.Constant) else "{}" for ч in узел.values)
+        return "".join(str(ч.value) if isinstance(ч, ast.Constant) else "{}" for ч in узел.values)
     return None
 
 
@@ -237,8 +237,8 @@ def в_питоне(текст: str, файл: str) -> list[tuple[str, str]]:
         if not слова or not (слова[0] == "api" or слова[1:2] == ["list"]):
             continue
         # не строка (число, имя) — значение флага или путь-выражение
-        слова = [с if с is not None else "{}" for с in слова]
-        что = предмет(слова)
+        полные = [с if с is not None else "{}" for с in слова]
+        что = предмет(полные)
         if что:
             найдено.append((f"{файл}:{узел.lineno}", что))
     return найдено
@@ -409,7 +409,7 @@ def main(argv: list[str] | None = None) -> int:
         return selftest()
 
     записи, err = таблица(args.root)
-    if err:
+    if err or записи is None:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
 

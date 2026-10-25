@@ -85,7 +85,7 @@ def open_changes() -> tuple[list[dict] | None, str | None]:
         return None, f"ответ gh api pulls не разобран — {e}"
 
 
-def files_of(number: int) -> tuple[set[str] | None, str | None]:
+def files_of(number: int | None) -> tuple[set[str] | None, str | None]:
     """Файлы одного изменения по REST. Вторым — причина отказа с адресом.
 
     ВСЕ СТРАНИЦЫ, А НЕ ПЕРВАЯ СОТНЯ (212). Тот же список `ci.yml` обходит
@@ -121,7 +121,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
     changes, err = open_changes()
-    if err:
+    if err or changes is None:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
 
@@ -150,10 +150,11 @@ def main(argv: list[str] | None = None) -> int:
         # любом дереве. Путь площадки (`files_of`) этим не болел: там REST.
         my_files = {name for name in done.stdout.split("\0") if name}
     elif mine is not None:
-        my_files, err = files_of(mine.get("number"))
-        if err:
+        найдены, err = files_of(mine.get("number"))
+        if err or найдены is None:
             print(f"проверка не отработала: {err}", file=sys.stderr)
             return 2
+        my_files = найдены
     else:
         print(
             f"проверка не отработала: список своих файлов не получен — {done.stderr.strip()[:120]}",
@@ -170,7 +171,7 @@ def main(argv: list[str] | None = None) -> int:
         if change.get("headRefName") == branch:
             continue
         чужие, err = files_of(change.get("number"))
-        if err:
+        if err or чужие is None:
             print(f"проверка не отработала: {err}", file=sys.stderr)
             return 2
         общие = sorted(my_files & чужие)

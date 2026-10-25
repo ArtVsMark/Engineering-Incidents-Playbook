@@ -161,14 +161,15 @@ def без_соседей(text: str) -> tuple[str, bool]:
             continue
         конец = re.compile(r"\n[ \t]*\n").search(text, m.end())
         вырезать.append((строка, конец.start() if конец else len(text)))
-    for начало, конец in reversed(вырезать):
-        text = text[:начало] + text[конец:]
+    for начало, до_куда in reversed(вырезать):
+        text = text[:начало] + text[до_куда:]
     return re.sub(r"\n[ \t]*\n(?:[ \t]*\n)+", "\n\n", text).strip(), не_отделён
 
 
 def split_verdict(text: str) -> tuple[str, str]:
     """Делит фрагмент на тело журнала и вердикт о правиле."""
-    body, verdict = [], []
+    body: list[str] = []
+    verdict: list[str] = []
     for line in text.splitlines():
         (verdict if line.lstrip().startswith(VERDICT_PREFIX) else body).append(line)
     return (
@@ -424,7 +425,7 @@ def missing_releases() -> tuple[list[str], str | None]:
     не проверкой.
     """
     found, err = history_metrics.tags(ROOT)
-    if err:
+    if err or found is None:
         return [], err
     have = set(RELEASE_RE.findall(CHANGELOG.read_text(encoding="utf-8")))
     return [t for t in found if history_metrics.release(t) not in have], None

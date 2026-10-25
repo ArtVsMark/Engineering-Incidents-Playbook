@@ -713,7 +713,7 @@ def body_for(
                 "пропущен — это не «навыков нет».",
                 "",
             ]
-        else:
+        elif skills is not None:
             нет = sum(1 for s in skills if not s["here"])
             lines += [
                 f"Навыки плагина каталога на этом теге: {len(skills)}, у "
@@ -823,7 +823,7 @@ def main() -> int:
     # ── исход 2: проверка не отработала ────────────────────────────────────
     выгрузка, err = fetch_export(args.catalogue, args.ref)
     rules = None if выгрузка is None else выгрузка.get("rules", [])
-    if err:
+    if err or выгрузка is None:
         print(f"проверка не отработала: экспорт каталога не прочитан — {err}", file=sys.stderr)
         return 2
     if not rules:
