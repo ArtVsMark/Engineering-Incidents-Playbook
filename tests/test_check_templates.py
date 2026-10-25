@@ -13,13 +13,11 @@
 Файловая система трогается во временном каталоге; сеть — нет.
 """
 
-
 from pathlib import Path
 
 import check_templates as ct
 
-HEAD = ("| Файл · File | Зачем | Правила | У себя · At home |\n"
-        "|---|---|---|---|\n")
+HEAD = "| Файл · File | Зачем | Правила | У себя · At home |\n|---|---|---|---|\n"
 
 
 def make(root: Path, files: dict[str, str], table: str) -> Path:
@@ -27,8 +25,7 @@ def make(root: Path, files: dict[str, str], table: str) -> Path:
     folder.mkdir(parents=True, exist_ok=True)
     for name, body in files.items():
         (folder / name).write_text(body, encoding="utf-8")
-    (folder / "README.md").write_text("## Что здесь\n\n" + HEAD + table,
-                                      encoding="utf-8")
+    (folder / "README.md").write_text("## Что здесь\n\n" + HEAD + table, encoding="utf-8")
     return root
 
 
@@ -37,6 +34,7 @@ def row(name: str, answer: str) -> str:
 
 
 # ── ответ есть и он адрес ──────────────────────────────────────────────────
+
 
 def test_adres_svoego_artefakta_chisto(tmp_path):
     (tmp_path / "scripts").mkdir()
@@ -47,12 +45,16 @@ def test_adres_svoego_artefakta_chisto(tmp_path):
 
 def test_net_s_prichinoy_chisto(tmp_path):
     """«У себя иначе» — законный ответ, если сказано почему."""
-    make(tmp_path, {"brief.md": "x"},
-         row("brief.md", "нет: параллельных исполнителей у каталога не бывает"))
+    make(
+        tmp_path,
+        {"brief.md": "x"},
+        row("brief.md", "нет: параллельных исполнителей у каталога не бывает"),
+    )
     assert ct.main(["--root", str(tmp_path)]) == 0
 
 
 # ── ответ отсутствует или только выглядит ответом ──────────────────────────
+
 
 def test_zagotovka_bez_stroki_nahodka(tmp_path):
     make(tmp_path, {"orphan.md": "x"}, row("other.md", "`scripts/x.py`"))
@@ -85,13 +87,17 @@ def test_stroka_perezhila_zagotovku_nahodka(tmp_path, capsys):
     """Обещание файла, которого нет, — та же порча, но в другую сторону."""
     (tmp_path / "scripts").mkdir()
     (tmp_path / "scripts" / "a.py").write_text("x", encoding="utf-8")
-    make(tmp_path, {"a.md": "x"},
-         row("a.md", "`scripts/a.py`") + row("ushedshaya.md", "`scripts/a.py`"))
+    make(
+        tmp_path,
+        {"a.md": "x"},
+        row("a.md", "`scripts/a.py`") + row("ushedshaya.md", "`scripts/a.py`"),
+    )
     assert ct.main(["--root", str(tmp_path)]) == 1
     assert "ushedshaya.md" in capsys.readouterr().err
 
 
 # ── три исхода ─────────────────────────────────────────────────────────────
+
 
 def test_bez_dokumenta_eto_dva(tmp_path):
     (tmp_path / "templates").mkdir()
@@ -114,6 +120,7 @@ def test_tablitsa_ne_razobralas_eto_dva(tmp_path):
 
 
 # ── разбор таблицы ─────────────────────────────────────────────────────────
+
 
 def test_beryotsya_posledniy_stolbets_a_ne_lyuboy():
     """Столбец «Правила» стоит рядом и полон ссылок: спутать их с ответом

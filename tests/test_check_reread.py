@@ -4,7 +4,6 @@
 «было» и «стало», — и ответ виден до того, как подпись куда-либо уехала (018).
 """
 
-
 import json
 import subprocess
 import sys
@@ -17,8 +16,14 @@ import check_reread as cr  # noqa: E402
 
 
 def git(root: Path, *args: str) -> str:
-    done = subprocess.run(["git", "-C", str(root), *args], capture_output=True,
-                          text=True, encoding="utf-8", check=True, timeout=60)
+    done = subprocess.run(
+        ["git", "-C", str(root), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=True,
+        timeout=60,
+    )
     return done.stdout.strip()
 
 
@@ -39,8 +44,8 @@ def дерево(tmp_path: Path) -> Path:
     git(root, "config", "user.name", "проба")
     git(root, "config", "user.email", "проба@example.com")
     (root / ".rules" / "bindings.json").write_text(
-        ответ("1.1", "", **{"001": "active", "002": "not-applicable"}),
-        encoding="utf-8")
+        ответ("1.1", "", **{"001": "active", "002": "not-applicable"}), encoding="utf-8"
+    )
     git(root, "add", "-A")
     git(root, "commit", "-q", "-m", "ответ прежней версии")
     return root
@@ -71,11 +76,21 @@ def test_podpis_sdvinulas_bez_zamera_eto_nahodka(дерево, capsys):
     """РОВНО ПРЕДМЕТ ПРАВИЛА, ЗАМЕР 8 сентября по коммиту 9bfa9d1: выгрузка
     поднялась 1.4 → 1.5, ответ 1.1 → 1.2, подпись проставлена — а обхода не
     было. Заметил вопрос владельца, а не механизм."""
-    положить(дерево, ответ("1.2", "1.5", **{"001": "active",
-                                            "002": "not-applicable"}))
+    положить(дерево, ответ("1.2", "1.5", **{"001": "active", "002": "not-applicable"}))
 
-    assert cr.main(["--root", str(дерево), "--base", "main", "--body-file",
-                    тело(дерево, "Обычное тело без замера.")]) == 1
+    assert (
+        cr.main(
+            [
+                "--root",
+                str(дерево),
+                "--base",
+                "main",
+                "--body-file",
+                тело(дерево, "Обычное тело без замера."),
+            ]
+        )
+        == 1
+    )
     err = capsys.readouterr().err
     assert "1.1 → 1.2" in err and "1.5" in err
 
@@ -85,11 +100,21 @@ def test_odna_pravka_zamerom_ne_schitaetsya(дерево, capsys):
     «изменена хотя бы одна запись» за след обхода — и вернула «чисто» по
     9bfa9d1, где правда изменена одна запись, та самая 157. Гейт, не
     отвергающий собственный повод, не проверяет ничего (140)."""
-    положить(дерево, ответ("1.2", "1.5", **{"001": "rejected",
-                                            "002": "not-applicable"}))
+    положить(дерево, ответ("1.2", "1.5", **{"001": "rejected", "002": "not-applicable"}))
 
-    assert cr.main(["--root", str(дерево), "--base", "main", "--body-file",
-                    тело(дерево, "Поправил одну запись.")]) == 1
+    assert (
+        cr.main(
+            [
+                "--root",
+                str(дерево),
+                "--base",
+                "main",
+                "--body-file",
+                тело(дерево, "Поправил одну запись."),
+            ]
+        )
+        == 1
+    )
     assert "это не замер обхода" in capsys.readouterr().err
 
 
@@ -97,42 +122,53 @@ def test_zamer_v_tele_propuskaet(дерево, capsys):
     """Пустое перечитывание законно: контракт мог двинуться там, где наших
     ответов не касается. Требовать правку значило бы учить менять записи ради
     галочки (051)."""
-    положить(дерево, ответ("1.2", "1.5", **{"001": "active",
-                                            "002": "not-applicable"}))
+    положить(дерево, ответ("1.2", "1.5", **{"001": "active", "002": "not-applicable"}))
 
-    assert cr.main(["--root", str(дерево), "--base", "main", "--body-file",
-                    тело(дерево, "Перечитано 78 записей, изменений нет.")]) == 0
+    assert (
+        cr.main(
+            [
+                "--root",
+                str(дерево),
+                "--base",
+                "main",
+                "--body-file",
+                тело(дерево, "Перечитано 78 записей, изменений нет."),
+            ]
+        )
+        == 0
+    )
     assert "обход назван" in capsys.readouterr().out
 
 
 def test_slovo_bez_chisla_ne_zamer(дерево):
     """«Перечитано» без числа неотличимо от «я посмотрел» (166)."""
-    положить(дерево, ответ("1.2", "1.5", **{"001": "active",
-                                            "002": "not-applicable"}))
+    положить(дерево, ответ("1.2", "1.5", **{"001": "active", "002": "not-applicable"}))
 
     # Вызов собран одной строкой намеренно: решение гейта спрашивается прямо,
     # а не через промежуточную переменную (150).
-    зов = ["--root", str(дерево), "--base", "main",
-           "--body-file", тело(дерево, "Всё перечитал, менять нечего.")]
+    зов = [
+        "--root",
+        str(дерево),
+        "--base",
+        "main",
+        "--body-file",
+        тело(дерево, "Всё перечитал, менять нечего."),
+    ]
 
     assert cr.main(зов) == 1
 
 
 def test_telo_chitaetsya_so_stdin(дерево, monkeypatch, capsys):
     """Конвейер подаёт тело файлом, окно — потоком: оба входа обязаны работать."""
-    положить(дерево, ответ("1.2", "1.5", **{"001": "active",
-                                            "002": "not-applicable"}))
-    monkeypatch.setattr("sys.stdin",
-                        __import__("io").StringIO("перечитано 12 записей"))
+    положить(дерево, ответ("1.2", "1.5", **{"001": "active", "002": "not-applicable"}))
+    monkeypatch.setattr("sys.stdin", __import__("io").StringIO("перечитано 12 записей"))
 
-    assert cr.main(["--root", str(дерево), "--base", "main",
-                    "--body-file", "-"]) == 0
+    assert cr.main(["--root", str(дерево), "--base", "main", "--body-file", "-"]) == 0
 
 
 def test_bez_tela_eto_tretiy_ishod(дерево, capsys):
     """Судить не по чему — отдельный ответ, а не «чисто» и не находка (039)."""
-    положить(дерево, ответ("1.2", "1.5", **{"001": "active",
-                                            "002": "not-applicable"}))
+    положить(дерево, ответ("1.2", "1.5", **{"001": "active", "002": "not-applicable"}))
 
     assert cr.main(["--root", str(дерево), "--base", "main"]) == 2
     assert "--body-file" in capsys.readouterr().err

@@ -6,20 +6,22 @@
 и она удаляется в том же тесте.
 """
 
-
 import pytest
 
 import check_runtime_deps as m
 
-БЕЗ_УСТАНОВКИ = ("jobs:\n  catalogue:\n    steps:\n"
-                 "      - run: python scripts/{s}\n")
-С_УСТАНОВКОЙ = ("jobs:\n  catalogue:\n    steps:\n"
-                "      - run: python -m pip install -r requirements-test.txt\n"
-                "      - run: python scripts/{s}\n")
+БЕЗ_УСТАНОВКИ = "jobs:\n  catalogue:\n    steps:\n      - run: python scripts/{s}\n"
+С_УСТАНОВКОЙ = (
+    "jobs:\n  catalogue:\n    steps:\n"
+    "      - run: python -m pip install -r requirements-test.txt\n"
+    "      - run: python scripts/{s}\n"
+)
 #: Ровно порядок из ci.yml на 7 сентября: гейт выше, установка ниже.
-УСТАНОВКА_НИЖЕ = ("jobs:\n  catalogue:\n    steps:\n"
-                  "      - run: python scripts/{s}\n"
-                  "      - run: python -m pip install -r requirements-test.txt\n")
+УСТАНОВКА_НИЖЕ = (
+    "jobs:\n  catalogue:\n    steps:\n"
+    "      - run: python scripts/{s}\n"
+    "      - run: python -m pip install -r requirements-test.txt\n"
+)
 
 
 @pytest.fixture()
@@ -69,6 +71,7 @@ def test_zhivoe_derevo_chisto():
 
 # ── имя модуля берётся из объявления, а не из словаря (022, задача #444) ────
 
+
 def файл_зависимостей(tmp_path, строки: str) -> str:
     """Свой requirements рядом с деревом. Путь — относительный, как в прогоне."""
     путь = m.ROOT / "_проба_requirements.txt"
@@ -87,9 +90,11 @@ def test_модуль_из_аннотации_читается_этим_гейт
     подопытный = m.ROOT / "scripts" / "_проба_зависимости.py"
     подопытный.write_text("import диковина\n", encoding="utf-8")
     try:
-        прогон = ("jobs:\n  catalogue:\n    steps:\n"
-                  f"      - run: python -m pip install -r {имя}\n"
-                  f"      - run: python scripts/{подопытный.name}\n")
+        прогон = (
+            "jobs:\n  catalogue:\n    steps:\n"
+            f"      - run: python -m pip install -r {имя}\n"
+            f"      - run: python scripts/{подопытный.name}\n"
+        )
         assert m.находки(прогон, m.ROOT)[0] == []
     finally:
         подопытный.unlink(missing_ok=True)
@@ -101,9 +106,11 @@ def test_пакет_без_аннотации_читается_своим_име
     подопытный = m.ROOT / "scripts" / "_проба_зависимости.py"
     подопытный.write_text("import диковина\n", encoding="utf-8")
     try:
-        прогон = ("jobs:\n  catalogue:\n    steps:\n"
-                  f"      - run: python -m pip install -r {имя}\n"
-                  f"      - run: python scripts/{подопытный.name}\n")
+        прогон = (
+            "jobs:\n  catalogue:\n    steps:\n"
+            f"      - run: python -m pip install -r {имя}\n"
+            f"      - run: python scripts/{подопытный.name}\n"
+        )
         assert m.находки(прогон, m.ROOT)[0] == []
     finally:
         подопытный.unlink(missing_ok=True)
@@ -116,9 +123,11 @@ def test_аннотация_не_делает_доступным_чужое_им
     подопытный = m.ROOT / "scripts" / "_проба_зависимости.py"
     подопытный.write_text("import небылица\n", encoding="utf-8")
     try:
-        прогон = ("jobs:\n  catalogue:\n    steps:\n"
-                  f"      - run: python -m pip install -r {имя}\n"
-                  f"      - run: python scripts/{подопытный.name}\n")
+        прогон = (
+            "jobs:\n  catalogue:\n    steps:\n"
+            f"      - run: python -m pip install -r {имя}\n"
+            f"      - run: python scripts/{подопытный.name}\n"
+        )
         список, _ = m.находки(прогон, m.ROOT)
         assert len(список) == 1 and "небылица" in список[0]
     finally:
@@ -135,5 +144,4 @@ def test_ответ_у_двух_гейтов_один(tmp_path):
     assert карта == {"чудо_пакет": {"диковина"}, "простой": set()}
     # `ставится` строит доступное из той же карты: объявленное — модулем,
     # необъявленное — своим именем.
-    assert {м for имя, мод in карта.items() for м in (мод or {имя})} == {
-        "диковина", "простой"}
+    assert {м for имя, мод in карта.items() for м in (мод or {имя})} == {"диковина", "простой"}

@@ -16,14 +16,17 @@ def дерево(tmp_path: Path, файлы: dict[str, str]) -> Path:
 
 
 # Перечень форм (210): каждое место охвата и каждый род символа — свой случай.
-@pytest.mark.parametrize("файлы", [
-    {"rules/ru/001-x.md": "Правило\U000E0041.\n"},          # Tag
-    {"rules/en/001-x.md": "rule​\n"},                   # нулевая ширина
-    {"candidates/x.md": "кандидат‮\n"},                 # двунаправленный
-    {"export/rules.json": '{"a": "⁦b"}\n'},             # изоляция направления
-    {".claude/skills/s/SKILL.md": "навыкㅤ\n"},          # заполнитель Lo
-    {"rules/ru/001-x.md": "мягкий­перенос\n"},          # граница: тоже отказ
-])
+@pytest.mark.parametrize(
+    "файлы",
+    [
+        {"rules/ru/001-x.md": "Правило\U000e0041.\n"},  # Tag
+        {"rules/en/001-x.md": "rule​\n"},  # нулевая ширина
+        {"candidates/x.md": "кандидат‮\n"},  # двунаправленный
+        {"export/rules.json": '{"a": "⁦b"}\n'},  # изоляция направления
+        {".claude/skills/s/SKILL.md": "навыкㅤ\n"},  # заполнитель Lo
+        {"rules/ru/001-x.md": "мягкий­перенос\n"},  # граница: тоже отказ
+    ],
+)
 def test_невидимое_отказ(tmp_path, capsys, файлы):
     assert ci.main(["--root", str(дерево(tmp_path, файлы))]) == 1
     err = capsys.readouterr().err
@@ -45,7 +48,7 @@ def test_пустой_охват_третий_исход(tmp_path):
 
 
 def test_имя_символа_а_не_сам_символ():
-    assert invisible.назвать("\U000E0041") == "U+E0041 TAG LATIN CAPITAL LETTER A"
+    assert invisible.назвать("\U000e0041") == "U+E0041 TAG LATIN CAPITAL LETTER A"
 
 
 def test_живое_дерево_чисто():
@@ -53,16 +56,19 @@ def test_живое_дерево_чисто():
 
 
 # Обзор #874: формы, которых первый набор не знал.
-@pytest.mark.parametrize("файлы", [
-    {"rules/ru/001-x.md": "полуширинныйﾠзаполнитель\n"},     # U+FFA0, Lo
-    {"rules/ru/001-x.md": "буква︁︂︃\n"},          # цепочка основных селекторов
-    {"rules/ru/001-x.md": "буква️\n"},                       # селектор не за значком
-    {"rules/ru/001-x.md": "буква\U000e0100\n"},                   # дополнительный селектор
-    {"AGENTS.md": "свод​\n"},                               # свод в охвате
-    {"templates/CLAUDE.md": "заготовка​\n"},                # заготовки в охвате
-    {"plugins/p/skills/s/SKILL.md": "плагин​\n"},           # плагин в охвате
-    {"changelog.d/x.added.md": "фрагмент​\n"},             # фрагмент журнала в охвате
-])
+@pytest.mark.parametrize(
+    "файлы",
+    [
+        {"rules/ru/001-x.md": "полуширинныйﾠзаполнитель\n"},  # U+FFA0, Lo
+        {"rules/ru/001-x.md": "буква︁︂︃\n"},  # цепочка основных селекторов
+        {"rules/ru/001-x.md": "буква️\n"},  # селектор не за значком
+        {"rules/ru/001-x.md": "буква\U000e0100\n"},  # дополнительный селектор
+        {"AGENTS.md": "свод​\n"},  # свод в охвате
+        {"templates/CLAUDE.md": "заготовка​\n"},  # заготовки в охвате
+        {"plugins/p/skills/s/SKILL.md": "плагин​\n"},  # плагин в охвате
+        {"changelog.d/x.added.md": "фрагмент​\n"},  # фрагмент журнала в охвате
+    ],
+)
 def test_новые_формы_отказ(tmp_path, capsys, файлы):
     assert ci.main(["--root", str(дерево(tmp_path, файлы))]) == 1
     assert "U+" in capsys.readouterr().err
@@ -91,10 +97,13 @@ def test_кейкап_чисто(tmp_path):
     assert ci.main(["--root", str(дерево(tmp_path, файлы))]) == 0
 
 
-@pytest.mark.parametrize("строка", [
-    "⚖️️\n",       # за значком цепочка селекторов
-    "⚖︁\n",             # за значком основной селектор, не FE0E/FE0F — полбайта
-    "x️⃣\n",            # кейкап на не-цифре
-])
+@pytest.mark.parametrize(
+    "строка",
+    [
+        "⚖️️\n",  # за значком цепочка селекторов
+        "⚖︁\n",  # за значком основной селектор, не FE0E/FE0F — полбайта
+        "x️⃣\n",  # кейкап на не-цифре
+    ],
+)
 def test_селектор_вне_формы_эмодзи_отказ(tmp_path, строка):
     assert ci.main(["--root", str(дерево(tmp_path, {"rules/ru/001-x.md": строка}))]) == 1

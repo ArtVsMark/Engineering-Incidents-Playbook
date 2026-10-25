@@ -17,7 +17,6 @@
 потому что предмет здесь — СВОДКА по наборам, а не их содержимое.
 """
 
-
 import check_gates as cg
 
 
@@ -29,10 +28,17 @@ def набор(находки: list[str], сломан: int = 0):
 def подменить(monkeypatch, наборы: list) -> None:
     """Главный ход зовёт свои наборы через один кортеж — его и подменяем."""
     monkeypatch.setattr(cg, "suite_attribution", наборы[0])
-    for имя in ("suite_audit", "suite_shape", "suite_index",
-                "suite_first_parents", "suite_charter", "suite_near",
-                "suite_require_coauthor", "suite_near_subject",
-                "suite_proposals"):
+    for имя in (
+        "suite_audit",
+        "suite_shape",
+        "suite_index",
+        "suite_first_parents",
+        "suite_charter",
+        "suite_near",
+        "suite_require_coauthor",
+        "suite_near_subject",
+        "suite_proposals",
+    ):
         monkeypatch.setattr(cg, имя, наборы[1] if len(наборы) > 1 else набор([]))
 
 

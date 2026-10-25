@@ -5,7 +5,6 @@
 особенно: файл, в котором ничего не написано, выглядит сделанной работой.
 """
 
-
 import subprocess
 from pathlib import Path
 
@@ -68,11 +67,15 @@ def test_перенос_строк_схлопывается(monkeypatch, repo):
 
 
 def test_секции_идут_объявленным_порядком(monkeypatch, repo):
-    prepare(monkeypatch, repo, {
-        "z.internal.md": "внутреннее",
-        "a.fixed.md": "починка",
-        "m.added.md": "новое",
-    })
+    prepare(
+        monkeypatch,
+        repo,
+        {
+            "z.internal.md": "внутреннее",
+            "a.fixed.md": "починка",
+            "m.added.md": "новое",
+        },
+    )
     found, problems = cc.validate()
     assert problems == []
     out = cc.render(found)
@@ -97,9 +100,16 @@ def test_пустая_сборка_это_пустая_строка(monkeypatch,
 # Разбор фрагментов проверен выше; здесь — что скрипт делает с разобранным:
 # три исхода (039), сборка в [Unreleased] и удаление собранных фрагментов (030).
 
+
 def git(repo: Path, *args: str) -> None:
-    subprocess.run(["git", "-C", str(repo), *args], check=True,
-                   capture_output=True, text=True, encoding="utf-8", timeout=60)
+    subprocess.run(
+        ["git", "-C", str(repo), *args],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
 
 
 def выпуск(repo: Path, *теги: str) -> None:
@@ -118,8 +128,14 @@ def выпуск(repo: Path, *теги: str) -> None:
         git(repo, "tag", тег)
 
 
-def cli(monkeypatch, repo: Path, files: dict[str, str], changelog: str | None,
-        *argv: str, теги: tuple[str, ...] = ("0.1.0",)) -> None:
+def cli(
+    monkeypatch,
+    repo: Path,
+    files: dict[str, str],
+    changelog: str | None,
+    *argv: str,
+    теги: tuple[str, ...] = ("0.1.0",),
+) -> None:
     prepare(monkeypatch, repo, files)
     monkeypatch.setattr(cc, "ROOT", repo)
     path = repo / "CHANGELOG.md"
@@ -166,8 +182,7 @@ def test_показ_сборки_ничего_не_меняет(monkeypatch, rep
 
 
 def test_сборка_кладёт_записи_и_убирает_фрагменты(monkeypatch, repo, capsys):
-    cli(monkeypatch, repo, {"a.added.md": "новое", "b.fixed.md": "починка"},
-        HEADER, "--collect")
+    cli(monkeypatch, repo, {"a.added.md": "новое", "b.fixed.md": "починка"}, HEADER, "--collect")
     assert cc.main() == 0
     text = (repo / "CHANGELOG.md").read_text(encoding="utf-8")
     assert "- новое" in text and "- починка" in text
@@ -178,8 +193,7 @@ def test_сборка_кладёт_записи_и_убирает_фрагмен
 
 
 def test_сборка_без_раздела_это_третий_исход(monkeypatch, repo, capsys):
-    cli(monkeypatch, repo, {"a.added.md": "новое"}, "# Журнал без раздела\n",
-        "--collect")
+    cli(monkeypatch, repo, {"a.added.md": "новое"}, "# Журнал без раздела\n", "--collect")
     assert cc.main() == 2
     assert "нет раздела" in capsys.readouterr().err
     # Фрагмент уцелел: не собрали — значит не удалили.
@@ -202,6 +216,7 @@ def test_сборка_пустого_не_трогает_журнал(monkeypatc
 # `fixed`, вердикта не требуют — иначе вопрос задавался бы там, где починки
 # не было.
 
+
 def frag(repo: Path, name: str, text: str) -> Path:
     return write(repo / "changelog.d" / name, text)
 
@@ -212,9 +227,18 @@ def test_починка_без_вердикта_это_находка(repo):
 
 
 def test_отказ_с_причиной_проходит(repo):
-    assert cc.verdict_problems([frag(
-        repo, "a.fixed.md",
-        "Починили.\n\n> правилом не становится, потому что это местная настройка.\n")]) == []
+    assert (
+        cc.verdict_problems(
+            [
+                frag(
+                    repo,
+                    "a.fixed.md",
+                    "Починили.\n\n> правилом не становится, потому что это местная настройка.\n",
+                )
+            ]
+        )
+        == []
+    )
 
 
 def test_отказ_без_причины_это_находка(repo):
@@ -223,23 +247,41 @@ def test_отказ_без_причины_это_находка(repo):
 
 
 def test_ссылка_на_правило_проходит(repo):
-    assert cc.verdict_problems([frag(
-        repo, "a.fixed.md", "Починили.\n\n> правило 145 — тот же класс.\n")]) == []
+    assert (
+        cc.verdict_problems(
+            [frag(repo, "a.fixed.md", "Починили.\n\n> правило 145 — тот же класс.\n")]
+        )
+        == []
+    )
 
 
 def test_ссылка_путём_в_дерево_тоже_проходит(repo):
-    assert cc.verdict_problems([frag(
-        repo, "a.fixed.md",
-        "Починили.\n\n> см. rules/ru/145-every-declared-outcome-is-run.md\n")]) == []
+    assert (
+        cc.verdict_problems(
+            [
+                frag(
+                    repo,
+                    "a.fixed.md",
+                    "Починили.\n\n> см. rules/ru/145-every-declared-outcome-is-run.md\n",
+                )
+            ]
+        )
+        == []
+    )
 
 
 def test_у_остальных_секций_вердикта_не_спрашивают(repo):
     """Здоровый предмет у границы: вопрос адресован починке, а не всякой работе."""
-    assert cc.verdict_problems([
-        frag(repo, "a.added.md", "Завели.\n"),
-        frag(repo, "b.changed.md", "Поменяли.\n"),
-        frag(repo, "c.internal.md", "Внутреннее.\n"),
-    ]) == []
+    assert (
+        cc.verdict_problems(
+            [
+                frag(repo, "a.added.md", "Завели.\n"),
+                frag(repo, "b.changed.md", "Поменяли.\n"),
+                frag(repo, "c.internal.md", "Внутреннее.\n"),
+            ]
+        )
+        == []
+    )
 
 
 def test_имя_не_по_форме_вердиктом_не_проверяется(repo):
@@ -248,8 +290,7 @@ def test_имя_не_по_форме_вердиктом_не_проверяет�
 
 
 def test_вердикт_в_журнал_не_едет(repo):
-    body, verdict = cc.split_verdict(
-        "Починили гонку.\n\n> правило 148 — тот же класс.\n")
+    body, verdict = cc.split_verdict("Починили гонку.\n\n> правило 148 — тот же класс.\n")
     assert body == "Починили гонку."
     assert "148" in verdict
 
@@ -263,10 +304,18 @@ def test_фрагмент_из_одного_вердикта_считается_
 
 # ── ответ о соседях в журнал не едет (466b867, #473) ──────────────────────
 
+
 def test_абзац_соседей_в_журнал_не_едет(monkeypatch, repo):
-    prepare(monkeypatch, repo, {"a.fixed.md": (
-        "Починили разбор.\n\n> правило 165 — его половина.\n\n"
-        "Соседи: спросили семь скриптов,\nвсе режут верно.\n")})
+    prepare(
+        monkeypatch,
+        repo,
+        {
+            "a.fixed.md": (
+                "Починили разбор.\n\n> правило 165 — его половина.\n\n"
+                "Соседи: спросили семь скриптов,\nвсе режут верно.\n"
+            )
+        },
+    )
     found, problems = cc.validate()
     assert problems == []
     assert found["fixed"] == ["Починили разбор."]
@@ -274,8 +323,11 @@ def test_абзац_соседей_в_журнал_не_едет(monkeypatch, re
 
 def test_абзац_соседей_с_отступом_режется_как_у_гейта(monkeypatch, repo):
     """Отступ гейт принимает (`check_narrowing`, самопроверка) — сборка тоже."""
-    prepare(monkeypatch, repo, {"a.changed.md": (
-        "Гейт сужен (#1).\n\n  Соседи: и вот что вышло\n\nВторой абзац.\n")})
+    prepare(
+        monkeypatch,
+        repo,
+        {"a.changed.md": ("Гейт сужен (#1).\n\n  Соседи: и вот что вышло\n\nВторой абзац.\n")},
+    )
     found, problems = cc.validate()
     assert problems == []
     assert found["changed"] == ["Гейт сужен (#1). Второй абзац."]
@@ -283,21 +335,28 @@ def test_абзац_соседей_с_отступом_режется_как_у_
 
 def test_ответ_внутри_абзаца_это_находка_а_не_срез(monkeypatch, repo):
     """Срез до конца абзаца молча съел бы поведение рядом (обзор #771)."""
-    prepare(monkeypatch, repo, {"a.changed.md": (
-        "Гейт сужен (#1).\nСоседи: спросили всех.\nИ ещё поведение.\n")})
+    prepare(
+        monkeypatch,
+        repo,
+        {"a.changed.md": ("Гейт сужен (#1).\nСоседи: спросили всех.\nИ ещё поведение.\n")},
+    )
     found, problems = cc.validate()
     assert found["changed"] == []
     assert problems and "внутри абзаца" in problems[0]
 
 
-@pytest.mark.parametrize("ответ", [
-    "Соседи:\nспросили всех, других форм нет.",
-    "Соседи:\n\nспросили всех, других форм нет.",
-])
+@pytest.mark.parametrize(
+    "ответ",
+    [
+        "Соседи:\nспросили всех, других форм нет.",
+        "Соседи:\n\nспросили всех, других форм нет.",
+    ],
+)
 def test_ответ_со_следующей_строки_режется_как_у_гейта(monkeypatch, repo, ответ):
     """Гейт ищет по тексту целиком, и `\\s*` у него съедает перевод строки —
     такой ответ он принимает; сборка обязана резать его тоже (обзор #776)."""
     import check_narrowing
+
     assert check_narrowing.СОСЕДИ.search(ответ)
     prepare(monkeypatch, repo, {"a.changed.md": f"Гейт сужен (#1).\n\n{ответ}\n"})
     found, problems = cc.validate()
@@ -333,8 +392,9 @@ def test_фрагмент_из_одних_соседей_считается_пу
 # изменения, собрали снова — и в теле выпуска встали ДВА «Добавлено» и ДВА
 # «Изменено». Разделить их обратно нечем: порядок внутри уже перемешан.
 
-СОБРАННЫЙ = ("# Журнал\n\n## [Unreleased]\n\n### Добавлено · Added\n\n"
-             "- первое\n\n## [0.1.0]\n\n- старое\n")
+СОБРАННЫЙ = (
+    "# Журнал\n\n## [Unreleased]\n\n### Добавлено · Added\n\n- первое\n\n## [0.1.0]\n\n- старое\n"
+)
 
 
 def test_повторная_сборка_не_задваивает_заголовки(monkeypatch, repo):
@@ -363,13 +423,16 @@ def test_повторная_сборка_не_трогает_прежние_вы
 
 
 def test_новая_секция_встаёт_рядом_а_не_вместо(monkeypatch, repo):
-    cli(monkeypatch, repo,
+    cli(
+        monkeypatch,
+        repo,
         {"mended.fixed.md": "починка\n\n> правило 030 — сюда и относится\n"},
-        СОБРАННЫЙ, "--collect")
+        СОБРАННЫЙ,
+        "--collect",
+    )
 
     assert cc.main() == 0
-    unreleased = (repo / "CHANGELOG.md").read_text(
-        encoding="utf-8").split("## [0.1.0]")[0]
+    unreleased = (repo / "CHANGELOG.md").read_text(encoding="utf-8").split("## [0.1.0]")[0]
     assert "### Добавлено · Added" in unreleased
     assert "### Починено · Fixed" in unreleased
     assert "- первое" in unreleased and "- починка" in unreleased
@@ -389,8 +452,10 @@ def test_разбор_читает_только_свой_раздел():
 # выпуска остались в [Unreleased], где их читают как ещё не вышедшие. Нашлось
 # это через два выпуска и не проверкой, а взглядом человека.
 
-ВЫШЕДШИЙ = ("# Журнал\n\n## [Unreleased]\n\n### Добавлено · Added\n\n"
-            "- свежее\n\n## [0.1.0] — 2026-08-21\n\n- старое\n")
+ВЫШЕДШИЙ = (
+    "# Журнал\n\n## [Unreleased]\n\n### Добавлено · Added\n\n"
+    "- свежее\n\n## [0.1.0] — 2026-08-21\n\n- старое\n"
+)
 
 
 def test_teg_bez_razdela_eto_nahodka(monkeypatch, repo, capsys):
@@ -408,8 +473,17 @@ def test_u_kazhdogo_tega_est_razdel_eto_chisto(monkeypatch, repo):
 
 
 def test_zakrytie_zavodit_razdel_i_pustoy_unreleased(monkeypatch, repo):
-    cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--close", "v1.1.0", "--date",
-        "2026-08-28", теги=("0.1.0", "v1.1.0"))
+    cli(
+        monkeypatch,
+        repo,
+        {},
+        ВЫШЕДШИЙ,
+        "--close",
+        "v1.1.0",
+        "--date",
+        "2026-08-28",
+        теги=("0.1.0", "v1.1.0"),
+    )
 
     assert cc.main() == 0
     свежий = (repo / "CHANGELOG.md").read_text(encoding="utf-8")
@@ -423,8 +497,7 @@ def test_zakrytie_zavodit_razdel_i_pustoy_unreleased(monkeypatch, repo):
 def test_posle_zakrytiya_proverka_chista(monkeypatch, repo):
     """Пара «закрыть» и «сверить» обязана сходиться: иначе выпуск оставлял бы
     после себя красное на общей ветке."""
-    cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--close", "v1.1.0",
-        теги=("0.1.0", "v1.1.0"))
+    cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--close", "v1.1.0", теги=("0.1.0", "v1.1.0"))
     assert cc.main() == 0
 
     monkeypatch.setattr("sys.argv", ["collect_changelog.py", "--check"])
@@ -434,8 +507,7 @@ def test_posle_zakrytiya_proverka_chista(monkeypatch, repo):
 def test_zakrytie_pustogo_razdela_eto_otkaz(monkeypatch, repo, capsys):
     """Выпуск без записей читается как «ничего не изменилось» — хуже, чем
     отсутствие выпуска (075)."""
-    cli(monkeypatch, repo, {}, HEADER, "--close", "v1.1.0",
-        теги=("0.1.0", "v1.1.0"))
+    cli(monkeypatch, repo, {}, HEADER, "--close", "v1.1.0", теги=("0.1.0", "v1.1.0"))
 
     assert cc.main() == 1
     assert "пуст" in capsys.readouterr().err
@@ -445,8 +517,15 @@ def test_zakrytie_pri_nesobrannyh_fragmentah_eto_otkaz(monkeypatch, repo, capsys
     """v1.10.0 закрыл раздел, оставив 10 фрагментов: код в теге, записей нет
     ни в разделе, ни на странице выпуска (030). Закрытие с остатком — отказ,
     и журнал не тронут."""
-    cli(monkeypatch, repo, {"a.fixed.md": "Починили.\n\n> правило 030.\n"},
-        ВЫШЕДШИЙ, "--close", "v1.1.0", теги=("0.1.0", "v1.1.0"))
+    cli(
+        monkeypatch,
+        repo,
+        {"a.fixed.md": "Починили.\n\n> правило 030.\n"},
+        ВЫШЕДШИЙ,
+        "--close",
+        "v1.1.0",
+        теги=("0.1.0", "v1.1.0"),
+    )
 
     assert cc.main() == 1
     assert "несобранных фрагментов: 1" in capsys.readouterr().err
@@ -455,13 +534,18 @@ def test_zakrytie_pri_nesobrannyh_fragmentah_eto_otkaz(monkeypatch, repo, capsys
 
 def test_sborka_i_zakrytie_berut_vse_fragmenty(monkeypatch, repo):
     """Порядок выпуска: собрать, потом закрыть — фрагмент доезжает в раздел."""
-    cli(monkeypatch, repo, {"a.fixed.md": "Починили.\n\n> правило 030.\n"},
-        ВЫШЕДШИЙ, "--collect", теги=("0.1.0", "v1.1.0"))
+    cli(
+        monkeypatch,
+        repo,
+        {"a.fixed.md": "Починили.\n\n> правило 030.\n"},
+        ВЫШЕДШИЙ,
+        "--collect",
+        теги=("0.1.0", "v1.1.0"),
+    )
     assert cc.main() == 0
     monkeypatch.setattr("sys.argv", ["collect_changelog.py", "--close", "v1.1.0"])
     assert cc.main() == 0
-    раздел = cc.закрытый_раздел(
-        (repo / "CHANGELOG.md").read_text(encoding="utf-8"), "1.1.0")
+    раздел = cc.закрытый_раздел((repo / "CHANGELOG.md").read_text(encoding="utf-8"), "1.1.0")
     assert "- Починили." in раздел and "- свежее" in раздел
 
 
@@ -478,8 +562,9 @@ def test_bez_tegov_eto_tretiy_ishod(monkeypatch, repo, capsys):
     """Мелкий клон тегов не приносит: зелёное здесь означало бы «выпусков не
     было», а это ровно то молчание, из-за которого 1.1.0 и потерялся (039)."""
     cli(monkeypatch, repo, {}, ВЫШЕДШИЙ, "--check")
-    subprocess.run(["git", "-C", str(repo), "tag", "-d", "0.1.0"],
-                   check=True, capture_output=True, timeout=60)
+    subprocess.run(
+        ["git", "-C", str(repo), "tag", "-d", "0.1.0"], check=True, capture_output=True, timeout=60
+    )
 
     assert cc.main() == 2
     assert "не отработала" in capsys.readouterr().err
@@ -492,6 +577,7 @@ def test_bez_tegov_eto_tretiy_ishod(monkeypatch, repo, capsys):
 # о которой известно, что она стопроцентна, ломается ровно один раз, и
 # незаметно: смотреть на неё уже перестали.
 
+
 def test_povedenie_bez_zapisi_eto_nahodka():
     нужна, почему = cc.entry_required(["scripts/a.py", "README.md"], "")
 
@@ -499,8 +585,7 @@ def test_povedenie_bez_zapisi_eto_nahodka():
 
 
 def test_zapis_ryadom_snimaet_trebovanie():
-    нужна, _ = cc.entry_required(
-        ["scripts/a.py", "changelog.d/x.added.md"], "")
+    нужна, _ = cc.entry_required(["scripts/a.py", "changelog.d/x.added.md"], "")
 
     assert not нужна
 
@@ -521,7 +606,8 @@ def test_osvobozhdenie_s_prichinoy_prohodit():
     """Выход назван: без него гейт обходили бы пустым фрагментом, а пустой
     фрагмент хуже отсутствующего — он выглядит памятью (126)."""
     нужна, почему = cc.entry_required(
-        ["scripts/a.py"], "Тело.\n\nЖурнал: не требуется — правка опечатки\n")
+        ["scripts/a.py"], "Тело.\n\nЖурнал: не требуется — правка опечатки\n"
+    )
 
     assert not нужна and "правка опечатки" in почему
 
@@ -559,9 +645,14 @@ def ветка_с_фрагментом(repo: Path, имя: str, текст: str)
     write(repo / "changelog.d" / "older.added.md", "Было.\n")
     git(repo, "add", "-A")
     git(repo, "commit", "-qm", "основание")
-    основание = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
-                               check=True, capture_output=True, text=True,
-                               encoding="utf-8", timeout=60).stdout.strip()
+    основание = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    ).stdout.strip()
     write(repo / "changelog.d" / имя, текст)
     git(repo, "add", "-A")
     git(repo, "commit", "-qm", "починка")
@@ -592,8 +683,10 @@ def test_добавленный_фрагмент_доезжает_до_пров�
 def test_фрагмент_с_вердиктом_находкой_не_считается(monkeypatch, repo):
     """Вторая сторона (140): из одних «обязан отвергнуть» ложный отказ не виден."""
     основание = ветка_с_фрагментом(
-        repo, "we-fixed-it.fixed.md",
-        "Починили.\n\n> правило 146 — зелёный гейт не проверяет свою посылку\n")
+        repo,
+        "we-fixed-it.fixed.md",
+        "Починили.\n\n> правило 146 — зелёный гейт не проверяет свою посылку\n",
+    )
     monkeypatch.setattr(cc, "ROOT", repo)
     monkeypatch.setattr(cc, "FRAGMENTS", repo / "changelog.d")
     пути, почему = cc.added_since(основание)
@@ -614,8 +707,11 @@ def test_имя_с_пробелом_не_разъезжается(monkeypatch, r
 def test_zaglushka_karkasa_eto_nahodka(monkeypatch, repo):
     """Каркас записи несёт во фрагменте заглушку; незаполненной она ушла бы в
     выпуск — так 02.09 ушла строка «Правило 164: <…>» (191)."""
-    prepare(monkeypatch, repo, {
-        "rule-209-x.added.md": f"Правило 209: {cc.ЗАГЛУШКА_ФРАГМЕНТА} (o/r#1).\n"})
+    prepare(
+        monkeypatch,
+        repo,
+        {"rule-209-x.added.md": f"Правило 209: {cc.ЗАГЛУШКА_ФРАГМЕНТА} (o/r#1).\n"},
+    )
     _, problems = cc.validate()
     assert len(problems) == 1 and "заглушка каркаса" in problems[0]
 
@@ -625,13 +721,14 @@ def test_zaglushka_karkasa_eto_nahodka(monkeypatch, repo):
 # длиннее предела площадки, 125 000 знаков, — HTTP 422 после того, как тег
 # уже ушёл. Длинный раздел идёт кратко со ссылкой, а не обрезкой.
 
-ОТКРЫТЫЙ = ("# Журнал\n\n## [Unreleased]\n\n### Добавлено · Added\n\n- новое\n- ещё\n\n"
-            "### Починено · Fixed\n\n- починка\n\n## [0.1.0]\n\n- старое\n")
+ОТКРЫТЫЙ = (
+    "# Журнал\n\n## [Unreleased]\n\n### Добавлено · Added\n\n- новое\n- ещё\n\n"
+    "### Починено · Fixed\n\n- починка\n\n## [0.1.0]\n\n- старое\n"
+)
 
 
 def test_тело_выпуска_целиком_пока_влезает(monkeypatch, repo, capsys):
-    cli(monkeypatch, repo, {}, ОТКРЫТЫЙ, "--notes", "v0.2.0",
-        "--key", "Ключевое", "--repo", "o/r")
+    cli(monkeypatch, repo, {}, ОТКРЫТЫЙ, "--notes", "v0.2.0", "--key", "Ключевое", "--repo", "o/r")
     assert cc.main() == 0
     out = capsys.readouterr().out
     assert out.startswith("# 0.2.0\n\n### Добавлено · Added")
@@ -640,8 +737,7 @@ def test_тело_выпуска_целиком_пока_влезает(monkeypa
 
 def test_длинное_тело_идёт_кратко_со_ссылкой(monkeypatch, repo, capsys):
     """Не обрезка: обрезанный журнал читался бы полным, хвост пропал бы молча."""
-    cli(monkeypatch, repo, {}, ОТКРЫТЫЙ, "--notes", "v0.2.0",
-        "--key", "Ключевое", "--repo", "o/r")
+    cli(monkeypatch, repo, {}, ОТКРЫТЫЙ, "--notes", "v0.2.0", "--key", "Ключевое", "--repo", "o/r")
     monkeypatch.setattr(cc, "ПРЕДЕЛ_ТЕЛА", 40)
     assert cc.main() == 0
     out = capsys.readouterr().out
@@ -663,14 +759,27 @@ def test_тело_пустого_раздела_отказ(monkeypatch, repo, ca
 # тело из раздела, который выпуск уже закрыл: [Unreleased] к этому времени
 # пуст.
 
-ЗАКРЫТЫЙ = ("# Журнал\n\n## [Unreleased]\n\n" + cc.EMPTY_NOTE + "\n\n"
-            "## [0.2.0] — 2026-09-27\n\n### Добавлено · Added\n\n- новое\n- ещё\n\n"
-            "### Починено · Fixed\n\n- починка\n\n## [0.1.0]\n\n- старое\n")
+ЗАКРЫТЫЙ = (
+    "# Журнал\n\n## [Unreleased]\n\n" + cc.EMPTY_NOTE + "\n\n"
+    "## [0.2.0] — 2026-09-27\n\n### Добавлено · Added\n\n- новое\n- ещё\n\n"
+    "### Починено · Fixed\n\n- починка\n\n## [0.1.0]\n\n- старое\n"
+)
 
 
 def test_дозавершение_берёт_закрытый_раздел(monkeypatch, repo, capsys):
-    cli(monkeypatch, repo, {}, ЗАКРЫТЫЙ, "--notes", "v0.2.0", "--closed",
-        "--key", "Ключевое", "--repo", "o/r")
+    cli(
+        monkeypatch,
+        repo,
+        {},
+        ЗАКРЫТЫЙ,
+        "--notes",
+        "v0.2.0",
+        "--closed",
+        "--key",
+        "Ключевое",
+        "--repo",
+        "o/r",
+    )
     assert cc.main() == 0
     out = capsys.readouterr().out
     assert out.startswith("# 0.2.0\n\n### Добавлено · Added")
@@ -681,8 +790,19 @@ def test_дозавершение_берёт_закрытый_раздел(monke
 
 def test_дозавершение_длинного_раздела_кратко(monkeypatch, repo, capsys):
     """Счёт — по закрытому разделу: у [Unreleased] он был бы нулевым."""
-    cli(monkeypatch, repo, {}, ЗАКРЫТЫЙ, "--notes", "v0.2.0", "--closed",
-        "--key", "Ключевое", "--repo", "o/r")
+    cli(
+        monkeypatch,
+        repo,
+        {},
+        ЗАКРЫТЫЙ,
+        "--notes",
+        "v0.2.0",
+        "--closed",
+        "--key",
+        "Ключевое",
+        "--repo",
+        "o/r",
+    )
     monkeypatch.setattr(cc, "ПРЕДЕЛ_ТЕЛА", 40)
     assert cc.main() == 0
     assert "3 записей журнала: добавлено — 2, починено — 1." in capsys.readouterr().out
@@ -698,8 +818,17 @@ def test_дозавершение_без_раздела_отказ(monkeypatch, 
 def test_дозавершение_читает_журнал_тега(monkeypatch, repo, capsys):
     """Голова могла уйти дальше: раздел читается в дереве тега."""
     write(repo / "at-tag" / "CHANGELOG.md", ЗАКРЫТЫЙ)
-    cli(monkeypatch, repo, {}, HEADER, "--notes", "v0.2.0", "--closed",
-        "--changelog", str(repo / "at-tag" / "CHANGELOG.md"))
+    cli(
+        monkeypatch,
+        repo,
+        {},
+        HEADER,
+        "--notes",
+        "v0.2.0",
+        "--closed",
+        "--changelog",
+        str(repo / "at-tag" / "CHANGELOG.md"),
+    )
     assert cc.main() == 0
     assert "- починка" in capsys.readouterr().out
 
@@ -721,13 +850,15 @@ def test_выпуск_дозавершается_проверенными_реж
     выпуска стоят за признаком `finish`. Публичную поверхность оно сверяет в
     дереве тега, а не на голове, ушедшей дальше.
     """
-    wf = (Path(__file__).resolve().parent.parent
-          / ".github" / "workflows" / "release.yml").read_text(encoding="utf-8")
-    assert "--notes \"$WANT\" --closed" in wf
-    assert "--key-of \"$WANT\"" in wf
+    wf = (
+        Path(__file__).resolve().parent.parent / ".github" / "workflows" / "release.yml"
+    ).read_text(encoding="utf-8")
+    assert '--notes "$WANT" --closed' in wf
+    assert '--key-of "$WANT"' in wf
     закрытие = wf.split("- name: раздел журнала, строка эволюции метрик")[1]
-    assert закрытие.lstrip().startswith("и закреплённый пример\n"
-                                         "        if: steps.form.outputs.finish != 'true'")
+    assert закрытие.lstrip().startswith(
+        "и закреплённый пример\n        if: steps.form.outputs.finish != 'true'"
+    )
     поверхность = wf.split("- name: публичная поверхность на месте")[1].split("- name:")[0]
     assert 'tree="$RUNNER_TEMP/at-tag"' in поверхность, "дозавершение сверяет дерево тега"
     assert '[ ! -e "$tree/$p" ]' in поверхность
@@ -738,15 +869,19 @@ def test_выпуск_дозавершается_проверенными_реж
 
 # ── одна тема на изменение (132): предупреждение, а не отказ ─────────────
 
-@pytest.mark.parametrize("имена, правил, предупредить", [
-    (["a.fixed.md"], 0, False),                                   # одна тема
-    (["a.fixed.md", "b.internal.md"], 0, False),                  # внутренний не тема
-    (["a.fixed.md", "b.added.md"], 0, True),                      # две внешних — сборное
-    (["a.added.md", "b.internal.md", "c.changed.md"], 0, True),   # две внешних среди трёх
-    (["rule.added.md", "mechanism.added.md"], 1, False),          # правило + его механизм
-    (["rule.added.md", "mech.added.md", "other.fixed.md"], 1, True),  # и ещё одна тема
-    ([], 0, False),                                               # фрагментов нет
-])
+
+@pytest.mark.parametrize(
+    "имена, правил, предупредить",
+    [
+        (["a.fixed.md"], 0, False),  # одна тема
+        (["a.fixed.md", "b.internal.md"], 0, False),  # внутренний не тема
+        (["a.fixed.md", "b.added.md"], 0, True),  # две внешних — сборное
+        (["a.added.md", "b.internal.md", "c.changed.md"], 0, True),  # две внешних среди трёх
+        (["rule.added.md", "mechanism.added.md"], 1, False),  # правило + его механизм
+        (["rule.added.md", "mech.added.md", "other.fixed.md"], 1, True),  # и ещё одна тема
+        ([], 0, False),  # фрагментов нет
+    ],
+)
 def test_сборное_изменение(имена, правил, предупредить):
     """Внешние фрагменты сверх нормы называются поимённо; внутренние и пара
     «правило + механизм» нормы не съедают (решение владельца 14.10)."""

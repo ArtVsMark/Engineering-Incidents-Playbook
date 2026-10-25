@@ -73,9 +73,13 @@ def импортируемые(root: Path, текст: str) -> list[str]:
     очередь = [текст]
     while очередь:
         for узел in ast.walk(ast.parse(очередь.pop())):
-            имена = ([a.name for a in узел.names] if isinstance(узел, ast.Import)
-                     else [узел.module] if isinstance(узел, ast.ImportFrom) and узел.module
-                     else [])
+            имена = (
+                [a.name for a in узел.names]
+                if isinstance(узел, ast.Import)
+                else [узел.module]
+                if isinstance(узел, ast.ImportFrom) and узел.module
+                else []
+            )
             for имя in имена:
                 путь = root / "scripts" / f"{имя}.py"
                 if имя in видел or not путь.is_file():
@@ -90,14 +94,21 @@ def импортируемые(root: Path, текст: str) -> list[str]:
 def литералы(текст: str) -> set[str]:
     """Строковые литералы кода без докстрингов: проза охватом не считается."""
     дерево = ast.parse(текст)
-    докстроки = {id(узел.body[0].value) for узел in ast.walk(дерево)
-                 if isinstance(узел, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef,
-                                      ast.ClassDef))
-                 and узел.body and isinstance(узел.body[0], ast.Expr)
-                 and isinstance(узел.body[0].value, ast.Constant)}
-    return {узел.value for узел in ast.walk(дерево)
-            if isinstance(узел, ast.Constant) and isinstance(узел.value, str)
-            and id(узел) not in докстроки}
+    докстроки = {
+        id(узел.body[0].value)
+        for узел in ast.walk(дерево)
+        if isinstance(узел, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+        and узел.body
+        and isinstance(узел.body[0], ast.Expr)
+        and isinstance(узел.body[0].value, ast.Constant)
+    }
+    return {
+        узел.value
+        for узел in ast.walk(дерево)
+        if isinstance(узел, ast.Constant)
+        and isinstance(узел.value, str)
+        and id(узел) not in докстроки
+    }
 
 
 def место_в_коде(признак: str, тексты: list[str]) -> bool:
@@ -126,14 +137,17 @@ def сверить(root: Path, перепись: dict) -> tuple[list[str], list[
                 находки.append(f"{номер}: место {место} не названо — ни гейтом, ни исключением")
                 continue
             if isinstance(значение, str) and значение.startswith(ИСКЛЮЧЕНО):
-                if not значение[len(ИСКЛЮЧЕНО):].strip():
+                if not значение[len(ИСКЛЮЧЕНО) :].strip():
                     находки.append(f"{номер}: {место} исключено без причины")
                 continue
             if isinstance(значение, str) and значение.startswith(ДОЛГ):
-                долги.append(f"{номер} · {место}: {значение[len(ДОЛГ):].strip()}")
+                долги.append(f"{номер} · {место}: {значение[len(ДОЛГ) :].strip()}")
                 continue
-            гейт, признак = ((значение.get("гейт", ""), значение.get("признак", признак_места))
-                             if isinstance(значение, dict) else (значение, признак_места))
+            гейт, признак = (
+                (значение.get("гейт", ""), значение.get("признак", признак_места))
+                if isinstance(значение, dict)
+                else (значение, признак_места)
+            )
             путь = root / гейт
             if not путь.is_file():
                 находки.append(f"{номер}: {место} — гейта {гейт} нет")
@@ -141,11 +155,15 @@ def сверить(root: Path, перепись: dict) -> tuple[list[str], list[
             текст = путь.read_text(encoding="utf-8")
             объявлено = declares(путь)
             if not объявлено or номер not in объявлено:
-                находки.append(f"{номер}: {гейт} не называет правило {номер} в блоке "
-                               "«Реализует правила каталога»")
+                находки.append(
+                    f"{номер}: {гейт} не называет правило {номер} в блоке "
+                    "«Реализует правила каталога»"
+                )
             if not место_в_коде(признак, [текст, *импортируемые(root, текст)]):
-                находки.append(f"{номер}: {место} — в коде {гейт} места нет (признак {признак}); "
-                               "перепись разошлась с охватом")
+                находки.append(
+                    f"{номер}: {место} — в коде {гейт} места нет (признак {признак}); "
+                    "перепись разошлась с охватом"
+                )
     return list(dict.fromkeys(находки)), долги
 
 
@@ -161,8 +179,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"проверка не отработала: {путь} не прочитан — {exc} (075)", file=sys.stderr)
         return 2
     if not перепись.get("rules") or not перепись.get("места"):
-        print(f"проверять нечего: в {путь} нет правил или мест — зеленеть на этом нельзя (075)",
-              file=sys.stderr)
+        print(
+            f"проверять нечего: в {путь} нет правил или мест — зеленеть на этом нельзя (075)",
+            file=sys.stderr,
+        )
         return 2
     находки, долги = сверить(args.root, перепись)
     if находки:
@@ -170,11 +190,17 @@ def main(argv: list[str] | None = None) -> int:
         for н in находки:
             print(f"  • {н}", file=sys.stderr)
         return 1
-    исключений = sum(1 for ответ in перепись["rules"].values() for з in ответ.values()
-                     if isinstance(з, str) and з.startswith(ИСКЛЮЧЕНО))
-    print(f"правила о механизмах держатся по всему дереву: правил {len(перепись['rules'])}, "
-          f"мест {len(перепись['места'])}, на суждении {len(перепись.get('суждение', {}))}, "
-          f"не построено {len(долги)}, исключений на веру {исключений}")
+    исключений = sum(
+        1
+        for ответ in перепись["rules"].values()
+        for з in ответ.values()
+        if isinstance(з, str) and з.startswith(ИСКЛЮЧЕНО)
+    )
+    print(
+        f"правила о механизмах держатся по всему дереву: правил {len(перепись['rules'])}, "
+        f"мест {len(перепись['места'])}, на суждении {len(перепись.get('суждение', {}))}, "
+        f"не построено {len(долги)}, исключений на веру {исключений}"
+    )
     for д in долги:
         print(f"  · не построено: {д}")
     return 0

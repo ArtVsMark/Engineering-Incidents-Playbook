@@ -56,7 +56,6 @@
   026 — вердикт по гипотезе записывается: уехала — файл удаляется вместе с ссылкой.
 """
 
-
 import argparse
 import datetime as dt
 import json
@@ -69,22 +68,25 @@ import check_duplicates
 ROOT = Path(__file__).resolve().parent.parent
 
 #: Разделы, без которых кандидат не кандидат. Порядок — порядок чтения.
-REQUIRED = ("Источник", "Предполагаемая причина", "Чем подтвердится",
-            "Применимость")
+REQUIRED = ("Источник", "Предполагаемая причина", "Чем подтвердится", "Применимость")
 #: Раздел правила. Здесь его появление означает, что запись притворяется.
 FORBIDDEN = ("След",)
 
 #: Необязательный раздел и его форма (#798).
 ДАННЫЕ = "Данные потребителей"
 #: Дата замера: ISO либо «9 октября 2026» — так написаны разделы до формы.
-ДАТА_RE = re.compile(r"\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}\s+(?:января|февраля|марта|"
-                     r"апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)"
-                     r"\s+\d{4}\b")
-СДВИГ_RE = re.compile(r"(?i)\*\*Куда это сдвигает гипотезу\.\*\*[^\n]*?"
-                      # «не подтвердится» — не «подтвердится» (обзор #822):
-                      # отрицание перед ответом его отменяет, а не повторяет.
-                      r"(?:(?<!не )(?<!не «)«?(?:подтвердится|опровергнется)»?"
-                      r"|не сдвигает)")
+ДАТА_RE = re.compile(
+    r"\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}\s+(?:января|февраля|марта|"
+    r"апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)"
+    r"\s+\d{4}\b"
+)
+СДВИГ_RE = re.compile(
+    r"(?i)\*\*Куда это сдвигает гипотезу\.\*\*[^\n]*?"
+    # «не подтвердится» — не «подтвердится» (обзор #822):
+    # отрицание перед ответом его отменяет, а не повторяет.
+    r"(?:(?<!не )(?<!не «)«?(?:подтвердится|опровергнется)»?"
+    r"|не сдвигает)"
+)
 
 HYPOTHESIS_RE = re.compile(r"(?im)^\*\*Гипотеза\.\*\*\s+\S")
 AREA_RE = re.compile(r"(?im)^\*\*Область\.\*\*\s+\S")
@@ -106,9 +108,9 @@ def section(text: str, name: str) -> str | None:
     m = re.search(rf"(?m)^##\s+{re.escape(name)}\s*$", text)
     if not m:
         return None
-    rest = text[m.end():]
+    rest = text[m.end() :]
     nxt = re.search(r"(?m)^##\s+", rest)
-    return rest[:nxt.start()] if nxt else rest
+    return rest[: nxt.start()] if nxt else rest
 
 
 def candidates(root: Path) -> list[Path]:
@@ -127,8 +129,7 @@ def cited_by_rules(root: Path, names: set[str]) -> list[str]:
             for target in re.findall(r"\]\(([^)\s]+)\)", text):
                 tail = target.split("#")[0].rsplit("/", 1)[-1]
                 if "candidates/" in target and tail in names:
-                    out.append(f"{rule.relative_to(root)} ссылается на "
-                               f"кандидата {tail}")
+                    out.append(f"{rule.relative_to(root)} ссылается на кандидата {tail}")
     return out
 
 
@@ -146,9 +147,11 @@ def promoted(root: Path, found: list[Path]) -> tuple[list[str], list[str]]:
     if verdicts.exists():
         try:
             данные = json.loads(verdicts.read_text(encoding="utf-8"))
-            принятые = {ключ.split(":", 1)[1]
-                        for ключ, v in данные.get("verdicts", {}).items()
-                        if ":" in ключ and v.get("status") == "admitted"}
+            принятые = {
+                ключ.split(":", 1)[1]
+                for ключ, v in данные.get("verdicts", {}).items()
+                if ":" in ключ and v.get("status") == "admitted"
+            }
         except ValueError, KeyError, TypeError:
             принятые = set()
 
@@ -158,37 +161,46 @@ def promoted(root: Path, found: list[Path]) -> tuple[list[str], list[str]]:
     for path in found:
         слаг = path.stem
         if слаг in slugs_rules:
-            отказы.append(f"{path.name}: предмет уехал в корпус — правило с тем "
-                          "же слагом уже есть. Две записи об одном, и эта "
-                          "говорит «инцидента нет» (022, 026)")
+            отказы.append(
+                f"{path.name}: предмет уехал в корпус — правило с тем "
+                "же слагом уже есть. Две записи об одном, и эта "
+                "говорит «инцидента нет» (022, 026)"
+            )
             continue
         if слаг in принятые:
-            отказы.append(f"{path.name}: предложение с тем же слагом принято "
-                          "как правило — гипотеза стала записью, а файл остался")
+            отказы.append(
+                f"{path.name}: предложение с тем же слагом принято "
+                "как правило — гипотеза стала записью, а файл остался"
+            )
             continue
         текст = path.read_text(encoding="utf-8")
         мой = check_duplicates.shingles(текст)
         близкие = sorted(
-            ((check_duplicates.jaccard(мой, check_duplicates.shingles(
-                данные["text"])), номер) for номер, данные in правила.items()),
-            reverse=True)[:1]
+            (
+                (check_duplicates.jaccard(мой, check_duplicates.shingles(данные["text"])), номер)
+                for номер, данные in правила.items()
+            ),
+            reverse=True,
+        )[:1]
         if близкие:
             вес, номер = близкие[0]
-            отчёт.append(f"{path.name}: ближайшее правило {номер} ({вес:.3f}) — "
-                         "порога у меры нет, это к прочтению, а не приговор")
+            отчёт.append(
+                f"{path.name}: ближайшее правило {номер} ({вес:.3f}) — "
+                "порога у меры нет, это к прочтению, а не приговор"
+            )
     return отказы, отчёт
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--root", type=Path, default=ROOT,
-                    help="корень дерева; по умолчанию сам репозиторий")
+    ap.add_argument(
+        "--root", type=Path, default=ROOT, help="корень дерева; по умолчанию сам репозиторий"
+    )
     root = ap.parse_args(argv).root
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not (root / "rules" / "ru").is_dir():
-        print("проверка не отработала: нет дерева rules/ru — сверять не с чем",
-              file=sys.stderr)
+        print("проверка не отработала: нет дерева rules/ru — сверять не с чем", file=sys.stderr)
         return 2
 
     found = candidates(root)
@@ -198,9 +210,11 @@ def main(argv: list[str] | None = None) -> int:
     for path in found:
         name = path.name
         if NUMBERED_RE.match(name):
-            problems.append(f"{name}: имя начинается с цифры. У кандидата "
-                            "номера нет — номер занимает место в корпусе, а "
-                            "корпус состоит из инцидентов")
+            problems.append(
+                f"{name}: имя начинается с цифры. У кандидата "
+                "номера нет — номер занимает место в корпусе, а "
+                "корпус состоит из инцидентов"
+            )
             continue
         if not NAME_RE.match(name):
             problems.append(f"{name}: имя не по форме «слаг-латиницей.md»")
@@ -208,9 +222,11 @@ def main(argv: list[str] | None = None) -> int:
 
         text = path.read_text(encoding="utf-8")
         if not HYPOTHESIS_RE.search(text):
-            problems.append(f"{name}: нет строки «**Гипотеза.**» с текстом — "
-                            "читатель обязан узнать статус из первой строки, "
-                            "а не из пути к файлу")
+            problems.append(
+                f"{name}: нет строки «**Гипотеза.**» с текстом — "
+                "читатель обязан узнать статус из первой строки, "
+                "а не из пути к файлу"
+            )
         if not AREA_RE.search(text):
             problems.append(f"{name}: нет строки «**Область.**»")
         for head in REQUIRED:
@@ -218,37 +234,47 @@ def main(argv: list[str] | None = None) -> int:
             if body is None:
                 problems.append(f"{name}: нет раздела «{head}»")
             elif not body.strip():
-                problems.append(f"{name}: раздел «{head}» пуст — заголовок без "
-                                "содержания выглядит заполненным")
+                problems.append(
+                    f"{name}: раздел «{head}» пуст — заголовок без содержания выглядит заполненным"
+                )
         for head in FORBIDDEN:
             if section(text, head) is not None:
-                problems.append(f"{name}: есть раздел «{head}» — он для правил. "
-                                "Кандидат с ним притворяется правилом")
+                problems.append(
+                    f"{name}: есть раздел «{head}» — он для правил. "
+                    "Кандидат с ним притворяется правилом"
+                )
         данные = section(text, ДАННЫЕ)
         if данные is not None:
             if not данные.strip():
                 problems.append(f"{name}: раздел «{ДАННЫЕ}» пуст")
             else:
                 if not SOURCE_RE.search(данные):
-                    problems.append(f"{name}: в разделе «{ДАННЫЕ}» нет разрешимого "
-                                    "источника — адреса или «владелец/репозиторий#номер»")
+                    problems.append(
+                        f"{name}: в разделе «{ДАННЫЕ}» нет разрешимого "
+                        "источника — адреса или «владелец/репозиторий#номер»"
+                    )
                 if not ДАТА_RE.search(данные):
                     problems.append(f"{name}: в разделе «{ДАННЫЕ}» нет даты замера")
                 if not СДВИГ_RE.search(данные):
-                    problems.append(f"{name}: в разделе «{ДАННЫЕ}» нет строки "
-                                    "«**Куда это сдвигает гипотезу.**» с ответом "
-                                    "«подтвердится», «опровергнется» или «не сдвигает»")
+                    problems.append(
+                        f"{name}: в разделе «{ДАННЫЕ}» нет строки "
+                        "«**Куда это сдвигает гипотезу.**» с ответом "
+                        "«подтвердится», «опровергнется» или «не сдвигает»"
+                    )
         src = section(text, "Источник") or ""
         if src.strip() and not SOURCE_RE.search(src):
-            problems.append(f"{name}: источник не разрешается — нужен адрес "
-                            "или задача «владелец/репозиторий#номер». Проза "
-                            "источником не считается")
+            problems.append(
+                f"{name}: источник не разрешается — нужен адрес "
+                "или задача «владелец/репозиторий#номер». Проза "
+                "источником не считается"
+            )
 
-        age = (dt.date.today() - dt.date.fromtimestamp(
-            path.stat().st_mtime)).days
+        age = (dt.date.today() - dt.date.fromtimestamp(path.stat().st_mtime)).days
         if age > STALE_DAYS:
-            warnings.append(f"{name}: лежит {age} дн. — пора подтвердить "
-                            "инцидентом или отвергнуть с причиной (026)")
+            warnings.append(
+                f"{name}: лежит {age} дн. — пора подтвердить "
+                "инцидентом или отвергнуть с причиной (026)"
+            )
 
     problems += cited_by_rules(root, {p.name for p in found})
     уехавшие, соседи = promoted(root, found)
@@ -259,9 +285,12 @@ def main(argv: list[str] | None = None) -> int:
         print("кандидаты не по форме:", file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
-        print("\n  Папка «почти правил» — готовый обход требования инцидента, "
-              "и обход\n  происходит сползанием, а не решением. Граница "
-              "держится здесь.", file=sys.stderr)
+        print(
+            "\n  Папка «почти правил» — готовый обход требования инцидента, "
+            "и обход\n  происходит сползанием, а не решением. Граница "
+            "держится здесь.",
+            file=sys.stderr,
+        )
         return 1
 
     for w in warnings:

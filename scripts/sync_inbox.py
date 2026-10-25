@@ -48,7 +48,6 @@
   0 — чисто;  1 — есть нерассмотренные;  2 — проверка не отработала.
 """
 
-
 import argparse
 import json
 import re
@@ -113,8 +112,7 @@ def fetch_where(catalogue: str, ref: str) -> tuple[list[dict] | None, str | None
     # Ветка задана здесь, а не берётся из `ref`: `ref` — версия ПРАВИЛ, и
     # закрепиться на теге правил, потеряв свежую сводку, читатель должен
     # мочь. Смешать их значило бы связать две независимые величины (164).
-    url = (f"https://raw.githubusercontent.com/{catalogue}/"
-           f"{SUMMARY_BRANCH}/export/where.json")
+    url = f"https://raw.githubusercontent.com/{catalogue}/{SUMMARY_BRANCH}/export/where.json"
     try:
         with urllib.request.urlopen(url, timeout=30) as resp:
             return json.loads(resp.read().decode("utf-8")).get("consumers", []), None
@@ -130,8 +128,7 @@ SKILLS_LIST = "plugins/catalogue/README.md"
 PLUGIN_KEY = "catalogue@incidents-playbook"
 
 
-def fetch_skills(catalogue: str, ref: str) -> tuple[list[tuple[str, str]] | None,
-                                                    str | None]:
+def fetch_skills(catalogue: str, ref: str) -> tuple[list[tuple[str, str]] | None, str | None]:
     """Навыки плагина каталога на этом `ref`: имя и «когда звать».
 
     РАЗДЕЛ — ДОПОЛНЕНИЕ, И ОН НЕ РОНЯЕТ ОСНОВНУЮ РАБОТУ (084): не прочитался
@@ -145,8 +142,7 @@ def fetch_skills(catalogue: str, ref: str) -> tuple[list[tuple[str, str]] | None
         return None, f"{url} — {e}"
 
 
-def разбор_навыков(text: str, url: str) -> tuple[list[tuple[str, str]] | None,
-                                                  str | None]:
+def разбор_навыков(text: str, url: str) -> tuple[list[tuple[str, str]] | None, str | None]:
     """Строки списка навыков либо названная ошибка, если строк нет вовсе.
 
     ПУСТОЙ РАЗБОР — НЕ «НАВЫКОВ НЕТ» (158, обзор #755): список прочитался, а
@@ -154,6 +150,7 @@ def разбор_навыков(text: str, url: str) -> tuple[list[tuple[str, st
     таблицы, и раздел пропадал молча, неотличимо от проекта без навыков.
     """
     import check_skills
+
     строки = check_skills.строки_списка(text)
     if not строки:
         return None, f"{url} — ни одной строки навыка в таблице"
@@ -163,16 +160,16 @@ def разбор_навыков(text: str, url: str) -> tuple[list[tuple[str, st
 def навыки_здесь(skills: list[tuple[str, str]], root: str = ".") -> list[dict]:
     """Стоит ли каждый навык каталога у проекта: копией, плагином или никак."""
     try:
-        with open(os.path.join(root, ".claude", "settings.json"),
-                  encoding="utf-8") as fh:
+        with open(os.path.join(root, ".claude", "settings.json"), encoding="utf-8") as fh:
             плагин = bool((json.load(fh).get("enabledPlugins") or {}).get(PLUGIN_KEY))
     except OSError, ValueError, AttributeError:
         плагин = False
     out = []
     for имя, когда in skills:
         копия = os.path.isfile(os.path.join(root, ".claude", "skills", имя, "SKILL.md"))
-        out.append({"name": имя, "when": когда,
-                    "here": "копия" if копия else "плагин" if плагин else ""})
+        out.append(
+            {"name": имя, "when": когда, "here": "копия" if копия else "плагин" if плагин else ""}
+        )
     return out
 
 
@@ -187,9 +184,11 @@ def solved_next_door(answered: dict, consumers: list[dict], me: str) -> list[dic
     Берутся только записи с РАЗРЕШИМЫМ адресом: пересказ соседа помогает не
     больше, чем его отсутствие, и это та же граница, что у поля `where`.
     """
-    свои = {rid for rid, rec in answered.items()
-            if rec.get("status") == "active"
-            and (rec.get("mechanism") or "none") == "none"}
+    свои = {
+        rid
+        for rid, rec in answered.items()
+        if rec.get("status") == "active" and (rec.get("mechanism") or "none") == "none"
+    }
     return _держат_соседи(свои, consumers, me, lambda mech: mech != "none")
 
 
@@ -206,15 +205,17 @@ def machine_next_door(answered: dict, consumers: list[dict], me: str) -> list[di
     """
     # Слово держимости контракт спрашивает только у механизма, который не
     # краснеет (`document`, `skill`, `none`); у гейта оно ничего не значит.
-    свои = {rid for rid, rec in answered.items()
-            if rec.get("status") == "active" and rec.get("holdable") == "no"
-            and (rec.get("mechanism") or "none") in ("document", "skill", "none")}
-    return _держат_соседи(свои, consumers, me,
-                          lambda mech: mech in ("gate", "pipeline"))
+    свои = {
+        rid
+        for rid, rec in answered.items()
+        if rec.get("status") == "active"
+        and rec.get("holdable") == "no"
+        and (rec.get("mechanism") or "none") in ("document", "skill", "none")
+    }
+    return _держат_соседи(свои, consumers, me, lambda mech: mech in ("gate", "pipeline"))
 
 
-def _держат_соседи(свои: set[str], consumers: list[dict], me: str,
-                   годится) -> list[dict]:
+def _держат_соседи(свои: set[str], consumers: list[dict], me: str, годится) -> list[dict]:
     """Для каждого своего правила — соседи, чей механизм годится, с адресом."""
     out: list[dict] = []
     for rid in sorted(свои):
@@ -246,22 +247,43 @@ WORD_ALONE = 9
 #: связывают всё со всем. Список РАЗРЕШИТЕЛЬНЫМ быть не может — перечислить
 #: значимые слова заранее нельзя, — поэтому он именно запретительный и короткий,
 #: а каждое слово в нём стоит по измеренной причине: встречается и там и там.
-NOISE = {"правило", "правила", "правил", "механизм", "механизма", "проекта",
-         "проект", "каталог", "каталога", "изменение", "изменения", "должен",
-         "должна", "должно", "который", "которая", "которое"}
+NOISE = {
+    "правило",
+    "правила",
+    "правил",
+    "механизм",
+    "механизма",
+    "проекта",
+    "проект",
+    "каталог",
+    "каталога",
+    "изменение",
+    "изменения",
+    "должен",
+    "должна",
+    "должно",
+    "который",
+    "которая",
+    "которое",
+}
 WORD_RE = re.compile(r"[\w-]+", re.UNICODE)
 
 
 def значимые(text: str) -> set[str]:
     """Слова, по которым имеет смысл связывать. Регистр и знаки убраны."""
-    return {w for w in (m.group(0).lower() for m in WORD_RE.finditer(text))
-            if len(w) >= WORD_MIN and w not in NOISE}
+    return {
+        w
+        for w in (m.group(0).lower() for m in WORD_RE.finditer(text))
+        if len(w) >= WORD_MIN and w not in NOISE
+    }
 
 
 #: Задача «про правила»: в заголовке назван номер правила либо путь в дерево.
 #: Ищется ССЫЛКА, а не слово «правило»: заголовок «правила игры» предметом не
 #: является, и мягкий порог здесь стоил бы дороже пропуска (166).
-RULE_IN_TITLE = re.compile(r"(?i)правил\w*\s*№?\s*(\d{3})\b|\brule\s*(\d{3})\b|rules/(?:ru|en)/(\d{3})-")
+RULE_IN_TITLE = re.compile(
+    r"(?i)правил\w*\s*№?\s*(\d{3})\b|\brule\s*(\d{3})\b|rules/(?:ru|en)/(\d{3})-"
+)
 
 
 def tier_of(rule: dict) -> int:
@@ -329,12 +351,11 @@ def ответ_на_версию(свой_ответ: dict | None) -> str | None
     сошедшимся).
     """
     if not свой_ответ:
-        return None                     # файла нет — о нём уже сказано
+        return None  # файла нет — о нём уже сказано
     return свой_ответ.get("answers_to") or ""
 
 
-def contract_gaps(объявлено: dict[str, str | None],
-                  ожидается: dict[str, str]) -> list[str]:
+def contract_gaps(объявлено: dict[str, str | None], ожидается: dict[str, str]) -> list[str]:
     """Расхождения по КАЖДОМУ номеру, который описывает файл потребителя.
 
     КЛЮЧ — ИМЯ КОНТРАКТА, А НЕ ИМЯ ПОЛЯ, и это не оформление. `bindings` и
@@ -353,16 +374,19 @@ def contract_gaps(объявлено: dict[str, str | None],
         ждём = ожидается.get(контракт)
         наш = объявлено.get(контракт)
         if not ждём:
-            out.append(f"каталог не объявил номер `{контракт}` — {о_чём}: "
-                       "сверить нечем")
+            out.append(f"каталог не объявил номер `{контракт}` — {о_чём}: сверить нечем")
         elif наш is None:
-            continue                      # файла нет — канал не подключён
+            continue  # файла нет — канал не подключён
         elif not наш:
-            out.append(f"в `{поле}` номер не объявлен, а каталог ждёт {ждём} "
-                       f"({о_чём}) — несверенное не считается сошедшимся")
+            out.append(
+                f"в `{поле}` номер не объявлен, а каталог ждёт {ждём} "
+                f"({о_чём}) — несверенное не считается сошедшимся"
+            )
         elif наш != ждём:
-            out.append(f"`{поле}` объявлен как {наш}, каталог ждёт {ждём} "
-                       f"({о_чём}) — ответы перечитываются под новый контракт")
+            out.append(
+                f"`{поле}` объявлен как {наш}, каталог ждёт {ждём} "
+                f"({о_чём}) — ответы перечитываются под новый контракт"
+            )
     return out
 
 
@@ -375,9 +399,11 @@ def held_by_nothing(answered: dict) -> list[str]:
 
     Замер 3 сентября: 47 таких правил на трёх подключённых проектах из четырёх.
     """
-    return sorted(rid for rid, rec in answered.items()
-                  if rec.get("status") == "active"
-                  and (rec.get("mechanism") or "none") == "none")
+    return sorted(
+        rid
+        for rid, rec in answered.items()
+        if rec.get("status") == "active" and (rec.get("mechanism") or "none") == "none"
+    )
 
 
 def started_here(issues: list[dict]) -> list[dict]:
@@ -395,8 +421,13 @@ def started_here(issues: list[dict]) -> list[dict]:
     for i in issues:
         m = RULE_IN_TITLE.search(i.get("title") or "")
         if m:
-            found.append({"number": i["number"], "title": i["title"],
-                          "rule": next(g for g in m.groups() if g)})
+            found.append(
+                {
+                    "number": i["number"],
+                    "title": i["title"],
+                    "rule": next(g for g in m.groups() if g),
+                }
+            )
     return found
 
 
@@ -417,13 +448,23 @@ def candidates_here(unreviewed: list[dict], issues: list[dict]) -> list[dict]:
     out: list[dict] = []
     словари = [(i, значимые(i.get("title") or "")) for i in issues]
     for rule in unreviewed:
-        свои = значимые(" ".join(filter(None, [
-            (rule.get("title") or {}).get("ru") if isinstance(rule.get("title"), dict)
-            else rule.get("title"),
-            " ".join((rule.get("areas") or {}).get("ru") or []
-                     if isinstance(rule.get("areas"), dict)
-                     else rule.get("areas") or []),
-        ])))
+        свои = значимые(
+            " ".join(
+                filter(
+                    None,
+                    [
+                        (rule.get("title") or {}).get("ru")
+                        if isinstance(rule.get("title"), dict)
+                        else rule.get("title"),
+                        " ".join(
+                            (rule.get("areas") or {}).get("ru") or []
+                            if isinstance(rule.get("areas"), dict)
+                            else rule.get("areas") or []
+                        ),
+                    ],
+                )
+            )
+        )
         if not свои:
             continue
         похожие = []
@@ -434,9 +475,15 @@ def candidates_here(unreviewed: list[dict], issues: list[dict]) -> list[dict]:
         if not похожие:
             continue
         похожие.sort(key=lambda p: (-p[0], p[1].get("number", 0)))
-        out.append({"rule": rule, "issues": [
-            {"number": i.get("number"), "title": i.get("title"), "words": w}
-            for _, i, w in похожие[:2]]})
+        out.append(
+            {
+                "rule": rule,
+                "issues": [
+                    {"number": i.get("number"), "title": i.get("title"), "words": w}
+                    for _, i, w in похожие[:2]
+                ],
+            }
+        )
     return out
 
 
@@ -491,18 +538,24 @@ def адрес_у_соседа(repo: str, где: str) -> str:
         цель = f"https://github.com/{repo}/tree/HEAD/{папка}".rstrip("/")
     else:
         цель = f"https://github.com/{repo}/blob/HEAD/{адрес}"
-    return f"[`{адрес}`]({цель}){где[len(адрес):]}"
+    return f"[`{адрес}`]({цель}){где[len(адрес) :]}"
 
-def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
-             stale: list[str] | None = None, total: int | None = None,
-             answered: int | None = None,
-             solved: list[dict] | None = None,
-             candidates: list[dict] | None = None,
-             started: list[dict] | None = None,
-             nothing: list[str] | None = None,
-             contract: list[str] | str | None = None,
-             skills: list[dict] | None = None,
-             skills_error: str | None = None) -> str:
+
+def body_for(
+    missing: list[dict],
+    unreviewed: list[dict],
+    catalogue: str,
+    stale: list[str] | None = None,
+    total: int | None = None,
+    answered: int | None = None,
+    solved: list[dict] | None = None,
+    candidates: list[dict] | None = None,
+    started: list[dict] | None = None,
+    nothing: list[str] | None = None,
+    contract: list[str] | str | None = None,
+    skills: list[dict] | None = None,
+    skills_error: str | None = None,
+) -> str:
     lines = [
         MARKER,
         "",
@@ -563,8 +616,9 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
         lines.append("")
     if nothing:
         lines += [
-            "**Действует, но не держится ничем:** " + ", ".join(
-                f"`{rid}`" for rid in nothing) + ".",
+            "**Действует, но не держится ничем:** "
+            + ", ".join(f"`{rid}`" for rid in nothing)
+            + ".",
             "",
             "Это не «не дошли руки» — там честно сказано `unreviewed`. Здесь "
             "сказано «действует», и это неправда: механизма нет.",
@@ -599,8 +653,9 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
         for item in solved:
             for h in item["held"]:
                 где = адрес_у_соседа(h["repo"], h["where"].split(";")[0].strip())
-                lines.append(f"| {item['rule']} | `{h['repo'].split('/')[-1]}` | "
-                             f"{h['mechanism']}: {где} |")
+                lines.append(
+                    f"| {item['rule']} | `{h['repo'].split('/')[-1]}` | {h['mechanism']}: {где} |"
+                )
         lines.append("")
 
     if candidates:
@@ -626,7 +681,9 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
             for i in item["issues"]:
                 lines.append(
                     f"| {rid} — {имя} | #{i['number']} {i['title']} | "
-                    + ", ".join(i["words"]) + " |")
+                    + ", ".join(i["words"])
+                    + " |"
+                )
         lines.append("")
 
     if stale:
@@ -635,8 +692,9 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
         lines += [
             "## Ответ о правиле, которого в каталоге нет",
             "",
-            "Правило снято, а ответ о нём остался: " + ", ".join(
-                f"**{rid}**" for rid in stale) + ".",
+            "Правило снято, а ответ о нём остался: "
+            + ", ".join(f"**{rid}**" for rid in stale)
+            + ".",
             "",
             "Номера не переиспользуются, но ответ о снятом правиле лежать не "
             "должен: как только номер займёт новая запись, этот ответ "
@@ -649,8 +707,11 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
     if skills or skills_error:
         lines += ["## Навыки каталога", ""]
         if skills_error:
-            lines += [f"Список навыков не прочитан: {skills_error}. Раздел "
-                      "пропущен — это не «навыков нет».", ""]
+            lines += [
+                f"Список навыков не прочитан: {skills_error}. Раздел "
+                "пропущен — это не «навыков нет».",
+                "",
+            ]
         else:
             нет = sum(1 for s in skills if not s["here"])
             lines += [
@@ -664,13 +725,14 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
                 "|---|---|---|",
             ]
             for s in skills:
-                lines.append(f"| `{s['name']}` | {s['when']} | "
-                             f"{s['here'] or 'не стоит'} |")
+                lines.append(f"| `{s['name']}` | {s['when']} | {s['here'] or 'не стоит'} |")
             lines.append("")
 
     if not missing and not unreviewed:
-        lines += ["**Нерассмотренных нет.** Это состояние, а не пустая задача: "
-                  "ответ есть по каждому правилу каталога."]
+        lines += [
+            "**Нерассмотренных нет.** Это состояние, а не пустая задача: "
+            "ответ есть по каждому правилу каталога."
+        ]
         return "\n".join(lines) + "\n"
 
     # ПОРЯДОК РАЗБОРА — ПО СТУПЕНЯМ, А НЕ ПО НОМЕРАМ. Номер говорит, когда
@@ -689,16 +751,23 @@ def body_for(missing: list[dict], unreviewed: list[dict], catalogue: str,
         return out
 
     if missing:
-        lines += ["## Ответа нет вовсе", "",
-                  "Правило появилось в каталоге, а записи о нём в ответе нет.", ""]
+        lines += [
+            "## Ответа нет вовсе",
+            "",
+            "Правило появилось в каталоге, а записи о нём в ответе нет.",
+            "",
+        ]
         lines += по_ступеням(missing)
     if unreviewed:
-        lines += ["## Записано `unreviewed`", "",
-                  "Очередь на рассмотрение, а не позор: «не дошли руки» — "
-                  "честный статус, пока он не застаивается.", ""]
+        lines += [
+            "## Записано `unreviewed`",
+            "",
+            "Очередь на рассмотрение, а не позор: «не дошли руки» — "
+            "честный статус, пока он не застаивается.",
+            "",
+        ]
         lines += по_ступеням(unreviewed)
     return "\n".join(lines) + "\n"
-
 
 
 def found_issue(out: str) -> tuple[str, str]:
@@ -731,31 +800,38 @@ def main() -> int:
     ap.add_argument("--catalogue", default="ArtVsMark/Engineering-Incidents-Playbook")
     ap.add_argument("--ref", default="main")
     ap.add_argument("--bindings", default=".rules/bindings.json")
-    ap.add_argument("--proposals", default=".rules/proposals.json",
-                    help="файл предложений: его номер тоже сверяется, а отсутствие файла — не находка")
+    ap.add_argument(
+        "--proposals",
+        default=".rules/proposals.json",
+        help="файл предложений: его номер тоже сверяется, а отсутствие файла — не находка",
+    )
     # КТО Я — чтобы не показывать проекту его собственный механизм как
     # соседский. Умолчание берётся из окружения площадки: там это уже есть, и
     # требовать его руками значило бы завести второй источник того же факта.
-    ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", ""),
-                    help="владелец/репозиторий этого проекта; по умолчанию из "
-                         "GITHUB_REPOSITORY")
+    ap.add_argument(
+        "--repo",
+        default=os.environ.get("GITHUB_REPOSITORY", ""),
+        help="владелец/репозиторий этого проекта; по умолчанию из GITHUB_REPOSITORY",
+    )
     ap.add_argument("--title", default="Правила каталога: входящие")
-    ap.add_argument("--dry-run", action="store_true",
-                    help="показать тело задачи и не трогать трекер")
+    ap.add_argument(
+        "--dry-run", action="store_true", help="показать тело задачи и не трогать трекер"
+    )
     args = ap.parse_args()
 
     # ── исход 2: проверка не отработала ────────────────────────────────────
     выгрузка, err = fetch_export(args.catalogue, args.ref)
     rules = None if выгрузка is None else выгрузка.get("rules", [])
     if err:
-        print(f"проверка не отработала: экспорт каталога не прочитан — {err}",
-              file=sys.stderr)
+        print(f"проверка не отработала: экспорт каталога не прочитан — {err}", file=sys.stderr)
         return 2
     if not rules:
-        print(f"проверка не отработала: {export_url(args.catalogue, args.ref)} "
-              "отдал пустой список "
-              "правил — сверять не с чем, а молча пропускать нельзя",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: {export_url(args.catalogue, args.ref)} "
+            "отдал пустой список "
+            "правил — сверять не с чем, а молча пропускать нельзя",
+            file=sys.stderr,
+        )
         return 2
 
     # ЗАМЕЩЁННОЕ В СЧЁТ НЕ ВХОДИТ (17.10): ответа о нём не требуют, в
@@ -787,13 +863,11 @@ def main() -> int:
         # факт один — файла нет, — и повторять его дважды значит шуметь (051).
         своя_схема = ""
     except (OSError, ValueError) as e:
-        print(f"проверка не отработала: {args.bindings} не разобран — {e}",
-              file=sys.stderr)
+        print(f"проверка не отработала: {args.bindings} не разобран — {e}", file=sys.stderr)
         return 2
 
     missing = [r for r in rules if r["id"] not in answered]
-    unreviewed = [r for r in rules
-                  if answered.get(r["id"], {}).get("status") == "unreviewed"]
+    unreviewed = [r for r in rules if answered.get(r["id"], {}).get("status") == "unreviewed"]
 
     stale = stale_here(answered, все_записи)
     # СОСЕДСКИЙ МЕХАНИЗМ — ДОПОЛНЕНИЕ, И ОНО НЕ РОНЯЕТ ОСНОВНУЮ РАБОТУ (084).
@@ -802,8 +876,7 @@ def main() -> int:
     # молчание не выдавалось за «у соседей ничего нет» (046).
     neighbours, err = fetch_where(args.catalogue, args.ref)
     if err:
-        print(f"сводка соседей не прочитана — {err}; раздел пропущен",
-              file=sys.stderr)
+        print(f"сводка соседей не прочитана — {err}; раздел пропущен", file=sys.stderr)
     solved = solved_next_door(answered, neighbours or [], args.repo)
     # ЗАДАЧИ СПРАШИВАЮТСЯ ОДИН РАЗ И БЕЗ ОТКАЗА. Трекер может не ответить —
     # тогда раздела просто нет: правило 130 говорит «приходит вместе с», а не
@@ -816,17 +889,17 @@ def main() -> int:
     # ВСЕ СТРАНИЦЫ (212): изменения лежат в том же списке и съедают сотню.
     code_i, открытые, _ = ghcli.список(
         "repos/{owner}/{repo}/issues?state=open&per_page=100",
-        ".[] | select(.pull_request == null) | {number, title}", вызов=gh)
+        ".[] | select(.pull_request == null) | {number, title}",
+        вызов=gh,
+    )
     if code_i == 0:
         свои_задачи = [i for i in открытые if MARKER not in (i.get("title") or "")]
     else:
-        print("задачи проекта не спрошены — раздела кандидатов не будет",
-              file=sys.stderr)
+        print("задачи проекта не спрошены — раздела кандидатов не будет", file=sys.stderr)
     candidates = candidates_here(unreviewed, свои_задачи)
     начатое = started_here(свои_задачи)
     заменены = {r["id"] for r in все_записи} - в_силе
-    ничем = held_by_nothing({rid: rec for rid, rec in answered.items()
-                             if rid not in заменены})
+    ничем = held_by_nothing({rid: rec for rid, rec in answered.items() if rid not in заменены})
     # ФАЙЛА НЕТ — КАНАЛ НЕ ПОДКЛЮЧЁН, И ЭТО НЕ НАХОДКА. Отличие от «файл
     # есть, номера нет» несущее: второе сверить нельзя, а притворяться
     # сошедшимся оно не должно (075).
@@ -837,31 +910,45 @@ def main() -> int:
         схема_предложений = None
     except OSError, ValueError:
         схема_предложений = ""
-    ожидается = ((выгрузка or {}).get("contracts") or {})
+    ожидается = (выгрузка or {}).get("contracts") or {}
     расхождение = contract_gaps(
-        {"bindings": своя_схема,
-         "proposals": схема_предложений,
-         "export": ответ_на_версию(свой_ответ)},
-        ожидается)
-    решено = sum(1 for r in rules
-                 if answered.get(r["id"], {}).get("status") not in (None, "unreviewed"))
+        {
+            "bindings": своя_схема,
+            "proposals": схема_предложений,
+            "export": ответ_на_версию(свой_ответ),
+        },
+        ожидается,
+    )
+    решено = sum(
+        1 for r in rules if answered.get(r["id"], {}).get("status") not in (None, "unreviewed")
+    )
     навыки, ошибка_навыков = fetch_skills(args.catalogue, args.ref)
     if ошибка_навыков:
-        print(f"список навыков не прочитан — {ошибка_навыков}; раздел "
-              "сообщит об этом", file=sys.stderr)
-    body = body_for(missing, unreviewed, args.catalogue, stale=stale,
-                    total=len(rules), answered=решено, solved=solved,
-                    candidates=candidates, started=начатое,
-                    nothing=ничем, contract=расхождение,
-                    skills=навыки_здесь(навыки) if навыки else None,
-                    skills_error=ошибка_навыков)
+        print(
+            f"список навыков не прочитан — {ошибка_навыков}; раздел сообщит об этом",
+            file=sys.stderr,
+        )
+    body = body_for(
+        missing,
+        unreviewed,
+        args.catalogue,
+        stale=stale,
+        total=len(rules),
+        answered=решено,
+        solved=solved,
+        candidates=candidates,
+        started=начатое,
+        nothing=ничем,
+        contract=расхождение,
+        skills=навыки_здесь(навыки) if навыки else None,
+        skills_error=ошибка_навыков,
+    )
     if args.dry_run:
         print(body)
         return 1 if (missing or unreviewed or stale) else 0
 
     if not os.environ.get("GH_TOKEN"):
-        print("проверка не отработала: GH_TOKEN не задан — обновлять задачу "
-              "нечем", file=sys.stderr)
+        print("проверка не отработала: GH_TOKEN не задан — обновлять задачу нечем", file=sys.stderr)
         return 2
 
     # Ищется среди ВСЕХ состояний, а не только открытых. Пока искали среди
@@ -879,9 +966,10 @@ def main() -> int:
     # первое совпадение — самое свежее, как и прежде.
     code, найдено, почему = ghcli.список(
         "repos/{owner}/{repo}/issues?state=all&per_page=100",
-        f'.[] | select(.pull_request == null) '
+        f".[] | select(.pull_request == null) "
         f'| select(.body // "" | contains("{MARKER}")) | "\\(.number) \\(.state)"',
-        вызов=gh)
+        вызов=gh,
+    )
     if code != 0:
         print(f"проверка не отработала: трекер не ответил — {почему}", file=sys.stderr)
         return 2
@@ -891,12 +979,19 @@ def main() -> int:
 
     if number:
         # ПО REST (001) — см. отбор задач выше.
-        code, out = gh("api", "--method", "PATCH",
-                       f"repos/{{owner}}/{{repo}}/issues/{number}", "-f", f"body={body}")
+        code, out = gh(
+            "api",
+            "--method",
+            "PATCH",
+            f"repos/{{owner}}/{{repo}}/issues/{number}",
+            "-f",
+            f"body={body}",
+        )
         where = f"задача #{number} обновлена"
     elif pending:
-        code, out = gh("api", "repos/{owner}/{repo}/issues",
-                       "-f", f"title={args.title}", "-f", f"body={body}")
+        code, out = gh(
+            "api", "repos/{owner}/{repo}/issues", "-f", f"title={args.title}", "-f", f"body={body}"
+        )
         where = f"задача заведена: {out}"
     else:
         # Завести задачу, чтобы тут же закрыть, — шум без адресата.
@@ -918,18 +1013,27 @@ def main() -> int:
     want = "OPEN" if pending else "CLOSED"
     if state and state.upper() != want:
         # ПО REST (001): состояние задачи — то же поле, что и тело.
-        code, out = gh("api", "--method", "PATCH",
-                       f"repos/{{owner}}/{{repo}}/issues/{number}",
-                       "-f", f"state={'open' if pending else 'closed'}")
+        code, out = gh(
+            "api",
+            "--method",
+            "PATCH",
+            f"repos/{{owner}}/{{repo}}/issues/{number}",
+            "-f",
+            f"state={'open' if pending else 'closed'}",
+        )
         if code != 0:
-            print(f"проверка не отработала: состояние задачи #{number} не "
-                  f"изменено — {out}", file=sys.stderr)
+            print(
+                f"проверка не отработала: состояние задачи #{number} не изменено — {out}",
+                file=sys.stderr,
+            )
             return 2
         where += ", открыта заново" if pending else ", закрыта: работы в ней нет"
 
-    print(f"{where}; правил {len(rules)}, разобрано {решено}, ответа нет "
-          f"у {len(missing)}, не рассмотрено {len(unreviewed)}, "
-          f"лишних {len(stale)}")
+    print(
+        f"{where}; правил {len(rules)}, разобрано {решено}, ответа нет "
+        f"у {len(missing)}, не рассмотрено {len(unreviewed)}, "
+        f"лишних {len(stale)}"
+    )
     return 1 if (missing or unreviewed or stale) else 0
 
 

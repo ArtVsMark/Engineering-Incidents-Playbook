@@ -55,7 +55,6 @@ ArtVsMark/Engineering-Incidents-Playbook#632). Неизмеренный пока
   075 — пропущенный раздел называется вслух, а не молчит.
 """
 
-
 import argparse
 import datetime as dt
 import json
@@ -126,8 +125,9 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 #: 15–17.10 файл публиковался 1.6 (#850): витрина читала только мажор 1 и
 #: откладывала 2.0 как «не ответил». С ArtVsMark/ArtVsMark#359 она читает
 #: мажор 2, и номер файла снова равен номеру договора.
-SCHEMA = check_facts.contract_series((ROOT / "export" / "facts" / "facts.version")
-                                     .read_text(encoding="utf-8"))
+SCHEMA = check_facts.contract_series(
+    (ROOT / "export" / "facts" / "facts.version").read_text(encoding="utf-8")
+)
 
 #: Прогон CI, чей статус витрина спрашивает у площадки. Файл называется, а не
 #: выводится: обязательная проверка у каталога одна, и живёт она здесь (168).
@@ -140,24 +140,30 @@ CI_WORKFLOW = "ci.yml"
 #: БЕРЁТСЯ ИЗ СХЕМЫ, А НЕ КОПИЕЙ. Пока договор держала витрина, здесь стояла
 #: ручная копия её `none.propertyNames.enum` (071, 209). С 2.0 схема лежит в
 #: этом же дереве, и вторая запись списка больше ничем не оправдана (049).
-ДОГОВОРНЫЕ: tuple[str, ...] = tuple(json.loads(
-    (ROOT / "export" / "facts" / "facts.schema.json").read_text(encoding="utf-8"))
-    ["properties"]["none"]["propertyNames"]["enum"])
+ДОГОВОРНЫЕ: tuple[str, ...] = tuple(
+    json.loads((ROOT / "export" / "facts" / "facts.schema.json").read_text(encoding="utf-8"))[
+        "properties"
+    ]["none"]["propertyNames"]["enum"]
+)
 
-SCHEMA_OF = ("формат ЭТОГО файла — факты каталога по договору фактов семьи "
-             "(export/facts/facts-contract.md). Не "
-             "версия каталога, не номер выпуска и не схема выгрузки правил: "
-             "ключ `schema` в этой экосистеме носят четыре разных предмета "
-             "(выгрузка, ответ потребителя, сводка, факты) — правило 164")
+SCHEMA_OF = (
+    "формат ЭТОГО файла — факты каталога по договору фактов семьи "
+    "(export/facts/facts-contract.md). Не "
+    "версия каталога, не номер выпуска и не схема выгрузки правил: "
+    "ключ `schema` в этой экосистеме носят четыре разных предмета "
+    "(выгрузка, ответ потребителя, сводка, факты) — правило 164"
+)
 
 #: Что именно здесь считается проверкой на изменении. Определение публикуется
 #: вместе с числом намеренно: снаружи проверок ВИДНО БОЛЬШЕ — работа `open` из
 #: `agent-pr.yml` просыпается на толчок в ветку и попадает в тот же коммит.
 #: Она не «на изменение»: у изменения из форка её не будет. Контракт запрещает
 #: публиковать оценки, поэтому здесь стоит то, что издатель знает точно.
-CHECKS_OF = ("работы прогонов, просыпающихся на событие pull_request. Проверок "
-             "у коммита может быть видно больше: работа, разбуженная толчком в "
-             "ветку, попадает в ту же голову, но изменением не вызвана")
+CHECKS_OF = (
+    "работы прогонов, просыпающихся на событие pull_request. Проверок "
+    "у коммита может быть видно больше: работа, разбуженная толчком в "
+    "ветку, попадает в ту же голову, но изменением не вызвана"
+)
 
 #: Поля, без которых договор 1.2 отвергает файл целиком: причины в `none` у
 #: них не бывает. Пропал любой — файл не пишется, исход 2: витрина отвергла бы
@@ -182,8 +188,13 @@ RUNS_ON_RE = re.compile(r"^\s*runs-on:\s*\"?([\w.-]+)\"?\s*$", re.M)
 def git(*args: str) -> tuple[int, str]:
     """Вызов git с прочитанным выводом. Отказ — значение, а не исключение."""
     try:
-        done = proc.run(["git", "-C", str(ROOT), *args],
-                        capture_output=True, text=True, encoding="utf-8", timeout=60)
+        done = proc.run(
+            ["git", "-C", str(ROOT), *args],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=60,
+        )
     except OSError as exc:
         return 1, str(exc)
     return done.returncode, (done.stdout or done.stderr).strip()
@@ -197,9 +208,9 @@ def tests() -> tuple[dict | None, str]:
     модули = sorted(p for p in каталог.glob("test_*.py"))
     if not модули:
         return None, "в tests/ нет ни одного модуля test_*.py"
-    функций = sum(len(TEST_DEF_RE.findall(p.read_text(encoding="utf-8",
-                                                      errors="replace")))
-                  for p in модули)
+    функций = sum(
+        len(TEST_DEF_RE.findall(p.read_text(encoding="utf-8", errors="replace"))) for p in модули
+    )
     return {"functions": функций, "modules": len(модули)}, ""
 
 
@@ -213,8 +224,7 @@ def checks_per_pr() -> tuple[dict | None, str]:
         if "pull_request" not in check_workflows.events(текст):
             continue
         блок = check_workflows.sections(текст).get("jobs") or []
-        имена += [m.group(1) for m in
-                  (check_workflows.KEY_RE.match(line) for line in блок) if m]
+        имена += [m.group(1) for m in (check_workflows.KEY_RE.match(line) for line in блок) if m]
     if not имена:
         return None, "ни один прогон не просыпается на pull_request"
     return {"count": len(имена), "names": sorted(имена), "counts_": CHECKS_OF}, ""
@@ -229,9 +239,13 @@ def python() -> tuple[dict | None, str]:
     версии = sorted({v for _, v in check_python_version.in_workflows(ROOT)})
     if планка is None and not версии:
         return None, "ни планки в манифесте, ни python-version в прогонах"
-    исполнители = sorted({m.group(1) for файл in WORKFLOWS.glob("*.yml")
-                          for m in RUNS_ON_RE.finditer(
-                              файл.read_text(encoding="utf-8", errors="replace"))})
+    исполнители = sorted(
+        {
+            m.group(1)
+            for файл in WORKFLOWS.glob("*.yml")
+            for m in RUNS_ON_RE.finditer(файл.read_text(encoding="utf-8", errors="replace"))
+        }
+    )
     раздел: dict = {}
     if версии:
         раздел["supported"] = [f"{a}.{b}" for a, b in версии]
@@ -259,9 +273,11 @@ def coverage() -> tuple[float | None, str]:
         # хуже, и молчать о покрытии нельзя, а падать всем — незачем (158).
         return None, f"замер покрытия не разобран: {отказ}"
     if percent is None:
-        return None, ("замера покрытия в этом прогоне не было: "
-                      f"{coverage_badge.DATA.name} отсутствует либо пакет "
-                      "coverage не установлен")
+        return None, (
+            "замера покрытия в этом прогоне не было: "
+            f"{coverage_badge.DATA.name} отсутствует либо пакет "
+            "coverage не установлен"
+        )
     return round(float(percent), 1), ""
 
 
@@ -269,8 +285,10 @@ def версия() -> tuple[str | None, str]:
     """Версия каталога «X.Y.N» — у того же тега, что значок `version.json`."""
     пара = version.version()
     if пара is None:
-        return None, ("тега схемы vX.Y.Z не видно: версия выводится из тега, "
-                      "и без него она недостоверна (scripts/version.py)")
+        return None, (
+            "тега схемы vX.Y.Z не видно: версия выводится из тега, "
+            "и без него она недостоверна (scripts/version.py)"
+        )
     return пара[1], ""
 
 
@@ -312,12 +330,13 @@ def build() -> tuple[dict | None, list[str], str]:
 
     причины: dict[str, str] = {}
     for ключ, значение, почему in (
-            ("version", *версия()),
-            ("release", *выпуск()),
-            ("tests", *tests()),
-            ("checks_per_pr", *checks_per_pr()),
-            ("python", *python()),
-            ("coverage_percent", *coverage())):
+        ("version", *версия()),
+        ("release", *выпуск()),
+        ("tests", *tests()),
+        ("checks_per_pr", *checks_per_pr()),
+        ("python", *python()),
+        ("coverage_percent", *coverage()),
+    ):
         if значение is None:
             пропуски.append(f"{ключ}: {почему}")
             if ключ in ДОГОВОРНЫЕ:
@@ -331,8 +350,9 @@ def build() -> tuple[dict | None, list[str], str]:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--print", action="store_true", dest="show",
-                    help="показать собранное, ничего не записывая")
+    ap.add_argument(
+        "--print", action="store_true", dest="show", help="показать собранное, ничего не записывая"
+    )
     args = ap.parse_args(argv)
 
     факты, пропуски, беда = build()
@@ -352,17 +372,23 @@ def main(argv: list[str] | None = None) -> int:
     # внешним взглядом; объявленный, но недостижимый исход — то же, что
     # мёртвый разбор кода возврата (039, 145).
     if not any(k in факты for k in ИЗМЕРЯЕМОЕ):
-        print("измерять нечего: ни один раздел не собрался — файл не записан. "
-              "Пустой ответ хуже отсутствующего, он выглядит измеренным "
-              "отсутствием", file=sys.stderr)
+        print(
+            "измерять нечего: ни один раздел не собрался — файл не записан. "
+            "Пустой ответ хуже отсутствующего, он выглядит измеренным "
+            "отсутствием",
+            file=sys.stderr,
+        )
         for п in пропуски:
             print(f"  не измерено — {п}", file=sys.stderr)
         return 1
     нет = [k for k in ОБЯЗАТЕЛЬНЫЕ if k not in факты]
     if нет:
-        print(f"сбор не отработал: нет обязательных полей договора 1.2 — "
-              f"{', '.join(нет)}. Файл без них витрина отвергает, и "
-              "публиковать его значило бы выдать отказ за факты", file=sys.stderr)
+        print(
+            f"сбор не отработал: нет обязательных полей договора 1.2 — "
+            f"{', '.join(нет)}. Файл без них витрина отвергает, и "
+            "публиковать его значило бы выдать отказ за факты",
+            file=sys.stderr,
+        )
         for п in пропуски:
             print(f"  не измерено — {п}", file=sys.stderr)
         return 2
@@ -375,11 +401,9 @@ def main(argv: list[str] | None = None) -> int:
             FACTS.parent.mkdir(parents=True, exist_ok=True)
             FACTS.write_text(текст, encoding="utf-8")
         except OSError as exc:
-            print(f"сбор не отработал: {FACTS} не записан — {exc}",
-                  file=sys.stderr)
+            print(f"сбор не отработал: {FACTS} не записан — {exc}", file=sys.stderr)
             return 2
-        print(f"факты собраны: {FACTS.relative_to(ROOT)}, "
-              f"разделов {len(факты)}")
+        print(f"факты собраны: {FACTS.relative_to(ROOT)}, разделов {len(факты)}")
     # ПРОПУСК НАЗЫВАЕТСЯ, А НЕ МОЛЧИТ. «Ключа нет» — законное состояние, но
     # только если известно, ПОЧЕМУ его нет: иначе оно неотличимо от забытого.
     for п in пропуски:

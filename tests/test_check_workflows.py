@@ -15,7 +15,6 @@
 Площадка не трогается: разбор — чистая функция над текстом файла.
 """
 
-
 from pathlib import Path
 
 import pytest
@@ -34,6 +33,7 @@ def workflow(root: Path, name: str, text: str) -> Path:
 
 # ── ручная кнопка (126) ────────────────────────────────────────────────────
 
+
 def test_knopka_v_blochnoy_forme_naydena():
     assert cw.has_button(BUTTON)
 
@@ -44,8 +44,7 @@ def test_knopka_spiskom_naydena():
 
 
 def test_bez_knopki_nahodka(tmp_path):
-    workflow(tmp_path, "w.yml",
-             "on:\n  push:\njobs:\n  a:\n    timeout-minutes: 5\n")
+    workflow(tmp_path, "w.yml", "on:\n  push:\njobs:\n  a:\n    timeout-minutes: 5\n")
     assert cw.main(["--root", str(tmp_path)]) == 1
 
 
@@ -55,6 +54,7 @@ def test_slovo_v_kommentarii_ne_schitaetsya_knopkoy():
 
 
 # ── предел времени (100) ───────────────────────────────────────────────────
+
 
 def test_rabota_bez_predela_nahodka(tmp_path):
     workflow(tmp_path, "w.yml", BUTTON + "jobs:\n  a:\n    runs-on: x\n")
@@ -86,6 +86,7 @@ def test_predel_u_kazhdoy_raboty_chisto():
 
 # ── три исхода ─────────────────────────────────────────────────────────────
 
+
 def test_chisto_eto_nol(tmp_path):
     workflow(tmp_path, "w.yml", BUTTON + "jobs:\n  a:\n    timeout-minutes: 5\n")
     assert cw.main(["--root", str(tmp_path)]) == 0
@@ -106,25 +107,35 @@ def test_nahodka_nazyvaet_fayl_i_rabotu(tmp_path, capsys):
 
 # ── необязательный канал не держит слияние (084) ───────────────────────────
 
+
 def test_neobyazatelnyy_progon_na_izmenenii_nahodka(tmp_path):
     """Значок, отказавший на изменении, задерживает слияние — при том что его
     отсутствие штатный исход, а не ошибка."""
-    workflow(tmp_path, "badges.yml",
-             "on:\n  pull_request:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n")
+    workflow(
+        tmp_path,
+        "badges.yml",
+        "on:\n  pull_request:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 1
 
 
 def test_obyazatelnye_proverki_na_izmenenii_zakonny(tmp_path):
     """`ci.yml` за тем и заведён: он и есть основная работа."""
-    workflow(tmp_path, "ci.yml",
-             "on:\n  pull_request:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n")
+    workflow(
+        tmp_path,
+        "ci.yml",
+        "on:\n  pull_request:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 0
 
 
 def test_neobyazatelnyy_na_raspisanii_zakonen(tmp_path):
     """Ночной прогон слияние не трогает — предмета правила здесь нет."""
-    workflow(tmp_path, "badges.yml",
-             "on:\n  schedule:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n")
+    workflow(
+        tmp_path,
+        "badges.yml",
+        "on:\n  schedule:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 0
 
 
@@ -134,13 +145,17 @@ def test_sobytiya_chitayutsya_i_spiskom():
 
 # ── закрепление вызываемого (152) ──────────────────────────────────────────
 
+
 def test_opasnoe_sobytie_bez_zakrepleniya_nahodka(tmp_path):
     """На `pull_request_target` файл прогона берётся с общей ветки, и код
     исполняется при её правах: здесь закреплять обязательно."""
-    workflow(tmp_path, "risky.yml",
-             "on:\n  pull_request_target:\n  workflow_dispatch:\n"
-             "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
-             "      - uses: actions/checkout@v4\n")
+    workflow(
+        tmp_path,
+        "risky.yml",
+        "on:\n  pull_request_target:\n  workflow_dispatch:\n"
+        "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
+        "      - uses: actions/checkout@v4\n",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 1
 
 
@@ -150,18 +165,24 @@ def test_bez_chuzhogo_koda_zakreplyat_nechego(tmp_path):
     `run:` — а сам файл на этом событии берётся с общей ветки. Закреплять
     нечего, и требование заставило бы ДОБАВИТЬ выкачку ради проверки, которая
     её же и сторожит. Замер: так гейт отверг `thaw.yml` (051)."""
-    workflow(tmp_path, "thaw.yml",
-             "on:\n  workflow_run:\n  workflow_dispatch:\n"
-             "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
-             "      - run: gh workflow run automerge.yml\n")
+    workflow(
+        tmp_path,
+        "thaw.yml",
+        "on:\n  workflow_run:\n  workflow_dispatch:\n"
+        "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
+        "      - run: gh workflow run automerge.yml\n",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 0
 
 
 def test_opasnoe_sobytie_s_zakrepleniem_chisto(tmp_path):
-    workflow(tmp_path, "risky.yml",
-             "on:\n  pull_request_target:\n  workflow_dispatch:\n"
-             "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
-             "      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09\n        with:\n          ref: main\n")
+    workflow(
+        tmp_path,
+        "risky.yml",
+        "on:\n  pull_request_target:\n  workflow_dispatch:\n"
+        "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
+        "      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09\n        with:\n          ref: main\n",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 0
 
 
@@ -170,19 +191,25 @@ def test_na_pull_request_zakreplenie_ne_trebuetsya(tmp_path):
     берётся ИЗ ИЗМЕНЕНИЯ. Правящий изменение переписывает шаг и зовёт что
     угодно — закреплённый скрипт просто перестаёт вызываться. Требовать
     закрепление здесь значит требовать защиту с нулевой ценностью."""
-    workflow(tmp_path, "ci.yml",
-             "on:\n  pull_request:\n  workflow_dispatch:\n"
-             "jobs:\n  a:\n    timeout-minutes: 5\n")
+    workflow(
+        tmp_path,
+        "ci.yml",
+        "on:\n  pull_request:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 0
 
 
 # ── имена оболочки латиницей (167) ─────────────────────────────────────────
 
+
 def test_env_klyuch_kirillicey_nahodka(tmp_path):
     """Тихая половина ошибки: переменная создаётся, а `$ТИП` не раскрывается —
     условие всегда даёт одну ветку, и шаг зеленеет, не проверив ничего."""
-    workflow(tmp_path, "w.yml", BUTTON + "jobs:\n  a:\n    timeout-minutes: 5\n"
-             "    env:\n      ТИП: bug\n")
+    workflow(
+        tmp_path,
+        "w.yml",
+        BUTTON + "jobs:\n  a:\n    timeout-minutes: 5\n    env:\n      ТИП: bug\n",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 1
 
 
@@ -199,23 +226,25 @@ def test_latinskie_imena_chisto():
 def test_proza_i_imena_shagov_ne_trogayutsya(tmp_path):
     """ГРАНИЦА: имя шага и сообщение — на языке проекта, и требовать от них
     латиницу значило бы краснеть на верном файле (051)."""
-    workflow(tmp_path, "w.yml", BUTTON + "jobs:\n  a:\n    timeout-minutes: 5\n"
-             "    steps:\n      - name: зоны выводятся из путей верно\n"
-             "        run: echo 'проверка прошла'\n")
+    workflow(
+        tmp_path,
+        "w.yml",
+        BUTTON + "jobs:\n  a:\n    timeout-minutes: 5\n"
+        "    steps:\n      - name: зоны выводятся из путей верно\n"
+        "        run: echo 'проверка прошла'\n",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 0
 
 
 # ── правило 179: группа отмены называет голову ──────────────────────────────
 
-ГРУППА_БЕЗ_ГОЛОВЫ = (
-    "concurrency:\n"
-    "  group: ci-${{ github.ref }}\n"
-    "  cancel-in-progress: true\n")
+ГРУППА_БЕЗ_ГОЛОВЫ = "concurrency:\n  group: ci-${{ github.ref }}\n  cancel-in-progress: true\n"
 ГРУППА_С_ГОЛОВОЙ = (
     "concurrency:\n"
     "  group: ci-${{ github.ref }}-"
     "${{ github.event.pull_request.head.sha || github.sha }}\n"
-    "  cancel-in-progress: true\n")
+    "  cancel-in-progress: true\n"
+)
 РАБОТА = "jobs:\n  a:\n    timeout-minutes: 5\n"
 
 
@@ -237,8 +266,10 @@ def test_gruppa_bez_otmeny_pod_pravilo_ne_podpadaet(tmp_path, capsys):
     то, что собирают, — так устроены automerge и thaw. Под 179 такая группа
     не подпадает; что она обязана читать состояние — предмет 199, и он
     проверяется своими случаями ниже."""
-    текст = (BUTTON + "concurrency:\n  group: automerge-${{ inputs.pr }}\n"
-             "  cancel-in-progress: false\n" + РАБОТА)
+    текст = (
+        BUTTON + "concurrency:\n  group: automerge-${{ inputs.pr }}\n"
+        "  cancel-in-progress: false\n" + РАБОТА
+    )
     workflow(tmp_path, "w.yml", текст)
     cw.main(["--root", str(tmp_path)])
     assert "(179)" not in capsys.readouterr().err
@@ -248,10 +279,12 @@ def test_predmet_sostoyanie_nazvan_spiskom(tmp_path):
     """ГРАНИЦА ИЗ САМОГО ПРАВИЛА: у `off-prefix` предмет — состояние ветки, а не
     коммит, и сообщение одинаково для любой головы. Разрешение объявлено
     списком с причиной, а не выведено из формы файла."""
-    workflow(tmp_path, "off-prefix.yml", BUTTON
-             + "concurrency:\n  group: off-prefix-${{ github.ref }}\n"
-               "  cancel-in-progress: true\n"
-             + РАБОТА)
+    workflow(
+        tmp_path,
+        "off-prefix.yml",
+        BUTTON + "concurrency:\n  group: off-prefix-${{ github.ref }}\n"
+        "  cancel-in-progress: true\n" + РАБОТА,
+    )
     assert cw.main(["--root", str(tmp_path)]) == 0
 
 
@@ -259,9 +292,11 @@ def test_badges_bolshe_ne_v_spiske_razresheniy(tmp_path):
     """Обратная сторона списка (140): `badges` из него УШЁЛ, потому что больше
     не отменяет, а ставит в очередь. Разрешение, пережившее свой предмет,
     читалось бы как действующее — и им объяснили бы возврат отмены."""
-    workflow(tmp_path, "badges.yml", BUTTON
-             + "concurrency:\n  group: badges\n  cancel-in-progress: true\n"
-             + РАБОТА)
+    workflow(
+        tmp_path,
+        "badges.yml",
+        BUTTON + "concurrency:\n  group: badges\n  cancel-in-progress: true\n" + РАБОТА,
+    )
     assert cw.main(["--root", str(tmp_path)]) == 1
 
 
@@ -280,15 +315,15 @@ def прогоны_в_записи(текст: str) -> set[str]:
     """Имена прогонов, названные в тексте записи. Ищется ПУТЬ, а не голое имя:
     голое `badges` стоит в записях и как имя ветки, и как имя группы."""
     import re
-    return {p.rsplit("/", 1)[1]
-            for p in re.findall(r"\.github/workflows/[\w.-]+\.yml", текст)}
+
+    return {p.rsplit("/", 1)[1] for p in re.findall(r"\.github/workflows/[\w.-]+\.yml", текст)}
 
 
 def запись_179() -> str:
     import json
     from pathlib import Path
-    реестр = json.loads(
-        (Path(cw.ROOT) / ".rules" / "bindings.json").read_text(encoding="utf-8"))
+
+    реестр = json.loads((Path(cw.ROOT) / ".rules" / "bindings.json").read_text(encoding="utf-8"))
     return реестр["rules"]["179"]["where"]
 
 
@@ -304,7 +339,8 @@ def test_zapis_o_spiske_sovpadaet_so_spiskom():
 БЫЛО_В_ЗАПИСИ = (
     "Разрешение объявлено списком CANCELS_BY_STATE с причиной у каждой строки: "
     "у .github/workflows/badges.yml и .github/workflows/off-prefix.yml предмет "
-    "— состояние, а не коммит")
+    "— состояние, а не коммит"
+)
 
 
 def test_zapis_o_spiske_lovit_rashozhdenie():
@@ -323,11 +359,18 @@ def test_dosloznost_byla_svyorena_s_istoriey():
     """
     import json
     import subprocess
+
     из_истории = subprocess.run(
         ["git", "show", "3e05f4a:.rules/bindings.json"],
-        cwd=cw.ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
+        cwd=cw.ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if из_истории.returncode != 0:
         import pytest
+
         pytest.skip("истории нет: мелкий клон — сверять дословность не с чем")
 
     было = json.loads(из_истории.stdout)["rules"]["179"]["where"]
@@ -347,6 +390,7 @@ def пример_в_тексте(текст: str, язык: str) -> set[str]:
     """Кого раздел «Не работает» называет своим примером. Берётся ОДИН абзац:
     соседние говорят о другом, и их имена примером не являются."""
     import re
+
     абзацы = текст.split("\n\n")
     (нужный,) = [a for a in абзацы if a.lstrip().startswith(РАЗДЕЛ[язык])]
     return set(re.findall(r"`([a-z][\w-]*)`", нужный))
@@ -355,14 +399,21 @@ def пример_в_тексте(текст: str, язык: str) -> set[str]:
 def правило_179(язык: str, ревизия: str | None = None) -> str | None:
     """Текст правила — из дерева либо из истории. `None`, если истории нет."""
     from pathlib import Path
+
     (файл,) = (Path(cw.ROOT) / "rules" / язык).glob("179-*.md")
     if ревизия is None:
         return файл.read_text(encoding="utf-8")
     import subprocess
+
     путь = файл.relative_to(cw.ROOT).as_posix()
-    из_истории = subprocess.run(["git", "show", f"{ревизия}:{путь}"],
-                                cwd=cw.ROOT, capture_output=True, text=True,
-                                encoding="utf-8", timeout=60)
+    из_истории = subprocess.run(
+        ["git", "show", f"{ревизия}:{путь}"],
+        cwd=cw.ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     return из_истории.stdout if из_истории.returncode == 0 else None
 
 
@@ -385,9 +436,9 @@ def имена_в_пункте(текст: str) -> set[str]:
     утверждением о составе не являются.
     """
     import re
+
     строки = текст.splitlines()
-    (начало,) = [n for n, с in enumerate(строки)
-                 if с.startswith("- ") and ПУНКТ in с]
+    (начало,) = [n for n, с in enumerate(строки) if с.startswith("- ") and ПУНКТ in с]
     конец = начало + 1
     while конец < len(строки) and not строки[конец].startswith("- "):
         конец += 1
@@ -398,6 +449,7 @@ def имена_в_пункте(текст: str) -> set[str]:
 def не_отменяют() -> set[str]:
     """Кто в дереве объявил очередь вместо отмены — по разбору, а не по списку."""
     from pathlib import Path
+
     из = set()
     for файл in (Path(cw.ROOT) / ".github" / "workflows").glob("*.yml"):
         группы = cw.cancelling_groups(файл.read_text(encoding="utf-8"))
@@ -409,8 +461,9 @@ def не_отменяют() -> set[str]:
 def test_perechen_ocheredey_sovpadaet_s_derevom():
     """Кого правило называет очередью, тот очередь и есть — в обоих деревьях."""
     for язык in ("ru", "en"):
-        assert имена_в_пункте(правило_179(язык)) == не_отменяют(), \
+        assert имена_в_пункте(правило_179(язык)) == не_отменяют(), (
             f"{язык}: перечень очередей разошёлся с деревом"
+        )
 
 
 def test_perechen_ocheredey_lovit_ustarevshiy():
@@ -420,6 +473,7 @@ def test_perechen_ocheredey_lovit_ustarevshiy():
         было = правило_179(язык, "3e05f4a")
         if было is None:
             import pytest
+
             pytest.skip("истории нет: мелкий клон — сверять не с чем")
 
         assert имена_в_пункте(было) == {"automerge", "thaw"}
@@ -429,8 +483,9 @@ def test_perechen_ocheredey_lovit_ustarevshiy():
 def test_primer_v_pravile_sovpadaet_so_spiskom():
     """Оба дерева называют примером ровно тех, кому это и разрешено."""
     for язык in ("ru", "en"):
-        assert пример_в_тексте(правило_179(язык), язык) == позволено_отменять(), \
+        assert пример_в_тексте(правило_179(язык), язык) == позволено_отменять(), (
             f"{язык}: пример в правиле разошёлся со списком"
+        )
 
 
 def test_primer_v_pravile_lovit_ustarevshiy():
@@ -444,6 +499,7 @@ def test_primer_v_pravile_lovit_ustarevshiy():
         было = правило_179(язык, "3e05f4a")
         if было is None:
             import pytest
+
             pytest.skip("истории нет: мелкий клон — сверять не с чем")
 
         assert пример_в_тексте(было, язык) == {"badges"}
@@ -457,8 +513,8 @@ def test_zhivoy_badges_stoit_v_ocheredi_a_ne_otmenyaet():
     Значки при этом были свежи: убивали ровно тот проход, что потом повторяли
     целиком. Случай держит саму починку в дереве, а не рассказ о ней."""
     from pathlib import Path
-    текст = (Path(cw.ROOT) / ".github" / "workflows" / "badges.yml").read_text(
-        encoding="utf-8")
+
+    текст = (Path(cw.ROOT) / ".github" / "workflows" / "badges.yml").read_text(encoding="utf-8")
 
     assert cw.cancelling_groups(текст) == [("badges", False)]
 
@@ -466,12 +522,15 @@ def test_zhivoy_badges_stoit_v_ocheredi_a_ne_otmenyaet():
 def test_gruppa_vnutri_raboty_tozhe_razbiraetsya():
     """`concurrency` объявляют и на уровне работы; дефект там тот же, а
     sections() знает только ключи первой колонки."""
-    текст = ("jobs:\n  a:\n    concurrency:\n      group: x-${{ github.ref }}\n"
-             "      cancel-in-progress: true\n    timeout-minutes: 5\n")
+    текст = (
+        "jobs:\n  a:\n    concurrency:\n      group: x-${{ github.ref }}\n"
+        "      cancel-in-progress: true\n    timeout-minutes: 5\n"
+    )
     assert cw.cancelling_groups(текст) == [("x-${{ github.ref }}", True)]
 
 
 # ── `id:` и вывод шага — идентификаторы, а не проза (правило 167) ───────────
+
 
 def test_id_kirillicey_nahodka():
     """ЖИВОЙ ОТКАЗ, а не выдумка: `id: ключ` в review.yml сделал файл
@@ -491,15 +550,16 @@ def test_name_shaga_ostayotsya_na_yazyke_proekta():
     """ГРАНИЦА, И ОНА ТОНКАЯ: `name:` — проза для человека и пишется
     по-русски; `id:` — имя для площадки. Прежняя редакция гейта не различала
     их и разрешала оба, потому что смотрела на КЛЮЧ, а не на значение."""
-    текст = ("jobs:\n  a:\n    steps:\n"
-             "      - name: ключа ревью нет — внешний взгляд не состоится\n"
-             "        id: token\n        run: echo\n")
+    текст = (
+        "jobs:\n  a:\n    steps:\n"
+        "      - name: ключа ревью нет — внешний взгляд не состоится\n"
+        "        id: token\n        run: echo\n"
+    )
     assert cw.non_ascii_names(текст) == []
 
 
 def test_latinskiy_vyvod_chisto():
     assert cw.non_ascii_names("        if: steps.token.outputs.present == 'yes'\n") == []
-
 
 
 # ── код возврата доживает до разбора (145) ─────────────────────────────────
@@ -561,28 +621,39 @@ def прогон(код: str, оболочка: str | None = None) -> str:
     """Файл прогона с одним шагом `run:` — минимальный носитель предмета."""
     shell = f"        shell: {оболочка}\n" if оболочка else ""
     тело = "\n".join("          " + s for s in код.splitlines())
-    return ("name: t\non: [push]\njobs:\n  j:\n    steps:\n"
-            f"      - name: проба\n{shell}        run: |\n{тело}\n")
+    return (
+        "name: t\non: [push]\njobs:\n  j:\n    steps:\n"
+        f"      - name: проба\n{shell}        run: |\n{тело}\n"
+    )
 
 
-@pytest.mark.parametrize("код, что", [
-    ("if [ 1 -eq 1 ]; then echo да; fi", "закрытое условие"),
-    # bash кириллицу в ИМЕНИ ФУНКЦИИ принимает — в отличие от имени переменной,
-    # и это разные предметы: 167 про второе, здесь про разбираемость вообще.
-    ("квота_кончилась() { echo x; }", "имя функции не латиницей"),
-    # Подстановку площадки оболочка не видит: её подставляют раньше. Находка
-    # здесь была бы о синтаксисе шаблона, а не оболочки (051).
-    ('echo "${{ github.sha }}"', "подстановка площадки"),
-    ('out=$(gh api "repos/${{ github.repository }}/pulls" --jq ".[]")', "подстановка внутри вызова"),
-])
+@pytest.mark.parametrize(
+    "код, что",
+    [
+        ("if [ 1 -eq 1 ]; then echo да; fi", "закрытое условие"),
+        # bash кириллицу в ИМЕНИ ФУНКЦИИ принимает — в отличие от имени переменной,
+        # и это разные предметы: 167 про второе, здесь про разбираемость вообще.
+        ("квота_кончилась() { echo x; }", "имя функции не латиницей"),
+        # Подстановку площадки оболочка не видит: её подставляют раньше. Находка
+        # здесь была бы о синтаксисе шаблона, а не оболочки (051).
+        ('echo "${{ github.sha }}"', "подстановка площадки"),
+        (
+            'out=$(gh api "repos/${{ github.repository }}/pulls" --jq ".[]")',
+            "подстановка внутри вызова",
+        ),
+    ],
+)
 def test_razbiraemaya_obolochka_nahodkoy_ne_yavlyaetsya(код, что):
     assert cw.unparsable_shell(прогон(код)) == [], что
 
 
-@pytest.mark.parametrize("код, что", [
-    ("if [ 1 -eq 1 ]; then echo да", "незакрытый if"),
-    ("case $x in a) echo a;;", "незакрытый case"),
-])
+@pytest.mark.parametrize(
+    "код, что",
+    [
+        ("if [ 1 -eq 1 ]; then echo да", "незакрытый if"),
+        ("case $x in a) echo a;;", "незакрытый case"),
+    ],
+)
 def test_nerazbiraemaya_obolochka_eto_nahodka(код, что):
     """Такой шаг падает МГНОВЕННО и выглядит обычным красным (167)."""
     assert len(cw.unparsable_shell(прогон(код))) == 1, что
@@ -596,8 +667,10 @@ def test_shag_ne_na_obolochke_ne_predmet():
 def действие(код: str, оболочка: str = "bash") -> str:
     """Составное действие: шаги лежат в `runs:`, а не в `jobs:`."""
     тело = "\n".join("          " + s for s in код.splitlines())
-    return ("name: a\ndescription: d\nruns:\n  using: composite\n  steps:\n"
-            f"    - name: проба\n      shell: {оболочка}\n      run: |\n{тело}\n")
+    return (
+        "name: a\ndescription: d\nruns:\n  using: composite\n  steps:\n"
+        f"    - name: проба\n      shell: {оболочка}\n      run: |\n{тело}\n"
+    )
 
 
 def test_sostavnoe_deystvie_proveryaetsya_toy_zhe_merkoy():
@@ -618,9 +691,11 @@ def test_defaults_urovnya_fayla_uvazhaetsya():
     Без этого прогон, объявивший себя pwsh в шапке, мерился бы `bash -n` —
     ложный красный о чужом языке, находка о форме вместо предмета (051).
     """
-    текст = ("name: t\non: [push]\ndefaults:\n  run:\n    shell: pwsh\n"
-             "jobs:\n  j:\n    steps:\n      - name: проба\n        run: |\n"
-             "          if ($true) { Write-Host x }\n")
+    текст = (
+        "name: t\non: [push]\ndefaults:\n  run:\n    shell: pwsh\n"
+        "jobs:\n  j:\n    steps:\n      - name: проба\n        run: |\n"
+        "          if ($true) { Write-Host x }\n"
+    )
     assert cw.unparsable_shell(текст) == []
 
 
@@ -630,6 +705,7 @@ def test_defaults_urovnya_fayla_uvazhaetsya():
 # для модели — была принята за имя ключа env и отвергнута как «не латиницей».
 # Гейт краснел на верном файле, а ложный отказ дороже пропуска (051).
 
+
 def test_kirillica_v_promte_ne_nahodka():
     """РОВНО ПРЕДМЕТ: двоеточие в прозе — не ключ разметки."""
     прогон = (
@@ -637,7 +713,8 @@ def test_kirillica_v_promte_ne_nahodka():
         "        with:\n          prompt: |\n"
         "            Последней строкой поставь ровно это:\n\n"
         "                ВЕРДИКТ: находок N\n\n"
-        "            По ней твою работу читает механизм.\n")
+        "            По ней твою работу читает механизм.\n"
+    )
 
     assert cw.non_ascii_names(прогон) == []
 
@@ -645,26 +722,32 @@ def test_kirillica_v_promte_ne_nahodka():
 def test_kirillica_v_run_ostayotsya_nahodkoy():
     """Граница с другой стороны: в `run:` лежит КОД, и там присваивание
     кириллицей падает кодом 127 — предмет правила 167 никуда не делся."""
-    прогон = ("jobs:\n  x:\n    steps:\n      - name: шаг\n        run: |\n"
-              "          ИМЯ=значение\n          echo \"$ИМЯ\"\n")
+    прогон = (
+        "jobs:\n  x:\n    steps:\n      - name: шаг\n        run: |\n"
+        '          ИМЯ=значение\n          echo "$ИМЯ"\n'
+    )
 
     assert cw.non_ascii_names(прогон) == ["ИМЯ"]
 
 
 def test_klyuch_env_kirillicey_ostayotsya_nahodkoy():
     """И вторая половина границы: настоящий ключ разметки по-прежнему ловится."""
-    прогон = ("jobs:\n  x:\n    steps:\n      - name: шаг\n        env:\n"
-              "          КЛЮЧ: значение\n        run: echo ок\n")
+    прогон = (
+        "jobs:\n  x:\n    steps:\n      - name: шаг\n        env:\n"
+        "          КЛЮЧ: значение\n        run: echo ок\n"
+    )
 
     assert "КЛЮЧ" in cw.non_ascii_names(прогон)
 
 
 def test_posle_bloka_razmetka_chitaetsya_snova():
     """Блок кончается по отступу: ключи ПОСЛЕ него обязаны проверяться."""
-    прогон = ("jobs:\n  x:\n    steps:\n      - uses: a/b@v1\n"
-              "        with:\n          prompt: |\n            проза: с двоеточием\n"
-              "      - name: следующий\n        env:\n          ЗНАЧЕНИЕ: 1\n"
-              "        run: echo ок\n")
+    прогон = (
+        "jobs:\n  x:\n    steps:\n      - uses: a/b@v1\n"
+        "        with:\n          prompt: |\n            проза: с двоеточием\n"
+        "      - name: следующий\n        env:\n          ЗНАЧЕНИЕ: 1\n"
+        "        run: echo ок\n"
+    )
 
     assert "ЗНАЧЕНИЕ" in cw.non_ascii_names(прогон)
 
@@ -676,16 +759,19 @@ def test_posle_bloka_razmetka_chitaetsya_snova():
 # (140): каждая из трёх форм невозможного разрешения — находка, исполнимое
 # разрешение и прогон без агента — нет.
 
+
 def агент(разрешено: str, *, python: bool = True, проверки: bool = True) -> str:
     """Прогон с агентом: разрешения и, по выбору, шаги, делающие их исполнимыми."""
     шаги = "    steps:\n      - uses: actions/checkout@v4\n"
     if python:
-        шаги += "      - uses: actions/setup-python@v5\n        with:\n          python-version: \"3.12\"\n"
+        шаги += '      - uses: actions/setup-python@v5\n        with:\n          python-version: "3.12"\n'
     if проверки:
         шаги += "      - name: обвязка\n        run: python -m pip install --quiet -r requirements-test.txt\n"
-    шаги += ("      - uses: anthropics/claude-code-action@v1\n        with:\n"
-             "          claude_args: >-\n            --allowedTools\n"
-             f"            \"{разрешено}\"\n")
+    шаги += (
+        "      - uses: anthropics/claude-code-action@v1\n        with:\n"
+        "          claude_args: >-\n            --allowedTools\n"
+        f'            "{разрешено}"\n'
+    )
     return "jobs:\n  review:\n    timeout-minutes: 20\n" + шаги
 
 
@@ -703,8 +789,12 @@ def test_bez_agenta_nahodok_net():
 
 def test_razreshenie_bez_pitona_ne_kasaetsya_ustanovok():
     """Агенту разрешён только git — ставить интерпретатор незачем."""
-    assert cw.impossible_permissions(
-        агент("Bash(git diff:*),Bash(git log:*)", python=False, проверки=False)) == []
+    assert (
+        cw.impossible_permissions(
+            агент("Bash(git diff:*),Bash(git log:*)", python=False, проверки=False)
+        )
+        == []
+    )
 
 
 def test_net_ustanovki_interpretatora_nahodka():
@@ -720,14 +810,18 @@ def test_pytest_bez_proverok_nahodka():
 def test_proverki_v_kommentarii_ne_schitayutsya():
     """Установка, упомянутая комментарием, проверок не ставит."""
     прогон = агент(ОБА, проверки=False).replace(
-        "    steps:\n", "    # python -m pip install -r requirements-test.txt\n    steps:\n")
+        "    steps:\n", "    # python -m pip install -r requirements-test.txt\n    steps:\n"
+    )
     assert any("requirements-test" in н for н in cw.impossible_permissions(прогон))
 
 
-@pytest.mark.parametrize("разрешено, нет", [
-    ("Bash(python -m pytest:*)", "python3 -m pytest"),
-    ("Bash(python3 scripts/preflight.py:*)", "python scripts/preflight.py"),
-])
+@pytest.mark.parametrize(
+    "разрешено, нет",
+    [
+        ("Bash(python -m pytest:*)", "python3 -m pytest"),
+        ("Bash(python3 scripts/preflight.py:*)", "python scripts/preflight.py"),
+    ],
+)
 def test_odno_imya_interpretatora_nahodka(разрешено, нет):
     """Живой случай 25.09: разрешено одно имя, агент зовёт другое."""
     находки = cw.impossible_permissions(агент(разрешено))
@@ -736,8 +830,9 @@ def test_odno_imya_interpretatora_nahodka(разрешено, нет):
 
 def test_zhivoy_fayl_prohodit_i_otkat_krasneet(tmp_path):
     """Живой review.yml проходит; он же без установки интерпретатора — отказ."""
-    живой = (Path(__file__).resolve().parent.parent / ".github" / "workflows"
-             / "review.yml").read_text(encoding="utf-8")
+    живой = (
+        Path(__file__).resolve().parent.parent / ".github" / "workflows" / "review.yml"
+    ).read_text(encoding="utf-8")
     assert cw.impossible_permissions(живой) == []
     откат = живой.replace("uses: actions/setup-python@", "uses: actions/other@")
     workflow(tmp_path, "review.yml", откат)
@@ -750,33 +845,42 @@ def test_zhivoy_fayl_prohodit_i_otkat_krasneet(tmp_path):
 # умолчанием main и исполняли скрипт оттуда — тег в строке uses: закреплял
 # только разметку. Набор двусторонний (140).
 
-ДЕЙСТВИЕ = ("runs:\n  using: composite\n  steps:\n    - name: шаг\n      shell: bash\n"
-            "      run: |\n        {строка}\n")
+ДЕЙСТВИЕ = (
+    "runs:\n  using: composite\n  steps:\n    - name: шаг\n      shell: bash\n"
+    "      run: |\n        {строка}\n"
+)
 
 
-@pytest.mark.parametrize("строка", [
-    "python .rules-sync/scripts/sync_inbox.py --ref main",
-    'python3 ".attribution-gate/scripts/check_attribution.py" "${args[@]}"',
-])
+@pytest.mark.parametrize(
+    "строка",
+    [
+        "python .rules-sync/scripts/sync_inbox.py --ref main",
+        'python3 ".attribution-gate/scripts/check_attribution.py" "${args[@]}"',
+    ],
+)
 def test_kod_iz_vykachannogo_kataloga_nahodka(строка):
     assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=строка))
 
 
-@pytest.mark.parametrize("строка", [
-    'python "$GITHUB_ACTION_PATH/scripts/sync_inbox.py" --ref main',
-    'python "$GITHUB_ACTION_PATH/../../../scripts/check_attribution.py" "${args[@]}"',
-    'python "${{ github.action_path }}/scripts/x.py"',
-    "echo без питона",
-])
+@pytest.mark.parametrize(
+    "строка",
+    [
+        'python "$GITHUB_ACTION_PATH/scripts/sync_inbox.py" --ref main',
+        'python "$GITHUB_ACTION_PATH/../../../scripts/check_attribution.py" "${args[@]}"',
+        'python "${{ github.action_path }}/scripts/x.py"',
+        "echo без питона",
+    ],
+)
 def test_kod_iz_svoego_puti_ne_nahodka(строка):
     assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=строка)) == []
 
 
 def test_upominanie_v_opisanii_ne_nahodka():
     """Проза описания входа — не шаг оболочки."""
-    действие = ("inputs:\n  ref:\n    description: >-\n"
-                "      python legacy/x.py больше не зовётся\n"
-                + ДЕЙСТВИЕ.format(строка="echo ok"))
+    действие = (
+        "inputs:\n  ref:\n    description: >-\n"
+        "      python legacy/x.py больше не зовётся\n" + ДЕЙСТВИЕ.format(строка="echo ok")
+    )
     assert cw.code_not_from_action_path(действие) == []
 
 
@@ -787,7 +891,8 @@ def test_zhivye_deystviya_prohodyat_i_otkat_krasneet(tmp_path):
         assert cw.code_not_from_action_path((корень / путь).read_text(encoding="utf-8")) == []
     workflow(tmp_path, "w.yml", "on:\n  workflow_dispatch:\njobs:\n  a:\n    timeout-minutes: 5\n")
     (tmp_path / "action.yml").write_text(
-        ДЕЙСТВИЕ.format(строка="python .rules-sync/scripts/sync_inbox.py"), encoding="utf-8")
+        ДЕЙСТВИЕ.format(строка="python .rules-sync/scripts/sync_inbox.py"), encoding="utf-8"
+    )
     assert cw.main(["--root", str(tmp_path)]) == 1
 
 
@@ -797,21 +902,31 @@ def test_zhivye_deystviya_prohodyat_i_otkat_krasneet(tmp_path):
 # пробелами ВОВСЕ: законная форма «проходила» потому, что вызов не найден, а
 # незаконная — тем же путём. Здесь каждая форма сначала распознаётся.
 
-@pytest.mark.parametrize("строка", [
-    'python "${{ inputs.path }}/x.py"',
-    "python -u .rules-sync/scripts/x.py",
-    "python3 '.gate/scripts/x.py' --flag",
-])
+
+@pytest.mark.parametrize(
+    "строка",
+    [
+        'python "${{ inputs.path }}/x.py"',
+        "python -u .rules-sync/scripts/x.py",
+        "python3 '.gate/scripts/x.py' --flag",
+    ],
+)
 def test_nezakonnyy_vyzov_raspoznayotsya(строка):
     assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=строка))
 
 
-@pytest.mark.parametrize("хвост, скрипт", [
-    ('"${{github.action_path}}/scripts/x.py"', "${{ github.action_path }}/scripts/x.py"),
-    ('"${{ github.action_path }}/scripts/x.py" --a', "${{ github.action_path }}/scripts/x.py"),
-    ('"${GITHUB_ACTION_PATH}/s.py"', "${GITHUB_ACTION_PATH}/s.py"),
-    ('"$GITHUB_ACTION_PATH/scripts/sync_inbox.py" \\', "$GITHUB_ACTION_PATH/scripts/sync_inbox.py"),
-])
+@pytest.mark.parametrize(
+    "хвост, скрипт",
+    [
+        ('"${{github.action_path}}/scripts/x.py"', "${{ github.action_path }}/scripts/x.py"),
+        ('"${{ github.action_path }}/scripts/x.py" --a', "${{ github.action_path }}/scripts/x.py"),
+        ('"${GITHUB_ACTION_PATH}/s.py"', "${GITHUB_ACTION_PATH}/s.py"),
+        (
+            '"$GITHUB_ACTION_PATH/scripts/sync_inbox.py" \\',
+            "$GITHUB_ACTION_PATH/scripts/sync_inbox.py",
+        ),
+    ],
+)
 def test_zakonnaya_forma_raspoznana_a_ne_propushchena(хвост, скрипт):
     """Законный вызов проходит, потому что его путь — свой, а не потому что
     разбор его не увидел: скрипт извлечён, и он тот самый."""
@@ -819,25 +934,35 @@ def test_zakonnaya_forma_raspoznana_a_ne_propushchena(хвост, скрипт):
     assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=f"python {хвост}")) == []
 
 
-@pytest.mark.parametrize("хвост", [
-    "-m pytest -q", "-c 'print(1)'", "-uc 'print(1)'", "-Wignore -m pytest",
-    "- < x.py",
-])
+@pytest.mark.parametrize(
+    "хвост",
+    [
+        "-m pytest -q",
+        "-c 'print(1)'",
+        "-uc 'print(1)'",
+        "-Wignore -m pytest",
+        "- < x.py",
+    ],
+)
 def test_ne_skript_ne_predmet(хвост):
     assert cw.скрипт_вызова(хвост) is None
 
 
 # ── находки обзора на #587: апостроф вне пути и ключ со значением ─────────
 
-@pytest.mark.parametrize("хвост, скрипт", [
-    ("-W ignore .rules-sync/evil.py", ".rules-sync/evil.py"),
-    ("-X dev .rules-sync/evil.py", ".rules-sync/evil.py"),
-    ("-uW ignore .rules-sync/evil.py", ".rules-sync/evil.py"),
-    ("-Wignore .rules-sync/evil.py", ".rules-sync/evil.py"),
-    ("--check-hash-based-pycs never .rules-sync/evil.py", ".rules-sync/evil.py"),
-    ("-- .rules-sync/evil.py", ".rules-sync/evil.py"),
-    ('-W ignore "$GITHUB_ACTION_PATH/s.py"', "$GITHUB_ACTION_PATH/s.py"),
-])
+
+@pytest.mark.parametrize(
+    "хвост, скрипт",
+    [
+        ("-W ignore .rules-sync/evil.py", ".rules-sync/evil.py"),
+        ("-X dev .rules-sync/evil.py", ".rules-sync/evil.py"),
+        ("-uW ignore .rules-sync/evil.py", ".rules-sync/evil.py"),
+        ("-Wignore .rules-sync/evil.py", ".rules-sync/evil.py"),
+        ("--check-hash-based-pycs never .rules-sync/evil.py", ".rules-sync/evil.py"),
+        ("-- .rules-sync/evil.py", ".rules-sync/evil.py"),
+        ('-W ignore "$GITHUB_ACTION_PATH/s.py"', "$GITHUB_ACTION_PATH/s.py"),
+    ],
+)
 def test_klyuch_so_znacheniem_ne_pryachet_skript(хвост, скрипт):
     """Значение ключа — не скрипт: путь за ним извлечён и судится."""
     assert cw.скрипт_вызова(хвост) == скрипт
@@ -845,14 +970,16 @@ def test_klyuch_so_znacheniem_ne_pryachet_skript(хвост, скрипт):
 
 def test_klyuch_so_znacheniem_pered_chuzhim_putyom_nahodka():
     строка = 'python -W ignore "$OTHER_PATH/evil.py"'
-    assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=строка)) == [
-        "$OTHER_PATH/evil.py"]
+    assert cw.code_not_from_action_path(ДЕЙСТВИЕ.format(строка=строка)) == ["$OTHER_PATH/evil.py"]
 
 
-@pytest.mark.parametrize("строка, находки", [
-    ("""python "$GITHUB_ACTION_PATH/s.py" --msg 'it's broken'""", []),
-    ("""python .rules-sync/s.py --msg 'it's broken'""", [".rules-sync/s.py"]),
-])
+@pytest.mark.parametrize(
+    "строка, находки",
+    [
+        ("""python "$GITHUB_ACTION_PATH/s.py" --msg 'it's broken'""", []),
+        ("""python .rules-sync/s.py --msg 'it's broken'""", [".rules-sync/s.py"]),
+    ],
+)
 def test_apostrof_vne_puti_ne_lomaet_razbor(строка, находки):
     """Неразбираемый хвост после пути не делает путь нечитаемым: свой — проходит,
     чужой — находка, и в обоих случаях названо имя скрипта, а не сырой хвост."""
@@ -866,52 +993,64 @@ def test_razorvannaya_kavychka_v_samom_puti_ne_suditsya():
 
 # ── ожидающий заход отменяется молча: второй источник (правило 199) ───────
 
-ОЖИДАЮЩИЙ = ("on:\n  push:\n  workflow_dispatch:\n"
-             "concurrency:\n  group: {group}\n  cancel-in-progress: false\n"
-             "jobs:\n  a:\n    timeout-minutes: 5\n    runs-on: ubuntu-latest\n"
-             "    steps:\n{steps}")
+ОЖИДАЮЩИЙ = (
+    "on:\n  push:\n  workflow_dispatch:\n"
+    "concurrency:\n  group: {group}\n  cancel-in-progress: false\n"
+    "jobs:\n  a:\n    timeout-minutes: 5\n    runs-on: ubuntu-latest\n"
+    "    steps:\n{steps}"
+)
 
 
 def test_событие_без_опроса_состояния_находка(tmp_path, capsys):
-    workflow(tmp_path, "w.yml", ОЖИДАЮЩИЙ.format(
-        group="one", steps="      - run: echo \"$GITHUB_SHA\"\n"))
+    workflow(
+        tmp_path, "w.yml", ОЖИДАЮЩИЙ.format(group="one", steps='      - run: echo "$GITHUB_SHA"\n')
+    )
     assert cw.main(["--root", str(tmp_path)]) == 1
     assert "(199)" in capsys.readouterr().err
 
 
-@pytest.mark.parametrize("group, steps", [
-    ("one", "      - run: gh api repos/o/r/pulls\n"),
-    ("one", "      - uses: actions/checkout@v5\n        with:\n          ref: main\n"),
-    ("w-${{ github.sha }}", "      - run: echo \"$GITHUB_SHA\"\n"),
-    ("one", "      - uses: actions/checkout@v5\n        with:\n          ref: "
-            "${{ github.event_name == 'workflow_run' && 'main' || github.ref }}\n"),
-])
+@pytest.mark.parametrize(
+    "group, steps",
+    [
+        ("one", "      - run: gh api repos/o/r/pulls\n"),
+        ("one", "      - uses: actions/checkout@v5\n        with:\n          ref: main\n"),
+        ("w-${{ github.sha }}", '      - run: echo "$GITHUB_SHA"\n'),
+        (
+            "one",
+            "      - uses: actions/checkout@v5\n        with:\n          ref: "
+            "${{ github.event_name == 'workflow_run' && 'main' || github.ref }}\n",
+        ),
+    ],
+)
 def test_опрос_или_группа_на_коммит_чисто(tmp_path, group, steps):
     workflow(tmp_path, "w.yml", ОЖИДАЮЩИЙ.format(group=group, steps=steps))
-    assert cw.ожидающий_без_опроса(
-        (tmp_path / ".github/workflows/w.yml").read_text()) == []
+    assert cw.ожидающий_без_опроса((tmp_path / ".github/workflows/w.yml").read_text()) == []
 
 
 def test_опрос_в_комментарии_не_считается():
-    текст = ОЖИДАЮЩИЙ.format(group="one",
-                             steps="      # gh api здесь не зовётся\n      - run: true\n")
+    текст = ОЖИДАЮЩИЙ.format(
+        group="one", steps="      # gh api здесь не зовётся\n      - run: true\n"
+    )
     assert cw.ожидающий_без_опроса(текст) == ["one"]
 
 
-@pytest.mark.parametrize("steps", [
-    "      - uses: actions/checkout@v5\n        with:\n          ref: ${{ github.sha }}\n",
-    "      - uses: actions/checkout@v5\n        with:\n"
-    "          ref: ${{ github.event.pull_request.head.sha }}\n",
-    "      - run: true  # gh api здесь только в комментарии\n",
-    "      - uses: actions/checkout@v5\n        with:\n"
-    "          ref: ${{ github.event.after }}\n",
-    "      - uses: actions/checkout@v5\n        with:\n"
-    "          ref: ${{ github.event.head_commit.id }}\n",
-    "      - uses: actions/checkout@v5\n        with:\n"
-    "          ref: ${{ github.event['after'] }}\n",
-    "      - uses: actions/checkout@v5\n        with:\n"
-    "          ref: ${{ github.event.commits[0].id }}\n",
-])
+@pytest.mark.parametrize(
+    "steps",
+    [
+        "      - uses: actions/checkout@v5\n        with:\n          ref: ${{ github.sha }}\n",
+        "      - uses: actions/checkout@v5\n        with:\n"
+        "          ref: ${{ github.event.pull_request.head.sha }}\n",
+        "      - run: true  # gh api здесь только в комментарии\n",
+        "      - uses: actions/checkout@v5\n        with:\n"
+        "          ref: ${{ github.event.after }}\n",
+        "      - uses: actions/checkout@v5\n        with:\n"
+        "          ref: ${{ github.event.head_commit.id }}\n",
+        "      - uses: actions/checkout@v5\n        with:\n"
+        "          ref: ${{ github.event['after'] }}\n",
+        "      - uses: actions/checkout@v5\n        with:\n"
+        "          ref: ${{ github.event.commits[0].id }}\n",
+    ],
+)
 def test_sha_события_и_хвостовой_комментарий_не_опрос(steps):
     текст = ОЖИДАЮЩИЙ.format(group="one", steps=steps)
     assert cw.ожидающий_без_опроса(текст) == ["one"]
@@ -921,8 +1060,7 @@ def test_vyzov_chuzhogo_progona_predela_ne_trebuet():
     """`timeout-minutes` у работы с `uses:` площадка не принимает: предел
     стоит внутри вызываемого прогона (шаги механизмов в ci.yml). Работа со своими шагами
     рядом по-прежнему обязана нести свой."""
-    text = (BUTTON + "jobs:\n  a:\n    uses: o/r/.github/workflows/s.yml@v1\n"
-            "  b:\n    runs-on: x\n")
+    text = BUTTON + "jobs:\n  a:\n    uses: o/r/.github/workflows/s.yml@v1\n  b:\n    runs-on: x\n"
     assert cw.jobs_without_timeout(text) == ["b"]
 
 
@@ -931,26 +1069,35 @@ def test_vyzov_chuzhogo_progona_predela_ne_trebuet():
 SHA = "fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09"
 
 
-@pytest.mark.parametrize("цель", [
-    "actions/checkout@v5",                       # подвижный мажор
-    "actions/checkout@v5.1.0",                   # точный тег тоже переставляем
-    "anthropics/claude-code-action@v1",          # действие при секретах
-    "actions/checkout@fbc6f39",                  # короткий SHA — не закрепление
-    "actions/checkout@main",                     # ветка
-])
+@pytest.mark.parametrize(
+    "цель",
+    [
+        "actions/checkout@v5",  # подвижный мажор
+        "actions/checkout@v5.1.0",  # точный тег тоже переставляем
+        "anthropics/claude-code-action@v1",  # действие при секретах
+        "actions/checkout@fbc6f39",  # короткий SHA — не закрепление
+        "actions/checkout@main",  # ветка
+    ],
+)
 def test_chuzhoe_ne_po_sha_otkaz(tmp_path, capsys, цель):
-    workflow(tmp_path, "w.yml", f"{BUTTON}jobs:\n  a:\n    timeout-minutes: 5\n"
-             f"    steps:\n      - uses: {цель}\n")
+    workflow(
+        tmp_path,
+        "w.yml",
+        f"{BUTTON}jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n      - uses: {цель}\n",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 1
     assert "#865" in capsys.readouterr().err
 
 
-@pytest.mark.parametrize("цель", [
-    f"actions/checkout@{SHA} # v5.1.0",
-    "ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-facts.yml@v1.5.0",
-    "./.github/actions/answer",
-    "docker://alpine:3.20",
-])
+@pytest.mark.parametrize(
+    "цель",
+    [
+        f"actions/checkout@{SHA} # v5.1.0",
+        "ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-facts.yml@v1.5.0",
+        "./.github/actions/answer",
+        "docker://alpine:3.20",
+    ],
+)
 def test_po_sha_i_svoi_chisto(цель):
     assert cw.unpinned_actions(f"    steps:\n      - uses: {цель}\n") == []
 
@@ -960,6 +1107,8 @@ def test_sostavnoe_deystvie_tozhe(tmp_path):
     workflow(tmp_path, "w.yml", f"{BUTTON}jobs:\n  a:\n    timeout-minutes: 5\n")
     д = tmp_path / ".github" / "actions" / "x" / "action.yml"
     д.parent.mkdir(parents=True)
-    д.write_text("runs:\n  using: composite\n  steps:\n    - uses: actions/setup-python@v6\n",
-                 encoding="utf-8")
+    д.write_text(
+        "runs:\n  using: composite\n  steps:\n    - uses: actions/setup-python@v6\n",
+        encoding="utf-8",
+    )
     assert cw.main(["--root", str(tmp_path)]) == 1

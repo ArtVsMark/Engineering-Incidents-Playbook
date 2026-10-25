@@ -15,7 +15,6 @@
 нечем, пока не сказано с чем; сама сверка требует сети и остаётся человеку.
 """
 
-
 import json
 import subprocess
 
@@ -43,17 +42,24 @@ def площадка(monkeypatch, изменения: list[dict], code: int = 0)
             номер = int(путь.split("/pulls/")[1].split("/")[0])
             return 0, "".join(json.dumps(ф) + "\n" for ф in файлы.get(номер, []))
         return 0, json.dumps(изменения)
+
     monkeypatch.setattr(co.ghcli, "run", подделка)
 
 
 def изменение(number: int, branch: str, *files: str) -> dict:
-    return {"number": number, "title": f"работа {number}",
-            "headRefName": branch, "_files": list(files)}
+    return {
+        "number": number,
+        "title": f"работа {number}",
+        "headRefName": branch,
+        "_files": list(files),
+    }
 
 
 def test_peresecheniy_net_eto_chisto(monkeypatch, capsys):
-    площадка(monkeypatch, [изменение(1, МОЙ, "scripts/a.py"),
-                           изменение(2, "agent/чужая", "scripts/b.py")])
+    площадка(
+        monkeypatch,
+        [изменение(1, МОЙ, "scripts/a.py"), изменение(2, "agent/чужая", "scripts/b.py")],
+    )
 
     assert co.main(["--branch", МОЙ]) == 0
     assert "пересечений нет" in capsys.readouterr().out
@@ -61,8 +67,13 @@ def test_peresecheniy_net_eto_chisto(monkeypatch, capsys):
 
 def test_obshchiy_fayl_eto_nahodka(monkeypatch, capsys):
     """Ровно инцидент: ночной прогон и окно тронули export/where.* разом."""
-    площадка(monkeypatch, [изменение(1, МОЙ, "export/where.json", "scripts/a.py"),
-                           изменение(2, "agent/ночной", "export/where.json")])
+    площадка(
+        monkeypatch,
+        [
+            изменение(1, МОЙ, "export/where.json", "scripts/a.py"),
+            изменение(2, "agent/ночной", "export/where.json"),
+        ],
+    )
 
     assert co.main(["--branch", МОЙ]) == 1
     out = capsys.readouterr().out
@@ -95,8 +106,7 @@ def test_peresechenie_za_sotym_faylom_vidno(monkeypatch, capsys):
     """Файлы изменения читаются до конца (212): у #327 их было 358, и общий
     файл за первой сотней прежде не находился вовсе."""
     хвост = [f"docs/f{i:03}.md" for i in range(149)] + ["scripts/a.py"]
-    площадка(monkeypatch, [изменение(1, МОЙ, "scripts/a.py"),
-                           изменение(2, "agent/чужая", *хвост)])
+    площадка(monkeypatch, [изменение(1, МОЙ, "scripts/a.py"), изменение(2, "agent/чужая", *хвост)])
 
     assert co.main(["--branch", МОЙ]) == 1
     assert "scripts/a.py" in capsys.readouterr().out
@@ -108,9 +118,11 @@ def дерево_с_веткой(tmp_path, *files: str) -> None:
     Локальный путь гейта зовёт `git diff --name-only -z origin/main...ветка`,
     и подделать его разбор нечем, кроме настоящего вывода git (150).
     """
+
     def git(*args: str) -> None:
-        subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
-                       capture_output=True, timeout=60)
+        subprocess.run(
+            ["git", "-C", str(tmp_path), *args], check=True, capture_output=True, timeout=60
+        )
 
     subprocess.run(["git", "init", "-q", "-b", "main", str(tmp_path)], check=True, timeout=60)
     git("config", "user.email", "проба@пример")
@@ -153,8 +165,10 @@ def test_istechenie_git_nazyvaet_prichinu(monkeypatch, capsys):
     import proc
 
     def завис(args, *, timeout, **kw):
-        return subprocess.CompletedProcess(args, proc.TIMED_OUT, "",
-                                           f"не ответил за {timeout:g} с: git (100)")
+        return subprocess.CompletedProcess(
+            args, proc.TIMED_OUT, "", f"не ответил за {timeout:g} с: git (100)"
+        )
+
     monkeypatch.setattr(co.proc, "run", завис)
     assert co.main([]) == 2
     err = capsys.readouterr().err

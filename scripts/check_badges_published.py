@@ -65,7 +65,6 @@ URL-кодирован: сырым поиском они не находятся
   python scripts/check_badges_published.py --selftest
 """
 
-
 import argparse
 import re
 import sys
@@ -89,8 +88,7 @@ HOST = "raw.githubusercontent.com"
 #: ветки. Класс узкий намеренно — он сам обрывается на `&`, `)`, кавычке и
 #: прочем, чем адрес кончается в разметке, и разбирать эти границы отдельно
 #: не приходится.
-ССЫЛКА = re.compile(
-    re.escape(HOST) + r"/([^/\s]+)/([^/\s]+)/" + BRANCH + r"/([A-Za-z0-9._/-]+)")
+ССЫЛКА = re.compile(re.escape(HOST) + r"/([^/\s]+)/([^/\s]+)/" + BRANCH + r"/([A-Za-z0-9._/-]+)")
 
 #: Обход не втягивает служебное (119).
 SKIP_DIRS = {".git", "node_modules", "__pycache__", ".pytest_cache"}
@@ -105,8 +103,7 @@ def ссылки(текст: str) -> list[tuple[int, str, str]]:
         for форма in {строка, unquote(строка)}:
             for m in ССЫЛКА.finditer(форма):
                 # Точка в конце предложения адресу не принадлежит.
-                out.append((номер, f"{m.group(1)}/{m.group(2)}",
-                            m.group(3).rstrip(".")))
+                out.append((номер, f"{m.group(1)}/{m.group(2)}", m.group(3).rstrip(".")))
     return sorted(set(out))
 
 
@@ -114,9 +111,11 @@ def собранное(каталог: Path) -> tuple[set[str], str]:
     """Пути внутри ветки — по СОДЕРЖИМОМУ каталога, который её и составляет."""
     if not каталог.is_dir():
         return set(), f"нет каталога собранного: {каталог}"
-    пути = {p.relative_to(каталог).as_posix()
-            for p in каталог.rglob("*")
-            if p.is_file() and not SKIP_DIRS & set(p.parts)}
+    пути = {
+        p.relative_to(каталог).as_posix()
+        for p in каталог.rglob("*")
+        if p.is_file() and not SKIP_DIRS & set(p.parts)
+    }
     if not пути:
         return set(), f"в каталоге собранного ни одного файла: {каталог}"
     return пути, ""
@@ -129,15 +128,13 @@ def из_дерева(корень: Path) -> list[tuple[str, str]]:
         if not path.is_file() or SKIP_DIRS & set(path.parts):
             continue
         try:
-            out.append((path.relative_to(корень).as_posix(),
-                        path.read_text(encoding="utf-8")))
+            out.append((path.relative_to(корень).as_posix(), path.read_text(encoding="utf-8")))
         except UnicodeDecodeError, OSError:
             continue
     return out
 
 
-def находки(документы: list[tuple[str, str]], набор: set[str],
-            slug: str) -> tuple[list[str], int]:
+def находки(документы: list[tuple[str, str]], набор: set[str], slug: str) -> tuple[list[str], int]:
     """Находки и число просмотренных ссылок на СВОЮ ветку."""
     плохо: list[str] = []
     всего = 0
@@ -153,7 +150,8 @@ def находки(документы: list[tuple[str, str]], набор: set[st
             подсказка = f"; ближе всего лежит {близкое[0]}" if близкое else ""
             плохо.append(
                 f"{путь}:{номер}: ссылка ведёт в {BRANCH}/{цель}, а такого "
-                f"файла на ветке нет{подсказка}")
+                f"файла на ветке нет{подсказка}"
+            )
     return плохо, всего
 
 
@@ -163,27 +161,39 @@ def selftest() -> int:
     НАБОР = {".github/badges/version.json", "export/where.json"}
     ЕСТЬ = f"https://{HOST}/{СВОЁ}/{BRANCH}/.github/badges/version.json"
     НЕТ = f"https://{HOST}/{СВОЁ}/{BRANCH}/.github/badges/tests.json"
-    КОДИРОВАННАЯ = ("https://img.shields.io/endpoint?url=https%3A%2F%2F" + HOST
-                    + "%2F" + СВОЁ.replace("/", "%2F") + "%2F" + BRANCH
-                    + "%2F.github%2Fbadges%2Ftests.json&style=flat")
+    КОДИРОВАННАЯ = (
+        "https://img.shields.io/endpoint?url=https%3A%2F%2F"
+        + HOST
+        + "%2F"
+        + СВОЁ.replace("/", "%2F")
+        + "%2F"
+        + BRANCH
+        + "%2F.github%2Fbadges%2Ftests.json&style=flat"
+    )
     случаи: list[tuple[str, str, bool]] = [
         # ── обязан НАЙТИ ──────────────────────────────────────────────────
         ("ссылка на несобранный путь", НЕТ, True),
-        ("тот же путь внутри url= у shields.io: адрес URL-кодирован",
-         КОДИРОВАННАЯ, True),
-        ("ссылка в конце предложения: точка адресу не принадлежит",
-         f"Значок лежит в {НЕТ}.", True),
+        ("тот же путь внутри url= у shields.io: адрес URL-кодирован", КОДИРОВАННАЯ, True),
+        ("ссылка в конце предложения: точка адресу не принадлежит", f"Значок лежит в {НЕТ}.", True),
         ("несобранный путь в разметке ссылки", f"[значок]({НЕТ})", True),
         # ── обязан ПРОПУСТИТЬ ─────────────────────────────────────────────
         ("ссылка на собранный путь", ЕСТЬ, False),
-        ("собранный путь внутри url= у shields.io",
-         КОДИРОВАННАЯ.replace("tests", "version"), False),
-        ("та же ветка у ЧУЖОГО репозитория: её рисуем не мы",
-         f"https://{HOST}/Сосед/Проект/{BRANCH}/.github/badges/tests.json", False),
-        ("файл общей ветки, а не ветки значков",
-         f"https://{HOST}/{СВОЁ}/main/README.md", False),
-        ("относительная ссылка: её держит check_links.py",
-         "[правило](rules/ru/196-a-link-is-not-published-before-the-file.md)", False),
+        (
+            "собранный путь внутри url= у shields.io",
+            КОДИРОВАННАЯ.replace("tests", "version"),
+            False,
+        ),
+        (
+            "та же ветка у ЧУЖОГО репозитория: её рисуем не мы",
+            f"https://{HOST}/Сосед/Проект/{BRANCH}/.github/badges/tests.json",
+            False,
+        ),
+        ("файл общей ветки, а не ветки значков", f"https://{HOST}/{СВОЁ}/main/README.md", False),
+        (
+            "относительная ссылка: её держит check_links.py",
+            "[правило](rules/ru/196-a-link-is-not-published-before-the-file.md)",
+            False,
+        ),
         ("внешний адрес без нашей ветки", "https://example.org/badges/x.json", False),
     ]
     сломано: list[str] = []
@@ -205,20 +215,25 @@ def selftest() -> int:
         через_main: list[tuple[str, str, int]] = [
             ("ссылка на несобранное", НЕТ, 1),
             ("ссылка на собранное", ЕСТЬ, 0),
-            ("ни одной ссылки на ветку — разбор пуст, а витрина без них не "
-             "работает (075)", "просто текст", 2),
+            (
+                "ни одной ссылки на ветку — разбор пуст, а витрина без них не работает (075)",
+                "просто текст",
+                2,
+            ),
         ]
         for имя, текст, ждём in через_main:
             (корень / "README.md").write_text(текст, encoding="utf-8")
-            вышло = main(["--published", str(Path(tmp) / "уехало"),
-                          "--docs", str(корень), "--slug", СВОЁ])
+            вышло = main(
+                ["--published", str(Path(tmp) / "уехало"), "--docs", str(корень), "--slug", СВОЁ]
+            )
             if вышло != ждём:
                 сломано.append(f"main(): {имя}: исход {вышло}, ждали {ждём}")
             print(f"  исход {вышло}  — main(): {имя}")
 
         # Третий исход у ВХОДА, а не у предмета: сверять не с чем.
-        вышло = main(["--published", str(Path(tmp) / "нет-такого"),
-                      "--docs", str(корень), "--slug", СВОЁ])
+        вышло = main(
+            ["--published", str(Path(tmp) / "нет-такого"), "--docs", str(корень), "--slug", СВОЁ]
+        )
         if вышло != 2:
             сломано.append(f"main(): нет каталога собранного: исход {вышло}, ждали 2")
         print(f"  исход {вышло}  — main(): каталога собранного нет")
@@ -234,14 +249,19 @@ def selftest() -> int:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--published", type=Path,
-                    help="каталог, СОДЕРЖИМОЕ которого уехало на ветку "
-                         f"`{BRANCH}`: пути считаются относительно него")
-    ap.add_argument("--docs", type=Path, default=ROOT,
-                    help="корень документов; по умолчанию рабочее дерево")
+    ap.add_argument(
+        "--published",
+        type=Path,
+        help="каталог, СОДЕРЖИМОЕ которого уехало на ветку "
+        f"`{BRANCH}`: пути считаются относительно него",
+    )
+    ap.add_argument(
+        "--docs", type=Path, default=ROOT, help="корень документов; по умолчанию рабочее дерево"
+    )
     ap.add_argument("--slug", help="своё имя вместо ответа origin")
-    ap.add_argument("--selftest", action="store_true",
-                    help="прогнать набор: что обязан найти и что пропустить")
+    ap.add_argument(
+        "--selftest", action="store_true", help="прогнать набор: что обязан найти и что пропустить"
+    )
     args = ap.parse_args(argv)
 
     if args.selftest:
@@ -249,8 +269,11 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 2: сверять не с чем ──────────────────────────────────────────
     if args.published is None:
-        print("проверка не отработала: не задан каталог собранного "
-              "(--published) — сверять ссылки не с чем", file=sys.stderr)
+        print(
+            "проверка не отработала: не задан каталог собранного "
+            "(--published) — сверять ссылки не с чем",
+            file=sys.stderr,
+        )
         return 2
     набор, почему = собранное(args.published)
     if почему:
@@ -261,15 +284,16 @@ def main(argv: list[str] | None = None) -> int:
     if not slug:
         slug, почему = own_slug(args.docs)
         if почему:
-            print(f"проверка не отработала: {почему} — чья ветка `{BRANCH}` "
-                  "в ссылке, неизвестно", file=sys.stderr)
+            print(
+                f"проверка не отработала: {почему} — чья ветка `{BRANCH}` в ссылке, неизвестно",
+                file=sys.stderr,
+            )
             return 2
 
     документы = из_дерева(args.docs)
     где = str(args.docs)
     if not документы:
-        print(f"проверка не отработала: ни одного читаемого документа в {где}",
-              file=sys.stderr)
+        print(f"проверка не отработала: ни одного читаемого документа в {где}", file=sys.stderr)
         return 2
 
     плохо, всего = находки(документы, набор, slug)
@@ -280,22 +304,28 @@ def main(argv: list[str] | None = None) -> int:
     # Зелёное на пустом входе означало бы «проверено», когда не проверено
     # ничего, — и первым же это скрыло бы протухший разбор адреса.
     if not всего:
-        print(f"проверка не отработала: в {где} ({len(документы)} док.) нет ни "
-              f"одной ссылки на свою ветку `{BRANCH}` — витрина без них не "
-              "работает, значит сломан разбор адреса, а не витрина",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: в {где} ({len(документы)} док.) нет ни "
+            f"одной ссылки на свою ветку `{BRANCH}` — витрина без них не "
+            "работает, значит сломан разбор адреса, а не витрина",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if плохо:
-        print(f"ссылки ведут в то, чего на ветке `{BRANCH}` нет "
-              f"(файлов на ней: {len(набор)}):", file=sys.stderr)
+        print(
+            f"ссылки ведут в то, чего на ветке `{BRANCH}` нет (файлов на ней: {len(набор)}):",
+            file=sys.stderr,
+        )
         for f in плохо:
             print(f"  • {f}", file=sys.stderr)
         return 1
 
-    print(f"ссылок на ветку `{BRANCH}`: {всего}, и каждая ведёт в файл, "
-          f"который на ней есть ({len(набор)} файлов)")
+    print(
+        f"ссылок на ветку `{BRANCH}`: {всего}, и каждая ведёт в файл, "
+        f"который на ней есть ({len(набор)} файлов)"
+    )
     return 0
 
 

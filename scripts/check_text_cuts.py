@@ -34,7 +34,6 @@
   165 — печатается ОХВАТ: сколько файлов просмотрено и сколько разрезов найдено.
 """
 
-
 import argparse
 import ast
 import sys
@@ -99,14 +98,19 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--root", type=Path, default=ROOT)
     args = ap.parse_args(argv)
 
-    файлы = sorted(list((args.root / "scripts").glob("*.py"))
-                   + list((args.root / "tests").glob("*.py"))
-                   + list((args.root / "templates").glob("*.py")))
+    файлы = sorted(
+        list((args.root / "scripts").glob("*.py"))
+        + list((args.root / "tests").glob("*.py"))
+        + list((args.root / "templates").glob("*.py"))
+    )
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not файлы:
-        print(f"проверка не отработала: в {args.root}/{{scripts,tests,"
-              "templates}} нет ни одного *.py — проверять нечего, и зеленеть "
-              "на этом нельзя", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {args.root}/{{scripts,tests,"
+            "templates}} нет ни одного *.py — проверять нечего, и зеленеть "
+            "на этом нельзя",
+            file=sys.stderr,
+        )
         return 2
 
     находки: list[str] = []
@@ -117,22 +121,25 @@ def main(argv: list[str] | None = None) -> int:
         for номер, имя in разрезы(текст):
             всего += 1
             if not объявлено(строки, номер):
-                находки.append(f"{f.relative_to(args.root)}:{номер} — "
-                               f"{имя} по точке без пометки «{ПОМЕТКА}»")
+                находки.append(
+                    f"{f.relative_to(args.root)}:{номер} — {имя} по точке без пометки «{ПОМЕТКА}»"
+                )
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if находки:
         print("текст режут по точке, не сказав, что режут:", file=sys.stderr)
         for n in находки:
             print(f"  • {n}", file=sys.stderr)
-        print(f"\n  Допишите рядом `# {ПОМЕТКА} <что именно>` — путь модуля, "
-              "номер версии,\n  расширение файла. Если же режется ПРОЗА, "
-              "разрез неверен: точка стоит\n  внутри имён (SECURITY.md, "
-              "v1.2.0), и контекст берут абзацем (144).", file=sys.stderr)
+        print(
+            f"\n  Допишите рядом `# {ПОМЕТКА} <что именно>` — путь модуля, "
+            "номер версии,\n  расширение файла. Если же режется ПРОЗА, "
+            "разрез неверен: точка стоит\n  внутри имён (SECURITY.md, "
+            "v1.2.0), и контекст берут абзацем (144).",
+            file=sys.stderr,
+        )
         return 1
 
-    print(f"разрезы объявлены: просмотрено файлов {len(файлы)}, "
-          f"разрезов по точке {всего}")
+    print(f"разрезы объявлены: просмотрено файлов {len(файлы)}, разрезов по точке {всего}")
     return 0
 
 

@@ -8,7 +8,6 @@
 бы по чужой причине.
 """
 
-
 from pathlib import Path
 
 import check_readers as cr

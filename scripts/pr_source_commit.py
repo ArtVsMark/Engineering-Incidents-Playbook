@@ -67,7 +67,6 @@
   158 — третий исход называет предмет: команду git, которая не ответила.
 """
 
-
 import argparse
 import subprocess
 import sys
@@ -80,8 +79,13 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def git(root: Path, *args: str) -> tuple[int, str, str]:
     """Вызов git с явной кодировкой (176): локаль раннера здесь не решает."""
-    done = proc.run(["git", "-C", str(root), *args],
-                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     return done.returncode, done.stdout, done.stderr
 
 
@@ -95,8 +99,7 @@ def уже_в_базе(root: Path, base: str, sha: str) -> tuple[bool | None, st
     """
     code, out, err = git(root, "show", "--pretty=", "--name-only", "-z", sha)
     if code != 0:
-        return None, (f"`git show --name-only {sha}` — "
-                      f"{err.strip()[:160] or f'код {code}'}")
+        return None, (f"`git show --name-only {sha}` — {err.strip()[:160] or f'код {code}'}")
     пути = [p for p in out.split("\0") if p]
     if not пути:
         return True, None
@@ -105,8 +108,7 @@ def уже_в_базе(root: Path, base: str, sha: str) -> tuple[bool | None, st
         return True, None
     if code == 1:
         return False, None
-    return None, (f"`git diff --quiet {base} {sha}` — "
-                  f"{err.strip()[:160] or f'код {code}'}")
+    return None, (f"`git diff --quiet {base} {sha}` — {err.strip()[:160] or f'код {code}'}")
 
 
 def base_subjects(root: Path, base: str) -> tuple[set[str] | None, str | None]:
@@ -121,8 +123,14 @@ def choose(root: Path, base: str, head: str = "HEAD") -> tuple[str | None, int, 
     """Отпечаток, исход и объяснение — в том виде, в каком их печатает main."""
     code, out, err = git(root, "rev-list", "--reverse", f"{base}..{head}")
     if code != 0:
-        return None, 2, (f"выбор не отработал: `git rev-list {base}..{head}` — "
-                         f"{err.strip()[:160] or f'код {code}'}")
+        return (
+            None,
+            2,
+            (
+                f"выбор не отработал: `git rev-list {base}..{head}` — "
+                f"{err.strip()[:160] or f'код {code}'}"
+            ),
+        )
     commits = [line.strip() for line in out.splitlines() if line.strip()]
     if not commits:
         return None, 1, f"сверх {base} коммитов нет"
@@ -134,8 +142,14 @@ def choose(root: Path, base: str, head: str = "HEAD") -> tuple[str | None, int, 
     for sha in commits:
         code, out, err = git(root, "log", "-1", "--format=%s", sha)
         if code != 0:
-            return None, 2, (f"выбор не отработал: `git log -1 --format=%s {sha}` — "
-                             f"{err.strip()[:160] or f'код {code}'}")
+            return (
+                None,
+                2,
+                (
+                    f"выбор не отработал: `git log -1 --format=%s {sha}` — "
+                    f"{err.strip()[:160] or f'код {code}'}"
+                ),
+            )
         subject = out.strip()
         if subject in subjects:
             continue
@@ -149,19 +163,26 @@ def choose(root: Path, base: str, head: str = "HEAD") -> tuple[str | None, int, 
     # ВСЯ ВЕТКА ОПОЗНАНА КАК СЛИТАЯ. Своей работы у ветки нет, а
     # «неизвестно» и «чужое» — разные ответы (051): выбор не молчит и не
     # выдумывает, он называет первый коммит и говорит, что это запасной путь.
-    return commits[0], 0, (f"ни один из {len(commits)} коммитов не вносит в "
-                           f"{base} ничего нового; запасной путь — первый "
-                           f"коммит, {commits[0][:8]}")
+    return (
+        commits[0],
+        0,
+        (
+            f"ни один из {len(commits)} коммитов не вносит в "
+            f"{base} ничего нового; запасной путь — первый "
+            f"коммит, {commits[0][:8]}"
+        ),
+    )
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень дерева; по умолчанию сам этот репозиторий")
-    parser.add_argument("--base", default="origin/main",
-                        help="общая ветка; по умолчанию origin/main")
-    parser.add_argument("--head", default="HEAD",
-                        help="голова ветки; по умолчанию HEAD")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень дерева; по умолчанию сам этот репозиторий"
+    )
+    parser.add_argument(
+        "--base", default="origin/main", help="общая ветка; по умолчанию origin/main"
+    )
+    parser.add_argument("--head", default="HEAD", help="голова ветки; по умолчанию HEAD")
     args = parser.parse_args(argv)
 
     sha, code, why = choose(args.root, args.base, args.head)

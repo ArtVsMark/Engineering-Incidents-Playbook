@@ -5,7 +5,11 @@ import shell_words as sw
 
 def test_слова_до_неразбираемого_места():
     """Незакрытая кавычка дальше по строке не роняет уже прочитанное."""
-    assert sw.слова_оболочки("python scripts/x.py --msg 'oops") == ["python", "scripts/x.py", "--msg"]
+    assert sw.слова_оболочки("python scripts/x.py --msg 'oops") == [
+        "python",
+        "scripts/x.py",
+        "--msg",
+    ]
 
 
 def test_разделители_режут_команды():
@@ -24,6 +28,7 @@ def test_оба_гейта_зовут_один_разбор(monkeypatch):
     """
     import check_paging
     import check_workflows
+
     позвали: list[str] = []
 
     def заглушка(хвост: str, разделители: str = "") -> list[str]:

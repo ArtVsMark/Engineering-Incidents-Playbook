@@ -15,7 +15,6 @@
 а не для одного «представителя»: расходились они именно поодиночке.
 """
 
-
 import pytest
 
 import ghcli
@@ -32,10 +31,12 @@ def свежий_замер(monkeypatch):
 def no_gh(monkeypatch):
     def boom(*a, **k):
         raise FileNotFoundError(2, "No such file or directory", "gh")
+
     monkeypatch.setattr(ghcli.subprocess, "run", boom)
 
 
 # ── сам помощник ───────────────────────────────────────────────────────────
+
 
 def test_нет_инструмента_это_свой_код(monkeypatch):
     no_gh(monkeypatch)
@@ -61,8 +62,10 @@ def test_обычный_отказ_gh_отсутствием_не_считает
     подделка отвечает единицей и на rate_limit тоже. Это ЗАКОННЫЙ исход и он
     не превращает находку в исчерпание — неизмеренное не выдаётся за нулевое.
     """
+
     class Done:
         returncode, stdout, stderr = 1, "", "нет такой задачи"
+
     monkeypatch.setattr(ghcli.subprocess, "run", lambda *a, **k: Done())
     code, out = ghcli.run("issue", "view", "1")
     assert code == 1 and not ghcli.failed(code)
@@ -80,6 +83,7 @@ def test_истечение_gh_это_третий_исход(monkeypatch):
 
     def завис(args, **kw):
         raise ghcli.subprocess.TimeoutExpired(args, kw.get("timeout"))
+
     monkeypatch.setattr(ghcli.subprocess, "run", завис)
     code, out = ghcli.run("api", "repos/o/r/issues")
     assert code == proc.TIMED_OUT and ghcli.failed(code)
@@ -89,21 +93,27 @@ def test_истечение_gh_это_третий_исход(monkeypatch):
 def test_успех_проходит(monkeypatch):
     class Done:
         returncode, stdout, stderr = 0, "[]", ""
+
     monkeypatch.setattr(ghcli.subprocess, "run", lambda *a, **k: Done())
     assert ghcli.run("issue", "list") == (0, "[]")
 
 
 # ── ради чего заведён: четыре скрипта, четыре отдельных случая ────────────
 
-@pytest.mark.parametrize("module,argv", [
-    ("sync_inbox", ["--bindings", "нет-такого.json"]),
-    ("collect_proposals", []),
-    ("sync_labels", ["--repo", "o/r"]),
-    ("main_red", []),
-])
+
+@pytest.mark.parametrize(
+    "module,argv",
+    [
+        ("sync_inbox", ["--bindings", "нет-такого.json"]),
+        ("collect_proposals", []),
+        ("sync_labels", ["--repo", "o/r"]),
+        ("main_red", []),
+    ],
+)
 def test_без_инструмента_скрипт_отдаёт_третий_исход(module, argv, monkeypatch, tmp_path):
     """1 у потребителя означает «очередь, всё в порядке» — отдавать его нельзя."""
     import importlib
+
     mod = importlib.import_module(module)
     no_gh(monkeypatch)
     monkeypatch.setenv("GH_TOKEN", "x")
@@ -114,6 +124,7 @@ def test_без_инструмента_скрипт_отдаёт_третий_и
 
 # ── правила 017 и 058: квота мерится, исчерпание останавливает ─────────────
 
+
 class Ответ:
     """Подделка ответа subprocess. Подделка нарочная и с источником: форма
     снята с живого ответа `gh api rate_limit` (170)."""
@@ -122,11 +133,14 @@ class Ответ:
         self.returncode, self.stdout, self.stderr = code, out, err
 
 
-КВОТА_ЕСТЬ = ('{"resources":{"core":{"remaining":4980,"limit":5000},'
-              '"graphql":{"remaining":4900,"limit":5000},'
-              '"search":{"remaining":30,"limit":30}}}')
-КВОТА_ПУСТА = ('{"resources":{"core":{"remaining":0,"limit":5000},'
-               '"graphql":{"remaining":4900,"limit":5000}}}')
+КВОТА_ЕСТЬ = (
+    '{"resources":{"core":{"remaining":4980,"limit":5000},'
+    '"graphql":{"remaining":4900,"limit":5000},'
+    '"search":{"remaining":30,"limit":30}}}'
+)
+КВОТА_ПУСТА = (
+    '{"resources":{"core":{"remaining":0,"limit":5000},"graphql":{"remaining":4900,"limit":5000}}}'
+)
 
 
 def подменить(monkeypatch, ответы):
@@ -174,8 +188,7 @@ def test_pri_otkaze_snachala_fakt_o_kvote(monkeypatch):
 def test_ischerpanie_eto_svoy_terminalnyy_kod(monkeypatch):
     """ГЛАВНЫЙ СЛУЧАЙ 058: до этого gh отдавал 1, и «лимит кончился» было
     неотличимо от «ничего не нашлось» — вызывающий шёл дальше."""
-    подменить(monkeypatch,
-              [Ответ(1, "", "API rate limit exceeded"), Ответ(0, КВОТА_ПУСТА)])
+    подменить(monkeypatch, [Ответ(1, "", "API rate limit exceeded"), Ответ(0, КВОТА_ПУСТА)])
     код, _ = ghcli.run("issue", "list")
     assert код == ghcli.QUOTA_OUT
     assert ghcli.failed(код)
@@ -192,39 +205,46 @@ def test_otkaz_bez_ischerpaniya_ostayotsya_nahodkoy(monkeypatch):
 def test_zamer_derzhitsya_odin_na_protsess(monkeypatch):
     """«Смотреть первым шагом» не значит «смотреть на каждом»: цена ограничена
     одним лишним вызовом, а следующим отказам факт отдаётся с отметкой."""
-    подменить(monkeypatch, [Ответ(1, "", "not found"), Ответ(0, КВОТА_ЕСТЬ),
-                            Ответ(1, "", "not found")])
+    подменить(
+        monkeypatch, [Ответ(1, "", "not found"), Ответ(0, КВОТА_ЕСТЬ), Ответ(1, "", "not found")]
+    )
     ghcli.run("issue", "view", "1")
     _, вывод = ghcli.run("issue", "view", "2")
     assert "замер этого процесса" in вывод
 
 
-
-@pytest.mark.parametrize("ответ", [
-    # Ровно то, чем площадка ответила 7 сентября: между «rate limit» и
-    # «exceeded» встало «already», и список подстрок этого не поймал.
-    "GraphQL: API rate limit already exceeded for user ID 86671904",
-    "API rate limit exceeded for user ID 86671904",
-    "You have exceeded a secondary rate limit",
-    "HTTP 403: Resource not accessible",
-])
+@pytest.mark.parametrize(
+    "ответ",
+    [
+        # Ровно то, чем площадка ответила 7 сентября: между «rate limit» и
+        # «exceeded» встало «already», и список подстрок этого не поймал.
+        "GraphQL: API rate limit already exceeded for user ID 86671904",
+        "API rate limit exceeded for user ID 86671904",
+        "You have exceeded a secondary rate limit",
+        "HTTP 403: Resource not accessible",
+    ],
+)
 def test_forma_ischerpaniya_uznayotsya(ответ):
     """Форму меняет площадка, смысл — нет: узнаём форму, а не редакцию."""
     assert ghcli.ИСЧЕРПАНИЕ_RE.search(ответ)
 
 
-@pytest.mark.parametrize("ответ", [
-    # Отказ в праве — НЕ исчерпание: лечится выдачей права, а не ожиданием.
-    "GraphQL: Resource not accessible by personal access token (addComment)",
-    "could not resolve to an Issue with the number 999",
-    # Слова про лимит есть, а исчерпания нет: набор двусторонний (140).
-    "rate limit information is not available",
-])
+@pytest.mark.parametrize(
+    "ответ",
+    [
+        # Отказ в праве — НЕ исчерпание: лечится выдачей права, а не ожиданием.
+        "GraphQL: Resource not accessible by personal access token (addComment)",
+        "could not resolve to an Issue with the number 999",
+        # Слова про лимит есть, а исчерпания нет: набор двусторонний (140).
+        "rate limit information is not available",
+    ],
+)
 def test_chuzhoy_otkaz_za_ischerpanie_ne_prinimaetsya(ответ):
     assert not ghcli.ИСЧЕРПАНИЕ_RE.search(ответ)
 
 
 # ── список читается до конца (212) ─────────────────────────────────────────
+
 
 def test_spisok_obhodit_stranitsy_i_razbiraet_po_elementu(monkeypatch):
     """Запрос идёт с --paginate, выражение отдаёт элементы строками JSON."""
@@ -234,10 +254,14 @@ def test_spisok_obhodit_stranitsy_i_razbiraet_po_elementu(monkeypatch):
         спрошено.append(args)
         # две «страницы» — две порции строк; строка-значение в кавычках
         return 0, '"a.py"\n"b.py"\n"c.py"\n'
+
     monkeypatch.setattr(ghcli, "run", подделка)
 
     assert ghcli.список("repos/o/r/pulls/1/files?per_page=100", ".[].filename") == (
-        0, ["a.py", "b.py", "c.py"], "")
+        0,
+        ["a.py", "b.py", "c.py"],
+        "",
+    )
     (args,) = спрошено
     assert "--paginate" in args
     assert args[args.index("--jq") + 1] == ".[].filename | tojson"

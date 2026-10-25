@@ -22,6 +22,7 @@ EXC = "try:\n    pass\nexcept (OSError, ValueError):\n    pass\n"
 
 # ── требования планки ──────────────────────────────────────────────────────
 
+
 def test_future_на_планке_314_находка():
     assert any("PEP 649" in н for н in st.находки_стиля("a.py", FUT, P314))
 
@@ -66,6 +67,7 @@ def test_одноэлементный_кортеж_с_запятой_не_пре
 
 # ── исходы ─────────────────────────────────────────────────────────────────
 
+
 def _дерево(repo, pyproject: str, файлы: dict[str, str]):
     write(repo / "pyproject.toml", pyproject)
     for путь, текст in файлы.items():
@@ -104,6 +106,9 @@ def test_без_ruff_третий_исход(repo, capsys, monkeypatch):
 def test_ruff_получает_цель_из_планки(repo, планка):
     """`str.format` с `%` ruff ловит на любой цели; цель же видна в разборе:
     `typing.Callable` устарел для любой планки выше 3.9 — находка на обеих."""
-    _дерево(repo, f'requires-python = ">={планка[0]}.{планка[1]}"\n',
-            {"scripts/a.py": "from typing import Callable\nf: Callable\n"})
+    _дерево(
+        repo,
+        f'requires-python = ">={планка[0]}.{планка[1]}"\n',
+        {"scripts/a.py": "from typing import Callable\nf: Callable\n"},
+    )
     assert any("UP035" in н for н in st.находки_ruff(repo, ["scripts/a.py"], планка))

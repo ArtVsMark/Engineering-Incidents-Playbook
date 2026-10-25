@@ -37,7 +37,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import sys
 from pathlib import Path
@@ -70,14 +69,14 @@ def share(text: str) -> float:
     letters = [c for c in text if c.isalpha()]
     if not letters:
         return 0.0
-    return sum(1 for c in letters
-               if "а" <= c.lower() <= "я" or c.lower() == "ё") / len(letters)
+    return sum(1 for c in letters if "а" <= c.lower() <= "я" or c.lower() == "ё") / len(letters)
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = parser.parse_args(argv)
     root: Path = args.root
 
@@ -87,9 +86,12 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not ru or not en:
-        print("проверка не отработала: нет пары языковых деревьев — "
-              f"{root / 'rules' / 'ru'} и {root / 'rules' / 'en'}. Сверять "
-              "язык не с чем", file=sys.stderr)
+        print(
+            "проверка не отработала: нет пары языковых деревьев — "
+            f"{root / 'rules' / 'ru'} и {root / 'rules' / 'en'}. Сверять "
+            "язык не с чем",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -100,13 +102,15 @@ def main(argv: list[str] | None = None) -> int:
             problems.append(
                 f"{path.relative_to(root)}: кириллицы {got:.0%} при потолке "
                 f"{EN_CEIL:.0%} — запись положена в английское дерево "
-                "непереведённой. Структура этого не видит: разделы на месте")
+                "непереведённой. Структура этого не видит: разделы на месте"
+            )
     for path in ru:
         got = share(path.read_text(encoding="utf-8"))
         if got < RU_FLOOR:
             problems.append(
                 f"{path.relative_to(root)}: кириллицы {got:.0%} при поле "
-                f"{RU_FLOOR:.0%} — в русском дереве лежит английский текст")
+                f"{RU_FLOOR:.0%} — в русском дереве лежит английский текст"
+            )
 
     if problems:
         print("языковые деревья разошлись с языком:", file=sys.stderr)
@@ -118,22 +122,33 @@ def main(argv: list[str] | None = None) -> int:
     худший_ru = min(share(p.read_text(encoding="utf-8")) for p in ru)
     запас: list[str] = []
     if худший_en > EN_MARGIN:
-        запас.append(f"английское дерево: худшее {худший_en:.3f} при границе "
-                     f"запаса {EN_MARGIN:.3f} (потолок {EN_CEIL})")
+        запас.append(
+            f"английское дерево: худшее {худший_en:.3f} при границе "
+            f"запаса {EN_MARGIN:.3f} (потолок {EN_CEIL})"
+        )
     if худший_ru < RU_MARGIN:
-        запас.append(f"русское дерево: худшее {худший_ru:.3f} при границе "
-                     f"запаса {RU_MARGIN:.3f} (пол {RU_FLOOR})")
+        запас.append(
+            f"русское дерево: худшее {худший_ru:.3f} при границе "
+            f"запаса {RU_MARGIN:.3f} (пол {RU_FLOOR})"
+        )
     if запас:
-        print("порог стоит уже без запаса — корпус подошёл к нему ближе "
-              "половины расстояния до края:", file=sys.stderr)
+        print(
+            "порог стоит уже без запаса — корпус подошёл к нему ближе половины расстояния до края:",
+            file=sys.stderr,
+        )
         for z in запас:
             print(f"  • {z}", file=sys.stderr)
-        print("\n  Шапка обещает запас в разы, и обещание перестало быть "
-              "верным.\n  Пересмотрите порог замером или запись, которая к "
-              "нему подошла (070).", file=sys.stderr)
+        print(
+            "\n  Шапка обещает запас в разы, и обещание перестало быть "
+            "верным.\n  Пересмотрите порог замером или запись, которая к "
+            "нему подошла (070).",
+            file=sys.stderr,
+        )
         return 1
-    print(f"языки на месте: пар {len(ru)}, кириллицы в английском дереве не "
-          f"больше {худший_en:.0%}, в русском не меньше {худший_ru:.0%}")
+    print(
+        f"языки на месте: пар {len(ru)}, кириллицы в английском дереве не "
+        f"больше {худший_en:.0%}, в русском не меньше {худший_ru:.0%}"
+    )
     return 0
 
 

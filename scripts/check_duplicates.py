@@ -62,7 +62,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import json
 import math
@@ -94,7 +93,8 @@ NUM_RE = re.compile(r"^(\d{3})-")
 
 #: Служебные слова каталога. Они есть в каждой записи, и близость по ним
 #: измеряет жанр, а не предмет.
-STOP = frozenset("""
+STOP = frozenset(
+    """
 и в во не на что он с со как а то все она так его но да ты к у же вы за бы по
 только ее мне было вот от меня еще нет о из ему теперь когда даже ну вдруг ли
 если или быть был чтобы этом этого этой этот эта эти тем чем над без под при
@@ -102,7 +102,8 @@ STOP = frozenset("""
 были будет может можно надо нужно должен должна должно который которая которое
 которые которых правило правила правил каталог каталога область след инцидент
 применимость почему
-""".split())
+""".split()
+)
 
 
 def rule_number(name: str) -> str | None:
@@ -111,8 +112,7 @@ def rule_number(name: str) -> str | None:
 
 
 def tokens(s: str) -> list[str]:
-    return [w.lower() for w in WORD.findall(s)
-            if len(w) > 2 and w.lower() not in STOP]
+    return [w.lower() for w in WORD.findall(s) if len(w) > 2 and w.lower() not in STOP]
 
 
 def shingles(text: str, k: int = 4) -> frozenset[str]:
@@ -125,7 +125,7 @@ def shingles(text: str, k: int = 4) -> frozenset[str]:
     flat = " ".join(tokens(text))
     if len(flat) < k:
         return frozenset()
-    return frozenset(flat[i:i + k] for i in range(len(flat) - k + 1))
+    return frozenset(flat[i : i + k] for i in range(len(flat) - k + 1))
 
 
 def jaccard(a: frozenset[str], b: frozenset[str]) -> float:
@@ -159,8 +159,7 @@ def load_rules(root: Path) -> dict[str, dict]:
 def neighbours(num: str, rules: dict[str, dict], limit: int) -> list[tuple[float, str]]:
     """Ближайшие к `num`, по убыванию близости. Само правило исключено."""
     target = rules[num]["shingles"]
-    scored = [(jaccard(target, r["shingles"]), n)
-              for n, r in rules.items() if n != num]
+    scored = [(jaccard(target, r["shingles"]), n) for n, r in rules.items() if n != num]
     # Сортировка по номеру во вторую очередь: одинаковая близость не должна
     # давать разный порядок от запуска к запуску (правило 049 — состояние
     # выводится воспроизводимо).
@@ -222,12 +221,10 @@ def subject(root: Path, target: str, rules: dict[str, dict]):
         except (OSError, UnicodeDecodeError) as exc:
             return None, f"черновик {target!r} не прочитан — {exc}", None
         if not tokens(text):
-            return None, (f"черновик {target!r} пуст после нормализации — "
-                          f"сравнивать нечего"), None
+            return None, (f"черновик {target!r} пуст после нормализации — сравнивать нечего"), None
         return f"черновик {path.name}", text, None
 
-    return None, (f"{target!r} — не номер правила в {RULES_RU}, не файл и "
-                  f"не `-`"), None
+    return None, (f"{target!r} — не номер правила в {RULES_RU}, не файл и не `-`"), None
 
 
 def mode_near(root: Path, target: str) -> int:
@@ -249,14 +246,17 @@ def mode_near(root: Path, target: str) -> int:
         target_sh = shingles(text)
         scored = sorted(
             ((jaccard(target_sh, r["shingles"]), n) for n, r in в_счёте.items()),
-            key=lambda p: (-p[0], p[1]))[:NEAR]
+            key=lambda p: (-p[0], p[1]),
+        )[:NEAR]
 
     print(label)
     print(f"\nближайшие {NEAR} записей каталога:\n")
     for score, other in scored:
         print(f"  {score:.3f}  {other}  {rules[other]['title']}")
-    print(f"\n  Близость — повод прочитать, а не приговор: самая близкая пара "
-          f"каталога\n  законна. Ответ записывается в {ANSWERS}.")
+    print(
+        f"\n  Близость — повод прочитать, а не приговор: самая близкая пара "
+        f"каталога\n  законна. Ответ записывается в {ANSWERS}."
+    )
     return 0
 
 
@@ -287,7 +287,8 @@ def mode_check(root: Path) -> int:
         if num not in rules:
             findings.append(
                 f"{num}: ответ есть, а правила нет. Номер опечатан или запись "
-                f"удалена — ответ убирается вместе с ней")
+                f"удалена — ответ убирается вместе с ней"
+            )
 
     for num in owed:
         answer = answers.get(num)
@@ -299,7 +300,8 @@ def mode_check(root: Path) -> int:
             findings.append(
                 f"{num}: ответа о соседях нет. Ближайшие: {shown}.\n"
                 f"        Прочитайте их и запишите в {ANSWERS}, каких "
-                f"посмотрели и почему это не они")
+                f"посмотрели и почему это не они"
+            )
             continue
 
         if not isinstance(answer, dict):
@@ -309,31 +311,34 @@ def mode_check(root: Path) -> int:
         considered = answer.get("considered")
         verdict = (answer.get("verdict") or "").strip()
 
-        if not isinstance(considered, list) or not all(
-                isinstance(x, str) for x in considered):
+        if not isinstance(considered, list) or not all(isinstance(x, str) for x in considered):
             findings.append(f"{num}: «considered» обязан быть списком номеров")
             continue
 
         unknown = [c for c in considered if c not in rules]
         if unknown:
             findings.append(
-                f"{num}: в «considered» правил не существует: "
-                f"{', '.join(sorted(unknown))}")
+                f"{num}: в «considered» правил не существует: {', '.join(sorted(unknown))}"
+            )
 
         рассмотрено = set(considered) | {num}
-        missed = sorted(n for n in must - рассмотрено
-                        if not (предки.get(n, set()) & рассмотрено)
-                        and not (преемники.get(n, set()) & рассмотрено))
+        missed = sorted(
+            n
+            for n in must - рассмотрено
+            if not (предки.get(n, set()) & рассмотрено)
+            and not (преемники.get(n, set()) & рассмотрено)
+        )
         if missed:
             shown = ", ".join(f"{n} ({s:.3f})" for s, n in top[:REQUIRED_TOP])
             findings.append(
-                f"{num}: верхние соседи не рассмотрены — {', '.join(missed)}. "
-                f"Верхушка: {shown}")
+                f"{num}: верхние соседи не рассмотрены — {', '.join(missed)}. Верхушка: {shown}"
+            )
 
         if len(verdict) < MIN_VERDICT:
             findings.append(
                 f"{num}: вердикт короче {MIN_VERDICT} символов — это отписка, "
-                f"а не ответ. Скажите, чем предмет отличается")
+                f"а не ответ. Скажите, чем предмет отличается"
+            )
 
     # Предупреждение, не отказ: пара ближе самой близкой законной пары корпуса
     # — повод посмотреть, но не повод краснеть. Порога у этой метрики нет, и
@@ -342,7 +347,7 @@ def mode_check(root: Path) -> int:
     hot_pair = ("", "")
     nums = sorted(в_счёте)
     for i, a in enumerate(nums):
-        for b in nums[i + 1:]:
+        for b in nums[i + 1 :]:
             s = jaccard(в_счёте[a]["shingles"], в_счёте[b]["shingles"])
             if s > hottest:
                 hottest, hot_pair = s, (a, b)
@@ -351,9 +356,12 @@ def mode_check(root: Path) -> int:
         print("вопрос о соседях не задан:", file=sys.stderr)
         for f in findings:
             print(f"  • {f}", file=sys.stderr)
-        print(f"\n  Гейт не решает, дубль это или нет — порога у метрики нет, "
-              f"и это\n  измерено. Он требует, чтобы вопрос был задан "
-              f"(задача #91).", file=sys.stderr)
+        print(
+            f"\n  Гейт не решает, дубль это или нет — порога у метрики нет, "
+            f"и это\n  измерено. Он требует, чтобы вопрос был задан "
+            f"(задача #91).",
+            file=sys.stderr,
+        )
         return 1
 
     if notes:
@@ -361,23 +369,32 @@ def mode_check(root: Path) -> int:
         for n in notes:
             print(f"  ~ {n}")
 
-    print(f"вопрос о соседях задан по каждому новому правилу: "
-          f"правил {len(в_счёте)} (ещё {len(выбыли)} заменены), с ответом {len(owed)}, "
-          f"объявлено долгом {baseline}")
-    print(f"  самая близкая пара корпуса: {hot_pair[0]} ↔ {hot_pair[1]} "
-          f"({hottest:.3f}) — законная, порогом не отсекается")
+    print(
+        f"вопрос о соседях задан по каждому новому правилу: "
+        f"правил {len(в_счёте)} (ещё {len(выбыли)} заменены), с ответом {len(owed)}, "
+        f"объявлено долгом {baseline}"
+    )
+    print(
+        f"  самая близкая пара корпуса: {hot_pair[0]} ↔ {hot_pair[1]} "
+        f"({hottest:.3f}) — законная, порогом не отсекается"
+    )
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--near", metavar="ПРЕДМЕТ",
-                       help="показать ближайших соседей: номер правила, файл-черновик\n(ещё без номера) или `-` — читать черновик из потока")
-    group.add_argument("--check", action="store_true",
-                       help="гейт: у каждого правила новее baseline есть ответ")
+    group.add_argument(
+        "--near",
+        metavar="ПРЕДМЕТ",
+        help="показать ближайших соседей: номер правила, файл-черновик\n(ещё без номера) или `-` — читать черновик из потока",
+    )
+    group.add_argument(
+        "--check", action="store_true", help="гейт: у каждого правила новее baseline есть ответ"
+    )
     args = parser.parse_args(argv)
 
     try:

@@ -6,7 +6,6 @@
 (140, 146, 039).
 """
 
-
 import subprocess
 from pathlib import Path
 
@@ -15,8 +14,14 @@ from conftest import write
 
 
 def git(repo: Path, *args: str) -> None:
-    subprocess.run(["git", "-C", str(repo), *args], check=True,
-                   capture_output=True, text=True, encoding="utf-8", timeout=60)
+    subprocess.run(
+        ["git", "-C", str(repo), *args],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
 
 
 def дерево(repo: Path, было: str, стало: str, фрагмент: str | None) -> str:
@@ -28,9 +33,14 @@ def дерево(repo: Path, было: str, стало: str, фрагмент: s
     write(repo / "changelog.d" / "older.added.md", "Было.\n")
     git(repo, "add", "-A")
     git(repo, "commit", "-qm", "основание")
-    основание = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
-                               check=True, capture_output=True, text=True,
-                               encoding="utf-8", timeout=60).stdout.strip()
+    основание = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    ).stdout.strip()
     write(repo / "scripts" / "предмет.py", стало + "\n")
     if фрагмент is not None:
         write(repo / "changelog.d" / "fix.fixed.md", фрагмент)
@@ -68,24 +78,26 @@ def test_сужение_с_ответом_проходит(monkeypatch, repo):
     Держится ЗАДАННЫЙ вопрос, а не ответ на него: судить об ответе машина не
     может, и требовать его форму значило бы получить форму (182).
     """
-    основание = дерево(repo, КЛАСС_БЫЛ, КЛАСС_СТАЛ,
-                       "Починили.\n\nСоседи: спросили — буллет `* ` терялся, закрыт случаем.\n")
+    основание = дерево(
+        repo,
+        КЛАСС_БЫЛ,
+        КЛАСС_СТАЛ,
+        "Починили.\n\nСоседи: спросили — буллет `* ` терялся, закрыт случаем.\n",
+    )
     настроить(monkeypatch, repo)
     assert cn.main(["--range", f"{основание}...HEAD"]) == 0
 
 
 def test_расширение_находкой_не_считается(monkeypatch, repo):
     """Прибыль — не убыль. Гейт, краснеющий на расширении, приучал бы к красному."""
-    основание = дерево(repo, 'X = re.compile(r"[ab]")',
-                       'X = re.compile(r"[abc]")', "Расширили.\n")
+    основание = дерево(repo, 'X = re.compile(r"[ab]")', 'X = re.compile(r"[abc]")', "Расширили.\n")
     настроить(monkeypatch, repo)
     assert cn.main(["--range", f"{основание}...HEAD"]) == 0
 
 
 def test_перенос_множества_находкой_не_считается(monkeypatch, repo):
     """Убыло в одном месте, прибыло в другом — счёт по изменению целиком (051)."""
-    основание = дерево(repo, 'S = {"a", "b"}',
-                       '# переехало ниже\nS = {"a", "b"}', "Переставили.\n")
+    основание = дерево(repo, 'S = {"a", "b"}', '# переехало ниже\nS = {"a", "b"}', "Переставили.\n")
     настроить(monkeypatch, repo)
     assert cn.main(["--range", f"{основание}...HEAD"]) == 0
 
@@ -117,9 +129,7 @@ def test_самопроверка_проходит():
 def test_обрезанный_список_называет_число():
     """Убрано больше показа — остаток назван числом, а не потерян (016, #879)."""
     члены = [f'"x{i:02d}"' for i in range(15)]
-    diff = ("--- a/s.py\n+++ b/s.py\n"
-            f"-ИМЕНА = {{{', '.join(члены)}}}\n"
-            f"+ИМЕНА = {{{члены[0]}}}\n")
+    diff = f"--- a/s.py\n+++ b/s.py\n-ИМЕНА = {{{', '.join(члены)}}}\n+ИМЕНА = {{{члены[0]}}}\n"
     вышло = cn.сужения(diff)
     assert any("и ещё 2" in в for в in вышло), вышло
 
@@ -131,8 +141,10 @@ def test_полный_список_без_хвоста():
 
 def test_обрезанный_класс_называет_число():
     """Ветка символьного класса тоже называет остаток числом (обзор #885)."""
-    diff = ("--- a/s.py\n+++ b/s.py\n"
-            '-ЗНАКИ = re.compile(r"[abcdefghijklmnop]")\n'
-            '+ЗНАКИ = re.compile(r"[a]")\n')
+    diff = (
+        "--- a/s.py\n+++ b/s.py\n"
+        '-ЗНАКИ = re.compile(r"[abcdefghijklmnop]")\n'
+        '+ЗНАКИ = re.compile(r"[a]")\n'
+    )
     вышло = cn.сужения(diff)
     assert any("символьный класс" in в and "и ещё 3" in в for в in вышло), вышло

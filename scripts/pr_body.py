@@ -51,7 +51,6 @@
         команда снятия заметки проверяются там, куда их доставила площадка.
 """
 
-
 import argparse
 import re
 import sys
@@ -61,7 +60,8 @@ from pathlib import Path
 #: отвергать связь, которую площадка признаёт, — ложный отказ (правило 097).
 CLOSING_RE = re.compile(
     r"(?im)^[ \t>*-]*(clos(?:e|es|ed)|fix(?:es|ed)?|resolv(?:e|es|ed))\s+"
-    r"(?:#|https://github\.com/[\w.-]+/[\w.-]+/issues/)(\d+)\b")
+    r"(?:#|https://github\.com/[\w.-]+/[\w.-]+/issues/)(\d+)\b"
+)
 
 #: Задача в хвосте заголовка — местное соглашение: `… (#83)`. Отсюда берётся
 #: номер, когда автор его не назвал явно.
@@ -167,16 +167,20 @@ def build(subject: str, body: str) -> tuple[str, str | None]:
         return body, None
     m = MENTION_RE.search(subject.strip())
     if not m:
-        return body, ("ни закрывающей строки в теле, ни задачи в хвосте "
-                      f"заголовка, ни строки «{EXEMPT_HINT}»")
+        return body, (
+            f"ни закрывающей строки в теле, ни задачи в хвосте заголовка, ни строки «{EXEMPT_HINT}»"
+        )
     line = f"Closes #{m.group(1)}"
     # Строка встаёт ПЕРЕД блоком трейлеров, а не после него. Иначе трейлеры
     # перестают быть последним абзацем, и `git log --format=%(trailers:…)`
     # их не находит — гейт атрибуции остался бы без предмета там, где текст
     # переиспользуют как сообщение коммита (правило 123).
     paras = body.rstrip("\n").split("\n\n")
-    if paras and paras[-1].strip() and all(
-            TRAILER_RE.match(ln) for ln in paras[-1].strip().split("\n")):
+    if (
+        paras
+        and paras[-1].strip()
+        and all(TRAILER_RE.match(ln) for ln in paras[-1].strip().split("\n"))
+    ):
         paras.insert(len(paras) - 1, line)
     else:
         paras.append(line)
@@ -186,18 +190,20 @@ def build(subject: str, body: str) -> tuple[str, str | None]:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     mode = ap.add_mutually_exclusive_group(required=True)
-    mode.add_argument("--build", action="store_true",
-                      help="собрать тело изменения со строкой связи")
-    mode.add_argument("--check", action="store_true",
-                      help="проверить готовое тело изменения")
+    mode.add_argument(
+        "--build", action="store_true", help="собрать тело изменения со строкой связи"
+    )
+    mode.add_argument("--check", action="store_true", help="проверить готовое тело изменения")
     ap.add_argument("--subject", default="", help="заголовок первого коммита ветки")
     ap.add_argument("--body-file", type=Path, help="файл с телом; «-» — стандартный ввод")
     args = ap.parse_args(argv)
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if args.body_file is None:
-        print("проверка не отработала: --body-file не передан — тело "
-              "изменения брать неоткуда", file=sys.stderr)
+        print(
+            "проверка не отработала: --body-file не передан — тело изменения брать неоткуда",
+            file=sys.stderr,
+        )
         return 2
     if str(args.body_file) == "-":
         body = sys.stdin.read()
@@ -209,21 +215,25 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.check:
         if not body.strip():
-            print(f"проверка не отработала: {args.body_file} пуст — "
-                  "проверять нечего", file=sys.stderr)
+            print(
+                f"проверка не отработала: {args.body_file} пуст — проверять нечего", file=sys.stderr
+            )
             return 2
         # СНЯТИЕ ПРОВЕРЯЕТСЯ ПЕРВЫМ И НЕЗАВИСИМО ОТ СВЯЗИ С ЗАДАЧЕЙ: это
         # другой предмет, и тело с верной связью бывает с мёртвым снятием.
         мёртвые = dead_marks(body)
         if мёртвые:
-            print("в теле изменения есть строка снятия, которая ничего не "
-                  "снимет:\n  "
-                  + "\n  ".join(мёртвые)
-                  + "\n  Механизм находок ищет СЕМЬ шестнадцатеричных знаков "
-                    "сразу за двоеточием;\n  всё остальное для человека "
-                    "выглядит разобранным, а для машины не совпадает ни с чем.\n"
-                    f"  Форма: «{СНЯТИЕ_HINT}» — отпечаток стоит слева от "
-                    "заметки в задаче.", file=sys.stderr)
+            print(
+                "в теле изменения есть строка снятия, которая ничего не "
+                "снимет:\n  "
+                + "\n  ".join(мёртвые)
+                + "\n  Механизм находок ищет СЕМЬ шестнадцатеричных знаков "
+                "сразу за двоеточием;\n  всё остальное для человека "
+                "выглядит разобранным, а для машины не совпадает ни с чем.\n"
+                f"  Форма: «{СНЯТИЕ_HINT}» — отпечаток стоит слева от "
+                "заметки в задаче.",
+                file=sys.stderr,
+            )
             return 1
         rid = linked(body)
         if rid:
@@ -235,22 +245,28 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"изменение делает часть задачи #{part}, остаток назван")
                 return 0
             # ── исход 1 ────────────────────────────────────────────────────
-            print(f"изменение объявлено частью задачи #{part}, а остаток не "
-                  "назван.\n  «Часть» без остатка неотличима от полного "
-                  "закрытия: площадка о частичности\n  не знает ничего, и "
-                  "сказать о ней может только автор (правило 173).\n"
-                  f"  Допишите строку «{REST_HINT}».", file=sys.stderr)
+            print(
+                f"изменение объявлено частью задачи #{part}, а остаток не "
+                "назван.\n  «Часть» без остатка неотличима от полного "
+                "закрытия: площадка о частичности\n  не знает ничего, и "
+                "сказать о ней может только автор (правило 173).\n"
+                f"  Допишите строку «{REST_HINT}».",
+                file=sys.stderr,
+            )
             return 1
         if exempt(body):
             print("изменение объявлено без задачи, причина названа")
             return 0
         # ── исход 1 ────────────────────────────────────────────────────────
-        print("в теле изменения нет строки связи с задачей.\n"
-              "  Площадка закрывает задачу по слову в ТЕЛЕ; ссылка `(#NNN)` в "
-              "заголовке — упоминание,\n  и при слиянии не закроет ничего "
-              "(правило 064).\n"
-              f"  Ответов три: «Closes #NNN», «Part of #NNN» с остатком, либо "
-              f"«{EXEMPT_HINT}».", file=sys.stderr)
+        print(
+            "в теле изменения нет строки связи с задачей.\n"
+            "  Площадка закрывает задачу по слову в ТЕЛЕ; ссылка `(#NNN)` в "
+            "заголовке — упоминание,\n  и при слиянии не закроет ничего "
+            "(правило 064).\n"
+            f"  Ответов три: «Closes #NNN», «Part of #NNN» с остатком, либо "
+            f"«{EXEMPT_HINT}».",
+            file=sys.stderr,
+        )
         return 1
 
     out, problem = build(args.subject, body)
@@ -258,8 +274,7 @@ def main(argv: list[str] | None = None) -> int:
         # Сборка НЕ отказывает: изменение без строки связи всё равно должно
         # открыться, иначе отмена останется без адресата (правило 147). Отказ
         # живёт в `--check`, на самом изменении, где его видно.
-        print(f"::warning::строка связи с задачей не найдена — {problem}",
-              file=sys.stderr)
+        print(f"::warning::строка связи с задачей не найдена — {problem}", file=sys.stderr)
     sys.stdout.write(out)
     return 0
 

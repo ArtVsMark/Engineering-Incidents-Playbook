@@ -36,7 +36,6 @@
   064 — зона изменения выводится из тронутых путей и сверяется с тем, что на нём стоит.
 """
 
-
 import argparse
 import fnmatch
 import re
@@ -47,7 +46,7 @@ ROOT = Path(__file__).resolve().parent.parent
 LABELS = ROOT / ".github" / "labels.yml"
 
 NAME_RE = re.compile(r'^-\s*name:\s*"([^"]+)"')
-PATHS_RE = re.compile(r'^\s*paths:\s*\[(.*)\]\s*$')
+PATHS_RE = re.compile(r"^\s*paths:\s*\[(.*)\]\s*$")
 ITEM_RE = re.compile(r'"([^"]+)"')
 
 
@@ -73,8 +72,10 @@ def zones(path: Path = LABELS) -> tuple[dict[str, list[str]], str | None]:
         if m and current:
             out[current] = ITEM_RE.findall(m.group(1))
     if not out:
-        return {}, (f"в {path.name} нет ни одной метки с `paths` — сверять "
-                    "зону не с чем. Это не «зон нет», это проверка не отработала")
+        return {}, (
+            f"в {path.name} нет ни одной метки с `paths` — сверять "
+            "зону не с чем. Это не «зон нет», это проверка не отработала"
+        )
     return out, None
 
 
@@ -112,17 +113,17 @@ def selftest() -> int:
         if вышло != ждём:
             bad.append(f"{name}: ждали {ждём}, вышло {вышло}")
 
-    case("запись каталога", ["rules/ru/001-a.md", "rules/en/001-a.md"],
-         ["area/rules"])
-    case("гейт и его набор", ["scripts/check_links.py", "tests/test_x.py"],
-         ["area/gates"])
+    case("запись каталога", ["rules/ru/001-a.md", "rules/en/001-a.md"], ["area/rules"])
+    case("гейт и его набор", ["scripts/check_links.py", "tests/test_x.py"], ["area/gates"])
     case("витрина", ["README.md"], ["area/showcase"])
-    case("контракт", ["export/rules.json", ".rules/bindings.json"],
-         ["area/export"])
+    case("контракт", ["export/rules.json", ".rules/bindings.json"], ["area/export"])
     case("заготовка", ["templates/bindings.json"], ["area/templates"])
     # Изменение через границы несёт ОБЕ зоны, а не первую попавшуюся.
-    case("через границу", ["rules/ru/001-a.md", "scripts/check_links.py"],
-         ["area/gates", "area/rules"])
+    case(
+        "через границу",
+        ["rules/ru/001-a.md", "scripts/check_links.py"],
+        ["area/gates", "area/rules"],
+    )
     # ГЛАВНАЯ ГРАНИЦА: файл вне зон зоной не становится и находкой не делает.
     case("вне зон", ["LICENSE", ".gitignore"], [])
     # `README.md` витрины не должен ловиться на `rules/README.md`.
@@ -130,6 +131,7 @@ def selftest() -> int:
 
     # Исход 2: набор меток без `paths` — «сверять не с чем», а не «зон нет».
     import tempfile
+
     пусто = Path(tempfile.mkdtemp()) / "labels.yml"
     пусто.write_text('- name: "area/rules"\n  color: "1d76db"\n', encoding="utf-8")
     _, err2 = zones(пусто)
@@ -138,18 +140,22 @@ def selftest() -> int:
 
     for b in bad:
         print(f"  ✗ {b}", file=sys.stderr)
-    print(f"самопроверка зон: случаев 9, провалов {len(bad)}",
-          file=sys.stderr if bad else sys.stdout)
+    print(
+        f"самопроверка зон: случаев 9, провалов {len(bad)}", file=sys.stderr if bad else sys.stdout
+    )
     return 1 if bad else 0
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--paths-from", type=Path,
-                    help="файл со списком тронутых путей, по одному в строке")
-    ap.add_argument("--have", default=None,
-                    help="метки, стоящие на изменении, через запятую; "
-                         "без ключа — только напечатать нужные")
+    ap.add_argument(
+        "--paths-from", type=Path, help="файл со списком тронутых путей, по одному в строке"
+    )
+    ap.add_argument(
+        "--have",
+        default=None,
+        help="метки, стоящие на изменении, через запятую; без ключа — только напечатать нужные",
+    )
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args(argv)
 
@@ -161,20 +167,23 @@ def main(argv: list[str] | None = None) -> int:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
     if not args.paths_from:
-        print("проверка не отработала: не сказано, какие пути тронуты "
-              "(--paths-from)", file=sys.stderr)
+        print(
+            "проверка не отработала: не сказано, какие пути тронуты (--paths-from)", file=sys.stderr
+        )
         return 2
     try:
-        paths = [l.strip() for l in
-                 args.paths_from.read_text(encoding="utf-8").splitlines()
-                 if l.strip()]
+        paths = [
+            l.strip() for l in args.paths_from.read_text(encoding="utf-8").splitlines() if l.strip()
+        ]
     except OSError as e:
-        print(f"проверка не отработала: список путей не прочитан — {e}",
-              file=sys.stderr)
+        print(f"проверка не отработала: список путей не прочитан — {e}", file=sys.stderr)
         return 2
     if not paths:
-        print(f"проверка не отработала: {args.paths_from} пуст — изменение "
-              "без файлов сверять не с чем", file=sys.stderr)
+        print(
+            f"проверка не отработала: {args.paths_from} пуст — изменение "
+            "без файлов сверять не с чем",
+            file=sys.stderr,
+        )
         return 2
 
     надо = needed(paths, zmap)
@@ -185,12 +194,14 @@ def main(argv: list[str] | None = None) -> int:
     есть = {x.strip() for x in args.have.split(",") if x.strip()}
     нет = [z for z in надо if z not in есть]
     if нет:
-        print("зона изменения не проставлена: " + ", ".join(нет),
-              file=sys.stderr)
-        print("  Метка — вход механизма, а не украшение (правило 064): от неё "
-              "зависят\n  очередь и зона работы. Ставит её конвейер при "
-              "открытии изменения;\n  если её нет — открыли не конвейером либо "
-              "сняли руками.", file=sys.stderr)
+        print("зона изменения не проставлена: " + ", ".join(нет), file=sys.stderr)
+        print(
+            "  Метка — вход механизма, а не украшение (правило 064): от неё "
+            "зависят\n  очередь и зона работы. Ставит её конвейер при "
+            "открытии изменения;\n  если её нет — открыли не конвейером либо "
+            "сняли руками.",
+            file=sys.stderr,
+        )
         return 1
     print(f"зона изменения на месте: {', '.join(надо) if надо else 'зон не тронуто'}")
     return 0

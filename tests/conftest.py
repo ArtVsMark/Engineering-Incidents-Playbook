@@ -10,7 +10,6 @@
 копией.
 """
 
-
 import sys
 from pathlib import Path
 

@@ -29,7 +29,6 @@
 Коды:    0 собрано · 1 собрать нечего · 2 проверка не отработала
 """
 
-
 import argparse
 import json
 import re
@@ -84,19 +83,27 @@ jobs:
 """
 
 PROPOSALS = {
-    "_": ("Правила, родившиеся ЗДЕСЬ и предлагаемые общему каталогу. Адрес этого "
-          "файла называется в реестре каталога, .rules/consumers.json, поле "
-          "proposals. Контракт: "
-          f"https://github.com/{CATALOGUE}/blob/main/export/README.md"),
-    "_номер": ("Номера здесь нет и быть не может: его присваивает каталог при "
-               "приёме. Номера не переиспользуются, и если два проекта выберут "
-               "номер независимо, столкновение уже нечем починить. Поля id, "
-               "number, rule — ошибка, и прогон каталога о ней скажет."),
-    "_что_слать": ("Инцидент, а не готовую запись: что сломалось, с числами и "
-                   "последовательностью событий. Оба языковых дерева, словарь "
-                   "областей, ответ о соседях и разрешимый след живут в каталоге."),
-    "_пусто": ("Пустой список — законное состояние и означает «предлагать пока "
-               "нечего». Отсутствие файла означает другое: «канал не подключён»."),
+    "_": (
+        "Правила, родившиеся ЗДЕСЬ и предлагаемые общему каталогу. Адрес этого "
+        "файла называется в реестре каталога, .rules/consumers.json, поле "
+        "proposals. Контракт: "
+        f"https://github.com/{CATALOGUE}/blob/main/export/README.md"
+    ),
+    "_номер": (
+        "Номера здесь нет и быть не может: его присваивает каталог при "
+        "приёме. Номера не переиспользуются, и если два проекта выберут "
+        "номер независимо, столкновение уже нечем починить. Поля id, "
+        "number, rule — ошибка, и прогон каталога о ней скажет."
+    ),
+    "_что_слать": (
+        "Инцидент, а не готовую запись: что сломалось, с числами и "
+        "последовательностью событий. Оба языковых дерева, словарь "
+        "областей, ответ о соседях и разрешимый след живут в каталоге."
+    ),
+    "_пусто": (
+        "Пустой список — законное состояние и означает «предлагать пока "
+        "нечего». Отсутствие файла означает другое: «канал не подключён»."
+    ),
     "proposals": [],
 }
 
@@ -108,14 +115,15 @@ def pinned_ref(contract: Path) -> tuple[str | None, str | None]:
     except OSError as e:
         return None, f"контракт не прочитан — {e}"
     if not m:
-        return None, ("в контракте нет маркера закреплённого тега — брать номер "
-                      "неоткуда, а вписывать его сюда значит завести второе "
-                      "место для версии")
+        return None, (
+            "в контракте нет маркера закреплённого тега — брать номер "
+            "неоткуда, а вписывать его сюда значит завести второе "
+            "место для версии"
+        )
     return m.group(1).strip(), None
 
 
-def build(repo: str, ids: list[str], ref: str,
-          контракты: dict[str, str]) -> dict[str, str]:
+def build(repo: str, ids: list[str], ref: str, контракты: dict[str, str]) -> dict[str, str]:
     """Пути и содержимое набора. Ключ — путь внутри репозитория проекта.
 
     НОМЕРА ФОРМАТОВ БЕРУТСЯ ИЗ ВЫГРУЗКИ, А НЕ ВПИСАНЫ. Здесь стояло «1.0» у
@@ -127,17 +135,23 @@ def build(repo: str, ids: list[str], ref: str,
         "schema": контракты["bindings"],
         "project": repo,
         "catalogue": f"https://github.com/{CATALOGUE}",
-        "_": ("Ответ ЭТОГО проекта по каждому правилу каталога. Статус — active, "
-              "rejected, not-applicable или unreviewed; у двух отрицательных "
-              "обязательна причина в поле why, у active — mechanism и where."),
-        "_зачем": ("Ответ живёт здесь, а не в каталоге, потому что здесь живёт "
-                   "механизм: одно правило в разных проектах держится по-разному."),
+        "_": (
+            "Ответ ЭТОГО проекта по каждому правилу каталога. Статус — active, "
+            "rejected, not-applicable или unreviewed; у двух отрицательных "
+            "обязательна причина в поле why, у active — mechanism и where."
+        ),
+        "_зачем": (
+            "Ответ живёт здесь, а не в каталоге, потому что здесь живёт "
+            "механизм: одно правило в разных проектах держится по-разному."
+        ),
         "rules": {i: {"status": "unreviewed"} for i in ids},
     }
     return {
         ".rules/bindings.json": json.dumps(bindings, ensure_ascii=False, indent=2) + "\n",
-        ".rules/proposals.json": json.dumps({**PROPOSALS, "schema": контракты["proposals"]},
-                                            ensure_ascii=False, indent=2) + "\n",
+        ".rules/proposals.json": json.dumps(
+            {**PROPOSALS, "schema": контракты["proposals"]}, ensure_ascii=False, indent=2
+        )
+        + "\n",
         ".github/workflows/rules-inbox.yml": WORKFLOW.format(catalogue=CATALOGUE, ref=ref),
     }
 
@@ -145,16 +159,20 @@ def build(repo: str, ids: list[str], ref: str,
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--repo", required=True, metavar="ВЛАДЕЛЕЦ/ИМЯ")
-    ap.add_argument("--out", type=Path, required=True, metavar="ПАПКА",
-                    help="куда сложить набор; папка создаётся")
+    ap.add_argument(
+        "--out",
+        type=Path,
+        required=True,
+        metavar="ПАПКА",
+        help="куда сложить набор; папка создаётся",
+    )
     ap.add_argument("--export", type=Path, default=EXPORT)
     ap.add_argument("--contract", type=Path, default=CONTRACT)
     args = ap.parse_args(argv)
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not REPO_RE.match(args.repo):
-        print(f"проверка не отработала: {args.repo!r} не похоже на "
-              "«владелец/имя»", file=sys.stderr)
+        print(f"проверка не отработала: {args.repo!r} не похоже на «владелец/имя»", file=sys.stderr)
         return 2
     try:
         doc = json.loads(args.export.read_text(encoding="utf-8"))
@@ -164,8 +182,7 @@ def main(argv: list[str] | None = None) -> int:
         ids = [r["id"] for r in doc["rules"] if r["id"] in в_силе]
         контракты = {к: str(doc["contracts"][к]) for к in ("bindings", "proposals")}
     except (OSError, ValueError, KeyError, TypeError) as e:
-        print(f"проверка не отработала: экспорт каталога не разобран — {e}",
-              file=sys.stderr)
+        print(f"проверка не отработала: экспорт каталога не разобран — {e}", file=sys.stderr)
         return 2
     ref, err = pinned_ref(args.contract)
     if err:
@@ -174,8 +191,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if not ids:
-        print("собирать нечего: в экспорте каталога нет ни одного правила",
-              file=sys.stderr)
+        print("собирать нечего: в экспорте каталога нет ни одного правила", file=sys.stderr)
         return 1
 
     # ── исход 0 ────────────────────────────────────────────────────────────
@@ -184,16 +200,25 @@ def main(argv: list[str] | None = None) -> int:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(body, encoding="utf-8")
         print(f"  {rel}")
-    print(f"набор для {args.repo} собран: правил {len(ids)}, действие закреплено "
-          f"на {ref}")
-    print("\nПоложите эти файлы в репозиторий проекта, затем добавьте его в "
-          "реестр каталога\n.rules/consumers.json одной записью:\n")
-    print(json.dumps({
-        "repo": args.repo, "role": "потребитель", "access": "public",
-        "since": "<день объявления, ГГГГ-ММ-ДД>",
-        "bindings": f"https://raw.githubusercontent.com/{args.repo}/main/.rules/bindings.json",
-        "proposals": f"https://raw.githubusercontent.com/{args.repo}/main/.rules/proposals.json",
-    }, ensure_ascii=False, indent=2))
+    print(f"набор для {args.repo} собран: правил {len(ids)}, действие закреплено на {ref}")
+    print(
+        "\nПоложите эти файлы в репозиторий проекта, затем добавьте его в "
+        "реестр каталога\n.rules/consumers.json одной записью:\n"
+    )
+    print(
+        json.dumps(
+            {
+                "repo": args.repo,
+                "role": "потребитель",
+                "access": "public",
+                "since": "<день объявления, ГГГГ-ММ-ДД>",
+                "bindings": f"https://raw.githubusercontent.com/{args.repo}/main/.rules/bindings.json",
+                "proposals": f"https://raw.githubusercontent.com/{args.repo}/main/.rules/proposals.json",
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
     return 0
 
 

@@ -57,15 +57,19 @@ ROOT = Path(__file__).resolve().parent.parent
 #: Что считается механизмом — те же места, что у мета-гейтов (220).
 МЕХАНИЗМ_RE = re.compile(
     r"^(scripts/check_[^/]+\.py|\.claude/hooks/[^/]+\.(py|sh)|\.github/workflows/[^/]+\.ya?ml"
-    r"|\.github/actions/[^/]+/action\.yml|\.claude/skills/[^/]+/SKILL\.md)$")
+    r"|\.github/actions/[^/]+/action\.yml|\.claude/skills/[^/]+/SKILL\.md)$"
+)
 #: Запись о семье — строка, где рядом с номером 162 названы семья, соседи или
 #: вопрос к ним. Голое «162» записью не считается: число в тексте ничего не
 #: говорит о том, кого спросили (обзор #884).
 НОМЕР_RE = re.compile(r"(?<!\d)162(?!\d)")
 #: Границы слов: «семь»/«семи» — числительное, «спрос» — потребность; запись о
 #: семье называет семью, соседа или спросившего (обзор #888).
-СЕМЬЯ_RE = re.compile(r"\b(?:семь[яеюи]|семей|семейств\w*|сосед\w*|спросил\w*|"
-                      r"спрашивал\w*|family|neighbou?rs?)\b", re.I)
+СЕМЬЯ_RE = re.compile(
+    r"\b(?:семь[яеюи]|семей|семейств\w*|сосед\w*|спросил\w*|"
+    r"спрашивал\w*|family|neighbou?rs?)\b",
+    re.I,
+)
 
 
 def записано(текст: str) -> bool:
@@ -84,17 +88,26 @@ def проверить_базу(root: Path, base: str) -> None:
     базу, и на отсутствующий путь — «path does not exist», код 128 (замер
     16.10), и битая база молча превратила бы каждый механизм в новый.
     """
-    done = proc.run(["git", "-C", str(root), "rev-parse", "--verify", "--quiet",
-                     f"{base}^{{commit}}"],
-                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), "rev-parse", "--verify", "--quiet", f"{base}^{{commit}}"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         raise НеОтработал(f"база {base} не разобрана как коммит в {root}")
 
 
 def на_базе(root: Path, base: str, путь: str) -> bool:
     """Есть ли путь на базе изменения; база уже проверена."""
-    done = proc.run(["git", "-C", str(root), "cat-file", "-e", f"{base}:{путь}"],
-                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), "cat-file", "-e", f"{base}:{путь}"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     return done.returncode == 0
 
 
@@ -102,16 +115,22 @@ def main(argv: list[str] | None = None) -> int:
     """Проверить механизмы, добавленные изменением."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=ROOT)
-    ap.add_argument("--paths-from", type=Path, required=True,
-                    help="файл со списком путей изменения, по одному в строке")
+    ap.add_argument(
+        "--paths-from",
+        type=Path,
+        required=True,
+        help="файл со списком путей изменения, по одному в строке",
+    )
     ap.add_argument("--base", required=True, help="коммит базы изменения")
     args = ap.parse_args(argv)
     try:
-        пути = [p.strip() for p in args.paths_from.read_text(encoding="utf-8").splitlines()
-                if p.strip()]
+        пути = [
+            p.strip() for p in args.paths_from.read_text(encoding="utf-8").splitlines() if p.strip()
+        ]
     except OSError as exc:
-        print(f"проверка не отработала: не прочитан {exc.filename}: {exc.strerror}",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: не прочитан {exc.filename}: {exc.strerror}", file=sys.stderr
+        )
         return 2
     кандидаты = [p for p in пути if МЕХАНИЗМ_RE.match(p) and (args.root / p).is_file()]
     try:
@@ -128,10 +147,12 @@ def main(argv: list[str] | None = None) -> int:
         print("новый механизм не называет, у кого из семьи спросили (162):", file=sys.stderr)
         for p in молчат:
             print(f"  • {p}", file=sys.stderr)
-        print("\n  Запишите в описании механизма, чем этот предмет держится у проектов\n"
-              "  семьи и что из этого следует: подключили, взяли идею или ни у кого нет\n"
-              "  — со ссылкой на 162. Как спросить — навык ask-the-family-first.",
-              file=sys.stderr)
+        print(
+            "\n  Запишите в описании механизма, чем этот предмет держится у проектов\n"
+            "  семьи и что из этого следует: подключили, взяли идею или ни у кого нет\n"
+            "  — со ссылкой на 162. Как спросить — навык ask-the-family-first.",
+            file=sys.stderr,
+        )
         return 1
     print(f"новые механизмы называют семью: {len(новые)}")
     return 0

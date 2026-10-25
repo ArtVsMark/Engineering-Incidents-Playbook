@@ -12,7 +12,6 @@
 потому подключается путём, а не импортом из общего каталога.
 """
 
-
 import importlib.util
 import io
 import json
@@ -40,8 +39,8 @@ def окно(monkeypatch):
     двадцати двух отказали разом, когда в рабочей ветке появился коммит с
     неполным телом. Тело проверяется своими случаями ниже (018).
     """
-    def настроить(command: str, branch: str | None = "agent/своя",
-                  tool: str = "Bash"):
+
+    def настроить(command: str, branch: str | None = "agent/своя", tool: str = "Bash"):
         monkeypatch.setattr(pg, "current_branch", lambda: branch)
         monkeypatch.setattr(pg, "тело_не_проходит", lambda корень: None)
         # ТРЕТИЙ ПРЕДМЕТ ХУКА ТОЖЕ ОТКЛЮЧЁН, И ПО ТОЙ ЖЕ ПРИЧИНЕ. Проверка
@@ -50,6 +49,7 @@ def окно(monkeypatch):
         # Своими случаями она проверяется ниже (018).
         monkeypatch.setattr(pg, "ветка_воскресает", lambda b: False)
         monkeypatch.setattr("sys.stdin", io.StringIO(событие(command, tool)))
+
     return настроить
 
 
@@ -127,20 +127,21 @@ def test_telo_dokumenta_na_vhode_ne_komanda(окно):
 
     Случай «строка в файле не команда» в наборе уже был, но проверял запись
     ЧУЖИМ инструментом; запись через оболочку им не покрывалась (140)."""
-    окно("cat > f.yml <<'YML'\n"
-         "echo 'переименуйте: git push -u origin agent/чужая'\n"
-         "YML\n"
-         "echo записано")
+    окно(
+        "cat > f.yml <<'YML'\n"
+        "echo 'переименуйте: git push -u origin agent/чужая'\n"
+        "YML\n"
+        "echo записано"
+    )
 
     assert pg.main() == 0
 
 
 def test_tolchok_posle_dokumenta_vidno(окно, capsys):
     """Граница с другой стороны: пропускается ТЕЛО, а не всё остальное."""
-    окно("cat > f.txt <<'EOF'\n"
-         "git push origin agent/из-текста\n"
-         "EOF\n"
-         "git push origin agent/настоящая")
+    окно(
+        "cat > f.txt <<'EOF'\ngit push origin agent/из-текста\nEOF\ngit push origin agent/настоящая"
+    )
 
     assert pg.main() == 2
     err = capsys.readouterr().err
@@ -199,13 +200,16 @@ def test_imya_podstanovkoy_ne_ugadyvaetsya(окно):
 # осмысленна, — между коммитом и толчком (018).
 
 
-@pytest.mark.parametrize("команда, ждём, что", [
-    ("git push -u origin ветка", True, "настоящий толчок"),
-    ("/usr/bin/git push origin x", True, "полный путь к git"),
-    ('echo "git push origin x" > /tmp/a', False, "слова внутри строки-аргумента"),
-    ("git status", False, "не толчок вовсе"),
-    ("cat > f <<'EOF'\ngit push origin main\nEOF", False, "внутри heredoc — текст"),
-])
+@pytest.mark.parametrize(
+    "команда, ждём, что",
+    [
+        ("git push -u origin ветка", True, "настоящий толчок"),
+        ("/usr/bin/git push origin x", True, "полный путь к git"),
+        ('echo "git push origin x" > /tmp/a', False, "слова внутри строки-аргумента"),
+        ("git status", False, "не толчок вовсе"),
+        ("cat > f <<'EOF'\ngit push origin main\nEOF", False, "внутри heredoc — текст"),
+    ],
+)
 def test_tolchok_uznayotsya_razborom(команда, ждём, что):
     """ЛОЖНЫЙ ОТКАЗ ЗДЕСЬ ДОРОЖЕ ПРОПУСКА: он останавливает работу, которая
     ничего не нарушает (051). Первая редакция спрашивала «есть ли слово push
@@ -289,8 +293,7 @@ def test_толчок_через_ключ_каталога_виден(окно):
 
 def test_переход_через_ключ_каталога_учтён(окно):
     """`git -C путь switch X && git push origin X` — толчок в СВОЮ ветку."""
-    assert pg.targets("git -C /дерево switch тема && git push origin тема",
-                      "своя") == []
+    assert pg.targets("git -C /дерево switch тема && git push origin тема", "своя") == []
 
 
 def test_обе_половины_сторожа_отвечают_одинаково(окно):
@@ -358,8 +361,7 @@ def test_двойное_тире_объявляет_пути_а_не_ветку(
     возвращал `export/rules.json` как имя ветки, и толчок в свою объявлялся
     чужим. `checkout` решает две задачи, и различает их `--`: за ним пути.
     """
-    команда = ("git checkout -- export/rules.json && "
-               "git push -u origin agent/своя")
+    команда = "git checkout -- export/rules.json && git push -u origin agent/своя"
     assert pg.targets(команда, "agent/своя") == []
     окно(команда)
     assert pg.main() == 0
@@ -372,8 +374,7 @@ def test_дерево_перед_двойным_тире_тоже_не_пере�
     Прежний разбор возвращал `main` и объявлял чужой ветку, в которой окно и
     стоит.
     """
-    assert pg.targets("git checkout main -- файл && git push origin своя",
-                      "своя") == []
+    assert pg.targets("git checkout main -- файл && git push origin своя", "своя") == []
 
 
 def test_точка_именем_ветки_не_бывает(окно):
@@ -388,10 +389,8 @@ def test_после_восстановления_чужая_всё_равно_ч
     Свернув «в команде есть `--`» в «команду не смотрим», сторож пропустил бы
     ровно то, ради чего заведён (140).
     """
-    assert pg.targets("git checkout -- файл && git push origin чужая",
-                      "своя") == ["чужая"]
-    assert pg.targets("git checkout чужая && git push origin своя",
-                      "своя") == ["своя"]
+    assert pg.targets("git checkout -- файл && git push origin чужая", "своя") == ["чужая"]
+    assert pg.targets("git checkout чужая && git push origin своя", "своя") == ["своя"]
 
 
 def test_у_switch_двойное_тире_не_отменяет_перехода(окно):
@@ -405,19 +404,15 @@ def test_у_switch_двойное_тире_не_отменяет_переход�
     делалась (195, 051).
     """
     assert pg.switched_to(["git", "switch", "--", "чужая"]) == "чужая"
-    assert pg.targets("git switch -- чужая && git push origin чужая",
-                      "своя") == []
+    assert pg.targets("git switch -- чужая && git push origin чужая", "своя") == []
     # И вторая сторона: перейдя в чужую, толчок в СВОЮ становится находкой.
-    assert pg.targets("git switch -- чужая && git push origin своя",
-                      "своя") == ["своя"]
+    assert pg.targets("git switch -- чужая && git push origin своя", "своя") == ["своя"]
 
 
 def test_создающие_ключи_switch_не_задеты(окно):
     """Соседи по перечислению: `-c` и `--orphan` заводят ветку и переходят."""
-    assert pg.targets("git switch -c новая && git push origin новая",
-                      "своя") == []
-    assert pg.targets("git switch --orphan новая && git push origin новая",
-                      "своя") == []
+    assert pg.targets("git switch -c новая && git push origin новая", "своя") == []
+    assert pg.targets("git switch --orphan новая && git push origin новая", "своя") == []
 
 
 # ── третий предмет: толчок в ветку, которую площадка удалила при слиянии ────
@@ -430,8 +425,10 @@ def test_создающие_ключи_switch_не_задеты(окно):
 
 def подменить_ссылки(monkeypatch, свой: str | None, там: str | None) -> None:
     """Ответы двух вызовов git: своя ссылка на origin и ответ площадки."""
+
     def вывод(argv):
         return свой if "rev-parse" in argv else там
+
     monkeypatch.setattr(pg, "_вывод", вывод)
 
 
@@ -488,12 +485,13 @@ def test_udalenie_vetki_ne_schitaetsya_voskresheniem(окно, monkeypatch, caps
 
 def test_soderzhimoe_uznayotsya_vo_vsekh_zakonnykh_formakh():
     """Три формы чистого удаления и три формы обычного толчка (140)."""
-    for команда in ("git push origin --delete чужая/stale",
-                    "git push origin -d чужая/stale",
-                    "git push origin :чужая/stale"):
+    for команда in (
+        "git push origin --delete чужая/stale",
+        "git push origin -d чужая/stale",
+        "git push origin :чужая/stale",
+    ):
         assert pg.везёт_содержимое(команда, "agent/своя") is False, команда
-    for команда in ("git push -u origin agent/своя", "git push",
-                    "git push origin"):
+    for команда in ("git push -u origin agent/своя", "git push", "git push origin"):
         assert pg.везёт_содержимое(команда, "agent/своя") is True, команда
 
 
@@ -505,9 +503,11 @@ def test_smeshannaya_forma_ne_gasit_voskreshenie():
     где-нибудь в строке сворачивал оба исхода в один флаг, и воскрешение
     проходило молча — при том что `targets` ту же форму разбирает верно (022).
     """
-    for команда in ("git push origin agent/своя :чужая/stale",
-                    "git push -u origin agent/своя && git push origin --delete чужая/stale",
-                    "git push origin --delete чужая/stale && git push -u origin agent/своя"):
+    for команда in (
+        "git push origin agent/своя :чужая/stale",
+        "git push -u origin agent/своя && git push origin --delete чужая/stale",
+        "git push origin --delete чужая/stale && git push -u origin agent/своя",
+    ):
         assert pg.везёт_содержимое(команда, "agent/своя") is True, команда
 
 
@@ -572,7 +572,7 @@ def test_podstanovka_obolochki_ne_schitaetsya_etoy_vetkoy():
     """«Неизвестно» и «эта ветка» — разные ответы, и путать их значит отвергать
     недостоверное (051). Стойка та же, что у `targets` двумя вопросами выше."""
     assert pg.везёт_содержимое("git push origin $b", "agent/своя") is False
-    assert pg.везёт_содержимое("git push origin $b") is True    # хоть куда-то — да
+    assert pg.везёт_содержимое("git push origin $b") is True  # хоть куда-то — да
 
 
 def test_tolchok_v_druguyu_vetku_ne_ostanavlivaetsya_khukom(окно, monkeypatch, capsys):
@@ -590,7 +590,7 @@ def test_perekhod_v_druguyu_vetku_snimaet_vopros():
     """
     команда = "git switch другая && git push -u origin другая"
     assert pg.везёт_содержимое(команда, "agent/своя") is False
-    assert pg.везёт_содержимое(команда) is True     # хоть куда-нибудь — да
+    assert pg.везёт_содержимое(команда) is True  # хоть куда-нибудь — да
 
 
 def test_obychnyy_tolchok_v_voskresshuyu_vsyo_eshchyo_otvergaetsya(окно, monkeypatch, capsys):
@@ -610,26 +610,33 @@ def test_obychnyy_tolchok_v_voskresshuyu_vsyo_eshchyo_otvergaetsya(окно, mon
 # ПРЕДПИСАННОЙ — инструкция окна требует толкать с повтором, а повтор пишется
 # циклом. Набор двусторонний (140): видит обёрнутое, молчит на тексте.
 
-@pytest.mark.parametrize("команда", [
-    "for i in 1 2 3; do git push; done",
-    "while true; do git push -u origin своя; done",
-    "until git push; do sleep 2; done",
-    "if true; then git push; fi",
-    "( git push )",
-    "{ git push; }",
-    "! git push",
-])
+
+@pytest.mark.parametrize(
+    "команда",
+    [
+        "for i in 1 2 3; do git push; done",
+        "while true; do git push -u origin своя; done",
+        "until git push; do sleep 2; done",
+        "if true; then git push; fi",
+        "( git push )",
+        "{ git push; }",
+        "! git push",
+    ],
+)
 def test_tolchok_vnutri_konstruktsii_obolochki_viden(команда):
     """Сторож видит толчок, обёрнутый конструкцией оболочки."""
     assert pg.толкает(команда) is True
 
 
-@pytest.mark.parametrize("команда", [
-    "echo do git push",
-    "echo 'for i in 1; do git push; done'",
-    "printf 'then git push'",
-    "git stash push scripts/a.py scripts/b.py",
-])
+@pytest.mark.parametrize(
+    "команда",
+    [
+        "echo do git push",
+        "echo 'for i in 1; do git push; done'",
+        "printf 'then git push'",
+        "git stash push scripts/a.py scripts/b.py",
+    ],
+)
 def test_tekst_pro_tolchok_ostayotsya_tekstom(команда):
     """Обратная сторона: снимается только ВЕДУЩЕЕ слово оболочки.
 
@@ -650,11 +657,14 @@ def test_skobka_ne_stanovitsya_imenem_vetki():
     assert pg.targets("( git push origin чужая )", "своя") == ["чужая"]
 
 
-@pytest.mark.parametrize("команда", [
-    "echo 'for i in 1; do git push; done'",
-    "echo 'cd X && git push'",
-    "echo \'a; git push\'",
-])
+@pytest.mark.parametrize(
+    "команда",
+    [
+        "echo 'for i in 1; do git push; done'",
+        "echo 'cd X && git push'",
+        "echo 'a; git push'",
+    ],
+)
 def test_razdeliteli_ne_rezhut_vnutri_kavychek(команда):
     """Разрез уважает кавычки, и это защита НАМЕРЕННАЯ, а не случайная.
 
@@ -686,14 +696,18 @@ def test_tsikl_s_povtorom_dokhodit_do_proverki_voskresheniya(окно, monkeypat
 # с punctuation_chars: он знает и кавычки, и экранирование, и отделяет
 # операторы словами. Своим остаётся только перечень ведущих слов оболочки.
 
-@pytest.mark.parametrize("команда", [
-    r"""git commit -m 'Don'\''t forget' && git push origin agent/чужая""",
-    r"""echo Don\'t forget && git push origin agent/чужая""",
-    r'''git commit -m "he said \"no\"" && git push''',
-    "case $x in a) git push ;; esac",
-    "case $x in a) git push origin чужая ;; b) git push ;; esac",
-    "echo x\ngit push",
-])
+
+@pytest.mark.parametrize(
+    "команда",
+    [
+        r"""git commit -m 'Don'\''t forget' && git push origin agent/чужая""",
+        r"""echo Don\'t forget && git push origin agent/чужая""",
+        r"""git commit -m "he said \"no\"" && git push""",
+        "case $x in a) git push ;; esac",
+        "case $x in a) git push origin чужая ;; b) git push ;; esac",
+        "echo x\ngit push",
+    ],
+)
 def test_formy_slepye_u_pervoy_pochinki_teper_vidny(команда):
     """Шесть форм, невидимых после первой починки, видны после второй."""
     assert pg.толкает(команда) is True
@@ -726,23 +740,30 @@ def test_nomer_potoka_ne_stanovitsya_vetkoy():
 # берётся posix-разбором, а к разбору с кавычками откатывается, только если в
 # ней стоит закавыченный разделитель. Набор двусторонний (140).
 
-@pytest.mark.parametrize("команда", [
-    "git p''ush origin agent/чужая",
-    'git "p"ush origin agent/чужая',
-    r"git pu\sh origin agent/чужая",
-    "g''it push origin agent/чужая",
-    'echo a";"b && git push origin agent/чужая',
-])
+
+@pytest.mark.parametrize(
+    "команда",
+    [
+        "git p''ush origin agent/чужая",
+        'git "p"ush origin agent/чужая',
+        r"git pu\sh origin agent/чужая",
+        "g''it push origin agent/чужая",
+        'echo a";"b && git push origin agent/чужая',
+    ],
+)
 def test_formy_slepye_u_vtoroy_pochinki_teper_vidny(команда):
     """Пять форм, невидимых после второй починки: оболочка склеивает куски слова."""
     assert pg.targets(команда, "своя") == ["agent/чужая"]
 
 
-@pytest.mark.parametrize("команда", [
-    "echo '&&' git push origin agent/чужая",
-    'echo ";" git push origin agent/чужая',
-    "printf '%s' '|' git push origin agent/чужая",
-])
+@pytest.mark.parametrize(
+    "команда",
+    [
+        "echo '&&' git push origin agent/чужая",
+        'echo ";" git push origin agent/чужая',
+        "printf '%s' '|' git push origin agent/чужая",
+    ],
+)
 def test_zakavychennyy_razdelitel_ostayotsya_tekstom(команда):
     """Обратная сторона: posix-разбор снимает кавычки ДО сверки с разделителями,
     и без отката текст `'&&'` стал бы настоящим `&&`, а хвост — толчком.
@@ -759,14 +780,21 @@ def test_zakavychennyy_razdelitel_ostayotsya_tekstom(команда):
 # (183). `raises` сужает ожидание до несовпадения: исключение из самого
 # сторожа ожидаемым отказом не засчитается.
 
-@pytest.mark.xfail(strict=True, raises=AssertionError,
-                   reason="граница отката: в строке с закавыченным разделителем "
-                          "кавычка в начале слова режет его надвое")
-@pytest.mark.parametrize("команда", [
-    'git "p"ush origin agent/чужая ";"',
-    "\"g\"it push origin agent/чужая ';'",
-    'git push origin "agent/"чужая ";"',
-])
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="граница отката: в строке с закавыченным разделителем "
+    "кавычка в начале слова режет его надвое",
+)
+@pytest.mark.parametrize(
+    "команда",
+    [
+        'git "p"ush origin agent/чужая ";"',
+        "\"g\"it push origin agent/чужая ';'",
+        'git push origin "agent/"чужая ";"',
+    ],
+)
 def test_granitsa_otkata_razrezannoe_slovo(команда):
     """Кавычка первым знаком слова: разбор с кавычками закрывает слово на ней.
     Разрезанная программа или подкоманда прячет толчок целиком, разрезанная
@@ -774,10 +802,13 @@ def test_granitsa_otkata_razrezannoe_slovo(команда):
     assert "agent/чужая" in pg.targets(команда, "своя")
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError,
-                   reason="граница отката: строку, которую не разбирает разбор "
-                          "с кавычками, берёт posix-разбор, и закавыченный "
-                          "разделитель в ней снимается до сверки")
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="граница отката: строку, которую не разбирает разбор "
+    "с кавычками, берёт posix-разбор, и закавыченный "
+    "разделитель в ней снимается до сверки",
+)
 def test_granitsa_otkata_nerazbiraemaya_stroka():
     """`a";"b` не разбирается без posix, и откатываться не к чему: `'&&'`
     становится настоящим `&&`, а хвост — толчком. Ложный отказ, а не пропуск."""
@@ -785,6 +816,7 @@ def test_granitsa_otkata_nerazbiraemaya_stroka():
 
 
 # ── зависший вызов не превращается в пропуск (обзор #882) ──────────────────
+
 
 def _завис():
     raise pg.subprocess.TimeoutExpired(["git", "rev-parse", "--abbrev-ref", "HEAD"], 60)
@@ -812,10 +844,15 @@ def test_дедлайны_стража_короче_предела_хука():
     import ast
     import json
     import re
+
     корень = ХУК.parent.parent.parent
     настройки = json.loads((корень / ".claude" / "settings.json").read_text(encoding="utf-8"))
-    предел = next(h["timeout"] for g in настройки["hooks"]["PreToolUse"]
-                  for h in g["hooks"] if "push_guard" in h["command"])
+    предел = next(
+        h["timeout"]
+        for g in настройки["hooks"]["PreToolUse"]
+        for h in g["hooks"]
+        if "push_guard" in h["command"]
+    )
     # Дедлайн считается столько раз, сколько вызывается функция, где он стоит:
     # `_вывод` идёт дважды, и по литералам сумма выходила 90 с вместо 110 с
     # (обзор #887). Прямые литералы в тексте без функции — по разу.
@@ -826,11 +863,13 @@ def test_дедлайны_стража_короче_предела_хука():
             f = узел.func
             имя = f.id if isinstance(f, ast.Name) else getattr(f, "attr", "")
             вызовы[имя] = вызовы.get(имя, 0) + 1
-    сроки = [(ф.name, к.value.value * max(1, вызовы.get(ф.name, 0)))
-             for ф in ast.walk(дерево) if isinstance(ф, ast.FunctionDef)
-             for к in ast.walk(ф)
-             if isinstance(к, ast.keyword) and к.arg == "timeout"
-             and isinstance(к.value, ast.Constant)]
+    сроки = [
+        (ф.name, к.value.value * max(1, вызовы.get(ф.name, 0)))
+        for ф in ast.walk(дерево)
+        if isinstance(ф, ast.FunctionDef)
+        for к in ast.walk(ф)
+        if isinstance(к, ast.keyword) and к.arg == "timeout" and isinstance(к.value, ast.Constant)
+    ]
     литералов = len(re.findall(r"timeout=(\d+)", ХУК.read_text(encoding="utf-8")))
     assert len(сроки) == литералов, "дедлайн вне функции или не числом — посчитайте его"
     assert сроки and sum(с for _, с in сроки) < предел, (сроки, предел)
@@ -839,8 +878,10 @@ def test_дедлайны_стража_короче_предела_хука():
 def test_нет_git_при_толчке_закрывает(окно, monkeypatch, capsys):
     """OSError давал код 1 — неблокирующий пропуск толчка (#883)."""
     окно("git push -u origin agent/своя")
+
     def нет_git():
         raise FileNotFoundError(2, "No such file", "git")
+
     monkeypatch.setattr(pg, "current_branch", нет_git)
     assert pg.main() == 2
     assert "закрыт" in capsys.readouterr().err

@@ -5,7 +5,6 @@
 прогонов — форма своих же `.github/workflows/*.yml`.
 """
 
-
 import python_badge as pb
 import pytest
 
@@ -17,8 +16,7 @@ def без_площадки(monkeypatch):
     monkeypatch.setattr(pb, "версия_pypi", lambda пакет: None)
     # Манифест сборок setup-python: в наборе вышли все серии, которые
     # встречаются в деревьях, — невышедшую задаёт тест явно.
-    monkeypatch.setattr(pb, "сборки_площадки",
-                        lambda: {(3, м) for м in range(10, 20)})
+    monkeypatch.setattr(pb, "сборки_площадки", lambda: {(3, м) for м in range(10, 20)})
 
 
 def прогон(conclusion: str, когда: str, id_: int = 1) -> dict:
@@ -33,31 +31,47 @@ def дерево(tmp_path, ci: str = "3.14", next_: str | None = "3.15"):
     wf = tmp_path / ".github" / "workflows"
     wf.mkdir(parents=True)
     (wf / "ci.yml").write_text(
-        f'        with:\n          python-version: "{ci}"\n', encoding="utf-8")
+        f'        with:\n          python-version: "{ci}"\n', encoding="utf-8"
+    )
     if next_:
         (wf / "python-next.yml").write_text(
             f'        with:\n          python-version: "{next_}"\n'
-            "          allow-prereleases: true\n", encoding="utf-8")
+            "          allow-prereleases: true\n",
+            encoding="utf-8",
+        )
     return tmp_path
 
 
 # ── состояние: последний прогон С ВЕРДИКТОМ ────────────────────────────────
 
+
 def test_последний_прошёл_зелёный():
-    assert pb.состояние([прогон("failure", "2026-10-01T10:00Z"),
-                         прогон("success", "2026-10-01T11:00Z")]) == "pass"
+    assert (
+        pb.состояние(
+            [прогон("failure", "2026-10-01T10:00Z"), прогон("success", "2026-10-01T11:00Z")]
+        )
+        == "pass"
+    )
 
 
 def test_последний_упал_красный():
-    assert pb.состояние([прогон("success", "2026-10-01T10:00Z"),
-                         прогон("failure", "2026-10-01T11:00Z")]) == "fail"
+    assert (
+        pb.состояние(
+            [прогон("success", "2026-10-01T10:00Z"), прогон("failure", "2026-10-01T11:00Z")]
+        )
+        == "fail"
+    )
 
 
 def test_отмена_не_вердикт_решает_предыдущий():
     """Отменённый прогон ничего не проверил (039): цвет даёт прошлый вердикт,
     а не серый и не зелёный."""
-    assert pb.состояние([прогон("failure", "2026-10-01T10:00Z"),
-                         прогон("cancelled", "2026-10-01T11:00Z")]) == "fail"
+    assert (
+        pb.состояние(
+            [прогон("failure", "2026-10-01T10:00Z"), прогон("cancelled", "2026-10-01T11:00Z")]
+        )
+        == "fail"
+    )
 
 
 def test_прогонов_нет_серый():
@@ -67,9 +81,9 @@ def test_прогонов_нет_серый():
 
 # ── версии берутся у прогонов, а не пишутся рукой (005) ────────────────────
 
+
 def test_версии_из_прогонов(tmp_path):
-    assert pb.версии(дерево(tmp_path)) == [("3.14", "ci.yml"),
-                                           ("3.15", "python-next.yml")]
+    assert pb.версии(дерево(tmp_path)) == [("3.14", "ci.yml"), ("3.15", "python-next.yml")]
 
 
 def test_сдвиг_планки_сдвигает_подпись(tmp_path):
@@ -78,25 +92,29 @@ def test_сдвиг_планки_сдвигает_подпись(tmp_path):
 
 # ── картинка ───────────────────────────────────────────────────────────────
 
+
 def test_три_части_и_python_цветом_основного_ci():
     картинка = pb.рисунок(pb.зоны_проверок([("3.14", "pass"), ("3.15", "fail")], "pass"))
     assert картинка.count("<rect x=") >= 3
     assert ">Python<" in картинка and ">3.14<" in картинка and ">3.15<" in картинка
     зелёный, красный = pb.СОСТОЯНИЯ["pass"][0], pb.СОСТОЯНИЯ["fail"][0]
     # Порядок цветов частей: CI (подпись), Python, 3.14, 3.15.
-    цвета = [кусок.split('fill="')[1].split('"')[0]
-             for кусок in картинка.split('<rect x="')[1:5]]
+    цвета = [кусок.split('fill="')[1].split('"')[0] for кусок in картинка.split('<rect x="')[1:5]]
     assert цвета == [pb.ПОДПИСЬ, зелёный, зелёный, красный]
     assert "CI не пройден" in картинка  # слово в подсказке, а не только цвет
 
 
 def test_main_python_красный_когда_ci_упал(tmp_path):
     out = tmp_path / "python.svg"
-    исходы = {"ci.yml": [прогон("failure", "2026-10-01T11:00Z")],
-              "python-next.yml": []}
-    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out)],
-                   прогоны=исходы.__getitem__,
-                   работы=lambda run_id: [работа("failure", "ubuntu-latest")]) == 0
+    исходы = {"ci.yml": [прогон("failure", "2026-10-01T11:00Z")], "python-next.yml": []}
+    assert (
+        pb.main(
+            ["--root", str(дерево(tmp_path)), "--out", str(out)],
+            прогоны=исходы.__getitem__,
+            работы=lambda run_id: [работа("failure", "ubuntu-latest")],
+        )
+        == 0
+    )
     картинка = out.read_text(encoding="utf-8")
     # Первая часть — префикс «CI» (#719); исход CI несёт часть «Python».
     python = картинка.split('<rect x="')[2]
@@ -106,39 +124,48 @@ def test_main_python_красный_когда_ci_упал(tmp_path):
 
 # ── исход 2: «не спросили» не рисуется серым (039) ─────────────────────────
 
+
 def test_площадка_молчит_это_третий_исход_а_не_серый(tmp_path):
     out = tmp_path / "python.svg"
 
     def молчит(файл: str) -> list[dict]:
         raise pb.НеОтветила("gh: 502")
 
-    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out)],
-                   прогоны=молчит) == 2
+    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out)], прогоны=молчит) == 2
     assert not out.exists()
 
 
 def test_нет_прогонов_с_версией_это_третий_исход(tmp_path):
     (tmp_path / ".github" / "workflows").mkdir(parents=True)
-    assert pb.main(["--root", str(tmp_path), "--out", str(tmp_path / "p.svg")],
-                   прогоны=lambda f: []) == 2
+    assert (
+        pb.main(["--root", str(tmp_path), "--out", str(tmp_path / "p.svg")], прогоны=lambda f: [])
+        == 2
+    )
 
 
 # ── части по ОС: где проект действительно проверяется ──────────────────────
+
 
 def test_непроверенные_ос_серые_а_не_пропадают():
     """Мультиплатформенность решает проект, а значок показывает её честно:
     при прогоне на одном Linux windows и mac стоят серыми — «не проверено»."""
     assert pb.по_ос([работа("success", "ubuntu-latest")]) == [
-        ("linux", "pass"), ("windows", "none"), ("mac", "none")]
+        ("linux", "pass"),
+        ("windows", "none"),
+        ("mac", "none"),
+    ]
 
 
 def test_упавшая_ос_видна_поимённо():
     """Индикатор поломки: из трёх ОС красная та, на которой упало."""
-    assert pb.по_ос([работа("success", "ubuntu-latest"),
-                     работа("failure", "windows-latest"),
-                     работа("success", "macos-14"),
-                     работа("success", "windows-latest")]) == [
-        ("linux", "pass"), ("windows", "fail"), ("mac", "pass")]
+    assert pb.по_ос(
+        [
+            работа("success", "ubuntu-latest"),
+            работа("failure", "windows-latest"),
+            работа("success", "macos-14"),
+            работа("success", "windows-latest"),
+        ]
+    ) == [("linux", "pass"), ("windows", "fail"), ("mac", "pass")]
 
 
 def test_ос_берутся_у_решающего_прогона(tmp_path):
@@ -149,11 +176,21 @@ def test_ос_берутся_у_решающего_прогона(tmp_path):
         спрошено.append(run_id)
         return [работа("success", "ubuntu-latest")]
 
-    исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z", 7),
-                         прогон("cancelled", "2026-10-01T11:00Z", 8)],
-              "python-next.yml": [прогон("success", "2026-10-01T10:00Z", 9)]}
-    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out)],
-                   прогоны=исходы.__getitem__, работы=работы) == 0
+    исходы = {
+        "ci.yml": [
+            прогон("success", "2026-10-01T10:00Z", 7),
+            прогон("cancelled", "2026-10-01T11:00Z", 8),
+        ],
+        "python-next.yml": [прогон("success", "2026-10-01T10:00Z", 9)],
+    }
+    assert (
+        pb.main(
+            ["--root", str(дерево(tmp_path)), "--out", str(out)],
+            прогоны=исходы.__getitem__,
+            работы=работы,
+        )
+        == 0
+    )
     assert спрошено == [7]  # отменённый 8 ничего не проверил
     картинка = out.read_text(encoding="utf-8")
     assert ">linux<" in картинка and ">windows<" in картинка and ">mac<" in картинка
@@ -161,38 +198,47 @@ def test_ос_берутся_у_решающего_прогона(tmp_path):
 
 # ── у потребителя: свой файл CI и версия матрицей ──────────────────────────
 
+
 def test_версия_матрицей_берётся_у_планки(tmp_path):
     """`python-version: ${{ matrix.python }}` числа не несёт; подпись тогда
     — планка из requires-python, которую гейт версий держит равной прогонам."""
     wf = tmp_path / ".github" / "workflows"
     wf.mkdir(parents=True)
     (wf / "tests.yml").write_text(
-        "          python-version: ${{ matrix.python }}\n", encoding="utf-8")
-    (tmp_path / "pyproject.toml").write_text(
-        'requires-python = ">=3.14"\n', encoding="utf-8")
+        "          python-version: ${{ matrix.python }}\n", encoding="utf-8"
+    )
+    (tmp_path / "pyproject.toml").write_text('requires-python = ">=3.14"\n', encoding="utf-8")
     assert pb.версии(tmp_path, "tests.yml") == [("3.14", "tests.yml")]
 
 
 def test_пропущенная_работа_не_делает_ос_серой():
     """Находка обзора #649: порядок работ не решает цвет — fail > pass > none."""
-    assert pb.по_ос([работа("skipped", "ubuntu-latest"),
-                     работа("success", "ubuntu-latest")])[0] == ("linux", "pass")
-    assert pb.по_ос([работа("success", "ubuntu-latest"),
-                     работа("failure", "ubuntu-latest"),
-                     работа("skipped", "ubuntu-latest")])[0] == ("linux", "fail")
+    assert pb.по_ос([работа("skipped", "ubuntu-latest"), работа("success", "ubuntu-latest")])[
+        0
+    ] == ("linux", "pass")
+    assert pb.по_ос(
+        [
+            работа("success", "ubuntu-latest"),
+            работа("failure", "ubuntu-latest"),
+            работа("skipped", "ubuntu-latest"),
+        ]
+    )[0] == ("linux", "fail")
 
 
 def test_полная_страница_без_вердикта_это_третий_исход(tmp_path):
     """Находка обзора #649: за краем страницы вердикт может быть, и серый
     «не проводилась» о неспрошенном был бы ложью (039)."""
     out = tmp_path / "python.svg"
-    без_вердикта = [прогон("cancelled", f"2026-10-01T{i:02d}:00Z", i)
-                    for i in range(pb.ПРЕДЕЛ)]
-    исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z")],
-              "python-next.yml": без_вердикта}
-    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out)],
-                   прогоны=исходы.__getitem__,
-                   работы=lambda run_id: []) == 2
+    без_вердикта = [прогон("cancelled", f"2026-10-01T{i:02d}:00Z", i) for i in range(pb.ПРЕДЕЛ)]
+    исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z")], "python-next.yml": без_вердикта}
+    assert (
+        pb.main(
+            ["--root", str(дерево(tmp_path)), "--out", str(out)],
+            прогоны=исходы.__getitem__,
+            работы=lambda run_id: [],
+        )
+        == 2
+    )
     assert not out.exists()
 
 
@@ -212,15 +258,22 @@ def test_без_версии_основного_ci_это_третий_исхо�
     wf.mkdir(parents=True)
     (wf / "pr-check.yml").write_text("    runs-on: ubuntu-latest\n", encoding="utf-8")
     (wf / "python-next.yml").write_text(
-        '          python-version: "3.15"\n          allow-prereleases: true\n',
-        encoding="utf-8")
+        '          python-version: "3.15"\n          allow-prereleases: true\n', encoding="utf-8"
+    )
     out = tmp_path / "python.svg"
-    assert pb.main(["--root", str(tmp_path), "--ci", "pr-check.yml", "--out", str(out)],
-                   прогоны=lambda f: [], работы=lambda r: []) == 2
+    assert (
+        pb.main(
+            ["--root", str(tmp_path), "--ci", "pr-check.yml", "--out", str(out)],
+            прогоны=lambda f: [],
+            работы=lambda r: [],
+        )
+        == 2
+    )
     assert not out.exists()
 
 
 # ── зоны выпуска: покрытие, release / PyPI, версия ─────────────────────────
+
 
 def test_выпуск_совпадает_с_pypi_зелёный_и_коротко():
     часть = pb.зона_выпуска("v1.5.0", "1.5.0", True)[1]
@@ -253,28 +306,58 @@ def test_порядок_зон_версия_последней(tmp_path):
     out = tmp_path / "python.svg"
     (tmp_path / "v.json").write_text('{"message": "1.5.3"}', encoding="utf-8")
     (tmp_path / "c.json").write_text('{"message": "72%"}', encoding="utf-8")
-    исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z")],
-              "python-next.yml": [прогон("success", "2026-10-01T10:00Z")]}
-    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out),
-                    "--coverage-json", str(tmp_path / "c.json"),
-                    "--version-json", str(tmp_path / "v.json")],
-                   прогоны=исходы.__getitem__,
-                   работы=lambda r: [работа("success", "ubuntu-latest")],
-                   релиз=lambda: "v1.5.0") == 0
+    исходы = {
+        "ci.yml": [прогон("success", "2026-10-01T10:00Z")],
+        "python-next.yml": [прогон("success", "2026-10-01T10:00Z")],
+    }
+    assert (
+        pb.main(
+            [
+                "--root",
+                str(дерево(tmp_path)),
+                "--out",
+                str(out),
+                "--coverage-json",
+                str(tmp_path / "c.json"),
+                "--version-json",
+                str(tmp_path / "v.json"),
+            ],
+            прогоны=исходы.__getitem__,
+            работы=lambda r: [работа("success", "ubuntu-latest")],
+            релиз=lambda: "v1.5.0",
+        )
+        == 0
+    )
     картинка = out.read_text(encoding="utf-8")
-    порядок = [картинка.index(f">{т}<") for т in
-               ("Python", "linux", "coverage", "release / PyPI", "version")]
+    порядок = [
+        картинка.index(f">{т}<")
+        for т in ("Python", "linux", "coverage", "release / PyPI", "version")
+    ]
     assert порядок == sorted(порядок)
 
 
 def test_молчание_pypi_это_третий_исход(tmp_path):
     def молчит(пакет: str) -> str | None:
         raise pb.НеОтветила("PyPI: timeout")
+
     исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z")], "python-next.yml": []}
-    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(tmp_path / "p.svg"),
-                    "--pypi", "stepik-python-grader"],
-                   прогоны=исходы.__getitem__, работы=lambda r: [],
-                   релиз=lambda: "v2.8.0", pypi=молчит) == 2
+    assert (
+        pb.main(
+            [
+                "--root",
+                str(дерево(tmp_path)),
+                "--out",
+                str(tmp_path / "p.svg"),
+                "--pypi",
+                "stepik-python-grader",
+            ],
+            прогоны=исходы.__getitem__,
+            работы=lambda r: [],
+            релиз=lambda: "v2.8.0",
+            pypi=молчит,
+        )
+        == 2
+    )
 
 
 def test_второе_покрытие_по_всем_ос_рядом_через_слеш():
@@ -301,6 +384,7 @@ def test_каждый_порог_покрытия_имеет_цвет_на_зн�
     """Находка обзора #653: имя порога из coverage_badge.COLORS без цвета
     здесь уронило бы сборку KeyError — расхождение ловится набором."""
     import coverage_badge
+
     assert {имя for _, имя in coverage_badge.COLORS} <= set(pb.ЦВЕТ_ПОКРЫТИЯ)
 
 
@@ -309,13 +393,37 @@ def test_заданный_но_отсутствующий_файл_значка_
     «не измерено» — значок не собирается, прежний остаётся (039)."""
     исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z")], "python-next.yml": []}
     out = tmp_path / "p.svg"
-    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out),
-                    "--coverage-json", str(tmp_path / "нет.json")],
-                   прогоны=исходы.__getitem__, работы=lambda r: []) == 2
+    assert (
+        pb.main(
+            [
+                "--root",
+                str(дерево(tmp_path)),
+                "--out",
+                str(out),
+                "--coverage-json",
+                str(tmp_path / "нет.json"),
+            ],
+            прогоны=исходы.__getitem__,
+            работы=lambda r: [],
+        )
+        == 2
+    )
     (tmp_path / "битый.json").write_text("{", encoding="utf-8")
-    assert pb.main(["--root", str(tmp_path), "--out", str(out),
-                    "--version-json", str(tmp_path / "битый.json")],
-                   прогоны=исходы.__getitem__, работы=lambda r: []) == 2
+    assert (
+        pb.main(
+            [
+                "--root",
+                str(tmp_path),
+                "--out",
+                str(out),
+                "--version-json",
+                str(tmp_path / "битый.json"),
+            ],
+            прогоны=исходы.__getitem__,
+            работы=lambda r: [],
+        )
+        == 2
+    )
     assert not out.exists()
 
 
@@ -323,6 +431,7 @@ def test_нет_пакета_на_pypi_узнаётся_по_коду_а_не_п
     """Находка обзора #653: «404» в порте или адресе не значит «пакета нет».
     Форма строки, которую отдаёт fetch, закреплена здесь же."""
     import urllib.error
+
     отказ = f"не прочитан: {urllib.error.HTTPError('u', 404, 'Not Found', None, None)}"
     assert pb.НЕТ_ПАКЕТА.search(отказ)
     assert not pb.НЕТ_ПАКЕТА.search("не прочитан: <urlopen error [Errno 111] host:4040>")
@@ -335,23 +444,39 @@ def test_файл_значка_без_числа_это_третий_исход(
     исходы = {"ci.yml": [прогон("success", "2026-10-01T10:00Z")], "python-next.yml": []}
     out = tmp_path / "p.svg"
     корень = дерево(tmp_path)
-    for имя, тело, ключ in (("c.json", '{"message": "n/a"}', "--coverage-json"),
-                            ("v.json", '{"message": ""}', "--version-json")):
+    for имя, тело, ключ in (
+        ("c.json", '{"message": "n/a"}', "--coverage-json"),
+        ("v.json", '{"message": ""}', "--version-json"),
+    ):
         (tmp_path / имя).write_text(тело, encoding="utf-8")
-        assert pb.main(["--root", str(корень), "--out", str(out), ключ, str(tmp_path / имя)],
-                       прогоны=исходы.__getitem__, работы=lambda r: []) == 2
+        assert (
+            pb.main(
+                ["--root", str(корень), "--out", str(out), ключ, str(tmp_path / имя)],
+                прогоны=исходы.__getitem__,
+                работы=lambda r: [],
+            )
+            == 2
+        )
     assert not out.exists()
 
 
 # ── префикс «CI»: подпись всей картинки, а не статус (#719) ────────────────
 
+
 def _картинка(tmp_path, *доп: str) -> str:
     out = tmp_path / "python.svg"
-    исходы = {"ci.yml": [прогон("failure", "2026-10-01T11:00Z")],
-              "python-next.yml": [прогон("success", "2026-10-01T11:00Z")]}
-    assert pb.main(["--root", str(дерево(tmp_path)), "--out", str(out), *доп],
-                   прогоны=исходы.__getitem__,
-                   работы=lambda r: [работа("failure", "ubuntu-latest")]) == 0
+    исходы = {
+        "ci.yml": [прогон("failure", "2026-10-01T11:00Z")],
+        "python-next.yml": [прогон("success", "2026-10-01T11:00Z")],
+    }
+    assert (
+        pb.main(
+            ["--root", str(дерево(tmp_path)), "--out", str(out), *доп],
+            прогоны=исходы.__getitem__,
+            работы=lambda r: [работа("failure", "ubuntu-latest")],
+        )
+        == 0
+    )
     return out.read_text(encoding="utf-8")
 
 
@@ -415,23 +540,36 @@ def job(name: str, conclusion: str) -> dict:
 
 def _с_наборами(tmp_path, suites: str, jobs: list[dict]) -> tuple[int, str]:
     out = tmp_path / "python.svg"
-    исходы = {"ci.yml": [прогон("success", "2026-10-01T11:00Z")],
-              "python-next.yml": [прогон("success", "2026-10-01T11:00Z")]}
-    код = pb.main(["--root", str(дерево_с_работами(tmp_path)), "--out", str(out),
-                   "--suites", suites],
-                  прогоны=исходы.__getitem__, работы=lambda r: jobs)
+    исходы = {
+        "ci.yml": [прогон("success", "2026-10-01T11:00Z")],
+        "python-next.yml": [прогон("success", "2026-10-01T11:00Z")],
+    }
+    код = pb.main(
+        ["--root", str(дерево_с_работами(tmp_path)), "--out", str(out), "--suites", suites],
+        прогоны=исходы.__getitem__,
+        работы=lambda r: jobs,
+    )
     return код, out.read_text(encoding="utf-8") if out.exists() else ""
 
 
 def test_работы_ci_ключ_и_имя():
     assert pb.работы_ci(CI_С_РАБОТАМИ) == {
-        "test": "test", "e2e": "e2e", "sandbox-linux": "Sandbox (linux)"}
+        "test": "test",
+        "e2e": "e2e",
+        "sandbox-linux": "Sandbox (linux)",
+    }
 
 
 def test_набор_красный_когда_его_работа_упала(tmp_path):
-    код, картинка = _с_наборами(tmp_path, "e2e, sandbox-linux:sandbox",
-                                [job("test (ubuntu-latest, 3.14)", "success"),
-                                 job("e2e", "failure"), job("Sandbox (linux)", "success")])
+    код, картинка = _с_наборами(
+        tmp_path,
+        "e2e, sandbox-linux:sandbox",
+        [
+            job("test (ubuntu-latest, 3.14)", "success"),
+            job("e2e", "failure"),
+            job("Sandbox (linux)", "success"),
+        ],
+    )
     assert код == 0
     assert ">e2e<" in картинка and ">sandbox<" in картинка
     assert "e2e: CI не пройден" in картинка and "sandbox: CI пройден" in картинка
@@ -444,9 +582,14 @@ def test_наборы_после_ос_перед_покрытием(tmp_path):
 
 
 def test_матричная_работа_совпадает_по_имени_с_значениями(tmp_path):
-    код, картинка = _с_наборами(tmp_path, "test:unit",
-                                [job("test (ubuntu-latest, 3.14)", "success"),
-                                 job("test (windows-latest, 3.14)", "failure")])
+    код, картинка = _с_наборами(
+        tmp_path,
+        "test:unit",
+        [
+            job("test (ubuntu-latest, 3.14)", "success"),
+            job("test (windows-latest, 3.14)", "failure"),
+        ],
+    )
     assert код == 0 and "unit: CI не пройден" in картинка
 
 
@@ -470,9 +613,15 @@ def test_больше_четырёх_наборов_значок_не_собра
 def test_имя_выражением_сверять_не_с_чем(tmp_path):
     корень = дерево(tmp_path)
     (корень / ".github" / "workflows" / "ci.yml").write_text(
-        "jobs:\n  t:\n    name: ${{ matrix.os }}\n", encoding="utf-8")
-    assert "выражением" in (pb.сверить_наборы([("t", "t")], pb.работы_ci(
-        (корень / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8"))) or "")
+        "jobs:\n  t:\n    name: ${{ matrix.os }}\n", encoding="utf-8"
+    )
+    assert "выражением" in (
+        pb.сверить_наборы(
+            [("t", "t")],
+            pb.работы_ci((корень / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")),
+        )
+        or ""
+    )
 
 
 def test_без_наборов_зоны_нет(tmp_path):
@@ -483,9 +632,12 @@ def test_без_наборов_зоны_нет(tmp_path):
 
 # ── разбор jobs: комментарии, кавычки, чужое имя (находка обзора #725) ─────
 
+
 def test_хвостовой_комментарий_не_входит_в_имя_и_ключ():
-    текст = ("jobs:\n  e2e:  # сквозные\n    name: E2E  # браузер\n"
-             "  'sandbox-linux':\n    runs-on: ubuntu-latest\n")
+    текст = (
+        "jobs:\n  e2e:  # сквозные\n    name: E2E  # браузер\n"
+        "  'sandbox-linux':\n    runs-on: ubuntu-latest\n"
+    )
     assert pb.работы_ci(текст) == {"e2e": "E2E", "sandbox-linux": "sandbox-linux"}
 
 
@@ -495,13 +647,22 @@ def test_набор_с_комментарием_в_имени_красится_�
     (корень / ".github" / "workflows" / "ci.yml").write_text(
         "jobs:\n  e2e:\n    name: E2E  # браузер\n    steps:\n"
         "      - uses: actions/setup-python@v6\n        with:\n"
-        '          python-version: "3.14"\n', encoding="utf-8")
+        '          python-version: "3.14"\n',
+        encoding="utf-8",
+    )
     out = tmp_path / "python.svg"
-    исходы = {"ci.yml": [прогон("success", "2026-10-01T11:00Z")],
-              "python-next.yml": [прогон("success", "2026-10-01T11:00Z")]}
-    assert pb.main(["--root", str(корень), "--out", str(out), "--suites", "e2e"],
-                   прогоны=исходы.__getitem__,
-                   работы=lambda r: [job("E2E", "failure")]) == 0
+    исходы = {
+        "ci.yml": [прогон("success", "2026-10-01T11:00Z")],
+        "python-next.yml": [прогон("success", "2026-10-01T11:00Z")],
+    }
+    assert (
+        pb.main(
+            ["--root", str(корень), "--out", str(out), "--suites", "e2e"],
+            прогоны=исходы.__getitem__,
+            работы=lambda r: [job("E2E", "failure")],
+        )
+        == 0
+    )
     assert "e2e: CI не пройден" in out.read_text(encoding="utf-8")
 
 
@@ -516,38 +677,55 @@ def test_отдельная_работа_со_скобками_не_матриц
 # Решение владельца 14 октября: планка 3.14, обязательная 3.15 в основном
 # CI, совещательная 3.16 — серая, пока её сборки у setup-python нет.
 
+
 def _ci_две_версии(tmp_path):
     дерево(tmp_path, "3.14", "3.16")
     (tmp_path / ".github" / "workflows" / "ci.yml").write_text(
         "jobs:\n  a:\n    steps:\n      - uses: actions/setup-python@v6\n"
-        "        with:\n          python-version: \"3.14\"\n"
+        '        with:\n          python-version: "3.14"\n'
         "  b:\n    name: тесты на 3.15\n    steps:\n"
         "      - uses: actions/setup-python@v6\n"
-        "        with:\n          python-version: \"3.15\"\n", encoding="utf-8")
+        '        with:\n          python-version: "3.15"\n',
+        encoding="utf-8",
+    )
     return tmp_path
 
 
 def test_основных_версий_несколько_по_возрастанию(tmp_path):
     assert pb.версии(_ci_две_версии(tmp_path)) == [
-        ("3.14", "ci.yml"), ("3.15", "ci.yml"), ("3.16", "python-next.yml")]
+        ("3.14", "ci.yml"),
+        ("3.15", "ci.yml"),
+        ("3.16", "python-next.yml"),
+    ]
 
 
 def test_версия_красится_своей_работой():
     """Источник подделки (правило 170): поля `name` и `conclusion` — форма
     ответа /repos/{owner}/{repo}/actions/runs/{id}/jobs, docs.github.com."""
-    jobs = [{"name": "catalogue", "conclusion": "success"},
-            {"name": "тесты на 3.15", "conclusion": "failure"}]
+    jobs = [
+        {"name": "catalogue", "conclusion": "success"},
+        {"name": "тесты на 3.15", "conclusion": "failure"},
+    ]
     assert pb.по_версиям(["3.14", "3.15"], jobs) == {"3.14": "pass", "3.15": "fail"}
 
 
 def test_невышедшая_предварительная_серая_со_словом(tmp_path):
     root = _ci_две_версии(tmp_path)
     out = tmp_path / "p.svg"
-    jobs = [{"name": "a", "conclusion": "success", "labels": ["ubuntu-latest"]},
-            {"name": "тесты на 3.15", "conclusion": "success", "labels": ["ubuntu-latest"]}]
-    assert pb.main(["--root", str(root), "--out", str(out)],
-                   прогоны=lambda f: [прогон("success", "2026-10-14T10:00Z")], работы=lambda i: jobs,
-                   релиз=lambda: None, сборки=lambda: {(3, 14), (3, 15)}) == 0
+    jobs = [
+        {"name": "a", "conclusion": "success", "labels": ["ubuntu-latest"]},
+        {"name": "тесты на 3.15", "conclusion": "success", "labels": ["ubuntu-latest"]},
+    ]
+    assert (
+        pb.main(
+            ["--root", str(root), "--out", str(out)],
+            прогоны=lambda f: [прогон("success", "2026-10-14T10:00Z")],
+            работы=lambda i: jobs,
+            релиз=lambda: None,
+            сборки=lambda: {(3, 14), (3, 15)},
+        )
+        == 0
+    )
     svg = out.read_text(encoding="utf-8")
     assert "3.16: сборки для CI ещё нет" in svg and "3.15: CI пройден" in svg
 
@@ -555,6 +733,7 @@ def test_невышедшая_предварительная_серая_со_с�
 def test_серия_пробы_совпадает_с_версией_прогона():
     """python-next.yml: серия в пробе манифеста и в python-version одна."""
     import re
+
     текст = (pb.ROOT / ".github" / "workflows" / "python-next.yml").read_text(encoding="utf-8")
     проба = re.search(r'NEXT:\s*"(\d+\.\d+)"', текст)
     ставится = re.search(r'python-version:\s*"(\d+\.\d+)"', текст)
@@ -565,12 +744,15 @@ def test_серия_пробы_совпадает_с_версией_прогон
 НАСТОЯЩИЙ_РЕЛИЗ = pb.релиз_площадки
 
 
-@pytest.mark.parametrize("теги, ждём", [
-    (["facts-v2.0.0", "v1.13.0", "v1.12.0"], "v1.13.0"),    # договор фактов — не выпуск проекта
-    (["v1.9.0", "v1.10.0"], "v1.10.0"),                      # старший числом, а не строкой
-    (["facts-v2.0.0"], None),                                # выпусков проекта нет
-    ([], None),
-])
+@pytest.mark.parametrize(
+    "теги, ждём",
+    [
+        (["facts-v2.0.0", "v1.13.0", "v1.12.0"], "v1.13.0"),  # договор фактов — не выпуск проекта
+        (["v1.9.0", "v1.10.0"], "v1.10.0"),  # старший числом, а не строкой
+        (["facts-v2.0.0"], None),  # выпусков проекта нет
+        ([], None),
+    ],
+)
 def test_выпуск_проекта_только_тегом_vxyz(monkeypatch, теги, ждём):
     """Зона выпуска берёт старший тег `vX.Y.Z`, а не «последний» площадки (15.10)."""
     monkeypatch.setattr(pb.ghcli, "список", lambda *a, **k: (0, теги, ""))
@@ -586,15 +768,29 @@ def test_выпуски_не_прочитаны_третий_исход(monkeypa
 def test_лесенка_семьи_та_же_что_у_каталога():
     """Лесенка — версии самого каталога, второй её записи нет (владелец 16.10)."""
     assert pb.лесенка() == [п for п, _ in pb.версии(pb.ROOT)]
-    assert pb.лесенка()[0] == ".".join(map(str, pb.cv.floor((pb.ROOT / "pyproject.toml").read_text(encoding="utf-8"))))
+    assert pb.лесенка()[0] == ".".join(
+        map(str, pb.cv.floor((pb.ROOT / "pyproject.toml").read_text(encoding="utf-8")))
+    )
 
 
-@pytest.mark.parametrize("свои, ждём", [
-    ([("3.14", "pass")], [("3.14", "pass"), ("3.15", "absent"), ("3.16", "absent")]),
-    ([("3.14", "pass"), ("3.16", "unreleased")], [("3.14", "pass"), ("3.15", "absent"), ("3.16", "unreleased")]),
-    ([("3.14", "pass"), ("3.15", "fail"), ("3.16", "none")], [("3.14", "pass"), ("3.15", "fail"), ("3.16", "none")]),
-    ([("3.13", "pass")], [("3.13", "pass"), ("3.14", "absent"), ("3.15", "absent"), ("3.16", "absent")]),
-])
+@pytest.mark.parametrize(
+    "свои, ждём",
+    [
+        ([("3.14", "pass")], [("3.14", "pass"), ("3.15", "absent"), ("3.16", "absent")]),
+        (
+            [("3.14", "pass"), ("3.16", "unreleased")],
+            [("3.14", "pass"), ("3.15", "absent"), ("3.16", "unreleased")],
+        ),
+        (
+            [("3.14", "pass"), ("3.15", "fail"), ("3.16", "none")],
+            [("3.14", "pass"), ("3.15", "fail"), ("3.16", "none")],
+        ),
+        (
+            [("3.13", "pass")],
+            [("3.13", "pass"), ("3.14", "absent"), ("3.15", "absent"), ("3.16", "absent")],
+        ),
+    ],
+)
 def test_недостающие_ступени_серым_по_возрастанию(свои, ждём):
     assert pb.на_лесенке(свои, ["3.14", "3.15", "3.16"]) == ждём
 
@@ -602,7 +798,10 @@ def test_недостающие_ступени_серым_по_возраста�
 def test_невышедшая_ступень_не_отставание():
     """Недостающая ступень без сборки — `unreleased`, а не жёлтое `absent`."""
     assert pb.на_лесенке([("3.14", "pass")], ["3.14", "3.15", "3.16"], {(3, 14), (3, 15)}) == [
-        ("3.14", "pass"), ("3.15", "absent"), ("3.16", "unreleased")]
+        ("3.14", "pass"),
+        ("3.15", "absent"),
+        ("3.16", "unreleased"),
+    ]
 
 
 def test_четыре_состояния_различимы_цветом():
@@ -618,14 +817,18 @@ def test_буквальная_планка_и_матрица_обе_на_зна�
     (tmp_path / ".github" / "workflows").mkdir(parents=True)
     (tmp_path / ".github" / "workflows" / "ci.yml").write_text(
         "on: push\njobs:\n  lint:\n    runs-on: ubuntu-latest\n    steps:\n"
-        "      - uses: actions/setup-python@v6\n        with:\n          python-version: \"3.14\"\n"
+        '      - uses: actions/setup-python@v6\n        with:\n          python-version: "3.14"\n'
         "  test-matrix:\n    runs-on: ubuntu-latest\n    strategy:\n      matrix:\n"
-        "        python: [\"3.14\", \"3.15\"]\n    steps:\n"
+        '        python: ["3.14", "3.15"]\n    steps:\n'
         "      - uses: actions/setup-python@v6\n        with:\n"
-        "          python-version: ${{ matrix.python }}\n", encoding="utf-8")
+        "          python-version: ${{ matrix.python }}\n",
+        encoding="utf-8",
+    )
     подписи = [п for п, _ in pb.версии(tmp_path)]
     assert подписи == ["3.14", "3.15"]
-    jobs = [{"name": "lint", "conclusion": "success"},
-            {"name": "test-matrix (3.14)", "conclusion": "success"},
-            {"name": "test-matrix (3.15)", "conclusion": "failure"}]
+    jobs = [
+        {"name": "lint", "conclusion": "success"},
+        {"name": "test-matrix (3.14)", "conclusion": "success"},
+        {"name": "test-matrix (3.15)", "conclusion": "failure"},
+    ]
     assert pb.по_версиям(подписи, jobs) == {"3.14": "pass", "3.15": "fail"}

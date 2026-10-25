@@ -35,7 +35,6 @@
 Коды:    0 нарисовано · 2 рисовать нечем
 """
 
-
 import argparse
 import json
 import sys
@@ -47,8 +46,12 @@ OUT_DIR = ".github/badges"
 #: Четыре файла: язык × тема. Английская витрина — не перевод подписей на
 #: лету, а свой набор слов: «held by nothing» это не «ничем», и подставлять
 #: одно вместо другого значило бы делать вид, что языки совпадают по длине.
-NAMES = {("ru", False): "consumers-light.svg", ("ru", True): "consumers-dark.svg",
-         ("en", False): "consumers-en-light.svg", ("en", True): "consumers-en-dark.svg"}
+NAMES = {
+    ("ru", False): "consumers-light.svg",
+    ("ru", True): "consumers-dark.svg",
+    ("en", False): "consumers-en-light.svg",
+    ("en", True): "consumers-en-dark.svg",
+}
 
 FONT = "Inter,Segoe UI,Helvetica,Arial,sans-serif"
 
@@ -90,20 +93,40 @@ UNVERIFIABLE = "unverifiable"
 
 #: Палитра площадки, тема к теме. Значения те же, что у витрины профиля.
 THEME = {
-    False: {"card": "#FFFFFF", "stroke": "#D0D7DE", "name": "#1F2328",
-            "accent": "#0969DA", "label": "#636C76", "tint": "#F6F8FA",
-            "gate": "#0969DA", "pipeline": "#1A7F37", "skill": "#9A6700",
-            "document": "#8250DF",
-            "process-step": "#8250DF", "none": "#CF222E",
-            "not-applicable": "#636C76", "unverifiable": "#CF222E",
-            "muted": "#8C959F"},
-    True: {"card": "#0D1117", "stroke": "#30363D", "name": "#F0F6FC",
-           "accent": "#58A6FF", "label": "#7D8590", "tint": "#161B22",
-           "gate": "#58A6FF", "pipeline": "#3FB950", "skill": "#D29922",
-           "document": "#A371F7",
-           "process-step": "#A371F7", "none": "#F85149",
-           "not-applicable": "#8B949E", "unverifiable": "#F85149",
-           "muted": "#8B949E"},
+    False: {
+        "card": "#FFFFFF",
+        "stroke": "#D0D7DE",
+        "name": "#1F2328",
+        "accent": "#0969DA",
+        "label": "#636C76",
+        "tint": "#F6F8FA",
+        "gate": "#0969DA",
+        "pipeline": "#1A7F37",
+        "skill": "#9A6700",
+        "document": "#8250DF",
+        "process-step": "#8250DF",
+        "none": "#CF222E",
+        "not-applicable": "#636C76",
+        "unverifiable": "#CF222E",
+        "muted": "#8C959F",
+    },
+    True: {
+        "card": "#0D1117",
+        "stroke": "#30363D",
+        "name": "#F0F6FC",
+        "accent": "#58A6FF",
+        "label": "#7D8590",
+        "tint": "#161B22",
+        "gate": "#58A6FF",
+        "pipeline": "#3FB950",
+        "skill": "#D29922",
+        "document": "#A371F7",
+        "process-step": "#A371F7",
+        "none": "#F85149",
+        "not-applicable": "#8B949E",
+        "unverifiable": "#F85149",
+        "muted": "#8B949E",
+    },
 }
 
 #: Ширина — не константа, а следствие: колонок «чем держится» столько,
@@ -184,14 +207,13 @@ def wrap_name(name: str) -> list[str]:
     if влезает(name):
         return [name]
     # Сколько знаков влезает — по ширине каждого, а не по их числу (#792).
-    влезло = max((k for k in range(1, len(name) + 1) if влезает(name[:k])),
-                 default=1)
+    влезло = max((k for k in range(1, len(name) + 1) if влезает(name[:k])), default=1)
     # Разрыв ищем во второй половине влезшего куска: раньше — рвём слишком
     # рано и первая строка полупустая, позже — второй строке не хватит места.
     голова = name[:влезло]
     место = max(голова.rfind("-"), голова.rfind("_"))
     if место >= влезло // 2:
-        первая, хвост = name[:место + 1], name[место + 1:]
+        первая, хвост = name[: место + 1], name[место + 1 :]
     else:
         первая, хвост = голова, name[влезло:]
     if not влезает(хвост):
@@ -219,15 +241,16 @@ def ширина_колонки(key: str, data: list[dict], w: dict) -> int:
     на месте остальных стоит прочерк. У второго блока чисел там нет вовсе —
     вместо них стоит состояние словом.
     """
-    подпись = text_width.ширина(w[key], ШРИФТ, SIZE["column"],
-                                600 if key in ЧИСЛА else 700, 0.3)
-    числа = [text_width.ширина(str(r[key]), ШРИФТ, SIZE["number"], 800)
-             for r in data if r["connected"] or key in ЧИСЛА]
+    подпись = text_width.ширина(w[key], ШРИФТ, SIZE["column"], 600 if key in ЧИСЛА else 700, 0.3)
+    числа = [
+        text_width.ширина(str(r[key]), ШРИФТ, SIZE["number"], 800)
+        for r in data
+        if r["connected"] or key in ЧИСЛА
+    ]
     return int(max([подпись] + числа))
 
 
-def полоса(data: list[dict], w: dict,
-           keys: list[str] | None = None) -> dict[str, tuple[int, int]]:
+def полоса(data: list[dict], w: dict, keys: list[str] | None = None) -> dict[str, tuple[int, int]]:
     """Колонки слева направо: ключ → (x левого края, ширина).
 
     ДВА БЛОКА РАЗДЕЛЕНЫ ПРОСВЕТОМ, А НЕ РАМКОЙ: между блоками COL_BETWEEN,
@@ -242,8 +265,7 @@ def полоса(data: list[dict], w: dict,
             ш = ширина_колонки(key, data, w)
             из[key] = (x, ш)
             последняя_в_блоке = m == len(блок) - 1
-            x += ш + (COL_BETWEEN if последняя_в_блоке and n < len(блоки) - 1
-                      else COL_IN)
+            x += ш + (COL_BETWEEN if последняя_в_блоке and n < len(блоки) - 1 else COL_IN)
     return из
 
 
@@ -265,14 +287,14 @@ def край(band: dict[str, tuple[int, int]], блок) -> tuple[int, int]:
     x, ш = band[блок[-1]]
     return левый, x + ш
 
+
 #: РАЗМЕРЫ СОБРАНЫ ЗДЕСЬ, А НЕ РАССЫПАНЫ ПО РАЗМЕТКЕ. Витрина показывает
 #: картинку по ширине места, и читается она тем крупнее, чем БОЛЬШЕ отношение
 #: кегля к ширине холста. Замер, из-за которого это и понадобилось: холст
 #: 1216 точек, имя 18 — на странице профиля это около тринадцати, и владелец
 #: сказал «мелко». Поднято на восьмую часть, а ширина удержана сжатием
 #: числовых колонок: расти вширь значило бы съесть прибавку обратно.
-SIZE = {"title": 31, "sub": 16, "column": 12.5, "name": 20, "number": 24,
-        "group": 11}
+SIZE = {"title": 31, "sub": 16, "column": 12.5, "name": 20, "number": 24, "group": 11}
 
 #: Слова каждой витрины. Состояния приходят из сводки по-русски — она
 #: собирается один раз и для обоих языков; сюда они переводятся при
@@ -291,27 +313,42 @@ SIZE = {"title": 31, "sub": 16, "column": 12.5, "name": 20, "number": 24,
 LANG = {
     "ru": {
         "title": "Чем держится правило у потребителей",
-        "sub": "ответы самих проектов на каждое из {total} правил каталога — "
-               "не наша оценка их",
-        "group_rules": "правила", "group_held": "чем держится",
-        "answered": "разобрано", "trails": "связей", "born": "родил",
-        "gate": "гейт", "pipeline": "конвейер", "skill": "навык",
+        "sub": "ответы самих проектов на каждое из {total} правил каталога — не наша оценка их",
+        "group_rules": "правила",
+        "group_held": "чем держится",
+        "answered": "разобрано",
+        "trails": "связей",
+        "born": "родил",
+        "gate": "гейт",
+        "pipeline": "конвейер",
+        "skill": "навык",
         "document": "документ",
-        "process-step": "шаг процесса", "none": "ничем",
-        "not-applicable": "не применимо", "unverifiable": "ничем",
-        "off": "не подключён", "unknown": "неизвестно",
+        "process-step": "шаг процесса",
+        "none": "ничем",
+        "not-applicable": "не применимо",
+        "unverifiable": "ничем",
+        "off": "не подключён",
+        "unknown": "неизвестно",
     },
     "en": {
         "title": "How rules are enforced across consumers",
         "sub": "each project's own answer on all {total} catalogue rules — "
-               "not our assessment of them",
-        "group_rules": "rules", "group_held": "held by",
-        "answered": "answered", "trails": "trails", "born": "born",
-        "gate": "gate", "pipeline": "pipeline", "skill": "skill",
+        "not our assessment of them",
+        "group_rules": "rules",
+        "group_held": "held by",
+        "answered": "answered",
+        "trails": "trails",
+        "born": "born",
+        "gate": "gate",
+        "pipeline": "pipeline",
+        "skill": "skill",
         "document": "document",
-        "process-step": "process step", "none": "nothing",
-        "not-applicable": "not applicable", "unverifiable": "nothing",
-        "off": "not connected", "unknown": "unknown",
+        "process-step": "process step",
+        "none": "nothing",
+        "not-applicable": "not applicable",
+        "unverifiable": "nothing",
+        "off": "not connected",
+        "unknown": "unknown",
     },
 }
 #: Состояние сводки — по-русски; на английской витрине оно называется своим
@@ -320,6 +357,7 @@ LANG = {
 #: переименуй он состояние — картинка молча показала бы его непереведённым (209).
 from aggregate_bindings import NOT_CONNECTED, UNKNOWN  # noqa: E402
 from build_rules_index import действующие_в_выгрузке  # noqa: E402
+
 STATE = {NOT_CONNECTED: "off", UNKNOWN: "unknown"}
 
 
@@ -331,20 +369,22 @@ def rows(doc: dict) -> list[dict]:
         # Статус приходит из другого поля сводки, чем механизм: складывать их в
         # один словарь до этого места значило бы потерять, откуда число.
         статус = c.get("by_status") or {}
-        out.append({
-            "name": (c.get("repo") or "?").split("/")[-1],
-            "state": c.get("state", ""),
-            "connected": bool(c.get("rules")),
-            **{k: mech.get(k, 0) for k in tuple(MECHANISM_ORDER) + LEGACY_KEYS},
-            **{k: статус.get(k, 0) for k in STATUS_KEYS},
-            # СКЛАДЫВАЕТСЯ ЗДЕСЬ, А НЕ ПРИ РИСОВАНИИ: числа обоих слагаемых
-            # остаются в строке по своим именам, и кто захочет разложить —
-            # разложит, не считая заново.
-            UNVERIFIABLE: mech.get("none", 0) + статус.get("not-applicable", 0),
-            "trails": c.get("trails", 0),
-            "born": c.get("born", 0),
-            "answered": c.get("answered") or 0,
-        })
+        out.append(
+            {
+                "name": (c.get("repo") or "?").split("/")[-1],
+                "state": c.get("state", ""),
+                "connected": bool(c.get("rules")),
+                **{k: mech.get(k, 0) for k in tuple(MECHANISM_ORDER) + LEGACY_KEYS},
+                **{k: статус.get(k, 0) for k in STATUS_KEYS},
+                # СКЛАДЫВАЕТСЯ ЗДЕСЬ, А НЕ ПРИ РИСОВАНИИ: числа обоих слагаемых
+                # остаются в строке по своим именам, и кто захочет разложить —
+                # разложит, не считая заново.
+                UNVERIFIABLE: mech.get("none", 0) + статус.get("not-applicable", 0),
+                "trails": c.get("trails", 0),
+                "born": c.get("born", 0),
+                "answered": c.get("answered") or 0,
+            }
+        )
     return out
 
 
@@ -386,21 +426,30 @@ def упорядочить(data: list[dict]) -> list[dict]:
     При полном равенстве ключей порядок — реестровый: `sorted` устойчив, и это
     часть договора, а не случайность — равные не переставляются без причины.
     """
+
     def ключ(r: dict) -> tuple[int, ...]:
         return tuple(-sum(r.get(k, 0) for k in ступень) for ступень in ЛЕСТНИЦА)
+
     живые = sorted((r for r in data if r["connected"]), key=ключ)
     return живые + [r for r in data if not r["connected"]]
 
 
 def esc(text: str) -> str:
     """SVG — это XML: пять знаков в нём значат не то, что кажется."""
-    return (text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                .replace('"', "&quot;").replace("'", "&apos;"))
+    return (
+        text.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+        .replace("'", "&apos;")
+    )
 
 
 def text(x, y, s, fill, size, weight=500, extra=""):
-    return (f'<text x="{x}" y="{y}" fill="{fill}" font-family="{FONT}" '
-            f'font-size="{size}" font-weight="{weight}"{extra}>{esc(s)}</text>')
+    return (
+        f'<text x="{x}" y="{y}" fill="{fill}" font-family="{FONT}" '
+        f'font-size="{size}" font-weight="{weight}"{extra}>{esc(s)}</text>'
+    )
 
 
 def shown(data: list[dict]) -> list[str]:
@@ -417,9 +466,11 @@ def shown(data: list[dict]) -> list[str]:
     # «не спрашивали». Слагаемые — `none` и `not-applicable` — своих колонок
     # больше не получают: порознь они обещают определённость, которой нет
     # (см. довод у UNVERIFIABLE).
-    return ([k for k in MECHANISM_ORDER if k != "none"]
-            + [k for k in LEGACY_KEYS if k in used]
-            + [UNVERIFIABLE])
+    return (
+        [k for k in MECHANISM_ORDER if k != "none"]
+        + [k for k in LEGACY_KEYS if k in used]
+        + [UNVERIFIABLE]
+    )
 
 
 def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
@@ -482,20 +533,44 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
     # отвечал бы на два вопроса подряд и не говорил, где кончается первый.
     for подпись, блок in ((w["group_rules"], ЧИСЛА), (w["group_held"], keys)):
         слева, справа = край(band, блок)
-        p.append(text((слева + справа) // 2, TOP - 40, подпись, t["label"],
-                      SIZE["group"], 700,
-                      ' letter-spacing="1.4" text-anchor="middle"'))
+        p.append(
+            text(
+                (слева + справа) // 2,
+                TOP - 40,
+                подпись,
+                t["label"],
+                SIZE["group"],
+                700,
+                ' letter-spacing="1.4" text-anchor="middle"',
+            )
+        )
     # ПОДПИСЬ КОЛОНКИ СТОИТ ОДИН РАЗ, СВЕРХУ И ПО СЕРЕДИНЕ СВОЕЙ КОЛОНКИ, а у
     # механизма — ещё и своим цветом: слово наверху, цвет держит связь подписи
     # со значением, и блок читается блоком без рамок.
     for key in ЧИСЛА:
-        p.append(text(середина(band[key]), TOP - 16, w[key], t["label"],
-                      SIZE["column"], 600,
-                      ' letter-spacing="0.3" text-anchor="middle"'))
+        p.append(
+            text(
+                середина(band[key]),
+                TOP - 16,
+                w[key],
+                t["label"],
+                SIZE["column"],
+                600,
+                ' letter-spacing="0.3" text-anchor="middle"',
+            )
+        )
     for key in keys:
-        p.append(text(середина(band[key]), TOP - 16, w[key], t[key],
-                      SIZE["column"], 700,
-                      ' letter-spacing="0.3" text-anchor="middle"'))
+        p.append(
+            text(
+                середина(band[key]),
+                TOP - 16,
+                w[key],
+                t[key],
+                SIZE["column"],
+                700,
+                ' letter-spacing="0.3" text-anchor="middle"',
+            )
+        )
 
     y = TOP
     for r in data:
@@ -504,22 +579,50 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
         # вокруг того же места, чтобы ряд не «поехал» относительно чисел.
         база = y + 17 if len(куски) == 1 else y + 8
         for n, кусок in enumerate(куски):
-            p.append(text(PAD, база + n * 19, кусок, t["name"], SIZE["name"], 800,
-                          ' letter-spacing="-0.4"'))
+            p.append(
+                text(
+                    PAD,
+                    база + n * 19,
+                    кусок,
+                    t["name"],
+                    SIZE["name"],
+                    800,
+                    ' letter-spacing="-0.4"',
+                )
+            )
         # «Родил» показывается и у НЕподключённого проекта: происхождение
         # записи не зависит от того, ответил ли проект каталогу, и прочерк
         # здесь означал бы «не знаем», хотя знаем (правило 027).
-        for key, value, live in (("answered", r["answered"], r["connected"]),
-                                 ("trails", r["trails"], r["trails"] > 0),
-                                 ("born", r["born"], r["born"] > 0)):
+        for key, value, live in (
+            ("answered", r["answered"], r["connected"]),
+            ("trails", r["trails"], r["trails"] > 0),
+            ("born", r["born"], r["born"] > 0),
+        ):
             cell = str(value) if live else "—"
-            p.append(text(середина(band[key]), y + 19, cell,
-                          t["accent"] if live else t["muted"], SIZE["number"], 800,
-                          ' text-anchor="middle"'))
+            p.append(
+                text(
+                    середина(band[key]),
+                    y + 19,
+                    cell,
+                    t["accent"] if live else t["muted"],
+                    SIZE["number"],
+                    800,
+                    ' text-anchor="middle"',
+                )
+            )
         if r["connected"]:
             for key in keys:
-                p.append(text(середина(band[key]), y + 19, str(r[key]), t[key],
-                              SIZE["number"], 800, ' text-anchor="middle"'))
+                p.append(
+                    text(
+                        середина(band[key]),
+                        y + 19,
+                        str(r[key]),
+                        t[key],
+                        SIZE["number"],
+                        800,
+                        ' text-anchor="middle"',
+                    )
+                )
         else:
             # Данных нет — СОСТОЯНИЕ словом, а не прочерк: «не подключён» и
             # «неизвестно» разные ответы, и ноль здесь означал бы третий (027).
@@ -531,15 +634,16 @@ def render(data: list[dict], total: int, dark: bool, lang: str = "ru") -> str:
         # получает: черта под нижним рядом читается как край таблицы, которого
         # нет, — карточка уже обведена рамкой.
         if r is not data[-1]:
-            p.append(f'<rect x="{PAD}" y="{y + row - 9}" width="{width - 2 * PAD}" '
-                     f'height="1" fill="{t["stroke"]}" opacity="0.55"/>')
+            p.append(
+                f'<rect x="{PAD}" y="{y + row - 9}" width="{width - 2 * PAD}" '
+                f'height="1" fill="{t["stroke"]}" opacity="0.55"/>'
+            )
         y += row
     # ПОДЗАГОЛОВОК СТОИТ ПОД ТАБЛИЦЕЙ, А НЕ НАД НЕЙ. Он картинку не
     # представляет, а ОГОВАРИВАЕТ: числа — ответы самих проектов, не наша
     # оценка их. Оговорку читают после того, что она оговаривает, а место в
     # шапке она занимала у подписей блоков — у того, что без неё не читается.
-    p.append(text(PAD, низ + 24, w["sub"].format(total=total), t["label"],
-                  SIZE["sub"], 500))
+    p.append(text(PAD, низ + 24, w["sub"].format(total=total), t["label"], SIZE["sub"], 500))
     p.append("</svg>")
     return "\n".join(p) + "\n"
 
@@ -560,13 +664,11 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     data = упорядочить(rows(doc))
     if not data:
-        print(f"рисовать нечем: в {SOURCE} нет ни одного потребителя",
-              file=sys.stderr)
+        print(f"рисовать нечем: в {SOURCE} нет ни одного потребителя", file=sys.stderr)
         return 2
     try:
         # Подпись «каждое из N правил» — по действующим (17.10).
-        выгрузка = json.loads(
-            (root / "export" / "rules.json").read_text(encoding="utf-8"))
+        выгрузка = json.loads((root / "export" / "rules.json").read_text(encoding="utf-8"))
         total = len(действующие_в_выгрузке(выгрузка))
     except (OSError, ValueError, KeyError) as e:
         print(f"рисовать нечем: экспорт правил не прочитан — {e}", file=sys.stderr)
@@ -574,11 +676,12 @@ def main(argv: list[str] | None = None) -> int:
 
     out_dir.mkdir(parents=True, exist_ok=True)
     for (lang, dark), name in NAMES.items():
-        (out_dir / name).write_text(render(data, total, dark, lang),
-                                    encoding="utf-8")
+        (out_dir / name).write_text(render(data, total, dark, lang), encoding="utf-8")
     live = sum(1 for r in data if r["connected"])
-    print(f"нарисовано: потребителей {len(data)}, подключено {live}, "
-          f"правил {total}; файлов {len(NAMES)} (язык × тема)")
+    print(
+        f"нарисовано: потребителей {len(data)}, подключено {live}, "
+        f"правил {total}; файлов {len(NAMES)} (язык × тема)"
+    )
     return 0
 
 

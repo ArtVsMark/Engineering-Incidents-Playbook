@@ -19,35 +19,41 @@ def дерево(tmp_path: Path, файлы: dict[str, str]) -> Path:
 
 
 # Перечень форм (210): каждая форма чтения и каждое место охвата — свой случай.
-@pytest.mark.parametrize("файлы", [
-    {"scripts/wait.py": 'if pr["merged"]:\n    go()\n'},                       # 2
-    {"scripts/wait.py": "ok = pr.get('merged_at') is not None\n"},              # 2
-    {"scripts/wait.py": "ok = pr.merged\n"},                                     # 1
-    {".github/workflows/w.yml": "run: gh api pulls/1 --jq .merged\n"},           # 1
-    {".github/workflows/w.yml": "run: gh api pulls --jq '.[] | {merged_by}'\n"}, # 3
-    {".github/workflows/w.yml": "run: gh pr view 1 --json mergedAt\n"},          # 4
-    {"scripts/wait.py": 'done = state == "MERGED"\n'},                           # 5
-    {"scripts/wait.sh": "gh pr view 1 --json mergedBy\n"},                       # охват: .sh
-    {"scripts/sub/wait.py": "ok = pr.merged_at\n"},                              # охват: вглубь
-    {".github/actions/a/action.yml": "run: gh api pulls/1 --jq .merged\n"},      # охват: действия
-    {".claude/hooks/h.sh": "gh pr view --json mergedAt\n"},                      # охват: хуки
-    {"scripts/check_x.py": 'if pr["merged"]:\n    go()\n'},                      # гейты не исключены
-    # Законное исключение — место, а не файл: новое чтение рядом не прикрыто.
-    {"scripts/review_findings.py": "y = select(.merged_at != null)\nif pr.merged:\n    go()\n"},
-])
+@pytest.mark.parametrize(
+    "файлы",
+    [
+        {"scripts/wait.py": 'if pr["merged"]:\n    go()\n'},  # 2
+        {"scripts/wait.py": "ok = pr.get('merged_at') is not None\n"},  # 2
+        {"scripts/wait.py": "ok = pr.merged\n"},  # 1
+        {".github/workflows/w.yml": "run: gh api pulls/1 --jq .merged\n"},  # 1
+        {".github/workflows/w.yml": "run: gh api pulls --jq '.[] | {merged_by}'\n"},  # 3
+        {".github/workflows/w.yml": "run: gh pr view 1 --json mergedAt\n"},  # 4
+        {"scripts/wait.py": 'done = state == "MERGED"\n'},  # 5
+        {"scripts/wait.sh": "gh pr view 1 --json mergedBy\n"},  # охват: .sh
+        {"scripts/sub/wait.py": "ok = pr.merged_at\n"},  # охват: вглубь
+        {".github/actions/a/action.yml": "run: gh api pulls/1 --jq .merged\n"},  # охват: действия
+        {".claude/hooks/h.sh": "gh pr view --json mergedAt\n"},  # охват: хуки
+        {"scripts/check_x.py": 'if pr["merged"]:\n    go()\n'},  # гейты не исключены
+        # Законное исключение — место, а не файл: новое чтение рядом не прикрыто.
+        {"scripts/review_findings.py": "y = select(.merged_at != null)\nif pr.merged:\n    go()\n"},
+    ],
+)
 def test_чтение_поля_отказ(tmp_path, capsys, файлы):
     assert rc.main(["--root", str(дерево(tmp_path, файлы))]) == 1
     assert "148" in capsys.readouterr().err
 
 
-@pytest.mark.parametrize("файлы", [
-    {"scripts/wait.py": "# ждём не поля merged, а коммита в main\n"},     # комментарий
-    {".github/workflows/w.yml": "  # поле merged у записи отстаёт\n"},     # комментарий
-    {"scripts/wait.py": "merged_into = 1\n"},                               # другое имя
-    {"scripts/wait.py": "merged = sorted(a | b)\n"},                        # голое имя
-    {"scripts/wait.py": "x = merged.values()\n"},                           # голое имя
-    {"scripts/notes.md": "pr.merged\n"},                                    # не исполняется
-])
+@pytest.mark.parametrize(
+    "файлы",
+    [
+        {"scripts/wait.py": "# ждём не поля merged, а коммита в main\n"},  # комментарий
+        {".github/workflows/w.yml": "  # поле merged у записи отстаёт\n"},  # комментарий
+        {"scripts/wait.py": "merged_into = 1\n"},  # другое имя
+        {"scripts/wait.py": "merged = sorted(a | b)\n"},  # голое имя
+        {"scripts/wait.py": "x = merged.values()\n"},  # голое имя
+        {"scripts/notes.md": "pr.merged\n"},  # не исполняется
+    ],
+)
 def test_законное_проходит(tmp_path, файлы):
     assert rc.main(["--root", str(дерево(tmp_path, файлы))]) == 0
 

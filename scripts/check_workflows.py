@@ -63,7 +63,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import re
 import shell_words
@@ -124,8 +123,8 @@ CALLER_FROM_BASE = ("pull_request_target", "workflow_run")
 #: объяснят возврат отмены; поэтому его здесь нет.
 CANCELS_BY_STATE = {
     "off-prefix.yml": "сообщает, что ветка мимо префикса не откроет изменение. "
-                      "Сообщение одинаково для любой головы, и обязательной "
-                      "проверки за ним не стоит — вытеснять нечего",
+    "Сообщение одинаково для любой головы, и обязательной "
+    "проверки за ним не стоит — вытеснять нечего",
 }
 
 #: Чем голова называется в имени группы. `github.sha` годится: на push это и
@@ -170,8 +169,7 @@ def has_button(text: str) -> bool:
     blocks = sections(text)
     on = "\n".join(blocks.get("on", []))
     inline = re.search(r"^on:\s*\[(.*)\]", text, re.M)
-    return "workflow_dispatch" in on or bool(
-        inline and "workflow_dispatch" in inline.group(1))
+    return "workflow_dispatch" in on or bool(inline and "workflow_dispatch" in inline.group(1))
 
 
 def events(text: str) -> set[str]:
@@ -180,8 +178,7 @@ def events(text: str) -> set[str]:
     inline = re.search(r"^on:\s*\[(.*)\]", text, re.M)
     if inline:
         return {e.strip() for e in inline.group(1).split(",") if e.strip()}
-    return {m.group(1) for m in (KEY_RE.match(line) for line in blocks.get("on", []))
-            if m}
+    return {m.group(1) for m in (KEY_RE.match(line) for line in blocks.get("on", [])) if m}
 
 
 #: Шаг, который вносит в прогон код ИЗВНЕ файла прогона: выкачка дерева и
@@ -222,8 +219,11 @@ SHA_RE = re.compile(r"@[0-9a-f]{40}$")
 
 def unpinned_actions(text: str) -> list[str]:
     """Чужие действия в `uses:`, закреплённые не полным SHA."""
-    return [цель for цель in USES_RE.findall(text)
-            if not цель.startswith(СВОИ_ДЕЙСТВИЯ) and not SHA_RE.search(цель)]
+    return [
+        цель
+        for цель in USES_RE.findall(text)
+        if not цель.startswith(СВОИ_ДЕЙСТВИЯ) and not SHA_RE.search(цель)
+    ]
 
 
 #: Ключ `env:` или присваивание в оболочке. Имя обязано быть ASCII — это
@@ -275,7 +275,7 @@ def без_чужого_текста(text: str) -> str:
             if голая and отступ <= внутри:
                 внутри = None
             else:
-                вышло.append("")      # место сохраняется: номера строк не едут
+                вышло.append("")  # место сохраняется: номера строк не едут
                 continue
         m = БЛОЧНЫЙ_СКАЛЯР.match(строка)
         if m and m.group(2) != "run":
@@ -343,7 +343,7 @@ def dead_exit_codes(text: str) -> list[str]:
     for m in RC_ASSIGN_RE.finditer(text):
         if ЖИВАЯ_ФОРМА in m.group("до"):
             continue
-        строка = text[:m.start()].count("\n") + 1
+        строка = text[: m.start()].count("\n") + 1
         мёртвые.append(f"строка {строка}: {m.group('имя')}=$?")
     return мёртвые
 
@@ -409,17 +409,18 @@ def unparsable_shell(text: str) -> list[str]:
             сл = строки[n]
             if сл.strip() and (len(сл) - len(сл.lstrip())) <= отступ:
                 break
-            тело.append(сл[отступ + 2:] if len(сл) > отступ else "")
+            тело.append(сл[отступ + 2 :] if len(сл) > отступ else "")
             n += 1
 
         язык = оболочка or файловая
         if язык and not язык.startswith(("bash", "sh")):
-            continue                       # не оболочка — python, pwsh и прочее
+            continue  # не оболочка — python, pwsh и прочее
         код = ПОДСТАНОВКА.sub("substituted", "\n".join(тело))
         if not код.strip():
             continue
-        r = proc.run(["bash", "-n"], input=код, text=True,
-                     capture_output=True, encoding="utf-8", timeout=60)
+        r = proc.run(
+            ["bash", "-n"], input=код, text=True, capture_output=True, encoding="utf-8", timeout=60
+        )
         if r.returncode != 0:
             причина = (r.stderr or "").strip().splitlines()
             плохо.append(f"{имя}: {причина[0] if причина else 'не разобран'}")
@@ -461,7 +462,6 @@ def jobs_without_timeout(text: str) -> list[str]:
     return found
 
 
-
 def cancelling_groups(text: str) -> list[tuple[str, bool]]:
     """Группы `concurrency` файла: имя группы и признак «отменяет предыдущий».
 
@@ -492,6 +492,7 @@ def cancelling_groups(text: str) -> list[tuple[str, bool]]:
             i += 1
         out.append((группа, отменяет))
     return out
+
 
 #: ВТОРОЙ ИСТОЧНИК ДОКАЗАТЕЛЬСТВА (правило 199). Прогон, который будится
 #: событием и стоит в группе с `cancel-in-progress: false`, теряет ОЖИДАЮЩИЙ
@@ -527,7 +528,8 @@ def cancelling_groups(text: str) -> list[tuple[str, bool]]:
 ГОЛОВА_ВЕТКИ_RE = re.compile(r"^\s+ref:\s*(\S.*)$")
 SHA_СОБЫТИЯ_RE = re.compile(
     r"\bgithub\.event\.(?:after|before)\b|\bhead_commit\.id\b"
-    r"|\bcommits\[\s*\d+\s*\]\.id\b")
+    r"|\bcommits\[\s*\d+\s*\]\.id\b"
+)
 СКОБКИ_RE = re.compile(r"\[\s*['\"]([\w-]+)['\"]\s*\]")
 ТОЛЬКО_РУКОЙ = {"workflow_dispatch", "schedule"}
 
@@ -541,8 +543,11 @@ def читает_состояние(text: str) -> bool:
         if ОПРОС_ПЛОЩАДКИ_RE.search(строка):
             return True
         m = ГОЛОВА_ВЕТКИ_RE.match(строка)
-        if (m and "sha" not in m.group(1).lower()
-                and not SHA_СОБЫТИЯ_RE.search(СКОБКИ_RE.sub(r".\1", m.group(1)))):
+        if (
+            m
+            and "sha" not in m.group(1).lower()
+            and not SHA_СОБЫТИЯ_RE.search(СКОБКИ_RE.sub(r".\1", m.group(1)))
+        ):
             return True
     return False
 
@@ -551,8 +556,11 @@ def ожидающий_без_опроса(text: str) -> list[str]:
     """Группы «не отменять», чей прогон будится событием и не читает состояние."""
     if not (events(text) - ТОЛЬКО_РУКОЙ) or читает_состояние(text):
         return []
-    return [группа for группа, отменяет in cancelling_groups(text)
-            if not отменяет and "github.sha" not in группа]
+    return [
+        группа
+        for группа, отменяет in cancelling_groups(text)
+        if not отменяет and "github.sha" not in группа
+    ]
 
 
 #: Список разрешений агенту: `--allowedTools "Bash(…),Bash(…)"`. Значение лежит
@@ -565,7 +573,8 @@ def ожидающий_без_опроса(text: str) -> list[str]:
 СТАВИТ_PYTHON_RE = re.compile(r"^\s+(?:-\s+)?uses:\s*actions/setup-python@", re.M)
 #: Шаг, ставящий проверки: `pip install … -r requirements-test.txt` вне комментария.
 СТАВИТ_ПРОВЕРКИ_RE = re.compile(
-    r"^(?!\s*#)[^\n#]*pip install[^\n#]*-r\s+requirements-test\.txt", re.M)
+    r"^(?!\s*#)[^\n#]*pip install[^\n#]*-r\s+requirements-test\.txt", re.M
+)
 ИМЕНА_PYTHON = ("python", "python3")
 
 
@@ -591,7 +600,8 @@ def слова_оболочки(хвост: str) -> list[str]:
     Сам разбор — `shell_words.слова_оболочки`, один на каталог (214).
     """
     return shell_words.слова_оболочки(
-        ВЫРАЖЕНИЕ_RE.sub(lambda m: "${{ " + m.group(1) + " }}", хвост))
+        ВЫРАЖЕНИЕ_RE.sub(lambda m: "${{ " + m.group(1) + " }}", хвост)
+    )
 
 
 def скрипт_вызова(хвост: str) -> str | None:
@@ -612,12 +622,12 @@ def скрипт_вызова(хвост: str) -> str | None:
     оболочка.
     """
     хвост = хвост.rstrip()
-    хвост = хвост.removesuffix("\\")          # продолжение строки оболочки — не часть аргумента
+    хвост = хвост.removesuffix("\\")  # продолжение строки оболочки — не часть аргумента
     слова = iter(слова_оболочки(хвост))
     for слово in слова:
-        if слово == "--":           # конец ключей: следующее слово — скрипт
+        if слово == "--":  # конец ключей: следующее слово — скрипт
             слово = next(слова, "")
-        elif слово == "-":          # программа со стандартного ввода
+        elif слово == "-":  # программа со стандартного ввода
             return None
         elif слово in ДЛИННЫЕ_СО_ЗНАЧЕНИЕМ:
             next(слова, None)
@@ -631,7 +641,7 @@ def скрипт_вызова(хвост: str) -> str | None:
                     return None
                 if буква in КЛЮЧИ_СО_ЗНАЧЕНИЕМ:
                     if место == len(слово):
-                        next(слова, None)   # значение — следующим словом
+                        next(слова, None)  # значение — следующим словом
                     break
             continue
         return слово if слово.endswith(".py") else None
@@ -685,40 +695,46 @@ def impossible_permissions(text: str) -> list[str]:
         if not СТАВИТ_PYTHON_RE.search(text):
             находки.append(
                 "агенту разрешён интерпретатор Python, а шага actions/setup-python "
-                "в прогоне нет: имя, которое разрешено, может не существовать")
-        if any("-m pytest" in f" {хвост}" for хвост in питон) \
-                and not СТАВИТ_ПРОВЕРКИ_RE.search(text):
+                "в прогоне нет: имя, которое разрешено, может не существовать"
+            )
+        if any("-m pytest" in f" {хвост}" for хвост in питон) and not СТАВИТ_ПРОВЕРКИ_RE.search(
+            text
+        ):
             находки.append(
                 "агенту разрешён pytest, а проверки (-r requirements-test.txt) в "
                 "прогоне не ставятся: набор не запустится, и вывод будет сделан "
-                "чтением")
+                "чтением"
+            )
         for есть, нет in (("python", "python3"), ("python3", "python")):
             for хвост in sorted(по_имени[есть] - по_имени[нет]):
                 находки.append(
                     f"«{есть} {хвост}» разрешено, а «{нет} {хвост}» — нет: агент "
                     "зовёт интерпретатор тем именем, которое знает, и второе "
-                    "отклоняется")
+                    "отклоняется"
+                )
     return находки
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = parser.parse_args(argv)
     workflows = sorted((args.root / ".github" / "workflows").glob("*.yml"))
     # СОСТАВНОЕ ДЕЙСТВИЕ ПРОВЕРЯЕТСЯ ТОЙ ЖЕ МЕРКОЙ. Инцидент правила 145 — три
     # места одной формы, и одно из них корневой `action.yml`: там мёртвый
     # разбор красил прогоны ЧУЖИХ проектов, подключивших действие. Оболочка у
     # шага `composite` та же самая, значит и предмет тот же.
-    действия = sorted(p for p in args.root.rglob("action.yml")
-                      if ".git" not in p.parts)
+    действия = sorted(p for p in args.root.rglob("action.yml") if ".git" not in p.parts)
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not workflows:
-        print("проверка не отработала: в .github/workflows не нашлось ни "
-              "одного файла — проверять нечего, и зеленеть на этом нельзя",
-              file=sys.stderr)
+        print(
+            "проверка не отработала: в .github/workflows не нашлось ни "
+            "одного файла — проверять нечего, и зеленеть на этом нельзя",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -730,14 +746,16 @@ def main(argv: list[str] | None = None) -> int:
             problems.append(
                 f"{name}: нет workflow_dispatch. Прогон, чьё событие не "
                 "наступит, останется без выхода — а замереть он может "
-                "именно тогда, когда нужен (126)")
+                "именно тогда, когда нужен (126)"
+            )
         ev = events(text)
         if "pull_request" in ev and name not in MAY_BLOCK_MERGE:
             problems.append(
                 f"{name}: просыпается на pull_request, а основной работой не "
                 "объявлен. Необязательный канал, отказавший на изменении, "
                 "задерживает слияние и роняет его — при том что его отсутствие "
-                "штатный исход, а не ошибка (084)")
+                "штатный исход, а не ошибка (084)"
+            )
         # ЗАКРЕПЛЕНИЕ ЗНАЧИТ ЧТО-ТО ТОЛЬКО ТАМ, ГДЕ ВЫЗЫВАЮЩИЙ ТОЖЕ С ОБЩЕЙ
         # ВЕТКИ. На pull_request площадка берёт САМ файл прогона из изменения:
         # правящий изменение переписывает шаг и зовёт что угодно, а
@@ -749,7 +767,8 @@ def main(argv: list[str] | None = None) -> int:
                 f"{name}: просыпается на {', '.join(sorted(opasnye))} — файл "
                 "прогона берётся с общей ветки, — а вызываемое не закреплено. "
                 "Здесь закреплять обязательно: код исполняется при правах "
-                "общей ветки (152)")
+                "общей ветки (152)"
+            )
         for имя in non_ascii_names(text):
             problems.append(
                 f"{name}: имя «{имя}» не латиницей. У переменной оболочки "
@@ -757,7 +776,8 @@ def main(argv: list[str] | None = None) -> int:
                 "условие на ней всегда даёт одну ветку, и шаг зеленеет, не "
                 "проверив ничего. У `id:` и `steps.X.outputs.Y` хуже: площадка "
                 "НЕ РАЗБИРАЕТ такой файл вовсе — прогон падает за ноль секунд, "
-                "работ в нём ноль, а выглядит это обычным красным (167)")
+                "работ в нём ноль, а выглядит это обычным красным (167)"
+            )
         # ГРУППА ОТМЕНЫ НАЗЫВАЕТ ПОКОЛЕНИЕ, А ПОКОЛЕНИЕ — ЭТО КОММИТ (179).
         # Без головы прогоны на РАЗНЫХ коммитах попадают в одну группу, и
         # вытеснить может более новый: события доставляются не в порядке
@@ -773,7 +793,8 @@ def main(argv: list[str] | None = None) -> int:
                 "github.ref головой НЕ является: на pull_request это "
                 "refs/pull/N/merge, один и тот же для всех событий изменения — "
                 "прогон на устаревшем коммите вытеснит прогон на актуальном "
-                "(179)")
+                "(179)"
+            )
         for группа in ожидающий_без_опроса(text):
             problems.append(
                 f"{name}: будится событием и стоит в группе «{группа}» с "
@@ -782,14 +803,16 @@ def main(argv: list[str] | None = None) -> int:
                 "условие, которое он снимал, останется висеть без следа. "
                 "Нужен второй источник: опрос площадки (gh api) или выкачка "
                 "головы ветки (ref:), а не SHA события. Проверяется наличие "
-                "опроса в файле, а не то, что он читает нужное (199)")
+                "опроса в файле, а не то, что он читает нужное (199)"
+            )
         for находка in impossible_permissions(text):
             problems.append(f"{name}: {находка} (032)")
         for job in jobs_without_timeout(text):
             problems.append(
                 f"{name}: у работы «{job}» нет timeout-minutes. Зависшая "
                 "работа держит очередь до умолчания площадки — шесть часов "
-                "молчания вместо отказа (100)")
+                "молчания вместо отказа (100)"
+            )
 
     # РАЗБИРАЕМОСТЬ ОБОЛОЧКИ — ТОЖЕ ПО ОБЕИМ ПОВЕРХНОСТЯМ. Первая редакция
     # звала это только в цикле по прогонам, и составные действия оставались
@@ -805,7 +828,8 @@ def main(argv: list[str] | None = None) -> int:
                 "этот блок, и прогон упадёт МГНОВЕННО — работ ноль, шагов ноль, "
                 "а выглядит это обычным красным. Ровно так 4 сентября `id: ключ` "
                 "съел смену (167). У составного действия цена выше: красным "
-                "станут прогоны ЧУЖИХ проектов, подключивших его")
+                "станут прогоны ЧУЖИХ проектов, подключивших его"
+            )
 
     # КОД СОСТАВНОГО ДЕЙСТВИЯ — ИЗ ЕГО ПУТИ (095). Только у действий: прогон
     # каталога исполняет своё дерево законно, это и есть его работа.
@@ -816,7 +840,8 @@ def main(argv: list[str] | None = None) -> int:
                 "$GITHUB_ACTION_PATH. Тег в строке uses: закрепляет только то, "
                 "что лежит там; скрипт из каталога, выкачанного ещё раз, приходит "
                 "той версии, которую назвал вход, — у потребителя по умолчанию "
-                "подвижной main (095)")
+                "подвижной main (095)"
+            )
 
     # ЧУЖОЕ ДЕЙСТВИЕ — ПО SHA, у прогонов и у составных действий: действие
     # каталога исполняет `uses:` в прогоне ПОТРЕБИТЕЛЯ, и подвижный тег там
@@ -827,7 +852,8 @@ def main(argv: list[str] | None = None) -> int:
                 f"{path.relative_to(args.root)}: `uses: {цель}` закреплено не "
                 "полным SHA. Тег переставляет владелец действия, и прогон "
                 "исполнит то, что лежит в нём сегодня. Пишется "
-                "`@<40 знаков> # vX.Y.Z` (#865)")
+                "`@<40 знаков> # vX.Y.Z` (#865)"
+            )
 
     # ФОРМА РАЗБОРА КОДА ВОЗВРАТА — у прогонов и у составных действий сразу.
     for path in [*workflows, *действия]:
@@ -838,23 +864,25 @@ def main(argv: list[str] | None = None) -> int:
                 "как `bash -e {0}`, и `set -uo pipefail` этот `-e` НЕ снимает: "
                 "на ненулевом коде оболочка умирает раньше присвоения, и весь "
                 "разбор ниже — код, который не исполняется ни разу. Пишется "
-                "`|| имя=$?` (145)")
+                "`|| имя=$?` (145)"
+            )
 
     if problems:
-        print("прогоны каталога разошлись с тем, что о них объявлено:",
-              file=sys.stderr)
+        print("прогоны каталога разошлись с тем, что о них объявлено:", file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
-    print(f"прогоны в порядке: файлов {len(workflows)} — у каждого ручная "
-          "кнопка, у каждой работы предел времени, необязательные каналы "
-          f"слияние не держат, закрепление стоит там, где значит, "
-          f"группа отмены называет голову, разрешённый агенту прогон "
-          f"исполним, чужие действия закреплены по SHA, действия исполняют свой код из своего пути, а код "
-          f"возврата разбирается формой, "
-          f"доживающей до разбора — проверено вместе с {len(действия)} "
-          f"составными действиями")
+    print(
+        f"прогоны в порядке: файлов {len(workflows)} — у каждого ручная "
+        "кнопка, у каждой работы предел времени, необязательные каналы "
+        f"слияние не держат, закрепление стоит там, где значит, "
+        f"группа отмены называет голову, разрешённый агенту прогон "
+        f"исполним, чужие действия закреплены по SHA, действия исполняют свой код из своего пути, а код "
+        f"возврата разбирается формой, "
+        f"доживающей до разбора — проверено вместе с {len(действия)} "
+        f"составными действиями"
+    )
     return 0
 
 

@@ -10,14 +10,15 @@
 значило бы проверять его самим собой; предмет проверки — согласие сторон.
 """
 
-
 import json
 
 import onboard_consumer as oc
 from conftest import write
 
-EXPORT = {"rules": [{"id": "001"}, {"id": "002"}],
-          "contracts": {"bindings": "1.6", "proposals": "1.2"}}
+EXPORT = {
+    "rules": [{"id": "001"}, {"id": "002"}],
+    "contracts": {"bindings": "1.6", "proposals": "1.2"},
+}
 CONTRACT = "текст\n\n`uses: X@<!--m:ref-->v1.2.0<!--/m:ref-->`\n"
 
 
@@ -29,11 +30,13 @@ def prepare(repo):
 
 def run(repo, name="owner/name"):
     e, c = prepare(repo)
-    return oc.main(["--repo", name, "--out", str(repo / "out"),
-                    "--export", str(e), "--contract", str(c)])
+    return oc.main(
+        ["--repo", name, "--out", str(repo / "out"), "--export", str(e), "--contract", str(c)]
+    )
 
 
 # ── собранное принимается обеими сторонами ────────────────────────────────
+
 
 def test_ответ_собран_по_каждому_правилу(repo):
     assert run(repo) == 0
@@ -59,9 +62,21 @@ def test_без_номеров_контрактов_третий_исход(repo
     """Выгрузка без contracts — отказ, а не набор с выдуманным номером (039)."""
     write(repo / "export" / "rules.json", json.dumps({"rules": EXPORT["rules"]}))
     write(repo / "export" / "README.md", CONTRACT)
-    assert oc.main(["--repo", "owner/name", "--out", str(repo / "out"),
-                    "--export", str(repo / "export" / "rules.json"),
-                    "--contract", str(repo / "export" / "README.md")]) == 2
+    assert (
+        oc.main(
+            [
+                "--repo",
+                "owner/name",
+                "--out",
+                str(repo / "out"),
+                "--export",
+                str(repo / "export" / "rules.json"),
+                "--contract",
+                str(repo / "export" / "README.md"),
+            ]
+        )
+        == 2
+    )
 
 
 def test_в_предложениях_нет_поля_номера(repo):
@@ -80,15 +95,18 @@ def test_тег_берётся_из_контракта_а_не_вписан(repo
 
 def test_рабочий_процесс_разбирается_как_yaml(repo):
     import yaml
+
     assert run(repo) == 0
     doc = yaml.safe_load(
-        (repo / "out" / ".github" / "workflows" / "rules-inbox.yml").read_text(encoding="utf-8"))
+        (repo / "out" / ".github" / "workflows" / "rules-inbox.yml").read_text(encoding="utf-8")
+    )
     assert doc["name"] == "rules-inbox"
     assert doc["permissions"]["issues"] == "write"
     assert "workflow_dispatch" in doc[True]
 
 
 # ── предметы, которые генератор обязан отвергнуть ──────────────────────────
+
 
 def test_имя_не_по_форме_это_третий_исход(repo, capsys):
     assert run(repo, name="просто-имя") == 2
@@ -97,32 +115,69 @@ def test_имя_не_по_форме_это_третий_исход(repo, capsys
 
 def test_нет_экспорта_это_третий_исход(repo, capsys):
     _, c = prepare(repo)
-    assert oc.main(["--repo", "o/n", "--out", str(repo / "out"),
-                    "--export", str(repo / "нет.json"), "--contract", str(c)]) == 2
+    assert (
+        oc.main(
+            [
+                "--repo",
+                "o/n",
+                "--out",
+                str(repo / "out"),
+                "--export",
+                str(repo / "нет.json"),
+                "--contract",
+                str(c),
+            ]
+        )
+        == 2
+    )
 
 
 def test_контракт_без_маркера_это_третий_исход(repo, capsys):
     e, _ = prepare(repo)
     c = write(repo / "export" / "README.md", "текст без маркера\n")
-    assert oc.main(["--repo", "o/n", "--out", str(repo / "out"),
-                    "--export", str(e), "--contract", str(c)]) == 2
+    assert (
+        oc.main(
+            ["--repo", "o/n", "--out", str(repo / "out"), "--export", str(e), "--contract", str(c)]
+        )
+        == 2
+    )
     assert "маркера" in capsys.readouterr().err
 
 
 def test_пустой_экспорт_это_находка(repo, capsys):
-    e = write(repo / "export" / "rules.json",
-              json.dumps({"rules": [], "contracts": EXPORT["contracts"]}))
+    e = write(
+        repo / "export" / "rules.json", json.dumps({"rules": [], "contracts": EXPORT["contracts"]})
+    )
     c = write(repo / "export" / "README.md", CONTRACT)
-    assert oc.main(["--repo", "o/n", "--out", str(repo / "out"),
-                    "--export", str(e), "--contract", str(c)]) == 1
+    assert (
+        oc.main(
+            ["--repo", "o/n", "--out", str(repo / "out"), "--export", str(e), "--contract", str(c)]
+        )
+        == 1
+    )
 
 
 def test_заготовка_без_замещённых(repo):
     """Новому потребителю о замещённом отвечать незачем (17.10)."""
-    e = write(repo / "export" / "rules.json", json.dumps({
-        **EXPORT, "rules": [{"id": "001", "superseded_by": "002"}, {"id": "002"}]}))
+    e = write(
+        repo / "export" / "rules.json",
+        json.dumps({**EXPORT, "rules": [{"id": "001", "superseded_by": "002"}, {"id": "002"}]}),
+    )
     c = write(repo / "export" / "README.md", CONTRACT)
-    assert oc.main(["--repo", "owner/name", "--out", str(repo / "out"),
-                    "--export", str(e), "--contract", str(c)]) == 0
+    assert (
+        oc.main(
+            [
+                "--repo",
+                "owner/name",
+                "--out",
+                str(repo / "out"),
+                "--export",
+                str(e),
+                "--contract",
+                str(c),
+            ]
+        )
+        == 0
+    )
     d = json.loads((repo / "out" / ".rules" / "bindings.json").read_text(encoding="utf-8"))
     assert set(d["rules"]) == {"002"}

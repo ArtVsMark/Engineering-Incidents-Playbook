@@ -32,14 +32,20 @@ def test_истечение_при_check_поднимает_отказ():
 
 
 def test_успех_как_у_subprocess():
-    done = proc.run([sys.executable, "-c", "print('ок')"], timeout=60,
-                    capture_output=True, text=True, encoding="utf-8")
+    done = proc.run(
+        [sys.executable, "-c", "print('ок')"],
+        timeout=60,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
     assert (done.returncode, done.stdout) == (0, "ок\n")
 
 
 def test_дедлайн_обязателен():
     """Без значения по умолчанию и только по имени: вызов без дедлайна не соберётся."""
     import inspect
+
     срок = inspect.signature(proc.run).parameters["timeout"]
     assert срок.default is inspect.Parameter.empty
     assert срок.kind is inspect.Parameter.KEYWORD_ONLY

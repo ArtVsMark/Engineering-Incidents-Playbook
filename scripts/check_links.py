@@ -25,7 +25,6 @@ origin (check_own_name.py), а не константой; нет origin — та
 Коды:    0 чисто · 1 есть битые ссылки · 2 проверять было нечего
 """
 
-
 import re
 import sys
 from pathlib import Path
@@ -81,14 +80,13 @@ def anchors(path: Path) -> set[str]:
 
 
 def main() -> int:
-    files = [
-        p for p in ROOT.rglob("*.md")
-        if not any(part in SKIP_DIRS for part in p.parts)
-    ]
+    files = [p for p in ROOT.rglob("*.md") if not any(part in SKIP_DIRS for part in p.parts)]
     if not files:
-        print(f"проверка не отработала: под {ROOT} не нашлось ни одного "
-              f"*.md вне {sorted(SKIP_DIRS)} — проверять нечего",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: под {ROOT} не нашлось ни одного "
+            f"*.md вне {sorted(SKIP_DIRS)} — проверять нечего",
+            file=sys.stderr,
+        )
         return 2
 
     slug, почему = own_slug(ROOT)
@@ -116,7 +114,8 @@ def main() -> int:
                     problems.append(
                         f"{rel}: документ уходит к потребителю, а ссылка ведёт "
                         f"в наше дерево → {raw}. У получателя этого пути нет — "
-                        "нужна абсолютная ссылка на каталог (076)")
+                        "нужна абсолютная ссылка на каталог (076)"
+                    )
                     continue
             if not path.exists():
                 problems.append(f"{rel}: ссылка в никуда → {raw}")
@@ -129,9 +128,11 @@ def main() -> int:
                     problems.append(f"{rel}: якоря нет → {raw}")
 
     if checked == 0:
-        print(f"проверка не отработала: в {len(files)} документах под {ROOT} "
-              "нет ни одной локальной ссылки — вход подозрителен",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: в {len(files)} документах под {ROOT} "
+            "нет ни одной локальной ссылки — вход подозрителен",
+            file=sys.stderr,
+        )
         return 2
 
     if problems:
@@ -140,9 +141,11 @@ def main() -> int:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
-    print(f"ссылки в порядке: {checked} локальных и {своих} своих абсолютных "
-          f"в {len(files)} документах"
-          + ("" if свои else f" — свои абсолютные НЕ проверены: {почему}"))
+    print(
+        f"ссылки в порядке: {checked} локальных и {своих} своих абсолютных "
+        f"в {len(files)} документах"
+        + ("" if свои else f" — свои абсолютные НЕ проверены: {почему}")
+    )
     return 0
 
 

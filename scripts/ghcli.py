@@ -44,7 +44,6 @@
         разбирает ответ по элементу, а не по странице.
 """
 
-
 import json
 import re
 import subprocess
@@ -69,15 +68,16 @@ QUOTA_OUT = 126
 #: limit ALREADY exceeded for user ID 86671904» — между теми же двумя словами
 #: встало третье, и ни одна подстрока не совпала. Проверять надо форму
 #: сообщения, а не запомненную редакцию: слова площадка меняет, смысл — нет.
-ИСЧЕРПАНИЕ_RE = re.compile(
-    r"rate limit\b[^.\n]{0,40}?\bexceed|secondary rate limit|\b403\b", re.I)
+ИСЧЕРПАНИЕ_RE = re.compile(r"rate limit\b[^.\n]{0,40}?\bexceed|secondary rate limit|\b403\b", re.I)
 
 #: Замер держится один на процесс: «смотреть первым шагом» не значит «смотреть
 #: на каждом». None — ещё не мерили.
 _замер: tuple[str, bool] | None = None
 #: Что сказать человеку. Причина называется целиком, а не «ошибка вызова».
-NO_GH_WHY = ("нет команды gh — поставьте GitHub CLI либо задайте PATH. "
-             "Механизм без неё не работает и не должен зеленеть")
+NO_GH_WHY = (
+    "нет команды gh — поставьте GitHub CLI либо задайте PATH. "
+    "Механизм без неё не работает и не должен зеленеть"
+)
 
 
 def остаток() -> tuple[str, bool]:
@@ -90,14 +90,17 @@ def остаток() -> tuple[str, bool]:
     try:
         done = proc.run(  # noqa: S603 — аргументы свои
             ["gh", "api", "rate_limit"],
-            capture_output=True, text=True, encoding="utf-8", timeout=120)
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=120,
+        )
     except OSError as e:
         return f"остаток не измерен: {NO_GH_WHY} ({e.strerror or e})", False
     if done.returncode != 0:
         # ЧЕСТНЕЕ СКАЗАТЬ «НЕ ИЗМЕРЕН», ЧЕМ ПОДСТАВИТЬ НОЛЬ: неизмеренное,
         # выданное за измеренное, — это гипотеза в одежде факта (037).
-        return ("остаток не измерен: gh api rate_limit ответил "
-                f"{done.returncode}"), False
+        return (f"остаток не измерен: gh api rate_limit ответил {done.returncode}"), False
     try:
         данные = json.loads(done.stdout)["resources"]
     except (ValueError, KeyError, TypeError) as e:
@@ -124,7 +127,9 @@ def run(*args: str) -> tuple[int, str]:
     """
     global _замер
     try:
-        done = proc.run(["gh", *args], capture_output=True, text=True, encoding="utf-8", timeout=120)
+        done = proc.run(
+            ["gh", *args], capture_output=True, text=True, encoding="utf-8", timeout=120
+        )
     except OSError as e:
         return NO_GH, f"{NO_GH_WHY} ({e.strerror or e})"
     вывод = (done.stdout or done.stderr).strip()
@@ -156,8 +161,9 @@ def failed(code: int) -> bool:
     return code in (NO_GH, QUOTA_OUT, proc.TIMED_OUT)
 
 
-def список(путь: str, элемент: str = ".[]", *,
-           вызов: Callable[..., tuple[int, str]] | None = None) -> tuple[int, list, str]:
+def список(
+    путь: str, элемент: str = ".[]", *, вызов: Callable[..., tuple[int, str]] | None = None
+) -> tuple[int, list, str]:
     """Список площадки ЦЕЛИКОМ — все страницы, по элементу (212).
 
     Возвращает код, элементы и причину отказа (пустую при коде 0). `вызов` —

@@ -48,7 +48,8 @@ def n() -> int:
     """Источник: действующие записи дерева. Замещённые в дереве есть — иначе набор пуст."""
     found, _, _ = b.collect()
     assert len(found) > len(b.действующие(found)), (
-        "замещённых нет — сверять нечего, и зелёное ничего бы не значило (146)")
+        "замещённых нет — сверять нечего, и зелёное ничего бы не значило (146)"
+    )
     return len(b.действующие(found))
 
 
@@ -87,8 +88,10 @@ def test_сводка_где_действует(n):
 
 
 def test_метрики_выпуска(n):
-    files = {str(p.relative_to(ROOT)): p.read_text(encoding="utf-8")
-             for p in (ROOT / "rules" / "ru").glob("*.md")}
+    files = {
+        str(p.relative_to(ROOT)): p.read_text(encoding="utf-8")
+        for p in (ROOT / "rules" / "ru").glob("*.md")
+    }
     files[".rules/bindings.json"] = ОТВЕТ.read_text(encoding="utf-8")
     assert int(hm.snapshot(files)["правил"]) == n
 
@@ -100,16 +103,39 @@ def test_значок(n, tmp_path):
 
 def test_картинка_потребителей(n, tmp_path, capsys):
     write(tmp_path / "export" / "rules.json", ВЫГРУЗКА.read_text(encoding="utf-8"))
-    write(tmp_path / "export" / "where.json", json.dumps({"consumers": [
-        {"repo": "o/a", "state": "подключён", "rules": {}, "answered": 0,
-         "by_mechanism": {}}]}))
+    write(
+        tmp_path / "export" / "where.json",
+        json.dumps(
+            {
+                "consumers": [
+                    {
+                        "repo": "o/a",
+                        "state": "подключён",
+                        "rules": {},
+                        "answered": 0,
+                        "by_mechanism": {},
+                    }
+                ]
+            }
+        ),
+    )
     assert cp.main(["--root", str(tmp_path), "--out-dir", str(tmp_path / "svg")]) == 0
     assert число(capsys.readouterr().out, r"правил (\d+);") == n
 
 
 def test_заготовка_потребителя(n, tmp_path, capsys):
-    oc.main(["--repo", "owner/name", "--out", str(tmp_path / "out"),
-             "--export", str(ВЫГРУЗКА), "--contract", str(ROOT / "export" / "README.md")])
+    oc.main(
+        [
+            "--repo",
+            "owner/name",
+            "--out",
+            str(tmp_path / "out"),
+            "--export",
+            str(ВЫГРУЗКА),
+            "--contract",
+            str(ROOT / "export" / "README.md"),
+        ]
+    )
     assert число(capsys.readouterr().out, r"правил (\d+),") == n
 
 

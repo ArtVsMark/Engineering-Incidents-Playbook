@@ -13,7 +13,6 @@
 остались МЕСТА для суждения, а не заполненные поля.
 """
 
-
 import json
 
 import new_rule as nr
@@ -24,14 +23,18 @@ def tree(repo, rules=("001-a", "002-b"), consumers=None, proposals=None):
     for name in rules:
         write(repo / "rules" / "ru" / f"{name}.md", "# Правило\n")
         write(repo / "rules" / "en" / f"{name}.md", "# A rule\n")
-    write(repo / "templates" / "rule-template.md",
-          "# `<Правило одной строкой>`\n\n**Область.** `<область>`\n\n"
-          "**Правило.** `<что делать>`\n\n## Инцидент\n\n`<что сломалось>`\n\n"
-          "## Применимость\n\n**Не работает** `<где>`.\n\n"
-          "## След\n\n`<разрешимый след>`\n")
+    write(
+        repo / "templates" / "rule-template.md",
+        "# `<Правило одной строкой>`\n\n**Область.** `<область>`\n\n"
+        "**Правило.** `<что делать>`\n\n## Инцидент\n\n`<что сломалось>`\n\n"
+        "## Применимость\n\n**Не работает** `<где>`.\n\n"
+        "## След\n\n`<разрешимый след>`\n",
+    )
     write(repo / ".rules" / "bindings.json", json.dumps({"rules": {}}))
-    write(repo / ".rules" / "consumers.json",
-          json.dumps(consumers or {"consumers": [{"repo": "o/one"}]}, ensure_ascii=False))
+    write(
+        repo / ".rules" / "consumers.json",
+        json.dumps(consumers or {"consumers": [{"repo": "o/one"}]}, ensure_ascii=False),
+    )
     if proposals is not None:
         write(repo / ".rules" / "incoming.json", json.dumps(proposals, ensure_ascii=False))
     (repo / "changelog.d").mkdir(parents=True, exist_ok=True)
@@ -42,11 +45,11 @@ def run(repo, *argv):
     return nr.main([*argv, "--root", str(repo)])
 
 
-OK = ("--slug", "a-new-thing", "--area", "процесс", "--tier", "3",
-      "--trail", "owner/repo#12")
+OK = ("--slug", "a-new-thing", "--area", "процесс", "--tier", "3", "--trail", "owner/repo#12")
 
 
 # ── номер: вычисляется однозначно и не переиспользуется ────────────────────
+
 
 def test_номер_берётся_выше_максимума(repo):
     """Дыра от удалённой записи остаётся дырой: номера не переиспользуются."""
@@ -78,6 +81,7 @@ def test_след_подставлен_целиком(repo):
 
 # ── граница: суждение остаётся человеку ────────────────────────────────────
 
+
 def test_места_для_суждения_остаются_пустыми(repo):
     """Сгенерированный инцидент был бы выдумкой, а она выглядит как основание."""
     assert run(tree(repo), *OK) == 0
@@ -89,41 +93,89 @@ def test_места_для_суждения_остаются_пустыми(repo
 
 # ── предметы, которые генератор обязан отвергнуть ──────────────────────────
 
+
 def test_занятый_слаг_это_находка(repo, capsys):
     assert run(tree(repo, rules=("001-a-new-thing",)), *OK) == 1
     assert "Пересмотр" in capsys.readouterr().err
 
 
 def test_область_вне_словаря_это_находка(repo, capsys):
-    assert run(tree(repo), "--slug", "x", "--area", "выдуманная", "--tier", "3",
-               "--trail", "owner/repo#12") == 1
+    assert (
+        run(
+            tree(repo),
+            "--slug",
+            "x",
+            "--area",
+            "выдуманная",
+            "--tier",
+            "3",
+            "--trail",
+            "owner/repo#12",
+        )
+        == 1
+    )
     assert "вне словаря" in capsys.readouterr().err
 
 
 def test_след_прозой_это_находка(repo, capsys):
-    assert run(tree(repo), "--slug", "x", "--area", "процесс", "--tier", "3",
-               "--trail", "где-то там") == 1
+    assert (
+        run(tree(repo), "--slug", "x", "--area", "процесс", "--tier", "3", "--trail", "где-то там")
+        == 1
+    )
     assert "не разрешается" in capsys.readouterr().err
 
 
 def test_слаг_кириллицей_это_находка(repo, capsys):
-    assert run(tree(repo), "--slug", "правило", "--area", "процесс", "--tier", "3",
-               "--trail", "owner/repo#12") == 1
+    assert (
+        run(
+            tree(repo),
+            "--slug",
+            "правило",
+            "--area",
+            "процесс",
+            "--tier",
+            "3",
+            "--trail",
+            "owner/repo#12",
+        )
+        == 1
+    )
     assert "не по форме" in capsys.readouterr().err
 
 
 # ── круг: предложение из проекта → каркас здесь ────────────────────────────
 
+
 def connected(slug="a-real-incident", incident="Сломалось вот это."):
-    return ({"consumers": [{"repo": "o/one", "proposals": ".rules/incoming.json"}]},
-            {"proposals": [{"slug": slug, "claim": "Делать так.",
-                            "incident": incident, "trail": "scripts/x.py"}]})
+    return (
+        {"consumers": [{"repo": "o/one", "proposals": ".rules/incoming.json"}]},
+        {
+            "proposals": [
+                {
+                    "slug": slug,
+                    "claim": "Делать так.",
+                    "incident": incident,
+                    "trail": "scripts/x.py",
+                }
+            ]
+        },
+    )
 
 
 def test_предложение_становится_каркасом(repo):
     c, p = connected()
-    assert run(tree(repo, consumers=c, proposals=p),
-               "--from-proposal", "o/one:a-real-incident", "--area", "процесс", "--tier", "3") == 0
+    assert (
+        run(
+            tree(repo, consumers=c, proposals=p),
+            "--from-proposal",
+            "o/one:a-real-incident",
+            "--area",
+            "процесс",
+            "--tier",
+            "3",
+        )
+        == 0
+    )
     ru = (repo / "rules" / "ru" / "003-a-real-incident.md").read_text(encoding="utf-8")
     assert "o/one — scripts/x.py" in ru
 
@@ -132,33 +184,74 @@ def test_номер_присваивает_каталог_а_не_проект(r
     """У предложения номера нет и быть не может: независимый выбор двух
     проектов уже нечем починить."""
     c, p = connected()
-    assert run(tree(repo, consumers=c, proposals=p),
-               "--from-proposal", "o/one:a-real-incident", "--area", "процесс", "--tier", "3") == 0
+    assert (
+        run(
+            tree(repo, consumers=c, proposals=p),
+            "--from-proposal",
+            "o/one:a-real-incident",
+            "--area",
+            "процесс",
+            "--tier",
+            "3",
+        )
+        == 0
+    )
     assert (repo / "rules" / "ru" / "003-a-real-incident.md").exists()
 
 
 def test_предложение_без_инцидента_это_находка(repo, capsys):
     c, p = connected(incident="")
-    assert run(tree(repo, consumers=c, proposals=p),
-               "--from-proposal", "o/one:a-real-incident", "--area", "процесс", "--tier", "3") == 1
+    assert (
+        run(
+            tree(repo, consumers=c, proposals=p),
+            "--from-proposal",
+            "o/one:a-real-incident",
+            "--area",
+            "процесс",
+            "--tier",
+            "3",
+        )
+        == 1
+    )
     assert "без инцидента" in capsys.readouterr().err
 
 
 def test_предложение_от_необъявленного_проекта_это_находка(repo, capsys):
     c, p = connected()
-    assert run(tree(repo, consumers=c, proposals=p),
-               "--from-proposal", "чужой/проект:a-real-incident", "--area", "процесс", "--tier", "3") == 1
+    assert (
+        run(
+            tree(repo, consumers=c, proposals=p),
+            "--from-proposal",
+            "чужой/проект:a-real-incident",
+            "--area",
+            "процесс",
+            "--tier",
+            "3",
+        )
+        == 1
+    )
     assert "не объявлен потребителем" in capsys.readouterr().err
 
 
 def test_канал_в_эту_сторону_не_подключён_это_находка(repo, capsys):
     _, p = connected()
-    assert run(tree(repo, proposals=p),
-               "--from-proposal", "o/one:a-real-incident", "--area", "процесс", "--tier", "3") == 1
+    assert (
+        run(
+            tree(repo, proposals=p),
+            "--from-proposal",
+            "o/one:a-real-incident",
+            "--area",
+            "процесс",
+            "--tier",
+            "3",
+        )
+        == 1
+    )
     assert "не назван адрес предложений" in capsys.readouterr().err
 
 
 # ── третий исход ───────────────────────────────────────────────────────────
+
 
 def test_пустой_каталог_это_третий_исход(repo, capsys):
     assert run(tree(repo, rules=()), *OK) == 2
@@ -175,24 +268,60 @@ def test_пустой_каталог_это_третий_исход(repo, capsys
 
 def test_потребитель_без_артефакта_это_находка(repo, capsys):
     tree(repo)
-    assert run(repo, "--slug", "a-new-thing", "--area", "процесс", "--tier", "3",
-               "--trail", "o/one — этот каталог") == 1
+    assert (
+        run(
+            repo,
+            "--slug",
+            "a-new-thing",
+            "--area",
+            "процесс",
+            "--tier",
+            "3",
+            "--trail",
+            "o/one — этот каталог",
+        )
+        == 1
+    )
     assert "не разрешается" in capsys.readouterr().err
 
 
 def test_потребитель_с_именем_решения_без_пути_это_находка(repo, capsys):
     """Ровно та форма, на которой обжёгся корпус."""
     tree(repo)
-    assert run(repo, "--slug", "a-new-thing", "--area", "процесс", "--tier", "3",
-               "--trail", "o/one — ADR-0010 § Контекст") == 1
+    assert (
+        run(
+            repo,
+            "--slug",
+            "a-new-thing",
+            "--area",
+            "процесс",
+            "--tier",
+            "3",
+            "--trail",
+            "o/one — ADR-0010 § Контекст",
+        )
+        == 1
+    )
     assert "не разрешается" in capsys.readouterr().err
 
 
 def test_потребитель_с_адресом_артефакта_собирается(repo):
     """Вторая сторона: путь с расширением и корневой документ по имени проходят."""
     tree(repo)
-    assert run(repo, "--slug", "a-new-thing", "--area", "процесс", "--tier", "3",
-               "--trail", "o/one — `scripts/check_x.py`") == 0
+    assert (
+        run(
+            repo,
+            "--slug",
+            "a-new-thing",
+            "--area",
+            "процесс",
+            "--tier",
+            "3",
+            "--trail",
+            "o/one — `scripts/check_x.py`",
+        )
+        == 0
+    )
 
 
 # ── след предложения: приставка не безусловна ──────────────────────────────
@@ -234,19 +363,23 @@ def test_след_задачей_с_описанием_разрешается(re
 # переносимости, и каждый свежий каркас краснел в гейте полноты за «разделов
 # в ru 5, в en 4» — стоп-кран читался как поломка генератора.
 
+
 def test_anglijskaya_zagotovka_povtoryaet_razdely_russkoy():
     from pathlib import Path
+
     корень = Path(__file__).resolve().parent.parent
     ru = (корень / "templates" / "rule-template.md").read_text(encoding="utf-8")
     разделы = lambda t: [s for s in t.splitlines() if s.startswith("## ")]
     assert len(разделы(ru)) == len(разделы(nr.EN_SKELETON))
-    assert ("**Переносится вне Claude Code.**" in ru) == \
-        ("**Portable beyond Claude Code.**" in nr.EN_SKELETON)
+    assert ("**Переносится вне Claude Code.**" in ru) == (
+        "**Portable beyond Claude Code.**" in nr.EN_SKELETON
+    )
 
 
 def test_zaglushka_fragmenta_beryotsya_u_geyta(repo):
     """Фрагмент несёт ровно ту заглушку, которую отвергает гейт журнала."""
     import collect_changelog as cc
+
     assert run(tree(repo), *OK) == 0
     фрагмент = (repo / "changelog.d" / "rule-003-a-new-thing.added.md").read_text(encoding="utf-8")
     assert cc.ЗАГЛУШКА_ФРАГМЕНТА in фрагмент

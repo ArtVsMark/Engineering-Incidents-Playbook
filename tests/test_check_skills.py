@@ -10,7 +10,6 @@
 площадка — настоящим. Расхождение двух прочтений видно только так.
 """
 
-
 from pathlib import Path
 
 import pytest
@@ -65,8 +64,13 @@ description: Звать, когда общая ветка покраснела.
 """
 
 
-def подделка(repo: Path, список: str = СПИСОК, навык: str = НАВЫК,
-             заготовка: str = ЗАГОТОВКА, имя: str = "triage") -> Path:
+def подделка(
+    repo: Path,
+    список: str = СПИСОК,
+    навык: str = НАВЫК,
+    заготовка: str = ЗАГОТОВКА,
+    имя: str = "triage",
+) -> Path:
     write(repo / "templates" / "skill-template.md", заготовка)
     write(repo / ".claude" / "skills" / "README.md", список)
     write(repo / ".claude" / "skills" / имя / "SKILL.md", навык)
@@ -104,15 +108,19 @@ def test_plagin_bez_spiska_eto_otkaz(repo, capsys):
 
 
 def test_navyk_plagina_bez_razdela_zagotovki_eto_otkaz(repo, capsys):
-    плагин(подделка(repo), список=СПИСОК,
-           навык=НАВЫК.replace("## Чего навык НЕ делает", "## Прочее"))
+    плагин(
+        подделка(repo), список=СПИСОК, навык=НАВЫК.replace("## Чего навык НЕ делает", "## Прочее")
+    )
     assert прогон(repo) == 1
     assert "plugins/p/skills/triage/SKILL.md: нет раздела" in capsys.readouterr().err
 
 
 def test_plagin_bez_navykov_eto_otkaz(repo, capsys):
     подделка(repo)
-    write(repo / "plugins" / "p" / "README.md", СПИСОК.replace("| `triage` | когда что-то покраснело |\n", ""))
+    write(
+        repo / "plugins" / "p" / "README.md",
+        СПИСОК.replace("| `triage` | когда что-то покраснело |\n", ""),
+    )
     assert прогон(repo) == 1
     assert "навыков нет" in capsys.readouterr().err
 
@@ -127,8 +135,10 @@ def test_est_a_v_spiske_ne_nazvan_eto_otkaz(repo, capsys):
     """Ровно тот случай, ради которого гейт заведён: навык в дереве, о котором
     не знает никто, кроме площадки."""
     подделка(repo)
-    write(repo / ".claude" / "skills" / "review" / "SKILL.md",
-          НАВЫК.replace("name: triage", "name: review"))
+    write(
+        repo / ".claude" / "skills" / "review" / "SKILL.md",
+        НАВЫК.replace("name: triage", "name: review"),
+    )
     assert прогон(repo) == 1
     assert "review есть" in capsys.readouterr().err
 
@@ -149,8 +159,7 @@ def test_imya_ne_sovpadaet_s_katalogom_eto_otkaz(repo, capsys):
 def test_pustoe_opisanie_eto_otkaz(repo, capsys, пустое):
     """Разбор заголовка — у check_bindings; здесь проверяется, что его находка
     доезжает до отказа ЭТОГО гейта, в том числе на блочном скаляре."""
-    подделка(repo, навык=НАВЫК.replace(
-        "description: Звать, когда общая ветка покраснела.", пустое))
+    подделка(repo, навык=НАВЫК.replace("description: Звать, когда общая ветка покраснела.", пустое))
     assert прогон(repo) == 1
     assert "description" in capsys.readouterr().err
 
@@ -164,27 +173,39 @@ def test_razdela_zagotovki_net_eto_otkaz(repo, capsys):
 def test_razdely_berutsya_iz_zagotovki_a_ne_iz_skripta(repo, capsys):
     """Заготовка потребовала третий раздел — навык без него отвергается, хотя
     в гейте о нём ни слова (155: канон один, и он в заготовке)."""
-    подделка(repo, заготовка=ЗАГОТОВКА.replace(
-        "## Чего навык НЕ делает", "## Что сделать\n\n## Чего навык НЕ делает"))
+    подделка(
+        repo,
+        заготовка=ЗАГОТОВКА.replace(
+            "## Чего навык НЕ делает", "## Что сделать\n\n## Чего навык НЕ делает"
+        ),
+    )
     assert прогон(repo) == 1
     assert "## Что сделать" in capsys.readouterr().err
 
 
-@pytest.mark.parametrize("строка", [
-    "",
-    "> **Читатель:** прохожий — кто-то.",
-    "> **Читатель:** агент —",
-])
+@pytest.mark.parametrize(
+    "строка",
+    [
+        "",
+        "> **Читатель:** прохожий — кто-то.",
+        "> **Читатель:** агент —",
+    ],
+)
 def test_chitatel_navyka_ne_nazvan_eto_otkaz(repo, capsys, строка):
-    подделка(repo, навык=НАВЫК.replace(
-        "> **Читатель:** агент — окно, у которого покраснело.", строка))
+    подделка(
+        repo, навык=НАВЫК.replace("> **Читатель:** агент — окно, у которого покраснело.", строка)
+    )
     assert прогон(repo) == 1
     assert "Читатель" in capsys.readouterr().err
 
 
 def test_chitatel_spiska_ne_nazvan_eto_otkaz(repo, capsys):
-    подделка(repo, список=СПИСОК.replace(
-        "> **Читатель:** участник — какие навыки есть у окна и как их звать.\n", ""))
+    подделка(
+        repo,
+        список=СПИСОК.replace(
+            "> **Читатель:** участник — какие навыки есть у окна и как их звать.\n", ""
+        ),
+    )
     assert прогон(repo) == 1
     assert "README.md: не назван читатель" in capsys.readouterr().err
 
@@ -192,8 +213,9 @@ def test_chitatel_spiska_ne_nazvan_eto_otkaz(repo, capsys):
 def test_tablitsa_putey_strokoy_spiska_ne_schitaetsya(repo):
     """В том же документе законно стоят таблицы с путями и командами: они не
     навыки, и ложный отказ на них приучил бы читать красное как фон."""
-    подделка(repo, список=СПИСОК + "\n| Файл | Что |\n|---|---|\n"
-                                   "| `scripts/check_skills.py` | гейт |\n")
+    подделка(
+        repo, список=СПИСОК + "\n| Файл | Что |\n|---|---|\n| `scripts/check_skills.py` | гейт |\n"
+    )
     assert прогон(repo) == 0
 
 

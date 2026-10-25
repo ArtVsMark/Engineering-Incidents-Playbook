@@ -5,7 +5,6 @@
 берёт ли он своё имя у `origin`, когда его не назвали ключом (039, 140, 005).
 """
 
-
 import subprocess
 from pathlib import Path
 
@@ -29,8 +28,7 @@ def ветка(корень: Path, *пути: str) -> Path:
 
 
 def прогон(документы: Path, снимок: Path, *ключи: str) -> int:
-    return cbp.main(["--published", str(снимок), "--docs", str(документы),
-                     *ключи])
+    return cbp.main(["--published", str(снимок), "--docs", str(документы), *ключи])
 
 
 def test_ссылка_на_несобранное_есть_находка(repo: Path) -> None:
@@ -94,8 +92,11 @@ def test_своё_имя_берётся_у_origin_а_не_вписано(repo: P
     дерево = repo / "дерево"
     дерево.mkdir()
     subprocess.run(["git", "-C", str(дерево), "init", "-q"], check=True, timeout=60)
-    subprocess.run(["git", "-C", str(дерево), "remote", "add", "origin",
-                    f"https://github.com/{СВОЁ}.git"], check=True, timeout=60)
+    subprocess.run(
+        ["git", "-C", str(дерево), "remote", "add", "origin", f"https://github.com/{СВОЁ}.git"],
+        check=True,
+        timeout=60,
+    )
     write(дерево / "README.md", адрес(НЕТ_НА_ВЕТКЕ))
     снимок = ветка(repo / "ветка", НА_ВЕТКЕ)
     assert прогон(дерево, снимок) == 1

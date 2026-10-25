@@ -11,7 +11,6 @@
 заведён (правило 146).
 """
 
-
 import json
 import subprocess
 from pathlib import Path
@@ -71,23 +70,31 @@ BINDINGS = """{
 
 
 def git(repo: Path, *args: str) -> subprocess.CompletedProcess:
-    return subprocess.run(["git", "-C", str(repo), *args], check=True,
-                          capture_output=True, text=True, encoding="utf-8", timeout=60)
+    return subprocess.run(
+        ["git", "-C", str(repo), *args],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
 
 
 def fake(repo: Path, rows: str = ROW, section: str = SECTION) -> Path:
     """Репозиторий с одним выпуском: две записи и ровно одна локальная ссылка."""
     write(repo / "docs" / "HISTORY.md", HISTORY.format(rows=rows, section=section))
     # Единственная локальная ссылка во всём дереве — она и есть «Ссылок: 1».
-    write(repo / "rules/ru/001-first.md",
-          RULE.format(title="Первое", areas="гейты, тесты")
-          + "\nСмежное: [002](002-second.md)\n")
-    write(repo / "rules/ru/002-second.md",
-          RULE.format(title="Второе", areas="тесты"))
+    write(
+        repo / "rules/ru/001-first.md",
+        RULE.format(title="Первое", areas="гейты, тесты") + "\nСмежное: [002](002-second.md)\n",
+    )
+    write(repo / "rules/ru/002-second.md", RULE.format(title="Второе", areas="тесты"))
     write(repo / ".rules/bindings.json", BINDINGS)
     # Два теста в одном модуле: ноль прошёл бы мимо счётчика незамеченным.
-    write(repo / "tests/test_подделка.py",
-          "def test_один():\n    pass\n\n\ndef test_два():\n    pass\n")
+    write(
+        repo / "tests/test_подделка.py",
+        "def test_один():\n    pass\n\n\ndef test_два():\n    pass\n",
+    )
 
     git(repo, "init", "-q", "-b", "main")
     git(repo, "config", "user.name", "Владелец")
@@ -134,8 +141,10 @@ def test_пустое_ключевое_это_отказ(repo):
 def test_ссылка_в_ключевом_это_отказ(repo):
     """Ссылка в ячейке сдвигает число ссылок в том же дереве, по которому
     строка и сверяется, — строка становится неверной о самой себе."""
-    fake(repo, rows=ROW.replace("Первый выпуск подделки",
-                                "Первый выпуск, см. [журнал](CHANGELOG.md)"))
+    fake(
+        repo,
+        rows=ROW.replace("Первый выпуск подделки", "Первый выпуск, см. [журнал](CHANGELOG.md)"),
+    )
 
     assert hm.main(["--root", str(repo), "--check"]) == 1
 
@@ -169,8 +178,7 @@ def test_второй_строки_одному_выпуску_не_бывает
     """Номера не переиспользуются, и дописать выпуск дважды нельзя."""
     fake(repo)
 
-    assert hm.main(["--root", str(repo), "--add", "v1.0.0",
-                    "--key", "второй раз", "--at-tag"]) == 1
+    assert hm.main(["--root", str(repo), "--add", "v1.0.0", "--key", "второй раз", "--at-tag"]) == 1
 
 
 def test_дописанная_строка_проходит_свой_же_гейт(repo):
@@ -178,8 +186,9 @@ def test_дописанная_строка_проходит_свой_же_гей
     после себя красное на общей ветке."""
     fake(repo, rows="")
 
-    assert hm.main(["--root", str(repo), "--add", "v1.0.0",
-                    "--key", "первый выпуск", "--at-tag"]) == 0
+    assert (
+        hm.main(["--root", str(repo), "--add", "v1.0.0", "--key", "первый выпуск", "--at-tag"]) == 0
+    )
     assert hm.main(["--root", str(repo), "--check"]) == 0
 
 
@@ -188,6 +197,7 @@ def test_дописанная_строка_проходит_свой_же_гей
 # Строка метрик без раздела — ряд чисел без ответа «почему решили именно так».
 # Переименование незакрытого раздела делает ВЫПУСК, а не рука: рукой это было
 # бы той же договорённостью «не забыть», на которой уже сломалась строка.
+
 
 def test_выпуск_без_раздела_это_отказ(repo):
     """Ровно инцидент: выпусков три, раздел о выпуске один."""
@@ -206,11 +216,13 @@ def test_раздел_в_архиве_засчитан(repo):
 
 def test_незакрытый_раздел_закрывается_выпуском(repo):
     """«Не выпущено» получает номер и дату от того же вызова, что и строку."""
-    fake(repo, rows="", section=SECTION.replace(
-        "## v1.0.0 · 1 сентября 2026 ·", "## Не выпущено ·"))
+    fake(
+        repo, rows="", section=SECTION.replace("## v1.0.0 · 1 сентября 2026 ·", "## Не выпущено ·")
+    )
 
-    assert hm.main(["--root", str(repo), "--add", "v1.0.0",
-                    "--key", "первый выпуск", "--at-tag"]) == 0
+    assert (
+        hm.main(["--root", str(repo), "--add", "v1.0.0", "--key", "первый выпуск", "--at-tag"]) == 0
+    )
     text = (repo / "docs" / "HISTORY.md").read_text(encoding="utf-8")
     assert "## Не выпущено" not in text
     assert "## v1.0.0 · " in text and "первый выпуск подделки" in text
@@ -221,29 +233,41 @@ def test_раздела_нет_вовсе_и_дописывание_отказы
     """Строка встала бы, а решения выпуска остались бы нерассказанными."""
     fake(repo, rows="", section="")
 
-    assert hm.main(["--root", str(repo), "--add", "v1.0.0",
-                    "--key", "первый выпуск", "--at-tag"]) == 1
+    assert (
+        hm.main(["--root", str(repo), "--add", "v1.0.0", "--key", "первый выпуск", "--at-tag"]) == 1
+    )
 
 
 def test_раздел_под_своим_номером_не_переименовывается(repo):
     """Досыпка строки задним числом раздел не трогает: он уже назван."""
     fake(repo, rows="")
 
-    assert hm.main(["--root", str(repo), "--add", "v1.0.0",
-                    "--key", "первый выпуск", "--at-tag"]) == 0
+    assert (
+        hm.main(["--root", str(repo), "--add", "v1.0.0", "--key", "первый выпуск", "--at-tag"]) == 0
+    )
     text = (repo / "docs" / "HISTORY.md").read_text(encoding="utf-8")
     assert text.count("## v1.0.0 · ") == 1
-    assert "1 сентября 2026" in text          # дата раздела своя, не подменена
+    assert "1 сентября 2026" in text  # дата раздела своя, не подменена
 
 
 def test_дата_раздела_берётся_у_тега_а_не_у_часов(repo):
     """Заголовок обязан называть дату ВЫПУСКА: часы окна к ней отношения
     не имеют, и подделка с тегом в прошлом это показывает."""
-    fake(repo, rows="", section=SECTION.replace(
-        "## v1.0.0 · 1 сентября 2026 ·", "## Не выпущено ·"))
+    fake(
+        repo, rows="", section=SECTION.replace("## v1.0.0 · 1 сентября 2026 ·", "## Не выпущено ·")
+    )
     git(repo, "tag", "-d", "v1.0.0")
-    git(repo, "-c", "commit.gpgsign=false", "-c", "user.name=Владелец",
-        "-c", "user.email=owner@example.com", "tag", "v1.0.0")
+    git(
+        repo,
+        "-c",
+        "commit.gpgsign=false",
+        "-c",
+        "user.name=Владелец",
+        "-c",
+        "user.email=owner@example.com",
+        "tag",
+        "v1.0.0",
+    )
     дата, ошибка = hm.tag_date(repo, "v1.0.0")
 
     assert not ошибка and дата.endswith("2026")
@@ -255,11 +279,13 @@ def test_дата_раздела_берётся_у_тега_а_не_у_часо�
 # выпуска, а не значком: значок с ним дёргался бы от каждого изменения.
 # Адрес назван в .rules/showcase.json полем `where`.
 
+
 def test_тесты_считаются_по_дереву_а_не_прогоном(repo):
     """Снимок выпуска — про дерево ТЕГА. Прогон дал бы число текущего."""
     fake(repo)
     (repo / "tests" / "test_подделка.py").write_text(
-        "def test_один():\n    pass\n", encoding="utf-8")   # рабочее дерево беднее
+        "def test_один():\n    pass\n", encoding="utf-8"
+    )  # рабочее дерево беднее
 
     files, err = hm.files_at_tag(repo, "v1.0.0")
 
@@ -311,6 +337,7 @@ def test_пересчёт_строки_без_тега_это_третий_ис�
 # истории, а на кнопке было введено другое. Дозавершение берёт «Ключевое» из
 # строки, которую выпуск уже записал.
 
+
 def test_ключевое_берётся_из_строки_выпуска(repo, capsys):
     assert hm.main(["--root", str(fake(repo)), "--key-of", "v1.0.0"]) == 0
     assert capsys.readouterr().out == "Первый выпуск подделки\n"
@@ -332,8 +359,20 @@ def test_дата_раздела_в_utc_а_не_в_поясе_коммита(rep
     """Находка обзора #706: дата из истории бралась в поясе машины автора."""
     monkeypatch.setenv("GIT_COMMITTER_DATE", "2026-10-08T00:24:00+03:00")
     git(repo, "init", "-q")
-    git(repo, "-c", "commit.gpgsign=false", "-c", "user.name=Владелец",
-        "-c", "user.email=owner@example.com", "commit", "-q", "--allow-empty", "-m", "x")
+    git(
+        repo,
+        "-c",
+        "commit.gpgsign=false",
+        "-c",
+        "user.name=Владелец",
+        "-c",
+        "user.email=owner@example.com",
+        "commit",
+        "-q",
+        "--allow-empty",
+        "-m",
+        "x",
+    )
     git(repo, "tag", "v9.9.9")
     дата, ошибка = hm.tag_date(repo, "v9.9.9")
 
@@ -346,10 +385,15 @@ def test_замещённое_в_метрики_выпуска_не_входит
         "rules/ru/001-old.md": "# a\n\n**Область.** код\n\n**Заменено.** 003\n",
         "rules/ru/002-b.md": "# b\n\n**Область.** код\n",
         "rules/ru/003-c.md": "# c\n\n**Область.** код\n",
-        ".rules/bindings.json": json.dumps({"rules": {
-            "001": {"status": "active", "mechanism": "none"},
-            "002": {"status": "active", "mechanism": "gate"},
-            "003": {"status": "active", "mechanism": "none"}}}),
+        ".rules/bindings.json": json.dumps(
+            {
+                "rules": {
+                    "001": {"status": "active", "mechanism": "none"},
+                    "002": {"status": "active", "mechanism": "gate"},
+                    "003": {"status": "active", "mechanism": "none"},
+                }
+            }
+        ),
     }
     снимок = hm.snapshot(files)
     assert снимок["правил"] == "2"

@@ -4,7 +4,6 @@
 разбор строки: предмет здесь — доезжает ли находка до отказа.
 """
 
-
 from pathlib import Path
 
 import check_skips as cs
@@ -30,15 +29,19 @@ def test_metka_bez_prichiny_eto_otkaz(repo, capsys):
 
 
 def test_metka_s_prichinoy_prohodit(repo):
-    подделка(repo, 'import pytest\n\n@pytest.mark.skip(reason="ждём #12")\n'
-                   "def test_x():\n    pass\n")
+    подделка(
+        repo, 'import pytest\n\n@pytest.mark.skip(reason="ждём #12")\ndef test_x():\n    pass\n'
+    )
 
     assert cs.main(["--root", str(repo)]) == 0
 
 
 def test_skipif_bez_prichiny_eto_otkaz(repo, capsys):
-    подделка(repo, "import pytest, sys\n\n@pytest.mark.skipif(sys.platform == 'win32')\n"
-                   "def test_x():\n    pass\n")
+    подделка(
+        repo,
+        "import pytest, sys\n\n@pytest.mark.skipif(sys.platform == 'win32')\n"
+        "def test_x():\n    pass\n",
+    )
 
     assert cs.main(["--root", str(repo)]) == 1
     assert "test_подделка.py" in capsys.readouterr().err
@@ -52,8 +55,11 @@ def test_vyzov_s_prichinoy_prohodit(repo):
 
 def test_prichina_na_sleduyushchey_stroke_zaschityvaetsya(repo):
     """Вызов переносят: окно разбора берётся абзацем, а не строкой (144)."""
-    подделка(repo, 'import pytest\n\n@pytest.mark.skip(\n    reason="перенос строки"\n)\n'
-                   "def test_x():\n    pass\n")
+    подделка(
+        repo,
+        'import pytest\n\n@pytest.mark.skip(\n    reason="перенос строки"\n)\n'
+        "def test_x():\n    pass\n",
+    )
 
     assert cs.main(["--root", str(repo)]) == 0
 

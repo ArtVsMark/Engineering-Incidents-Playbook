@@ -23,19 +23,30 @@ import check_retelling as cr
 def прогон(tmp_path: Path, тело: str, пути: list[str] = ()) -> int:
     (tmp_path / "p.txt").write_text("\n".join(пути), encoding="utf-8")
     (tmp_path / "b.md").write_text(тело, encoding="utf-8")
-    return cr.main(["--root", str(tmp_path), "--paths-from", str(tmp_path / "p.txt"),
-                    "--body-file", str(tmp_path / "b.md")])
+    return cr.main(
+        [
+            "--root",
+            str(tmp_path),
+            "--paths-from",
+            str(tmp_path / "p.txt"),
+            "--body-file",
+            str(tmp_path / "b.md"),
+        ]
+    )
 
 
-@pytest.mark.parametrize("тело, предупредить", [
-    (ТЕЛО_631, True),                                                  # 2 против 3
-    ("Две находки.\nРазобрано: a\nРазобрано: b\n", False),            # сошлось
-    ("3 находки.\nРазобрано: a\nРазобрано: b\n", True),               # цифрой
-    ("ревью дало «находок 0».\nРазобрано: a\n", False),               # цитата не счёт
-    ("Две другие находки закрыты раньше.\nРазобрано: a\nРазобрано: b\nРазобрано: c\n", False),
-    ("Две находки и три находки.\nРазобрано: a\n", False),            # два числа — не судим
-    ("Две находки, строк снятия нет.\n", False),                      # снятий нет
-])
+@pytest.mark.parametrize(
+    "тело, предупредить",
+    [
+        (ТЕЛО_631, True),  # 2 против 3
+        ("Две находки.\nРазобрано: a\nРазобрано: b\n", False),  # сошлось
+        ("3 находки.\nРазобрано: a\nРазобрано: b\n", True),  # цифрой
+        ("ревью дало «находок 0».\nРазобрано: a\n", False),  # цитата не счёт
+        ("Две другие находки закрыты раньше.\nРазобрано: a\nРазобрано: b\nРазобрано: c\n", False),
+        ("Две находки и три находки.\nРазобрано: a\n", False),  # два числа — не судим
+        ("Две находки, строк снятия нет.\n", False),  # снятий нет
+    ],
+)
 def test_число_находок_против_снятий(tmp_path, capsys, тело, предупредить):
     assert прогон(tmp_path, тело) == 0
     assert ("::warning::" in capsys.readouterr().out) is предупредить
@@ -53,6 +64,17 @@ def test_путь_которого_нет_нигде_предупреждает�
 
 
 def test_нет_тела_третий_исход(tmp_path, capsys):
-    assert cr.main(["--root", str(tmp_path), "--paths-from", str(tmp_path / "нет.txt"),
-                    "--body-file", str(tmp_path / "нет.md")]) == 2
+    assert (
+        cr.main(
+            [
+                "--root",
+                str(tmp_path),
+                "--paths-from",
+                str(tmp_path / "нет.txt"),
+                "--body-file",
+                str(tmp_path / "нет.md"),
+            ]
+        )
+        == 2
+    )
     assert "нет.txt" in capsys.readouterr().err

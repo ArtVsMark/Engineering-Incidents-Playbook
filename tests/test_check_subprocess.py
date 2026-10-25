@@ -9,7 +9,6 @@
 трогаются.
 """
 
-
 import pytest
 
 import check_subprocess as cs
@@ -17,8 +16,7 @@ import check_subprocess as cs
 
 def test_tekstovyy_vyzov_bez_kodirovki_nahodka():
     """Ровно тот случай, что дал 32 находки на живом дереве."""
-    код = ("import subprocess\n"
-           "subprocess.run(['git', 'log'], capture_output=True, text=True)")
+    код = "import subprocess\nsubprocess.run(['git', 'log'], capture_output=True, text=True)"
     assert [n for n, _ in cs.offenders(код)] == [2]
 
 
@@ -40,8 +38,7 @@ def test_errors_bez_encoding_tozhe_nahodka():
 
 
 def test_universal_newlines_schitaetsya_tekstovym():
-    код = ("import subprocess\n"
-           "subprocess.run(['git'], universal_newlines=True)")
+    код = "import subprocess\nsubprocess.run(['git'], universal_newlines=True)"
     assert len(cs.offenders(код)) == 1
 
 
@@ -52,11 +49,7 @@ def test_slovo_v_dokstroke_ne_vyzov():
 
 def test_vyzov_razlozhennyy_po_strokam_naydetsya():
     """И обратная сторона того же: поиск по строке пропустил бы это."""
-    код = ("import subprocess\n"
-           "subprocess.run(\n"
-           "    ['git', 'log'],\n"
-           "    text=True,\n"
-           ")\n")
+    код = "import subprocess\nsubprocess.run(\n    ['git', 'log'],\n    text=True,\n)\n"
     assert len(cs.offenders(код)) == 1
 
 
@@ -69,11 +62,13 @@ def test_gejt_otvechaet_otkazom_cherez_main(tmp_path):
     """Случай спрашивает РЕШЕНИЕ гейта, а не повторяет его условие (150)."""
     (tmp_path / "scripts").mkdir()
     (tmp_path / "scripts" / "x.py").write_text(
-        "import subprocess\nsubprocess.run(['git'], text=True)\n", encoding="utf-8")
+        "import subprocess\nsubprocess.run(['git'], text=True)\n", encoding="utf-8"
+    )
     assert cs.main(["--root", str(tmp_path)]) == 1
 
 
 # ── список путей читается по NUL (165) ─────────────────────────────────────
+
 
 def test_spisok_putey_bez_z_nahodka():
     """Ровно тот случай, что дал семь мест на живом дереве."""
@@ -89,130 +84,162 @@ def test_s_z_chisto():
 def test_quotepath_prinimaetsya_kak_ravnosilnyy():
     """ГРАНИЦА, НАЙДЕННАЯ ЖИВЫМ ОТКАЗОМ: `core.quotePath=false` снимает ту же
     поломку с другой стороны, и два места в дереве отвечали именно так."""
-    код = ('subprocess.run(["git", "-c", "core.quotePath=false", "status",'
-           ' "--porcelain"])')
+    код = 'subprocess.run(["git", "-c", "core.quotePath=false", "status", "--porcelain"])'
     assert cs.unseparated(код) == []
 
 
 # ── вывод -z разбирается по NUL, а не split() (165, #762) ─────────────────
 
-ВЫЗОВ_Z = ('    done = subprocess.run(["git", "diff", "--name-only", "-z", "x"],\n'
-           '                          capture_output=True, text=True, encoding="utf-8")\n')
+ВЫЗОВ_Z = (
+    '    done = subprocess.run(["git", "diff", "--name-only", "-z", "x"],\n'
+    '                          capture_output=True, text=True, encoding="utf-8")\n'
+)
 
 
 def test_z_razrezan_split_nahodka():
     """Ровно инцидент #762: `-z` в команде, голый `split()` в разборе — весь
     список становится одним именем, и check_overlap не видел пересечений."""
-    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
-           + "    return {x for x in done.stdout.split() if x}\n")
+    код = (
+        "import subprocess\ndef f():\n"
+        + ВЫЗОВ_Z
+        + "    return {x for x in done.stdout.split() if x}\n"
+    )
     assert [что for _, что in cs.unsplit(код)] == ["split"]
 
 
 def test_z_razrezan_po_nul_chisto():
-    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
-           + '    return [x for x in done.stdout.split("\\0") if x]\n')
+    код = (
+        "import subprocess\ndef f():\n"
+        + ВЫЗОВ_Z
+        + '    return [x for x in done.stdout.split("\\0") if x]\n'
+    )
     assert cs.unsplit(код) == []
 
 
 def test_splitlines_tozhe_ne_nul():
-    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
-           + "    return done.stdout.splitlines()\n")
+    код = "import subprocess\ndef f():\n" + ВЫЗОВ_Z + "    return done.stdout.splitlines()\n"
     assert [что for _, что in cs.unsplit(код)] == ["splitlines"]
 
 
 def test_tsepochka_na_samom_vyzove():
-    код = ('import subprocess\nимена = subprocess.run(["git", "ls-files", "-z"],'
-           ' capture_output=True, text=True, encoding="utf-8").stdout.split()\n')
+    код = (
+        'import subprocess\nимена = subprocess.run(["git", "ls-files", "-z"],'
+        ' capture_output=True, text=True, encoding="utf-8").stdout.split()\n'
+    )
     assert [что for _, что in cs.unsplit(код)] == ["split"]
 
 
 def test_chuzhoy_split_v_toy_zhe_funktsii_ne_nahodka():
     """Предмет — ОТНОШЕНИЕ вызова и разбора (166): `.split()` у строки, не
     связанной с выводом `-z`, находкой не становится."""
-    код = ("import subprocess\ndef f(строка):\n" + ВЫЗОВ_Z
-           + '    имена = done.stdout.split("\\0")\n'
-           + "    return строка.split(), имена\n")
+    код = (
+        "import subprocess\ndef f(строка):\n"
+        + ВЫЗОВ_Z
+        + '    имена = done.stdout.split("\\0")\n'
+        + "    return строка.split(), имена\n"
+    )
     assert cs.unsplit(код) == []
 
 
 def test_imya_iz_drugoy_funktsii_ne_svyazano():
     """Связь прослеживается в ОДНОЙ функции: одноимённая переменная соседней
     функции к выводу `-z` отношения не имеет."""
-    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z + "    return done\n"
-           "def g(done):\n    return done.split()\n")
+    код = (
+        "import subprocess\ndef f():\n" + ВЫЗОВ_Z + "    return done\n"
+        "def g(done):\n    return done.split()\n"
+    )
     assert cs.unsplit(код) == []
 
 
-@pytest.mark.parametrize("разбор", [
-    'done.stdout.strip().split("\\n")',
-    "done.stdout.split(None)",
-    "done.stdout.split(maxsplit=1)",
-    "done.stdout.rsplit()",
-])
+@pytest.mark.parametrize(
+    "разбор",
+    [
+        'done.stdout.strip().split("\\n")',
+        "done.stdout.split(None)",
+        "done.stdout.split(maxsplit=1)",
+        "done.stdout.rsplit()",
+    ],
+)
 def test_lyuboy_razdelitel_krome_nul_nahodka(разбор):
     """Ревью #764: гейт ловил только `split()` без аргумента, а `split("\\n")`
     после `.strip()` и `split(maxsplit=1)` склеивают список так же."""
-    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z + f"    return {разбор}\n")
+    код = "import subprocess\ndef f():\n" + ВЫЗОВ_Z + f"    return {разбор}\n"
     assert cs.unsplit(код)
 
 
 def test_razdelitel_peremennaya_ne_nahodka():
     """Чему равна переменная-разделитель, разбор не знает — красное было бы
     догадкой (051)."""
-    код = ("import subprocess\ndef f(sep):\n" + ВЫЗОВ_Z
-           + "    return done.stdout.split(sep)\n")
+    код = "import subprocess\ndef f(sep):\n" + ВЫЗОВ_Z + "    return done.stdout.split(sep)\n"
     assert cs.unsplit(код) == []
 
 
 def test_pereprivyazka_razvyazyvaet():
     """Ревью #764: `d = d.stdout.split("\\0")` делает `d` списком имён, и
     `.split()` на имени после этого к выводу `-z` отношения не имеет."""
-    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
-           + '    done = done.stdout.split("\\0")[0]\n'
-           + "    return done.split()\n")
+    код = (
+        "import subprocess\ndef f():\n"
+        + ВЫЗОВ_Z
+        + '    done = done.stdout.split("\\0")[0]\n'
+        + "    return done.split()\n"
+    )
     assert cs.unsplit(код) == []
 
 
 def test_vlozhennaya_funktsiya_svoya_oblast():
     """Ревью #764: параметр вложенной функции с тем же именем — другое имя."""
-    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
-           + "    def g(done):\n        return done.split()\n"
-           + "    return g\n")
+    код = (
+        "import subprocess\ndef f():\n"
+        + ВЫЗОВ_Z
+        + "    def g(done):\n        return done.split()\n"
+        + "    return g\n"
+    )
     assert cs.unsplit(код) == []
 
 
 def test_svyaz_pered_pereprivyazkoy_eshchyo_nahodka():
     """Обратная сторона порядка: разбор ДО перепривязки — по-прежнему вывод
     `-z`, и голый `split()` на нём находка."""
-    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
-           + "    имена = done.stdout.split()\n"
-           + "    done = None\n    return имена\n")
+    код = (
+        "import subprocess\ndef f():\n"
+        + ВЫЗОВ_Z
+        + "    имена = done.stdout.split()\n"
+        + "    done = None\n    return имена\n"
+    )
     assert [что for _, что in cs.unsplit(код)] == ["split"]
 
 
 def test_spisok_posle_razreza_po_nul_ne_svyazan():
     """Ревью #767: `run(…-z).stdout.split("\\0")` — уже список путей, и разрез
     пути по «/» на нём находкой не становится."""
-    код = ('import subprocess\ndef f():\n'
-           '    имена = subprocess.run(["git", "ls-files", "-z"], capture_output=True,'
-           ' text=True, encoding="utf-8").stdout.split("\\0")\n'
-           '    return [и.split("/") for и in имена], имена[0].rsplit(".", 1)\n')
+    код = (
+        "import subprocess\ndef f():\n"
+        '    имена = subprocess.run(["git", "ls-files", "-z"], capture_output=True,'
+        ' text=True, encoding="utf-8").stdout.split("\\0")\n'
+        '    return [и.split("/") for и in имена], имена[0].rsplit(".", 1)\n'
+    )
     assert cs.unsplit(код) == []
 
 
 def test_for_razvyazyvaet_posle_iteriruemogo():
     """Ревью #767: цель `for` привязывается ПОСЛЕ итерируемого, и разрез в
     самом итерируемом — ещё вывод `-z`."""
-    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
-           + "    for done in done.stdout.split():\n        pass\n")
+    код = (
+        "import subprocess\ndef f():\n"
+        + ВЫЗОВ_Z
+        + "    for done in done.stdout.split():\n        pass\n"
+    )
     assert [что for _, что in cs.unsplit(код)] == ["split"]
 
 
 def test_umolchanie_vlozhennoy_funktsii_vo_vneshney_oblasti():
     """Значение по умолчанию вычисляется во внешней области — и проверяется там."""
-    код = ("import subprocess\ndef f():\n" + ВЫЗОВ_Z
-           + "    def g(имена=done.stdout.split()):\n        return имена\n"
-           + "    return g\n")
+    код = (
+        "import subprocess\ndef f():\n"
+        + ВЫЗОВ_Z
+        + "    def g(имена=done.stdout.split()):\n        return имена\n"
+        + "    return g\n"
+    )
     assert [что for _, что in cs.unsplit(код)] == ["split"]
 
 
@@ -221,9 +248,12 @@ def test_granitsa_potok_ne_proslezhivaetsya():
     исходника, а не исполнения. Присваивание в ветке снимает связь и для кода
     после ветки. Случай фиксирует границу, а не желаемое поведение: если гейт
     научится видеть поток, случай обязан поменяться вместе с записью 165."""
-    код = ("import subprocess\ndef f(c):\n" + ВЫЗОВ_Z
-           + "    if c:\n        done = None\n"
-           + "    return done.stdout.split()\n")
+    код = (
+        "import subprocess\ndef f(c):\n"
+        + ВЫЗОВ_Z
+        + "    if c:\n        done = None\n"
+        + "    return done.stdout.split()\n"
+    )
     assert cs.unsplit(код) == []
 
 
@@ -231,8 +261,9 @@ def test_razbor_ne_po_nul_otkaz_cherez_main(tmp_path):
     """Решение спрашивается у гейта через `main` (150)."""
     (tmp_path / "scripts").mkdir()
     (tmp_path / "scripts" / "x.py").write_text(
-        "import subprocess\ndef f():\n" + ВЫЗОВ_Z
-        + "    return done.stdout.split()\n", encoding="utf-8")
+        "import subprocess\ndef f():\n" + ВЫЗОВ_Z + "    return done.stdout.split()\n",
+        encoding="utf-8",
+    )
     assert cs.main(["--root", str(tmp_path)]) == 1
 
 
@@ -248,6 +279,7 @@ def test_ne_git_ne_trogaetsya():
 
 # ── правило 180: предмет разрешается по импортам, а не по хвосту имени ──────
 
+
 def test_svoya_funktsiya_s_tem_zhe_imenem_ne_nahodka():
     """ГЛАВНЫЙ СЛУЧАЙ 180, и он про ложную находку, а не про пропуск.
 
@@ -256,9 +288,7 @@ def test_svoya_funktsiya_s_tem_zhe_imenem_ne_nahodka():
     потребителя дописала таким несуществующий параметр — пятнадцать тестов
     упали. Ложная находка здесь дороже пропуска: она чинит работающий код.
     """
-    код = ("import subprocess\n"
-           "def run(cmd, text=True): ...\n"
-           "run(['x'], text=True)\n")
+    код = "import subprocess\ndef run(cmd, text=True): ...\nrun(['x'], text=True)\n"
     assert cs.offenders(код) == []
 
 
@@ -266,8 +296,7 @@ def test_psevdonim_funktsii_nahoditsya():
     """ОБРАТНАЯ ПОЛОВИНА ТОГО ЖЕ, и у каталога она была открыта полностью:
     до разрешения по импортам такой вызов не находился вовсе — гейт зеленел
     за отсутствие того, чего не умел увидеть (146)."""
-    код = ("from subprocess import run as запустить\n"
-           "запустить(['x'], text=True)\n")
+    код = "from subprocess import run as запустить\nзапустить(['x'], text=True)\n"
     assert [n for n, _ in cs.offenders(код)] == [2]
 
 
@@ -279,21 +308,18 @@ def test_psevdonim_modulya_nahoditsya():
 def test_chuzhoy_modul_s_tem_zhe_imenem_metoda_ne_nahodka():
     """ГРАНИЦА: `pool.run(..., text=True)` — не subprocess, и звено имени об
     этом не сообщает ничего."""
-    код = ("import subprocess\n"
-           "import pool\n"
-           "pool.run(['x'], text=True)\n")
+    код = "import subprocess\nimport pool\npool.run(['x'], text=True)\n"
     assert cs.offenders(код) == []
 
 
 def test_import_vnutri_funktsii_tozhe_schitaetsya():
     """Импорт бывает не только в шапке; разбор идёт по всему дереву."""
-    код = ("def f():\n"
-           "    import subprocess\n"
-           "    subprocess.run(['x'], text=True)\n")
+    код = "def f():\n    import subprocess\n    subprocess.run(['x'], text=True)\n"
     assert [n for n, _ in cs.offenders(код)] == [3]
 
 
 # ── правила 017 и 058: площадку зовут через одну дверь ─────────────────────
+
 
 def test_gh_naprjamuyu_nahodka():
     """Мимо ghcli «лимит кончился» снова становится неотличимо от «ничего не
@@ -325,26 +351,32 @@ def test_cherez_dver_chisto():
     assert cs.мимо_двери('import ghcli\nghcli.run("issue", "list")\n') == []
 
 
-
 # ── дедлайн вызова (100, #879) ─────────────────────────────────────────────
 
-@pytest.mark.parametrize("вызов", [
-    "import subprocess\nsubprocess.run(['git', 'status'])\n",
-    "import subprocess as sp\nsp.check_output(['gh', 'api', 'x'])\n",
-    "from subprocess import call\ncall(['sh', '-c', 'true'])\n",
-    "import subprocess\nsubprocess.run(['git'], timeout=None)\n",      # умолчание явно — не дедлайн
-    "import subprocess\nsubprocess.check_call(['make'], cwd='.')\n",
-])
+
+@pytest.mark.parametrize(
+    "вызов",
+    [
+        "import subprocess\nsubprocess.run(['git', 'status'])\n",
+        "import subprocess as sp\nsp.check_output(['gh', 'api', 'x'])\n",
+        "from subprocess import call\ncall(['sh', '-c', 'true'])\n",
+        "import subprocess\nsubprocess.run(['git'], timeout=None)\n",  # умолчание явно — не дедлайн
+        "import subprocess\nsubprocess.check_call(['make'], cwd='.')\n",
+    ],
+)
 def test_без_дедлайна_находка(вызов):
     assert cs.no_deadline(вызов)
 
 
-@pytest.mark.parametrize("вызов", [
-    "import subprocess\nsubprocess.run(['git', 'status'], timeout=60)\n",
-    "import subprocess\np = subprocess.Popen(['x'])\n",                 # у конструктора нет
-    "import subprocess\nsubprocess.run(['x'], **опции)\n",               # мог прийти оттуда
-    "def run(*a):\n    pass\nrun('x')\n",                                 # своя функция (180)
-])
+@pytest.mark.parametrize(
+    "вызов",
+    [
+        "import subprocess\nsubprocess.run(['git', 'status'], timeout=60)\n",
+        "import subprocess\np = subprocess.Popen(['x'])\n",  # у конструктора нет
+        "import subprocess\nsubprocess.run(['x'], **опции)\n",  # мог прийти оттуда
+        "def run(*a):\n    pass\nrun('x')\n",  # своя функция (180)
+    ],
+)
 def test_с_дедлайном_или_воздержание_чисто(вызов):
     assert cs.no_deadline(вызов) == []
 

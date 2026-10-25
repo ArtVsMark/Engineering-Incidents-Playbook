@@ -48,7 +48,6 @@ HTTPS, без API и без клона, и сводятся в одну табл
          python scripts/aggregate_bindings.py --check    # сверить, сеть не нужна
 """
 
-
 import argparse
 import datetime as dt
 import email.utils
@@ -66,9 +65,15 @@ from typing import Any
 # копия расходится молча, и первым это увидит потребитель, а не гейт.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_rules_index import действующие_в_выгрузке  # noqa: E402
-from check_bindings import (MECHANISM_ORDER, addressed,  # noqa: E402
-                            навык, навык_в_дереве, происхождение,
-                            слово_держимости)
+from check_bindings import (
+    MECHANISM_ORDER,
+    addressed,  # noqa: E402
+    навык,
+    навык_в_дереве,
+    происхождение,
+    слово_держимости,
+)
+
 # Где лежат плагины каталога, знает гейт витрины.
 from check_plugins import PLUGINS  # noqa: E402
 
@@ -76,6 +81,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CONSUMERS = ROOT / ".rules" / "consumers.json"
 EXPORT_JSON = ROOT / "export" / "where.json"
 SUMMARY_SCHEMA = "1.7"
+
 
 #: Поля записи, которые сводка переносит НАРУЖУ. Собираются ОДНОЙ функцией
 #: потому, что таких мест два — сборка и сверка, — и они сравниваются на
@@ -87,28 +93,31 @@ SUMMARY_SCHEMA = "1.7"
 #: строка — это ответ «не сказано», и он тоже ответ (027).
 def держание(rec: dict) -> dict:
     """Что сводка публикует про одну запись чужого ответа."""
-    return {"mechanism": rec.get("mechanism") or "none",
-            "where": rec.get("where") or "",
-            # Слово переводится со старого имени поля на входе: ответ 1.3 не
-            # обязан знать про 1.5, и сводка не имеет права звать это пустотой.
-            "holdable": слово_держимости(rec),
-            "awaiting": (rec.get("awaiting") or ""),
-            "analysed": (rec.get("analysed") or ""),
-            "decided": (rec.get("decided") or ""),
-            # Навык едет наружу адресом, как его назвал ответ. Без него
-            # каталог не видел, кто держит правила навыком ЕГО плагина, —
-            # а это единственный чужой механизм, который отсюда проверяем
-            # (контракт ответа 1.7, сводка 1.5).
-            "skill": (rec.get("skill") or ""),
-            # Происхождение механизма — слово самого потребителя (контракт
-            # ответа 1.8, сводка 1.6, #701): откуда механизм взят и как —
-            # вызван, скопирован, переделан. Без него «чьи гейты в ходу у
-            # семьи» угадывалось по именам файлов, а копия от своего гейта
-            # по дереву неотличима.
-            # Без `or ""`: ложное нестроковое ([], 0, false) иначе исчезло бы
-            # до сверки формы и прошло как «поля нет».
-            "origin": rec.get("origin", ""),
-            "origin_kind": rec.get("origin_kind", "")}
+    return {
+        "mechanism": rec.get("mechanism") or "none",
+        "where": rec.get("where") or "",
+        # Слово переводится со старого имени поля на входе: ответ 1.3 не
+        # обязан знать про 1.5, и сводка не имеет права звать это пустотой.
+        "holdable": слово_держимости(rec),
+        "awaiting": (rec.get("awaiting") or ""),
+        "analysed": (rec.get("analysed") or ""),
+        "decided": (rec.get("decided") or ""),
+        # Навык едет наружу адресом, как его назвал ответ. Без него
+        # каталог не видел, кто держит правила навыком ЕГО плагина, —
+        # а это единственный чужой механизм, который отсюда проверяем
+        # (контракт ответа 1.7, сводка 1.5).
+        "skill": (rec.get("skill") or ""),
+        # Происхождение механизма — слово самого потребителя (контракт
+        # ответа 1.8, сводка 1.6, #701): откуда механизм взят и как —
+        # вызван, скопирован, переделан. Без него «чьи гейты в ходу у
+        # семьи» угадывалось по именам файлов, а копия от своего гейта
+        # по дереву неотличима.
+        # Без `or ""`: ложное нестроковое ([], 0, false) иначе исчезло бы
+        # до сверки формы и прошло как «поля нет».
+        "origin": rec.get("origin", ""),
+        "origin_kind": rec.get("origin_kind", ""),
+    }
+
 
 def заметки(rules: dict) -> dict:
     """Мысли и замеры проекта по правилам — `note` и `metric` (ответ 1.9).
@@ -229,8 +238,12 @@ def пауза_сервера(e: urllib.error.HTTPError) -> float | None:
 #: секунды на потребителя и 4.4 минуты на все восемь чтений — то есть примерно
 #: столько же, сколько стоила ОДНА прежняя попытка в 20 секунд, только теперь
 #: их три. Найдено внешним взглядом на этом же изменении (183).
-def fetch(url: str, timeout: int = 10, попыток: int = ПОПЫТОК,
-          разобрать: Callable[[str], Any] = json.loads) -> tuple[Any, str | None]:
+def fetch(
+    url: str,
+    timeout: int = 10,
+    попыток: int = ПОПЫТОК,
+    разобрать: Callable[[str], Any] = json.loads,
+) -> tuple[Any, str | None]:
     """Ответ потребителя по обычному HTTPS: без API, без токена, без клона.
 
     РАЗБОР — ПАРАМЕТР, А НЕ ВТОРАЯ ФУНКЦИЯ. Ответ по умолчанию JSON; навык,
@@ -260,9 +273,11 @@ def fetch(url: str, timeout: int = 10, попыток: int = ПОПЫТОК,
             последняя = f"не прочитан: {e}"
             сервер = пауза_сервера(e)
             if сервер is not None and сервер > ПРЕДЕЛ_ПАУЗЫ:
-                return None, (f"{последняя} — сервер просит ждать "
-                              f"{сервер:.0f} с, больше предела "
-                              f"{ПРЕДЕЛ_ПАУЗЫ:.0f} с")
+                return None, (
+                    f"{последняя} — сервер просит ждать "
+                    f"{сервер:.0f} с, больше предела "
+                    f"{ПРЕДЕЛ_ПАУЗЫ:.0f} с"
+                )
         except (urllib.error.URLError, OSError) as e:
             последняя = f"не прочитан: {e}"
         except ValueError as e:
@@ -279,8 +294,9 @@ def read_local(path: str) -> tuple[dict | None, str | None]:
         return None, f"не прочитан: {e}"
 
 
-def collect(consumers: list[dict],
-            заменены: set[str] = frozenset()) -> tuple[list[dict], list[str]]:
+def collect(
+    consumers: list[dict], заменены: set[str] = frozenset()
+) -> tuple[list[dict], list[str]]:
     """Читает ответ каждого потребителя. Возвращает срезы и находки.
 
     `заменены` — замещённые номера каталога: в счёт ответов, статусов и
@@ -299,16 +315,17 @@ def collect(consumers: list[dict],
         if not source:
             # Объявлено, что связи нет. Это состояние, а не пробел в данных.
             entry["state"] = UNKNOWN if c.get("access") == "private" else NOT_CONNECTED
-            entry["why"] = ("ответ приватен и публично недоступен"
-                            if c.get("access") == "private"
-                            else "ответ потребителя ещё не заведён")
+            entry["why"] = (
+                "ответ приватен и публично недоступен"
+                if c.get("access") == "private"
+                else "ответ потребителя ещё не заведён"
+            )
             if c.get("since"):
                 entry["since"] = c["since"]
             slices.append(entry)
             continue
 
-        data, err = (read_local(source) if not source.startswith("http")
-                     else fetch(source))
+        data, err = read_local(source) if not source.startswith("http") else fetch(source)
         if err:
             # Потребитель объявлен и обещал ответ. Молчать об этом нельзя:
             # молчание неотличимо от «у него всё в порядке» (правило 075).
@@ -388,7 +405,7 @@ def unconnected(consumers: list[dict], читать=fetch) -> list[str]:
     адресу, — но сводка показывала у него НОЛЬ, а витрина рисовала подключённым
     с нулём. Заметил это владелец глазами; механизм молчал бы ещё 17 дней, пока
     не дотикает UNCONNECTED_DAYS.
-    
+
     Ровно правило 175: утверждение «предмета нет», опровергаемое одной
     командой, обязано быть гейтом, а не сроком. И ровно 075 с другой стороны:
     «не смотрели» показывалось как «у него ничего нет».
@@ -403,13 +420,16 @@ def unconnected(consumers: list[dict], читать=fetch) -> list[str]:
                 f"{c.get('repo')}: адрес ответа не заполнен, а ответ ЕСТЬ — "
                 f"лежит по соглашению ({СОГЛАШЕНИЕ.format(repo=c.get('repo'))}). "
                 "Сводка показывает у него ноль, и «мы не смотрели» неотличимо от "
-                "«у него ничего нет» (075, 175). Заполните поле bindings")
+                "«у него ничего нет» (075, 175). Заполните поле bindings"
+            )
             continue
         since = c.get("since")
         if not since:
-            out.append(f"{c.get('repo')}: объявлен потребителем, ответа нет, и "
-                       "с какого дня — не сказано. Поле since называет начало "
-                       "отсчёта, без него срок не считается")
+            out.append(
+                f"{c.get('repo')}: объявлен потребителем, ответа нет, и "
+                "с какого дня — не сказано. Поле since называет начало "
+                "отсчёта, без него срок не считается"
+            )
             continue
         try:
             days = (today - dt.date.fromisoformat(since)).days
@@ -417,10 +437,12 @@ def unconnected(consumers: list[dict], читать=fetch) -> list[str]:
             out.append(f"{c.get('repo')}: since не разбирается — {since!r}")
             continue
         if days > UNCONNECTED_DAYS:
-            out.append(f"{c.get('repo')}: объявлен потребителем {days} дн. назад, "
-                       "ответа так и нет. Либо подключить, либо убрать из реестра — "
-                       "объявленный и молчащий потребитель делает сводку шире "
-                       "правды")
+            out.append(
+                f"{c.get('repo')}: объявлен потребителем {days} дн. назад, "
+                "ответа так и нет. Либо подключить, либо убрать из реестра — "
+                "объявленный и молчащий потребитель делает сводку шире "
+                "правды"
+            )
     return out
 
 
@@ -439,7 +461,6 @@ def stale(slices: list[dict]) -> list[str]:
         if age > TTL_DAYS:
             out.append(f"{s['repo']}: ответ читался {age} дн. назад")
     return out
-
 
 
 #: Поля сводки, которые меняются САМИ ПО СЕБЕ, без изменения данных. Дата
@@ -464,8 +485,13 @@ VOLATILE_TOP = ("generated_at",)
 #: механизм, а его отсутствие, и в разделе «чем держат» ему нечего сказать.
 #: `process-step` попадает — его ещё отдают потребители, и назвать его в
 #: отчёте «шагом процесса» честнее, чем молча приравнять к одному из новых.
-MECHANISM_RU = {"gate": "гейт", "pipeline": "конвейер", "skill": "навык",
-                "document": "документ", "process-step": "шаг процесса"}
+MECHANISM_RU = {
+    "gate": "гейт",
+    "pipeline": "конвейер",
+    "skill": "навык",
+    "document": "документ",
+    "process-step": "шаг процесса",
+}
 
 #: Колонки «чем держится» и порядок показа. Канон один — `check_bindings.py`;
 #: здесь он импортируется, а не переписывается: две классификации одной
@@ -512,8 +538,7 @@ def _load_bearing(connected: list[dict]) -> list[str]:
     rows: list[str] = []
     for s in connected:
         name = s["repo"].split("/")[-1]
-        holders = [h for h in (s.get("holds") or {}).values()
-                   if h.get("mechanism") != "none"]
+        holders = [h for h in (s.get("holds") or {}).values() if h.get("mechanism") != "none"]
         counted: dict[str, int] = {}
         named = 0
         for h in holders:
@@ -524,18 +549,23 @@ def _load_bearing(connected: list[dict]) -> list[str]:
                 counted[a] = counted.get(a, 0) + 1
         if not holders:
             continue
-        top = sorted(((n, a) for a, n in counted.items() if n >= LOAD_MIN),
-                     key=lambda x: (-x[0], x[1]))
+        top = sorted(
+            ((n, a) for a, n in counted.items() if n >= LOAD_MIN), key=lambda x: (-x[0], x[1])
+        )
         singles = sum(1 for n in counted.values() if n < LOAD_MIN)
         for n, a in top:
             rows.append(f"| `{name}` | `{a}` | {n} |")
         rows.append(
             f"| `{name}` | _остальные_ · _the rest_ | "
             f"{singles} механизмов по одному правилу; без названного адреса: "
-            f"{len(holders) - named} из {len(holders)} |")
+            f"{len(holders) - named} из {len(holders)} |"
+        )
     if not rows:
-        lines += ["Подключённых потребителей с построенными механизмами пока нет.",
-                  "", "No connected consumer has a mechanism in place yet."]
+        lines += [
+            "Подключённых потребителей с построенными механизмами пока нет.",
+            "",
+            "No connected consumer has a mechanism in place yet.",
+        ]
         return lines
     lines += [
         "> Считается путь к файлу, найденный в поле `where` ответа потребителя. "
@@ -576,8 +606,7 @@ def _how_others_enforce(connected: list[dict]) -> list[str]:
             if h.get("mechanism") == "none":
                 unheld.setdefault(rid, []).append(name)
             else:
-                held.setdefault(rid, []).append(
-                    (name, h.get("mechanism", ""), h.get("where", "")))
+                held.setdefault(rid, []).append((name, h.get("mechanism", ""), h.get("where", "")))
     both = sorted(set(held) & set(unheld))
     lines = ["", "## Чем держат другие · How others enforce it", ""]
     if not both:
@@ -585,8 +614,7 @@ def _how_others_enforce(connected: list[dict]) -> list[str]:
             "Правил, которые у одного держатся механизмом, а у другого не "
             "держатся ничем, сейчас нет.",
             "",
-            "No rule is currently held by a mechanism in one project and by "
-            "nothing in another.",
+            "No rule is currently held by a mechanism in one project and by nothing in another.",
         ]
         return lines
     lines += [
@@ -603,9 +631,11 @@ def _how_others_enforce(connected: list[dict]) -> list[str]:
     ]
     for rid in both:
         by = "; ".join(
-            f"`{name}` — {MECHANISM_RU.get(mech, mech)}: {where}" if where
+            f"`{name}` — {MECHANISM_RU.get(mech, mech)}: {where}"
+            if where
             else f"`{name}` — {MECHANISM_RU.get(mech, mech)}"
-            for name, mech, where in held[rid])
+            for name, mech, where in held[rid]
+        )
         lines.append(f"| {rid} | {by} | " + ", ".join(f"`{n}`" for n in unheld[rid]) + " |")
     return lines
 
@@ -677,11 +707,15 @@ def schema_lag(slices: list[dict], own: str) -> list[str]:
             continue
         theirs = s.get("schema") or ""
         if not theirs:
-            out.append(f"{s['repo']}: ответ не называет версию схемы — "
-                       "подъём контракта у нас он не заметит")
+            out.append(
+                f"{s['repo']}: ответ не называет версию схемы — "
+                "подъём контракта у нас он не заметит"
+            )
         elif theirs != own:
-            out.append(f"{s['repo']}: ответ по схеме {theirs}, у контракта {own} — "
-                       "записи остаются валидными, означая уже другое")
+            out.append(
+                f"{s['repo']}: ответ по схеме {theirs}, у контракта {own} — "
+                "записи остаются валидными, означая уже другое"
+            )
     return out
 
 
@@ -710,13 +744,17 @@ def export_lag(slices: list[dict], own_export: str) -> list[str]:
             continue
         theirs = (s.get("answers_to") or "").strip()
         if not theirs:
-            out.append(f"{s['repo']}: ответ не называет версию ВЫГРУЗКИ, по которой "
-                       f"построен (ключ answers_to). Наша сейчас {own_export}: "
-                       "подъём контракта такому потребителю не адресовать")
+            out.append(
+                f"{s['repo']}: ответ не называет версию ВЫГРУЗКИ, по которой "
+                f"построен (ключ answers_to). Наша сейчас {own_export}: "
+                "подъём контракта такому потребителю не адресовать"
+            )
         elif theirs != own_export:
-            out.append(f"{s['repo']}: ответ построен на выгрузке {theirs}, у нас "
-                       f"{own_export} — записи валидны, а составленные по ним ответы "
-                       "отвечают на другой вопрос (157)")
+            out.append(
+                f"{s['repo']}: ответ построен на выгрузке {theirs}, у нас "
+                f"{own_export} — записи валидны, а составленные по ним ответы "
+                "отвечают на другой вопрос (157)"
+            )
     return out
 
 
@@ -754,26 +792,34 @@ def schema_findings(slices: list[dict]) -> tuple[list[str], list[str]]:
         свои.append(
             f"templates/bindings.json: заготовка ответа объявляет схему {tpl}, "
             f"а ответ каталога — {own}. Образец, который раздают, отстал от "
-            "того, что применяется дома (155, 157)")
+            "того, что применяется дома (155, 157)"
+        )
     # ВЕРСИЯ ВЫГРУЗКИ ЧИТАЕТСЯ ЖИВОЙ, ИЗ САМОЙ ВЫГРУЗКИ. Константа рядом
     # разошлась бы с ней молча — тот же приём, что и у номера ответа (049).
     export_ver = ""
     try:
-        export_ver = (json.loads((ROOT / "export" / "rules.json").read_text(encoding="utf-8"))
-                      .get("contracts", {}).get("export") or "")
+        export_ver = (
+            json.loads((ROOT / "export" / "rules.json").read_text(encoding="utf-8"))
+            .get("contracts", {})
+            .get("export")
+            or ""
+        )
     except OSError, ValueError:
         pass
     чужое = schema_lag(slices, own)
     if export_ver:
         чужое += export_lag(slices, export_ver)
     else:
-        свои.append("export/rules.json не назвал contracts.export — сверить, на какой "
-                    "версии выгрузки построены чужие ответы, нечем")
+        свои.append(
+            "export/rules.json не назвал contracts.export — сверить, на какой "
+            "версии выгрузки построены чужие ответы, нечем"
+        )
     return чужое, свои
 
 
-def stale_answers(slices: list[dict], rule_ids: list[str],
-                  superseded: dict[str, str] | None = None) -> list[str]:
+def stale_answers(
+    slices: list[dict], rule_ids: list[str], superseded: dict[str, str] | None = None
+) -> list[str]:
     """Ответы потребителей о правилах, которых в каталоге НЕТ.
 
     ЭТО НАХОДКА, А НЕ ОЧЕРЕДЬ. Нерассмотренное правило — состояние: решение
@@ -804,10 +850,12 @@ def stale_answers(slices: list[dict], rule_ids: list[str],
     for s in slices:
         extra = sorted(set(s.get("rules") or {}) - known)
         if extra:
-            out.append(f"{s['repo']}: отвечает о правилах, которых в каталоге "
-                       f"нет — {', '.join(extra)}. Номер не переиспользуется, "
-                       "но и ответ о снятом правиле не должен лежать: заняв "
-                       "номер, новая запись унаследует чужое решение молча")
+            out.append(
+                f"{s['repo']}: отвечает о правилах, которых в каталоге "
+                f"нет — {', '.join(extra)}. Номер не переиспользуется, "
+                "но и ответ о снятом правиле не должен лежать: заняв "
+                "номер, новая запись унаследует чужое решение молча"
+            )
         out += unaddressed(s)
         out += происхождение_неверно(s)
         out += навыки_плагина(s)
@@ -845,9 +893,11 @@ def навыки_плагина(s: dict) -> list[str]:
             нет.append(f"{rid} → {адрес} ({чего})")
     if not нет:
         return []
-    return [f"{s['repo']}: назван навык плагина каталога, которого у каталога "
-            f"нет — {'; '.join(нет)}. Правило считается держащимся навыком, а "
-            "держит его ничто"]
+    return [
+        f"{s['repo']}: назван навык плагина каталога, которого у каталога "
+        f"нет — {'; '.join(нет)}. Правило считается держащимся навыком, а "
+        "держит его ничто"
+    ]
 
 
 def superseded_map() -> dict[str, str]:
@@ -860,8 +910,7 @@ def superseded_map() -> dict[str, str]:
         doc = json.loads(RULES.read_text(encoding="utf-8"))
     except OSError, ValueError:
         return {}
-    return {r["id"]: r["superseded_by"] for r in doc.get("rules", [])
-            if r.get("superseded_by")}
+    return {r["id"]: r["superseded_by"] for r in doc.get("rules", []) if r.get("superseded_by")}
 
 
 def answers_superseded(s: dict, superseded: dict[str, str]) -> list[str]:
@@ -881,9 +930,11 @@ def answers_superseded(s: dict, superseded: dict[str, str]) -> list[str]:
     if not было:
         return []
     пары = ", ".join(f"{rid} → {superseded[rid]}" for rid in было)
-    return [f"{s['repo']}: отвечает о заменённых правилах — {пары}. Это "
-            "состояние, а не находка: ответ верен для того, что было. "
-            "Перенести его или нет, решает потребитель"]
+    return [
+        f"{s['repo']}: отвечает о заменённых правилах — {пары}. Это "
+        "состояние, а не находка: ответ верен для того, что было. "
+        "Перенести его или нет, решает потребитель"
+    ]
 
 
 def unaddressed(s: dict) -> list[str]:
@@ -901,14 +952,18 @@ def unaddressed(s: dict) -> list[str]:
     и утверждать о нём мы можем только то, что видно в ответе.
     """
     out: list[str] = []
-    bad = sorted(rid for rid, h in (s.get("holds") or {}).items()
-                 if h.get("mechanism") not in (None, "", "none")
-                 and not addressed(h.get("where") or ""))
+    bad = sorted(
+        rid
+        for rid, h in (s.get("holds") or {}).items()
+        if h.get("mechanism") not in (None, "", "none") and not addressed(h.get("where") or "")
+    )
     if bad:
         shown = ", ".join(bad[:8]) + (f" и ещё {len(bad) - 8}" if len(bad) > 8 else "")
-        out.append(f"{s['repo']}: механизм назван, а адреса нет — {shown}. "
-                   "Открыть такой механизм нечем, и соседу он достаётся "
-                   "пересказом вместо решения")
+        out.append(
+            f"{s['repo']}: механизм назван, а адреса нет — {shown}. "
+            "Открыть такой механизм нечем, и соседу он достаётся "
+            "пересказом вместо решения"
+        )
     return out
 
 
@@ -930,8 +985,7 @@ def происхождение_неверно(s: dict) -> list[str]:
         # Срез несёт только действующие записи, и статус в держание не
         # переносится — он известен по построению среза. Схема — самого
         # ответа: требования 1.9 к ответу 1.8 не предъявляются (157).
-        if (что := происхождение({**h, "status": "active"},
-                                 s.get("schema") or "")) is not None:
+        if (что := происхождение({**h, "status": "active"}, s.get("schema") or "")) is not None:
             out.append(f"{s['repo']}: {rid} — {что}")
     return out
 
@@ -946,8 +1000,7 @@ def правила_выгрузки(path: Path) -> tuple[list[str], set[str]]:
     return [r["id"] for r in выгрузка["rules"]], действующие_в_выгрузке(выгрузка)
 
 
-def census(slices: list[dict], rule_ids: list[str],
-           в_силе: set[str] | None = None) -> list[str]:
+def census(slices: list[dict], rule_ids: list[str], в_силе: set[str] | None = None) -> list[str]:
     """Сколько правил сейчас и сколько из них разобрано — по каждому.
 
     Печатается КАЖДЫМ прогоном, а не только красным. Число, которое видно
@@ -959,8 +1012,7 @@ def census(slices: list[dict], rule_ids: list[str],
     все = set(rule_ids)
     known = все if в_силе is None else все & в_силе
     выбыли = len(все) - len(known)
-    out = [f"правил в каталоге: {len(known)}"
-           + (f" (ещё {выбыли} заменены)" if выбыли else "")]
+    out = [f"правил в каталоге: {len(known)}" + (f" (ещё {выбыли} заменены)" if выбыли else "")]
     for s in slices:
         answers = s.get("rules")
         if answers is None:
@@ -973,7 +1025,8 @@ def census(slices: list[dict], rule_ids: list[str],
             f" из {len(known)} · не рассмотрено {by.get('unreviewed', 0)}"
             f" · без ответа {len(known - set(answers))}"
             f" · лишних {len(set(answers) - все)}"
-            f" · действует {by.get('active', 0)} (ничем {mech.get('none', 0)})")
+            f" · действует {by.get('active', 0)} (ничем {mech.get('none', 0)})"
+        )
     # КТО ДЕРЖИТ ПРАВИЛА НАВЫКОМ ПЛАГИНА КАТАЛОГА. Каталог держит плагин и
     # принимает навыки снизу; без этой строки он не знал бы, пользуется ли
     # кто-нибудь тем, что раздаёт. Печатается только при непустом ответе:
@@ -981,9 +1034,10 @@ def census(slices: list[dict], rule_ids: list[str],
     for s in slices:
         навыки = навыки_плагина_в(s)
         if навыки:
-            out.append(f"  {s['repo']}: навыком плагина каталога держит "
-                       f"{len(навыки)} — " + ", ".join(
-                           f"{rid} ({адрес})" for rid, адрес in навыки.items()))
+            out.append(
+                f"  {s['repo']}: навыком плагина каталога держит "
+                f"{len(навыки)} — " + ", ".join(f"{rid} ({адрес})" for rid, адрес in навыки.items())
+            )
     return out
 
 
@@ -993,22 +1047,29 @@ def _notes(connected: list[dict]) -> list[str]:
     for s in connected:
         for rid, z in (s.get("notes") or {}).items():
             m = z.get("metric") or {}
-            замер = (f"{m.get('what')}: {m.get('value')} ({m.get('measured')})"
-                     if isinstance(m, dict) and m else "")
+            замер = (
+                f"{m.get('what')}: {m.get('value')} ({m.get('measured')})"
+                if isinstance(m, dict) and m
+                else ""
+            )
             заметка = str(z.get("note") or "").replace("|", "\\|").replace("\n", " ")
-            строки.append(f"| {rid} | `{s['repo'].split('/')[-1]}` | "
-                          f"{заметка} | {замер} |")
+            строки.append(f"| {rid} | `{s['repo'].split('/')[-1]}` | {заметка} | {замер} |")
     if not строки:
         return []
-    return ["", "## Заметки и замеры проектов · Project notes and metrics", "",
-            "Мысли проекта по правилу (`note`) и замеры (`metric`) — то, что не "
-            "легло в стандартные поля ответа (контракт 1.9).", "",
-            "| № | Проект | Заметка | Замер |", "|---|---|---|---|",
-            *строки]
+    return [
+        "",
+        "## Заметки и замеры проектов · Project notes and metrics",
+        "",
+        "Мысли проекта по правилу (`note`) и замеры (`metric`) — то, что не "
+        "легло в стандартные поля ответа (контракт 1.9).",
+        "",
+        "| № | Проект | Заметка | Замер |",
+        "|---|---|---|---|",
+        *строки,
+    ]
 
 
-def as_markdown(slices: list[dict], rule_ids: list[str],
-                в_силе: set[str] | None = None) -> str:
+def as_markdown(slices: list[dict], rule_ids: list[str], в_силе: set[str] | None = None) -> str:
     """Таблица «где действует». Файл производный и руками не правится."""
     lines = [
         "# Где действует правило · Where a rule applies",
@@ -1029,8 +1090,7 @@ def as_markdown(slices: list[dict], rule_ids: list[str],
     # жила бы и после того, как последний потребитель перешёл, а вычеркнуть её
     # было бы некому (правило 049 — вычисляемое состояние протухает молча).
     seen = {k for s in slices for k, v in (s.get("by_mechanism") or {}).items() if v}
-    cols = list(MECHANISM_COLUMNS) + [
-        m for m in ("process-step",) if m in seen]
+    cols = list(MECHANISM_COLUMNS) + [m for m in ("process-step",) if m in seen]
     head = " | ".join(MECHANISM_HEAD[m] for m in cols)
     lines += [
         "| Проект · Project | Состояние · State | Следов · Trails | "
@@ -1058,9 +1118,16 @@ def as_markdown(slices: list[dict], rule_ids: list[str],
                 str(len(set(answers) - все)),
                 str((s.get("by_status") or {}).get("active", 0)),
                 *(str(m.get(k, 0)) for k in cols),
-                str(len({a for rid, h in (s.get("holds") or {}).items()
-                         if rid not in заменены and h.get("mechanism") != "none"
-                         for a in ADDRESS_RE.findall(h.get("where") or "")})),
+                str(
+                    len(
+                        {
+                            a
+                            for rid, h in (s.get("holds") or {}).items()
+                            if rid not in заменены and h.get("mechanism") != "none"
+                            for a in ADDRESS_RE.findall(h.get("where") or "")
+                        }
+                    )
+                ),
             ]
         # ТОЛЬКО ИМЯ ПРОЕКТА. Владелец у всех строк один и тот же, и в таблице
         # из двенадцати колонок он занимает место, не различая ни одной. Ниже,
@@ -1070,7 +1137,9 @@ def as_markdown(slices: list[dict], rule_ids: list[str],
             f"| `{s['repo'].split('/')[-1]}` | {s['state']} | {s.get('trails', 0)} | "
             f"{s.get('born', 0)} | "
             f"{answered if answered is not None else '—'} | "
-            + " | ".join(cells) + f" | {s.get('why', '')} |")
+            + " | ".join(cells)
+            + f" | {s.get('why', '')} |"
+        )
 
     connected = [s for s in slices if s.get("rules")]
     if not connected:
@@ -1091,17 +1160,19 @@ def as_markdown(slices: list[dict], rule_ids: list[str],
     lines += _notes(connected)
 
     head = " | ".join(f"`{s['repo'].split('/')[-1]}`" for s in connected)
-    lines += ["", "## Правила · Rules", "",
-              f"| № | {head} |", "|---" * (len(connected) + 1) + "|"]
+    lines += ["", "## Правила · Rules", "", f"| № | {head} |", "|---" * (len(connected) + 1) + "|"]
     for rid in (r for r in rule_ids if r in known):
         cells = " | ".join(STATUS_RU.get(s["rules"].get(rid), "—") for s in connected)
         lines.append(f"| {rid} | {cells} |")
     return "\n".join(lines) + "\n"
 
 
-def check_offline(consumers: list[dict], rule_ids: list[str],
-                  compare_summary: bool = True,
-                  в_силе: set[str] | None = None) -> int:
+def check_offline(
+    consumers: list[dict],
+    rule_ids: list[str],
+    compare_summary: bool = True,
+    в_силе: set[str] | None = None,
+) -> int:
     """Сверка без сети: сводка на диске согласована и покрывает весь реестр.
 
     Сюда не ходят наружу сознательно. Обязательная проверка изменения не должна
@@ -1123,17 +1194,24 @@ def check_offline(consumers: list[dict], rule_ids: list[str],
         stored = json.loads(EXPORT_JSON.read_text(encoding="utf-8"))
         stored_md = EXPORT_MD.read_text(encoding="utf-8")
     except (OSError, ValueError) as e:
-        print(f"нет собранной сводки или она не разобрана — {e}. Соберите: "
-              "python scripts/aggregate_bindings.py", file=sys.stderr)
+        print(
+            f"нет собранной сводки или она не разобрана — {e}. Соберите: "
+            "python scripts/aggregate_bindings.py",
+            file=sys.stderr,
+        )
         return 1
 
     slices = stored.get("consumers", [])
     seen = {s.get("repo") for s in slices}
     missing = [c["repo"] for c in consumers if c.get("repo") not in seen]
     if missing:
-        print("в реестре есть потребители, которых нет в сводке: "
-              + ", ".join(missing) + ".\n  Пересоберите: "
-              "python scripts/aggregate_bindings.py", file=sys.stderr)
+        print(
+            "в реестре есть потребители, которых нет в сводке: "
+            + ", ".join(missing)
+            + ".\n  Пересоберите: "
+            "python scripts/aggregate_bindings.py",
+            file=sys.stderr,
+        )
         return 1
     # Потребитель с местным ответом читается прямо здесь: сети это не требует,
     # а расхождение ловит на том же изменении, которое его создало.
@@ -1143,8 +1221,10 @@ def check_offline(consumers: list[dict], rule_ids: list[str],
             continue
         data, err = read_local(source)
         if err:
-            print(f"объявленный местный ответ не читается: {c['repo']}: "
-                  f"{source} {err}", file=sys.stderr)
+            print(
+                f"объявленный местный ответ не читается: {c['repo']}: {source} {err}",
+                file=sys.stderr,
+            )
             return 1
         # У СВОДКИ ОДИН ПИСАТЕЛЬ, И НА ИЗМЕНЕНИИ ЭТО НЕ МЫ. Требовать от каждой
         # правки ответа пересобранную сводку значит заводить второго писателя
@@ -1159,52 +1239,61 @@ def check_offline(consumers: list[dict], rule_ids: list[str],
         if not compare_summary:
             continue
         want = {rid: rec.get("status") for rid, rec in data.get("rules", {}).items()}
-        have = next((s.get("rules") or {} for s in slices
-                     if s.get("repo") == c.get("repo")), {})
+        have = next((s.get("rules") or {} for s in slices if s.get("repo") == c.get("repo")), {})
         if want != have:
             diff = sorted(set(want) | set(have))
             names = [r for r in diff if want.get(r) != have.get(r)]
-            shown = ", ".join(f"{r} ({have.get(r, '—')} → {want.get(r, '—')})"
-                              for r in names[:5])
+            shown = ", ".join(f"{r} ({have.get(r, '—')} → {want.get(r, '—')})" for r in names[:5])
             more = "" if len(names) <= 5 else f" и ещё: {len(names) - 5}"
-            print(f"сводка отстала от ответа {c['repo']} — расходится: "
-                  f"{shown}{more}.\n  Пересоберите: "
-                  "python scripts/aggregate_bindings.py", file=sys.stderr)
+            print(
+                f"сводка отстала от ответа {c['repo']} — расходится: "
+                f"{shown}{more}.\n  Пересоберите: "
+                "python scripts/aggregate_bindings.py",
+                file=sys.stderr,
+            )
             return 1
         # ЧЕМ ДЕРЖИТСЯ — ТОЖЕ ПРЕДМЕТ СВЕРКИ. Сравнивать один статус значило бы
         # ловить «правило перестало действовать» и пропускать «правило перестало
         # держаться гейтом»: второе — ровно та потеря, ради которой раздел «чем
         # держат другие» и заведён, и уехала бы она молча (146).
-        want_h = {rid: держание(rec)
-                  for rid, rec in data.get("rules", {}).items()
-                  if rec.get("status") == "active"}
-        have_h = next((s.get("holds") or {} for s in slices
-                       if s.get("repo") == c.get("repo")), {})
+        want_h = {
+            rid: держание(rec)
+            for rid, rec in data.get("rules", {}).items()
+            if rec.get("status") == "active"
+        }
+        have_h = next((s.get("holds") or {} for s in slices if s.get("repo") == c.get("repo")), {})
         if want_h != have_h:
-            names = sorted(r for r in set(want_h) | set(have_h)
-                           if want_h.get(r) != have_h.get(r))
+            names = sorted(r for r in set(want_h) | set(have_h) if want_h.get(r) != have_h.get(r))
             shown = ", ".join(
                 f"{r} ({(have_h.get(r) or {}).get('mechanism', '—')} → "
                 f"{(want_h.get(r) or {}).get('mechanism', '—')})"
-                for r in names[:5])
+                for r in names[:5]
+            )
             more = "" if len(names) <= 5 else f" и ещё: {len(names) - 5}"
-            print(f"сводка отстала от того, ЧЕМ держит {c['repo']}: {shown}"
-                  f"{more}.\n  Пересоберите: "
-                  "python scripts/aggregate_bindings.py", file=sys.stderr)
+            print(
+                f"сводка отстала от того, ЧЕМ держит {c['repo']}: {shown}"
+                f"{more}.\n  Пересоберите: "
+                "python scripts/aggregate_bindings.py",
+                file=sys.stderr,
+            )
             return 1
 
         want_n = заметки(data.get("rules", {}))
-        have_n = next((s.get("notes") or {} for s in slices
-                       if s.get("repo") == c.get("repo")), {})
+        have_n = next((s.get("notes") or {} for s in slices if s.get("repo") == c.get("repo")), {})
         if want_n != have_n:
-            print(f"сводка отстала от заметок и замеров {c['repo']}.\n  "
-                  "Пересоберите: python scripts/aggregate_bindings.py",
-                  file=sys.stderr)
+            print(
+                f"сводка отстала от заметок и замеров {c['repo']}.\n  "
+                "Пересоберите: python scripts/aggregate_bindings.py",
+                file=sys.stderr,
+            )
             return 1
 
     if as_markdown(slices, rule_ids, в_силе) != stored_md:
-        print(f"устарело — пересоберите: {EXPORT_MD.relative_to(ROOT)} не "
-              f"соответствует {EXPORT_JSON.relative_to(ROOT)}", file=sys.stderr)
+        print(
+            f"устарело — пересоберите: {EXPORT_MD.relative_to(ROOT)} не "
+            f"соответствует {EXPORT_JSON.relative_to(ROOT)}",
+            file=sys.stderr,
+        )
         return 1
 
     connected = sum(1 for s in slices if s.get("rules"))
@@ -1230,43 +1319,49 @@ def check_offline(consumers: list[dict], rule_ids: list[str],
         return 1
     for line in census(slices, rule_ids, в_силе):
         print(line)
-    print(f"сводка согласована: потребителей {len(slices)}, из них подключено "
-          f"{connected}; сеть не опрашивалась")
+    print(
+        f"сводка согласована: потребителей {len(slices)}, из них подключено "
+        f"{connected}; сеть не опрашивалась"
+    )
     return 0
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true",
-                    help="сверить собранное с тем, что лежит на диске")
-    ap.add_argument("--not-my-summary", action="store_true",
-                    help="сводку не сверять: у неё один писатель, и это не я")
+    ap.add_argument(
+        "--check", action="store_true", help="сверить собранное с тем, что лежит на диске"
+    )
+    ap.add_argument(
+        "--not-my-summary",
+        action="store_true",
+        help="сводку не сверять: у неё один писатель, и это не я",
+    )
     args = ap.parse_args()
 
     # ── исход 2: проверка не отработала ────────────────────────────────────
     try:
         registry = json.loads(CONSUMERS.read_text(encoding="utf-8"))
     except (OSError, ValueError) as e:
-        print(f"проверка не отработала: реестр потребителей не прочитан — {e}",
-              file=sys.stderr)
+        print(f"проверка не отработала: реестр потребителей не прочитан — {e}", file=sys.stderr)
         return 2
     consumers = registry.get("consumers", [])
     if not consumers:
-        print(f"проверка не отработала: {CONSUMERS.relative_to(ROOT)} не называет "
-              "ни одного потребителя — агрегировать нечего, а молчать нельзя",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: {CONSUMERS.relative_to(ROOT)} не называет "
+            "ни одного потребителя — агрегировать нечего, а молчать нельзя",
+            file=sys.stderr,
+        )
         return 2
     try:
         rule_ids, в_силе = правила_выгрузки(RULES)
     except (OSError, ValueError, KeyError) as e:
-        print(f"проверка не отработала: экспорт правил не прочитан — {e}",
-              file=sys.stderr)
+        print(f"проверка не отработала: экспорт правил не прочитан — {e}", file=sys.stderr)
         return 2
 
     if args.check:
-        return check_offline(consumers, rule_ids,
-                             compare_summary=not args.not_my_summary,
-                             в_силе=в_силе)
+        return check_offline(
+            consumers, rule_ids, compare_summary=not args.not_my_summary, в_силе=в_силе
+        )
 
     slices, problems = collect(consumers, set(rule_ids) - в_силе)
     try:
@@ -1374,18 +1469,23 @@ def main() -> int:
         print("находки в чужих репозиториях — правятся не здесь:")
         for e in elsewhere:
             print(f"  • {e}")
-        print("  Прогон от этого не краснеет: снять такое красное отсюда "
-              "нечем.\n  Адресаты — задача в этом трекере и раздел во "
-              "входящих самого потребителя.")
+        print(
+            "  Прогон от этого не краснеет: снять такое красное отсюда "
+            "нечем.\n  Адресаты — задача в этом трекере и раздел во "
+            "входящих самого потребителя."
+        )
 
     # ── исход 1: находки ───────────────────────────────────────────────────
     if problems:
         print("объявленные потребители, чей ответ не читается:", file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
-        print("\n  Потребитель в реестре обещает ответ. Недоступный ответ — "
-              "отказ, а не\n  молчание: иначе «не смогли прочитать» выглядит "
-              "как «у него всё хорошо».", file=sys.stderr)
+        print(
+            "\n  Потребитель в реестре обещает ответ. Недоступный ответ — "
+            "отказ, а не\n  молчание: иначе «не смогли прочитать» выглядит "
+            "как «у него всё хорошо».",
+            file=sys.stderr,
+        )
         return 1
 
     for w in warnings:
@@ -1393,9 +1493,11 @@ def main() -> int:
 
     # ── исход 0 ────────────────────────────────────────────────────────────
     connected = sum(1 for s in slices if s.get("rules"))
-    print(f"сводка собрана: потребителей {len(slices)}, из них подключено "
-          f"{connected}; правил в экспорте {len(в_силе)} "
-          f"(записей {len(rule_ids)}, заменены {len(rule_ids) - len(в_силе)})")
+    print(
+        f"сводка собрана: потребителей {len(slices)}, из них подключено "
+        f"{connected}; правил в экспорте {len(в_силе)} "
+        f"(записей {len(rule_ids)}, заменены {len(rule_ids) - len(в_силе)})"
+    )
     for s in slices:
         if not s.get("rules"):
             print(f"  · {s['repo']}: {s['state']} — {s.get('why', '')}")

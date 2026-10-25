@@ -23,8 +23,14 @@ def f(x):
 
 
 def git(root: Path, *args: str) -> str:
-    return subprocess.run(["git", "-C", str(root), *args], check=True,
-                          capture_output=True, text=True, encoding="utf-8", timeout=60).stdout.strip()
+    return subprocess.run(
+        ["git", "-C", str(root), *args],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    ).stdout.strip()
 
 
 @pytest.fixture
@@ -42,9 +48,18 @@ def дерево(tmp_path: Path) -> tuple[Path, str]:
 def прогон(tmp_path: Path, root: Path, base: str, пути: list[str], тело: str = "") -> int:
     (tmp_path / "paths.txt").write_text("\n".join(пути) + "\n", encoding="utf-8")
     (tmp_path / "body.md").write_text(тело, encoding="utf-8")
-    return fc.main(["--root", str(root), "--base", base,
-                    "--paths-from", str(tmp_path / "paths.txt"),
-                    "--body-file", str(tmp_path / "body.md")])
+    return fc.main(
+        [
+            "--root",
+            str(root),
+            "--base",
+            base,
+            "--paths-from",
+            str(tmp_path / "paths.txt"),
+            "--body-file",
+            str(tmp_path / "body.md"),
+        ]
+    )
 
 
 ПОЧИНКА = "changelog.d/x.fixed.md"
@@ -55,6 +70,7 @@ def код(root: Path) -> None:
 
 
 # ── обязан отвергнуть ────────────────────────────────────────────────────
+
 
 def test_починка_кода_без_проверки_отказ(tmp_path, дерево, capsys):
     root, base = дерево
@@ -72,11 +88,14 @@ def test_новый_скрипт_в_починке_без_проверки_от�
 def test_выход_без_причины_не_выход(tmp_path, дерево):
     root, base = дерево
     код(root)
-    assert прогон(tmp_path, root, base, [ПОЧИНКА, "scripts/a.py"],
-                  "Проверка: не требуется —   \n") == 1
+    assert (
+        прогон(tmp_path, root, base, [ПОЧИНКА, "scripts/a.py"], "Проверка: не требуется —   \n")
+        == 1
+    )
 
 
 # ── обязан пропустить ────────────────────────────────────────────────────
+
 
 def test_починка_с_проверкой_проходит(tmp_path, дерево):
     root, base = дерево
@@ -92,12 +111,15 @@ def test_не_починка_не_спрашивается(tmp_path, дерев�
     assert прогон(tmp_path, root, base, ["changelog.d/x.added.md", "scripts/a.py"]) == 0
 
 
-@pytest.mark.parametrize("правка", [
-    lambda s: s.replace("Возвращает удвоенное.", "Удваивает число."),       # докстрока
-    lambda s: s.replace('"""Модуль."""', '"""Модуль о числах."""'),          # докстрока модуля
-    lambda s: s.replace("    return x * 2", "    # удвоение\n    return x * 2"),  # комментарий
-    lambda s: s.replace("return x * 2", "return x*2"),                      # пробелы
-])
+@pytest.mark.parametrize(
+    "правка",
+    [
+        lambda s: s.replace("Возвращает удвоенное.", "Удваивает число."),  # докстрока
+        lambda s: s.replace('"""Модуль."""', '"""Модуль о числах."""'),  # докстрока модуля
+        lambda s: s.replace("    return x * 2", "    # удвоение\n    return x * 2"),  # комментарий
+        lambda s: s.replace("return x * 2", "return x*2"),  # пробелы
+    ],
+)
 def test_правка_прозы_проверки_не_требует(tmp_path, дерево, правка, capsys):
     root, base = дерево
     (root / "scripts" / "a.py").write_text(правка(СКРИПТ), encoding="utf-8")
@@ -114,12 +136,21 @@ def test_удалённый_скрипт_проверки_не_требует(tm
 def test_названный_выход_пропускает(tmp_path, дерево, capsys):
     root, base = дерево
     код(root)
-    assert прогон(tmp_path, root, base, [ПОЧИНКА, "scripts/a.py"],
-                  "Проверка: не требуется — правится текст сообщения, поведение то же\n") == 0
+    assert (
+        прогон(
+            tmp_path,
+            root,
+            base,
+            [ПОЧИНКА, "scripts/a.py"],
+            "Проверка: не требуется — правится текст сообщения, поведение то же\n",
+        )
+        == 0
+    )
     assert "выход назван" in capsys.readouterr().out
 
 
 # ── не отработала ────────────────────────────────────────────────────────
+
 
 def test_неразбираемый_скрипт_третий_исход_с_предметом(tmp_path, дерево, capsys):
     root, base = дерево
@@ -130,19 +161,40 @@ def test_неразбираемый_скрипт_третий_исход_с_пр
 
 def test_нет_списка_путей_третий_исход(tmp_path, дерево, capsys):
     root, base = дерево
-    assert fc.main(["--root", str(root), "--base", base,
-                    "--paths-from", str(tmp_path / "нет.txt"),
-                    "--body-file", str(tmp_path / "нет.md")]) == 2
+    assert (
+        fc.main(
+            [
+                "--root",
+                str(root),
+                "--base",
+                base,
+                "--paths-from",
+                str(tmp_path / "нет.txt"),
+                "--body-file",
+                str(tmp_path / "нет.md"),
+            ]
+        )
+        == 2
+    )
     assert "нет.txt" in capsys.readouterr().err
 
 
 # ── находки обзора #830 ──────────────────────────────────────────────────
 
+
 def test_пустая_причина_не_берёт_следующую_строку(tmp_path, дерево):
     root, base = дерево
     код(root)
-    assert прогон(tmp_path, root, base, [ПОЧИНКА, "scripts/a.py"],
-                  "Проверка: не требуется —\nPart of #816\n") == 1
+    assert (
+        прогон(
+            tmp_path,
+            root,
+            base,
+            [ПОЧИНКА, "scripts/a.py"],
+            "Проверка: не требуется —\nPart of #816\n",
+        )
+        == 1
+    )
 
 
 def test_удалённый_тест_не_проверка(tmp_path, дерево):

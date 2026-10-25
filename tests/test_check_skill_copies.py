@@ -5,7 +5,6 @@
 эталон лежит в дереве, из которого она запущена.
 """
 
-
 from pathlib import Path
 
 import check_skill_copies as csc
@@ -21,8 +20,7 @@ def каталог(root: Path) -> Path:
 
 
 def прогон(repo: Path, *ключи: str) -> int:
-    return csc.main(["--repo", str(repo / "proj"),
-                     "--catalogue-root", str(repo / "cat"), *ключи])
+    return csc.main(["--repo", str(repo / "proj"), "--catalogue-root", str(repo / "cat"), *ключи])
 
 
 def сверка(repo: Path, *имена: str) -> int:
@@ -40,8 +38,10 @@ def test_совпадающая_копия_чиста(repo, capsys):
 def test_правка_копии_это_находка_с_номером_строки(repo, capsys):
     """Замер 01.10: у проекта механизмов копия разошлась с третьей строки."""
     каталог(repo)
-    write(repo / "proj/.claude/skills/answer-a-rule/SKILL.md",
-          НАВЫК.replace("Звать, когда отвечают.", "Своё описание."))
+    write(
+        repo / "proj/.claude/skills/answer-a-rule/SKILL.md",
+        НАВЫК.replace("Звать, когда отвечают.", "Своё описание."),
+    )
     assert сверка(repo) == 1
     out = capsys.readouterr().out
     assert "SKILL.md расходится с каталогом, первая разная строка 3" in out
@@ -83,8 +83,10 @@ def test_пустой_список_это_третий_исход_а_не_зел
 def test_удалённая_копия_из_нескольких_это_находка(repo, capsys):
     """Находка ревью #638: при двух копиях удаление одной проходило зелёным."""
     корень = каталог(repo)
-    write(корень / "plugins/catalogue/skills/second/SKILL.md",
-          НАВЫК.replace("answer-a-rule", "second"))
+    write(
+        корень / "plugins/catalogue/skills/second/SKILL.md",
+        НАВЫК.replace("answer-a-rule", "second"),
+    )
     write(repo / "proj/.claude/skills/answer-a-rule/SKILL.md", НАВЫК)
     assert сверка(repo, "answer-a-rule", "second") == 1
     assert "second: копии нет" in capsys.readouterr().out

@@ -42,7 +42,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import json
 import re
@@ -111,7 +110,7 @@ def section(text: str, head: str) -> str | None:
     m = re.search("^" + re.escape(head) + r"[ \t]*$", text, re.M)
     if m is None:
         return None
-    rest = text[m.end():]
+    rest = text[m.end() :]
     nxt = rest.find("\n## ")
     return rest if nxt < 0 else rest[:nxt]
 
@@ -135,8 +134,10 @@ def check_template(root: Path) -> list[str]:
     """
     path = root / "templates" / "rule-template.md"
     if not path.exists():
-        return [f"заготовки {path.name} нет — её берут другие проекты, "
-                "и её отсутствие они заметят раньше нас"]
+        return [
+            f"заготовки {path.name} нет — её берут другие проекты, "
+            "и её отсутствие они заметят раньше нас"
+        ]
     text = path.read_text(encoding="utf-8")
     problems: list[str] = []
     # Заготовка обязана показывать то, что каталог ТРЕБУЕТ, а не всё, что
@@ -147,14 +148,18 @@ def check_template(root: Path) -> list[str]:
         if section(text, head) is None:
             problems.append(
                 f"заготовка без раздела «{head[3:]}» — берущий её проект "
-                "получит запись, которую каталог не примет")
+                "получит запись, которую каталог не примет"
+            )
     if not CLAIM_RE["ru"].search(text):
-        problems.append("заготовка без строки «Правило.» — утверждение в ней "
-                        "обязано быть образцом, а не подразумеваться")
+        problems.append(
+            "заготовка без строки «Правило.» — утверждение в ней "
+            "обязано быть образцом, а не подразумеваться"
+        )
     body = section(text, APPLIES_HEAD["ru"])
     if body is not None and not BOUNDARY_RE["ru"].search(body):
-        problems.append("заготовка не показывает границу «не работает» — "
-                        "именно её чаще всего и пропускают")
+        problems.append(
+            "заготовка не показывает границу «не работает» — именно её чаще всего и пропускают"
+        )
     return problems
 
 
@@ -214,29 +219,32 @@ def check_history(root: Path) -> list[str]:
     marks = list(RELEASE_RE.finditer(text))
     for i, m in enumerate(marks):
         name = m.group(1)
-        body = text[m.end():marks[i + 1].start() if i + 1 < len(marks) else len(text)]
+        body = text[m.end() : marks[i + 1].start() if i + 1 < len(marks) else len(text)]
         nxt = re.search(r"(?m)^#{1,2} ", body)
         if nxt:
-            body = body[:nxt.start()]
+            body = body[: nxt.start()]
         for part in RELEASE_PARTS:
             if part not in body:
-                out.append(f"HISTORY.md, выпуск «{name}»: нет раздела "
-                           f"«{part.strip('*').rstrip('.')}»")
+                out.append(
+                    f"HISTORY.md, выпуск «{name}»: нет раздела «{part.strip('*').rstrip('.')}»"
+                )
         # Ссылка спрашивается у «Что вошло»: она там и живёт — задача,
         # изменение, правило. В «Итоге» ссылке делать нечего, он про смысл.
-        came = re.search(r"\*\*Что вошло\.\*\*(.*?)(?=\*\*Решения\.\*\*|\Z)",
-                         body, re.S)
+        came = re.search(r"\*\*Что вошло\.\*\*(.*?)(?=\*\*Решения\.\*\*|\Z)", body, re.S)
         if came and not RELEASE_LINK_RE.search(came.group(1)):
-            out.append(f"HISTORY.md, выпуск «{name}»: «Что вошло» без "
-                       "разрешимой ссылки — выпуск остался рассказом")
+            out.append(
+                f"HISTORY.md, выпуск «{name}»: «Что вошло» без "
+                "разрешимой ссылки — выпуск остался рассказом"
+            )
 
     # Предел, выраженный числом (правило 108). Растущий документ без него
     # перестаёт отвечать на вопрос «что было недавно» и не сообщает об этом.
     if len(marks) > HISTORY_WINDOW:
-        older = [m.group(1) for m in marks[:len(marks) - HISTORY_WINDOW]]
-        out.append(f"HISTORY.md: выпусков больше, чем держит окно. Перенесите "
-                   f"в {HISTORY_ARCHIVE} ДОСЛОВНО, старшими вперёд: "
-                   + ", ".join(f"«{n}»" for n in older))
+        older = [m.group(1) for m in marks[: len(marks) - HISTORY_WINDOW]]
+        out.append(
+            f"HISTORY.md: выпусков больше, чем держит окно. Перенесите "
+            f"в {HISTORY_ARCHIVE} ДОСЛОВНО, старшими вперёд: " + ", ".join(f"«{n}»" for n in older)
+        )
 
     # Архив засчитывает раздел у тега (history_metrics), и потому сам
     # проверяется на обратное: в нём только то, что ВЫШЛО за окно. Иначе
@@ -244,20 +252,29 @@ def check_history(root: Path) -> list[str]:
     # документ переставал бы отвечать на «что было недавно» (108).
     archive = root / "docs" / HISTORY_ARCHIVE
     if archive.exists():
-        moved = [m.group(1) for m in RELEASE_RE.finditer(
-            re.sub(r"(?s)```.*?```", "", archive.read_text(encoding="utf-8")))]
+        moved = [
+            m.group(1)
+            for m in RELEASE_RE.finditer(
+                re.sub(r"(?s)```.*?```", "", archive.read_text(encoding="utf-8"))
+            )
+        ]
         if "Не выпущено" in moved:
-            out.append(f"{HISTORY_ARCHIVE}: незакрытый выпуск в архиве — "
-                       "окно уходит только вышедшее")
+            out.append(
+                f"{HISTORY_ARCHIVE}: незакрытый выпуск в архиве — окно уходит только вышедшее"
+            )
         if moved and len(marks) < HISTORY_WINDOW:
-            out.append(f"{HISTORY_ARCHIVE}: разделы вынесены раньше срока — "
-                       f"в HISTORY.md {len(marks)} из {HISTORY_WINDOW}, "
-                       "окно не заполнено")
+            out.append(
+                f"{HISTORY_ARCHIVE}: разделы вынесены раньше срока — "
+                f"в HISTORY.md {len(marks)} из {HISTORY_WINDOW}, "
+                "окно не заполнено"
+            )
         live = [версия(m.group(1)) for m in marks if m.group(1) != "Не выпущено"]
         old = [версия(n) for n in moved if n != "Не выпущено"]
         if live and old and max(old) >= min(live):
-            out.append(f"{HISTORY_ARCHIVE}: в архиве выпуск не старше живых "
-                       "разделов — за окно уходят старшие, а не выбранные")
+            out.append(
+                f"{HISTORY_ARCHIVE}: в архиве выпуск не старше живых "
+                "разделов — за окно уходят старшие, а не выбранные"
+            )
     return out
 
 
@@ -307,29 +324,34 @@ def check_portable(num: str, slot: dict) -> list[str]:
     seen = {}
     for lang in LANGS:
         path = slot.get(lang)
-        seen[lang] = (PORTABLE_RE[lang].search(path.read_text(encoding="utf-8"))
-                      if path is not None else None)
-    if all(slot.get(l) is not None for l in LANGS) \
-            and bool(seen["ru"]) != bool(seen["en"]):
+        seen[lang] = (
+            PORTABLE_RE[lang].search(path.read_text(encoding="utf-8")) if path is not None else None
+        )
+    if all(slot.get(l) is not None for l in LANGS) and bool(seen["ru"]) != bool(seen["en"]):
         has = "ru" if seen["ru"] else "en"
-        out.append(f"{num}: переносимость объявлена только в дереве {has} — "
-                   "деревья расходятся именно так, по одному полю за раз")
+        out.append(
+            f"{num}: переносимость объявлена только в дереве {has} — "
+            "деревья расходятся именно так, по одному полю за раз"
+        )
         return out
     for lang in LANGS:
         m = seen[lang]
         if not m:
             continue
         raw = m.group(1)
-        head, why = (raw.split("—", 1) if "—" in raw else (raw, ""))
+        head, why = raw.split("—", 1) if "—" in raw else (raw, "")
         value = head.strip().lower()
         if value not in PORTABLE_VALUES[lang]:
-            out.append(f"{num} ({lang}): переносимость «{value}» вне набора "
-                       f"{PORTABLE_VALUES[lang]}")
+            out.append(
+                f"{num} ({lang}): переносимость «{value}» вне набора {PORTABLE_VALUES[lang]}"
+            )
             continue
         if not why.strip():
-            out.append(f"{num} ({lang}): переносимость объявлена без причины. "
-                       "Ответ без причины не проверить и не оспорить — а "
-                       "«частично» без неё вообще ничего не сообщает")
+            out.append(
+                f"{num} ({lang}): переносимость объявлена без причины. "
+                "Ответ без причины не проверить и не оспорить — а "
+                "«частично» без неё вообще ничего не сообщает"
+            )
     return out
 
 
@@ -351,8 +373,9 @@ def collect(root: Path) -> tuple[dict[str, dict[str, Path]], str | None]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = parser.parse_args(argv)
     root: Path = args.root
     consumers = root / ".rules" / "consumers.json"
@@ -363,16 +386,17 @@ def main(argv: list[str] | None = None) -> int:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
     if not consumers.exists():
-        print("проверка не отработала: нет .rules/consumers.json — "
-              "разрешительный список потребителей, без него след не разобрать",
-              file=sys.stderr)
+        print(
+            "проверка не отработала: нет .rules/consumers.json — "
+            "разрешительный список потребителей, без него след не разобрать",
+            file=sys.stderr,
+        )
         return 2
     try:
         registry = json.loads(consumers.read_text(encoding="utf-8"))
         known = {c["repo"] for c in registry["consumers"]}
     except (ValueError, KeyError, TypeError) as e:
-        print(f"проверка не отработала: реестр потребителей не разобрать — {e}",
-              file=sys.stderr)
+        print(f"проверка не отработала: реестр потребителей не разобрать — {e}", file=sys.stderr)
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -402,33 +426,39 @@ def main(argv: list[str] | None = None) -> int:
                 problems.append(
                     f"{num}: {where} — заглушка заготовки не заполнена: "
                     f"«{з[:60]}…». Каркас, собранный генератором, — место для "
-                    "суждения, а не запись (191)")
+                    "суждения, а не запись (191)"
+                )
 
             if not CLAIM_RE[lang].search(text):
                 problems.append(
                     f"{num}: {where} — нет строки с утверждением правила. "
-                    "Заголовок называет тему, утверждение говорит, что делать")
+                    "Заголовок называет тему, утверждение говорит, что делать"
+                )
 
             body = section(text, APPLIES_HEAD[lang])
             if body is not None and not BOUNDARY_RE[lang].search(body):
                 problems.append(
                     f"{num}: {where} — «Применимость» без границы «не работает». "
-                    "Без неё каталог копируют целиком, включая заведомо чужое")
+                    "Без неё каталог копируют целиком, включая заведомо чужое"
+                )
 
             body = section(text, TRACE_HEAD[lang])
             if body is not None and not trace_resolves(body, known):
                 problems.append(
                     f"{num}: {where} — след не разрешается: ни задачи "
                     "«владелец/репозиторий#номер», ни потребителя из "
-                    ".rules/consumers.json. Проза следом не считается")
+                    ".rules/consumers.json. Проза следом не считается"
+                )
 
         if len(slot) == len(LANGS):
-            heads = {lang: HEAD_RE.findall(slot[lang].read_text(encoding="utf-8"))
-                     for lang in LANGS}
+            heads = {
+                lang: HEAD_RE.findall(slot[lang].read_text(encoding="utf-8")) for lang in LANGS
+            }
             if len(heads["ru"]) != len(heads["en"]):
                 problems.append(
                     f"{num}: разделов в ru {len(heads['ru'])}, в en "
-                    f"{len(heads['en'])} — деревья разошлись по структуре")
+                    f"{len(heads['en'])} — деревья разошлись по структуре"
+                )
                 continue
             for i, (a, b) in enumerate(zip(heads["ru"], heads["en"])):
                 a, b = a.strip(), b.strip()
@@ -438,19 +468,23 @@ def main(argv: list[str] | None = None) -> int:
                 if a in CANON and CANON[a] != b:
                     warnings.append(
                         f"{num}: раздел {i + 1} — ru «{a[3:]}», en «{b[3:]}», "
-                        f"а канон для него — «{CANON[a][3:]}»")
+                        f"а канон для него — «{CANON[a][3:]}»"
+                    )
                 elif a not in CANON and b in CANON.values():
                     warnings.append(
-                        f"{num}: раздел {i + 1} — en «{b[3:]}» каноничен, "
-                        f"ru «{a[3:]}» нет")
+                        f"{num}: раздел {i + 1} — en «{b[3:]}» каноничен, ru «{a[3:]}» нет"
+                    )
 
     if problems:
         print("записи каталога неполны по содержанию:", file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
-        print("\n  Разделы на месте — это проверяет сборка указателя. Здесь "
-              "проверено,\n  что под заголовком есть то, ради чего он стоит "
-              "(правило 002).", file=sys.stderr)
+        print(
+            "\n  Разделы на месте — это проверяет сборка указателя. Здесь "
+            "проверено,\n  что под заголовком есть то, ради чего он стоит "
+            "(правило 002).",
+            file=sys.stderr,
+        )
         return 1
 
     # ── исход 0 ────────────────────────────────────────────────────────────
@@ -461,10 +495,11 @@ def main(argv: list[str] | None = None) -> int:
     pairs = sum(1 for slot in found.values() if len(slot) == len(LANGS))
     # Сверяются ВСЕ записи, замещённые тоже — их читают по старым ссылкам.
     # Правилами из них числятся только действующие (17.10).
-    print(f"записи полны по содержанию: записей {len(found)}, из них "
-          f"действующих правил {len(действующие(found))}, сверено парами {pairs}")
-    print("  утверждение, граница «не работает», разрешимый след, "
-          "паритет разделов")
+    print(
+        f"записи полны по содержанию: записей {len(found)}, из них "
+        f"действующих правил {len(действующие(found))}, сверено парами {pairs}"
+    )
+    print("  утверждение, граница «не работает», разрешимый след, паритет разделов")
     return 0
 
 

@@ -15,7 +15,6 @@
 нет, не обязана: идущая проверка это ожидание, и случай стоит отдельно.
 """
 
-
 import json
 
 import merge_ready as mr
@@ -30,6 +29,7 @@ def ok(name="catalogue", conclusion="success"):
 
 
 # ── предметы, которые сторож обязан отвергнуть ─────────────────────────────
+
 
 def test_пустой_список_это_не_зелено():
     allowed, why = run([])
@@ -64,6 +64,7 @@ def test_обязательная_красная_отвергается_даже
 
 # ── здоровые предметы: сторож обязан пропустить ────────────────────────────
 
+
 def test_обязательная_зелёная_пропускает():
     allowed, why = run([ok()])
     assert allowed and "все зелёные" in why
@@ -87,6 +88,7 @@ def test_без_обязательных_достаточно_отсутстви
 
 # ── три исхода у командной строки ──────────────────────────────────────────
 
+
 def test_пустой_ввод_это_третий_исход(monkeypatch, capsys):
     monkeypatch.setattr("sys.stdin", type("S", (), {"read": staticmethod(lambda: "  ")})())
     assert mr.main(["--required", "catalogue"]) == 2
@@ -99,21 +101,24 @@ def test_битый_json_это_третий_исход(monkeypatch, capsys):
 
 
 def test_ответ_без_списка_это_третий_исход(monkeypatch, capsys):
-    monkeypatch.setattr("sys.stdin",
-                        type("S", (), {"read": staticmethod(lambda: '{"message":"нет"}')})())
+    monkeypatch.setattr(
+        "sys.stdin", type("S", (), {"read": staticmethod(lambda: '{"message":"нет"}')})()
+    )
     assert mr.main([]) == 2
     assert "нет ключа `check_runs`" in capsys.readouterr().err
 
 
 def test_голый_список_тоже_принимается(monkeypatch):
-    monkeypatch.setattr("sys.stdin",
-                        type("S", (), {"read": staticmethod(lambda: json.dumps([ok()]))})())
+    monkeypatch.setattr(
+        "sys.stdin", type("S", (), {"read": staticmethod(lambda: json.dumps([ok()]))})()
+    )
     assert mr.main(["--required", "catalogue"]) == 0
 
 
 def test_нельзя_сливать_это_код_один(monkeypatch, capsys):
-    monkeypatch.setattr("sys.stdin",
-                        type("S", (), {"read": staticmethod(lambda: '{"check_runs":[]}')})())
+    monkeypatch.setattr(
+        "sys.stdin", type("S", (), {"read": staticmethod(lambda: '{"check_runs":[]}')})()
+    )
     assert mr.main(["--required", "catalogue"]) == 1
     assert "сливать нельзя" in capsys.readouterr().err
 
@@ -125,17 +130,21 @@ def test_нельзя_сливать_это_код_один(monkeypatch, capsys)
 # покраснела, и за полчаса в неё уехали два изменения с зелёными проверками,
 # снятыми на сломанном основании.
 
+
 def прогон(name, conclusion, at="2026-09-02T09:00:00Z"):
-    return {"name": name, "status": "completed", "conclusion": conclusion,
-            "createdAt": at}
+    return {"name": name, "status": "completed", "conclusion": conclusion, "createdAt": at}
 
 
-КРАСНОЕ = [прогон("ci", "success"),
-           прогон("attribution-history", "success", "2026-09-02T08:53:00Z"),
-           прогон("attribution-history", "failure", "2026-09-02T09:07:00Z")]
-ЗЕЛЁНОЕ = [прогон("ci", "success"),
-           прогон("attribution-history", "failure", "2026-09-02T09:07:00Z"),
-           прогон("attribution-history", "success", "2026-09-02T09:31:00Z")]
+КРАСНОЕ = [
+    прогон("ci", "success"),
+    прогон("attribution-history", "success", "2026-09-02T08:53:00Z"),
+    прогон("attribution-history", "failure", "2026-09-02T09:07:00Z"),
+]
+ЗЕЛЁНОЕ = [
+    прогон("ci", "success"),
+    прогон("attribution-history", "failure", "2026-09-02T09:07:00Z"),
+    прогон("attribution-history", "success", "2026-09-02T09:31:00Z"),
+]
 
 
 def test_красное_основание_замораживает_очередь():
@@ -146,8 +155,7 @@ def test_красное_основание_замораживает_очеред
 
 
 def test_метка_размораживает_очередь():
-    why, state = mr.frozen(КРАСНОЕ, labels=["area/gates", "blocker"],
-                           thaw="blocker")
+    why, state = mr.frozen(КРАСНОЕ, labels=["area/gates", "blocker"], thaw="blocker")
 
     assert why == ""
 
@@ -169,8 +177,10 @@ def test_зелёное_основание_очередь_не_держит():
 def test_считается_последний_прогон_работы_а_не_любой():
     """Площадка отдаёт историю событий, а не состояние: рядом со свежим
     успехом висит вчерашний отказ, и он очередь морозить не должен (009)."""
-    свежий_успех = [прогон("ci", "failure", "2026-09-01T10:00:00Z"),
-                    прогон("ci", "success", "2026-09-02T10:00:00Z")]
+    свежий_успех = [
+        прогон("ci", "failure", "2026-09-01T10:00:00Z"),
+        прогон("ci", "success", "2026-09-02T10:00:00Z"),
+    ]
 
     assert mr.frozen(свежий_успех, labels=[], thaw="blocker")[0] == ""
 
@@ -178,16 +188,26 @@ def test_считается_последний_прогон_работы_а_не
 def test_идущий_прогон_основание_не_морозит():
     """«Ещё идёт» — не отказ: заморозка на состоянии, которое пройдёт само,
     останавливала бы очередь на ровном месте (051)."""
-    идёт = [{"name": "ci", "status": "in_progress", "conclusion": None,
-             "createdAt": "2026-09-02T10:00:00Z"}]
+    идёт = [
+        {
+            "name": "ci",
+            "status": "in_progress",
+            "conclusion": None,
+            "createdAt": "2026-09-02T10:00:00Z",
+        }
+    ]
 
     assert mr.frozen(идёт, labels=[], thaw="blocker")[0] == ""
 
 
 def test_исключение_принадлежит_потребителю():
     """Список исключений задаёт проект, а не инструмент."""
-    assert mr.frozen(КРАСНОЕ, labels=[], thaw="blocker",
-                     excluded=frozenset({"attribution-history"}))[0] == ""
+    assert (
+        mr.frozen(КРАСНОЕ, labels=[], thaw="blocker", excluded=frozenset({"attribution-history"}))[
+            0
+        ]
+        == ""
+    )
 
 
 def test_заморозка_спрашивается_до_проверок_изменения(tmp_path, monkeypatch, capsys):
@@ -195,8 +215,9 @@ def test_заморозка_спрашивается_до_проверок_из�
     нельзя. Спроси гейт их первыми — он ответил бы «сливать можно»."""
     base = tmp_path / "base.json"
     base.write_text(json.dumps(КРАСНОЕ), encoding="utf-8")
-    monkeypatch.setattr("sys.stdin", type("S", (), {
-        "read": staticmethod(lambda: json.dumps([ok()]))})())
+    monkeypatch.setattr(
+        "sys.stdin", type("S", (), {"read": staticmethod(lambda: json.dumps([ok()]))})()
+    )
 
     assert mr.main(["--required", "catalogue", "--base-runs", str(base)]) == 1
     assert "заморожена" in capsys.readouterr().err
@@ -218,8 +239,7 @@ def test_только_заморозка_без_основания_это_тре
 
 def test_нечитаемое_основание_это_третий_исход(tmp_path, capsys):
     """«Основание красное» и «основание не спрошено» — разные ответы (039)."""
-    assert mr.main(["--freeze-only",
-                    "--base-runs", str(tmp_path / "нет.json")]) == 2
+    assert mr.main(["--freeze-only", "--base-runs", str(tmp_path / "нет.json")]) == 2
     assert "не прочитаны" in capsys.readouterr().err
 
 
@@ -238,14 +258,14 @@ def test_основание_не_список_это_третий_исход(tmp
 # взведённому автомержу, а он ждёт только обязательные. Девятнадцать раз работа
 # канала пропала целиком — в том числе две верные находки на #392.
 
+
 def прогон(имя, статус="completed", исход="success"):
     return {"name": имя, "status": статус, "conclusion": исход}
 
 
 def test_verdikt_est_slivaem():
     """Канал ответил — неважно чем: находки советуют, а не запрещают (084)."""
-    можно, почему = mr.awaited(
-        [прогон("catalogue"), прогон("review", исход="failure")], ["review"])
+    можно, почему = mr.awaited([прогон("catalogue"), прогон("review", исход="failure")], ["review"])
 
     assert можно is True
     assert "failure" in почему
@@ -254,8 +274,8 @@ def test_verdikt_est_slivaem():
 def test_verdikta_net_zhdyom():
     """РОВНО ПРЕДМЕТ: прогон идёт, вердикта нет — слияние ждёт."""
     можно, почему = mr.awaited(
-        [прогон("catalogue"), прогон("review", статус="in_progress", исход=None)],
-        ["review"])
+        [прогон("catalogue"), прогон("review", статус="in_progress", исход=None)], ["review"]
+    )
 
     assert можно is False
     assert "review" in почему
@@ -288,9 +308,20 @@ def test_krasnaya_obyazatelnaya_vazhnee_molchaniya(monkeypatch, capsys):
     молчание необязательной — причина не сливать СЕЙЧАС. Печатать первую как
     вторую значило бы врать отчётом (158)."""
     import io
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
-        прогон("catalogue", исход="failure"),
-        прогон("review", статус="in_progress", исход=None)]})))
+
+    monkeypatch.setattr(
+        "sys.stdin",
+        io.StringIO(
+            json.dumps(
+                {
+                    "check_runs": [
+                        прогон("catalogue", исход="failure"),
+                        прогон("review", статус="in_progress", исход=None),
+                    ]
+                }
+            )
+        ),
+    )
 
     assert mr.main(["--required", "catalogue", "--await", "review"]) == 1
     err = capsys.readouterr().err
@@ -301,9 +332,20 @@ def test_zelyonaya_obyazatelnaya_no_verdikta_net_eto_rano(monkeypatch, capsys):
     """Граница с другой стороны: обязательная зелёная, а канал молчит — это
     «рано», а не «нельзя», и отчёт обязан говорить именно так."""
     import io
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
-        прогон("catalogue"),
-        прогон("review", статус="in_progress", исход=None)]})))
+
+    monkeypatch.setattr(
+        "sys.stdin",
+        io.StringIO(
+            json.dumps(
+                {
+                    "check_runs": [
+                        прогон("catalogue"),
+                        прогон("review", статус="in_progress", исход=None),
+                    ]
+                }
+            )
+        ),
+    )
 
     assert mr.main(["--required", "catalogue", "--await", "review"]) == 1
     assert "сливать рано" in capsys.readouterr().err
@@ -311,8 +353,13 @@ def test_zelyonaya_obyazatelnaya_no_verdikta_net_eto_rano(monkeypatch, capsys):
 
 def test_vse_zelyonye_i_verdikt_est_slivaem(monkeypatch, capsys):
     import io
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
-        прогон("catalogue"), прогон("review", исход="failure")]})))
+
+    monkeypatch.setattr(
+        "sys.stdin",
+        io.StringIO(
+            json.dumps({"check_runs": [прогон("catalogue"), прогон("review", исход="failure")]})
+        ),
+    )
 
     assert mr.main(["--required", "catalogue", "--await", "review"]) == 0
     assert "сливать можно" in capsys.readouterr().out
@@ -324,8 +371,13 @@ def test_krasnyy_neobyazatelnyy_sliyanie_ne_derzhit(monkeypatch, capsys):
     На замере это не проявилось лишь потому, что за 33 прогона ревью не
     покраснело ни разу: гейт был зелёным по отсутствию предмета (146)."""
     import io
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
-        прогон("catalogue"), прогон("review", исход="failure")]})))
+
+    monkeypatch.setattr(
+        "sys.stdin",
+        io.StringIO(
+            json.dumps({"check_runs": [прогон("catalogue"), прогон("review", исход="failure")]})
+        ),
+    )
 
     assert mr.main(["--required", "catalogue", "--await", "review"]) == 0
 
@@ -334,8 +386,13 @@ def test_bez_await_krasnyy_kanal_po_prezhnemu_derzhit(monkeypatch):
     """Граница: исключение действует только для НАЗВАННЫХ каналов. Не назвали
     — работа считается основной, и её краснота держит слияние, как и прежде."""
     import io
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
-        прогон("catalogue"), прогон("review", исход="failure")]})))
+
+    monkeypatch.setattr(
+        "sys.stdin",
+        io.StringIO(
+            json.dumps({"check_runs": [прогон("catalogue"), прогон("review", исход="failure")]})
+        ),
+    )
 
     assert mr.main(["--required", "catalogue"]) == 1
 
@@ -348,11 +405,14 @@ def test_bez_await_krasnyy_kanal_po_prezhnemu_derzhit(monkeypatch):
 # automerge.yml, и набор читает его ОТТУДА: список в тесте разошёлся бы с
 # настоящим молча.
 
+
 def исключения_очереди() -> frozenset[str]:
     import re
     from pathlib import Path
-    yml = (Path(__file__).resolve().parent.parent / ".github" / "workflows"
-           / "automerge.yml").read_text(encoding="utf-8")
+
+    yml = (
+        Path(__file__).resolve().parent.parent / ".github" / "workflows" / "automerge.yml"
+    ).read_text(encoding="utf-8")
     найдено = re.search(r"merge_ready\.py --freeze-only --base-exclude (\S+)", yml)
     assert найдено, "automerge.yml не передаёт --base-exclude заморозке"
     return frozenset(найдено.group(1).split(","))
@@ -360,17 +420,19 @@ def исключения_очереди() -> frozenset[str]:
 
 def прогон_ветки(name: str, conclusion: str, at: str) -> dict:
     """Своё имя: `прогон` в этом файле объявлен дважды с разными полями."""
-    return {"name": name, "status": "completed", "conclusion": conclusion,
-            "createdAt": at}
+    return {"name": name, "status": "completed", "conclusion": conclusion, "createdAt": at}
 
 
-УПАВШИЙ_ВЫПУСК = [прогон_ветки("ci", "success", "2026-09-27T13:12:00Z"),
-                  прогон_ветки("release", "failure", "2026-09-27T13:13:43Z")]
+УПАВШИЙ_ВЫПУСК = [
+    прогон_ветки("ci", "success", "2026-09-27T13:12:00Z"),
+    прогон_ветки("release", "failure", "2026-09-27T13:13:43Z"),
+]
 
 
 def test_упавший_выпуск_очередь_не_морозит():
-    assert mr.frozen(УПАВШИЙ_ВЫПУСК, labels=[], thaw="blocker",
-                     excluded=исключения_очереди())[0] == ""
+    assert (
+        mr.frozen(УПАВШИЙ_ВЫПУСК, labels=[], thaw="blocker", excluded=исключения_очереди())[0] == ""
+    )
 
 
 def test_без_исключения_упавший_выпуск_морозил_бы():
@@ -382,8 +444,7 @@ def test_без_исключения_упавший_выпуск_морозил_
 
 def test_исключение_выпуска_не_глушит_настоящее_красное():
     runs = УПАВШИЙ_ВЫПУСК + [прогон_ветки("ci", "failure", "2026-09-27T13:20:00Z")]
-    why, _ = mr.frozen(runs, labels=[], thaw="blocker",
-                       excluded=исключения_очереди())
+    why, _ = mr.frozen(runs, labels=[], thaw="blocker", excluded=исключения_очереди())
     assert "ci" in why and "release" not in why
 
 
@@ -393,8 +454,10 @@ def test_дежурный_исключает_выпуск_тем_же_имене
     «работу не начинают» — два ответа на один вопрос (214)."""
     import re
     from pathlib import Path
-    yml = (Path(__file__).resolve().parent.parent / ".github" / "workflows"
-           / "main-red.yml").read_text(encoding="utf-8")
+
+    yml = (
+        Path(__file__).resolve().parent.parent / ".github" / "workflows" / "main-red.yml"
+    ).read_text(encoding="utf-8")
     # Строка аргумента, а не проза: в комментарии рядом стоит снятое
     # исключение прошлого, и оно исключением не является.
     дежурный = frozenset(re.findall(r"(?m)^\s+--exclude (\S+) \\$", yml))
@@ -409,6 +472,7 @@ def test_предварительный_прогон_исключён_и_оче�
     import re
     from pathlib import Path
     import check_python_version as cv
+
     корень = Path(__file__).resolve().parent.parent
     yml = (корень / ".github" / "workflows" / "main-red.yml").read_text(encoding="utf-8")
     дежурный = frozenset(re.findall(r"(?m)^\s+--exclude (\S+) \\$", yml))
@@ -423,14 +487,26 @@ def test_предварительный_прогон_исключён_и_оче�
 
 # ── советники: краснота видна, слияние не держит (решение владельца 09.10) ──
 
+
 def test_krasnyy_sovetnik_sliyanie_ne_derzhit(monkeypatch, capsys):
     """Срок окна (006) правкой изменения не чинится: его красное — совет,
     а сбой чужого шага на пути очереди запрещает 084."""
     import io
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
-        прогон("catalogue"),
-        прогон("window-lifetime / window-lifetime", исход="failure"),
-        прогон("rulebook-fresh / rulebook-fresh", исход="failure")]})))
+
+    monkeypatch.setattr(
+        "sys.stdin",
+        io.StringIO(
+            json.dumps(
+                {
+                    "check_runs": [
+                        прогон("catalogue"),
+                        прогон("window-lifetime / window-lifetime", исход="failure"),
+                        прогон("rulebook-fresh / rulebook-fresh", исход="failure"),
+                    ]
+                }
+            )
+        ),
+    )
 
     assert mr.main(["--required", "catalogue"]) == 0
 
@@ -438,8 +514,11 @@ def test_krasnyy_sovetnik_sliyanie_ne_derzhit(monkeypatch, capsys):
 def test_sovetnik_ne_podmenyaet_obyazatelnuyu(monkeypatch):
     """Граница с другой стороны: зелёный советник за catalogue не считается."""
     import io
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
-        прогон("window-lifetime / window-lifetime")]})))
+
+    monkeypatch.setattr(
+        "sys.stdin",
+        io.StringIO(json.dumps({"check_runs": [прогон("window-lifetime / window-lifetime")]})),
+    )
 
     assert mr.main(["--required", "catalogue"]) == 1
 
@@ -456,11 +535,13 @@ def test_sovetniki_skhodyatsya_s_rabotami_mechanisms_yml():
     """
     import re
     from pathlib import Path
-    прогон = (Path(mr.__file__).resolve().parent.parent
-              / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+
+    прогон = (
+        Path(mr.__file__).resolve().parent.parent / ".github" / "workflows" / "ci.yml"
+    ).read_text(encoding="utf-8")
     работы = re.findall(
-        r"^  ([\w-]+):\n(?:    if: [^\n]*\n)?    uses: [^\n]*/step-([\w-]+)\.yml@",
-        прогон, re.M)
+        r"^  ([\w-]+):\n(?:    if: [^\n]*\n)?    uses: [^\n]*/step-([\w-]+)\.yml@", прогон, re.M
+    )
     assert работы, "в ci.yml не найдено ни одной работы-вызова шага механизмов"
     шаги = {f"{работа} / {шаг}" for работа, шаг in работы}
     # Каждый шаг — ровно в одном списке: советник или обязательный (#930).
@@ -473,10 +554,11 @@ def _обязательные_шаги() -> set[str]:
     """Шаги механизмов (`работа / шаг`) с классом required в `.pipeline.yml`."""
     from pathlib import Path
     import yaml
-    ответ = yaml.safe_load((Path(mr.__file__).resolve().parent.parent
-                            / ".pipeline.yml").read_text(encoding="utf-8"))
-    return {имя for имя, класс in ответ["checks"].items()
-            if " / " in имя and класс == "required"}
+
+    ответ = yaml.safe_load(
+        (Path(mr.__file__).resolve().parent.parent / ".pipeline.yml").read_text(encoding="utf-8")
+    )
+    return {имя for имя, класс in ответ["checks"].items() if " / " in имя and класс == "required"}
 
 
 def test_obyazatelnye_shagi_nazvany_avtomerzhu():
@@ -487,8 +569,10 @@ def test_obyazatelnye_shagi_nazvany_avtomerzhu():
     засчиталось бы пройденным.
     """
     from pathlib import Path
-    прогон = (Path(mr.__file__).resolve().parent.parent
-              / ".github" / "workflows" / "automerge.yml").read_text(encoding="utf-8")
+
+    прогон = (
+        Path(mr.__file__).resolve().parent.parent / ".github" / "workflows" / "automerge.yml"
+    ).read_text(encoding="utf-8")
     вызовы = [строка for строка in прогон.splitlines() if "merge_ready.py --required" in строка]
     assert вызовы, "в automerge.yml нет вызова merge_ready с --required"
     обязательные = _обязательные_шаги()
@@ -506,9 +590,20 @@ def test_vzvod_ne_zhdyot_idushchih_proverok(monkeypatch, capsys):
     читался прогоном как «жду вердикта», и изменение не взводилось вовсе.
     """
     import io
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
-        прогон("catalogue", статус="in_progress", исход=None),
-        прогон("review", исход="success")]})))
+
+    monkeypatch.setattr(
+        "sys.stdin",
+        io.StringIO(
+            json.dumps(
+                {
+                    "check_runs": [
+                        прогон("catalogue", статус="in_progress", исход=None),
+                        прогон("review", исход="success"),
+                    ]
+                }
+            )
+        ),
+    )
 
     assert mr.main(["--required", "catalogue", "--await", "review"]) == 0
     assert "взводить можно" in capsys.readouterr().out
@@ -517,10 +612,21 @@ def test_vzvod_ne_zhdyot_idushchih_proverok(monkeypatch, capsys):
 def test_vzvod_krasnoe_derzhit_i_pri_idushchih(monkeypatch, capsys):
     """Граница: красная проверка держит взвод, даже если другие ещё идут."""
     import io
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
-        прогон("catalogue", статус="in_progress", исход=None),
-        прогон("other", исход="failure"),
-        прогон("review", исход="success")]})))
+
+    monkeypatch.setattr(
+        "sys.stdin",
+        io.StringIO(
+            json.dumps(
+                {
+                    "check_runs": [
+                        прогон("catalogue", статус="in_progress", исход=None),
+                        прогон("other", исход="failure"),
+                        прогон("review", исход="success"),
+                    ]
+                }
+            )
+        ),
+    )
 
     assert mr.main(["--required", "catalogue", "--await", "review"]) == 1
     assert "незелёные" in capsys.readouterr().err
@@ -529,8 +635,13 @@ def test_vzvod_krasnoe_derzhit_i_pri_idushchih(monkeypatch, capsys):
 def test_bez_await_idushchie_po_prezhnemu_ne_slivayutsya(monkeypatch, capsys):
     """Слияние сразу (без `--await`) по-прежнему ждёт все проверки."""
     import io
-    monkeypatch.setattr("sys.stdin", io.StringIO(json.dumps({"check_runs": [
-        прогон("catalogue", статус="in_progress", исход=None)]})))
+
+    monkeypatch.setattr(
+        "sys.stdin",
+        io.StringIO(
+            json.dumps({"check_runs": [прогон("catalogue", статус="in_progress", исход=None)]})
+        ),
+    )
 
     assert mr.main(["--required", "catalogue"]) == 1
     assert "ещё идут" in capsys.readouterr().err

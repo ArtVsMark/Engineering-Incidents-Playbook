@@ -72,20 +72,25 @@ TITLE = "Зелёное со второй попытки не записано �
 #: Слова записи: два случая таблицы 124, у которых запись обязательна.
 ЗАПИСЬ_RE = re.compile(r"нестабильн|до первого теста", re.IGNORECASE)
 #: Пункт тела задачи — его же пишет `тело()`; по нему пункт переносится.
-ПУНКТ_RE = re.compile(r"^- `(?P<name>[^`]*)` · попытка (?P<attempt>\d+) · "
-                      r"\[(?P<id>\d+)\]\((?P<url>[^)]*)\) · `(?P<sha>[^`]*)`$", re.M)
+ПУНКТ_RE = re.compile(
+    r"^- `(?P<name>[^`]*)` · попытка (?P<attempt>\d+) · "
+    r"\[(?P<id>\d+)\]\((?P<url>[^)]*)\) · `(?P<sha>[^`]*)`$",
+    re.M,
+)
 
 
 def повторные(прогоны: list[dict]) -> list[dict]:
     """Зелёные не с первой попытки."""
-    return [п for п in прогоны
-            if п.get("conclusion") == "success" and int(п.get("run_attempt") or 1) > 1]
+    return [
+        п
+        for п in прогоны
+        if п.get("conclusion") == "success" and int(п.get("run_attempt") or 1) > 1
+    ]
 
 
 def журнал(root: Path) -> str:
     """Весь текст журнала: фрагменты, вышедшие и нет, и собранный файл."""
-    части = [p.read_text(encoding="utf-8")
-             for p in sorted((root / "changelog.d").rglob("*.md"))]
+    части = [p.read_text(encoding="utf-8") for p in sorted((root / "changelog.d").rglob("*.md"))]
     if (root / "CHANGELOG.md").is_file():
         части.append((root / "CHANGELOG.md").read_text(encoding="utf-8"))
     return "\n".join(части)
@@ -94,39 +99,58 @@ def журнал(root: Path) -> str:
 def записан(номер: object, текст: str) -> bool:
     """Есть ли абзац журнала, где номер стоит целым числом рядом со словом записи."""
     число = re.compile(rf"(?<!\d){re.escape(str(номер))}(?!\d)")
-    return any(число.search(абзац) and ЗАПИСЬ_RE.search(абзац)
-               for абзац in re.split(r"\n\s*\n", текст))
+    return any(
+        число.search(абзац) and ЗАПИСЬ_RE.search(абзац) for абзац in re.split(r"\n\s*\n", текст)
+    )
 
 
 def прежние(body: str) -> list[dict]:
     """Пункты прежнего тела задачи — прогоны, ещё ждущие записи."""
-    return [{"id": int(m["id"]), "name": m["name"], "run_attempt": int(m["attempt"]),
-             "conclusion": "success", "html_url": m["url"], "head_sha": m["sha"]}
-            for m in ПУНКТ_RE.finditer(body)]
+    return [
+        {
+            "id": int(m["id"]),
+            "name": m["name"],
+            "run_attempt": int(m["attempt"]),
+            "conclusion": "success",
+            "html_url": m["url"],
+            "head_sha": m["sha"],
+        }
+        for m in ПУНКТ_RE.finditer(body)
+    ]
 
 
-def незаписанные(прогоны: list[dict], текст: str,
-                 ждущие: list[dict] | None = None) -> list[dict]:
+def незаписанные(прогоны: list[dict], текст: str, ждущие: list[dict] | None = None) -> list[dict]:
     """Повторные зелёные из окна и прежние пункты, которых журнал не записал."""
     по_номеру = {п.get("id"): п for п in [*(ждущие or []), *повторные(прогоны)]}
     return [п for п in по_номеру.values() if not записан(п.get("id"), текст)]
 
 
 def тело(найдено: list[dict], run_url: str) -> str:
-    строки = [f"- `{п.get('name')}` · попытка {п.get('run_attempt')} · "
-              f"[{п.get('id')}]({п.get('html_url')}) · `{str(п.get('head_sha'))[:7]}`"
-              for п in найдено]
-    return "\n".join([
-        MARKER, "",
-        "Прогоны общей ветки, позеленевшие не с первой попытки, чьих номеров нет "
-        "в журнале (правило 124):", "",
-        *(строки or ["- нет: каждый повторный зелёный записан"]), "",
-        "Зелёное со второго раза — находка, а не починка. Запишите фрагментом "
-        "журнала, что упало и на каком шаге, с номером прогона: «нестабильность», "
-        "если та же работа зеленела на этом коммите раньше, или «умерла до первого "
-        "теста». Пункт уйдёт следующим заходом. Задачу закрывает человек.", "",
-        f"Прогон: {run_url}" if run_url else "",
-    ]).rstrip() + "\n"
+    строки = [
+        f"- `{п.get('name')}` · попытка {п.get('run_attempt')} · "
+        f"[{п.get('id')}]({п.get('html_url')}) · `{str(п.get('head_sha'))[:7]}`"
+        for п in найдено
+    ]
+    return (
+        "\n".join(
+            [
+                MARKER,
+                "",
+                "Прогоны общей ветки, позеленевшие не с первой попытки, чьих номеров нет "
+                "в журнале (правило 124):",
+                "",
+                *(строки or ["- нет: каждый повторный зелёный записан"]),
+                "",
+                "Зелёное со второго раза — находка, а не починка. Запишите фрагментом "
+                "журнала, что упало и на каком шаге, с номером прогона: «нестабильность», "
+                "если та же работа зеленела на этом коммите раньше, или «умерла до первого "
+                "теста». Пункт уйдёт следующим заходом. Задачу закрывает человек.",
+                "",
+                f"Прогон: {run_url}" if run_url else "",
+            ]
+        ).rstrip()
+        + "\n"
+    )
 
 
 def тело_задачи() -> tuple[int | None, str, str | None]:
@@ -146,13 +170,26 @@ def записать(body: str, есть_что: bool) -> tuple[int, str]:
     if номер is None and not есть_что:
         return 0, "задачи нет, и заводить нечего"
     if номер is not None:
-        code, out = ghcli.run("api", "--method", "PATCH",
-                              f"repos/{{owner}}/{{repo}}/issues/{номер}", "-f", f"body={body}")
+        code, out = ghcli.run(
+            "api",
+            "--method",
+            "PATCH",
+            f"repos/{{owner}}/{{repo}}/issues/{номер}",
+            "-f",
+            f"body={body}",
+        )
         что = f"задача #{номер} обновлена"
     else:
-        code, out = ghcli.run("api", "repos/{owner}/{repo}/issues",
-                              "-f", f"title={TITLE}", "-f", f"body={body}",
-                              "-f", "labels[]=area/gates")
+        code, out = ghcli.run(
+            "api",
+            "repos/{owner}/{repo}/issues",
+            "-f",
+            f"title={TITLE}",
+            "-f",
+            f"body={body}",
+            "-f",
+            "labels[]=area/gates",
+        )
         что = "задача заведена"
     return (0, что) if code == 0 else (2, f"трекер не принял запись — {out}")
 
@@ -168,16 +205,19 @@ def main(argv: list[str] | None = None) -> int:
     с = (dt.datetime.now(dt.UTC) - dt.timedelta(days=args.days)).date().isoformat()
     code, прогоны, почему = ghcli.список(
         f"repos/{{owner}}/{{repo}}/actions/runs?branch=main&status=success"
-        f"&created=>={с}&per_page=100", ".workflow_runs[]")
+        f"&created=>={с}&per_page=100",
+        ".workflow_runs[]",
+    )
     if code != 0:
-        print(f"проверка не отработала: прогоны общей ветки с {с} не прочитаны — {почему}",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: прогоны общей ветки с {с} не прочитаны — {почему}",
+            file=sys.stderr,
+        )
         return 2
     try:
         текст = журнал(args.root)
     except OSError as exc:
-        print(f"проверка не отработала: журнал не прочитан — {exc.filename}",
-              file=sys.stderr)
+        print(f"проверка не отработала: журнал не прочитан — {exc.filename}", file=sys.stderr)
         return 2
 
     ждущие: list[dict] = []
@@ -188,17 +228,18 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         ждущие = прежние(прежнее)
     найдено = незаписанные(прогоны, текст, ждущие)
-    print(f"зелёных прогонов с {с}: {len(прогоны)}, не с первой попытки: "
-          f"{len(повторные(прогоны))}, ждали записи из задачи: {len(ждущие)}, "
-          f"не записано: {len(найдено)}")
+    print(
+        f"зелёных прогонов с {с}: {len(прогоны)}, не с первой попытки: "
+        f"{len(повторные(прогоны))}, ждали записи из задачи: {len(ждущие)}, "
+        f"не записано: {len(найдено)}"
+    )
     for п in найдено:
         print(f"  · {п.get('name')} · попытка {п.get('run_attempt')} · {п.get('html_url')}")
 
     if args.apply:
         code, что = записать(тело(найдено, args.run_url), bool(найдено))
         if code:
-            print(f"проверка не отработала: задача с маркером {MARKER} — {что}",
-                  file=sys.stderr)
+            print(f"проверка не отработала: задача с маркером {MARKER} — {что}", file=sys.stderr)
             return 2
         print(что)
     return 1 if найдено else 0

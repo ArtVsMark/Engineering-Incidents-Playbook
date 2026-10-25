@@ -11,8 +11,11 @@ def test_самопроверка_двусторонняя():
 
 def test_стоящий_тег_отказ(tmp_path, monkeypatch):
     monkeypatch.setattr(fr, "tag_exists", lambda _tag: True)
-    monkeypatch.setattr(sys, "argv", ["facts_release.py", "--dist", str(tmp_path / "d"),
-                                      "--notes", str(tmp_path / "n.md")])
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["facts_release.py", "--dist", str(tmp_path / "d"), "--notes", str(tmp_path / "n.md")],
+    )
     assert fr.main() == 1
 
 

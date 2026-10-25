@@ -54,7 +54,6 @@
         пройденной.
 """
 
-
 import argparse
 import json
 import sys
@@ -102,8 +101,9 @@ THAW = "blocker"
 # советник, либо обязательный по `.pipeline.yml` и назван автомержу.
 
 
-def frozen(base_runs: list[dict], labels: list[str], thaw: str,
-           excluded: frozenset[str] = frozenset()) -> tuple[str, str]:
+def frozen(
+    base_runs: list[dict], labels: list[str], thaw: str, excluded: frozenset[str] = frozenset()
+) -> tuple[str, str]:
     """Причина заморозки и состояние основания, годное для печати.
 
     Проверяется ПЕРВЫМ и отдельно от проверок самого изменения: это условие
@@ -122,29 +122,38 @@ def frozen(base_runs: list[dict], labels: list[str], thaw: str,
         # молчать о ней значит выдавать незнание за чистоту.
         немые = main_red.unresolved_names(base_runs, excluded)
         if немые:
-            return "", ("основание зелёное; без вердикта: " + ", ".join(немые)
-                        + " — все прогоны этих работ отменены, и подтверждают они ничего")
+            return "", (
+                "основание зелёное; без вердикта: "
+                + ", ".join(немые)
+                + " — все прогоны этих работ отменены, и подтверждают они ничего"
+            )
         return "", "основание зелёное"
     названы = ", ".join(red)
     if thaw in labels:
         return "", f"основание красное ({названы}), разморожено меткой «{thaw}»"
-    return ("общая ветка красная: " + названы
-            + f". Очередь заморожена — двигается только изменение с меткой "
-            f"«{thaw}», то есть та самая починка. Остальные проверки прошли бы "
-            "на сломанном основании и ничего не значат (правило 053)"), ""
+    return (
+        "общая ветка красная: "
+        + названы
+        + f". Очередь заморожена — двигается только изменение с меткой "
+        f"«{thaw}», то есть та самая починка. Остальные проверки прошли бы "
+        "на сломанном основании и ничего не значат (правило 053)"
+    ), ""
 
 
 def красные(runs: list[dict]) -> list[str]:
     """Имена проверок с отказом — одна мера для слияния и для взвода."""
-    return sorted({r.get("name", "?") for r in runs
-                   if (r.get("conclusion") or "") in BAD})
+    return sorted({r.get("name", "?") for r in runs if (r.get("conclusion") or "") in BAD})
 
 
 def идущие(runs: list[dict]) -> list[str]:
     """Имена проверок без вердикта — одна мера для слияния и для взвода."""
-    return sorted({r.get("name", "?") for r in runs
-                   if r.get("status") != "completed"
-                   or r.get("conclusion") in PENDING})
+    return sorted(
+        {
+            r.get("name", "?")
+            for r in runs
+            if r.get("status") != "completed" or r.get("conclusion") in PENDING
+        }
+    )
 
 
 def awaited(runs: list[dict], names: list[str]) -> tuple[bool, str]:
@@ -175,22 +184,25 @@ def awaited(runs: list[dict], names: list[str]) -> tuple[bool, str]:
         if not свои:
             ответили.append(f"{имя}: не запускался")
             continue
-        идут = [r for r in свои if r.get("status") != "completed"
-                or r.get("conclusion") in PENDING]
+        идут = [r for r in свои if r.get("status") != "completed" or r.get("conclusion") in PENDING]
         if идут:
             ждём.append(имя)
         else:
             исходы = sorted({(r.get("conclusion") or "?") for r in свои})
             ответили.append(f"{имя}: {', '.join(исходы)}")
     if ждём:
-        return False, ("вердикта ещё нет: " + ", ".join(ждём)
-                       + ". Канал необязательный — держит не его краснота, а "
-                       "молчание (084)")
+        return False, (
+            "вердикта ещё нет: "
+            + ", ".join(ждём)
+            + ". Канал необязательный — держит не его краснота, а "
+            "молчание (084)"
+        )
     return True, "вердикты необязательных каналов: " + "; ".join(ответили)
 
 
-def verdict(runs: list[dict], required: list[str],
-            optional: list[str] | None = None) -> tuple[bool, str]:
+def verdict(
+    runs: list[dict], required: list[str], optional: list[str] | None = None
+) -> tuple[bool, str]:
     """Можно ли сливать. Вторая строка — причина, годная для печати.
 
     НЕОБЯЗАТЕЛЬНЫЕ КАНАЛЫ ИСКЛЮЧАЮТСЯ ОТСЮДА, И ЭТО ПОЧИНКА, А НЕ ОГОВОРКА.
@@ -208,9 +220,11 @@ def verdict(runs: list[dict], required: list[str],
     if optional:
         runs = [r for r in runs if r.get("name") not in optional]
     if not runs:
-        return False, ("проверок нет НИ ОДНОЙ — это «не стартовало», а не «всё "
-                       "хорошо» (правило 010). Частая причина: у изменения "
-                       "конфликт, и площадка не собрала ссылку слияния")
+        return False, (
+            "проверок нет НИ ОДНОЙ — это «не стартовало», а не «всё "
+            "хорошо» (правило 010). Частая причина: у изменения "
+            "конфликт, и площадка не собрала ссылку слияния"
+        )
     bad = красные(runs)
     if bad:
         return False, "незелёные проверки: " + ", ".join(bad)
@@ -220,36 +234,59 @@ def verdict(runs: list[dict], required: list[str],
     green = {r.get("name") for r in runs if r.get("conclusion") == "success"}
     missing = [n for n in required if n not in green]
     if missing:
-        return False, ("обязательные проверки не зелены на этой голове: "
-                       + ", ".join(missing) + ". Зелены: "
-                       + (", ".join(sorted(n for n in green if n)) or "—"))
+        return False, (
+            "обязательные проверки не зелены на этой голове: "
+            + ", ".join(missing)
+            + ". Зелены: "
+            + (", ".join(sorted(n for n in green if n)) or "—")
+        )
     return True, f"проверок {len(runs)}, все зелёные, обязательные на месте"
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--required", default="", metavar="ИМЕНА",
-                    help="имена обязательных проверок через запятую")
-    ap.add_argument("--base-runs", metavar="ФАЙЛ", type=Path,
-                    help="прогоны общей ветки: gh run list --branch main "
-                         "--json name,status,conclusion,createdAt. Без ключа "
-                         "заморозка НЕ проверяется — и это видно в отчёте")
-    ap.add_argument("--base-exclude", default="", metavar="ИМЕНА",
-                    help="работы общей ветки, чьё красное не морозит очередь; "
-                         "список принадлежит потребителю, а не инструменту")
-    ap.add_argument("--labels", default="", metavar="МЕТКИ",
-                    help="метки изменения через запятую")
-    ap.add_argument("--thaw-label", default=THAW, metavar="МЕТКА",
-                    help=f"метка, размораживающая очередь (по умолчанию {THAW})")
-    ap.add_argument("--await", dest="await_", default="", metavar="ИМЕНА",
-                    help="необязательные каналы, чьего ВЕРДИКТА ждём перед "
-                         "слиянием: держит не краснота, а молчание. Прогон, "
-                         "который не запускался, ожиданием не считается")
-    ap.add_argument("--freeze-only", action="store_true",
-                    help="спросить только про основание и не читать проверок "
-                         "изменения: заморозка — условие ВХОДА в очередь, и "
-                         "спрашивается до того, как у изменения появятся свои "
-                         "проверки (053)")
+    ap.add_argument(
+        "--required", default="", metavar="ИМЕНА", help="имена обязательных проверок через запятую"
+    )
+    ap.add_argument(
+        "--base-runs",
+        metavar="ФАЙЛ",
+        type=Path,
+        help="прогоны общей ветки: gh run list --branch main "
+        "--json name,status,conclusion,createdAt. Без ключа "
+        "заморозка НЕ проверяется — и это видно в отчёте",
+    )
+    ap.add_argument(
+        "--base-exclude",
+        default="",
+        metavar="ИМЕНА",
+        help="работы общей ветки, чьё красное не морозит очередь; "
+        "список принадлежит потребителю, а не инструменту",
+    )
+    ap.add_argument("--labels", default="", metavar="МЕТКИ", help="метки изменения через запятую")
+    ap.add_argument(
+        "--thaw-label",
+        default=THAW,
+        metavar="МЕТКА",
+        help=f"метка, размораживающая очередь (по умолчанию {THAW})",
+    )
+    ap.add_argument(
+        "--await",
+        dest="await_",
+        default="",
+        metavar="ИМЕНА",
+        help="необязательные каналы, чьего ВЕРДИКТА ждём перед "
+        "слиянием: держит не краснота, а молчание. Прогон, "
+        "который не запускался, ожиданием не считается",
+    )
+    ap.add_argument(
+        "--freeze-only",
+        action="store_true",
+        help="спросить только про основание и не читать проверок "
+        "изменения: заморозка — условие ВХОДА в очередь, и "
+        "спрашивается до того, как у изменения появятся свои "
+        "проверки (053)",
+    )
     args = ap.parse_args(argv)
     required = [n.strip() for n in args.required.split(",") if n.strip()]
     ждать = [n.strip() for n in args.await_.split(",") if n.strip()]
@@ -263,20 +300,27 @@ def main(argv: list[str] | None = None) -> int:
         try:
             base = json.loads(args.base_runs.read_text(encoding="utf-8"))
         except (OSError, ValueError) as e:
-            print(f"проверка не отработала: прогоны общей ветки не прочитаны "
-                  f"— {args.base_runs}: {e}", file=sys.stderr)
+            print(
+                f"проверка не отработала: прогоны общей ветки не прочитаны — {args.base_runs}: {e}",
+                file=sys.stderr,
+            )
             return 2
         if not isinstance(base, list):
-            print(f"проверка не отработала: в {args.base_runs} нет списка "
-                  "прогонов общей ветки", file=sys.stderr)
+            print(
+                f"проверка не отработала: в {args.base_runs} нет списка прогонов общей ветки",
+                file=sys.stderr,
+            )
             return 2
         заморожено, основание = frozen(base, labels, args.thaw_label, excluded)
         if заморожено:
             print(f"сливать нельзя: {заморожено}", file=sys.stderr)
             return 1
     elif args.freeze_only:
-        print("проверка не отработала: --freeze-only без --base-runs — "
-              "спрашивать про основание нечем", file=sys.stderr)
+        print(
+            "проверка не отработала: --freeze-only без --base-runs — "
+            "спрашивать про основание нечем",
+            file=sys.stderr,
+        )
         return 2
 
     if args.freeze_only:
@@ -286,19 +330,23 @@ def main(argv: list[str] | None = None) -> int:
     # ── исход 2 ────────────────────────────────────────────────────────────
     raw = sys.stdin.read()
     if not raw.strip():
-        print("проверка не отработала: на stdin пусто — список проверок "
-              "подаётся туда (`gh api ... | merge_ready.py`)", file=sys.stderr)
+        print(
+            "проверка не отработала: на stdin пусто — список проверок "
+            "подаётся туда (`gh api ... | merge_ready.py`)",
+            file=sys.stderr,
+        )
         return 2
     try:
         doc = json.loads(raw)
     except ValueError as e:
-        print(f"проверка не отработала: список проверок не разобран — {e}",
-              file=sys.stderr)
+        print(f"проверка не отработала: список проверок не разобран — {e}", file=sys.stderr)
         return 2
     runs = doc.get("check_runs") if isinstance(doc, dict) else doc
     if not isinstance(runs, list):
-        print("проверка не отработала: в JSON со stdin нет ключа "
-              "`check_runs` и сам он не список", file=sys.stderr)
+        print(
+            "проверка не отработала: в JSON со stdin нет ключа `check_runs` и сам он не список",
+            file=sys.stderr,
+        )
         return 2
 
     # ВЕРДИКТ НЕОБЯЗАТЕЛЬНЫХ СПРАШИВАЕТСЯ ПЕРВЫМ, И ЭТО НЕ ПОРЯДОК РАДИ

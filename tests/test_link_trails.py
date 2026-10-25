@@ -23,7 +23,6 @@
 `gh` подменяется.
 """
 
-
 import pytest
 
 import link_trails as lt
@@ -32,8 +31,12 @@ ME = "ArtVsMark/ArtVsMark"
 
 
 def rule(rid: str, repo: str = ME, issue: str = "7", slug: str = "slug") -> dict:
-    return {"id": rid, "slug": slug, "title": {"ru": f"правило {rid}"},
-            "trails": [{"repo": repo, "issue": issue}]}
+    return {
+        "id": rid,
+        "slug": slug,
+        "title": {"ru": f"правило {rid}"},
+        "trails": [{"repo": repo, "issue": issue}],
+    }
 
 
 def ids(found: dict) -> dict:
@@ -61,8 +64,12 @@ def test_poryadok_pravil_zadan():
 
 
 def test_odno_pravilo_neskolko_zadach():
-    r = {"id": "132", "slug": "s", "title": {"ru": "t"},
-         "trails": [{"repo": ME, "issue": "20"}, {"repo": ME, "issue": "19"}]}
+    r = {
+        "id": "132",
+        "slug": "s",
+        "title": {"ru": "t"},
+        "trails": [{"repo": ME, "issue": "20"}, {"repo": ME, "issue": "19"}],
+    }
     assert ids(lt.trails_for([r], ME)) == {"19": ["132"], "20": ["132"]}
 
 
@@ -104,7 +111,8 @@ def test_zapis_odna_i_vtoroy_progon_molchit(monkeypatch, capsys):
         if not пишет:
             assert "--paginate" in args
             return 0, "101\n" if state["exists"] else ""
-        written.append(args[-1]); state["exists"] = 1
+        written.append(args[-1])
+        state["exists"] = 1
         return 0, "ok"
 
     monkeypatch.setattr(lt.ghcli, "run", fake)
@@ -115,11 +123,11 @@ def test_zapis_odna_i_vtoroy_progon_molchit(monkeypatch, capsys):
     # после неё не очищался. Читающий не мог отличить удачную запись от
     # неустранённой находки, и прогон по расписанию у потребителя красил
     # успешную работу (109). Остаток после записи пуст — значит ноль.
-    assert lt.main() == 0                      # дописал всё, до чего дошёл
-    assert written == [written[0]]             # ровно одна запись
+    assert lt.main() == 0  # дописал всё, до чего дошёл
+    assert written == [written[0]]  # ровно одна запись
     monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME, "--apply"])
-    assert lt.main() == 0                      # второй прогон: ставить нечего
-    assert len(written) == 1                   # и он ничего не дописал
+    assert lt.main() == 0  # второй прогон: ставить нечего
+    assert len(written) == 1  # и он ничего не дописал
 
 
 def test_suhoy_progon_ne_pishet(monkeypatch, capsys):
@@ -128,7 +136,7 @@ def test_suhoy_progon_ne_pishet(monkeypatch, capsys):
 
     def fake(*args):
         if not any(a.startswith("body=") for a in args):
-            return 0, ""                       # чтение — не запись
+            return 0, ""  # чтение — не запись
         written.append(args[1])
         return 0, ""
 
@@ -145,6 +153,7 @@ def test_kod_ne_menyaet_smysla_mezhdu_rezhimami(monkeypatch, capsys):
     два режима: сухой отвечает «есть находки», записывающий — «чисто». Пока
     код был общим, читающему приходилось знать режим, чтобы понять ответ, —
     а прогон по расписанию его не знал и красил удачную запись."""
+
     def fake(*args):
         return (0, "ok") if any(a.startswith("body=") for a in args) else (0, "")
 
@@ -182,10 +191,12 @@ def test_otkaz_chteniya_kommentariev_tretiy_ishod(monkeypatch, capsys, код, �
     """Находка обзора на #598: отказ площадки (код 1) и неразобранный ответ
     (код 2 от ghcli.список) уходили в «ссылка уже стоит» — задача выпадала
     из работы молча, а прогон отвечал нулём (039)."""
+
     def fake(*args):
         if "--paginate" in args:
             return код, ответ
         return 0, "gh version 2"
+
     monkeypatch.setattr(lt.ghcli, "run", fake)
     monkeypatch.setattr(lt, "fetch_rules", lambda c, r: ([rule("005")], None))
     monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME, "--apply"])
@@ -193,24 +204,28 @@ def test_otkaz_chteniya_kommentariev_tretiy_ishod(monkeypatch, capsys, код, �
     assert "не прочитана" in capsys.readouterr().err
 
 
-@pytest.mark.parametrize("отказывает, слово", [
-    ("body=", "запись в #7 не принята"),
-    ("labels[]=", "метка на #7 не поставлена"),
-])
+@pytest.mark.parametrize(
+    "отказывает, слово",
+    [
+        ("body=", "запись в #7 не принята"),
+        ("labels[]=", "метка на #7 не поставлена"),
+    ],
+)
 def test_otkaz_zapisi_tretiy_ishod(monkeypatch, capsys, отказывает, слово):
     """Находка обзора на #601: отказ записи комментария с кодом 1 читался
     записью (проверялся только `failed`), а ответ на метку не читался вовсе.
     Правило 210: перечислены все вызовы площадки в файле, у каждого — случай."""
+
     def fake(*args):
         if "--paginate" in args:
-            return 0, ""                             # ссылки ещё нет
+            return 0, ""  # ссылки ещё нет
         if any(a.startswith(отказывает) for a in args):
             return 1, "HTTP 403: Resource not accessible by integration"
         return 0, "ok"
+
     monkeypatch.setattr(lt.ghcli, "run", fake)
     monkeypatch.setattr(lt, "fetch_rules", lambda c, r: ([rule("005")], None))
-    monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME, "--apply",
-                                     "--label", "rules"])
+    monkeypatch.setattr("sys.argv", ["link_trails.py", "--repo", ME, "--apply", "--label", "rules"])
     assert lt.main() == 2
     assert слово in capsys.readouterr().err
 

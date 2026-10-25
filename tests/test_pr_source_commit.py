@@ -6,7 +6,6 @@
 до того, как что-либо открыто.
 """
 
-
 import subprocess
 import sys
 from pathlib import Path
@@ -18,13 +17,18 @@ import pr_source_commit as psc  # noqa: E402
 
 
 def git(root: Path, *args: str) -> str:
-    done = subprocess.run(["git", "-C", str(root), *args], capture_output=True,
-                          text=True, encoding="utf-8", check=True, timeout=60)
+    done = subprocess.run(
+        ["git", "-C", str(root), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=True,
+        timeout=60,
+    )
     return done.stdout.strip()
 
 
-def commit(root: Path, subject: str, name: str = "f",
-           content: str | None = None) -> str:
+def commit(root: Path, subject: str, name: str = "f", content: str | None = None) -> str:
     """Содержимое задаётся отдельно от заголовка НЕ для красоты: два коммита с
     одним родителем, деревом, заголовком и секундой — один и тот же объект git,
     и «слитая уплотнением соседка» тихо становилась предком общей ветки. Тогда
@@ -69,8 +73,9 @@ def test_chuzhoy_kommit_slitoy_vetki_propuskaetsya(дерево):
 
     # Уплотняющее слияние: в общей ветке один НОВЫЙ коммит с тем же заголовком.
     git(дерево, "checkout", "-q", "main")
-    commit(дерево, "fix(bindings): отложенное — не долг (177)", name="a",
-           content="слито уплотнением")
+    commit(
+        дерево, "fix(bindings): отложенное — не долг (177)", name="a", content="слито уплотнением"
+    )
 
     git(дерево, "checkout", "-q", "agent/соседняя")
     git(дерево, "checkout", "-q", "-b", "agent/своя")
@@ -123,8 +128,7 @@ def test_chuzhoy_kommit_bez_sovpadeniya_zagolovka_lovitsya_soderzhimym(дере�
     commit(дерево, "fix(export): чужая тема (049)", name="a")
 
     git(дерево, "checkout", "-q", "main")
-    commit(дерево, "совсем другой заголовок", name="a",
-           content="fix(export): чужая тема (049)")
+    commit(дерево, "совсем другой заголовок", name="a", content="fix(export): чужая тема (049)")
 
     git(дерево, "checkout", "-q", "agent/соседняя")
     git(дерево, "checkout", "-q", "-b", "agent/своя")

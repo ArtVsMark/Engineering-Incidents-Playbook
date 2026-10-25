@@ -44,7 +44,6 @@
 Исходы:  0 — подделки полны;  1 — есть пропуск;  2 — проверка не отработала.
 """
 
-
 import argparse
 import os
 import re
@@ -57,7 +56,7 @@ import proc
 
 ЧИСТО, НАХОДКИ, СЛОМАНО = 0, 1, 2
 
-ОТРАВА_СОКЕТА = '''\
+ОТРАВА_СОКЕТА = """\
 import socket
 
 ПЕТЛЯ = {"127.0.0.1", "::1", "localhost", "0.0.0.0", ""}
@@ -83,7 +82,7 @@ def _обёртка(настоящая, позиция):
 socket.socket.connect = _обёртка(_c, 1)
 socket.socket.connect_ex = _обёртка(_ce, 1)
 socket.create_connection = _обёртка(_cc, 0)
-'''
+"""
 
 ЗАГЛУШКА_ПАДАЮЩАЯ = '#!/bin/sh\necho "ОТРАВА: позван настоящий gh: $*" >&2\nexit 66\n'
 ЗАГЛУШКА_УСПЕШНАЯ = '#!/bin/sh\necho "[]"\nexit 0\n'
@@ -99,7 +98,9 @@ def прогон(root: Path, окружение: dict[str, str]) -> tuple[int, l
         text=True,
         encoding="utf-8",
         cwd=root,
-        env=окружение, timeout=600)
+        env=окружение,
+        timeout=600,
+    )
     отказали = sorted({m.group(2) for m in ОТКАЗ.finditer(сказано.stdout + сказано.stderr)})
     return сказано.returncode, отказали
 
@@ -153,8 +154,10 @@ def main(argv: list[str] | None = None) -> int:
     if находки:
         print(f"\nподделки неполны: заходов с отказом {len(находки)} из 3")
         return НАХОДКИ
-    print("\nподделки полны: три захода, отказов нет — "
-          "зелёное не держится ни на пропущенной подделке, ни на пустоте")
+    print(
+        "\nподделки полны: три захода, отказов нет — "
+        "зелёное не держится ни на пропущенной подделке, ни на пустоте"
+    )
     return ЧИСТО
 
 

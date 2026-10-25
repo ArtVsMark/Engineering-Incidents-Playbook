@@ -9,7 +9,6 @@
 по которой атрибуция проверяется по одному коммиту.
 """
 
-
 from pathlib import Path
 
 import check_connect as cc
@@ -34,8 +33,12 @@ from conftest import write
 '''
 
 
-def подделка(repo: Path, таблица: str = ТАБЛИЦА, инструмент: str = ИНСТРУМЕНТ,
-             вход: tuple[str, ...] = ("README.md", "START.md")) -> Path:
+def подделка(
+    repo: Path,
+    таблица: str = ТАБЛИЦА,
+    инструмент: str = ИНСТРУМЕНТ,
+    вход: tuple[str, ...] = ("README.md", "START.md"),
+) -> Path:
     write(repo / "CONNECT.md", таблица)
     write(repo / "scripts" / "tool.py", инструмент)
     for doc in вход:
@@ -49,8 +52,11 @@ def test_vsyo_nazvano_i_vsyo_est(repo):
 
 def test_instrument_bez_stroki_v_dokumente_eto_otkaz(repo, capsys):
     """Ровно инцидент: скрипт есть и объявлен, а на входе о нём ни слова."""
-    подделка(repo, таблица="# Подключение\n\n| Ин | Что | Где |\n|---|---|---|\n"
-                           "| `scripts/other.py` | иное | у потребителя |\n")
+    подделка(
+        repo,
+        таблица="# Подключение\n\n| Ин | Что | Где |\n|---|---|---|\n"
+        "| `scripts/other.py` | иное | у потребителя |\n",
+    )
     write(repo / "scripts" / "other.py", "#\n")
 
     assert cc.main(["--root", str(repo)]) == 1
@@ -68,8 +74,11 @@ def test_nazvannyy_no_nesushchestvuyushchiy_eto_otkaz(repo, capsys):
 
 def test_deystvie_proveryaetsya_svoim_action_yml(repo, capsys):
     """`uses:` — тоже инструмент, и его тоже можно потерять переименованием."""
-    подделка(repo, таблица=ТАБЛИЦА + "| `uses: вл/репо/.github/actions/attr@v1` "
-                                     "| атрибуция | у потребителя |\n")
+    подделка(
+        repo,
+        таблица=ТАБЛИЦА + "| `uses: вл/репо/.github/actions/attr@v1` "
+        "| атрибуция | у потребителя |\n",
+    )
 
     assert cc.main(["--root", str(repo)]) == 1
     assert "action.yml" in capsys.readouterr().err
@@ -91,9 +100,11 @@ def test_nash_geyt_pod_marker_ne_popadaet(repo, capsys):
     """Догадка по словам понижена до предупреждения — иначе ложный отказ на
     каждом скрипте, который просто говорит о потребителях (051)."""
     подделка(repo, инструмент=ИНСТРУМЕНТ)
-    write(repo / "scripts" / "gate.py",
-          '"""Гейт.\n\nЗапускается **в репозитории потребителя** — так сказано '
-          'про чужой скрипт.\n"""\n')
+    write(
+        repo / "scripts" / "gate.py",
+        '"""Гейт.\n\nЗапускается **в репозитории потребителя** — так сказано '
+        'про чужой скрипт.\n"""\n',
+    )
 
     assert cc.main(["--root", str(repo)]) == 0
     out = capsys.readouterr().out

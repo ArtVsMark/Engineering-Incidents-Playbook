@@ -40,7 +40,6 @@
   2 — проверка не отработала (список не прочитан, модуль не разобран).
 """
 
-
 import argparse
 import ast
 import json
@@ -58,9 +57,14 @@ def образцы(текст: str) -> list[tuple[str, int]]:
     дерево = ast.parse(текст)
     вышло: list[tuple[str, int]] = []
     for узел in ast.walk(дерево):
-        if not (isinstance(узел, ast.Call) and узел.args
-                and isinstance(узел.func, ast.Attribute) and узел.func.attr == "compile"
-                and isinstance(узел.func.value, ast.Name) and узел.func.value.id == "re"):
+        if not (
+            isinstance(узел, ast.Call)
+            and узел.args
+            and isinstance(узел.func, ast.Attribute)
+            and узел.func.attr == "compile"
+            and isinstance(узел.func.value, ast.Name)
+            and узел.func.value.id == "re"
+        ):
             continue
         первый = узел.args[0]
         if isinstance(первый, ast.Constant) and isinstance(первый.value, str):
@@ -80,8 +84,7 @@ def копии(root: Path) -> tuple[dict[str, list[str]] | None, str]:
                 return None, f"{имя} не разобран — {e}"
             for образец, строка in найдено:
                 где.setdefault(образец, []).append(f"{имя}:{строка}")
-    return {о: м for о, м in где.items()
-            if len({x.rsplit(":", 1)[0] for x in м}) > 1}, ""
+    return {о: м for о, м in где.items() if len({x.rsplit(":", 1)[0] for x in м}) > 1}, ""
 
 
 def список(root: Path) -> tuple[list[dict] | None, str]:
@@ -106,21 +109,42 @@ def список(root: Path) -> tuple[list[dict] | None, str]:
 def selftest() -> int:
     """Гейт отличает копию в другом модуле от совпадения внутри одного."""
     import tempfile
+
     случаи = [
-        ("один образец в двух модулях — копия",
-         {"a": 'import re\nX = re.compile(r"^\\d+$")\n',
-          "b": 'import re\nY = re.compile(r"^\\d+$")\n'}, 1),
-        ("один образец дважды в одном модуле — не предмет",
-         {"a": 'import re\nX = re.compile(r"^\\d+$")\nY = re.compile(r"^\\d+$")\n'}, 0),
-        ("разные образцы — чисто",
-         {"a": 'import re\nX = re.compile(r"^\\d+$")\n',
-          "b": 'import re\nY = re.compile(r"^\\w+$")\n'}, 0),
-        ("импорт вместо копии — чисто",
-         {"a": 'import re\nX = re.compile(r"^\\d+$")\n',
-          "b": "from a import X\n"}, 0),
-        ("образец выражением не читается",
-         {"a": 'import re\nX = re.compile(r"^\\d+$")\n',
-          "b": 'import re\nP = "^\\\\d+$"\nY = re.compile(P)\n'}, 0),
+        (
+            "один образец в двух модулях — копия",
+            {
+                "a": 'import re\nX = re.compile(r"^\\d+$")\n',
+                "b": 'import re\nY = re.compile(r"^\\d+$")\n',
+            },
+            1,
+        ),
+        (
+            "один образец дважды в одном модуле — не предмет",
+            {"a": 'import re\nX = re.compile(r"^\\d+$")\nY = re.compile(r"^\\d+$")\n'},
+            0,
+        ),
+        (
+            "разные образцы — чисто",
+            {
+                "a": 'import re\nX = re.compile(r"^\\d+$")\n',
+                "b": 'import re\nY = re.compile(r"^\\w+$")\n',
+            },
+            0,
+        ),
+        (
+            "импорт вместо копии — чисто",
+            {"a": 'import re\nX = re.compile(r"^\\d+$")\n', "b": "from a import X\n"},
+            0,
+        ),
+        (
+            "образец выражением не читается",
+            {
+                "a": 'import re\nX = re.compile(r"^\\d+$")\n',
+                "b": 'import re\nP = "^\\\\d+$"\nY = re.compile(P)\n',
+            },
+            0,
+        ),
     ]
     плохо = []
     for что, файлы, ждём in случаи:
@@ -138,16 +162,18 @@ def selftest() -> int:
         print(f"РАСХОЖДЕНИЕ: {строка}", file=sys.stderr)
     if плохо:
         return 1
-    print("самопроверка пройдена: копия в другом модуле отличается от совпадения "
-          "в одном и от импорта")
+    print(
+        "самопроверка пройдена: копия в другом модуле отличается от совпадения в одном и от импорта"
+    )
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--root", type=Path, default=ROOT)
-    p.add_argument("--selftest", action="store_true",
-                   help="прогнать гейт по случаям, а не по дереву (140)")
+    p.add_argument(
+        "--selftest", action="store_true", help="прогнать гейт по случаям, а не по дереву (140)"
+    )
     args = p.parse_args(argv)
     if args.selftest:
         return selftest()
@@ -167,24 +193,33 @@ def main(argv: list[str] | None = None) -> int:
     плохо = False
     if неназванные:
         плохо = True
-        print("один предмет разбирают две реализации — образец повторён в "
-              "другом модуле (214):", file=sys.stderr)
+        print(
+            "один предмет разбирают две реализации — образец повторён в другом модуле (214):",
+            file=sys.stderr,
+        )
         for образец, места in неназванные.items():
             print(f"  • {образец!r}: {', '.join(места)}", file=sys.stderr)
-        print("  Копия сегодня совпадает и разойдётся при первой правке одной из "
-              "них, молча.\n"
-              "  Либо импорт у того, кто разбирает предмет, либо совпадение "
-              "поимённо в .rules/copies.json с причиной.", file=sys.stderr)
+        print(
+            "  Копия сегодня совпадает и разойдётся при первой правке одной из "
+            "них, молча.\n"
+            "  Либо импорт у того, кто разбирает предмет, либо совпадение "
+            "поимённо в .rules/copies.json с причиной.",
+            file=sys.stderr,
+        )
     if мёртвые:
         плохо = True
-        print(".rules/copies.json: записи, которым в дереве больше нечего "
-              "разрешать (102):", file=sys.stderr)
+        print(
+            ".rules/copies.json: записи, которым в дереве больше нечего разрешать (102):",
+            file=sys.stderr,
+        )
         for з in мёртвые:
             print(f"  • {з['pattern']!r}", file=sys.stderr)
     if плохо:
         return 1
-    print(f"один предмет — одна реализация: образцов в двух модулях и более "
-          f"{len(найдено)}, и каждый назван с причиной в .rules/copies.json")
+    print(
+        f"один предмет — одна реализация: образцов в двух модулях и более "
+        f"{len(найдено)}, и каждый назван с причиной в .rules/copies.json"
+    )
     return 0
 
 

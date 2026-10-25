@@ -42,7 +42,6 @@
   051 — сеть не ответила, сторож молчит: ложный отказ дороже пропуска.
 """
 
-
 import json
 import re
 import shlex
@@ -58,8 +57,15 @@ WITH_VALUE = {"--repo", "-o", "--push-option", "--exec", "--receive-pack"}
 DELETES_ALL = {"--delete", "-d"}
 #: Глобальные ключи самого git, за которыми идёт значение: `git -C путь push`.
 #: Отделять их приходится, потому что подкоманда — первое слово БЕЗ ключа.
-GLOBAL_WITH_VALUE = {"-C", "-c", "--git-dir", "--work-tree", "--namespace",
-                     "--exec-path", "--super-prefix"}
+GLOBAL_WITH_VALUE = {
+    "-C",
+    "-c",
+    "--git-dir",
+    "--work-tree",
+    "--namespace",
+    "--exec-path",
+    "--super-prefix",
+}
 
 
 #: ДЕРЖИТ ПРАВИЛО 206 — «форма, которую гейт не видит, становится обходом».
@@ -71,8 +77,9 @@ GLOBAL_WITH_VALUE = {"-C", "-c", "--git-dir", "--work-tree", "--namespace",
 #: НИ РАЗУ ИЗ ТРЁХ — ветки agent/a-record-about-a-list-outlived-the-list
 #: (дважды) и agent/the-queue-list-was-stale-before-the-shift воскрешены
 #: толчком после слияния, и #529 с #531 закрыты дублями.
-ВЕДУЩИЕ_ОБОЛОЧКИ = frozenset({"do", "then", "else", "elif", "if", "while",
-                              "until", "case", "esac", "in", "{", "!", "time"})
+ВЕДУЩИЕ_ОБОЛОЧКИ = frozenset(
+    {"do", "then", "else", "elif", "if", "while", "until", "case", "esac", "in", "{", "!", "time"}
+)
 
 #: Хвосты тех же конструкций. Без них `( git push )` отдаёт `)` позиционным
 #: словом, и сторож назвал бы предметом отказа ветку с именем скобки (158).
@@ -110,7 +117,7 @@ def куски(command: str) -> list[list[str]]:
     вышло: list[list[str]] = []
     for строка in without_heredocs(command).split("\n"):
         слова = слова_строки(строка)
-        if слова is None:               # незакрытая кавычка — не наше дело
+        if слова is None:  # незакрытая кавычка — не наше дело
             continue
         текущий: list[str] = []
         for слово, разделитель in слова:
@@ -174,8 +181,8 @@ def слова_строки(строка: str) -> list[tuple[str, bool]] | None:
         return None
     буквально = разбор(строка, posix=False)
     if буквально is not None and any(
-            w not in РАЗДЕЛИТЕЛИ and без_кавычек(w) in РАЗДЕЛИТЕЛИ
-            for w in буквально):
+        w not in РАЗДЕЛИТЕЛИ and без_кавычек(w) in РАЗДЕЛИТЕЛИ for w in буквально
+    ):
         return [(без_кавычек(w), w in РАЗДЕЛИТЕЛИ) for w in буквально]
     return [(w, w in РАЗДЕЛИТЕЛИ) for w in склеено]
 
@@ -193,7 +200,7 @@ def до_перенаправления(words: list[str]) -> list[str]:
         if слово in ПЕРЕНАПРАВЛЕНИЕ:
             конец = i
             if конец and words[конец - 1].isdigit():
-                конец -= 1          # `2` в `2>&1` — номер потока, а не ветка
+                конец -= 1  # `2` в `2>&1` — номер потока, а не ветка
             return words[:конец]
     return words
 
@@ -238,12 +245,12 @@ def подкоманда(words: list[str]) -> tuple[str, list[str]] | None:
     while i < len(words):
         слово = words[i]
         if слово in GLOBAL_WITH_VALUE:
-            i += 2                      # ключ и его значение
+            i += 2  # ключ и его значение
             continue
         if слово.startswith("-"):
             i += 1
             continue
-        return слово, words[i + 1:]
+        return слово, words[i + 1 :]
     return None
 
 
@@ -255,8 +262,13 @@ REDIRECT = re.compile(r"[<>]")
 
 
 def current_branch() -> str | None:
-    done = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
-                          capture_output=True, text=True, encoding="utf-8", timeout=5)
+    done = subprocess.run(
+        ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=5,
+    )
     return done.stdout.strip() or None if done.returncode == 0 else None
 
 
@@ -288,7 +300,7 @@ def without_heredocs(command: str) -> str:
             конец = m.group(2)
             i += 1
             while i < len(lines) and lines[i].strip() != конец:
-                i += 1                  # тело документа — данные, пропускаем
+                i += 1  # тело документа — данные, пропускаем
         i += 1
     return "\n".join(out)
 
@@ -437,12 +449,12 @@ def targets(command: str, current: str | None = None) -> list[str]:
     out: list[str] = []
     for ветка, ссылки, удаляет_всё in толчки(command, current):
         if удаляет_всё:
-            continue                    # содержимого в команде нет
+            continue  # содержимого в команде нет
         for ref in ссылки:
             if ref.startswith(":"):
-                continue                # `:ветка` — удаление одной ссылки
+                continue  # `:ветка` — удаление одной ссылки
             if REFSPEC.match(ref):
-                continue                # `HEAD:ветка` — цель названа явно
+                continue  # `HEAD:ветка` — цель названа явно
             имя = ref.removeprefix("refs/heads/")
             # Подстановка оболочки: значения сторож не знает и не выдумывает.
             if "$" in имя or "`" in имя:
@@ -481,17 +493,26 @@ def первый_коммит_ветки(корень: Path) -> str | None:
     """
     выбор = корень / "scripts" / "pr_source_commit.py"
     if not выбор.exists():
-        return None                     # чужое дерево — не наш предмет
+        return None  # чужое дерево — не наш предмет
     названо = subprocess.run(
         [sys.executable, str(выбор), "--root", str(корень), "--base", "origin/main"],
-        capture_output=True, text=True, encoding="utf-8", timeout=30)
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=30,
+    )
     if названо.returncode != 0:
-        return None                     # коммитов нет либо выбор не отработал
+        return None  # коммитов нет либо выбор не отработал
     sha = названо.stdout.strip()
     if not sha:
         return None
-    тело = subprocess.run(["git", "-C", str(корень), "log", "-1", "--format=%B", sha],
-                          capture_output=True, text=True, encoding="utf-8", timeout=5)
+    тело = subprocess.run(
+        ["git", "-C", str(корень), "log", "-1", "--format=%B", sha],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=5,
+    )
     return тело.stdout if тело.returncode == 0 else None
 
 
@@ -517,16 +538,22 @@ def тело_не_проходит(корень: Path) -> str | None:
     """
     скрипт = корень / "scripts" / "pr_body.py"
     if not скрипт.exists():
-        return None                     # чужое дерево — не наш предмет
+        return None  # чужое дерево — не наш предмет
     тело = первый_коммит_ветки(корень)
     if тело is None:
         return None
-    done = subprocess.run([sys.executable, str(скрипт), "--check", "--body-file", "-"],
-                          input=тело, capture_output=True, text=True, encoding="utf-8", timeout=30)
+    done = subprocess.run(
+        [sys.executable, str(скрипт), "--check", "--body-file", "-"],
+        input=тело,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=30,
+    )
     if done.returncode == 0:
         return None
     if done.returncode == 2:
-        return None                     # проверка не отработала — не мешаем (039)
+        return None  # проверка не отработала — не мешаем (039)
     return (done.stdout + done.stderr).strip()
 
 
@@ -553,13 +580,13 @@ def цель(ref: str, текущая: str | None = None) -> str | None:
     решён не порядком, а единственным местом снятия.
     """
     if ref.startswith(":"):
-        return None                     # `:имя` — удаление одной ссылки
+        return None  # `:имя` — удаление одной ссылки
     имя = ref.split(":", 1)[1] if ":" in ref else ref
     имя = имя.removeprefix("refs/heads/")
     if "$" in имя or "`" in имя:
-        return None                     # подстановка — не выдумываем (051)
+        return None  # подстановка — не выдумываем (051)
     if имя == "HEAD":
-        return текущая                  # git положит голову в одноимённую ветку
+        return текущая  # git положит голову в одноимённую ветку
     return имя or None
 
 
@@ -601,15 +628,15 @@ def везёт_содержимое(command: str, ветка: str | None = None)
     """
     for где, ссылки, удаляет_всё in толчки(command, ветка):
         if удаляет_всё:
-            continue                    # содержимого в команде нет
-        if ветка is None:               # вопрос «хоть куда-нибудь»
+            continue  # содержимого в команде нет
+        if ветка is None:  # вопрос «хоть куда-нибудь»
             if not ссылки or any(not ref.startswith(":") for ref in ссылки):
                 return True
             continue
         if где != ветка:
-            continue                    # окно перешло — предмет уже другой
+            continue  # окно перешло — предмет уже другой
         if not ссылки:
-            return True                 # `git push` — голова в текущую ветку
+            return True  # `git push` — голова в текущую ветку
         if any(цель(ref, где) == ветка for ref in ссылки):
             return True
     return False
@@ -636,13 +663,12 @@ def ветка_воскресает(branch: str) -> bool:
     то есть там, где сеть всё равно нужна, — и только когда локальная ссылка
     есть. Не ответила сеть — хук молчит: ложный отказ дороже пропуска (051).
     """
-    свой = _вывод(["git", "rev-parse", "--verify", "--quiet",
-                   f"refs/remotes/origin/{branch}"])
+    свой = _вывод(["git", "rev-parse", "--verify", "--quiet", f"refs/remotes/origin/{branch}"])
     if свой is None:
-        return False                    # у себя не помним — значит новая тема
+        return False  # у себя не помним — значит новая тема
     там = _вывод(["git", "ls-remote", "--heads", "origin", branch])
     if там is None:
-        return False                    # сеть не ответила — не мешаем (051)
+        return False  # сеть не ответила — не мешаем (051)
     return not там.strip()
 
 
@@ -677,7 +703,7 @@ def main() -> int:
     try:
         event = json.load(sys.stdin)
     except ValueError, OSError:
-        return 0                        # не разобрали событие — не мешаем
+        return 0  # не разобрали событие — не мешаем
     if event.get("tool_name") != "Bash":
         return 0
     command = (event.get("tool_input") or {}).get("command") or ""
@@ -687,21 +713,37 @@ def main() -> int:
         # Нет git или скрипта — тот же тихий пропуск, что и у тайм-аута: код 1
         # площадка считает неблокирующим (обзор #883).
         if толкает(command):
-            print(f"страж толчка не смог запустить проверку — {exc} — толчок закрыт: "
-                  "без неё он ушёл бы непроверенным (220).", file=sys.stderr)
+            print(
+                f"страж толчка не смог запустить проверку — {exc} — толчок закрыт: "
+                "без неё он ушёл бы непроверенным (220).",
+                file=sys.stderr,
+            )
             return 2
-        print(f"страж толчка: проверка не запустилась — {exc}; команда не толчок и "
-              "пропущена без проверки ветки", file=sys.stderr)
+        print(
+            f"страж толчка: проверка не запустилась — {exc}; команда не толчок и "
+            "пропущена без проверки ветки",
+            file=sys.stderr,
+        )
         return 0
     except subprocess.TimeoutExpired as exc:
-        вызов = " ".join(map(str, exc.cmd))[:120] if isinstance(exc.cmd, (list, tuple)) else str(exc.cmd)[:120]
+        вызов = (
+            " ".join(map(str, exc.cmd))[:120]
+            if isinstance(exc.cmd, (list, tuple))
+            else str(exc.cmd)[:120]
+        )
         if толкает(command):
-            print(f"страж толчка не дождался «{вызов}» за {exc.timeout} с — толчок закрыт: "
-                  "без проверки он ушёл бы непроверенным (100, 220). Повторите, когда "
-                  "git снова отвечает.", file=sys.stderr)
+            print(
+                f"страж толчка не дождался «{вызов}» за {exc.timeout} с — толчок закрыт: "
+                "без проверки он ушёл бы непроверенным (100, 220). Повторите, когда "
+                "git снова отвечает.",
+                file=sys.stderr,
+            )
             return 2
-        print(f"страж толчка: «{вызов}» не ответил за {exc.timeout} с; команда не "
-              "толчок и пропущена без проверки ветки", file=sys.stderr)
+        print(
+            f"страж толчка: «{вызов}» не ответил за {exc.timeout} с; команда не "
+            "толчок и пропущена без проверки ветки",
+            file=sys.stderr,
+        )
         return 0
 
 
@@ -709,13 +751,15 @@ def решить(command: str) -> int:
     """Решение по команде оболочки: 0 — пропустить, 2 — отвергнуть с причиной."""
     branch = current_branch()
     if branch is None or branch == "HEAD":
-        return 0                        # отделённая голова — сравнивать не с чем
+        return 0  # отделённая голова — сравнивать не с чем
     чужие = targets(command, branch)
     if чужие:
-        print(f"толчок в {', '.join(чужие)}, а окно стоит на {branch}. "
-              "Содержимое уехало бы не туда, куда смотрит окно (правило 012). "
-              f"Если ветка верна — перейдите в неё: git switch {чужие[0]}",
-              file=sys.stderr)
+        print(
+            f"толчок в {', '.join(чужие)}, а окно стоит на {branch}. "
+            "Содержимое уехало бы не туда, куда смотрит окно (правило 012). "
+            f"Если ветка верна — перейдите в неё: git switch {чужие[0]}",
+            file=sys.stderr,
+        )
         return 2
 
     # ВТОРОЙ ПРЕДМЕТ ТОГО ЖЕ ХУКА: тело, из которого конвейер соберёт изменение.
@@ -728,23 +772,29 @@ def решить(command: str) -> int:
     if not толкает(command):
         return 0
     if везёт_содержимое(command, branch) and ветка_воскресает(branch):
-        print(f"ветки {branch} на площадке НЕТ, а у себя она помнится — значит "
-              "площадка удалила её при слиянии. Толчок её воскресит вместе с "
-              "уже слитыми коммитами, и конвейер честно откроет изменение на "
-              "работу, которая уже в общей ветке (правило 202).\n"
-              "Продолжение работы после слияния идёт с НОВОЙ ветки от свежей "
-              "общей:\n"
-              "  git fetch origin main && git checkout -B <новое-имя> origin/main "
-              "&& git cherry-pick <ваши коммиты>", file=sys.stderr)
+        print(
+            f"ветки {branch} на площадке НЕТ, а у себя она помнится — значит "
+            "площадка удалила её при слиянии. Толчок её воскресит вместе с "
+            "уже слитыми коммитами, и конвейер честно откроет изменение на "
+            "работу, которая уже в общей ветке (правило 202).\n"
+            "Продолжение работы после слияния идёт с НОВОЙ ветки от свежей "
+            "общей:\n"
+            "  git fetch origin main && git checkout -B <новое-имя> origin/main "
+            "&& git cherry-pick <ваши коммиты>",
+            file=sys.stderr,
+        )
         return 2
     беда = тело_не_проходит(Path.cwd())
     if беда:
-        print("тело первого коммита ветки не пройдёт гейт изменения:\n"
-              f"{беда}\n"
-              "Конвейер ставит тело изменения ОДИН раз при открытии — поправить "
-              "коммит после толчка уже недостаточно, придётся править тело через "
-              "API и перезапускать проверку руками. Поправьте здесь: "
-              "git commit --amend", file=sys.stderr)
+        print(
+            "тело первого коммита ветки не пройдёт гейт изменения:\n"
+            f"{беда}\n"
+            "Конвейер ставит тело изменения ОДИН раз при открытии — поправить "
+            "коммит после толчка уже недостаточно, придётся править тело через "
+            "API и перезапускать проверку руками. Поправьте здесь: "
+            "git commit --amend",
+            file=sys.stderr,
+        )
         return 2
     return 0
 

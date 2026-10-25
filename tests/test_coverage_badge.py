@@ -13,7 +13,6 @@
 ступень, и заметить это может только тот, кто помнит границу.
 """
 
-
 import pytest
 
 import coverage_badge as cb
@@ -22,12 +21,22 @@ from conftest import write, замер
 
 # ── порог цвета: граница проверяется с обеих сторон ────────────────────────
 
-@pytest.mark.parametrize("percent,want", [
-    (100, "brightgreen"), (90, "brightgreen"), (89.9, "green"),
-    (75, "green"), (74.9, "yellow"),
-    (50, "yellow"), (49.9, "orange"),
-    (25, "orange"), (24.9, "red"), (0, "red"),
-])
+
+@pytest.mark.parametrize(
+    "percent,want",
+    [
+        (100, "brightgreen"),
+        (90, "brightgreen"),
+        (89.9, "green"),
+        (75, "green"),
+        (74.9, "yellow"),
+        (50, "yellow"),
+        (49.9, "orange"),
+        (25, "orange"),
+        (24.9, "red"),
+        (0, "red"),
+    ],
+)
 def test_цвет_на_границе_порога(percent, want):
     assert cb.color(percent) == want
 
@@ -41,6 +50,7 @@ def test_значок_по_форме_endpoint():
 
 
 # ── три исхода ─────────────────────────────────────────────────────────────
+
 
 def test_без_замера_это_третий_исход(monkeypatch, repo, capsys):
     monkeypatch.setattr(cb, "DATA", repo / "нет-замера")
@@ -76,8 +86,7 @@ def test_отсутствующий_значок_тоже_находка(monkeyp
     assert cb.main() == 1
 
 
-def test_сборка_кладёт_значок_рядом_с_недостающими_каталогами(
-        monkeypatch, repo, capsys):
+def test_сборка_кладёт_значок_рядом_с_недостающими_каталогами(monkeypatch, repo, capsys):
     badge = repo / "нет" / "такого" / "badge.json"
     monkeypatch.setattr(cb, "BADGE", badge)
     monkeypatch.setattr(cb, "measured", lambda: 77.0)
@@ -88,8 +97,8 @@ def test_сборка_кладёт_значок_рядом_с_недостающ
 
 # ── данные замера: с чужого дерева и свежие ────────────────────────────────
 
-def test_данные_с_чужого_дерева_это_третий_исход_с_названным_файлом(
-        monkeypatch, repo, capsys):
+
+def test_данные_с_чужого_дерева_это_третий_исход_с_названным_файлом(monkeypatch, repo, capsys):
     """Ровно инцидент 24 сентября: `.coverage` пережил смену ветки и ссылается
     на файл, которого в дереве нет. Отказ называет его, а не пролетает
     исключением `NoSource` сквозь всех, кто зовёт замер (158)."""

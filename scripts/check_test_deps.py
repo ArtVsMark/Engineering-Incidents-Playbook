@@ -25,7 +25,6 @@
         отдельное изменение, а не побочный эффект свежего выпуска.
 """
 
-
 import argparse
 import ast
 import re
@@ -36,6 +35,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 REQS = "requirements-test.txt"
+
 
 #: Модули самого каталога: лежат в scripts/ и рядом с тестами.
 def local_modules(root: Path) -> set[str]:
@@ -123,8 +123,7 @@ def объявлено(lines: Iterable[str]) -> dict[str, set[str]]:
         модули = set()
         m = MODULE_RE.search(raw)
         if m:
-            модули = {n.strip().lower()
-                      for n in re.split(r"[,\s]+", m.group(1)) if n.strip()}
+            модули = {n.strip().lower() for n in re.split(r"[,\s]+", m.group(1)) if n.strip()}
         line = raw.split("#")[0].strip()
         if not line or line.startswith("-"):
             continue
@@ -159,7 +158,7 @@ def без_границы(lines: Iterable[str]) -> list[str]:
         # Граница ищется в СПЕЦИФИКАТОРЕ, а не в строке: маркер среды после
         # `;` несёт свои `<` и `==` (`python_version<"3.13"`), и они говорят о
         # Python, а не о версии пакета (обзор #747).
-        if m and not ГРАНИЦА_RE.search(line[m.end():].split(";")[0]):
+        if m and not ГРАНИЦА_RE.search(line[m.end() :].split(";")[0]):
             out.append(m.group(0))
     return out
 
@@ -186,8 +185,10 @@ def main(argv: list[str] | None = None) -> int:
     # ── исход 2 ────────────────────────────────────────────────────────────
     tests = sorted((root / "tests").glob("*.py"))
     if not tests:
-        print(f"проверка не отработала: в {root / 'tests'} нет ни одного "
-              "*.py — смотреть нечего", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {root / 'tests'} нет ни одного *.py — смотреть нечего",
+            file=sys.stderr,
+        )
         return 2
     allowed, err = declared(root)
     if err:
@@ -202,13 +203,13 @@ def main(argv: list[str] | None = None) -> int:
             f"{REQS}: «{имя}» без верхней границы версии — свежий мажорный "
             "выпуск поменяет прогон молча, и проверка автора разойдётся с "
             "конвейером. Поставьте `<следующий мажорный`; подъём границы — "
-            "отдельное изменение (073)")
+            "отдельное изменение (073)"
+        )
     for path in tests:
         try:
             names = imported(path)
         except SyntaxError as e:
-            print(f"проверка не отработала: {path.name} не разобран — {e}",
-                  file=sys.stderr)
+            print(f"проверка не отработала: {path.name} не разобран — {e}", file=sys.stderr)
             return 2
         for name in sorted(names):
             if name in known:
@@ -218,7 +219,8 @@ def main(argv: list[str] | None = None) -> int:
             problems.append(
                 f"{path.name}: импортирует «{name}», которого нет ни в "
                 f"стандартной библиотеке, ни в {REQS}. У автора он, возможно, "
-                "стоит — в чужом окружении набор упадёт на импорте")
+                "стоит — в чужом окружении набор упадёт на импорте"
+            )
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if problems:
@@ -226,14 +228,19 @@ def main(argv: list[str] | None = None) -> int:
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
         if any("импортирует" in p for p in problems):
-            print(f"\n  «У автора работает» означает «проверено на выборке "
-                  f"автора» (правило 107).\n  Объявите зависимость в {REQS} — "
-                  "её ставят обе работы конвейера.", file=sys.stderr)
+            print(
+                f"\n  «У автора работает» означает «проверено на выборке "
+                f"автора» (правило 107).\n  Объявите зависимость в {REQS} — "
+                "её ставят обе работы конвейера.",
+                file=sys.stderr,
+            )
         return 1
 
     # ── исход 0 ────────────────────────────────────────────────────────────
-    print(f"тесты зависят только от объявленного: модулей {len(tests)}, "
-          f"объявленных зависимостей {len(allowed)}")
+    print(
+        f"тесты зависят только от объявленного: модулей {len(tests)}, "
+        f"объявленных зависимостей {len(allowed)}"
+    )
     return 0
 
 

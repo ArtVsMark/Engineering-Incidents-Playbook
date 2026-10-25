@@ -24,14 +24,14 @@
 площадки, и подделать ответ дешевле, чем ходить за ним.
 """
 
-
 import json
 
 import main_red
 
 
-def run(name: str, conclusion: str | None, *, at: str = "2026-01-01",
-        status: str = "completed") -> dict:
+def run(
+    name: str, conclusion: str | None, *, at: str = "2026-01-01", status: str = "completed"
+) -> dict:
     return {"name": name, "status": status, "conclusion": conclusion, "createdAt": at}
 
 
@@ -126,7 +126,7 @@ def test_zelyonaya_vetka_eto_nol(tmp_path, monkeypatch, capsys):
         calls["n"] += 1
         if args[0] == "run":
             return 0, json.dumps([run("ci", "success")])
-        return 0, ""                         # открытых задач нет: пустой вывод
+        return 0, ""  # открытых задач нет: пустой вывод
 
     monkeypatch.setattr(main_red, "gh", fake)
     monkeypatch.setattr("sys.argv", ["main_red.py", "--body-file", str(template)])
@@ -137,9 +137,15 @@ def test_zelyonaya_vetka_eto_nol(tmp_path, monkeypatch, capsys):
 def test_zadacha_dezhurnogo_ishchetsya_po_vsem_stranitsam(monkeypatch):
     """Открытые задачи читаются до конца (212): изменения лежат в том же
     списке и съедают сотню, а задача дежурного — не самая свежая."""
+
     def fake(*args):
         assert "--paginate" in args
-        return 0, (json.dumps({"number": 3, "body": "чужая"}) + "\n"
-                   + json.dumps({"number": 9, "body": main_red.MARKER}) + "\n")
+        return 0, (
+            json.dumps({"number": 3, "body": "чужая"})
+            + "\n"
+            + json.dumps({"number": 9, "body": main_red.MARKER})
+            + "\n"
+        )
+
     monkeypatch.setattr(main_red, "gh", fake)
     assert main_red.find_issue() == (9, None)

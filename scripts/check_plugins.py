@@ -42,7 +42,6 @@
   0 — витрина и дерево сходятся;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import json
 import re
@@ -80,10 +79,22 @@ def сверить(root: Path) -> tuple[list[str] | None, str, int]:
     витрина, папка = root / MARKETPLACE, root / PLUGINS
     if not витрина.exists():
         if папка.is_dir():
-            return None, (f"{MARKETPLACE.as_posix()} нет, а {PLUGINS.as_posix()}/ "
-                          "есть — плагины лежат, и площадка их не найдёт"), 0
-        return None, (f"нет ни {MARKETPLACE.as_posix()}, ни {PLUGINS.as_posix()}/ "
-                      "— гейт без предмета не зеленеет (075)"), 0
+            return (
+                None,
+                (
+                    f"{MARKETPLACE.as_posix()} нет, а {PLUGINS.as_posix()}/ "
+                    "есть — плагины лежат, и площадка их не найдёт"
+                ),
+                0,
+            )
+        return (
+            None,
+            (
+                f"нет ни {MARKETPLACE.as_posix()}, ни {PLUGINS.as_posix()}/ "
+                "— гейт без предмета не зеленеет (075)"
+            ),
+            0,
+        )
     d, чего = прочитать(витрина)
     if d is None:
         return None, f"{MARKETPLACE.as_posix()} {чего}", 0
@@ -97,8 +108,10 @@ def сверить(root: Path) -> tuple[list[str] | None, str, int]:
         находки.append(f"{имя}: нет `owner.name`")
     плагины = d.get("plugins")
     if not (isinstance(плагины, list) and плагины):
-        находки.append(f"{имя}: `plugins` не непустой список — витрина, которая "
-                       "ничего не отдаёт, выглядит отданной")
+        находки.append(
+            f"{имя}: `plugins` не непустой список — витрина, которая "
+            "ничего не отдаёт, выглядит отданной"
+        )
         плагины = []
 
     названы: set[str] = set()
@@ -108,8 +121,10 @@ def сверить(root: Path) -> tuple[list[str] | None, str, int]:
             continue
         плагин = str(запись.get("name") or "")
         if not ИМЯ_RE.match(плагин):
-            находки.append(f"{имя}: имя плагина {плагин!r} — не латиница через "
-                           "дефис; оно же имя папки и часть вызова навыка")
+            находки.append(
+                f"{имя}: имя плагина {плагин!r} — не латиница через "
+                "дефис; оно же имя папки и часть вызова навыка"
+            )
             continue
         if плагин in названы:
             находки.append(f"{имя}: плагин «{плагин}» назван дважды")
@@ -118,11 +133,14 @@ def сверить(root: Path) -> tuple[list[str] | None, str, int]:
             находки.append(
                 f"{имя}: у «{плагин}» вписана версия {запись['version']!r}. "
                 "Версию выводит коммит витрины; вписанную некому поднять, и "
-                "поставившие остаются на старом тексте молча (035)")
+                "поставившие остаются на старом тексте молча (035)"
+            )
         ждём = f"./{(PLUGINS / плагин).as_posix()}"
         if запись.get("source") != ждём:
-            находки.append(f"{имя}: у «{плагин}» source {запись.get('source')!r}, "
-                           f"а ждётся {ждём!r} — папка плагина и есть его имя")
+            находки.append(
+                f"{имя}: у «{плагин}» source {запись.get('source')!r}, "
+                f"а ждётся {ждём!r} — папка плагина и есть его имя"
+            )
             continue
         манифест = PLUGINS / плагин / MANIFEST
         м, чего = прочитать(root / манифест)
@@ -132,36 +150,52 @@ def сверить(root: Path) -> tuple[list[str] | None, str, int]:
         if м.get("name") != плагин:
             находки.append(
                 f"{манифест.as_posix()}: name {м.get('name')!r}, а витрина зовёт "
-                f"плагин «{плагин}» — три имени одного плагина расходятся молча (035)")
+                f"плагин «{плагин}» — три имени одного плагина расходятся молча (035)"
+            )
         if "version" in м:
             находки.append(
                 f"{манифест.as_posix()}: вписана версия {м['version']!r}. Версию "
-                "выводит коммит витрины; вписанную некому поднять (035)")
+                "выводит коммит витрины; вписанную некому поднять (035)"
+            )
 
     if папка.is_dir():
         for лишняя in sorted(п.name for п in папка.iterdir() if п.is_dir()):
             if лишняя not in названы:
                 находки.append(
                     f"{(PLUGINS / лишняя).as_posix()}/ есть, а {имя} о нём "
-                    "молчит — такой плагин не поставит никто")
+                    "молчит — такой плагин не поставит никто"
+                )
     return находки, "", len(названы)
 
 
 def selftest() -> int:
     """Гейт отличает сошедшуюся витрину от каждого из своих предметов."""
     import tempfile
-    годная = {"name": "m", "owner": {"name": "o"},
-              "plugins": [{"name": "p", "source": "./plugins/p"}]}
+
+    годная = {
+        "name": "m",
+        "owner": {"name": "o"},
+        "plugins": [{"name": "p", "source": "./plugins/p"}],
+    }
     манифест = {"name": "p"}
     случаи: list[tuple[str, dict, dict | None, list[str], int]] = [
         ("сошедшаяся витрина", годная, манифест, [], 0),
-        ("версия в витрине", {**годная, "plugins": [
-            {"name": "p", "source": "./plugins/p", "version": "1.0.0"}]},
-         манифест, [], 1),
+        (
+            "версия в витрине",
+            {**годная, "plugins": [{"name": "p", "source": "./plugins/p", "version": "1.0.0"}]},
+            манифест,
+            [],
+            1,
+        ),
         ("версия в манифесте", годная, {"name": "p", "version": "1.0.0"}, [], 1),
         ("имя в манифесте другое", годная, {"name": "q"}, [], 1),
-        ("source мимо папки", {**годная, "plugins": [
-            {"name": "p", "source": "./elsewhere"}]}, манифест, [], 1),
+        (
+            "source мимо папки",
+            {**годная, "plugins": [{"name": "p", "source": "./elsewhere"}]},
+            манифест,
+            [],
+            1,
+        ),
         ("папка без записи в витрине", годная, манифест, ["лишний"], 1),
         ("витрина без плагинов", {**годная, "plugins": []}, None, [], 1),
     ]
@@ -173,8 +207,7 @@ def selftest() -> int:
             (корень / MARKETPLACE).write_text(json.dumps(витрина), encoding="utf-8")
             if м is not None:
                 (корень / PLUGINS / "p" / MANIFEST).parent.mkdir(parents=True)
-                (корень / PLUGINS / "p" / MANIFEST).write_text(json.dumps(м),
-                                                              encoding="utf-8")
+                (корень / PLUGINS / "p" / MANIFEST).write_text(json.dumps(м), encoding="utf-8")
             for л in лишние:
                 (корень / PLUGINS / л).mkdir(parents=True)
             находки, отказ, _ = сверить(корень)
@@ -186,16 +219,19 @@ def selftest() -> int:
         print(f"РАСХОЖДЕНИЕ: {строка}", file=sys.stderr)
     if плохо:
         return 1
-    print("самопроверка пройдена: вписанная версия, чужое имя, source мимо "
-          "папки и плагин без записи отличаются от сошедшейся витрины")
+    print(
+        "самопроверка пройдена: вписанная версия, чужое имя, source мимо "
+        "папки и плагин без записи отличаются от сошедшейся витрины"
+    )
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--root", type=Path, default=ROOT)
-    p.add_argument("--selftest", action="store_true",
-                   help="прогнать гейт по случаям, а не по дереву (140)")
+    p.add_argument(
+        "--selftest", action="store_true", help="прогнать гейт по случаям, а не по дереву (140)"
+    )
     args = p.parse_args(argv)
     if args.selftest:
         return selftest()
@@ -209,8 +245,10 @@ def main(argv: list[str] | None = None) -> int:
         for н in находки:
             print(f"  • {н}", file=sys.stderr)
         return 1
-    print(f"витрина плагинов в порядке: плагинов {плагинов}, у каждого папка и "
-          f"манифест с тем же именем, вписанной версии нет — её выводит коммит")
+    print(
+        f"витрина плагинов в порядке: плагинов {плагинов}, у каждого папка и "
+        f"манифест с тем же именем, вписанной версии нет — её выводит коммит"
+    )
     return 0
 
 

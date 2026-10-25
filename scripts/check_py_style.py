@@ -50,16 +50,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_python_version as cv  # noqa: E402
 
 #: С какой версии доступно то, что гейт требует. Ключ — версия языка.
-ЛЕНИВЫЕ_АННОТАЦИИ = (3, 14)   # PEP 649/749: __future__ annotations лишний
-EXCEPT_БЕЗ_СКОБОК = (3, 14)   # PEP 758: except A, B: без скобок
+ЛЕНИВЫЕ_АННОТАЦИИ = (3, 14)  # PEP 649/749: __future__ annotations лишний
+EXCEPT_БЕЗ_СКОБОК = (3, 14)  # PEP 758: except A, B: без скобок
 
 FUTURE = re.compile(r"^from __future__ import annotations\s*$", re.M)
 
 
 def файлы(root: Path) -> list[str]:
     """Отслеживаемые .py — то, что поедет, а не то, что лежит рядом."""
-    done = proc.run(["git", "ls-files", "-z", "*.py"], cwd=root,
-                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "ls-files", "-z", "*.py"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         raise RuntimeError(f"git ls-files не отработал: {done.stderr.strip()}")
     return sorted(п for п in done.stdout.split("\0") if п)
@@ -75,8 +81,11 @@ def except_в_скобках(text: str) -> list[int]:
     не записывается вовсе."""
     ОТКРЫВАЮТ, ЗАКРЫВАЮТ = {"(", "[", "{"}, {")", "]", "}"}
     строки: list[int] = []
-    токены = [t for t in tokenize.generate_tokens(io.StringIO(text).readline)
-              if t.type not in (tokenize.NL, tokenize.COMMENT)]
+    токены = [
+        t
+        for t in tokenize.generate_tokens(io.StringIO(text).readline)
+        if t.type not in (tokenize.NL, tokenize.COMMENT)
+    ]
     for i, t in enumerate(токены):
         if t.type != tokenize.NAME or t.string != "except":
             continue
@@ -92,8 +101,7 @@ def except_в_скобках(text: str) -> list[int]:
                 глубина += 1
             elif s in ЗАКРЫВАЮТ:
                 глубина -= 1
-            elif (глубина == 1 and s == "," and j + 1 < len(токены)
-                  and токены[j + 1].string != ")"):
+            elif глубина == 1 and s == "," and j + 1 < len(токены) and токены[j + 1].string != ")":
                 элементов += 1
             if глубина == 0:
                 break
@@ -107,12 +115,16 @@ def находки_стиля(путь: str, text: str, планка: tuple[int,
     """Что в файле отстаёт от планки."""
     out: list[str] = []
     if планка >= ЛЕНИВЫЕ_АННОТАЦИИ and FUTURE.search(text):
-        out.append(f"{путь}: `from __future__ import annotations` при планке "
-                   f"{планка[0]}.{планка[1]} — аннотации и так ленивые (PEP 649)")
+        out.append(
+            f"{путь}: `from __future__ import annotations` при планке "
+            f"{планка[0]}.{планка[1]} — аннотации и так ленивые (PEP 649)"
+        )
     if планка >= EXCEPT_БЕЗ_СКОБОК:
-        out += [f"{путь}:{n}: `except (A, B):` без `as` при планке "
-                f"{планка[0]}.{планка[1]} — скобки не нужны (PEP 758)"
-                for n in except_в_скобках(text)]
+        out += [
+            f"{путь}:{n}: `except (A, B):` без `as` при планке "
+            f"{планка[0]}.{планка[1]} — скобки не нужны (PEP 758)"
+            for n in except_в_скобках(text)
+        ]
     return out
 
 
@@ -121,16 +133,36 @@ def находки_ruff(root: Path, пути: list[str], планка: tuple[int
     рядом = Path(sys.executable).with_name("ruff")
     ruff = str(рядом) if рядом.exists() else shutil.which("ruff")
     if ruff is None:
-        raise RuntimeError("ruff не найден — ни рядом с интерпретатором, ни в PATH "
-                           "(он в requirements-test.txt)")
+        raise RuntimeError(
+            "ruff не найден — ни рядом с интерпретатором, ни в PATH (он в requirements-test.txt)"
+        )
     done = proc.run(
-        [ruff, "check", "--isolated", "--no-cache", "--output-format", "json",
-         "--target-version", f"py{планка[0]}{планка[1]}", "--select", "UP,FURB188",
-         *пути], cwd=root, capture_output=True, text=True, encoding="utf-8", timeout=300)
+        [
+            ruff,
+            "check",
+            "--isolated",
+            "--no-cache",
+            "--output-format",
+            "json",
+            "--target-version",
+            f"py{планка[0]}{планка[1]}",
+            "--select",
+            "UP,FURB188",
+            *пути,
+        ],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=300,
+    )
     if done.returncode not in (0, 1):
         raise RuntimeError(f"ruff не отработал: {done.stderr.strip()[:300]}")
-    return [f"{Path(d['filename']).relative_to(root.resolve())}:{d['location']['row']}: "
-            f"{d['code']} {d['message']}" for d in json.loads(done.stdout or "[]")]
+    return [
+        f"{Path(d['filename']).relative_to(root.resolve())}:{d['location']['row']}: "
+        f"{d['code']} {d['message']}"
+        for d in json.loads(done.stdout or "[]")
+    ]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -145,8 +177,11 @@ def main(argv: list[str] | None = None) -> int:
         пути = файлы(root)
         if not пути:
             raise RuntimeError("отслеживаемых .py нет ни одного — проверять нечего")
-        находки = [н for п in пути
-                   for н in находки_стиля(п, (root / п).read_text(encoding="utf-8"), планка)]
+        находки = [
+            н
+            for п in пути
+            for н in находки_стиля(п, (root / п).read_text(encoding="utf-8"), планка)
+        ]
         находки += находки_ruff(root, пути, планка)
     except (OSError, RuntimeError, ValueError, tokenize.TokenError) as e:
         print(f"стиль не проверен: {e}", file=sys.stderr)

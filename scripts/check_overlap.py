@@ -29,7 +29,6 @@
 Исходы:  0 пересечений нет · 1 есть · 2 проверка не отработала.
 """
 
-
 import argparse
 import json
 import subprocess
@@ -47,8 +46,13 @@ LIMIT = 50
 
 def current_branch(root: Path) -> tuple[str, str]:
     """Имя текущей ветки; вторым — причина, если git его не назвал (истечение в том числе)."""
-    done = proc.run(["git", "-C", str(root), "rev-parse",
-                     "--abbrev-ref", "HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), "rev-parse", "--abbrev-ref", "HEAD"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         return "", done.stderr.strip()
     return done.stdout.strip(), ""
@@ -69,8 +73,11 @@ def open_changes() -> tuple[list[dict] | None, str | None]:
     у тех изменений, с которыми есть что сравнивать (обычно ни у одного).
     """
     code, out = ghcli.run(
-        "api", f"repos/{{owner}}/{{repo}}/pulls?state=open&per_page={LIMIT}",
-        "--jq", "[.[] | {number, title, headRefName: .head.ref}]")
+        "api",
+        f"repos/{{owner}}/{{repo}}/pulls?state=open&per_page={LIMIT}",
+        "--jq",
+        "[.[] | {number, title, headRefName: .head.ref}]",
+    )
     if code != 0:
         return None, f"gh api pulls — {out.strip()[:160] or f'код {code}'}"
     try:
@@ -87,7 +94,8 @@ def files_of(number: int) -> tuple[set[str] | None, str | None]:
     358 файлов (#327) пересечение считалось бы по первой сотне.
     """
     code, файлы, почему = ghcli.список(
-        f"repos/{{owner}}/{{repo}}/pulls/{number}/files?per_page=100", ".[].filename")
+        f"repos/{{owner}}/{{repo}}/pulls/{number}/files?per_page=100", ".[].filename"
+    )
     if code != 0:
         return None, f"gh api pulls/{number}/files — {почему.strip()[:160] or f'код {code}'}"
     return set(файлы), None
@@ -95,19 +103,23 @@ def files_of(number: int) -> tuple[set[str] | None, str | None]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
-    parser.add_argument("--branch", help="ветка, для которой считается "
-                                         "пересечение; по умолчанию текущая")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
+    parser.add_argument(
+        "--branch", help="ветка, для которой считается пересечение; по умолчанию текущая"
+    )
     args = parser.parse_args(argv)
     root: Path = args.root
     branch, почему = (args.branch, "") if args.branch else current_branch(root)
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not branch:
-        print(f"проверка не отработала: `git -C {args.root} rev-parse "
-              f"--abbrev-ref HEAD` не назвал ветку{' — ' + почему if почему else ''}",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: `git -C {args.root} rev-parse "
+            f"--abbrev-ref HEAD` не назвал ветку{' — ' + почему if почему else ''}",
+            file=sys.stderr,
+        )
         return 2
     changes, err = open_changes()
     if err:
@@ -126,9 +138,12 @@ def main(argv: list[str] | None = None) -> int:
     # чужое рабочее дерево. Поэтому площадка осталась запасным путём — она
     # дороже, но она есть тогда, когда локальной истории нет.
     done = proc.run(
-        ["git", "-C", str(root), "diff", "--name-only", "-z",
-         f"origin/main...{branch}"],
-        capture_output=True, text=True, encoding="utf-8", timeout=60)
+        ["git", "-C", str(root), "diff", "--name-only", "-z", f"origin/main...{branch}"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode == 0:
         # ПО NUL, А НЕ `split()` (165, #762): NUL не пробел, и голый `split()`
         # склеивал весь список в одно имя с `\0` внутри — оно не совпадало ни
@@ -141,8 +156,10 @@ def main(argv: list[str] | None = None) -> int:
             print(f"проверка не отработала: {err}", file=sys.stderr)
             return 2
     else:
-        print("проверка не отработала: список своих файлов не получен — "
-              f"{done.stderr.strip()[:120]}", file=sys.stderr)
+        print(
+            f"проверка не отработала: список своих файлов не получен — {done.stderr.strip()[:120]}",
+            file=sys.stderr,
+        )
         return 2
     if not my_files:
         print(f"ветка {branch} не трогает ни одного файла — сравнивать нечего")
@@ -161,21 +178,26 @@ def main(argv: list[str] | None = None) -> int:
         if общие:
             overlaps.append(
                 f"#{change.get('number')} «{(change.get('title') or '')[:48]}» "
-                f"({change.get('headRefName')}): " + " · ".join(общие[:6])
-                + (f" и ещё {len(общие) - 6}" if len(общие) > 6 else ""))
+                f"({change.get('headRefName')}): "
+                + " · ".join(общие[:6])
+                + (f" и ещё {len(общие) - 6}" if len(общие) > 6 else "")
+            )
 
     if overlaps:
-        print(f"те же файлы правит кто-то ещё — открытых изменений "
-              f"{len(overlaps)}:")
+        print(f"те же файлы правит кто-то ещё — открытых изменений {len(overlaps)}:")
         for o in overlaps:
             print(f"  ~ {o}")
-        print("  Пересечение бывает законным, и слияние это не держит: "
-              "решает тот, кто толкает. Но узнать об этом надо ДО толчка, а "
-              "не из конфликта после (правило 133).")
+        print(
+            "  Пересечение бывает законным, и слияние это не держит: "
+            "решает тот, кто толкает. Но узнать об этом надо ДО толчка, а "
+            "не из конфликта после (правило 133)."
+        )
         return 1
 
-    print(f"пересечений нет: ветка {branch}, файлов {len(my_files)}, "
-          f"открытых изменений рядом {len(changes) - (1 if mine else 0)}")
+    print(
+        f"пересечений нет: ветка {branch}, файлов {len(my_files)}, "
+        f"открытых изменений рядом {len(changes) - (1 if mine else 0)}"
+    )
     return 0
 
 

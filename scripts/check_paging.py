@@ -52,7 +52,6 @@ gh_json), в прогонах — по строке вызова после ск
   2 — проверка не отработала (таблица не прочитана).
 """
 
-
 import argparse
 import ast
 import json
@@ -65,25 +64,67 @@ ROOT = Path(__file__).resolve().parent.parent
 
 #: Коллекции площадки, которые отдаются страницами. Имя — последнее буквальное
 #: звено пути; взято из справочника REST (у адреса есть `per_page`/`page`).
-СПИСКИ = frozenset({
-    "annotations", "artifacts", "branches", "check-runs", "check-suites",
-    "collaborators", "comments", "commits", "events", "files", "issues",
-    "jobs", "labels", "milestones", "pulls", "releases", "reviews", "runs",
-    "statuses", "tags", "workflows",
-})
+СПИСКИ = frozenset(
+    {
+        "annotations",
+        "artifacts",
+        "branches",
+        "check-runs",
+        "check-suites",
+        "collaborators",
+        "comments",
+        "commits",
+        "events",
+        "files",
+        "issues",
+        "jobs",
+        "labels",
+        "milestones",
+        "pulls",
+        "releases",
+        "reviews",
+        "runs",
+        "statuses",
+        "tags",
+        "workflows",
+    }
+)
 
 #: Буквальные окончания адресов, которые отдают ОДИН объект или являются
 #: действием. Страниц у них нет.
-ОДИНОЧНЫЕ = frozenset({
-    "dispatches", "latest", "merge", "protection", "rate_limit", "status",
-})
+ОДИНОЧНЫЕ = frozenset(
+    {
+        "dispatches",
+        "latest",
+        "merge",
+        "protection",
+        "rate_limit",
+        "status",
+    }
+)
 
 #: Флаги `gh api`, за которыми идёт значение: их значение — не путь.
-С_ЗНАЧЕНИЕМ = frozenset({
-    "-X", "--method", "-H", "--header", "-q", "--jq", "-t", "--template",
-    "-f", "--raw-field", "-F", "--field", "--input", "--cache", "-p",
-    "--preview", "--hostname",
-})
+С_ЗНАЧЕНИЕМ = frozenset(
+    {
+        "-X",
+        "--method",
+        "-H",
+        "--header",
+        "-q",
+        "--jq",
+        "-t",
+        "--template",
+        "-f",
+        "--raw-field",
+        "-F",
+        "--field",
+        "--input",
+        "--cache",
+        "-p",
+        "--preview",
+        "--hostname",
+    }
+)
 
 #: Флаги, с которыми gh отправляет тело, а значит меняет метод на POST.
 С_ТЕЛОМ = frozenset({"-f", "--raw-field", "-F", "--field", "--input"})
@@ -134,7 +175,7 @@ def разбор_api(слова: list[str]) -> tuple[str | None, bool, bool]:
         elif с.startswith("-"):
             pass
         elif путь is None:
-            путь = с.rstrip(")")    # `$(gh api "путь")` — скобка подстановки
+            путь = с.rstrip(")")  # `$(gh api "путь")` — скобка подстановки
         i += 1
     чтение = метод == "GET" if метод else not тело
     return путь, обход, чтение
@@ -170,8 +211,7 @@ def строка_аргумента(узел: ast.expr) -> str | None:
     if isinstance(узел, ast.Constant) and isinstance(узел.value, str):
         return узел.value
     if isinstance(узел, ast.JoinedStr):
-        return "".join(ч.value if isinstance(ч, ast.Constant) else "{}"
-                       for ч in узел.values)
+        return "".join(ч.value if isinstance(ч, ast.Constant) else "{}" for ч in узел.values)
     return None
 
 
@@ -237,7 +277,7 @@ def в_оболочке(текст: str, файл: str) -> list[tuple[str, str]]
     найдено: list[tuple[str, str]] = []
     for n, строка in логические_строки(текст):
         for м in ВЫЗОВ_В_ОБОЛОЧКЕ.finditer(строка):
-            что = предмет(слова_оболочки(строка[м.start(1):]))
+            что = предмет(слова_оболочки(строка[м.start(1) :]))
             if что:
                 найдено.append((f"{файл}:{n}", что))
     return найдено
@@ -247,14 +287,12 @@ def предметы(root: Path) -> list[tuple[str, str]]:
     """Все чтения списков одним запросом в дереве, с адресом каждого."""
     найдено: list[tuple[str, str]] = []
     for путь in sorted((root / "scripts").glob("*.py")):
-        найдено += в_питоне(путь.read_text(encoding="utf-8"),
-                            str(путь.relative_to(root)))
+        найдено += в_питоне(путь.read_text(encoding="utf-8"), str(путь.relative_to(root)))
     места = sorted((root / ".github" / "workflows").glob("*.yml"))
     if (root / "action.yml").exists():
         места.append(root / "action.yml")
     for путь in места:
-        найдено += в_оболочке(путь.read_text(encoding="utf-8"),
-                              str(путь.relative_to(root)))
+        найдено += в_оболочке(путь.read_text(encoding="utf-8"), str(путь.relative_to(root)))
     return найдено
 
 
@@ -272,14 +310,19 @@ def таблица(root: Path) -> tuple[list[dict] | None, str]:
     if not isinstance(записи, list):
         return None, f"{имя}: нет списка allowed"
     for з in записи:
-        if not (isinstance(з, dict) and з.get("where") and з.get("what")
-                and str(з.get("why", "")).strip()):
+        if not (
+            isinstance(з, dict)
+            and з.get("where")
+            and з.get("what")
+            and str(з.get("why", "")).strip()
+        ):
             return None, f"{имя}: у записи нет where, what или why — {з}"
     return записи, ""
 
 
-def сверка(найдено: list[tuple[str, str]],
-           записи: list[dict]) -> tuple[list[tuple[str, str]], list[dict]]:
+def сверка(
+    найдено: list[tuple[str, str]], записи: list[dict]
+) -> tuple[list[tuple[str, str]], list[dict]]:
     """Находки без названного предела и записи таблицы, не нашедшие вызова."""
     ключи = {(з["where"], з["what"]) for з in записи}
     живые: set[tuple[str, str]] = set()
@@ -313,13 +356,21 @@ def selftest() -> int:
     ]
     оболочка = [
         ('  open=$(gh api "repos/$R/pulls?state=open" --jq ".[]")', 1, "список в оболочке"),
-        ('  gh api --paginate "repos/$R/pulls/$PR/files?per_page=100" \\\n'
-         '    --jq ".[].filename"', 0, "обход с переносом строки"),
+        (
+            '  gh api --paginate "repos/$R/pulls/$PR/files?per_page=100" \\\n'
+            '    --jq ".[].filename"',
+            0,
+            "обход с переносом строки",
+        ),
         ('  gh api "repos/$R/pulls/$PR" --jq .body', 0, "объект в оболочке"),
         ('  gh api "repos/$R/issues" \\\n    -f title="$T" >/dev/null', 0, "запись с переносом"),
         ('  # gh api "repos/$R/pulls" — одной страницей было', 0, "комментарий"),
-        ('  gh run list --branch "$B" --limit 40 \\\n    --json conclusion', 1, "прогоны в оболочке"),
-        ('  gh workflow list --all', 1, "list другой подкоманды"),
+        (
+            '  gh run list --branch "$B" --limit 40 \\\n    --json conclusion',
+            1,
+            "прогоны в оболочке",
+        ),
+        ("  gh workflow list --all", 1, "list другой подкоманды"),
         ('  body=$(gh api "$URL" --jq .body)', 1, "путь-переменная в оболочке"),
     ]
     плохо = []
@@ -339,16 +390,19 @@ def selftest() -> int:
         print(f"РАСХОЖДЕНИЕ: {строка}", file=sys.stderr)
     if плохо:
         return 1
-    print("самопроверка пройдена: обход отличается от одной страницы, "
-          "запись — от чтения, объект — от списка")
+    print(
+        "самопроверка пройдена: обход отличается от одной страницы, "
+        "запись — от чтения, объект — от списка"
+    )
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--root", type=Path, default=ROOT)
-    p.add_argument("--selftest", action="store_true",
-                   help="прогнать гейт по случаям, а не по дереву (140)")
+    p.add_argument(
+        "--selftest", action="store_true", help="прогнать гейт по случаям, а не по дереву (140)"
+    )
     args = p.parse_args(argv)
     if args.selftest:
         return selftest()
@@ -368,35 +422,47 @@ def main(argv: list[str] | None = None) -> int:
     плохо = False
     if без_предела:
         плохо = True
-        print("список площадки читается одной страницей, и предел не назван (212):",
-              file=sys.stderr)
+        print(
+            "список площадки читается одной страницей, и предел не назван (212):", file=sys.stderr
+        )
         for где, что in без_предела:
             print(f"  • {где}: {что}", file=sys.stderr)
-        print("  Пока список короче страницы, разницы не видно; дорос до края — "
-              "хвост пропадает молча.\n"
-              "  Либо обход (`gh api --paginate`, `ghcli.список()`), либо предел "
-              f"поимённо в {имя} с причиной.", file=sys.stderr)
+        print(
+            "  Пока список короче страницы, разницы не видно; дорос до края — "
+            "хвост пропадает молча.\n"
+            "  Либо обход (`gh api --paginate`, `ghcli.список()`), либо предел "
+            f"поимённо в {имя} с причиной.",
+            file=sys.stderr,
+        )
     if незнакомые:
         плохо = True
-        print("адрес площадки не классифицирован — список это или объект, "
-              "гейт не угадывает:", file=sys.stderr)
+        print(
+            "адрес площадки не классифицирован — список это или объект, гейт не угадывает:",
+            file=sys.stderr,
+        )
         for где, что in незнакомые:
             print(f"  • {где}: {что}", file=sys.stderr)
-        print("  Назовите последнее звено в СПИСКАХ или ОДИНОЧНЫХ "
-              "scripts/check_paging.py.", file=sys.stderr)
+        print(
+            "  Назовите последнее звено в СПИСКАХ или ОДИНОЧНЫХ scripts/check_paging.py.",
+            file=sys.stderr,
+        )
     if мёртвые:
         плохо = True
-        print(f"записи {имя}, которым в дереве больше нечего разрешать (102):",
-              file=sys.stderr)
+        print(f"записи {имя}, которым в дереве больше нечего разрешать (102):", file=sys.stderr)
         for з in мёртвые:
             print(f"  • {з['where']}: {з['what']}", file=sys.stderr)
-        print("  Послабление без предмета снимают: иначе оно разрешит следующий "
-              "вызов, о котором никто не думал.", file=sys.stderr)
+        print(
+            "  Послабление без предмета снимают: иначе оно разрешит следующий "
+            "вызов, о котором никто не думал.",
+            file=sys.stderr,
+        )
     if плохо:
         return 1
 
-    print(f"списки площадки читаются до конца: чтений одним запросом "
-          f"{len(найдено)}, и у каждого предел назван в {имя}")
+    print(
+        f"списки площадки читаются до конца: чтений одним запросом "
+        f"{len(найдено)}, и у каждого предел назван в {имя}"
+    )
     return 0
 
 

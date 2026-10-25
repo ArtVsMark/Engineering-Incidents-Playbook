@@ -7,7 +7,6 @@
 Площадка и git не трогаются: `findings` — чистая функция над списком путей.
 """
 
-
 import subprocess
 import sys
 from pathlib import Path
@@ -19,8 +18,9 @@ import check_derived as cd
 
 def test_svodka_v_izmenenii_nahodka():
     """Ровно тот случай, что дал три конфликта за смену."""
-    assert cd.findings(["rules/ru/001-x.md", "export/where.md"], "agent/тема") == \
-        ["export/where.md"]
+    assert cd.findings(["rules/ru/001-x.md", "export/where.md"], "agent/тема") == [
+        "export/where.md"
+    ]
 
 
 def test_oba_fayla_svodki_nazyvayutsya():
@@ -67,9 +67,19 @@ def test_tretiy_ishod_na_nerazobrannom_diapazone(tmp_path):
     нет — это код 2, а не чистый прогон (075)."""
     subprocess.run(["git", "init", "-q", str(tmp_path)], check=True, timeout=60)
     done = subprocess.run(
-        [sys.executable, str(Path(cd.__file__)), "--root", str(tmp_path),
-         "--range", "нет-такого...HEAD"],
-        capture_output=True, text=True, encoding="utf-8", timeout=600)
+        [
+            sys.executable,
+            str(Path(cd.__file__)),
+            "--root",
+            str(tmp_path),
+            "--range",
+            "нет-такого...HEAD",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=600,
+    )
     assert done.returncode == 2
     assert "не отработала" in done.stderr
 
@@ -78,9 +88,11 @@ def test_gejt_otvechaet_otkazom_cherez_main(tmp_path):
     """Случай спрашивает РЕШЕНИЕ гейта, а не повторяет его условие (150).
     Подделка — настоящее дерево с настоящим диапазоном, где сводка едет в
     изменении: `main` обязан ответить единицей."""
+
     def git(*args):
-        subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
-                       capture_output=True, timeout=60)
+        subprocess.run(
+            ["git", "-C", str(tmp_path), *args], check=True, capture_output=True, timeout=60
+        )
 
     subprocess.run(["git", "init", "-q", str(tmp_path)], check=True, timeout=60)
     git("config", "user.email", "проба@пример")
@@ -102,5 +114,7 @@ def test_gejt_otvechaet_otkazom_cherez_main(tmp_path):
     # ОБРАТНАЯ СТОРОНА НА ТОМ ЖЕ ДЕРЕВЕ (140): файл убран — гейт молчит.
     git("rm", "-q", "export/where.md")
     git("commit", "-qm", "сводка ушла на ветку badges")
-    assert cd.main(["--root", str(tmp_path), "--range", "HEAD~1...HEAD",
-                    "--branch", "agent/тема"]) == 0
+    assert (
+        cd.main(["--root", str(tmp_path), "--range", "HEAD~1...HEAD", "--branch", "agent/тема"])
+        == 0
+    )

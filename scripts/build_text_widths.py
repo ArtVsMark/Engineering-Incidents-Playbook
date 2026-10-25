@@ -37,18 +37,25 @@ from collections.abc import Callable
 #: Знаки, которые надписи каталога выводят: печатная ASCII, кириллица, кавычки,
 #: тире и значки вердиктов. Знак, которого нет в файле шрифта, в таблицу не
 #: попадает — `text_width` даст ему ширину самого широкого (045).
-ЗНАКИ = ("".join(map(chr, range(0x20, 0x7F)))
-         + "ЁАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяё"
-         + "«»·×–—…№→✓✗")
+ЗНАКИ = (
+    "".join(map(chr, range(0x20, 0x7F)))
+    + "ЁАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяё"
+    + "«»·×–—…№→✓✗"
+)
 
 #: Файл начертания Inter по весу.
-INTER = {400: "Inter-Regular.otf", 500: "Inter-Medium.otf",
-         600: "Inter-SemiBold.otf", 700: "Inter-Bold.otf",
-         800: "Inter-ExtraBold.otf"}
+INTER = {
+    400: "Inter-Regular.otf",
+    500: "Inter-Medium.otf",
+    600: "Inter-SemiBold.otf",
+    700: "Inter-Bold.otf",
+    800: "Inter-ExtraBold.otf",
+}
 
 
-def ширины(карта: dict[int, str], продвижение: Callable[[str], int],
-           знаки: str = ЗНАКИ) -> dict[str, int]:
+def ширины(
+    карта: dict[int, str], продвижение: Callable[[str], int], знаки: str = ЗНАКИ
+) -> dict[str, int]:
     """Ширина (advance width, hmtx) каждого знака, который есть в карте шрифта."""
     return {з: продвижение(карта[ord(з)]) for з in знаки if ord(з) in карта}
 
@@ -56,12 +63,16 @@ def ширины(карта: dict[int, str], продвижение: Callable[[s
 def замер(путь: Path) -> tuple[dict[str, int], int, str]:
     """Ширины знаков, единицы на кегль и источник одного файла шрифта."""
     from fontTools.ttLib import TTFont
+
     шрифт = TTFont(путь)
     метрики = шрифт["hmtx"].metrics
     отпечаток = hashlib.sha256(путь.read_bytes()).hexdigest()[:12]
     источник = f"{шрифт['name'].getDebugName(5)} {путь.name} sha256:{отпечаток}"
-    return (ширины(шрифт.getBestCmap(), lambda g: метрики[g][0]),
-            шрифт["head"].unitsPerEm, источник)
+    return (
+        ширины(шрифт.getBestCmap(), lambda g: метрики[g][0]),
+        шрифт["head"].unitsPerEm,
+        источник,
+    )
 
 
 def собрать(verdana: Path, inter: Path) -> dict:
@@ -76,15 +87,15 @@ def собрать(verdana: Path, inter: Path) -> dict:
     if len(единицы_i) != 1:
         raise ValueError(f"у начертаний Inter разные единицы: {sorted(единицы_i)}")
     return {
-        "about": ("Ширины знаков (advance width) в единицах кегля — источник "
-                  "истины для ширины надписей в SVG каталога (#792). Собирается "
-                  "scripts/build_text_widths.py замером файлов шрифта, а не "
-                  "правится руками."),
+        "about": (
+            "Ширины знаков (advance width) в единицах кегля — источник "
+            "истины для ширины надписей в SVG каталога (#792). Собирается "
+            "scripts/build_text_widths.py замером файлов шрифта, а не "
+            "правится руками."
+        ),
         "fonts": {
-            "Inter": {"source": "; ".join(источники), "units": единицы_i.pop(),
-                      "weights": веса},
-            "Verdana": {"source": источник_v, "units": единицы_v,
-                        "weights": {"400": знаки_v}},
+            "Inter": {"source": "; ".join(источники), "units": единицы_i.pop(), "weights": веса},
+            "Verdana": {"source": источник_v, "units": единицы_v, "weights": {"400": знаки_v}},
         },
     }
 
@@ -92,17 +103,18 @@ def собрать(verdana: Path, inter: Path) -> dict:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--verdana", type=Path, required=True, help="Verdana.TTF")
-    ap.add_argument("--inter", type=Path, required=True,
-                    help="каталог с Inter-*.otf")
-    ap.add_argument("--check", action="store_true",
-                    help="сверить записанную таблицу с замером, не записывая")
+    ap.add_argument("--inter", type=Path, required=True, help="каталог с Inter-*.otf")
+    ap.add_argument(
+        "--check", action="store_true", help="сверить записанную таблицу с замером, не записывая"
+    )
     args = ap.parse_args(argv)
     try:
         таблица = собрать(args.verdana, args.inter)
     except ImportError:
-        print(f"замер не сделан: {Path(__file__).name} нужен fontTools "
-              "(pip install fonttools)",
-              file=sys.stderr)
+        print(
+            f"замер не сделан: {Path(__file__).name} нужен fontTools (pip install fonttools)",
+            file=sys.stderr,
+        )
         return 2
     except (OSError, KeyError, ValueError) as e:
         print(f"замер не сделан: {e}", file=sys.stderr)

@@ -12,14 +12,14 @@
 дерева, см. `scripts/check_forgeries.py`.
 """
 
-
 import check_forgeries as cf
 
 
 # ── что гейт обязан отвергнуть ─────────────────────────────────────────────
 
-ПОДМЕНА = ('def test_x(monkeypatch):\n'
-           '    monkeypatch.setattr(mod.ghcli, "run", lambda *a: (0, "[]"))\n')
+ПОДМЕНА = (
+    'def test_x(monkeypatch):\n    monkeypatch.setattr(mod.ghcli, "run", lambda *a: (0, "[]"))\n'
+)
 
 
 def test_shov_bez_istochnika_nahodka():
@@ -44,15 +44,14 @@ def test_adres_bez_slova_ne_schitaetsya():
 
 # ── что гейт обязан пропустить ─────────────────────────────────────────────
 
+
 def test_komanda_v_kavychkah_eto_adres():
-    текст = ('"""Источник подделки: снято с `gh pr list --json number`."""\n'
-             + ПОДМЕНА)
+    текст = '"""Источник подделки: снято с `gh pr list --json number`."""\n' + ПОДМЕНА
     assert cf.назван_источник(текст)
 
 
 def test_ssylka_eto_adres():
-    текст = ('"""Форма снята с https://raw.githubusercontent.com/x/y/main/e.json"""\n'
-             + ПОДМЕНА)
+    текст = '"""Форма снята с https://raw.githubusercontent.com/x/y/main/e.json"""\n' + ПОДМЕНА
     assert cf.назван_источник(текст)
 
 
@@ -64,17 +63,18 @@ def test_nomer_zadachi_eto_adres():
 def test_obyavlenie_v_dve_stroki():
     """Объявление в докстроке переносится; окно в две строки — та же граница,
     что у разбора прозы (144)."""
-    текст = ('"""Источник подделки:\n'
-             '`gh issue list --json number,body`.\n"""\n' + ПОДМЕНА)
+    текст = '"""Источник подделки:\n`gh issue list --json number,body`.\n"""\n' + ПОДМЕНА
     assert cf.назван_источник(текст)
 
 
 def test_svoi_konstanty_pod_pravilo_ne_podpadayut():
     """ГРАНИЦА: подмена своего пути, корня и argv — не подделка чужой стороны."""
-    текст = ('def test_x(monkeypatch):\n'
-             '    monkeypatch.setattr(mod, "LABELS", path)\n'
-             '    monkeypatch.setattr(mod, "ROOT", repo)\n'
-             '    monkeypatch.setattr("sys.argv", ["x.py"])\n')
+    текст = (
+        "def test_x(monkeypatch):\n"
+        '    monkeypatch.setattr(mod, "LABELS", path)\n'
+        '    monkeypatch.setattr(mod, "ROOT", repo)\n'
+        '    monkeypatch.setattr("sys.argv", ["x.py"])\n'
+    )
     assert cf.швы(текст) == []
 
 
@@ -83,6 +83,7 @@ def test_nabor_bez_shva_ne_sprashivaetsya():
 
 
 # ── исходы через main ──────────────────────────────────────────────────────
+
 
 def дерево(tmp_path, файлы: dict[str, str]):
     (tmp_path / "tests").mkdir(exist_ok=True)

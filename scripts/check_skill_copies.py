@@ -50,7 +50,6 @@
   158 — третий исход называет предмет.
 """
 
-
 import argparse
 import shutil
 import sys
@@ -75,51 +74,66 @@ def навыки_каталога(root: Path) -> dict[str, Path]:
 
 def файлы(папка: Path) -> dict[str, bytes]:
     """Все файлы навыка по относительному пути — навык не обязан быть одним файлом."""
-    return {p.relative_to(папка).as_posix(): p.read_bytes()
-            for p in sorted(папка.rglob("*")) if p.is_file()}
+    return {
+        p.relative_to(папка).as_posix(): p.read_bytes()
+        for p in sorted(папка.rglob("*"))
+        if p.is_file()
+    }
 
 
 def расхождения(эталон: Path, копия: Path) -> list[str]:
     """Чем копия отличается от эталона — по файлам, с первой разной строкой."""
     а, б = файлы(эталон), файлы(копия)
     out = [f"нет файла {путь}" for путь in sorted(set(а) - set(б))]
-    out += [f"лишний файл {путь} — в навыке каталога его нет"
-            for путь in sorted(set(б) - set(а))]
+    out += [f"лишний файл {путь} — в навыке каталога его нет" for путь in sorted(set(б) - set(а))]
     for путь in sorted(set(а) & set(б)):
         if а[путь] == б[путь]:
             continue
         строки_а = а[путь].decode("utf-8", "replace").splitlines()
         строки_б = б[путь].decode("utf-8", "replace").splitlines()
-        номер = next((i for i, (x, y) in enumerate(zip(строки_а, строки_б), 1)
-                      if x != y), min(len(строки_а), len(строки_б)) + 1)
+        номер = next(
+            (i for i, (x, y) in enumerate(zip(строки_а, строки_б), 1) if x != y),
+            min(len(строки_а), len(строки_б)) + 1,
+        )
         out.append(f"{путь} расходится с каталогом, первая разная строка {номер}")
     return out
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--repo", type=Path, required=True,
-                    help="корень репозитория проекта")
-    ap.add_argument("--catalogue-root", type=Path, default=ROOT,
-                    help="дерево каталога; по умолчанию то, откуда запущен скрипт")
-    ap.add_argument("--skills", nargs="*", default=None,
-                    help="какие копии сверять — объявление копий проекта")
-    ap.add_argument("--apply", nargs="+", metavar="ИМЯ",
-                    help="положить или обновить копии названных навыков")
+    ap.add_argument("--repo", type=Path, required=True, help="корень репозитория проекта")
+    ap.add_argument(
+        "--catalogue-root",
+        type=Path,
+        default=ROOT,
+        help="дерево каталога; по умолчанию то, откуда запущен скрипт",
+    )
+    ap.add_argument(
+        "--skills", nargs="*", default=None, help="какие копии сверять — объявление копий проекта"
+    )
+    ap.add_argument(
+        "--apply", nargs="+", metavar="ИМЯ", help="положить или обновить копии названных навыков"
+    )
     args = ap.parse_args(argv)
 
     каталог = навыки_каталога(args.catalogue_root)
     if not каталог:
-        print(f"не отработала: в {args.catalogue_root / PLUGINS} нет ни одного "
-              "навыка плагина — сверять не с чем", file=sys.stderr)
+        print(
+            f"не отработала: в {args.catalogue_root / PLUGINS} нет ни одного "
+            "навыка плагина — сверять не с чем",
+            file=sys.stderr,
+        )
         return 2
     у_проекта = args.repo / SKILLS
 
     if args.apply:
         неизвестные = [и for и in args.apply if и not in каталог]
         if неизвестные:
-            print(f"не отработала: у каталога нет навыков {', '.join(неизвестные)}; "
-                  f"есть {', '.join(каталог)}", file=sys.stderr)
+            print(
+                f"не отработала: у каталога нет навыков {', '.join(неизвестные)}; "
+                f"есть {', '.join(каталог)}",
+                file=sys.stderr,
+            )
             return 2
         for имя in args.apply:
             куда = у_проекта / имя
@@ -133,16 +147,20 @@ def main(argv: list[str] | None = None) -> int:
     # и пропажа копии выглядела бы так же, как её отсутствие. Пустой список —
     # «сверять нечего», и зелёным это не отвечается (075, ревью #638).
     if not args.skills:
-        print("не отработала: не назван ни один навык — список --skills и есть "
-              f"объявление копий; у каталога есть {', '.join(каталог)}",
-              file=sys.stderr)
+        print(
+            "не отработала: не назван ни один навык — список --skills и есть "
+            f"объявление копий; у каталога есть {', '.join(каталог)}",
+            file=sys.stderr,
+        )
         return 2
     неизвестные = [и for и in args.skills if и not in каталог]
     if неизвестные:
-        print(f"не отработала: у каталога нет навыков {', '.join(неизвестные)}; "
-              f"есть {', '.join(каталог)}. Навык удалён или переименован в "
-              "каталоге — копию у себя убрать или перенести под новое имя",
-              file=sys.stderr)
+        print(
+            f"не отработала: у каталога нет навыков {', '.join(неизвестные)}; "
+            f"есть {', '.join(каталог)}. Навык удалён или переименован в "
+            "каталоге — копию у себя убрать или перенести под новое имя",
+            file=sys.stderr,
+        )
         return 2
     имена = list(args.skills)
 
@@ -150,8 +168,7 @@ def main(argv: list[str] | None = None) -> int:
     for имя in имена:
         копия = у_проекта / имя
         if not копия.is_dir():
-            находки.append(f"{имя}: копии нет — положить её можно ключом "
-                           f"--apply {имя}")
+            находки.append(f"{имя}: копии нет — положить её можно ключом --apply {имя}")
             continue
         находки += [f"{имя}: {р}" for р in расхождения(каталог[имя], копия)]
 
@@ -159,8 +176,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"копии навыков расходятся с каталогом: {len(находки)}")
         for н in находки:
             print(f"  • {н}")
-        print("  Обновить копию — ключом --apply. Доработать навык — предложением "
-              "kind: skill с amends и base, а не правкой копии.")
+        print(
+            "  Обновить копию — ключом --apply. Доработать навык — предложением "
+            "kind: skill с amends и base, а не правкой копии."
+        )
         return 1
     print(f"копии навыков совпадают с каталогом: {len(имена)} — {', '.join(имена)}")
     return 0
