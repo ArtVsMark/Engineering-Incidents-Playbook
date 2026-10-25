@@ -109,7 +109,7 @@
       ]
     },
     "family": {
-      "state": "ok",
+      "state": "behind",
       "why": "",
       "links": [
         {
@@ -117,9 +117,9 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.10.0",
-          "latest": "v1.10.0",
+          "latest": "v1.11.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "ok",
+          "state": "behind",
           "why": ""
         },
         {
@@ -127,9 +127,9 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.10.0",
-          "latest": "v1.10.0",
+          "latest": "v1.11.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "ok",
+          "state": "behind",
           "why": ""
         },
         {
@@ -137,9 +137,9 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.10.0",
-          "latest": "v1.10.0",
+          "latest": "v1.11.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "ok",
+          "state": "behind",
           "why": ""
         },
         {
@@ -147,9 +147,9 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.10.0",
-          "latest": "v1.10.0",
+          "latest": "v1.11.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "ok",
+          "state": "behind",
           "why": ""
         },
         {
@@ -157,9 +157,9 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.10.0",
-          "latest": "v1.10.0",
+          "latest": "v1.11.0",
           "where": ".github/workflows/mechanisms.yml",
-          "state": "ok",
+          "state": "behind",
           "why": ""
         },
         {
@@ -197,10 +197,10 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "steps",
           "mine": ">=0.12,<0.13",
-          "latest": "0.12",
+          "latest": "0.13",
           "where": ".pipeline.yml:contract",
-          "state": "ok",
-          "why": ""
+          "state": "behind",
+          "why": "свежий контракт шагов вне объявленного диапазона"
         }
       ]
     },
@@ -236,8 +236,8 @@
     {
       "code": "EPM",
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
-      "state": "ok",
-      "why": ""
+      "state": "behind",
+      "why": "release: v1.10.0 → v1.11.0 (связей 5, .github/workflows/mechanisms.yml); steps: >=0.12,<0.13 → 0.13 (.pipeline.yml:contract)"
     }
   ],
   "uptake": {
