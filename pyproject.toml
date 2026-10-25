@@ -91,5 +91,5 @@ explicit_package_bases = true
 # типов и без pytest. Те же имена, что у механизмов: их отсутствие — свойство
 # окружения шага, а не находка о коде.
 [[tool.mypy.overrides]]
-module = ["yaml", "pytest", "_pytest.*", "fontTools.*"]
+module = ["yaml", "pytest", "_pytest.*", "fontTools.*", "coverage"]
 ignore_missing_imports = true

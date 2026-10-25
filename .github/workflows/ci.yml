@@ -785,6 +785,18 @@ jobs:
       checks: read
       pull-requests: read
       issues: read
+  # Линтер, формат и типы — состав из `pyproject.toml` каталога (`[tool.ruff]`,
+  # `[tool.mypy]`): шаг зовёт инструменты без путей. Спрашивает о дереве, а не
+  # об изменении, — идёт и на толчке в main. Совещательно на время наблюдения
+  # (#958, пункт 1); в его окружении только ruff, mypy и pyyaml — недостающее
+  # названо переопределением mypy, замер в чистом venv 25.10.
+  lint:
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-lint.yml@v1.11.0
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: read
+      issues: read
   pipeline:
     uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-pipeline.yml@v1.11.0
     # Дедлайн вызова процесса — отказ, а не предупреждение: шаг держит
