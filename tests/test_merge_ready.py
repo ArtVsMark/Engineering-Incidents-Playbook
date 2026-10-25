@@ -449,7 +449,7 @@ def test_sovetniki_skhodyatsya_s_rabotami_mechanisms_yml():
 
     Расхождение не безобидно: советник, которого нет в списке, становится
     обычной проверкой, и его красное молча держит слияние (084). Внешняя
-    половина имени — работа в mechanisms.yml, внутренняя — `name:` работы
+    половина имени — работа в ci.yml, внутренняя — `name:` работы
     в вызываемом step-<имя>.yml; у соседа на v1.5.0 (c36d16b) она равна
     <имя>, это его соглашение. ГРАНИЦА: переименует сосед работу внутри
     файла — набор этого не увидит, увидит прогон на изменении.
@@ -457,10 +457,11 @@ def test_sovetniki_skhodyatsya_s_rabotami_mechanisms_yml():
     import re
     from pathlib import Path
     прогон = (Path(mr.__file__).resolve().parent.parent
-              / ".github" / "workflows" / "mechanisms.yml").read_text(encoding="utf-8")
+              / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
     работы = re.findall(
-        r"^  ([\w-]+):\n    uses: [^\n]*/step-([\w-]+)\.yml@", прогон, re.M)
-    assert работы, "в mechanisms.yml не найдено ни одной работы-вызова"
+        r"^  ([\w-]+):\n(?:    if: [^\n]*\n)?    uses: [^\n]*/step-([\w-]+)\.yml@",
+        прогон, re.M)
+    assert работы, "в ci.yml не найдено ни одной работы-вызова шага механизмов"
     шаги = {f"{работа} / {шаг}" for работа, шаг in работы}
     # Каждый шаг — ровно в одном списке: советник или обязательный (#930).
     обязательные = _обязательные_шаги()

@@ -919,7 +919,7 @@ def test_sha_события_и_хвостовой_комментарий_не_о
 
 def test_vyzov_chuzhogo_progona_predela_ne_trebuet():
     """`timeout-minutes` у работы с `uses:` площадка не принимает: предел
-    стоит внутри вызываемого прогона (mechanisms.yml). Работа со своими шагами
+    стоит внутри вызываемого прогона (шаги механизмов в ci.yml). Работа со своими шагами
     рядом по-прежнему обязана нести свой."""
     text = (BUTTON + "jobs:\n  a:\n    uses: o/r/.github/workflows/s.yml@v1\n"
             "  b:\n    runs-on: x\n")

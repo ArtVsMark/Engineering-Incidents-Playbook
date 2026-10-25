@@ -721,3 +721,83 @@ jobs:
 
       - name: тесты проходят на 3.15
         run: python -m pytest -q -rs
+
+  # ── ШАГИ ПРОЕКТА МЕХАНИЗМОВ ────────────────────────────────────────────────
+  # Взяты версией, а не копией (090: общее уезжает вверх, а не копируется
+  # вбок). До 25.10 жили отдельным прогоном mechanisms.yml — этап наблюдения
+  # #930; теперь они в ci.yml, как в скелете договора механизмов
+  # (`docs/use/pipeline.md`), и сводный гейт `ci-complete` опросит их отсюда
+  # (#958). Класс каждой проверки — `.pipeline.yml`; имя проверки — «работа
+  # вызова / работа шага», и переезд из файла в файл его не меняет.
+  #
+  # Сосед держит гейтом правила, которые у каталога машиной не держались ничем:
+  #   006 — срок жизни окна, открывшего изменение (трейлер Claude-Session);
+  #   047, 134 — свод (AGENTS.md / CLAUDE.md) правился под уже работающим окном.
+  #
+  # ВЕРСИЯ НАЗВАНА ТЕГОМ, И ТЕГ ПОДВИЖЕН — ЗАКРЕПЛЕНИЯ ЗДЕСЬ НЕТ. Код соседа
+  # берётся с того коммита, на который тег указывает В МОМЕНТ прогона: подъём
+  # на новый выпуск — отдельное изменение, но передвинуть сам тег сосед может.
+  # Неподвижным был бы только полный SHA; его здесь нет сознательно — выпуски
+  # соседа не переставляются, и это доверие, а не проверка (039). На 25.10
+  # v1.11.0 указывает на 96c2c93b52cd5a433e06a2984a0919e655ad9b73.
+  #
+  # ШАГИ О ИЗМЕНЕНИИ НА ТОЛЧКЕ В main НЕ ИДУТ (`if: … != 'push'`), как в ci.yml
+  # самих механизмов: им не о чем спрашивать, и красное на общей ветке
+  # заморозило бы очередь (053). `pipeline` спрашивает о дереве и идёт везде.
+  #
+  # ПРАВА — У РАБОТЫ: шаги соседа объявляют эти четыре, вызывающий обязан
+  # выдать не меньше, а работам каталога выше они не нужны.
+  window-lifetime:
+    if: github.event_name != 'push'
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-window-lifetime.yml@v1.11.0
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: read
+      issues: read
+  rulebook-fresh:
+    if: github.event_name != 'push'
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-rulebook-fresh.yml@v1.11.0
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: read
+      issues: read
+  pr-meta:
+    if: github.event_name != 'push'
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-pr-meta.yml@v1.11.0
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: read
+      issues: read
+  journal:
+    if: github.event_name != 'push'
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-journal.yml@v1.11.0
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: read
+      issues: read
+  contract:
+    if: github.event_name != 'push'
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-contract.yml@v1.11.0
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: read
+      issues: read
+  pipeline:
+    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-pipeline.yml@v1.11.0
+    # Дедлайн вызова процесса — отказ, а не предупреждение: шаг держит
+    # слияние (#930), и без ключа его гейт дедлайна только советовал бы.
+    # Места — умолчание гейта (`scripts`, `.claude/hooks`): там 0 находок.
+    # `tests/` и `templates/` пока держит свой check_subprocess.py — у шага
+    # там 60 мест без поимки истечения, это отдельное решение (#958, пункт 4).
+    with:
+      mechanism-gates-enforce: true
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: read
+      issues: read
