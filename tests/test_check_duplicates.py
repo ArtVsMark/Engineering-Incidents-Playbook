@@ -8,17 +8,21 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
 import check_duplicates as cd  # noqa: E402
 
-ВЕРДИКТ = ("Предмет другой: соседи говорят про подпись записи, эта запись — "
-           "про порядок очереди, и общего у них только слова.")
+ВЕРДИКТ = (
+    "Предмет другой: соседи говорят про подпись записи, эта запись — "
+    "про порядок очереди, и общего у них только слова."
+)
 
 
 def запись(номер: str, суть: str, замена: str = "") -> str:
     """Подделка правила в форме каталога; `замена` — номер в «Заменено»."""
     пометка = f"**Заменено.** {замена}\n\n" if замена else ""
-    return (f"# Подделка {номер}\n\n**Правило.** {суть}.\n\n{пометка}"
-            f"## Инцидент\n\nМеханизм сломался так, что {суть}.\n\n"
-            f"## Применимость\n\n**Работает** там, где {суть}.\n\n"
-            "## След\n\nArtVsMark/Engineering-Incidents-Playbook#1\n")
+    return (
+        f"# Подделка {номер}\n\n**Правило.** {суть}.\n\n{пометка}"
+        f"## Инцидент\n\nМеханизм сломался так, что {суть}.\n\n"
+        f"## Применимость\n\n**Работает** там, где {суть}.\n\n"
+        "## След\n\nArtVsMark/Engineering-Incidents-Playbook#1\n"
+    )
 
 
 def дерево(tmp_path: Path, рассмотрено_новым: list[str]) -> Path:
@@ -36,12 +40,13 @@ def дерево(tmp_path: Path, рассмотрено_новым: list[str]) -
     for номер, (суть, замена) in правила.items():
         (папка / f"{номер}-r.md").write_text(запись(номер, суть, замена), encoding="utf-8")
     (tmp_path / ".rules").mkdir()
-    ответы = {"145": {"considered": рассмотрено_новым, "verdict": ВЕРДИКТ},
-              "160": {"considered": ["001", "002", "003", "145", "150"],
-                      "verdict": ВЕРДИКТ}}
+    ответы = {
+        "145": {"considered": рассмотрено_новым, "verdict": ВЕРДИКТ},
+        "160": {"considered": ["001", "002", "003", "145", "150"], "verdict": ВЕРДИКТ},
+    }
     (tmp_path / ".rules" / "neighbours.json").write_text(
-        json.dumps({"baseline": 144, "answers": ответы}, ensure_ascii=False),
-        encoding="utf-8")
+        json.dumps({"baseline": 144, "answers": ответы}, ensure_ascii=False), encoding="utf-8"
+    )
     return tmp_path
 
 

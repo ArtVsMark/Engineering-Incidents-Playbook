@@ -42,7 +42,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import re
 import sys
@@ -79,7 +78,8 @@ NO_NEGATIVE_SUBJECT: dict[str, str] = {
         "предупреждает, а не отказывает — по решению владельца 14.10 (#816) и 051: "
         "предикат вероятностный (1 верное на #631 при 0 ложных на 99 телах), и "
         "исход 1 у шага не предусмотрен. Набор tests/test_check_retelling.py держит "
-        "обе стороны: предупреждение есть — и его нет"),
+        "обе стороны: предупреждение есть — и его нет"
+    ),
 }
 
 #: Случай, спрашивающий решение гейта и ожидающий ОТКАЗ. Проверяется именно он,
@@ -100,6 +100,8 @@ def rejects_in_tests(root: Path, stem: str) -> bool:
     # Обёртка `def run(...): return X.main(...)` считается только вместе с
     # ожиданием отказа где-то в наборе: сама по себе она ничего не спрашивает.
     return "== 1" in text
+
+
 #: Раздел свода, в котором гейты перечислены. Заголовок сверяется целой
 #: строкой: «## 🛡 Гейты» — префикс никого не задевает, но приём тот же, что
 #: спас разбор следа (правило 141).
@@ -111,7 +113,7 @@ def section(text: str, head: str) -> str | None:
     m = re.search("^" + re.escape(head) + r"[ \t]*$", text, re.M)
     if m is None:
         return None
-    rest = text[m.end():]
+    rest = text[m.end() :]
     nxt = rest.find("\n## ")
     return rest if nxt < 0 else rest[:nxt]
 
@@ -123,8 +125,9 @@ def named_in(text: str) -> set[str]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = parser.parse_args(argv)
     root: Path = args.root
 
@@ -142,21 +145,26 @@ def main(argv: list[str] | None = None) -> int:
     # ── исход 2 ────────────────────────────────────────────────────────────
     for path in (core, charter, onramp, pipeline):
         if not path.exists():
-            print(f"проверка не отработала: нет {path.name} — "
-                  "сверять не с чем", file=sys.stderr)
+            print(f"проверка не отработала: нет {path.name} — сверять не с чем", file=sys.stderr)
             return 2
 
     charter_text = charter.read_text(encoding="utf-8")
     gates_section = section(core.read_text(encoding="utf-8"), CHARTER_SECTION)
     if gates_section is None:
-        print(f"проверка не отработала: в своде нет раздела «{CHARTER_SECTION}» — "
-              "таблицы гейтов, с которой сверяется конвейер", file=sys.stderr)
+        print(
+            f"проверка не отработала: в своде нет раздела «{CHARTER_SECTION}» — "
+            "таблицы гейтов, с которой сверяется конвейер",
+            file=sys.stderr,
+        )
         return 2
 
     in_pipeline = named_in(pipeline.read_text(encoding="utf-8"))
     if not in_pipeline:
-        print("проверка не отработала: в ci.yml не нашлось ни одного гейта — "
-              "это ошибка разбора, а не пустой конвейер", file=sys.stderr)
+        print(
+            "проверка не отработала: в ci.yml не нашлось ни одного гейта — "
+            "это ошибка разбора, а не пустой конвейер",
+            file=sys.stderr,
+        )
         return 2
 
     in_charter = named_in(gates_section)
@@ -169,11 +177,13 @@ def main(argv: list[str] | None = None) -> int:
         for missing in sorted(in_pipeline - declared):
             problems.append(
                 f"{name}: гейт {missing} стоит в конвейере, а в {where} его нет. "
-                "Читающий не узнает о проверке, которая его остановит")
+                "Читающий не узнает о проверке, которая его остановит"
+            )
         for extra in sorted(declared - in_pipeline):
             problems.append(
                 f"{name}: в {where} обещан {extra}, а в конвейере такого шага "
-                "нет. Обещание, которое никто не исполняет")
+                "нет. Обещание, которое никто не исполняет"
+            )
 
     # НАДСТРОЙКА ССЫЛАЕТСЯ НА ЯДРО И НЕ ЗАВОДИТ ВТОРОЙ ТАБЛИЦЫ. Ровно то, чем
     # опасен раскол: два документа об одном разъезжаются молча (022). Первый
@@ -183,12 +193,14 @@ def main(argv: list[str] | None = None) -> int:
         problems.append(
             "надстройка: CLAUDE.md не ссылается на AGENTS.md. Читатель "
             "надстройки обязан узнать, где ядро, из первых строк — иначе "
-            "он прочитает половину требований и решит, что это все")
+            "он прочитает половину требований и решит, что это все"
+        )
     if section(charter_text, CHARTER_SECTION) is not None:
         problems.append(
             f"надстройка: в CLAUDE.md заведён свой раздел «{CHARTER_SECTION}». "
             "Таблица гейтов одна и живёт в ядре: вторая устареет первой же "
-            "правкой конвейера, и разойдутся они молча")
+            "правкой конвейера, и разойдутся они молча"
+        )
 
     compare("ядро", in_charter, "таблице AGENTS.md")
     compare("документ для участника", in_onramp, "списке CONTRIBUTING.md")
@@ -197,9 +209,11 @@ def main(argv: list[str] | None = None) -> int:
         print("объявленные гейты разошлись с конвейером:", file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
-        print("\n  Канон — шаги ci.yml: их исполняет площадка, а строку в "
-              "документе\n  не исполняет никто (правила 022, 002).",
-              file=sys.stderr)
+        print(
+            "\n  Канон — шаги ci.yml: их исполняет площадка, а строку в "
+            "документе\n  не исполняет никто (правила 022, 002).",
+            file=sys.stderr,
+        )
         return 1
 
     # ── исход 0 плюс метрика ───────────────────────────────────────────────
@@ -230,29 +244,37 @@ def main(argv: list[str] | None = None) -> int:
         script = root / g
         if not script.exists():
             continue
-        if ("def selftest" in script.read_text(encoding="utf-8")
-                and f"{g} --selftest" in pipeline_text):
+        if (
+            "def selftest" in script.read_text(encoding="utf-8")
+            and f"{g} --selftest" in pipeline_text
+        ):
             by_selftest.add(g)
     by_tests = {g for g in in_pipeline if rejects_in_tests(root, Path(g).stem)}
-    untested = sorted(in_pipeline - by_harness - by_tests - by_selftest
-                      - set(NO_NEGATIVE_SUBJECT))
+    untested = sorted(in_pipeline - by_harness - by_tests - by_selftest - set(NO_NEGATIVE_SUBJECT))
 
-    print(f"свод и конвейер называют одно и то же: гейтов {len(in_pipeline)}, "
-          f"расхождений нет")
-    print(f"  подделкой в check_gates: {len(by_harness)}, "
-          f"набором в tests: {len(by_tests)}, "
-          f"самопроверкой: {len(by_selftest)}, "
-          f"освобождено с причиной {len(NO_NEGATIVE_SUBJECT)}")
+    print(f"свод и конвейер называют одно и то же: гейтов {len(in_pipeline)}, расхождений нет")
+    print(
+        f"  подделкой в check_gates: {len(by_harness)}, "
+        f"набором в tests: {len(by_tests)}, "
+        f"самопроверкой: {len(by_selftest)}, "
+        f"освобождено с причиной {len(NO_NEGATIVE_SUBJECT)}"
+    )
     if untested:
         print("у гейта нет отвергаемого предмета:", file=sys.stderr)
         for g in untested:
-            print(f"  • {g}: ни подделки в check_gates.py, ни случая в "
-                  f"tests/test_{Path(g).stem}.py, где гейт отвечает ОТКАЗОМ. "
-                  "Зелёный прогон на хорошем входе подтверждает, что скрипт "
-                  "запускается, и ничего больше (140, 146)", file=sys.stderr)
-        print("\n  Случай обязан спрашивать решение гейта, а не повторять его "
-              "условие\n  (150): `assert main([...]) == 1` на подделанном "
-              "предмете.", file=sys.stderr)
+            print(
+                f"  • {g}: ни подделки в check_gates.py, ни случая в "
+                f"tests/test_{Path(g).stem}.py, где гейт отвечает ОТКАЗОМ. "
+                "Зелёный прогон на хорошем входе подтверждает, что скрипт "
+                "запускается, и ничего больше (140, 146)",
+                file=sys.stderr,
+            )
+        print(
+            "\n  Случай обязан спрашивать решение гейта, а не повторять его "
+            "условие\n  (150): `assert main([...]) == 1` на подделанном "
+            "предмете.",
+            file=sys.stderr,
+        )
         return 1
     return 0
 

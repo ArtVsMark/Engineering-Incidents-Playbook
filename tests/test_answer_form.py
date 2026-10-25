@@ -7,7 +7,6 @@
 приучил бы читать красное как фон (051).
 """
 
-
 import json
 from pathlib import Path
 
@@ -21,22 +20,32 @@ import check_answer as ca
 
 # ── происхождение: обязательно с 1.9 у gate/pipeline ──────────────────────
 
-@pytest.mark.parametrize("rec", [
-    {"status": "active", "mechanism": "gate", "origin_kind": "own"},
-    {"status": "active", "mechanism": "pipeline", "origin_kind": "adapted", "origin": ИСТОЧНИК},
-    {"status": "active", "mechanism": "document"},
-    {"status": "not-applicable", "why": "нет"},
-])
+
+@pytest.mark.parametrize(
+    "rec",
+    [
+        {"status": "active", "mechanism": "gate", "origin_kind": "own"},
+        {"status": "active", "mechanism": "pipeline", "origin_kind": "adapted", "origin": ИСТОЧНИК},
+        {"status": "active", "mechanism": "document"},
+        {"status": "not-applicable", "why": "нет"},
+    ],
+)
 def test_происхождение_19_законно(rec):
     assert af.происхождение(rec, "1.9") is None
 
 
-@pytest.mark.parametrize("rec, слово", [
-    ({"status": "active", "mechanism": "gate"}, "обязательно"),
-    ({"status": "active", "mechanism": "gate", "origin_kind": "own", "origin": ИСТОЧНИК}, "противоречит"),
-    ({"status": "active", "mechanism": "gate", "origin_kind": "called"}, "без `origin`"),
-    ({"status": "active", "mechanism": "none", "origin_kind": "own"}, "при механизме `none`"),
-])
+@pytest.mark.parametrize(
+    "rec, слово",
+    [
+        ({"status": "active", "mechanism": "gate"}, "обязательно"),
+        (
+            {"status": "active", "mechanism": "gate", "origin_kind": "own", "origin": ИСТОЧНИК},
+            "противоречит",
+        ),
+        ({"status": "active", "mechanism": "gate", "origin_kind": "called"}, "без `origin`"),
+        ({"status": "active", "mechanism": "none", "origin_kind": "own"}, "при механизме `none`"),
+    ],
+)
 def test_происхождение_19_отвергается(rec, слово):
     что = af.происхождение(rec, "1.9")
     assert что is not None and слово in что
@@ -47,25 +56,34 @@ def test_ответ_18_задним_числом_не_спрашивается()
     перечитывание (157)."""
     assert af.происхождение({"status": "active", "mechanism": "gate"}, "1.8") is None
     assert "1.9" in af.происхождение(
-        {"status": "active", "mechanism": "gate", "origin_kind": "own"}, "1.8")
+        {"status": "active", "mechanism": "gate", "origin_kind": "own"}, "1.8"
+    )
 
 
 # ── проба «не применимо»: одна форма и три диалекта ───────────────────────
 
+
 def test_диалекты_пробы_читаются_одной_формой():
     assert af.проба({"refuted_by": "a/*.yml"}) == {"globs": ["a/*.yml"], "contains": []}
     assert af.проба({"absent": {"substring": "x", "globs": ["*.md"]}}) == {
-        "globs": ["*.md"], "contains": ["x"]}
+        "globs": ["*.md"],
+        "contains": ["x"],
+    }
     assert af.проба({"refuted_by": {"globs": ["*.md"], "contains": ["x"]}}) == {
-        "globs": ["*.md"], "contains": ["x"]}
+        "globs": ["*.md"],
+        "contains": ["x"],
+    }
 
 
-@pytest.mark.parametrize("rec, схема, слово", [
-    ({"status": "active", "refuted_by": {"globs": ["*"]}}, "1.9", "опровергать нечего"),
-    ({"status": "not-applicable", "refuted_by": "a/*.yml"}, "1.9", "диалект до 1.9"),
-    ({"status": "not-applicable", "absent": {"globs": ["*"]}}, "1.9", "диалект до 1.9"),
-    ({"status": "not-applicable", "refuted_by": {"globs": []}}, "1.9", "непустой список"),
-])
+@pytest.mark.parametrize(
+    "rec, схема, слово",
+    [
+        ({"status": "active", "refuted_by": {"globs": ["*"]}}, "1.9", "опровергать нечего"),
+        ({"status": "not-applicable", "refuted_by": "a/*.yml"}, "1.9", "диалект до 1.9"),
+        ({"status": "not-applicable", "absent": {"globs": ["*"]}}, "1.9", "диалект до 1.9"),
+        ({"status": "not-applicable", "refuted_by": {"globs": []}}, "1.9", "непустой список"),
+    ],
+)
 def test_проба_не_по_форме(rec, схема, слово):
     что = af.проба_неверна(rec, схема)
     assert что is not None and слово in что
@@ -74,8 +92,10 @@ def test_проба_не_по_форме(rec, схема, слово):
 def test_проба_находит_предмет(tmp_path):
     (tmp_path / "w").mkdir()
     (tmp_path / "w" / "a.yml").write_text("strategy:\n  matrix: [1]\n")
-    rec = {"status": "not-applicable",
-           "refuted_by": {"globs": ["w/*.yml"], "contains": ["matrix:"]}}
+    rec = {
+        "status": "not-applicable",
+        "refuted_by": {"globs": ["w/*.yml"], "contains": ["matrix:"]},
+    }
     assert "matrix:" in af.прогнать_пробу(rec, tmp_path)
     rec["refuted_by"]["contains"] = ["flock"]
     assert af.прогнать_пробу(rec, tmp_path) is None
@@ -83,12 +103,16 @@ def test_проба_находит_предмет(tmp_path):
 
 # ── заметка и замер; закрытая форма ───────────────────────────────────────
 
-@pytest.mark.parametrize("rec, слово", [
-    ({"note": "  "}, "`note`"),
-    ({"metric": 5}, "объект"),
-    ({"metric": {"what": "x", "value": True, "measured": "2026-10-08"}}, "value"),
-    ({"metric": {"what": "x", "value": 3, "measured": "8 октября"}}, "measured"),
-])
+
+@pytest.mark.parametrize(
+    "rec, слово",
+    [
+        ({"note": "  "}, "`note`"),
+        ({"metric": 5}, "объект"),
+        ({"metric": {"what": "x", "value": True, "measured": "2026-10-08"}}, "value"),
+        ({"metric": {"what": "x", "value": 3, "measured": "8 октября"}}, "measured"),
+    ],
+)
 def test_заметка_и_замер_не_по_форме(rec, слово):
     что = af.заметка_неверна(rec)
     assert что is not None and слово in что
@@ -102,6 +126,7 @@ def test_закрытая_форма_с_19_и_пояснения_через_по
 
 # ── проверка, которую каталог отдаёт проекту ──────────────────────────────
 
+
 def ответ(tmp_path: Path, rules: dict, схема: str = "1.9") -> Path:
     p = tmp_path / "bindings.json"
     p.write_text(json.dumps({"schema": схема, "rules": rules}), encoding="utf-8")
@@ -109,19 +134,30 @@ def ответ(tmp_path: Path, rules: dict, схема: str = "1.9") -> Path:
 
 
 def test_проект_по_форме_проходит(tmp_path, capsys):
-    p = ответ(tmp_path, {"001": {"status": "active", "mechanism": "gate",
-                                 "where": "s.py", "origin_kind": "own",
-                                 "note": "мысль",
-                                 "metric": {"what": "x", "value": 1,
-                                            "measured": "2026-10-08"}}})
+    p = ответ(
+        tmp_path,
+        {
+            "001": {
+                "status": "active",
+                "mechanism": "gate",
+                "where": "s.py",
+                "origin_kind": "own",
+                "note": "мысль",
+                "metric": {"what": "x", "value": 1, "measured": "2026-10-08"},
+            }
+        },
+    )
     assert ca.main(["--bindings", str(p), "--root", str(tmp_path)]) == 0
 
 
-@pytest.mark.parametrize("rec, слово", [
-    ({"status": "active", "mechanism": "code", "origin_kind": "own"}, "вне словаря"),
-    ({"status": "rejected"}, "без причины"),
-    ({"status": "active", "mechanism": "gate"}, "origin_kind"),
-])
+@pytest.mark.parametrize(
+    "rec, слово",
+    [
+        ({"status": "active", "mechanism": "code", "origin_kind": "own"}, "вне словаря"),
+        ({"status": "rejected"}, "без причины"),
+        ({"status": "active", "mechanism": "gate"}, "origin_kind"),
+    ],
+)
 def test_проект_не_по_форме_отвергается(tmp_path, capsys, rec, слово):
     p = ответ(tmp_path, {"001": rec})
     assert ca.main(["--bindings", str(p), "--root", str(tmp_path)]) == 1
@@ -130,9 +166,16 @@ def test_проект_не_по_форме_отвергается(tmp_path, caps
 
 def test_опровергнутая_проба_это_находка(tmp_path, capsys):
     (tmp_path / "ci.yml").write_text("matrix: [a, b]\n")
-    p = ответ(tmp_path, {"015": {"status": "not-applicable", "why": "одна ОС",
-                                 "refuted_by": {"globs": ["*.yml"],
-                                                "contains": ["matrix:"]}}})
+    p = ответ(
+        tmp_path,
+        {
+            "015": {
+                "status": "not-applicable",
+                "why": "одна ОС",
+                "refuted_by": {"globs": ["*.yml"], "contains": ["matrix:"]},
+            }
+        },
+    )
     assert ca.main(["--bindings", str(p), "--root", str(tmp_path)]) == 1
     assert "опровергнуто" in capsys.readouterr().err
 
@@ -143,8 +186,8 @@ def test_нечитаемый_ответ_это_третий_исход(tmp_path
     assert ca.main(["--bindings", str(p), "--root", str(tmp_path)]) == 2
 
 
-
 # ── обзор #756: схема, диалект не объектом, маска за деревом ──────────────
+
 
 @pytest.mark.parametrize("схема", [None, "", "один-девять", "1"])
 def test_нечитаемая_схема_это_находка(tmp_path, capsys, схема):
@@ -179,8 +222,7 @@ def test_симлинк_наружу_не_читается(tmp_path):
     корень = tmp_path / "корень"
     корень.mkdir()
     (корень / "link.txt").symlink_to(снаружи / "s.txt")
-    rec = {"status": "not-applicable",
-           "refuted_by": {"globs": ["*.txt"], "contains": ["matrix:"]}}
+    rec = {"status": "not-applicable", "refuted_by": {"globs": ["*.txt"], "contains": ["matrix:"]}}
     assert af.прогнать_пробу(rec, корень) is None
 
 
@@ -188,35 +230,77 @@ def test_симлинк_наружу_не_читается(tmp_path):
 # Замер 9 октября: ответ из девяти заведомо неполных записей проходил проверку
 # проекта с кодом 0 — эти требования жили только у гейта каталога о себе.
 
-ПОЛНЫЙ_ДОКУМЕНТ = {"status": "active", "mechanism": "document",
-                   "where": "README.md", "holdable": "no", "why": "суждение"}
+ПОЛНЫЙ_ДОКУМЕНТ = {
+    "status": "active",
+    "mechanism": "document",
+    "where": "README.md",
+    "holdable": "no",
+    "why": "суждение",
+}
 
 
-@pytest.mark.parametrize("rec, слово", [
-    ({"status": "active"}, "вне словаря"),
-    ({"status": "active", "mechanism": "gate", "origin_kind": "own"}, "где именно"),
-    ({"status": "active", "mechanism": "gate", "origin_kind": "own",
-      "where": "   "}, "где именно"),
-    ({"status": "active", "mechanism": "gate", "origin_kind": "own",
-      "where": "где-то в конвейере"}, "адреса нет"),
-    ({"status": "rejected", "why": "   "}, "без причины"),
-    ({"status": "active", "mechanism": "none", "holdable": "no",
-      "why": "суждение"}, "machine_half"),
-    ({"status": "active", "mechanism": "none", "machine_half": "нет",
-      "holdable": "no", "why": " "}, "почему — не сказано"),
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "потом"}, "`holdable` принимает"),
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "why": ""}, "причины нет"),
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "conditional"}, "без события"),
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "refused"}, "без замера"),
-    ({"status": "active", "mechanism": "skill", "where": "README.md",
-      "holdable": "no", "why": "суждение"}, "каким — не сказано"),
-    ({"status": "active", "mechanism": "gate", "origin_kind": "own",
-      "where": "s.py", "awaiting": "предмет"}, "awaiting осталось"),
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "analysed": "вчера"}, "не дата"),
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "decided": "2026-10-01"}, "`decided` без `analysed`"),
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "analysed": "2026-10-01",
-      "decided": "2026-10-02"}, "новее сверки"),
-])
+@pytest.mark.parametrize(
+    "rec, слово",
+    [
+        ({"status": "active"}, "вне словаря"),
+        ({"status": "active", "mechanism": "gate", "origin_kind": "own"}, "где именно"),
+        (
+            {"status": "active", "mechanism": "gate", "origin_kind": "own", "where": "   "},
+            "где именно",
+        ),
+        (
+            {
+                "status": "active",
+                "mechanism": "gate",
+                "origin_kind": "own",
+                "where": "где-то в конвейере",
+            },
+            "адреса нет",
+        ),
+        ({"status": "rejected", "why": "   "}, "без причины"),
+        (
+            {"status": "active", "mechanism": "none", "holdable": "no", "why": "суждение"},
+            "machine_half",
+        ),
+        (
+            {
+                "status": "active",
+                "mechanism": "none",
+                "machine_half": "нет",
+                "holdable": "no",
+                "why": " ",
+            },
+            "почему — не сказано",
+        ),
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "потом"}, "`holdable` принимает"),
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "why": ""}, "причины нет"),
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "conditional"}, "без события"),
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "refused"}, "без замера"),
+        (
+            {
+                "status": "active",
+                "mechanism": "skill",
+                "where": "README.md",
+                "holdable": "no",
+                "why": "суждение",
+            },
+            "каким — не сказано",
+        ),
+        (
+            {
+                "status": "active",
+                "mechanism": "gate",
+                "origin_kind": "own",
+                "where": "s.py",
+                "awaiting": "предмет",
+            },
+            "awaiting осталось",
+        ),
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "analysed": "вчера"}, "не дата"),
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "decided": "2026-10-01"}, "`decided` без `analysed`"),
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "analysed": "2026-10-01", "decided": "2026-10-02"}, "новее сверки"),
+    ],
+)
 def test_обязательное_не_заполнено(tmp_path, capsys, rec, слово):
     """Решение спрашивается у проверки проекта целиком, через `main` (150)."""
     p = ответ(tmp_path, {"001": rec})
@@ -232,8 +316,12 @@ def test_полная_запись_документом_проходит():
 def test_требование_действует_с_своей_версии():
     """`holdable` заведён в 1.5, `refused` — в 1.6: ответ 1.2 о них не обязан
     знать, а ответ 1.5 слова `refused` ещё не имеет (157)."""
-    без_слова = {"status": "active", "mechanism": "document",
-                 "where": "README.md", "why": "суждение"}
+    без_слова = {
+        "status": "active",
+        "mechanism": "document",
+        "where": "README.md",
+        "why": "суждение",
+    }
     assert af.обязательные(без_слова, "1.2") == []
     assert af.обязательные(без_слова, "1.5")
     отказ = {**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "refused", "machine_half": "замер"}
@@ -244,8 +332,12 @@ def test_требование_действует_с_своей_версии():
 def test_без_номера_отсрочки_нет():
     """Отсрочку даёт объявленная старая версия; ответ без номера не объявил
     ничего, и спрашивается с него всё."""
-    без_слова = {"status": "active", "mechanism": "document",
-                 "where": "README.md", "why": "суждение"}
+    без_слова = {
+        "status": "active",
+        "mechanism": "document",
+        "where": "README.md",
+        "why": "суждение",
+    }
     assert af.обязательные(без_слова, None)
 
 
@@ -256,19 +348,23 @@ def test_чужой_механизм_одна_находка_а_не_шум():
     assert len(out) == 1 and "вне словаря" in out[0]
 
 
-@pytest.mark.parametrize("rec, схема, разобрано", [
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "refused", "machine_half": "замер"}, "1.5", False),
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "refused", "machine_half": "замер"}, "1.6", True),
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "why": "  "}, "1.9", False),
-    ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "conditional"}, "1.9", False),
-    (ПОЛНЫЙ_ДОКУМЕНТ, "1.9", True),
-])
+@pytest.mark.parametrize(
+    "rec, схема, разобрано",
+    [
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "refused", "machine_half": "замер"}, "1.5", False),
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "refused", "machine_half": "замер"}, "1.6", True),
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "why": "  "}, "1.9", False),
+        ({**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "conditional"}, "1.9", False),
+        (ПОЛНЫЙ_ДОКУМЕНТ, "1.9", True),
+    ],
+)
 def test_счёт_и_форма_одним_предикатом(rec, схема, разобрано):
     """Ревью #765: приёмка разбора жила в двух копиях, и словарь по версии
     был только у формы — ответ 1.5 со словом `refused` форма отвергала, а
     счёт ступени 0 засчитывал разобранным. Теперь «разобрано» у счёта ровно
     тогда, когда у формы нет находки."""
     import check_bindings as cb
+
     assert (cb.держимость(rec, схема) is not None) is разобрано
     assert (af.держимость_неверна(rec, схема) is None) is разобрано
 
@@ -278,6 +374,7 @@ def test_счёт_ступени_0_берёт_версию_ответа(monkeypa
     него не действовал. Решение спрашивается у `tier_zero` целиком (150):
     ответ 1.5 со словом `refused` разобранным не считается."""
     import check_bindings as cb
+
     rec = {**ПОЛНЫЙ_ДОКУМЕНТ, "holdable": "refused", "machine_half": "замер"}
     вызовы: list[object] = []
     исходная = cb.держимость
@@ -285,6 +382,7 @@ def test_счёт_ступени_0_берёт_версию_ответа(monkeypa
     def следящая(r: dict, schema: object) -> str | None:
         вызовы.append(schema)
         return исходная(r, schema)
+
     monkeypatch.setattr(cb, "держимость", следящая)
     cb.tier_zero({"001": rec}, {"001"}, "1.5", "1.5")
     assert вызовы and set(вызовы) == {"1.5"}

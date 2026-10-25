@@ -50,8 +50,19 @@ ROOT = Path(__file__).resolve().parent.parent
 #: работе. «находок 0» — обычно цитата вердикта обзора, и в сверку не идёт; текст
 #: в «ёлочках» — тоже цитата, и вырезается до поиска (замер на #631: там рядом
 #: стояли «Две находки» автора и «находок 0» обзора).
-СЛОВА = {"одна": 1, "одну": 1, "две": 2, "три": 3, "четыре": 4, "пять": 5,
-         "шесть": 6, "семь": 7, "восемь": 8, "девять": 9, "десять": 10}
+СЛОВА = {
+    "одна": 1,
+    "одну": 1,
+    "две": 2,
+    "три": 3,
+    "четыре": 4,
+    "пять": 5,
+    "шесть": 6,
+    "семь": 7,
+    "восемь": 8,
+    "девять": 9,
+    "десять": 10,
+}
 ЧИСЛО_RE = re.compile(r"(?i)\b(\d+|" + "|".join(СЛОВА) + r")\s+находк\w*")
 ЦИТАТА_RE = re.compile(r"«[^»\n]*»")
 СНЯТИЕ_RE = re.compile(r"(?im)^[ \t>*-]*Разобрано:[ \t]*\S")
@@ -59,8 +70,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def пути_мимо(тело: str, пути: set[str], root: Path) -> list[str]:
     """Названные путём файлы, которых нет ни в изменении, ни в дереве."""
-    return sorted({п for п in ПУТЬ_RE.findall(тело)
-                   if п not in пути and not (root / п).exists()})
+    return sorted({п for п in ПУТЬ_RE.findall(тело) if п not in пути and not (root / п).exists()})
 
 
 def числа_находок(тело: str) -> list[int]:
@@ -87,24 +97,30 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--body-file", type=Path, required=True)
     args = ap.parse_args(argv)
     try:
-        пути = {p.strip() for p in args.paths_from.read_text(encoding="utf-8").splitlines()
-                if p.strip()}
+        пути = {
+            p.strip() for p in args.paths_from.read_text(encoding="utf-8").splitlines() if p.strip()
+        }
         тело = args.body_file.read_text(encoding="utf-8")
     except OSError as exc:
-        print(f"проверка не отработала: не прочитан {exc.filename}: {exc.strerror}",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: не прочитан {exc.filename}: {exc.strerror}", file=sys.stderr
+        )
         return 2
 
     мимо = пути_мимо(тело, пути, args.root)
     снятия = расхождение_снятий(тело)
     for п in мимо:
-        print(f"::warning::тело изменения называет `{п}`, а такого файла нет ни в "
-              "изменении, ни в дереве — пересказ сверяется с `git diff --stat` (215)")
+        print(
+            f"::warning::тело изменения называет `{п}`, а такого файла нет ни в "
+            "изменении, ни в дереве — пересказ сверяется с `git diff --stat` (215)"
+        )
     if снятия:
         print(f"::warning::{снятия} — пересчитайте по телу (215)")
-    print(f"пересказ сверен: путей в теле {len(set(ПУТЬ_RE.findall(тело)))}, "
-          f"мимо {len(мимо)}; снятий {len(СНЯТИЕ_RE.findall(тело))}"
-          + (", число разошлось" if снятия else ""))
+    print(
+        f"пересказ сверен: путей в теле {len(set(ПУТЬ_RE.findall(тело)))}, "
+        f"мимо {len(мимо)}; снятий {len(СНЯТИЕ_RE.findall(тело))}"
+        + (", число разошлось" if снятия else "")
+    )
     return 0
 
 

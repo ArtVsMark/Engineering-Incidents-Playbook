@@ -10,7 +10,6 @@ https://docs.github.com/rest/commits/commits#list-pull-requests-associated-with-
 на элемент со всех страниц.
 """
 
-
 import json
 import sys
 from pathlib import Path
@@ -20,8 +19,12 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import check_task_state as cts  # noqa: E402
 
-ИЗМЕНЕНИЕ = {"number": 7, "body": "Closes #5", "merged_at": "2026-09-25T00:00:00Z",
-             "merge_commit_sha": "abc"}
+ИЗМЕНЕНИЕ = {
+    "number": 7,
+    "body": "Closes #5",
+    "merged_at": "2026-09-25T00:00:00Z",
+    "merge_commit_sha": "abc",
+}
 
 
 def test_chitaetsya_postranichno_i_po_elementu(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -46,12 +49,16 @@ def test_pustoy_otvet_eto_pustoy_spisok(monkeypatch: pytest.MonkeyPatch) -> None
     assert cts.pulls_for("abc") == ([], "")
 
 
-@pytest.mark.parametrize("ответ, почему", [
-    ((1, "HTTP 403"), "HTTP 403"),
-    ((0, "{не json"), "не разобран"),
-])
-def test_otkaz_i_nerazobrannoe_tretiy_iskhod(monkeypatch: pytest.MonkeyPatch,
-                                              ответ: tuple[int, str], почему: str) -> None:
+@pytest.mark.parametrize(
+    "ответ, почему",
+    [
+        ((1, "HTTP 403"), "HTTP 403"),
+        ((0, "{не json"), "не разобран"),
+    ],
+)
+def test_otkaz_i_nerazobrannoe_tretiy_iskhod(
+    monkeypatch: pytest.MonkeyPatch, ответ: tuple[int, str], почему: str
+) -> None:
     monkeypatch.setattr(cts, "gh", lambda *a: ответ)
     pulls, причина = cts.pulls_for("abc")
     assert pulls is None

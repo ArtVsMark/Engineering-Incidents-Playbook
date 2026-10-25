@@ -62,8 +62,12 @@ def запись(событие: object, исход: str, сейчас: datetime
     if not isinstance(имя, str) or not ИМЯ_RE.fullmatch(имя):
         return None
     сессия = событие.get("session_id")
-    return {"ts": сейчас.isoformat(timespec="seconds"), "skill": имя, "outcome": исход,
-            "session": сессия if isinstance(сессия, str) and ИМЯ_RE.fullmatch(сессия) else None}
+    return {
+        "ts": сейчас.isoformat(timespec="seconds"),
+        "skill": имя,
+        "outcome": исход,
+        "session": сессия if isinstance(сессия, str) and ИМЯ_RE.fullmatch(сессия) else None,
+    }
 
 
 def main(argv: list[str] | None = None, stdin=None, сейчас: datetime | None = None) -> int:

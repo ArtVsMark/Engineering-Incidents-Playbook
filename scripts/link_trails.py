@@ -64,7 +64,6 @@ Claude-Code_Usage-Token. Теперь считается ОСТАТОК: ско�
         записи, а не находка до неё, и исходы объявлены порознь для двух режимов.
 """
 
-
 import argparse
 import collections
 import json
@@ -106,8 +105,10 @@ def trails_for(rules: list[dict], repo: str) -> dict[str, list[dict]]:
             issue = str(trail.get("issue") or "").strip()
             if issue.isdigit():
                 found[issue].append(rule)
-    return {issue: sorted(rr, key=lambda r: str(r.get("id")))
-            for issue, rr in sorted(found.items(), key=lambda kv: int(kv[0]))}
+    return {
+        issue: sorted(rr, key=lambda r: str(r.get("id")))
+        for issue, rr in sorted(found.items(), key=lambda kv: int(kv[0]))
+    }
 
 
 def title_of(rule: dict) -> str:
@@ -120,17 +121,23 @@ def title_of(rule: dict) -> str:
 
 def comment_for(rules: list[dict], catalogue: str) -> str:
     """Один комментарий на задачу: что из неё выросло и куда смотреть."""
-    lines = [MARKER, "",
-             "Из этой задачи выросли правила общего каталога "
-             f"[`{catalogue}`](https://github.com/{catalogue}):", ""]
+    lines = [
+        MARKER,
+        "",
+        "Из этой задачи выросли правила общего каталога "
+        f"[`{catalogue}`](https://github.com/{catalogue}):",
+        "",
+    ]
     for rule in rules:
         rid, slug = str(rule.get("id")), str(rule.get("slug") or "")
         link = f"https://github.com/{catalogue}/blob/main/rules/ru/{rid}-{slug}.md"
         lines.append(f"- [**{rid}**]({link}) — {title_of(rule)}")
-    lines += ["",
-              "Запись ведёт прогон, а не человек: она одна на задачу и "
-              "обновляется по месту. Инцидент и границы применимости живут в "
-              "каталоге, здесь остаётся ссылка."]
+    lines += [
+        "",
+        "Запись ведёт прогон, а не человек: она одна на задачу и "
+        "обновляется по месту. Инцидент и границы применимости живут в "
+        "каталоге, здесь остаётся ссылка.",
+    ]
     return "\n".join(lines)
 
 
@@ -142,18 +149,32 @@ def selftest() -> int:
     месте читатель уже не проверит.
     """
     R = lambda i, repo, issue, slug="x": {
-        "id": i, "slug": slug, "title": {"ru": f"правило {i}"},
-        "trails": [{"repo": repo, "issue": issue}]}
+        "id": i,
+        "slug": slug,
+        "title": {"ru": f"правило {i}"},
+        "trails": [{"repo": repo, "issue": issue}],
+    }
     ME = "ArtVsMark/ArtVsMark"
     cases = [
         ("след ведёт сюда", [R("005", ME, "7")], {"7": ["005"]}),
         ("след ведёт в чужой проект", [R("005", "ArtVsMark/Other", "7")], {}),
-        ("одна задача — несколько правил",
-         [R("005", ME, "7"), R("009", ME, "7")], {"7": ["005", "009"]}),
-        ("одно правило — несколько задач",
-         [{"id": "132", "slug": "s", "title": {"ru": "t"},
-           "trails": [{"repo": ME, "issue": "19"}, {"repo": ME, "issue": "20"}]}],
-         {"19": ["132"], "20": ["132"]}),
+        (
+            "одна задача — несколько правил",
+            [R("005", ME, "7"), R("009", ME, "7")],
+            {"7": ["005", "009"]},
+        ),
+        (
+            "одно правило — несколько задач",
+            [
+                {
+                    "id": "132",
+                    "slug": "s",
+                    "title": {"ru": "t"},
+                    "trails": [{"repo": ME, "issue": "19"}, {"repo": ME, "issue": "20"}],
+                }
+            ],
+            {"19": ["132"], "20": ["132"]},
+        ),
         ("следов нет вовсе", [{"id": "001", "slug": "s", "title": {"ru": "t"}}], {}),
         ("след без номера", [R("005", ME, "")], {}),
         ("номер не число", [R("005", ME, "abc")], {}),
@@ -183,8 +204,9 @@ def selftest() -> int:
         os.environ["PATH"] = empty
         try:
             if not ghcli.failed(ghcli.run("--version")[0]):
-                broken.append("отсутствия gh не видно: механизм не отработал, "
-                              "а исход неотличим от находки")
+                broken.append(
+                    "отсутствия gh не видно: механизм не отработал, а исход неотличим от находки"
+                )
         finally:
             os.environ["PATH"] = path
 
@@ -209,8 +231,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--catalogue", default="ArtVsMark/Engineering-Incidents-Playbook")
     parser.add_argument("--ref", default="main")
-    parser.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", ""),
-                        help="репозиторий потребителя; по умолчанию из окружения")
+    parser.add_argument(
+        "--repo",
+        default=os.environ.get("GITHUB_REPOSITORY", ""),
+        help="репозиторий потребителя; по умолчанию из окружения",
+    )
     parser.add_argument("--label", default="", help="метка на задачи со следом")
     parser.add_argument("--apply", action="store_true", help="писать в трекер")
     parser.add_argument("--selftest", action="store_true")
@@ -242,7 +267,8 @@ def main() -> int:
         # оставленная после сотого, иначе не находилась бы — и ставилась снова.
         code, совпало, почему = ghcli.список(
             f"repos/{args.repo}/issues/{issue}/comments?per_page=100",
-            f'.[] | select(.body // "" | contains("{MARKER}")) | .id')
+            f'.[] | select(.body // "" | contains("{MARKER}")) | .id',
+        )
         # ЛЮБОЙ ОТКАЗ ЧТЕНИЯ — ТРЕТИЙ ИСХОД, А НЕ «ССЫЛКА УЖЕ СТОИТ». Прежде
         # здесь терминальным считался только отказ инструмента и квоты, а код 1
         # от площадки и код 2 неразобранного ответа уходили в ветку «уже
@@ -252,7 +278,7 @@ def main() -> int:
             print(f"не отработал: задача #{issue} не прочитана — {почему}", file=sys.stderr)
             return 2
         if совпало:
-            continue                       # обратная ссылка уже стоит
+            continue  # обратная ссылка уже стоит
         missing.append(issue)
         if not args.apply:
             continue
@@ -263,8 +289,12 @@ def main() -> int:
         # вызовы площадки в этом файле перечислены по правилу 210 — чтение,
         # запись, метка и два вызова самопроверки, где `failed` и есть предмет
         # (находка обзора на #601).
-        code, out = ghcli.run("api", f"repos/{args.repo}/issues/{issue}/comments",
-                              "-f", f"body={comment_for(rr, args.catalogue)}")
+        code, out = ghcli.run(
+            "api",
+            f"repos/{args.repo}/issues/{issue}/comments",
+            "-f",
+            f"body={comment_for(rr, args.catalogue)}",
+        )
         if code != 0:
             print(f"не отработал: запись в #{issue} не принята — {out}", file=sys.stderr)
             return 2
@@ -273,19 +303,21 @@ def main() -> int:
             # метку, а не заменяет набор — как и `--add-label` до правки.
             # Ответ прежде не читался вовсе: метка, не поставленная площадкой,
             # проходила молча.
-            code, out = ghcli.run("api", f"repos/{args.repo}/issues/{issue}/labels",
-                                  "-f", f"labels[]={args.label}")
+            code, out = ghcli.run(
+                "api", f"repos/{args.repo}/issues/{issue}/labels", "-f", f"labels[]={args.label}"
+            )
             if code != 0:
-                print(f"не отработал: метка на #{issue} не поставлена — {out}",
-                      file=sys.stderr)
+                print(f"не отработал: метка на #{issue} не поставлена — {out}", file=sys.stderr)
                 return 2
 
     # ОСТАТОК, А НЕ НАХОДКА. Сухой прогон ничего не писал — остаток равен
     # находке; с --apply дописано всё, до чего дошли, и остаток пуст. Один и
     # тот же код возврата означал бы в двух режимах разное (109).
     осталось = [] if args.apply else missing
-    print(f"задач со следом: {len(found)}; без обратной ссылки было: {len(missing)}"
-          + (f" — дописано {len(missing)}" if args.apply and missing else ""))
+    print(
+        f"задач со следом: {len(found)}; без обратной ссылки было: {len(missing)}"
+        + (f" — дописано {len(missing)}" if args.apply and missing else "")
+    )
     if missing and not args.apply:
         print("--apply не задан: в трекер ничего не пишу")
     return 1 if осталось else 0

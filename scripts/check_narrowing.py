@@ -62,7 +62,6 @@
   python scripts/check_narrowing.py --selftest
 """
 
-
 import argparse
 import re
 import subprocess
@@ -117,7 +116,7 @@ def символы(класс: str) -> set[str]:
     i = 0
     while i < len(класс):
         if класс[i] == "\\" and i + 1 < len(класс):
-            куски.append(класс[i:i + 2])
+            куски.append(класс[i : i + 2])
             i += 2
             continue
         куски.append(класс[i])
@@ -125,9 +124,13 @@ def символы(класс: str) -> set[str]:
     j = 0
     while j < len(куски):
         # Диапазон — только между двумя знаками: `-` с краю литерален.
-        if (0 < j < len(куски) - 1 and куски[j] == "-"
-                and len(куски[j - 1]) == 1 and len(куски[j + 1]) == 1
-                and ord(куски[j - 1]) <= ord(куски[j + 1])):
+        if (
+            0 < j < len(куски) - 1
+            and куски[j] == "-"
+            and len(куски[j - 1]) == 1
+            and len(куски[j + 1]) == 1
+            and ord(куски[j - 1]) <= ord(куски[j + 1])
+        ):
             начало, конец = ord(куски[j - 1]), ord(куски[j + 1])
             вышло |= {chr(c) for c in range(начало, конец + 1)}
             j += 2
@@ -163,10 +166,8 @@ def сужения(diff: str) -> list[str]:
     другой файл — убыль в одном месте и прибыль в другом; по куску это читалось
     бы сужением, по изменению сокращается само (051).
     """
-    убрано = [s[1:] for s in diff.splitlines()
-              if s.startswith("-") and not s.startswith("---")]
-    добавлено = [s[1:] for s in diff.splitlines()
-                 if s.startswith("+") and not s.startswith("+++")]
+    убрано = [s[1:] for s in diff.splitlines() if s.startswith("-") and not s.startswith("---")]
+    добавлено = [s[1:] for s in diff.splitlines() if s.startswith("+") and not s.startswith("+++")]
     было_знаков, было_членов = атомы(убрано)
     стало_знаков, стало_членов = атомы(добавлено)
     вышло: list[str] = []
@@ -176,17 +177,22 @@ def сужения(diff: str) -> list[str]:
         вышло.append(f"символьный класс перестал принимать: {показ}{хвост(ушли_знаки)}")
     ушли_члены = было_членов - стало_членов
     if ушли_члены:
-        вышло.append("из множества убрано: " + ", ".join(sorted(ушли_члены)[:ПОКАЗ])
-                     + хвост(ушли_члены))
+        вышло.append(
+            "из множества убрано: " + ", ".join(sorted(ушли_члены)[:ПОКАЗ]) + хвост(ушли_члены)
+        )
     return вышло
 
 
 def тронутые_фрагменты(диапазон: str) -> tuple[list[Path] | None, str]:
     """Фрагменты журнала, тронутые этим изменением, — там и ищется ответ."""
     done = proc.run(
-        ["git", "diff", "--name-only", "-z", "--diff-filter=AM",
-         диапазон, "--", "changelog.d"],
-        cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
+        ["git", "diff", "--name-only", "-z", "--diff-filter=AM", диапазон, "--", "changelog.d"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         return None, (done.stderr or "").strip()
     return [ROOT / имя for имя in done.stdout.split("\0") if имя], ""
@@ -196,7 +202,12 @@ def diff_of(диапазон: str) -> tuple[str | None, str]:
     """Дифф изменения. Без контекста: контекст дал бы чужие строки за свои."""
     done = proc.run(
         ["git", "diff", "-U0", диапазон, "--", "*.py"],
-        cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         return None, (done.stderr or "").strip()
     return done.stdout, ""
@@ -204,36 +215,60 @@ def diff_of(диапазон: str) -> tuple[str | None, str]:
 
 def selftest() -> int:
     """Гейт прогоняется тем, что обязан найти И что обязан пропустить (140)."""
-    ДИФФ = lambda было, стало: "\n".join(
-        [f"-{s}" for s in было] + [f"+{s}" for s in стало])
+    ДИФФ = lambda было, стало: "\n".join([f"-{s}" for s in было] + [f"+{s}" for s in стало])
     случаи = [
         # ── обязан НАЙТИ ──────────────────────────────────────────────────
-        ("инцидент 195: звёздочка ушла из класса в альтернативу",
-         ДИФФ([r'ПРЕФИКС = re.compile(r"^[ \t>#-*]*")'],
-              [r'ПРЕФИКС = re.compile(r"^(?:[ \t>#-]|\*(?=\s))*")']), True),
-        ("класс сузился прямо",
-         ДИФФ([r'X = re.compile(r"[abc]")'], [r'X = re.compile(r"[ab]")']), True),
-        ("из множества убран элемент",
-         ДИФФ(['WITH_VALUE = {"--repo", "-o", "--exec"}'],
-              ['WITH_VALUE = {"--repo", "-o"}']), True),
-        ("диапазон раскрыт: убыль внутри него видна",
-         ДИФФ([r'X = re.compile(r"[a-e]")'], [r'X = re.compile(r"[a-c]")']), True),
+        (
+            "инцидент 195: звёздочка ушла из класса в альтернативу",
+            ДИФФ(
+                [r'ПРЕФИКС = re.compile(r"^[ \t>#-*]*")'],
+                [r'ПРЕФИКС = re.compile(r"^(?:[ \t>#-]|\*(?=\s))*")'],
+            ),
+            True,
+        ),
+        (
+            "класс сузился прямо",
+            ДИФФ([r'X = re.compile(r"[abc]")'], [r'X = re.compile(r"[ab]")']),
+            True,
+        ),
+        (
+            "из множества убран элемент",
+            ДИФФ(['WITH_VALUE = {"--repo", "-o", "--exec"}'], ['WITH_VALUE = {"--repo", "-o"}']),
+            True,
+        ),
+        (
+            "диапазон раскрыт: убыль внутри него видна",
+            ДИФФ([r'X = re.compile(r"[a-e]")'], [r'X = re.compile(r"[a-c]")']),
+            True,
+        ),
         # ── обязан ПРОПУСТИТЬ ─────────────────────────────────────────────
-        ("расширение класса",
-         ДИФФ([r'X = re.compile(r"[ab]")'], [r'X = re.compile(r"[abc]")']), False),
-        ("добавление элемента в множество",
-         ДИФФ(['S = {"a", "b"}'], ['S = {"a", "b", "c"}']), False),
-        ("переименование при том же классе",
-         ДИФФ([r'СТАРОЕ = re.compile(r"[abc]")'],
-              [r'НОВОЕ = re.compile(r"[abc]")']), False),
-        ("перенос множества: убыло в одном месте, прибыло в другом",
-         ДИФФ(['S = {"a", "b"}'], ['# сюда', 'S = {"a", "b"}']), False),
-        ("правка, не трогающая признаков вовсе",
-         ДИФФ(["x = 1"], ["x = 2"]), False),
-        ("взятие по индексу классом не считается",
-         ДИФФ(["y = items[0]"], ["y = items[1]"]), False),
-        ("вложенный словарь потерял ключ — это тоже убыль",
-         ДИФФ(['S = {"a": {"b": 1}}'], ['S = {"a": {}}']), True),
+        (
+            "расширение класса",
+            ДИФФ([r'X = re.compile(r"[ab]")'], [r'X = re.compile(r"[abc]")']),
+            False,
+        ),
+        (
+            "добавление элемента в множество",
+            ДИФФ(['S = {"a", "b"}'], ['S = {"a", "b", "c"}']),
+            False,
+        ),
+        (
+            "переименование при том же классе",
+            ДИФФ([r'СТАРОЕ = re.compile(r"[abc]")'], [r'НОВОЕ = re.compile(r"[abc]")']),
+            False,
+        ),
+        (
+            "перенос множества: убыло в одном месте, прибыло в другом",
+            ДИФФ(['S = {"a", "b"}'], ["# сюда", 'S = {"a", "b"}']),
+            False,
+        ),
+        ("правка, не трогающая признаков вовсе", ДИФФ(["x = 1"], ["x = 2"]), False),
+        ("взятие по индексу классом не считается", ДИФФ(["y = items[0]"], ["y = items[1]"]), False),
+        (
+            "вложенный словарь потерял ключ — это тоже убыль",
+            ДИФФ(['S = {"a": {"b": 1}}'], ['S = {"a": {}}']),
+            True,
+        ),
     ]
     сломано: list[str] = []
     for имя, diff, ждём in случаи:
@@ -243,11 +278,13 @@ def selftest() -> int:
         print(f"  {'сужение' if вышло else 'чисто  ':<8} — {имя}")
 
     # СТРОКА ОТВЕТА ЧИТАЕТСЯ, А НЕ ПОДРАЗУМЕВАЕТСЯ.
-    for текст, ждём in [("Соседи: спросили, других форм нет", True),
-                        ("> правило 195 — про соседей", False),
-                        ("соседи где-то рядом", False),
-                        ("  Соседи: и вот что вышло", True),
-                        ("Соседи:", False)]:
+    for текст, ждём in [
+        ("Соседи: спросили, других форм нет", True),
+        ("> правило 195 — про соседей", False),
+        ("соседи где-то рядом", False),
+        ("  Соседи: и вот что вышло", True),
+        ("Соседи:", False),
+    ]:
         if bool(СОСЕДИ.search(текст)) != ждём:
             сломано.append(f"строка ответа: «{текст}» разобрана неверно")
     print("  ответ    — строка «Соседи:» отличается от прозы о соседях")
@@ -263,10 +300,12 @@ def selftest() -> int:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--range", dest="диапазон", default="origin/main...HEAD",
-                    help="диапазон изменения")
-    ap.add_argument("--selftest", action="store_true",
-                    help="прогнать разбор на обеих сторонах границы")
+    ap.add_argument(
+        "--range", dest="диапазон", default="origin/main...HEAD", help="диапазон изменения"
+    )
+    ap.add_argument(
+        "--selftest", action="store_true", help="прогнать разбор на обеих сторонах границы"
+    )
     args = ap.parse_args(argv)
 
     if args.selftest:
@@ -274,19 +313,26 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not FRAGMENTS.is_dir():
-        print(f"проверка не отработала: нет каталога фрагментов {FRAGMENTS} — "
-              "спрашивать ответ негде", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет каталога фрагментов {FRAGMENTS} — спрашивать ответ негде",
+            file=sys.stderr,
+        )
         return 2
     diff, почему = diff_of(args.диапазон)
     if diff is None:
-        print(f"проверка не отработала: дифф диапазона {args.диапазон!r} не "
-              f"прочитан — {почему or 'git молчит'}", file=sys.stderr)
+        print(
+            f"проверка не отработала: дифф диапазона {args.диапазон!r} не "
+            f"прочитан — {почему or 'git молчит'}",
+            file=sys.stderr,
+        )
         return 2
     фрагменты, почему = тронутые_фрагменты(args.диапазон)
     if фрагменты is None:
-        print(f"проверка не отработала: список фрагментов диапазона "
-              f"{args.диапазон!r} не прочитан — {почему or 'git молчит'}",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: список фрагментов диапазона "
+            f"{args.диапазон!r} не прочитан — {почему or 'git молчит'}",
+            file=sys.stderr,
+        )
         return 2
 
     найдено = сужения(diff)
@@ -294,19 +340,20 @@ def main(argv: list[str] | None = None) -> int:
         print("сужений признаков в изменении нет — спрашивать не о чем")
         return 0
 
-    сказано = [п for п in фрагменты
-               if п.exists() and СОСЕДИ.search(п.read_text(encoding="utf-8"))]
+    сказано = [п for п in фрагменты if п.exists() and СОСЕДИ.search(п.read_text(encoding="utf-8"))]
     if сказано:
-        print("признак сужен, и о соседях сказано: "
-              + ", ".join(п.name for п in сказано))
+        print("признак сужен, и о соседях сказано: " + ", ".join(п.name for п in сказано))
         return 0
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     print("признак сужен, а о соседях не сказано:", file=sys.stderr)
     for строка in найдено:
         print(f"  • {строка}", file=sys.stderr)
-    print("\n  Что решалось этим признаком ещё? Работавшее могло сломаться, "
-          "а сломанное — остаться сломанным (правило 195).", file=sys.stderr)
+    print(
+        "\n  Что решалось этим признаком ещё? Работавшее могло сломаться, "
+        "а сломанное — остаться сломанным (правило 195).",
+        file=sys.stderr,
+    )
     print("  Ответ — строкой во фрагменте журнала:", file=sys.stderr)
     print("      Соседи: <у кого спросили и что вышло>", file=sys.stderr)
     print("  «Соседей нет» — законный ответ, но произнесённый.", file=sys.stderr)

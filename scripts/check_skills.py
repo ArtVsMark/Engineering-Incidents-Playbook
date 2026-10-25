@@ -57,7 +57,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import re
 import sys
@@ -67,9 +66,11 @@ from pathlib import Path
 # разошлась бы с ним молча, и первым на блочном скаляре: его чинили трижды
 # (ревью #497, #500, #501), и каждая починка шла бы теперь в двух местах.
 from check_bindings import НАВЫКИ_ОКНА, навык_в_дереве
+
 # Строка читателя и словарь — тоже чужие: читателей закрытый список, и второй
 # словарь разошёлся бы с первым на первом же новом читателе.
 from check_readers import EN, HEAD, LINE_RE, READERS, reader_of
+
 # Где лежат плагины, знает гейт витрины: папка плагина — его имя там же (035).
 from check_plugins import PLUGINS
 
@@ -153,23 +154,27 @@ def места(root: Path) -> list[tuple[Path, Path]]:
     return вышло
 
 
-def сверить_место(root: Path, папка: Path, список: Path,
-                  required: list[str]) -> tuple[int, int, list[str]]:
+def сверить_место(
+    root: Path, папка: Path, список: Path, required: list[str]
+) -> tuple[int, int, list[str]]:
     """Список против дерева и форма каждого навыка одного места.
 
     Возвращает: сколько названо в списке, сколько лежит в дереве, находки.
     """
     problems: list[str] = []
     folder, index = root / папка, root / список
-    tree = sorted(p.name for p in folder.iterdir() if p.is_dir()) \
-        if folder.is_dir() else []
+    tree = sorted(p.name for p in folder.iterdir() if p.is_dir()) if folder.is_dir() else []
     if not index.is_file():
-        problems.append(f"{список.as_posix()} нет — навыки в {папка.as_posix()} "
-                        "не названы списком, и сверять дерево не с чем")
+        problems.append(
+            f"{список.as_posix()} нет — навыки в {папка.as_posix()} "
+            "не названы списком, и сверять дерево не с чем"
+        )
         return 0, len(tree), problems
     if not tree:
-        problems.append(f"{папка.as_posix()}: навыков нет — место, которое "
-                        "ничего не отдаёт, выглядит механизмом, не будучи им")
+        problems.append(
+            f"{папка.as_posix()}: навыков нет — место, которое "
+            "ничего не отдаёт, выглядит механизмом, не будучи им"
+        )
     names = listed(index.read_text(encoding="utf-8"))
 
     reader, question = reader_of(index)
@@ -177,27 +182,31 @@ def сверить_место(root: Path, папка: Path, список: Path,
         problems.append(
             f"{список.as_posix()}: не назван читатель из словаря {sorted(READERS)} "
             "с вопросом. check_readers.py скрытые папки не обходит, и спросить "
-            "это, кроме здесь, некому")
+            "это, кроме здесь, некому"
+        )
 
     seen: set[str] = set()
     for name in names:
         if name in seen:
             problems.append(
                 f"{список.as_posix()}: «{name}» назван дважды — две строки одного "
-                "навыка расходятся при первой правке")
+                "навыка расходятся при первой правке"
+            )
         seen.add(name)
         if name not in tree:
             problems.append(
                 f"{список.as_posix()} называет «{name}», а каталога "
                 f"{(папка / name).as_posix()} нет. За названным навыком придут "
-                "и не найдут ничего")
+                "и не найдут ничего"
+            )
 
     for name in tree:
         if name not in seen:
             problems.append(
                 f"{(папка / name).as_posix()} есть, а в {список.as_posix()} не "
                 "назван. Навык, о котором молчит список, человек не позовёт — "
-                "а окно позовёт, не сказав никому")
+                "а окно позовёт, не сказав никому"
+            )
         missing = навык_в_дереве(name, root, папка)
         if missing:
             problems.append(f"{(папка / name).as_posix()}: {missing}")
@@ -208,7 +217,8 @@ def сверить_место(root: Path, папка: Path, список: Path,
             problems.append(
                 f"{(папка / name).as_posix()}/SKILL.md: под заголовком нет "
                 "строки «> **Читатель:** <кто> — <когда зовут>» с читателем из "
-                f"словаря {sorted(READERS)}")
+                f"словаря {sorted(READERS)}"
+            )
         present = set(SECTION_RE.findall(text))
         for section in required:
             if section not in present:
@@ -216,42 +226,57 @@ def сверить_место(root: Path, папка: Path, список: Path,
                     f"{(папка / name).as_posix()}/SKILL.md: нет раздела "
                     f"«{section}» — его требует {TEMPLATE.as_posix()}, "
                     "заготовка, которую каталог раздаёт и обязан держать у "
-                    "себя сам (155)")
+                    "себя сам (155)"
+                )
     return len(names), len(tree), problems
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = parser.parse_args(argv)
     root: Path = args.root
     folder, index, template = root / SKILLS, root / LIST, root / TEMPLATE
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not folder.is_dir():
-        print(f"проверка не отработала: нет {folder} — навыков нет, и гейт без "
-              "предмета не зеленеет (075)", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {folder} — навыков нет, и гейт без "
+            "предмета не зеленеет (075)",
+            file=sys.stderr,
+        )
         return 2
     if not index.is_file():
-        print(f"проверка не отработала: нет {index} — списка навыков, с которым "
-              "сверяется дерево", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {index} — списка навыков, с которым сверяется дерево",
+            file=sys.stderr,
+        )
         return 2
     if not template.is_file():
-        print(f"проверка не отработала: нет {template} — заготовки, из которой "
-              "берутся разделы навыка", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {template} — заготовки, из которой "
+            "берутся разделы навыка",
+            file=sys.stderr,
+        )
         return 2
     names = listed(index.read_text(encoding="utf-8"))
     if not names:
-        print(f"проверка не отработала: в {index} не разобралось ни одной строки "
-              "списка «| `имя` | …». Это ошибка разбора, а не пустой список: "
-              "каталог навыков существует", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {index} не разобралось ни одной строки "
+            "списка «| `имя` | …». Это ошибка разбора, а не пустой список: "
+            "каталог навыков существует",
+            file=sys.stderr,
+        )
         return 2
     required = sections(template.read_text(encoding="utf-8"))
     if not required:
-        print(f"проверка не отработала: в {template} не нашлось формы "
-              "```markdown … ``` с разделами `## …` — сверять навыки не с чем",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: в {template} не нашлось формы "
+            "```markdown … ``` с разделами `## …` — сверять навыки не с чем",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -264,15 +289,16 @@ def main(argv: list[str] | None = None) -> int:
         всего_в_дереве += в_дереве
 
     if problems:
-        print("навыки разошлись со списком или с заготовкой:",
-              file=sys.stderr)
+        print("навыки разошлись со списком или с заготовкой:", file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
-    print(f"навыки в порядке: мест {len(места(root))}, в списках "
-          f"{всего_в_списках}, в дереве {всего_в_дереве}, у каждого заголовок, "
-          f"читатель и разделов заготовки {len(required)}")
+    print(
+        f"навыки в порядке: мест {len(места(root))}, в списках "
+        f"{всего_в_списках}, в дереве {всего_в_дереве}, у каждого заголовок, "
+        f"читатель и разделов заготовки {len(required)}"
+    )
     return 0
 
 

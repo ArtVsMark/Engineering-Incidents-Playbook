@@ -13,8 +13,7 @@ import pytest
 import build_rules_index as bri
 import family
 
-ХОРОШИЙ = {"schema": "1.0", "project": "o/a", "release": None,
-           "gives": {"x": "1.0"}, "takes": []}
+ХОРОШИЙ = {"schema": "1.0", "project": "o/a", "release": None, "gives": {"x": "1.0"}, "takes": []}
 
 
 def test_манифест_отдаёт_номера_выгрузки_и_свой():
@@ -25,12 +24,15 @@ def test_манифест_отдаёт_номера_выгрузки_и_свой
     assert family.изъян_формы(м) is None
 
 
-@pytest.mark.parametrize("doc, изъян", [
-    ([], "не объект"),
-    ({**ХОРОШИЙ, "gives": None}, "«gives» не того типа"),
-    ({k: v for k, v in ХОРОШИЙ.items() if k != "takes"}, "нет ключа «takes»"),
-    ({**ХОРОШИЙ, "schema": "2.0"}, "формат 2.0"),
-])
+@pytest.mark.parametrize(
+    "doc, изъян",
+    [
+        ([], "не объект"),
+        ({**ХОРОШИЙ, "gives": None}, "«gives» не того типа"),
+        ({k: v for k, v in ХОРОШИЙ.items() if k != "takes"}, "нет ключа «takes»"),
+        ({**ХОРОШИЙ, "schema": "2.0"}, "формат 2.0"),
+    ],
+)
 def test_чужая_форма_называется(doc, изъян):
     assert изъян in family.изъян_формы(doc)
 
@@ -40,11 +42,14 @@ def test_минор_формата_читается():
     assert family.изъян_формы({**ХОРОШИЙ, "schema": "1.3"}) is None
 
 
-@pytest.mark.parametrize("err, состояние", [
-    ("не прочитан: HTTP Error 404: Not Found", "absent"),
-    ("не прочитан: <urlopen error timed out> — и так 3 раза подряд", "unreadable"),
-    ("не прочитан: HTTP Error 403: Forbidden", "unreadable"),
-])
+@pytest.mark.parametrize(
+    "err, состояние",
+    [
+        ("не прочитан: HTTP Error 404: Not Found", "absent"),
+        ("не прочитан: <urlopen error timed out> — и так 3 раза подряд", "unreadable"),
+        ("не прочитан: HTTP Error 403: Forbidden", "unreadable"),
+    ],
+)
 def test_нет_файла_и_не_прочитан_различаются(err, состояние):
     строка = family.запись("o/a", None, err)
     assert строка["state"] == состояние and строка["why"] == err
@@ -63,19 +68,24 @@ def test_сводка_берёт_свой_без_сети_а_соседей_по
 
     def прочесть(url: str):
         прочитано.append(url)
-        return ({**ХОРОШИЙ, "project": "o/a"}, None) if "/o/a/" in url else (
-            None, "не прочитан: HTTP Error 404: Not Found")
+        return (
+            ({**ХОРОШИЙ, "project": "o/a"}, None)
+            if "/o/a/" in url
+            else (None, "не прочитан: HTTP Error 404: Not Found")
+        )
 
     свой = {**ХОРОШИЙ, "project": "o/self"}
-    doc = family.сводка([{"repo": "o/self"}, {"repo": "o/a"}, {"repo": "o/b"}],
-                        свой, прочесть)
+    doc = family.сводка([{"repo": "o/self"}, {"repo": "o/a"}, {"repo": "o/b"}], свой, прочесть)
     assert [p["state"] for p in doc["projects"]] == ["published", "published", "absent"]
     # Разбор читается только у опубликованного: у отсутствующего его нет (#844).
     # Свой манифест — без сети; своего разбора на диске нет — он читается по
     # адресу ветки badges, как у соседей (обзор #856).
-    assert прочитано == [family.РАЗБОР_АДРЕС.format(repo="o/self"),
-                         family.АДРЕС.format(repo="o/a"), family.РАЗБОР_АДРЕС.format(repo="o/a"),
-                         family.АДРЕС.format(repo="o/b")]
+    assert прочитано == [
+        family.РАЗБОР_АДРЕС.format(repo="o/self"),
+        family.АДРЕС.format(repo="o/a"),
+        family.РАЗБОР_АДРЕС.format(repo="o/a"),
+        family.АДРЕС.format(repo="o/b"),
+    ]
     assert doc["schema"] == family.FAMILY_SCHEMA
 
 
@@ -83,11 +93,12 @@ def test_main_пишет_сводку_по_реестру(tmp_path, monkeypatch,
     """Источник подделки (правило 170): та же форма возврата `fetch`, что
     выше, — `(None, "не прочитан: HTTP Error 404: Not Found")`."""
     (tmp_path / ".rules").mkdir()
-    (tmp_path / ".rules" / "consumers.json").write_text(json.dumps(
-        {"consumers": [{"repo": family.своё_имя()}, {"repo": "o/b"}]}),
-        encoding="utf-8")
-    monkeypatch.setattr(family, "fetch",
-                        lambda url: (None, "не прочитан: HTTP Error 404: Not Found"))
+    (tmp_path / ".rules" / "consumers.json").write_text(
+        json.dumps({"consumers": [{"repo": family.своё_имя()}, {"repo": "o/b"}]}), encoding="utf-8"
+    )
+    monkeypatch.setattr(
+        family, "fetch", lambda url: (None, "не прочитан: HTTP Error 404: Not Found")
+    )
     assert family.main(["--root", str(tmp_path), "--summary"]) == 0
     doc = json.loads((tmp_path / family.SUMMARY).read_text(encoding="utf-8"))
     assert [p["state"] for p in doc["projects"]] == ["published", "absent"]
@@ -103,6 +114,7 @@ def test_выпуск_берётся_из_того_же_дерева(tmp_path):
     """Выпуск и номера одного манифеста — из одного дерева (обзор #801):
     в клоне без тегов выпуска нет, хотя у каталога рядом он есть."""
     import subprocess
+
     subprocess.run(["git", "init", "-q", str(tmp_path)], check=True, timeout=60)
     assert family.выпуск(tmp_path) is None
     assert family.манифест(tmp_path)["release"] is None
@@ -114,28 +126,42 @@ def test_выпуск_свой_тег_у_своего_дерева(tmp_path):
     import subprocess
 
     def git(*a: str) -> str:
-        return subprocess.run(["git", "-C", str(tmp_path), *a], check=True,
-                              capture_output=True, text=True,
-                              encoding="utf-8", timeout=60).stdout.strip()
+        return subprocess.run(
+            ["git", "-C", str(tmp_path), *a],
+            check=True,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=60,
+        ).stdout.strip()
+
     git("init", "-q")
-    git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q",
-        "--allow-empty", "-m", "первый")
+    git(
+        "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", "первый"
+    )
     git("tag", "v7.3.0")
     assert family.выпуск(tmp_path) == {"tag": "v7.3.0", "sha": git("rev-parse", "HEAD")}
 
 
 def test_связи_из_разбора_соседа_и_своего():
     """links — блок издателей опубликованного разбора; не прочитан — поля нет (#844)."""
+
     def прочесть(url: str):
         if url.endswith("contracts.json"):
             return {**ХОРОШИЙ, "project": url.split("/")[3] + "/" + url.split("/")[4]}, None
         if "/o/a/" in url:
-            return {"publishers": [{"code": "EIP", "state": "ok"}, {"code": "EPM", "state": "none"}]}, None
+            return {
+                "publishers": [{"code": "EIP", "state": "ok"}, {"code": "EPM", "state": "none"}]
+            }, None
         return None, "не прочитан: HTTP Error 404: Not Found"
 
     свой = {**ХОРОШИЙ, "project": "o/self"}
-    doc = family.сводка([{"repo": "o/self"}, {"repo": "o/a"}, {"repo": "o/b"}], свой, прочесть,
-                        свой_разбор={"publishers": [{"code": "EIP", "state": "ok"}]})
+    doc = family.сводка(
+        [{"repo": "o/self"}, {"repo": "o/a"}, {"repo": "o/b"}],
+        свой,
+        прочесть,
+        свой_разбор={"publishers": [{"code": "EIP", "state": "ok"}]},
+    )
     по_имени = {p["repo"]: p for p in doc["projects"]}
     assert по_имени["o/a"]["links"] == {"EIP": "ok", "EPM": "none"}
     assert "links" not in по_имени["o/b"]
@@ -149,6 +175,7 @@ def test_связи_не_той_формы_не_пустые(разбор):
 
 def test_свой_разбор_на_чистом_клоне_читается_с_ветки_badges():
     """Своего разбора на диске нет (сводка собирается до него) — links не пустые (обзор #856)."""
+
     def прочесть(url: str):
         if url == family.РАЗБОР_АДРЕС.format(repo="o/self"):
             return {"publishers": [{"code": "EIP", "state": "unknown"}]}, None
@@ -159,7 +186,10 @@ def test_свой_разбор_на_чистом_клоне_читается_с_
     assert doc["projects"][0]["links"] == {"EIP": "unknown"}
     # Диск важнее сети: свой разбор есть — по адресу не ходят.
     прочитано: list[str] = []
-    family.сводка([{"repo": "o/self"}], свой,
-                  lambda url: (прочитано.append(url), (None, "x"))[1],
-                  свой_разбор={"publishers": [{"code": "EIP", "state": "ok"}]})
+    family.сводка(
+        [{"repo": "o/self"}],
+        свой,
+        lambda url: (прочитано.append(url), (None, "x"))[1],
+        свой_разбор={"publishers": [{"code": "EIP", "state": "ok"}]},
+    )
     assert прочитано == []

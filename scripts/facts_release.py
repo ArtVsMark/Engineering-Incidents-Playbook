@@ -55,8 +55,13 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 #: Что лежит на странице выпуска — плоско, под своими именами. Порядок — порядок
 #: чтения издателем: проза, схема, номер, проверка, образец.
-ASSETS = (check_facts.CONTRACT_PATH, check_facts.SCHEMA_PATH, check_facts.VERSION_PATH,
-          pathlib.Path(check_facts.__file__).resolve(), check_facts.EXAMPLE_PATH)
+ASSETS = (
+    check_facts.CONTRACT_PATH,
+    check_facts.SCHEMA_PATH,
+    check_facts.VERSION_PATH,
+    pathlib.Path(check_facts.__file__).resolve(),
+    check_facts.EXAMPLE_PATH,
+)
 
 
 def tag_for(number: str) -> str:
@@ -71,8 +76,15 @@ def listed(out: str, tag: str) -> bool:
 
 def tag_exists(tag: str) -> bool:
     """Стоит ли такой тег — точной сверкой, а не по образцу."""
-    out = proc.run(["git", "tag", "--list", tag], cwd=ROOT, capture_output=True,
-                   text=True, encoding="utf-8", check=True, timeout=60).stdout
+    out = proc.run(
+        ["git", "tag", "--list", tag],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=True,
+        timeout=60,
+    ).stdout
     return listed(out, tag)
 
 
@@ -89,18 +101,27 @@ def verify(dist: pathlib.Path, repo: str) -> list[str]:
     каталога не подхватится — ровно положение издателя.
     """
     found: list[str] = []
-    runs = (("образец отвечает договору",
-             ["--file", check_facts.EXAMPLE_PATH.name, "--repo", repo]),
-            ("номер сходится с заголовками", ["--contract"]))
+    runs = (
+        ("образец отвечает договору", ["--file", check_facts.EXAMPLE_PATH.name, "--repo", repo]),
+        ("номер сходится с заголовками", ["--contract"]),
+    )
     for name, args in runs:
-        run = proc.run([sys.executable, "-I", pathlib.Path(check_facts.__file__).name,
-                        *args], cwd=dist, capture_output=True, text=True,
-                       encoding="utf-8", timeout=600)
+        run = proc.run(
+            [sys.executable, "-I", pathlib.Path(check_facts.__file__).name, *args],
+            cwd=dist,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=600,
+        )
         if run.returncode != 0:
-            last = (run.stderr.strip().splitlines() or run.stdout.strip().splitlines()
-                    or ["вывода нет"])[-1]
-            found.append(f"у издателя не отработало бы: {name} — исход {run.returncode}, "
-                         f"последняя строка: {last}")
+            last = (
+                run.stderr.strip().splitlines() or run.stdout.strip().splitlines() or ["вывода нет"]
+            )[-1]
+            found.append(
+                f"у издателя не отработало бы: {name} — исход {run.returncode}, "
+                f"последняя строка: {last}"
+            )
     return found
 
 
@@ -109,8 +130,11 @@ def step_files(step: str) -> list[str]:
     for line in step.splitlines():
         words = line.split()
         if words[:2] == ["for", "f"] and "in" in words:
-            return [word.rstrip(";") for word in words[words.index("in") + 1:]
-                    if word not in (";", "do")]
+            return [
+                word.rstrip(";")
+                for word in words[words.index("in") + 1 :]
+                if word not in (";", "do")
+            ]
     return []
 
 
@@ -121,37 +145,40 @@ def notes(number: str, repo: str) -> str:
     tree = f"https://github.com/{repo}/blob/{tag}"
     # не проза: номер версии «мажор.минор.патч».
     series = ".".join(number.split(".")[:2])
-    return "\n".join([
-        f"Договор фактов семьи, номер **{number}**: издатель пишет в "
-        f"`facts.json` поле `\"schema\": \"{series}\"`.",
-        "",
-        "Приложено — пять файлов, класть в один каталог:",
-        "",
-        *(f"- `{source.name}`" for source in ASSETS),
-        "",
-        "Проверить свой файл — тем же кодом, что судит его читатель:",
-        "",
-        "```",
-        "python check_facts.py --file .github/badges/facts.json --repo владелец/имя",
-        "```",
-        "",
-        "Исход `0` — договору отвечает, `1` — расхождения названы, `2` — проверка не "
-        "отработала; предупреждения `⚠` кода не меняют.",
-        "",
-        "Шаг для CI — вставить в прогон, публикующий `facts.json`, перед публикацией:",
-        "",
-        step,
-        "",
-        f"Источник по тегу — [`export/facts/facts-contract.md`]({tree}/export/facts/facts-contract.md); "
-        f"как договор меняется — там же, раздел «Как контракт меняется».",
-    ])
+    return "\n".join(
+        [
+            f"Договор фактов семьи, номер **{number}**: издатель пишет в "
+            f'`facts.json` поле `"schema": "{series}"`.',
+            "",
+            "Приложено — пять файлов, класть в один каталог:",
+            "",
+            *(f"- `{source.name}`" for source in ASSETS),
+            "",
+            "Проверить свой файл — тем же кодом, что судит его читатель:",
+            "",
+            "```",
+            "python check_facts.py --file .github/badges/facts.json --repo владелец/имя",
+            "```",
+            "",
+            "Исход `0` — договору отвечает, `1` — расхождения названы, `2` — проверка не "
+            "отработала; предупреждения `⚠` кода не меняют.",
+            "",
+            "Шаг для CI — вставить в прогон, публикующий `facts.json`, перед публикацией:",
+            "",
+            step,
+            "",
+            f"Источник по тегу — [`export/facts/facts-contract.md`]({tree}/export/facts/facts-contract.md); "
+            f"как договор меняется — там же, раздел «Как контракт меняется».",
+        ]
+    )
 
 
 def selftest() -> int:
     """Обе стороны (140): собранный выпуск проверяется, порча и стоящий тег — отказ."""
-    import contextlib                                          # noqa: PLC0415
-    import io                                                  # noqa: PLC0415
-    import tempfile                                            # noqa: PLC0415
+    import contextlib  # noqa: PLC0415
+    import io  # noqa: PLC0415
+    import tempfile  # noqa: PLC0415
+
     broken: list[str] = []
     repo = json.loads(check_facts.EXAMPLE_PATH.read_text(encoding="utf-8"))["repo"]
 
@@ -178,8 +205,10 @@ def selftest() -> int:
         broken.append("шаг для CI не прибит к текущему тегу или не попал на страницу")
     if step_files("    for f in a.py b.json; do") != ["a.py", "b.json"] or step_files("x") != []:
         broken.append("разбор строки for f in в шаге для CI неверен")
-    print(f"  {'да ' if wanted and not set(wanted) - shipped else 'НЕТ'} — шаг для CI: "
-          f"скачивает {len(wanted)} файла из выпуска, прибит к {tag_for(number)}")
+    print(
+        f"  {'да ' if wanted and not set(wanted) - shipped else 'НЕТ'} — шаг для CI: "
+        f"скачивает {len(wanted)} файла из выпуска, прибит к {tag_for(number)}"
+    )
 
     with tempfile.TemporaryDirectory(dir=os.environ.get("RUNNER_TEMP")) as tmp:
         dist = pathlib.Path(tmp) / "dist"
@@ -189,23 +218,32 @@ def selftest() -> int:
         said = verify(dist, repo)
         if said:
             broken.append(f"сборка из дерева не проверилась у «издателя»: {said}")
-        print(f"  {'да ' if not said else 'НЕТ'} — сборка из дерева: пять файлов, у издателя исход 0")
+        print(
+            f"  {'да ' if not said else 'НЕТ'} — сборка из дерева: пять файлов, у издателя исход 0"
+        )
 
         # Порча — обе проверки обязаны её заметить: образец не отвечает
         # договору, проза разошлась с номером.
         (dist / check_facts.EXAMPLE_PATH.name).write_text(
-            json.dumps({"schema": "1.4"}), encoding="utf-8")
+            json.dumps({"schema": "1.4"}), encoding="utf-8"
+        )
         prose = dist / check_facts.CONTRACT_PATH.name
-        prose.write_text(prose.read_text(encoding="utf-8").replace(
-            "## Единые требования · договор", "## Требования · договор"), encoding="utf-8")
+        prose.write_text(
+            prose.read_text(encoding="utf-8").replace(
+                "## Единые требования · договор", "## Требования · договор"
+            ),
+            encoding="utf-8",
+        )
         said = verify(dist, repo)
         if len(said) != 2:
             broken.append(f"порча выпуска: ждали два отказа, вышло {said}")
         print(f"  {'да ' if len(said) == 2 else 'НЕТ'} — порча выпуска: оба отказа названы")
 
-    for shown, asked, expected in (("facts-v1.4.0\n", "facts-v1.4.0", True),
-                                    ("facts-v1.4.0\n", "facts-v1.4.*", False),
-                                    ("facts-v1.4.10\n", "facts-v1.4.1", False)):
+    for shown, asked, expected in (
+        ("facts-v1.4.0\n", "facts-v1.4.0", True),
+        ("facts-v1.4.0\n", "facts-v1.4.*", False),
+        ("facts-v1.4.10\n", "facts-v1.4.1", False),
+    ):
         got = listed(shown, asked)
         if got is not expected:
             broken.append(f"сверка тега «{asked}» среди «{shown.strip()}»: {got}")
@@ -219,8 +257,10 @@ def selftest() -> int:
     with tempfile.TemporaryDirectory(dir=os.environ.get("RUNNER_TEMP")) as tmp:
         sys.argv = ["facts_release.py", "--dist", f"{tmp}/dist", "--notes", f"{tmp}/notes.md"]
         try:
-            with contextlib.redirect_stdout(io.StringIO()), \
-                    contextlib.redirect_stderr(io.StringIO()):
+            with (
+                contextlib.redirect_stdout(io.StringIO()),
+                contextlib.redirect_stderr(io.StringIO()),
+            ):
                 globals()["tag_exists"] = lambda _tag: True
                 if main() != 1:
                     broken.append("стоящий тег не отвергнут — выпуск переставил бы его")
@@ -232,13 +272,16 @@ def selftest() -> int:
                 if main() != 0:
                     broken.append("исправный выпуск не собран")
                 if "check_facts.py --file" not in pathlib.Path(f"{tmp}/notes.md").read_text(
-                        encoding="utf-8"):
+                    encoding="utf-8"
+                ):
                     broken.append("текст страницы не говорит, как запустить проверку")
         finally:
             globals()["tag_exists"], globals()["ASSETS"] = saved_exists, saved_assets
             sys.argv = saved_argv
-    print(f"  {'да ' if len(broken) == before else 'НЕТ'} — main: стоящий тег — 1, "
-          f"нечитаемый договор — 2, исправный — 0")
+    print(
+        f"  {'да ' if len(broken) == before else 'НЕТ'} — main: стоящий тег — 1, "
+        f"нечитаемый договор — 2, исправный — 0"
+    )
 
     if broken:
         print(check_facts.annotate("error", "самопроверка провалена"), file=sys.stderr)
@@ -253,7 +296,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=(__doc__ or "").splitlines()[0])
     parser.add_argument("--dist", type=pathlib.Path, help="каталог файлов выпуска")
     parser.add_argument("--notes", type=pathlib.Path, help="куда записать текст страницы")
-    parser.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", "ArtVsMark/Engineering-Incidents-Playbook"))
+    parser.add_argument(
+        "--repo",
+        default=os.environ.get("GITHUB_REPOSITORY", "ArtVsMark/Engineering-Incidents-Playbook"),
+    )
     parser.add_argument("--selftest", action="store_true")
     args = parser.parse_args()
     if args.selftest:
@@ -263,11 +309,11 @@ def main() -> int:
         return 2
 
     try:
-        number = check_facts.contract_version(
-            check_facts.VERSION_PATH.read_text(encoding="utf-8"))
+        number = check_facts.contract_version(check_facts.VERSION_PATH.read_text(encoding="utf-8"))
         schema = json.loads(check_facts.SCHEMA_PATH.read_text(encoding="utf-8"))
         drift = check_facts.contract_drift(
-            number, schema, check_facts.CONTRACT_PATH.read_text(encoding="utf-8"))
+            number, schema, check_facts.CONTRACT_PATH.read_text(encoding="utf-8")
+        )
         tag = tag_for(number)
         standing = tag_exists(tag)
         missing = [str(source) for source in ASSETS if not source.is_file()]
@@ -285,12 +331,15 @@ def main() -> int:
     if not step_files(step) or missing:
         refusals.append(f"шаг для CI скачивает того, чего в выпуске нет: {missing or 'ничего'}")
     if standing:
-        refusals.append(f"тег {tag} уже стоит: выпуск, на который прибились, не "
-                        f"переставляется — поднимите номер в export/facts/facts.version")
+        refusals.append(
+            f"тег {tag} уже стоит: выпуск, на который прибились, не "
+            f"переставляется — поднимите номер в export/facts/facts.version"
+        )
     if not refusals:
         assemble(args.dist)
-        refusals += verify(args.dist, json.loads(
-            check_facts.EXAMPLE_PATH.read_text(encoding="utf-8"))["repo"])
+        refusals += verify(
+            args.dist, json.loads(check_facts.EXAMPLE_PATH.read_text(encoding="utf-8"))["repo"]
+        )
     if refusals:
         for line in refusals:
             print(check_facts.annotate("error", line), file=sys.stderr)

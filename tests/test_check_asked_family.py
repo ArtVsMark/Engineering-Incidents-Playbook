@@ -9,8 +9,14 @@ import check_asked_family as af
 
 
 def git(root: Path, *args: str) -> str:
-    return subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True,
-                          encoding="utf-8", timeout=60, check=True).stdout.strip()
+    return subprocess.run(
+        ["git", "-C", str(root), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+        check=True,
+    ).stdout.strip()
 
 
 @pytest.fixture
@@ -32,14 +38,17 @@ def запуск(root: Path, base: str, пути: list[str]) -> int:
     return af.main(["--root", str(root), "--paths-from", str(список), "--base", base])
 
 
-@pytest.mark.parametrize("путь", [
-    "scripts/check_new.py",
-    ".claude/hooks/guard.sh",
-    ".claude/hooks/guard.py",
-    ".github/workflows/w.yml",
-    ".github/actions/a/action.yml",
-    ".claude/skills/s/SKILL.md",
-])
+@pytest.mark.parametrize(
+    "путь",
+    [
+        "scripts/check_new.py",
+        ".claude/hooks/guard.sh",
+        ".claude/hooks/guard.py",
+        ".github/workflows/w.yml",
+        ".github/actions/a/action.yml",
+        ".claude/skills/s/SKILL.md",
+    ],
+)
 def test_новый_механизм_без_записи_отказ(репо, capsys, путь):
     root, base = репо
     (root / путь).parent.mkdir(parents=True, exist_ok=True)
@@ -51,7 +60,8 @@ def test_новый_механизм_без_записи_отказ(репо, ca
 def test_новый_механизм_с_записью_чисто(репо):
     root, base = репо
     (root / "scripts" / "check_new.py").write_text(
-        '"""СПЕРВА СПРОСИЛИ СЕМЬЮ (162): у соседей нет."""\n', encoding="utf-8")
+        '"""СПЕРВА СПРОСИЛИ СЕМЬЮ (162): у соседей нет."""\n', encoding="utf-8"
+    )
     assert запуск(root, base, ["scripts/check_new.py"]) == 0
 
 
@@ -84,23 +94,31 @@ def test_база_не_разобрана_третий_исход(репо, caps
 
 
 def test_список_не_прочитан_третий_исход(tmp_path):
-    assert af.main(["--root", str(tmp_path), "--paths-from", str(tmp_path / "нет.txt"),
-                    "--base", "HEAD"]) == 2
+    assert (
+        af.main(
+            ["--root", str(tmp_path), "--paths-from", str(tmp_path / "нет.txt"), "--base", "HEAD"]
+        )
+        == 2
+    )
 
 
 def test_голое_число_не_запись(репо):
     """«162» в замере или списке правил — не запись о семье (обзор #884)."""
     root, base = репо
     (root / "scripts" / "check_new.py").write_text(
-        '"""Реализует правила: 001, 162, 214."""\n', encoding="utf-8")
+        '"""Реализует правила: 001, 162, 214."""\n', encoding="utf-8"
+    )
     assert запуск(root, base, ["scripts/check_new.py"]) == 1
 
 
-@pytest.mark.parametrize("путь, виден", [
-    (".github/workflows/deps-pins.yml", True),      # свой прогон подъёма закреплений
-    ("scripts/check_hook_interpreter.py", True),    # гейт интерпретатора хуков
-    ("scripts/check_old.py", False),                # расширение старого: граница
-])
+@pytest.mark.parametrize(
+    "путь, виден",
+    [
+        (".github/workflows/deps-pins.yml", True),  # свой прогон подъёма закреплений
+        ("scripts/check_hook_interpreter.py", True),  # гейт интерпретатора хуков
+        ("scripts/check_old.py", False),  # расширение старого: граница
+    ],
+)
 def test_три_случая_16_10(репо, путь, виден):
     """Охват сверен со случаями, ради которых гейт заведён (обзор #884)."""
     root, base = репо
@@ -109,10 +127,13 @@ def test_три_случая_16_10(репо, путь, виден):
     assert запуск(root, base, [путь]) == (1 if виден else 0)
 
 
-@pytest.mark.parametrize("строка", [
-    '"""Реализует правила: 162, 214 — семь проверок."""\n',     # числительное
-    '"""162 — спрос на гейт велик."""\n',                       # потребность
-])
+@pytest.mark.parametrize(
+    "строка",
+    [
+        '"""Реализует правила: 162, 214 — семь проверок."""\n',  # числительное
+        '"""162 — спрос на гейт велик."""\n',  # потребность
+    ],
+)
 def test_соседнее_слово_не_запись(репо, строка):
     """«Семь» и «спрос» рядом с 162 — не запись о семье (обзор #888)."""
     root, base = репо

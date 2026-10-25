@@ -17,7 +17,6 @@
 обязательная проверка не зависит от чужого сервера.
 """
 
-
 import datetime as dt
 import email.message
 import email.utils
@@ -30,10 +29,8 @@ from conftest import write
 
 def prepare(monkeypatch, repo: Path, consumers, rules=("001", "002")) -> None:
     registry = repo / ".rules" / "consumers.json"
-    write(registry, json.dumps({"schema": "1.0", "consumers": consumers},
-                               ensure_ascii=False))
-    write(repo / "export" / "rules.json",
-          json.dumps({"rules": [{"id": i} for i in rules]}))
+    write(registry, json.dumps({"schema": "1.0", "consumers": consumers}, ensure_ascii=False))
+    write(repo / "export" / "rules.json", json.dumps({"rules": [{"id": i} for i in rules]}))
     monkeypatch.setattr(ab, "ROOT", repo)
     monkeypatch.setattr(ab, "CONSUMERS", registry)
     monkeypatch.setattr(ab, "EXPORT_JSON", repo / "export" / "where.json")
@@ -47,12 +44,12 @@ def cli(monkeypatch, *argv: str) -> None:
 
 def answer(repo: Path, where: str, **rules) -> str:
     """Кладёт ответ потребителя и возвращает путь ОТНОСИТЕЛЬНО корня."""
-    write(repo / where,
-          json.dumps({"rules": {k: {"status": v} for k, v in rules.items()}}))
+    write(repo / where, json.dumps({"rules": {k: {"status": v} for k, v in rules.items()}}))
     return where
 
 
 # ── третий исход: сверять нечего ───────────────────────────────────────────
+
 
 def test_нет_реестра_это_третий_исход(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo, [])
@@ -71,6 +68,7 @@ def test_пустой_реестр_это_третий_исход(monkeypatch, r
 
 # ── состояния, которые находкой НЕ являются ────────────────────────────────
 
+
 def test_потребитель_без_связи_это_состояние(monkeypatch, repo):
     slices, problems = ab.collect([{"repo": "owner/one"}])
     assert problems == []
@@ -86,10 +84,9 @@ def test_приватный_ответ_называется_неизвестны
 
 # ── находка: объявленный потребитель, чей ответ не читается ────────────────
 
-def test_нечитаемый_ответ_объявленного_потребителя_это_находка(
-        monkeypatch, repo, capsys):
-    prepare(monkeypatch, repo,
-            [{"repo": "owner/one", "bindings": ".rules/нет-такого.json"}])
+
+def test_нечитаемый_ответ_объявленного_потребителя_это_находка(monkeypatch, repo, capsys):
+    prepare(monkeypatch, repo, [{"repo": "owner/one", "bindings": ".rules/нет-такого.json"}])
     cli(monkeypatch)
     assert ab.main() == 1
     assert "не читается" in capsys.readouterr().err
@@ -114,16 +111,17 @@ def test_живой_ответ_собирается_в_срез(monkeypatch, rep
 # всех одинаково, не различает ничего (051), а утверждение о механизме
 # разошлось с механизмом на второй день после постройки (183).
 
+
 def test_vtoroy_nomer_doezzhaet_do_sreza(monkeypatch, repo):
     """Ровно предмет дефекта: поле есть в файле — обязано быть в срезе."""
     prepare(monkeypatch, repo, [])
     monkeypatch.setattr(ab, "ROOT", repo)
-    write(repo / ".rules" / "bindings.json", json.dumps(
-        {"schema": "1.2", "answers_to": "1.5",
-         "rules": {"001": {"status": "active"}}}))
+    write(
+        repo / ".rules" / "bindings.json",
+        json.dumps({"schema": "1.2", "answers_to": "1.5", "rules": {"001": {"status": "active"}}}),
+    )
 
-    slices, _ = ab.collect([{"repo": "owner/one",
-                             "bindings": ".rules/bindings.json"}])
+    slices, _ = ab.collect([{"repo": "owner/one", "bindings": ".rules/bindings.json"}])
 
     assert slices[0]["answers_to"] == "1.5"
 
@@ -131,15 +129,18 @@ def test_vtoroy_nomer_doezzhaet_do_sreza(monkeypatch, repo):
 def test_shodyashchiysya_nomer_vygruzki_molchit():
     """Граница с другой стороны: сверка обязана УМЕТЬ промолчать. Пока поле не
     доезжало, промолчать она не могла ни на каком входе (140)."""
-    assert ab.export_lag([{"repo": "o/a", "rules": {"001": "active"},
-                           "answers_to": "1.5"}], "1.5") == []
+    assert (
+        ab.export_lag([{"repo": "o/a", "rules": {"001": "active"}, "answers_to": "1.5"}], "1.5")
+        == []
+    )
 
 
 def test_otstavshiy_nomer_vygruzki_nazyvaet_oba(monkeypatch, repo):
     """Отставание называет ОБА номера: «правьте на 1.5» без «у вас 1.2»
     не даёт понять, насколько отстал ответ и стоит ли перечитывать (158)."""
-    найдено = ab.export_lag([{"repo": "o/a", "rules": {"001": "active"},
-                              "answers_to": "1.2"}], "1.5")
+    найдено = ab.export_lag(
+        [{"repo": "o/a", "rules": {"001": "active"}, "answers_to": "1.2"}], "1.5"
+    )
 
     assert len(найдено) == 1
     assert "1.2" in найдено[0] and "1.5" in найдено[0]
@@ -148,14 +149,14 @@ def test_otstavshiy_nomer_vygruzki_nazyvaet_oba(monkeypatch, repo):
 def test_nomer_ne_nazvan_eto_otdelnyy_otvet():
     """«Не назвал» и «отстал» — разные состояния: первому подъём адресовать
     нечем вовсе, второму есть куда (027)."""
-    найдено = ab.export_lag([{"repo": "o/a", "rules": {"001": "active"},
-                              "answers_to": ""}], "1.5")
+    найдено = ab.export_lag([{"repo": "o/a", "rules": {"001": "active"}, "answers_to": ""}], "1.5")
 
     assert len(найдено) == 1
     assert "не называет" in найдено[0]
 
 
 # ── сверка собранного: --check ─────────────────────────────────────────────
+
 
 def test_собранная_сводка_согласована(monkeypatch, repo):
     src = answer(repo, ".rules/bindings.json", **{"001": "active"})
@@ -172,10 +173,16 @@ def test_реестр_ушёл_вперёд_сводки_это_находка(m
     cli(monkeypatch)
     assert ab.main() == 0
     # Потребитель приехал в реестр, сводку не пересобрали.
-    write(ab.CONSUMERS, json.dumps(
-        {"schema": "1.0", "consumers": [{"repo": "owner/one", "bindings": src},
-                                        {"repo": "owner/two"}]},
-        ensure_ascii=False))
+    write(
+        ab.CONSUMERS,
+        json.dumps(
+            {
+                "schema": "1.0",
+                "consumers": [{"repo": "owner/one", "bindings": src}, {"repo": "owner/two"}],
+            },
+            ensure_ascii=False,
+        ),
+    )
     cli(monkeypatch, "--check")
     assert ab.main() == 1
     assert "owner/two" in capsys.readouterr().err
@@ -232,9 +239,11 @@ def test_местный_ответ_пропал_после_сборки_это_�
 
 # ── производная таблица ────────────────────────────────────────────────────
 
+
 def test_таблица_перечисляет_правила_поимённо(repo):
-    slices = [{"repo": "owner/one", "state": "подключён", "answered": 1,
-               "rules": {"001": "active"}}]
+    slices = [
+        {"repo": "owner/one", "state": "подключён", "answered": 1, "rules": {"001": "active"}}
+    ]
     text = ab.as_markdown(slices, ["001", "002"])
     assert "| 001 |" in text and "| 002 |" in text
     assert "не правится руками" in text
@@ -248,8 +257,9 @@ def test_без_подключённых_таблица_правил_объяв�
 
 
 def test_отставший_ответ_это_предупреждение_а_не_отказ():
-    old = (__import__("datetime").date.today()
-           - __import__("datetime").timedelta(days=ab.TTL_DAYS + 1)).isoformat()
+    old = (
+        __import__("datetime").date.today() - __import__("datetime").timedelta(days=ab.TTL_DAYS + 1)
+    ).isoformat()
     assert ab.stale([{"repo": "owner/one", "read_at": old}])
     assert ab.stale([{"repo": "owner/one", "read_at": "не дата"}]) == []
 
@@ -265,8 +275,10 @@ def test_отставший_ответ_это_предупреждение_а_н
 # Срок делает адресата. Набор двусторонний: свежий и подключённый обязаны
 # проходить, иначе состояние станет находкой на пустом месте.
 
+
 def days_ago(n: int) -> str:
     import datetime as dt
+
     return (dt.date.today() - dt.timedelta(days=n)).isoformat()
 
 
@@ -285,14 +297,12 @@ def test_на_границе_срока_ещё_состояние():
 
 
 def test_подключённый_срока_не_знает():
-    assert ab.unconnected([{"repo": "o/a", "since": days_ago(999),
-                            "bindings": "x.json"}]) == []
+    assert ab.unconnected([{"repo": "o/a", "since": days_ago(999), "bindings": "x.json"}]) == []
 
 
 def test_приватный_подключения_не_требует():
     """Его ответ недоступен по объявленной причине — требовать нечего."""
-    assert ab.unconnected([{"repo": "o/a", "since": days_ago(999),
-                            "access": "private"}]) == []
+    assert ab.unconnected([{"repo": "o/a", "since": days_ago(999), "access": "private"}]) == []
 
 
 def test_без_начала_отсчёта_это_находка():
@@ -316,10 +326,14 @@ def test_отказ_живёт_в_сборке_а_не_в_проверке_из�
     красному (051).
     """
     src = answer(repo, ".rules/bindings.json", **{"001": "active"})
-    prepare(monkeypatch, repo, [
-        {"repo": "owner/one", "bindings": src, "since": days_ago(1)},
-        {"repo": "owner/two", "since": days_ago(ab.UNCONNECTED_DAYS + 1)},
-    ])
+    prepare(
+        monkeypatch,
+        repo,
+        [
+            {"repo": "owner/one", "bindings": src, "since": days_ago(1)},
+            {"repo": "owner/two", "since": days_ago(ab.UNCONNECTED_DAYS + 1)},
+        ],
+    )
     cli(monkeypatch)
     assert ab.main() == 1
     assert "owner/two" in capsys.readouterr().err
@@ -330,8 +344,7 @@ def test_отказ_живёт_в_сборке_а_не_в_проверке_из�
 
 def test_сводка_всё_равно_записана_при_находке(monkeypatch, repo):
     """Отказ не отменяет работу: сводка собрана, иначе чинить было бы нечем."""
-    prepare(monkeypatch, repo, [{"repo": "owner/two",
-                                 "since": days_ago(ab.UNCONNECTED_DAYS + 1)}])
+    prepare(monkeypatch, repo, [{"repo": "owner/two", "since": days_ago(ab.UNCONNECTED_DAYS + 1)}])
     cli(monkeypatch)
     assert ab.main() == 1
     assert ab.EXPORT_MD.exists() and ab.EXPORT_JSON.exists()
@@ -345,11 +358,20 @@ def test_сводка_всё_равно_записана_при_находке(m
 # адрес. Ответ существовал и был недоступен, пока не откроешь три файла в трёх
 # репозиториях.
 
+
 def held(repo: Path, where: str, **rules) -> str:
     """Ответ потребителя с механизмом: значение — (статус, механизм, адрес)."""
-    write(repo / where, json.dumps({"rules": {
-        k: {"status": v[0], "mechanism": v[1], "where": v[2]}
-        for k, v in rules.items()}}, ensure_ascii=False))
+    write(
+        repo / where,
+        json.dumps(
+            {
+                "rules": {
+                    k: {"status": v[0], "mechanism": v[1], "where": v[2]} for k, v in rules.items()
+                }
+            },
+            ensure_ascii=False,
+        ),
+    )
     return where
 
 
@@ -369,10 +391,20 @@ def cell(md: str, project: str, head: str) -> str:
 
 
 def test_таблица_потребителей_называет_чем_держится(monkeypatch, repo):
-    prepare(monkeypatch, repo, [{
-        "repo": "o/a", "bindings": held(repo, ".rules/a.json",
-                                        **{"001": ("active", "gate", "s/g.py"),
-                                           "002": ("active", "none", "")})}])
+    prepare(
+        monkeypatch,
+        repo,
+        [
+            {
+                "repo": "o/a",
+                "bindings": held(
+                    repo,
+                    ".rules/a.json",
+                    **{"001": ("active", "gate", "s/g.py"), "002": ("active", "none", "")},
+                ),
+            }
+        ],
+    )
     cli(monkeypatch)
 
     ab.main()
@@ -386,9 +418,17 @@ def test_таблица_потребителей_называет_чем_дер�
 
 def test_отсутствие_механизма_и_none_это_одно_состояние(monkeypatch, repo):
     """`mechanism` не задан и `mechanism: none` — оба «не держится ничем»."""
-    write(repo / ".rules/a.json", json.dumps({"rules": {
-        "001": {"status": "active"},
-        "002": {"status": "active", "mechanism": "none"}}}))
+    write(
+        repo / ".rules/a.json",
+        json.dumps(
+            {
+                "rules": {
+                    "001": {"status": "active"},
+                    "002": {"status": "active", "mechanism": "none"},
+                }
+            }
+        ),
+    )
     prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": ".rules/a.json"}])
     cli(monkeypatch)
 
@@ -399,11 +439,20 @@ def test_отсутствие_механизма_и_none_это_одно_сос�
 
 
 def test_чужой_механизм_виден_там_где_у_соседа_ничем(monkeypatch, repo):
-    prepare(monkeypatch, repo, [
-        {"repo": "o/a", "bindings": held(repo, ".rules/a.json",
-                                         **{"001": ("active", "gate", "s/g.py")})},
-        {"repo": "o/b", "bindings": held(repo, ".rules/b.json",
-                                         **{"001": ("active", "none", "")})}])
+    prepare(
+        monkeypatch,
+        repo,
+        [
+            {
+                "repo": "o/a",
+                "bindings": held(repo, ".rules/a.json", **{"001": ("active", "gate", "s/g.py")}),
+            },
+            {
+                "repo": "o/b",
+                "bindings": held(repo, ".rules/b.json", **{"001": ("active", "none", "")}),
+            },
+        ],
+    )
     cli(monkeypatch)
 
     ab.main()
@@ -417,11 +466,20 @@ def test_чужой_механизм_виден_там_где_у_соседа_н
 
 def test_правило_без_механизма_ни_у_кого_в_раздел_не_идёт(monkeypatch, repo):
     """Учиться не у кого — строки быть не должно, иначе раздел станет шумом."""
-    prepare(monkeypatch, repo, [
-        {"repo": "o/a", "bindings": held(repo, ".rules/a.json",
-                                         **{"001": ("active", "none", "")})},
-        {"repo": "o/b", "bindings": held(repo, ".rules/b.json",
-                                         **{"001": ("active", "none", "")})}])
+    prepare(
+        monkeypatch,
+        repo,
+        [
+            {
+                "repo": "o/a",
+                "bindings": held(repo, ".rules/a.json", **{"001": ("active", "none", "")}),
+            },
+            {
+                "repo": "o/b",
+                "bindings": held(repo, ".rules/b.json", **{"001": ("active", "none", "")}),
+            },
+        ],
+    )
     cli(monkeypatch)
 
     ab.main()
@@ -431,11 +489,21 @@ def test_правило_без_механизма_ни_у_кого_в_разде
 
 
 def test_сколько_правил_держит_механизм_считается(monkeypatch, repo):
-    prepare(monkeypatch, repo, [{
-        "repo": "o/a", "bindings": held(repo, ".rules/a.json",
-                                        **{"001": ("active", "gate", "s/g.py"),
-                                           "002": ("active", "gate", "s/g.py")})},
-    ], rules=("001", "002"))
+    prepare(
+        monkeypatch,
+        repo,
+        [
+            {
+                "repo": "o/a",
+                "bindings": held(
+                    repo,
+                    ".rules/a.json",
+                    **{"001": ("active", "gate", "s/g.py"), "002": ("active", "gate", "s/g.py")},
+                ),
+            },
+        ],
+        rules=("001", "002"),
+    )
     cli(monkeypatch)
 
     ab.main()
@@ -447,9 +515,18 @@ def test_сколько_правил_держит_механизм_считае�
 
 def test_держащий_без_названного_адреса_назван_числом(monkeypatch, repo):
     """Доля без остатка выглядела бы как полнота — сколько таких, печатается."""
-    prepare(monkeypatch, repo, [{
-        "repo": "o/a", "bindings": held(repo, ".rules/a.json",
-                                        **{"001": ("active", "gate", "чтением при приёмке")})}])
+    prepare(
+        monkeypatch,
+        repo,
+        [
+            {
+                "repo": "o/a",
+                "bindings": held(
+                    repo, ".rules/a.json", **{"001": ("active", "gate", "чтением при приёмке")}
+                ),
+            }
+        ],
+    )
     cli(monkeypatch)
 
     ab.main()
@@ -465,8 +542,10 @@ def test_смена_механизма_без_пересборки_это_нах
     cli(monkeypatch)
     ab.main()
 
-    write(repo / путь, json.dumps({"rules": {
-        "001": {"status": "active", "mechanism": "none", "where": ""}}}))
+    write(
+        repo / путь,
+        json.dumps({"rules": {"001": {"status": "active", "mechanism": "none", "where": ""}}}),
+    )
     cli(monkeypatch, "--check")
     код = ab.main()
 
@@ -481,41 +560,56 @@ def test_смена_механизма_без_пересборки_это_нах
 # признано действующими. Замер поймал оба края: у грейдера тринадцать без
 # ответа, у витрины один ЛИШНИЙ — ответ за правило, которого в экспорте нет.
 
+
 def test_следы_считаются_по_экспорту(repo):
-    counts = ab.trail_counts([
-        {"id": "001", "trails": [{"repo": "o/a"}, {"repo": "o/b"}]},
-        {"id": "002", "trails": [{"repo": "o/a"}]},
-        {"id": "003"},
-    ])
+    counts = ab.trail_counts(
+        [
+            {"id": "001", "trails": [{"repo": "o/a"}, {"repo": "o/b"}]},
+            {"id": "002", "trails": [{"repo": "o/a"}]},
+            {"id": "003"},
+        ]
+    )
 
     assert counts == {"o/a": 2, "o/b": 1}
 
 
 def test_след_есть_а_потребитель_не_подключён(monkeypatch, repo):
     """Следы считаются и у неподключённого: иначе его вклад не виден вовсе."""
-    write(repo / "export" / "rules.json", json.dumps(
-        {"rules": [{"id": "001", "trails": [{"repo": "o/тихий"}]}]}))
-    prepare(monkeypatch, repo, [{"repo": "o/тихий", "bindings": None}],
-            rules=("001",))
-    write(repo / "export" / "rules.json", json.dumps(
-        {"rules": [{"id": "001", "trails": [{"repo": "o/тихий"}]}]}))
+    write(
+        repo / "export" / "rules.json",
+        json.dumps({"rules": [{"id": "001", "trails": [{"repo": "o/тихий"}]}]}),
+    )
+    prepare(monkeypatch, repo, [{"repo": "o/тихий", "bindings": None}], rules=("001",))
+    write(
+        repo / "export" / "rules.json",
+        json.dumps({"rules": [{"id": "001", "trails": [{"repo": "o/тихий"}]}]}),
+    )
     cli(monkeypatch)
 
     ab.main()
-    строка = next(l for l in (repo / "export" / "where.md")
-                  .read_text(encoding="utf-8").splitlines()
-                  if l.startswith("| `тихий`"))
+    строка = next(
+        l
+        for l in (repo / "export" / "where.md").read_text(encoding="utf-8").splitlines()
+        if l.startswith("| `тихий`")
+    )
 
     assert "| не подключён | 1 |" in строка
 
 
 def test_без_ответа_и_лишний_ответ_разные_числа(monkeypatch, repo):
     """Оба края видны: правило без ответа и ответ за несуществующее правило."""
-    write(repo / ".rules/a.json", json.dumps({"rules": {
-        "001": {"status": "active", "mechanism": "gate", "where": "s/g.py"},
-        "999": {"status": "active", "mechanism": "gate", "where": "s/g.py"}}}))
-    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": ".rules/a.json"}],
-            rules=("001", "002"))
+    write(
+        repo / ".rules/a.json",
+        json.dumps(
+            {
+                "rules": {
+                    "001": {"status": "active", "mechanism": "gate", "where": "s/g.py"},
+                    "999": {"status": "active", "mechanism": "gate", "where": "s/g.py"},
+                }
+            }
+        ),
+    )
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": ".rules/a.json"}], rules=("001", "002"))
     cli(monkeypatch)
 
     ab.main()
@@ -532,10 +626,20 @@ def test_без_ответа_и_лишний_ответ_разные_числа(
 
 def test_механизмы_считаются_различными_адресами(monkeypatch, repo):
     """Два правила на одном файле — один механизм, а не два."""
-    prepare(monkeypatch, repo, [{
-        "repo": "o/a", "bindings": held(repo, ".rules/a.json",
-                                        **{"001": ("active", "gate", "s/g.py"),
-                                           "002": ("active", "gate", "s/g.py")})}])
+    prepare(
+        monkeypatch,
+        repo,
+        [
+            {
+                "repo": "o/a",
+                "bindings": held(
+                    repo,
+                    ".rules/a.json",
+                    **{"001": ("active", "gate", "s/g.py"), "002": ("active", "gate", "s/g.py")},
+                ),
+            }
+        ],
+    )
     cli(monkeypatch)
 
     ab.main()
@@ -550,6 +654,7 @@ def test_механизмы_считаются_различными_адреса
 # «ответ есть, а правила такого в каталоге нет». У потребителей тот же вопрос
 # не задавался вовсе. Замер: у витрины лежит ответ о правиле 143, удалённом
 # как дубль, и лежал он там с самого удаления, невидимый.
+
 
 def test_ответ_о_несуществующем_правиле_это_находка():
     срез = [{"repo": "o/a", "rules": {"001": "active", "143": "active"}}]
@@ -572,9 +677,15 @@ def test_правило_без_ответа_находкой_не_считает
 # одна и она принципиальная: чужой файл отсюда не чинится, поэтому находка
 # едет адресату, а прогон от неё не краснеет (051, 053).
 
+
 def test_механизм_потребителя_без_адреса_это_находка():
-    срез = [{"repo": "o/a", "rules": {"001": "active"},
-             "holds": {"001": {"mechanism": "gate", "where": "везде понемногу"}}}]
+    срез = [
+        {
+            "repo": "o/a",
+            "rules": {"001": "active"},
+            "holds": {"001": {"mechanism": "gate", "where": "везде понемногу"}},
+        }
+    ]
 
     находки = ab.stale_answers(срез, ["001"])
 
@@ -583,16 +694,26 @@ def test_механизм_потребителя_без_адреса_это_на
 
 def test_адрес_у_потребителя_находкой_не_считается():
     """Обратная сторона (140): гейт, отвергающий всё, зелен так же, как верный."""
-    срез = [{"repo": "o/a", "rules": {"001": "active"},
-             "holds": {"001": {"mechanism": "gate", "where": "scripts/g.py"}}}]
+    срез = [
+        {
+            "repo": "o/a",
+            "rules": {"001": "active"},
+            "holds": {"001": {"mechanism": "gate", "where": "scripts/g.py"}},
+        }
+    ]
 
     assert ab.stale_answers(срез, ["001"]) == []
 
 
 def test_у_потребителя_ничем_адреса_не_требуют():
     """`none` честнее выдуманного пути, и наказывать за честность нельзя."""
-    срез = [{"repo": "o/a", "rules": {"001": "active"},
-             "holds": {"001": {"mechanism": "none", "where": "пока никак"}}}]
+    срез = [
+        {
+            "repo": "o/a",
+            "rules": {"001": "active"},
+            "holds": {"001": {"mechanism": "none", "where": "пока никак"}},
+        }
+    ]
 
     assert ab.stale_answers(срез, ["001"]) == []
 
@@ -602,12 +723,10 @@ def test_неподключённый_в_находки_не_попадает():
     assert ab.stale_answers([{"repo": "o/a", "state": "не подключён"}], ["001"]) == []
 
 
-def test_на_изменении_лишний_ответ_это_предупреждение_а_не_отказ(
-        monkeypatch, repo, capsys):
+def test_на_изменении_лишний_ответ_это_предупреждение_а_не_отказ(monkeypatch, repo, capsys):
     """Чужой файл отсюда не чинится — красить за него чужую работу нельзя."""
     путь = answer(repo, ".rules/a.json", **{"001": "active", "143": "active"})
-    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}],
-            rules=("001", "002"))
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}], rules=("001", "002"))
     cli(monkeypatch)
     ab.main()
 
@@ -621,8 +740,7 @@ def test_на_изменении_лишний_ответ_это_предупре
 def test_перепись_печатается_и_на_зелёном(monkeypatch, repo, capsys):
     """Число, видное только при поломке, не отвечает «куда мы движемся»."""
     путь = answer(repo, ".rules/a.json", **{"001": "active", "002": "unreviewed"})
-    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}],
-            rules=("001", "002", "003"))
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}], rules=("001", "002", "003"))
     cli(monkeypatch)
 
     код = ab.main()
@@ -634,8 +752,7 @@ def test_перепись_печатается_и_на_зелёном(monkeypatc
 
 
 def test_перепись_называет_неподключённого_состоянием(monkeypatch, repo, capsys):
-    prepare(monkeypatch, repo, [{"repo": "o/тихий", "bindings": None}],
-            rules=("001",))
+    prepare(monkeypatch, repo, [{"repo": "o/тихий", "bindings": None}], rules=("001",))
     cli(monkeypatch)
 
     ab.main()
@@ -651,11 +768,11 @@ def test_перепись_называет_неподключённого_сос
 # и снять это красное он не мог ничем, кроме исключения потребителя из
 # реестра. Находки делятся по тому, чьей правкой снимаются.
 
+
 def test_чужая_находка_прогон_не_роняет(monkeypatch, repo, capsys):
     """Лишний ответ правится у потребителя — отсюда недостижимо."""
     путь = answer(repo, ".rules/a.json", **{"001": "active", "143": "active"})
-    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}],
-            rules=("001", "002"))
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}], rules=("001", "002"))
     cli(monkeypatch)
 
     код = ab.main()
@@ -666,8 +783,7 @@ def test_чужая_находка_прогон_не_роняет(monkeypatch, r
 def test_чужая_находка_названа_вслух(monkeypatch, repo, capsys):
     """Не краснеть — не значит молчать: иначе это было бы 075."""
     путь = answer(repo, ".rules/a.json", **{"001": "active", "143": "active"})
-    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}],
-            rules=("001", "002"))
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": путь}], rules=("001", "002"))
     cli(monkeypatch)
 
     ab.main()
@@ -679,8 +795,7 @@ def test_чужая_находка_названа_вслух(monkeypatch, repo, 
 
 def test_своя_находка_прогон_роняет(monkeypatch, repo, capsys):
     """Нечитаемый ответ по объявленному адресу правится ЗДЕСЬ — в реестре."""
-    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": ".rules/нет.json"}],
-            rules=("001",))
+    prepare(monkeypatch, repo, [{"repo": "o/a", "bindings": ".rules/нет.json"}], rules=("001",))
     cli(monkeypatch)
 
     код = ab.main()
@@ -692,9 +807,12 @@ def test_своя_находка_прогон_роняет(monkeypatch, repo, ca
 def test_обе_находки_разом_роняет_только_своя(monkeypatch, repo, capsys):
     """Своя и чужая рядом: код берётся у своей, чужая всё равно названа."""
     путь = answer(repo, ".rules/a.json", **{"001": "active", "143": "active"})
-    prepare(monkeypatch, repo, [
-        {"repo": "o/a", "bindings": путь},
-        {"repo": "o/b", "bindings": ".rules/нет.json"}], rules=("001", "002"))
+    prepare(
+        monkeypatch,
+        repo,
+        [{"repo": "o/a", "bindings": путь}, {"repo": "o/b", "bindings": ".rules/нет.json"}],
+        rules=("001", "002"),
+    )
     cli(monkeypatch)
 
     код = ab.main()
@@ -710,6 +828,7 @@ def test_обе_находки_разом_роняет_только_своя(mon
 # Заменённая запись остаётся в выгрузке и остаётся действующей — в «лишние»
 # такой ответ не попадёт и не должен. Но молчать нельзя: потребитель не знает,
 # что появилась смена, и узнать может только отсюда. Набор двусторонний.
+
 
 def test_ответ_о_заменённом_называется_состоянием():
     срез = {"repo": "o/a", "rules": {"001": "active"}}
@@ -737,11 +856,14 @@ def test_о_незаменённом_правиле_не_говорят():
 
 # ── третье число: происхождение записей (задача #192) ──────────────────────
 
+
 def test_rodil_schitaetsya_po_polyu_origin():
     """Метрика — выборка по хранимому полю, а не догадка по следам."""
-    rules = [{"id": "001", "origin": "o/a"},
-             {"id": "002", "origin": "o/a"},
-             {"id": "003", "origin": "o/b"}]
+    rules = [
+        {"id": "001", "origin": "o/a"},
+        {"id": "002", "origin": "o/a"},
+        {"id": "003", "origin": "o/b"},
+    ]
 
     assert ab.origin_counts(rules) == {"o/a": 2, "o/b": 1}
 
@@ -756,14 +878,14 @@ def test_sled_i_proishozhdenie_schitayutsya_otdelno():
     """След ведёт туда, где поломка ВИДНА, а происхождение — где случилась.
     Слить их значило бы выдать догадку за выборку: у части записей следов
     нет вовсе, а у части их несколько и родителя по ним не выбрать."""
-    rules = [{"id": "001", "origin": "o/a",
-              "trails": [{"repo": "o/b"}, {"repo": "o/c"}]}]
+    rules = [{"id": "001", "origin": "o/a", "trails": [{"repo": "o/b"}, {"repo": "o/c"}]}]
 
     assert ab.origin_counts(rules) == {"o/a": 1}
     assert ab.trail_counts(rules) == {"o/b": 1, "o/c": 1}
 
 
 # ── версия ответа сверяется с издателем (157) ──────────────────────────────
+
 
 def срез(repo: str, schema: str) -> dict:
     return {"repo": repo, "schema": schema, "rules": {"001": "active"}}
@@ -773,8 +895,8 @@ def test_otstavshaya_shema_eto_nahodka():
     """52 ответа грейдера из 153 стояли расколотым словом, и его гейт был
     зелёным: он сравнивал свою версию со своей же константой."""
     assert ab.schema_lag([срез("o/a", "1.0")], "1.1") == [
-        "o/a: ответ по схеме 1.0, у контракта 1.1 — записи остаются валидными, "
-        "означая уже другое"]
+        "o/a: ответ по схеме 1.0, у контракта 1.1 — записи остаются валидными, означая уже другое"
+    ]
 
 
 def test_tekushchaya_shema_molchit():
@@ -799,6 +921,7 @@ def test_nepodklyuchyonnyy_ne_schitaetsya():
 # появлялось раз в сутки на вкладке, куда не ходят (142). Замер, которым это
 # вскрылось: у одного потребителя ответ объявлял версию ВЫШЕ нашей — в его
 # файл попал номер схемы ВЫГРУЗКИ вместо номера схемы ОТВЕТА.
+
 
 def срез(repo, schema, rules=None):
     return {"repo": repo, "schema": schema, "rules": rules or {"001": "active"}}
@@ -832,6 +955,7 @@ def test_nepodklyuchivshiysya_v_schyot_ne_idyot():
 
 
 # ── «ответа нет» опровергается пробой, а не календарём (правила 175, 075) ───
+
 
 def читатель(ответ):
     """Подделка чтения по адресу. Источник подделки (правило 170): форма снята
@@ -882,11 +1006,11 @@ def test_adres_zapolnen_probu_ne_delayut():
     assert ab.unconnected(заполнен, читатель({"rules": {"001": {}}})) == []
 
 
-
 # ── обрыв связи не то же самое, что ответ площадки (051) ───────────────────
 # Ночной прогон 8 сентября объявил двух потребителей недоступными по одному
 # сбросу соединения — и оба прочитались через четверть часа. Здесь предмет
 # ровно этот: что повторяется, что не повторяется и как об этом сказано.
+
 
 class ОтветЗаглушка:
     """Тело ответа: `urlopen` отдаёт его как контекстный менеджер.
@@ -931,9 +1055,7 @@ def _урл(monkeypatch, *исходы) -> list[int]:
 
 
 def test_сброс_связи_переспрашивается_и_ответ_доезжает(monkeypatch):
-    попытки = _урл(monkeypatch,
-                   OSError(104, "Connection reset by peer"),
-                   '{"rules": {}}')
+    попытки = _урл(monkeypatch, OSError(104, "Connection reset by peer"), '{"rules": {}}')
     data, err = ab.fetch("https://example.org/bindings.json")
     assert err is None and data == {"rules": {}}
     assert len(попытки) == 2
@@ -949,8 +1071,9 @@ def test_обрыв_на_всех_попытках_называет_их_чис�
 
 def test_ответ_404_это_ответ_и_не_переспрашивается(monkeypatch):
     """«Файла нет» — решение площадки, а не молчание провода."""
-    попытки = _урл(monkeypatch, ab.urllib.error.HTTPError(
-        "https://example.org/x", 404, "Not Found", {}, None))
+    попытки = _урл(
+        monkeypatch, ab.urllib.error.HTTPError("https://example.org/x", 404, "Not Found", {}, None)
+    )
     data, err = ab.fetch("https://example.org/x")
     assert data is None and "404" in err
     assert len(попытки) == 1
@@ -958,10 +1081,11 @@ def test_ответ_404_это_ответ_и_не_переспрашиваетс
 
 def test_ответ_503_переспрашивается_как_обрыв(monkeypatch):
     """«Мне сейчас плохо» — состояние, а не отсутствие файла."""
-    попытки = _урл(monkeypatch,
-                   ab.urllib.error.HTTPError("https://example.org/x", 503,
-                                             "Service Unavailable", {}, None),
-                   '{"rules": {}}')
+    попытки = _урл(
+        monkeypatch,
+        ab.urllib.error.HTTPError("https://example.org/x", 503, "Service Unavailable", {}, None),
+        '{"rules": {}}',
+    )
     data, err = ab.fetch("https://example.org/x")
     assert err is None and data == {"rules": {}}
     assert len(попытки) == 2
@@ -981,17 +1105,19 @@ def test_нечитаемый_json_переспрашивать_незачем(m
 # не находка, отсутствующий — находка, навык в дереве потребителя не
 # проверяется вовсе, потому что его дерева у нас нет.
 
+
 def test_сводка_переносит_адрес_навыка():
-    вышло = ab.держание({"mechanism": "skill", "where": "x.md",
-                         "skill": "catalogue:answer-a-rule"})
+    вышло = ab.держание({"mechanism": "skill", "where": "x.md", "skill": "catalogue:answer-a-rule"})
     assert вышло["skill"] == "catalogue:answer-a-rule"
     assert ab.держание({"mechanism": "gate", "where": "x.py"})["skill"] == ""
 
 
 def срез_с_навыком(адрес: str) -> dict:
-    return {"repo": "o/a", "rules": {"001": "active"},
-            "holds": {"001": ab.держание({"mechanism": "skill", "where": "x.md",
-                                          "skill": адрес})}}
+    return {
+        "repo": "o/a",
+        "rules": {"001": "active"},
+        "holds": {"001": ab.держание({"mechanism": "skill", "where": "x.md", "skill": адрес})},
+    }
 
 
 def test_навык_плагина_который_есть_у_каталога_не_находка():
@@ -1002,7 +1128,7 @@ def test_навык_плагина_которого_нет_у_каталога_�
     вышло = ab.навыки_плагина(срез_с_навыком("catalogue:no-such-skill"))
     assert len(вышло) == 1
     assert "001 → catalogue:no-such-skill" in вышло[0]
-    assert вышло[0].startswith("o/a: ")          # адресат — сам потребитель
+    assert вышло[0].startswith("o/a: ")  # адресат — сам потребитель
 
 
 def test_навык_в_дереве_потребителя_отсюда_не_проверяется():
@@ -1012,17 +1138,25 @@ def test_навык_в_дереве_потребителя_отсюда_не_п�
 
 def test_счёт_называет_кто_держит_навыком_плагина():
     строки = ab.census([срез_с_навыком("catalogue:answer-a-rule")], ["001"])
-    assert any("навыком плагина каталога держит 1 — 001 (catalogue:answer-a-rule)"
-               in с for с in строки)
-    assert not any("навыком плагина" in с
-                   for с in ab.census([срез_с_навыком(".claude/skills/x")], ["001"]))
+    assert any(
+        "навыком плагина каталога держит 1 — 001 (catalogue:answer-a-rule)" in с for с in строки
+    )
+    assert not any(
+        "навыком плагина" in с for с in ab.census([срез_с_навыком(".claude/skills/x")], ["001"])
+    )
 
 
 # ── происхождение механизма в сводке (сводка 1.6, #701) ───────────────────
 
+
 def test_держание_выгружает_происхождение():
-    rec = {"status": "active", "mechanism": "gate", "where": "scripts/x.py",
-           "origin": "o/r:scripts/x.py@v1", "origin_kind": "adapted"}
+    rec = {
+        "status": "active",
+        "mechanism": "gate",
+        "where": "scripts/x.py",
+        "origin": "o/r:scripts/x.py@v1",
+        "origin_kind": "adapted",
+    }
     h = ab.держание(rec)
     assert h["origin"] == "o/r:scripts/x.py@v1" and h["origin_kind"] == "adapted"
     assert ab.держание({"status": "active", "mechanism": "gate"})["origin"] == ""
@@ -1031,11 +1165,14 @@ def test_держание_выгружает_происхождение():
 def test_происхождение_потребителя_сверяется_тем_же_разбором():
     """Свой ответ и чужие сверяются одной функцией (214): находка называет
     потребителя и правило, прогон от неё не краснеет."""
-    срез = {"repo": "o/r", "holds": {
-        "001": {"mechanism": "gate", "origin": "o/r:a.py@v1", "origin_kind": "called"},
-        "002": {"mechanism": "gate", "origin": "o/r:a.py@v1"},
-        "003": {"mechanism": "none", "origin": "o/r:a.py@v1", "origin_kind": "copied"},
-    }}
+    срез = {
+        "repo": "o/r",
+        "holds": {
+            "001": {"mechanism": "gate", "origin": "o/r:a.py@v1", "origin_kind": "called"},
+            "002": {"mechanism": "gate", "origin": "o/r:a.py@v1"},
+            "003": {"mechanism": "none", "origin": "o/r:a.py@v1", "origin_kind": "copied"},
+        },
+    }
     найдено = ab.происхождение_неверно(срез)
     assert [н.split(" — ")[0] for н in найдено] == ["o/r: 002", "o/r: 003"]
 
@@ -1043,30 +1180,56 @@ def test_происхождение_потребителя_сверяется_т
 def test_нестроковое_происхождение_потребителя_находка_а_не_падение():
     """Находка обзора #705: `.strip()` на чужом списке ронял сводку всех
     потребителей. Ложное нестроковое не теряется в держании как «поля нет»."""
-    holds = {"001": ab.держание({"status": "active", "mechanism": "gate",
-                                 "origin": ["o/r:a.py@v1"], "origin_kind": "called"}),
-             "002": ab.держание({"status": "active", "mechanism": "gate",
-                                 "origin": [], "origin_kind": False})}
+    holds = {
+        "001": ab.держание(
+            {
+                "status": "active",
+                "mechanism": "gate",
+                "origin": ["o/r:a.py@v1"],
+                "origin_kind": "called",
+            }
+        ),
+        "002": ab.держание(
+            {"status": "active", "mechanism": "gate", "origin": [], "origin_kind": False}
+        ),
+    }
     найдено = ab.происхождение_неверно({"repo": "o/r", "holds": holds})
     assert len(найдено) == 2 and all("ждётся строка" in н for н in найдено)
 
 
 # ── заметки и замеры проектов едут в сводку (ответ 1.9, сводка 1.7) ────────
 
+
 def test_заметки_собираются_с_любой_записи():
-    rules = {"001": {"status": "not-applicable", "why": "нет", "note": "идея"},
-             "002": {"status": "active", "mechanism": "gate",
-                     "metric": {"what": "x", "value": 3, "measured": "2026-10-08"}},
-             "003": {"status": "active", "mechanism": "gate"}}
+    rules = {
+        "001": {"status": "not-applicable", "why": "нет", "note": "идея"},
+        "002": {
+            "status": "active",
+            "mechanism": "gate",
+            "metric": {"what": "x", "value": 3, "measured": "2026-10-08"},
+        },
+        "003": {"status": "active", "mechanism": "gate"},
+    }
     assert ab.заметки(rules) == {
         "001": {"note": "идея"},
-        "002": {"metric": {"what": "x", "value": 3, "measured": "2026-10-08"}}}
+        "002": {"metric": {"what": "x", "value": 3, "measured": "2026-10-08"}},
+    }
 
 
 def test_раздел_заметок_в_сводке():
-    строки = ab._notes([{"repo": "o/proj", "notes": {
-        "001": {"note": "a | b", "metric": {"what": "x", "value": 3,
-                                            "measured": "2026-10-08"}}}}])
+    строки = ab._notes(
+        [
+            {
+                "repo": "o/proj",
+                "notes": {
+                    "001": {
+                        "note": "a | b",
+                        "metric": {"what": "x", "value": 3, "measured": "2026-10-08"},
+                    }
+                },
+            }
+        ]
+    )
     текст = "\n".join(строки)
     assert "## Заметки и замеры проектов" in текст
     assert "| 001 | `proj` | a \\| b | x: 3 (2026-10-08) |" in текст
@@ -1079,11 +1242,11 @@ def test_раздел_заметок_в_сводке():
 # «Retry-After: 120» и HTTP-дата; коды 429 и 503 — те, которыми площадка
 # отвечает на перегрузку (`urllib.error.HTTPError`, как у живого urlopen).
 
+
 def _с_паузой(код: int, значение: str) -> Exception:
     заголовки = email.message.Message()
     заголовки["Retry-After"] = значение
-    return ab.urllib.error.HTTPError("https://example.org/x", код, "busy",
-                                     заголовки, None)
+    return ab.urllib.error.HTTPError("https://example.org/x", код, "busy", заголовки, None)
 
 
 def _сны(monkeypatch) -> list[float]:
@@ -1116,11 +1279,13 @@ def test_пауза_больше_предела_это_отказ_с_назва�
 
 
 def test_без_паузы_сервера_действует_расчётная(monkeypatch):
-    попытки = _урл(monkeypatch,
-                   ab.urllib.error.HTTPError("https://example.org/x", 503,
-                                             "busy", email.message.Message(),
-                                             None),
-                   '{"rules": {}}')
+    попытки = _урл(
+        monkeypatch,
+        ab.urllib.error.HTTPError(
+            "https://example.org/x", 503, "busy", email.message.Message(), None
+        ),
+        '{"rules": {}}',
+    )
     сны = _сны(monkeypatch)
     ab.fetch("https://example.org/x")
     assert len(попытки) == 2 and сны == [ab.ПАУЗА * 1]
@@ -1135,13 +1300,15 @@ def test_худший_случай_укладывается_в_бюджет_ра
     зависит от содержимого предложений, а не от реестра."""
     import inspect
     import re
+
     таймаут = inspect.signature(ab.fetch).parameters["timeout"].default
-    реестр = json.loads((ab.ROOT / ".rules/consumers.json").read_text(
-        encoding="utf-8"))["consumers"]
-    чтений = sum(1 for c in реестр for k in ("bindings", "proposals")
-                 if str(c.get(k, "")).startswith("http"))
-    прогон = (ab.ROOT / ".github/workflows/consumers-sync.yml").read_text(
-        encoding="utf-8")
+    реестр = json.loads((ab.ROOT / ".rules/consumers.json").read_text(encoding="utf-8"))[
+        "consumers"
+    ]
+    чтений = sum(
+        1 for c in реестр for k in ("bindings", "proposals") if str(c.get(k, "")).startswith("http")
+    )
+    прогон = (ab.ROOT / ".github/workflows/consumers-sync.yml").read_text(encoding="utf-8")
     минут = int(re.search(r"timeout-minutes:\s*(\d+)", прогон).group(1))
     на_чтение = ab.ПОПЫТОК * таймаут + (ab.ПОПЫТОК - 1) * ab.ПРЕДЕЛ_ПАУЗЫ
     assert чтений > 0
@@ -1150,18 +1317,27 @@ def test_худший_случай_укладывается_в_бюджет_ра
 
 def test_пауза_датой_и_неразборчивая():
     будущее = email.utils.format_datetime(
-        dt.datetime.now(dt.UTC) + dt.timedelta(seconds=30), usegmt=True)
+        dt.datetime.now(dt.UTC) + dt.timedelta(seconds=30), usegmt=True
+    )
     assert 0 < ab.пауза_сервера(_с_паузой(503, будущее)) <= 30
     assert ab.пауза_сервера(_с_паузой(503, "скоро")) is None
 
 
 # ── замещённые в счёт не входят (17.10) ─────────────────────────────────────
 
+
 def test_замещённое_не_считается_ни_без_ответа_ни_лишним(repo):
     """«Без ответа» — по действующим, «лишних» — по всем: ответ о замещённом законен."""
-    slices = [{"repo": "owner/one", "state": "подключён", "answered": 1,
-               "rules": {"001": "active", "003": "active"},
-               "by_status": {"active": 1}, "by_mechanism": {"gate": 1}}]
+    slices = [
+        {
+            "repo": "owner/one",
+            "state": "подключён",
+            "answered": 1,
+            "rules": {"001": "active", "003": "active"},
+            "by_status": {"active": 1},
+            "by_mechanism": {"gate": 1},
+        }
+    ]
     строки = ab.census(slices, ["001", "002", "003"], {"002", "003"})
     assert строки[0] == "правил в каталоге: 2 (ещё 1 заменены)"
     assert "разобрано 1 из 2" in строки[1]
@@ -1169,8 +1345,14 @@ def test_замещённое_не_считается_ни_без_ответа_�
 
 
 def test_таблица_не_перечисляет_замещённые(repo):
-    slices = [{"repo": "owner/one", "state": "подключён", "answered": 1,
-               "rules": {"001": "active", "002": "active"}}]
+    slices = [
+        {
+            "repo": "owner/one",
+            "state": "подключён",
+            "answered": 1,
+            "rules": {"001": "active", "002": "active"},
+        }
+    ]
     text = ab.as_markdown(slices, ["001", "002"], {"002"})
     assert "| 002 |" in text and "| 001 |" not in text
 
@@ -1178,10 +1360,18 @@ def test_таблица_не_перечисляет_замещённые(repo):
 def test_счёт_среза_по_действующим_ответы_целиком(repo):
     """Срез несёт все ответы (по ним сверка лишних), а считает только действующие."""
     src = "answers.json"
-    write(repo / src, json.dumps({"rules": {
-        "001": {"status": "active", "mechanism": "gate", "where": "scripts/x.py"},
-        "002": {"status": "active", "mechanism": "none"},
-        "999": {"status": "unreviewed"}}}))
+    write(
+        repo / src,
+        json.dumps(
+            {
+                "rules": {
+                    "001": {"status": "active", "mechanism": "gate", "where": "scripts/x.py"},
+                    "002": {"status": "active", "mechanism": "none"},
+                    "999": {"status": "unreviewed"},
+                }
+            }
+        ),
+    )
     slices, _ = ab.collect([{"repo": "owner/one", "bindings": str(repo / src)}], {"001"})
     s = slices[0]
     # 001 замещено и не считается; 999 — лишний ответ, и он считается: его видно.

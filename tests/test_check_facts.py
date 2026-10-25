@@ -11,8 +11,13 @@ import check_facts as cf
 
 
 def запуск(*args: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run([sys.executable, str(Path(cf.__file__)), *args],
-                          capture_output=True, text=True, encoding="utf-8", timeout=600)
+    return subprocess.run(
+        [sys.executable, str(Path(cf.__file__)), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=600,
+    )
 
 
 def test_самопроверка_двусторонняя():
@@ -33,8 +38,10 @@ def test_чужой_репозиторий_находка(tmp_path):
 
 def test_мажор_1_принят_с_советом_о_переезде(tmp_path):
     f = tmp_path / "facts.json"
-    f.write_text(json.dumps({**json.loads(ПРИМЕР.read_text(encoding="utf-8")),
-                             "schema": "1.6"}), encoding="utf-8")
+    f.write_text(
+        json.dumps({**json.loads(ПРИМЕР.read_text(encoding="utf-8")), "schema": "1.6"}),
+        encoding="utf-8",
+    )
     run = запуск("--file", str(f), "--repo", "Owner/Project")
     assert run.returncode == 0
     assert "facts-v2.0.0" in run.stdout
@@ -55,7 +62,8 @@ def test_нечитаемый_файл_третий_исход(tmp_path):
 def test_номер_разошёлся_с_прозой_отказ(tmp_path, monkeypatch):
     """Гейт `--contract` отвергает прозу на прежнем номере, а не только пропускает верную."""
     проза = cf.CONTRACT_PATH.read_text(encoding="utf-8").replace(
-        "FACTS_CONTRACT: facts-v2.0.0", "FACTS_CONTRACT: facts-v1.6.0")
+        "FACTS_CONTRACT: facts-v2.0.0", "FACTS_CONTRACT: facts-v1.6.0"
+    )
     старая = tmp_path / "facts-contract.md"
     старая.write_text(проза, encoding="utf-8")
     monkeypatch.setattr(cf, "CONTRACT_PATH", старая)

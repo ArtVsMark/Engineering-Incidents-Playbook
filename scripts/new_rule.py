@@ -30,7 +30,6 @@
 Коды: 0 каркас собран · 1 собрать нельзя · 2 проверка не отработала
 """
 
-
 import argparse
 import json
 import re
@@ -143,12 +142,16 @@ def trail_resolves(trail: str, root: Path) -> bool:
     if ЗАДАЧА_RE.search(trail):
         return True
     try:
-        known = {c["repo"] for c in json.loads(
-            (root / ".rules" / "consumers.json").read_text(encoding="utf-8"))["consumers"]}
+        known = {
+            c["repo"]
+            for c in json.loads((root / ".rules" / "consumers.json").read_text(encoding="utf-8"))[
+                "consumers"
+            ]
+        }
     except OSError, ValueError, KeyError, TypeError:
         return False
     for repo in known:
-        if trail.startswith(repo) and разрешимый_адрес(trail[len(repo):]):
+        if trail.startswith(repo) and разрешимый_адрес(trail[len(repo) :]):
             return True
     return False
 
@@ -163,39 +166,43 @@ def proposal(root: Path, key: str) -> tuple[dict, str | None]:
     if not slug:
         return {}, f"ключ {key!r} не по форме «владелец/репозиторий:слаг»"
     try:
-        registry = json.loads(
-            (root / ".rules" / "consumers.json").read_text(encoding="utf-8"))
+        registry = json.loads((root / ".rules" / "consumers.json").read_text(encoding="utf-8"))
     except (OSError, ValueError) as e:
         return {}, f"реестр потребителей не прочитан — {e}"
-    entry = next((c for c in registry.get("consumers", [])
-                  if c.get("repo") == repo), None)
+    entry = next((c for c in registry.get("consumers", []) if c.get("repo") == repo), None)
     if entry is None:
-        return {}, (f"{repo} не объявлен потребителем. Предложение от "
-                    "необъявленного проекта принимать нельзя: за ним нет ни "
-                    "ответа о правилах, ни адреса, по которому спросить")
+        return {}, (
+            f"{repo} не объявлен потребителем. Предложение от "
+            "необъявленного проекта принимать нельзя: за ним нет ни "
+            "ответа о правилах, ни адреса, по которому спросить"
+        )
     source = entry.get("proposals")
     if not source:
-        return {}, (f"у {repo} не назван адрес предложений — канал в эту "
-                    "сторону не подключён")
+        return {}, (f"у {repo} не назван адрес предложений — канал в эту сторону не подключён")
     try:
         if source.startswith("http"):
             import urllib.request
+
             with urllib.request.urlopen(source, timeout=30) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
         else:
             data = json.loads((root / source).read_text(encoding="utf-8"))
     except Exception as e:
         return {}, f"предложения {repo} не прочитаны — {e}"
-    found = next((p for p in data.get("proposals", [])
-                  if p.get("slug") == slug), None)
+    found = next((p for p in data.get("proposals", []) if p.get("slug") == slug), None)
     if found is None:
         return {}, f"у {repo} нет предложения со слагом {slug!r}"
     if not found.get("incident"):
-        return {}, (f"предложение {key} без инцидента. Правило без инцидента — "
-                    "предпочтение, и через месяц его нечем защитить")
-    return {"slug": slug, "trail": след_предложения(repo, found.get("trail", "")),
-            "claim": found.get("claim", ""),
-            "incident": found.get("incident", "")}, None
+        return {}, (
+            f"предложение {key} без инцидента. Правило без инцидента — "
+            "предпочтение, и через месяц его нечем защитить"
+        )
+    return {
+        "slug": slug,
+        "trail": след_предложения(repo, found.get("trail", "")),
+        "claim": found.get("claim", ""),
+        "incident": found.get("incident", ""),
+    }, None
 
 
 def след_предложения(repo: str, свой: str) -> str:
@@ -224,26 +231,38 @@ def след_предложения(repo: str, свой: str) -> str:
 def neighbours(root: Path, path: Path) -> str:
     """Верхушка соседей по ЧЕРНОВИКУ — как подсказка, а не как ответ."""
     done = proc.run(
-        [sys.executable, str(root / "scripts" / "check_duplicates.py"),
-         "--near", str(path)], capture_output=True, text=True, encoding="utf-8", timeout=600)
+        [sys.executable, str(root / "scripts" / "check_duplicates.py"), "--near", str(path)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=600,
+    )
     return (done.stdout or done.stderr).strip()
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--slug", help="слаг латиницей, без номера; при --from-proposal берётся оттуда")
-    ap.add_argument("--tier", required=True, type=int, choices=(1, 2, 3, 4, 5),
-                    help="ступень внедрения: 1 правила и роли · 2 конвейер и CI · "
-                         "3 гейты и процессы · 4 код и тесты · 5 всё остальное. "
-                         "Умолчания нет намеренно: молчаливая пятая означала бы "
-                         "«не спросили», а не «берут последним»")
-    ap.add_argument("--area", required=True,
-                    help="одна-три области через запятую, из закрытого словаря")
-    ap.add_argument("--trail",
-                    help="владелец/репозиторий#номер либо потребитель с артефактом")
-    ap.add_argument("--from-proposal", metavar="ВЛАДЕЛЕЦ/РЕПО:СЛАГ",
-                    help="предложение, приехавшее из проекта: слаг, область и "
-                         "след берутся из него, а номер присваивает каталог")
+    ap.add_argument(
+        "--tier",
+        required=True,
+        type=int,
+        choices=(1, 2, 3, 4, 5),
+        help="ступень внедрения: 1 правила и роли · 2 конвейер и CI · "
+        "3 гейты и процессы · 4 код и тесты · 5 всё остальное. "
+        "Умолчания нет намеренно: молчаливая пятая означала бы "
+        "«не спросили», а не «берут последним»",
+    )
+    ap.add_argument(
+        "--area", required=True, help="одна-три области через запятую, из закрытого словаря"
+    )
+    ap.add_argument("--trail", help="владелец/репозиторий#номер либо потребитель с артефактом")
+    ap.add_argument(
+        "--from-proposal",
+        metavar="ВЛАДЕЛЕЦ/РЕПО:СЛАГ",
+        help="предложение, приехавшее из проекта: слаг, область и "
+        "след берутся из него, а номер присваивает каталог",
+    )
     ap.add_argument("--root", type=Path, default=ROOT)
     args = ap.parse_args(argv)
     root: Path = args.root
@@ -260,23 +279,26 @@ def main(argv: list[str] | None = None) -> int:
         args.slug = args.slug or pending["slug"]
         args.trail = args.trail or pending["trail"]
     if not args.slug:
-        print("собрать нельзя: слаг не назван и взять его неоткуда",
-              file=sys.stderr)
+        print("собрать нельзя: слаг не назван и взять его неоткуда", file=sys.stderr)
         return 1
     if not args.trail:
-        print("собрать нельзя: след не назван. Он обязан разрешаться — задача "
-              "или потребитель с артефактом", file=sys.stderr)
+        print(
+            "собрать нельзя: след не назван. Он обязан разрешаться — задача "
+            "или потребитель с артефактом",
+            file=sys.stderr,
+        )
         return 1
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     taken = existing(root)
     if not taken:
-        print("проверка не отработала: в rules/ru нет ни одной записи — "
-              "нумеровать не от чего", file=sys.stderr)
+        print(
+            "проверка не отработала: в rules/ru нет ни одной записи — нумеровать не от чего",
+            file=sys.stderr,
+        )
         return 2
     if not (root / "templates" / "rule-template.md").exists():
-        print("проверка не отработала: нет заготовки templates/rule-template.md",
-              file=sys.stderr)
+        print("проверка не отработала: нет заготовки templates/rule-template.md", file=sys.stderr)
         return 2
     known_areas, TIERS, err = словари(root)
     if err:
@@ -285,36 +307,51 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if not SLUG_RE.match(args.slug):
-        print(f"собрать нельзя: слаг {args.slug!r} не по форме — латиница, "
-              "цифры и дефисы, начинается с буквы", file=sys.stderr)
+        print(
+            f"собрать нельзя: слаг {args.slug!r} не по форме — латиница, "
+            "цифры и дефисы, начинается с буквы",
+            file=sys.stderr,
+        )
         return 1
     if args.slug in taken.values():
         num = next(n for n, s in taken.items() if s == args.slug)
-        print(f"собрать нельзя: слаг занят записью {num}. Пересмотр — это "
-              "НОВАЯ запись с новым слагом, а не правка задним числом",
-              file=sys.stderr)
+        print(
+            f"собрать нельзя: слаг занят записью {num}. Пересмотр — это "
+            "НОВАЯ запись с новым слагом, а не правка задним числом",
+            file=sys.stderr,
+        )
         return 1
     wanted = [a.strip() for a in args.area.split(",") if a.strip()]
     unknown = [a for a in wanted if a not in known_areas]
     if unknown:
-        print(f"собрать нельзя: области вне словаря — {', '.join(unknown)}.\n"
-              f"  Словарь закрыт и живёт в scripts/build_rules_index.py; новая "
-              "дописывается туда осознанно и сразу с описанием.\n"
-              f"  Есть: {', '.join(sorted(known_areas))}", file=sys.stderr)
+        print(
+            f"собрать нельзя: области вне словаря — {', '.join(unknown)}.\n"
+            f"  Словарь закрыт и живёт в scripts/build_rules_index.py; новая "
+            "дописывается туда осознанно и сразу с описанием.\n"
+            f"  Есть: {', '.join(sorted(known_areas))}",
+            file=sys.stderr,
+        )
         return 1
     if not trail_resolves(args.trail, root):
-        print(f"собрать нельзя: след {args.trail!r} не разрешается. Нужна "
-              "задача «владелец/репозиторий#номер» либо потребитель из реестра "
-              "с названным артефактом. Проза следом не считается",
-              file=sys.stderr)
+        print(
+            f"собрать нельзя: след {args.trail!r} не разрешается. Нужна "
+            "задача «владелец/репозиторий#номер» либо потребитель из реестра "
+            "с названным артефактом. Проза следом не считается",
+            file=sys.stderr,
+        )
         return 1
 
     # ── исход 0 ────────────────────────────────────────────────────────────
     num = next_number(taken)
     name = f"{num}-{args.slug}.md"
     ru_body = (root / "templates" / "rule-template.md").read_text(encoding="utf-8")
-    ru_body = re.sub(r"(?m)^\*\*Область\.\*\*.*?(?=\n\n)", f"**Область.** {args.area}",
-                     ru_body, count=1, flags=re.S)
+    ru_body = re.sub(
+        r"(?m)^\*\*Область\.\*\*.*?(?=\n\n)",
+        f"**Область.** {args.area}",
+        ru_body,
+        count=1,
+        flags=re.S,
+    )
     # Ступень подставляется вслед за областью и в ту же форму, что читает
     # сборка указателя: имя берётся из её словаря, а не пишется здесь заново
     # (209) — вторая копия имени разошлась бы молча.
@@ -322,12 +359,12 @@ def main(argv: list[str] | None = None) -> int:
     if re.search(r"(?m)^\*\*Ступень\.\*\*", ru_body):
         ru_body = re.sub(r"(?m)^\*\*Ступень\.\*\*.*$", ступень, ru_body, count=1)
     else:
-        ru_body = re.sub(r"(?m)^(\*\*Область\.\*\*.*)$",
-                         lambda m: f"{m.group(1)}\n\n{ступень}", ru_body, count=1)
+        ru_body = re.sub(
+            r"(?m)^(\*\*Область\.\*\*.*)$", lambda m: f"{m.group(1)}\n\n{ступень}", ru_body, count=1
+        )
     # След подставляется целиком: он разрешим и проверен выше, человеку в нём
     # делать нечего. Всё остальное в заготовке остаётся местом для суждения.
-    ru_body = re.sub(r"(?ms)^## След\n\n`<.*?>`\n",
-                     f"## След\n\n{args.trail}\n", ru_body, count=1)
+    ru_body = re.sub(r"(?ms)^## След\n\n`<.*?>`\n", f"## След\n\n{args.trail}\n", ru_body, count=1)
     made = []
     for lang in LANGS:
         path = root / "rules" / lang / name
@@ -336,10 +373,15 @@ def main(argv: list[str] | None = None) -> int:
             path.write_text(ru_body, encoding="utf-8")
         else:
             en_areas = ", ".join(known_areas[a] for a in wanted)
-            path.write_text(EN_SKELETON.format(area_en=en_areas, trail=args.trail,
-                                               tier_n=args.tier,
-                                               tier_en=TIERS[args.tier]['en']),
-                            encoding="utf-8")
+            path.write_text(
+                EN_SKELETON.format(
+                    area_en=en_areas,
+                    trail=args.trail,
+                    tier_n=args.tier,
+                    tier_en=TIERS[args.tier]["en"],
+                ),
+                encoding="utf-8",
+            )
         made.append(str(path.relative_to(root)))
 
     # Пути считаются ОТ КОРНЯ, а не от ROOT модуля: ROOT указывает на сам
@@ -350,29 +392,31 @@ def main(argv: list[str] | None = None) -> int:
     bindings = root / ".rules" / "bindings.json"
     doc = json.loads(bindings.read_text(encoding="utf-8"))
     doc["rules"][num] = {"status": "unreviewed"}
-    bindings.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n",
-                        encoding="utf-8")
+    bindings.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     frag = root / "changelog.d" / f"rule-{num}-{args.slug}.added.md"
-    frag.write_text(f"Правило {num}: {ЗАГЛУШКА_ФРАГМЕНТА} ({args.trail}).\n",
-                    encoding="utf-8")
+    frag.write_text(f"Правило {num}: {ЗАГЛУШКА_ФРАГМЕНТА} ({args.trail}).\n", encoding="utf-8")
 
     for p in made:
         print(f"  {p}")
     print(f"  .rules/bindings.json — {num}: не рассмотрено")
     print(f"  {frag.relative_to(root)}")
-    print(f"\nкаркас {num} собран. Номер взят выше максимума: они не "
-          "переиспользуются даже после удаления.\n")
+    print(
+        f"\nкаркас {num} собран. Номер взят выше максимума: они не "
+        "переиспользуются даже после удаления.\n"
+    )
     print(neighbours(root, root / "rules" / "ru" / name))
-    print("\nОСТАЛОСЬ ЧЕЛОВЕКУ — и генератор этого не сделает:\n"
-          "  • утверждение, инцидент с числами, механизм поломки;\n"
-          "  • граница «НЕ работает» — без неё гейт полноты не пропустит;\n"
-          "  • английская сторона по существу, а не подстрочником;\n"
-          f"  • вердикт о соседях в .rules/neighbours.json по ГОТОВОМУ тексту,\n"
-          f"    а не по этому черновику — гейт сверяет именно готовый;\n"
-          "  • ответ о правиле в .rules/bindings.json вместо «не рассмотрено».\n"
-          "Потом: закоммитить, затем python scripts/build_rules_index.py —\n"
-          "дата берётся из истории файла, и до коммита её нет.")
+    print(
+        "\nОСТАЛОСЬ ЧЕЛОВЕКУ — и генератор этого не сделает:\n"
+        "  • утверждение, инцидент с числами, механизм поломки;\n"
+        "  • граница «НЕ работает» — без неё гейт полноты не пропустит;\n"
+        "  • английская сторона по существу, а не подстрочником;\n"
+        f"  • вердикт о соседях в .rules/neighbours.json по ГОТОВОМУ тексту,\n"
+        f"    а не по этому черновику — гейт сверяет именно готовый;\n"
+        "  • ответ о правиле в .rules/bindings.json вместо «не рассмотрено».\n"
+        "Потом: закоммитить, затем python scripts/build_rules_index.py —\n"
+        "дата берётся из истории файла, и до коммита её нет."
+    )
     return 0
 
 

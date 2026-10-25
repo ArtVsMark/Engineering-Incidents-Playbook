@@ -77,7 +77,6 @@ coverage_badge.COLORS. «release / PyPI» показывает старшие д
   209 — основной прогон назван константой build_facts, а не вторым литералом.
 """
 
-
 import argparse
 import hashlib
 import json
@@ -144,20 +143,20 @@ class НеОтветила(Exception):
     """Площадка не ответила о прогонах — третий исход, а не серый цвет."""
 
 
-def версии(root: Path = ROOT, ci: str = build_facts.CI_WORKFLOW
-           ) -> list[tuple[str, str]]:
+def версии(root: Path = ROOT, ci: str = build_facts.CI_WORKFLOW) -> list[tuple[str, str]]:
     """(подпись версии, файл прогона): основные по возрастанию, следующие за ними.
 
     ОСНОВНЫХ МОЖЕТ БЫТЬ НЕСКОЛЬКО (решение владельца 14 октября): с выходом
     3.15 планка осталась 3.14, а 3.15 стала обязательной проверкой — обе
     версии стоят в основном CI и обе держат слияние. Первая — планка.
     """
-    основные = sorted({(f"{a}.{b}", f) for f, (a, b) in cv.in_workflows(root) if f == ci},
-                      # не проза: серия версии «X.Y», разрез по точке.
-                      key=lambda п: tuple(map(int, п[0].split("."))))
+    основные = sorted(
+        {(f"{a}.{b}", f) for f, (a, b) in cv.in_workflows(root) if f == ci},
+        # не проза: серия версии «X.Y», разрез по точке.
+        key=lambda п: tuple(map(int, п[0].split("."))),
+    )
     манифест = root / "pyproject.toml"
-    if not основные and (root / ".github" / "workflows" / ci).is_file() \
-            and манифест.is_file():
+    if not основные and (root / ".github" / "workflows" / ci).is_file() and манифест.is_file():
         планка = cv.floor(манифест.read_text(encoding="utf-8"))
         if планка:
             основные = [(f"{планка[0]}.{планка[1]}", ci)]
@@ -197,8 +196,10 @@ def по_ос(jobs: list[dict]) -> list[tuple[str, str]]:
     итог: dict[str, str] = {}
     for job in jobs:
         метки = job.get("labels") or []
-        ос = next((имя for префикс, имя in ОС.items()
-                   if any(str(м).startswith(префикс) for м in метки)), None)
+        ос = next(
+            (имя for префикс, имя in ОС.items() if any(str(м).startswith(префикс) for м in метки)),
+            None,
+        )
         if ос is None:
             continue
         исход = job.get("conclusion")
@@ -218,8 +219,9 @@ def лесенка() -> list[str]:
     return [п for п, _ in версии(ROOT)]
 
 
-def на_лесенке(части: list[tuple[str, str]], ступени: list[str],
-               вышедшие: set[tuple[int, int]] | None = None) -> list[tuple[str, str]]:
+def на_лесенке(
+    части: list[tuple[str, str]], ступени: list[str], вышедшие: set[tuple[int, int]] | None = None
+) -> list[tuple[str, str]]:
     """Версии проекта и недостающие ступени лесенки, по возрастанию.
 
     Недостающая ступень — `absent`, если сборка серии есть, и `unreleased`, если
@@ -233,9 +235,11 @@ def на_лесенке(части: list[tuple[str, str]], ступени: list[
         серия = tuple(int(x) for x in п.split("."))
         return "unreleased" if вышедшие is not None and серия not in вышедшие else "absent"
 
-    return sorted([*части, *((п, недостающая(п)) for п in ступени if п not in свои)],
-                  # не проза: серия версии «X.Y», разрез по точке.
-                  key=lambda ч: tuple(int(x) for x in ч[0].split(".")))
+    return sorted(
+        [*части, *((п, недостающая(п)) for п in ступени if п not in свои)],
+        # не проза: серия версии «X.Y», разрез по точке.
+        key=lambda ч: tuple(int(x) for x in ч[0].split(".")),
+    )
 
 
 def по_версиям(подписи: list[str], jobs: list[dict]) -> dict[str, str]:
@@ -260,14 +264,16 @@ def по_версиям(подписи: list[str], jobs: list[dict]) -> dict[str
 #: Манифест сборок, из которого setup-python ставит интерпретатор. Версия,
 #: которой в нём нет, не вышла вовсе: предварительный прогон на ней проверять
 #: нечем, и его тёмно-серый значит «сборки ещё нет», а не «не проводилась».
-МАНИФЕСТ_СБОРОК = ("https://raw.githubusercontent.com/actions/python-versions/"
-                   "main/versions-manifest.json")
+МАНИФЕСТ_СБОРОК = (
+    "https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json"
+)
 Сборки = Callable[[], set[tuple[int, int]]]
 
 
 def сборки_площадки() -> set[tuple[int, int]]:
     """Серии `X.Y`, у которых в манифесте setup-python есть хоть одна сборка."""
     from aggregate_bindings import fetch
+
     doc, err = fetch(МАНИФЕСТ_СБОРОК)
     if err is not None or not isinstance(doc, list):
         raise НеОтветила(f"манифест сборок {МАНИФЕСТ_СБОРОК}: {err or 'не список'}")
@@ -286,8 +292,10 @@ def прогоны_площадки(файл: str) -> list[dict]:
     """Завершённые прогоны файла на `main`, от новых; одна страница —
     предел объявлен в .rules/limits.json."""
     код, вывод = ghcli.run(
-        "api", f"repos/{{owner}}/{{repo}}/actions/workflows/{файл}/runs"
-        f"?branch=main&status=completed&per_page={ПРЕДЕЛ}")
+        "api",
+        f"repos/{{owner}}/{{repo}}/actions/workflows/{файл}/runs"
+        f"?branch=main&status=completed&per_page={ПРЕДЕЛ}",
+    )
     if код != 0:
         raise НеОтветила(вывод)
     return json.loads(вывод).get("workflow_runs", [])
@@ -296,7 +304,8 @@ def прогоны_площадки(файл: str) -> list[dict]:
 def работы_площадки(run_id: int) -> list[dict]:
     """Все работы прогона — постранично (212)."""
     код, работы, почему = ghcli.список(
-        f"repos/{{owner}}/{{repo}}/actions/runs/{run_id}/jobs", ".jobs[]")
+        f"repos/{{owner}}/{{repo}}/actions/runs/{run_id}/jobs", ".jobs[]"
+    )
     if код != 0:
         raise НеОтветила(почему)
     return работы
@@ -327,8 +336,13 @@ def _ширина(текст: str) -> int:
 #: 3,2:1, #bf8700 3,1:1, #bc4c00 5,0:1, #cf222e 5,4:1. Прежний «green»
 #: #4ac26b давал 2,3:1 — хуже, чем #2da44e, и заменён тёмным #1a7f37 у
 #: верхнего порога, чтобы два зелёных различались, не теряя текста.
-ЦВЕТ_ПОКРЫТИЯ = {"brightgreen": "#1a7f37", "green": "#2da44e", "yellow": "#bf8700",
-                 "orange": "#bc4c00", "red": "#cf222e"}
+ЦВЕТ_ПОКРЫТИЯ = {
+    "brightgreen": "#1a7f37",
+    "green": "#2da44e",
+    "yellow": "#bf8700",
+    "orange": "#bc4c00",
+    "red": "#cf222e",
+}
 #: Зазор между зонами: внутри зоны части разделены тонкой линией, а зоны —
 #: просветом, чтобы «проверки», «покрытие» и «выпуск» читались порознь.
 ЗАЗОР = 4
@@ -336,8 +350,7 @@ def _ширина(текст: str) -> int:
 ЗОНЫ = ".zones.json"
 
 
-def рисунок(зоны: list[list[Часть]], сдвиг: int = 0,
-            растяжки: dict[int, int] | None = None) -> str:
+def рисунок(зоны: list[list[Часть]], сдвиг: int = 0, растяжки: dict[int, int] | None = None) -> str:
     """Картинка из зон: каждая зона — скруглённая полоса своих частей.
 
     `сдвиг` опускает полосу на столько точек вниз — так единый значок
@@ -363,27 +376,34 @@ def рисунок(зоны: list[list[Часть]], сдвиг: int = 0,
             # Остаток — последним частям: сумма добавок равна растяжке зоны.
             w = _ширина(текст) + доля + (1 if к >= len(зона) - остаток else 0)
             прямоугольники.append(
-                f'<rect x="{x}"{y} width="{w}" height="20" fill="{цвет}" clip-path="url(#z{метка}{н})"/>')
+                f'<rect x="{x}"{y} width="{w}" height="20" fill="{цвет}" clip-path="url(#z{метка}{н})"/>'
+            )
             if к:
                 # Разделитель частей: при трёх зелёных цвет их не различает.
-                границы.append(f'<rect x="{x - 1}"{y} width="1" height="20" fill="#fff" fill-opacity=".7"/>')
+                границы.append(
+                    f'<rect x="{x - 1}"{y} width="1" height="20" fill="#fff" fill-opacity=".7"/>'
+                )
             центр = x + w / 2
             надписи.append(
                 f'<text x="{центр}" y="{15 + сдвиг}" fill="#010101" fill-opacity=".3">{escape(текст)}</text>'
-                f'<text x="{центр}" y="{14 + сдвиг}">{escape(текст)}</text>')
+                f'<text x="{центр}" y="{14 + сдвиг}">{escape(текст)}</text>'
+            )
             x += w
-        обрезки.append(f'<clipPath id="z{метка}{н}"><rect{y} width="{x - начало}" height="20" '
-                       f'rx="3" x="{начало}"/></clipPath>')
+        обрезки.append(
+            f'<clipPath id="z{метка}{н}"><rect{y} width="{x - начало}" height="20" '
+            f'rx="3" x="{начало}"/></clipPath>'
+        )
         x += ЗАЗОР
     ширина = x - ЗАЗОР
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{ширина}" height="{20 + сдвиг}" '
         f'role="img" aria-label="{escape(подсказка)}">'
         f"<title>{escape(подсказка)}</title>{''.join(обрезки)}"
-        f'<g>{"".join(прямоугольники)}{"".join(границы)}</g>'
+        f"<g>{''.join(прямоугольники)}{''.join(границы)}</g>"
         '<g fill="#fff" text-anchor="middle" '
         'font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">'
-        f'{"".join(надписи)}</g></svg>\n')
+        f"{''.join(надписи)}</g></svg>\n"
+    )
 
 
 #: Сколько наборов умещается в значок, который ещё читается.
@@ -438,20 +458,27 @@ def наборы(вход: str) -> list[tuple[str, str]]:
 def сверить_наборы(заданные: list[tuple[str, str]], работы: dict[str, str]) -> str | None:
     """Что не так с наборами; None — все работы есть в файле CI и их не больше предела."""
     if len(заданные) > НАБОРОВ_НЕ_БОЛЬШЕ:
-        return (f"наборов {len(заданные)}, а значок читается с {НАБОРОВ_НЕ_БОЛЬШЕ} — "
-                "отбор наборов решает проект")
+        return (
+            f"наборов {len(заданные)}, а значок читается с {НАБОРОВ_НЕ_БОЛЬШЕ} — "
+            "отбор наборов решает проект"
+        )
     for работа, _ in заданные:
         if работа not in работы:
-            return (f"работы «{работа}» в файле CI нет (есть: {', '.join(sorted(работы))}) — "
-                    "переименованная работа посерела бы молча (005)")
+            return (
+                f"работы «{работа}» в файле CI нет (есть: {', '.join(sorted(работы))}) — "
+                "переименованная работа посерела бы молча (005)"
+            )
         if "${{" in работы[работа]:
-            return (f"у работы «{работа}» имя задано выражением ({работы[работа]}) — "
-                    "сверять исход не с чем")
+            return (
+                f"у работы «{работа}» имя задано выражением ({работы[работа]}) — "
+                "сверять исход не с чем"
+            )
     return None
 
 
-def по_наборам(заданные: list[tuple[str, str]], работы: dict[str, str],
-               jobs: list[dict]) -> list[tuple[str, str]]:
+def по_наборам(
+    заданные: list[tuple[str, str]], работы: dict[str, str], jobs: list[dict]
+) -> list[tuple[str, str]]:
     """(подпись, состояние) каждого набора по работам решающего прогона.
 
     Работа матрицей у площадки — «имя (значения)»; совпадают и она, и
@@ -467,8 +494,7 @@ def по_наборам(заданные: list[tuple[str, str]], работы: d
         сост = "none"
         for job in jobs:
             название = str(job.get("name") or "")
-            if название != имя and (not название.startswith(имя + " (")
-                                    or название in чужие):
+            if название != имя and (not название.startswith(имя + " (") or название in чужие):
                 continue
             исход = job.get("conclusion")
             s = "fail" if исход in УПАЛ else "pass" if исход in ПРОШЁЛ else "none"
@@ -489,8 +515,10 @@ def зона_наборов(состояния: list[tuple[str, str]]) -> list[�
 
 def зоны_проверок(части: list[tuple[str, str]], общий: str) -> list[list[Часть]]:
     """Зона «CI Python и версии» и зона ОС; «CI» — серой частью первой зоны."""
+
     def часть(подпись: str, сост: str) -> Часть:
         return (подпись, СОСТОЯНИЯ[сост][0], СОСТОЯНИЯ[сост][1])
+
     версии_ = [часть(п, с) for п, с in части if п not in ОС.values()]
     платформы = [часть(п, с) for п, с in части if п in ОС.values()]
     зоны = [[(ПРЕФИКС, ПОДПИСЬ, ""), часть("Python", общий)] + версии_]
@@ -500,6 +528,7 @@ def зоны_проверок(части: list[tuple[str, str]], общий: str
 
 
 # ── зоны выпуска: покрытие, релиз / PyPI, версия ───────────────────────────
+
 
 def из_значка(путь: Path | None) -> str | None:
     """`message` из файла значка shields (endpoint): None — вход не задан.
@@ -537,9 +566,14 @@ def зона_покрытия(сообщение: str | None, по_всем: str
     имя = coverage_badge.color(float(основное))
     все = _процент(по_всем)
     if все is None or все == основное:
-        return [("coverage", ПОДПИСЬ, ""), (f"{основное}%", ЦВЕТ_ПОКРЫТИЯ[имя], f"покрытие {основное}%")]
-    return [("coverage / all (os)", ПОДПИСЬ, ""), (f"{основное}% / {все}%", ЦВЕТ_ПОКРЫТИЯ[имя],
-                                        f"покрытие {основное}%, по всем ОС {все}%")]
+        return [
+            ("coverage", ПОДПИСЬ, ""),
+            (f"{основное}%", ЦВЕТ_ПОКРЫТИЯ[имя], f"покрытие {основное}%"),
+        ]
+    return [
+        ("coverage / all (os)", ПОДПИСЬ, ""),
+        (f"{основное}% / {все}%", ЦВЕТ_ПОКРЫТИЯ[имя], f"покрытие {основное}%, по всем ОС {все}%"),
+    ]
 
 
 def зона_версии(версия: str | None) -> list[Часть]:
@@ -571,8 +605,14 @@ def зона_выпуска(релиз: str | None, pypi: str | None, объяв
     if pypi is not None and коротко(релиз) == коротко(pypi):
         return [подпись, (коротко(релиз), СОСТОЯНИЯ["pass"][0], f"выпуск {релиз} совпадает с PyPI")]
     на_pypi = коротко(pypi) if pypi else "—"
-    return [подпись, (f"{коротко(релиз)} / {на_pypi}", СОСТОЯНИЯ["fail"][0],
-                      f"выпуск {релиз}, на PyPI {pypi or 'пакета нет'}")]
+    return [
+        подпись,
+        (
+            f"{коротко(релиз)} / {на_pypi}",
+            СОСТОЯНИЯ["fail"][0],
+            f"выпуск {релиз}, на PyPI {pypi or 'пакета нет'}",
+        ),
+    ]
 
 
 def релиз_площадки() -> str | None:
@@ -587,7 +627,8 @@ def релиз_площадки() -> str | None:
     """
     код, теги, почему = ghcli.список(
         "repos/{owner}/{repo}/releases?per_page=100",
-        ".[] | select((.draft | not) and (.prerelease | not)) | .tag_name")
+        ".[] | select((.draft | not) and (.prerelease | not)) | .tag_name",
+    )
     if код != 0:
         raise НеОтветила(почему)
     свои = [т for т in теги if isinstance(т, str) and version.TAG_RE.match(т)]
@@ -611,42 +652,62 @@ def версия_pypi(пакет: str) -> str | None:
     raise НеОтветила(f"PyPI: {ошибка}")
 
 
-def main(argv: list[str] | None = None, прогоны: Прогоны = прогоны_площадки,
-         работы: Работы = работы_площадки, сборки: Сборки | None = None,
-         релиз: Callable[[], str | None] | None = None,
-         pypi: Callable[[str], str | None] | None = None) -> int:
+def main(
+    argv: list[str] | None = None,
+    прогоны: Прогоны = прогоны_площадки,
+    работы: Работы = работы_площадки,
+    сборки: Сборки | None = None,
+    релиз: Callable[[], str | None] | None = None,
+    pypi: Callable[[str], str | None] | None = None,
+) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--out", type=Path, default=OUT)
-    ap.add_argument("--ci", default=build_facts.CI_WORKFLOW,
-                    help="файл основного CI в .github/workflows")
-    ap.add_argument("--coverage-json", type=Path,
-                    help="файл значка покрытия (shields endpoint) — его message")
-    ap.add_argument("--coverage-all-json", type=Path,
-                    help="файл значка покрытия, сведённого по всем ОС; есть — "
-                         "в зоне покрытия появляется второе число")
-    ap.add_argument("--version-json", type=Path,
-                    help="файл значка версии (shields endpoint) — его message")
-    ap.add_argument("--suites", default="",
-                    help="наборы проверок основного CI: работа[:подпись],… — "
-                         "зона после ОС; работы сверяются с файлом CI")
-    ap.add_argument("--pypi", default="",
-                    help="имя пакета на PyPI; пусто — проект на PyPI не публикуется")
+    ap.add_argument(
+        "--ci", default=build_facts.CI_WORKFLOW, help="файл основного CI в .github/workflows"
+    )
+    ap.add_argument(
+        "--coverage-json", type=Path, help="файл значка покрытия (shields endpoint) — его message"
+    )
+    ap.add_argument(
+        "--coverage-all-json",
+        type=Path,
+        help="файл значка покрытия, сведённого по всем ОС; есть — "
+        "в зоне покрытия появляется второе число",
+    )
+    ap.add_argument(
+        "--version-json", type=Path, help="файл значка версии (shields endpoint) — его message"
+    )
+    ap.add_argument(
+        "--suites",
+        default="",
+        help="наборы проверок основного CI: работа[:подпись],… — "
+        "зона после ОС; работы сверяются с файлом CI",
+    )
+    ap.add_argument(
+        "--pypi", default="", help="имя пакета на PyPI; пусто — проект на PyPI не публикуется"
+    )
     args = ap.parse_args(argv)
 
     пары = версии(args.root, args.ci)
     if not пары:
-        print(f"значок не собран: в {args.root}/.github/workflows нет ни "
-              f"{args.ci} с python-version, ни предварительного "
-              "прогона — подписывать нечего (075)", file=sys.stderr)
+        print(
+            f"значок не собран: в {args.root}/.github/workflows нет ни "
+            f"{args.ci} с python-version, ни предварительного "
+            "прогона — подписывать нечего (075)",
+            file=sys.stderr,
+        )
         return 2
     if args.ci not in {файл for _, файл in пары}:
         # Без основного CI «Python» и ОС красить нечем: серый сказал бы «не
         # проводилась» о прогоне, которого не спрашивали (039).
-        print(f"значок не собран: у {args.ci} не нашлось версии — ни "
-              "python-version числом, ни requires-python в pyproject.toml. "
-              "«Python» и ОС красятся основным CI, и без него значок врал бы "
-              "серым (039)", file=sys.stderr)
+        print(
+            f"значок не собран: у {args.ci} не нашлось версии — ни "
+            "python-version числом, ни requires-python в pyproject.toml. "
+            "«Python» и ОС красятся основным CI, и без него значок врал бы "
+            "серым (039)",
+            file=sys.stderr,
+        )
         return 2
     заданные = наборы(args.suites)
     файл_ci = args.root / ".github" / "workflows" / args.ci
@@ -670,8 +731,9 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
                     # Страница полна, а вердикта на ней нет: за краем он может
                     # быть. Серый здесь сказал бы «не проводилась» о том, чего
                     # не спросили, — это третий исход, а не цвет (039).
-                    raise НеОтветила(f"в последних {ПРЕДЕЛ} прогонах нет вердикта, "
-                                     "а глубже не спрашивали")
+                    raise НеОтветила(
+                        f"в последних {ПРЕДЕЛ} прогонах нет вердикта, а глубже не спрашивали"
+                    )
                 прочитано[файл] = runs
                 if файл == args.ci:
                     общий = состояние(runs)
@@ -692,9 +754,12 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
             серия = tuple(int(x) for x in подпись.split("."))
             части.append((подпись, состояние(runs) if серия in вышедшие else "unreleased"))
         except (НеОтветила, ValueError, KeyError) as e:
-            print(f"значок не собран: прогоны {файл} у площадки не прочитаны — "
-                  f"{e}. Серым это не рисуется: «не спросили» не значит «не "
-                  "проводилась» (039)", file=sys.stderr)
+            print(
+                f"значок не собран: прогоны {файл} у площадки не прочитаны — "
+                f"{e}. Серым это не рисуется: «не спросили» не значит «не "
+                "проводилась» (039)",
+                file=sys.stderr,
+            )
             return 2
     ступени = лесенка()
     if вышедшие is None and set(ступени) - {п for п, _ in части}:
@@ -719,8 +784,10 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
         покрытие = из_значка(args.coverage_json)
         покрытие_всех = из_значка(args.coverage_all_json)
         версия = из_значка(args.version_json)
-        for путь, сообщение in ((args.coverage_json, покрытие),
-                                (args.coverage_all_json, покрытие_всех)):
+        for путь, сообщение in (
+            (args.coverage_json, покрытие),
+            (args.coverage_all_json, покрытие_всех),
+        ):
             if сообщение is not None and _процент(сообщение) is None:
                 # «n/a» или «unknown» — замер не дал числа; серый сказал бы
                 # «не измерено» о том, что измерить пытались (039).
@@ -743,8 +810,11 @@ def main(argv: list[str] | None = None, прогоны: Прогоны = про�
     # Зоны рядом с картинкой: значок проекта (project_badge.py) рисует эту
     # строку заново в общей сетке со второй, не спрашивая площадку второй раз.
     args.out.with_name(args.out.stem + ЗОНЫ).write_text(
-        json.dumps(зоны, ensure_ascii=False) + "\n", encoding="utf-8")
-    print("значок: " + "; ".join(f"{т} — {слово}" for зона in зоны for т, _, слово in зона if слово))
+        json.dumps(зоны, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    print(
+        "значок: " + "; ".join(f"{т} — {слово}" for зона in зоны for т, _, слово in зона if слово)
+    )
     return 0
 
 

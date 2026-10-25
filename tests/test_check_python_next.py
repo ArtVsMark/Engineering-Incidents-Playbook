@@ -7,7 +7,6 @@ https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest
 та же форма, урезанная до веток, о которых спрашивает случай.
 """
 
-
 import json
 
 import pytest
@@ -44,8 +43,10 @@ def _прогон(tmp_path, версия: str = "3.15"):
     (tmp_path / ".github" / "workflows").mkdir(parents=True)
     (tmp_path / ".github" / "workflows" / "python-next.yml").write_text(
         "jobs:\n  tests:\n    steps:\n      - uses: actions/setup-python@v6\n"
-        f"        with:\n          python-version: \"{версия}\"\n"
-        "          allow-prereleases: true\n", encoding="utf-8")
+        f'        with:\n          python-version: "{версия}"\n'
+        "          allow-prereleases: true\n",
+        encoding="utf-8",
+    )
     return tmp_path
 
 
@@ -68,13 +69,16 @@ def test_вышла_стабильной_называет_следующую_в�
 
 def test_вышла_а_следующей_ещё_нет():
     манифест = [{"version": "3.15.0", "stable": True}]
-    assert "следующей предрелизной ветки у площадки пока нет" in pn.расхождения((3, 15), манифест)[0]
+    assert (
+        "следующей предрелизной ветки у площадки пока нет" in pn.расхождения((3, 15), манифест)[0]
+    )
 
 
 def test_предрелизная_у_площадки_новее():
     манифест = [*СЕГОДНЯ, {"version": "3.16.0-alpha.1", "stable": False}]
     assert pn.расхождения((3, 15), манифест) == [
-        "предрелизная у площадки уже 3.16, а python-next держит 3.15"]
+        "предрелизная у площадки уже 3.16, а python-next держит 3.15"
+    ]
 
 
 def test_ветки_которой_площадка_не_знает():
@@ -111,8 +115,9 @@ def test_исходы_0_и_1(tmp_path, capsys):
 
 def test_настоящее_дерево_на_снимке_сходится(tmp_path):
     """Снимок 14.10: каталог гоняет 3.16 совещательно, альфы ещё нет."""
-    assert pn.main(["--root", str(SCRIPTS.parent),
-                    "--manifest", _манифест(tmp_path, АЛЬФЫ_НЕТ)]) == 0
+    assert (
+        pn.main(["--root", str(SCRIPTS.parent), "--manifest", _манифест(tmp_path, АЛЬФЫ_НЕТ)]) == 0
+    )
 
 
 def test_следующая_за_стабильной_до_альфы_ожидание():
@@ -125,8 +130,7 @@ def test_следующая_за_стабильной_до_альфы_ожида
 def test_задача_находится_своим_маркером_а_не_дежурного(monkeypatch):
     """find_issue принимал маркер и не читал его: сверка нашла бы задачу
     дежурного по красной ветке и переписала бы её тело (214)."""
-    задачи = [{"number": 7, "body": main_red.MARKER},
-              {"number": 9, "body": pn.MARKER + "\nтекст"}]
+    задачи = [{"number": 7, "body": main_red.MARKER}, {"number": 9, "body": pn.MARKER + "\nтекст"}]
     monkeypatch.setattr(main_red.ghcli, "список", lambda *a, **k: (0, задачи, ""))
     assert main_red.find_issue(pn.MARKER) == (9, None)
     assert main_red.find_issue() == (7, None)
@@ -180,6 +184,7 @@ def трекер(monkeypatch):
         monkeypatch.setattr(pn.main_red, "find_issue", т.find)
         monkeypatch.setattr(pn.ghcli, "run", т.run)
         return т
+
     return завести
 
 
@@ -218,7 +223,9 @@ def test_сверка_отработала_закрывает_задачу_от�
     Находку при этом не трогает — её закрывает человек."""
     т = трекер(задачи={1: pn.MARKER + "\nнаходка", 2: pn.MARKER_ОТКАЗ + "\nсбой"})
     корень = _прогон(tmp_path)
-    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, СЕГОДНЯ), "--apply"]) == 0
+    assert (
+        pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, СЕГОДНЯ), "--apply"]) == 0
+    )
     assert т.закрытые == {2}
 
 
@@ -227,15 +234,19 @@ def test_трекер_не_ответил_при_отказе_код_3(tmp_path,
     Код 3 — адресата нет, и прогон его различает."""
     трекер(лежит=True)
     корень = _прогон(tmp_path)
-    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, []),
-                    "--apply"]) == pn.НЕТ_АДРЕСАТА
+    assert (
+        pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, []), "--apply"])
+        == pn.НЕТ_АДРЕСАТА
+    )
 
 
 def test_трекер_не_ответил_при_находке_код_3(tmp_path, трекер):
     трекер(лежит=True)
     корень = _прогон(tmp_path)
-    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, ВЫШЛА),
-                    "--apply"]) == pn.НЕТ_АДРЕСАТА
+    assert (
+        pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, ВЫШЛА), "--apply"])
+        == pn.НЕТ_АДРЕСАТА
+    )
 
 
 def test_отказ_без_apply_в_трекер_не_пишет(tmp_path, monkeypatch):
@@ -245,8 +256,9 @@ def test_отказ_без_apply_в_трекер_не_пишет(tmp_path, monke
 
 
 @pytest.mark.parametrize("манифест, исход", [(ВЫШЛА, 1), (СЕГОДНЯ, 0)])
-def test_сбой_уборки_не_гасит_находку_и_не_меняет_исход(tmp_path, трекер, monkeypatch,
-                                                         манифест, исход):
+def test_сбой_уборки_не_гасит_находку_и_не_меняет_исход(
+    tmp_path, трекер, monkeypatch, манифест, исход
+):
     """Находки обзоров #694 и #696: уборка задачи отказа шла до записи находки
     и гасила её, а затем её сбой давал код 3 — «ни находка, ни отказ не
     дошли», хотя находка дошла. Теперь находка пишется первой, а сбой уборки
@@ -258,8 +270,11 @@ def test_сбой_уборки_не_гасит_находку_и_не_меняе
         if "state=closed" in args:
             return 1, "HTTP 500"
         return настоящий(*args)
+
     monkeypatch.setattr(pn.ghcli, "run", закрытие_падает)
     корень = _прогон(tmp_path)
-    assert pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, манифест),
-                    "--apply"]) == исход
+    assert (
+        pn.main(["--root", str(корень), "--manifest", _манифест(tmp_path, манифест), "--apply"])
+        == исход
+    )
     assert any(тело.startswith(pn.MARKER) for тело in т.задачи.values()) == (исход == 1)

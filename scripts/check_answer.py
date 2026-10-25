@@ -38,7 +38,6 @@
   039 — три исхода, а не два.
 """
 
-
 import argparse
 import json
 import sys
@@ -54,7 +53,7 @@ def находки(answer: dict, root: Path) -> list[str]:
     """Все находки формы ответа проекта и опровергнутые пробы."""
     схема = answer.get("schema") or ""
     out: list[str] = []
-    if (что := answer_form.схема_неверна(схема)):
+    if что := answer_form.схема_неверна(схема):
         out.append(что)
     for rid, rec in sorted((answer.get("rules") or {}).items()):
         # Вся форма записи — обязательные поля, словари, даты, происхождение,
@@ -64,8 +63,10 @@ def находки(answer: dict, root: Path) -> list[str]:
         if isinstance(rec, dict) and rec.get("status") == "not-applicable":
             улика = answer_form.прогнать_пробу(rec, root)
             if улика:
-                out.append(f"{rid}: «не применимо» опровергнуто своей же пробой — "
-                           f"{улика}. Предмет в дереве появился: перечитайте ответ")
+                out.append(
+                    f"{rid}: «не применимо» опровергнуто своей же пробой — "
+                    f"{улика}. Предмет в дереве появился: перечитайте ответ"
+                )
     return out
 
 
@@ -77,22 +78,18 @@ def main(argv: list[str] | None = None) -> int:
     try:
         answer = json.loads(args.bindings.read_text(encoding="utf-8"))
     except (OSError, ValueError) as e:
-        print(f"проверка не отработала: {args.bindings} не прочитан — {e}",
-              file=sys.stderr)
+        print(f"проверка не отработала: {args.bindings} не прочитан — {e}", file=sys.stderr)
         return 2
     if not isinstance(answer, dict) or not isinstance(answer.get("rules"), dict):
-        print(f"проверка не отработала: в {args.bindings} нет объекта `rules`",
-              file=sys.stderr)
+        print(f"проверка не отработала: в {args.bindings} нет объекта `rules`", file=sys.stderr)
         return 2
     найдено = находки(answer, args.root)
     if найдено:
-        print(f"ответ каталогу не по форме контракта {answer.get('schema')}:",
-              file=sys.stderr)
+        print(f"ответ каталогу не по форме контракта {answer.get('schema')}:", file=sys.stderr)
         for f in найдено:
             print(f"  • {f}", file=sys.stderr)
         return 1
-    print(f"ответ по форме контракта {answer.get('schema')}: записей "
-          f"{len(answer['rules'])}")
+    print(f"ответ по форме контракта {answer.get('schema')}: записей {len(answer['rules'])}")
     return 0
 
 

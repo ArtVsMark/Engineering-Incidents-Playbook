@@ -14,7 +14,6 @@
 владельца, не объявленный нигде, становится находкой.
 """
 
-
 import json
 import subprocess
 from pathlib import Path
@@ -23,18 +22,24 @@ import check_own_name as co
 from conftest import write
 
 МОЁ = "ArtVsMark/Engineering-Incidents-Playbook"
-РЕЕСТР = {"schema": "1.0", "consumers": [
-    {"repo": МОЁ}, {"repo": "ArtVsMark/Stepik-Python-Grader"}]}
+РЕЕСТР = {"schema": "1.0", "consumers": [{"repo": МОЁ}, {"repo": "ArtVsMark/Stepik-Python-Grader"}]}
 
 
 def дерево(root: Path, text: str, реестр: dict | None = None) -> Path:
-    write(root / ".rules" / "consumers.json",
-          json.dumps(реестр if реестр is not None else РЕЕСТР, ensure_ascii=False))
+    write(
+        root / ".rules" / "consumers.json",
+        json.dumps(реестр if реестр is not None else РЕЕСТР, ensure_ascii=False),
+    )
     write(root / "README.md", text)
-    subprocess.run(["git", "-C", str(root), "init", "-q", "-b", "main"],
-                   check=True, capture_output=True, timeout=60)
-    subprocess.run(["git", "-C", str(root), "add", "-A"], check=True,
-                   capture_output=True, timeout=60)
+    subprocess.run(
+        ["git", "-C", str(root), "init", "-q", "-b", "main"],
+        check=True,
+        capture_output=True,
+        timeout=60,
+    )
+    subprocess.run(
+        ["git", "-C", str(root), "add", "-A"], check=True, capture_output=True, timeout=60
+    )
     return root
 
 
@@ -43,6 +48,7 @@ def run(root: Path, slug: str = МОЁ) -> int:
 
 
 # ── здоровые предметы ──────────────────────────────────────────────────────
+
 
 def test_svoyo_imya_i_potrebiteli_prohodyat(repo, capsys):
     дерево(repo, f"# К\n\nсм. {МОЁ} и ArtVsMark/Stepik-Python-Grader\n")
@@ -74,6 +80,7 @@ def test_ssylka_s_hvostom_eto_tot_zhe_repozitoriy(repo):
 
 # ── предметы, которые гейт обязан отвергнуть ───────────────────────────────
 
+
 def test_staroe_imya_v_dereve_eto_nahodka(repo, capsys):
     """Ровно инцидент 2 сентября: переименование, 245 старых упоминаний."""
     дерево(repo, f"# К\n\n{МОЁ}, а вот тут ArtVsMark/name-it-no-longer-has\n")
@@ -87,9 +94,11 @@ def test_reestr_otstal_ot_ploshchadki_eto_nahodka(repo, capsys):
 
     Если бы своё имя бралось из реестра, оно совпало бы с собой и гейт
     промолчал бы ровно там, ради чего построен (146)."""
-    дерево(repo, "# К\n\nтекст\n",
-           реестр={"schema": "1.0",
-                   "consumers": [{"repo": "ArtVsMark/name-it-no-longer-has"}]})
+    дерево(
+        repo,
+        "# К\n\nтекст\n",
+        реестр={"schema": "1.0", "consumers": [{"repo": "ArtVsMark/name-it-no-longer-has"}]},
+    )
 
     assert run(repo) == 1
     assert "своего имени нет в реестре" in capsys.readouterr().err
@@ -97,12 +106,18 @@ def test_reestr_otstal_ot_ploshchadki_eto_nahodka(repo, capsys):
 
 # ── третий исход: проверка не отработала ──────────────────────────────────
 
+
 def test_reestra_net_eto_tretiy_ishod(repo, capsys):
     write(repo / "README.md", "# К\n")
-    subprocess.run(["git", "-C", str(repo), "init", "-q", "-b", "main"],
-                   check=True, capture_output=True, timeout=60)
-    subprocess.run(["git", "-C", str(repo), "add", "-A"], check=True,
-                   capture_output=True, timeout=60)
+    subprocess.run(
+        ["git", "-C", str(repo), "init", "-q", "-b", "main"],
+        check=True,
+        capture_output=True,
+        timeout=60,
+    )
+    subprocess.run(
+        ["git", "-C", str(repo), "add", "-A"], check=True, capture_output=True, timeout=60
+    )
 
     assert run(repo) == 2
     assert "не прочитан" in capsys.readouterr().err
@@ -121,8 +136,12 @@ def test_bez_origin_imya_ne_vydumyvaetsya(repo, capsys):
     """Своё имя приходит СНАРУЖИ или не приходит вовсе: константой оно быть
     не должно (005), и молчаливого запасного пути здесь нет."""
     write(repo / ".rules" / "consumers.json", json.dumps(РЕЕСТР))
-    subprocess.run(["git", "-C", str(repo), "init", "-q", "-b", "main"],
-                   check=True, capture_output=True, timeout=60)
+    subprocess.run(
+        ["git", "-C", str(repo), "init", "-q", "-b", "main"],
+        check=True,
+        capture_output=True,
+        timeout=60,
+    )
 
     assert co.main(["--root", str(repo)]) == 2
     assert "origin" in capsys.readouterr().err

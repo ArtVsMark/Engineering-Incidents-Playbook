@@ -40,7 +40,6 @@
   157 — требование действует с той версии ответа, где его завёл контракт.
 """
 
-
 import datetime as dt
 import re
 from pathlib import Path
@@ -53,13 +52,27 @@ ORIGIN_RE = re.compile(r"^[\w.-]+/[\w.-]+:[^\s@:]+@[^\s@]+$")
 #: или замечает машинно, кто-то написал — здесь или у соседа.
 С_ПРОИСХОЖДЕНИЕМ = ("gate", "pipeline")
 #: Ключи записи, которые знает контракт. Закрытый список с 1.9.
-ПОЛЯ = frozenset({
-    "status", "mechanism", "where", "why", "skill", "holdable",
-    "machine_half", "awaiting", "origin", "origin_kind", "analysed",
-    "decided", "refuted_by", "note", "metric",
-    # Переходный слой со старого словаря (094): поле читается, пока не снят.
-    "document_reason",
-})
+ПОЛЯ = frozenset(
+    {
+        "status",
+        "mechanism",
+        "where",
+        "why",
+        "skill",
+        "holdable",
+        "machine_half",
+        "awaiting",
+        "origin",
+        "origin_kind",
+        "analysed",
+        "decided",
+        "refuted_by",
+        "note",
+        "metric",
+        # Переходный слой со старого словаря (094): поле читается, пока не снят.
+        "document_reason",
+    }
+)
 #: Диалект пробы до 1.9 у грейдера: `absent: {substring, globs}`.
 ДИАЛЕКТ_ПРОБЫ = "absent"
 
@@ -163,8 +176,18 @@ def слово_держимости(rec: dict) -> str:
 #: «README». Под PATH_RE такой токен не попадает, и утверждение о нём проходило
 #: молча — ровно так ответ по 065 год говорил «точки входа новичка нет», когда
 #: CONTRIBUTING.md лежал в корне (задача #67).
-BARE_DOCS = ("CONTRIBUTING", "README", "LICENSE", "CHANGELOG", "SECURITY",
-             "HISTORY", "CLAUDE", "VERSIONING", "START", "TOP-10")
+BARE_DOCS = (
+    "CONTRIBUTING",
+    "README",
+    "LICENSE",
+    "CHANGELOG",
+    "SECURITY",
+    "HISTORY",
+    "CLAUDE",
+    "VERSIONING",
+    "START",
+    "TOP-10",
+)
 BARE_RE = re.compile(r"\b(" + "|".join(BARE_DOCS) + r")\b")
 
 
@@ -230,8 +253,10 @@ def версия_требований(schema: object) -> tuple[int, ...]:
 def схема_неверна(schema: object) -> str | None:
     """Номер схемы ответа читается как `X.Y`; иначе — находка."""
     if not re.fullmatch(r"\d+\.\d+", str(schema or "")):
-        return (f"`schema` — «{schema}», а ждётся номер контракта ответа вида "
-                "`1.9`: без него неизвестно, по каким правилам сверять запись")
+        return (
+            f"`schema` — «{schema}», а ждётся номер контракта ответа вида "
+            "`1.9`: без него неизвестно, по каким правилам сверять запись"
+        )
     return None
 
 
@@ -250,39 +275,47 @@ def происхождение(rec: dict, schema: object = "1.8") -> str | None:
         if v is not None and not isinstance(v, str):
             # Чужой ответ может нести что угодно: падение уронило бы сверку
             # всех вместо находки одному (051).
-            return (f"`{поле}` — {type(v).__name__} `{str(v)[:40]}`, а ждётся "
-                    "строка")
+            return f"`{поле}` — {type(v).__name__} `{str(v)[:40]}`, а ждётся строка"
     origin = (rec.get("origin") or "").strip()
     kind = (rec.get("origin_kind") or "").strip()
     mech = rec.get("mechanism") or "none"
     if not origin and not kind:
         if с_19(schema) and rec.get("status") == "active" and mech in С_ПРОИСХОЖДЕНИЕМ:
-            return (f"`{mech}` без `origin_kind` — с контракта 1.9 происхождение "
-                    "механизма обязательно: `own`, если разработан здесь, иначе "
-                    "`called`/`copied`/`adapted` и `origin` с адресом источника")
+            return (
+                f"`{mech}` без `origin_kind` — с контракта 1.9 происхождение "
+                "механизма обязательно: `own`, если разработан здесь, иначе "
+                "`called`/`copied`/`adapted` и `origin` с адресом источника"
+            )
         return None
     if kind and kind not in ORIGIN_KINDS:
-        return (f"`origin_kind: {kind}` — такого слова нет; ждётся одно из "
-                + ", ".join(ORIGIN_KINDS))
+        return f"`origin_kind: {kind}` — такого слова нет; ждётся одно из " + ", ".join(
+            ORIGIN_KINDS
+        )
     if kind == "own" and not с_19(schema):
         return "`origin_kind: own` появился в контракте 1.9 — у ответа схема ниже"
     if mech == "none":
-        return ("происхождение при механизме `none` — у того, чего нет, "
-                "утверждать не о чем")
+        return "происхождение при механизме `none` — у того, чего нет, утверждать не о чем"
     if kind == "own":
         if origin:
-            return ("`origin_kind: own` с `origin` — свой механизм ниоткуда не "
-                    "взят, адрес источника здесь противоречит слову")
+            return (
+                "`origin_kind: own` с `origin` — свой механизм ниоткуда не "
+                "взят, адрес источника здесь противоречит слову"
+            )
         return None
     if kind and not origin:
-        return (f"`origin_kind: {kind}` без `origin` — способ переноса назван, "
-                "а откуда перенесено, нет")
+        return (
+            f"`origin_kind: {kind}` без `origin` — способ переноса назван, а откуда перенесено, нет"
+        )
     if not kind:
-        return ("`origin` назван без `origin_kind` — вызов по тегу и копию "
-                "не различить, а ради этого поле и заведено")
+        return (
+            "`origin` назван без `origin_kind` — вызов по тегу и копию "
+            "не различить, а ради этого поле и заведено"
+        )
     if not ORIGIN_RE.match(origin):
-        return (f"`origin` — «{origin[:60]}», а это не адрес. Ждётся "
-                "`<владелец>/<репозиторий>:<путь>@<версия>`")
+        return (
+            f"`origin` — «{origin[:60]}», а это не адрес. Ждётся "
+            "`<владелец>/<репозиторий>:<путь>@<версия>`"
+        )
     return None
 
 
@@ -294,8 +327,10 @@ def проба(rec: dict) -> dict | None:
     сырая = rec.get("refuted_by")
     if сырая is None and isinstance(rec.get(ДИАЛЕКТ_ПРОБЫ), dict):
         a = rec[ДИАЛЕКТ_ПРОБЫ]
-        сырая = {"globs": a.get("globs") or [],
-                 "contains": [a["substring"]] if a.get("substring") else []}
+        сырая = {
+            "globs": a.get("globs") or [],
+            "contains": [a["substring"]] if a.get("substring") else [],
+        }
     if сырая is None:
         return None
     if isinstance(сырая, str):
@@ -310,30 +345,38 @@ def проба_неверна(rec: dict, schema: object) -> str | None:
     if "refuted_by" not in rec and ДИАЛЕКТ_ПРОБЫ not in rec:
         return None
     if rec.get("status") != "not-applicable":
-        return ("проба опровергает «не применимо», а статус записи "
-                f"`{rec.get('status')}` — опровергать нечего")
+        return (
+            "проба опровергает «не применимо», а статус записи "
+            f"`{rec.get('status')}` — опровергать нечего"
+        )
     if с_19(schema):
         if ДИАЛЕКТ_ПРОБЫ in rec:
-            return ("`absent` — диалект до 1.9; с 1.9 проба пишется "
-                    "`refuted_by: {globs, contains}`")
+            return "`absent` — диалект до 1.9; с 1.9 проба пишется `refuted_by: {globs, contains}`"
         if not isinstance(rec.get("refuted_by"), dict):
-            return ("`refuted_by` строкой — диалект до 1.9; с 1.9 проба "
-                    "пишется объектом `{globs, contains}`")
+            return (
+                "`refuted_by` строкой — диалект до 1.9; с 1.9 проба "
+                "пишется объектом `{globs, contains}`"
+            )
     # Совет про объект `absent` верен только для ответа ниже 1.9: на 1.9 сам
     # `absent` уже запрещён, и ветка выше говорит, чем его заменить (#757).
     if "refuted_by" not in rec and not isinstance(rec.get(ДИАЛЕКТ_ПРОБЫ), dict):
         return "`absent` — объект `{substring, globs}` (диалект до 1.9)"
     п = проба(rec)
     маски, строки = п["globs"], п["contains"]
-    if (not isinstance(маски, list) or not маски
-            or not all(isinstance(m, str) and m.strip() for m in маски)):
+    if (
+        not isinstance(маски, list)
+        or not маски
+        or not all(isinstance(m, str) and m.strip() for m in маски)
+    ):
         return "`refuted_by.globs` — непустой список масок путей"
     # Маска приходит из ДАННЫХ изменения, а прогоняется в чужом прогоне:
     # абсолютная или с `..` вышла бы за дерево проекта (обзор #756).
     for m in маски:
         if m.startswith(("/", "\\")) or re.match(r"^[A-Za-z]:", m) or ".." in Path(m).parts:
-            return (f"`refuted_by.globs` — «{m}» выходит за дерево проекта: "
-                    "маска относительная и без `..`")
+            return (
+                f"`refuted_by.globs` — «{m}» выходит за дерево проекта: "
+                "маска относительная и без `..`"
+            )
     if not isinstance(строки, list) or not all(isinstance(s, str) and s for s in строки):
         return "`refuted_by.contains` — список строк (пустой — «файл есть»)"
     return None
@@ -424,43 +467,50 @@ def обязательные(rec: dict, schema: object) -> list[str]:
     if status not in STATUSES:
         return [f"статус {status!r} вне набора {STATUSES}"]
     if status in ("rejected", "not-applicable") and _пусто(rec.get("why")):
-        out.append(f"статус {status!r} без причины — решение без причины "
-                   "вернётся следующей ревизией")
+        out.append(
+            f"статус {status!r} без причины — решение без причины вернётся следующей ревизией"
+        )
     if status != "active":
         return out
     mech = rec.get("mechanism")
     if mech not in MECHANISMS:
         # Дальше спрашивать нечего: все прочие требования зависят от слова, и
         # следствия чужого слова были бы шумом поверх одной находки (051).
-        return out + [f"действует, но механизм {mech!r} вне словаря (вне набора "
-                      f"{', '.join(MECHANISMS)})"]
+        return out + [
+            f"действует, но механизм {mech!r} вне словаря (вне набора {', '.join(MECHANISMS)})"
+        ]
     if mech != "none":
         if _пусто(rec.get("where")):
             out.append("действует, а где именно — не сказано")
         elif not addressed(rec["where"]):
             out.append(
                 f"держится {mech}, а адреса нет — «{rec['where'][:60]}». "
-                "Механизм, который нельзя открыть, проверить нечем")
+                "Механизм, который нельзя открыть, проверить нечем"
+            )
     if mech == "none" and _пусто(rec.get("why")):
         out.append(
             "не держится ничем, и почему — не сказано. `none` без причины "
             "неотличимо от «не дошли руки»: требует суждения · предмет чужой · "
-            "проверка дороже нарушения — но названо это должно быть (154)")
+            "проверка дороже нарушения — но названо это должно быть (154)"
+        )
     if mech == "none" and _пусто(rec.get("machine_half")):
         out.append(
             "причина есть, а разбора надвое нет. Скажите в поле `machine_half`, "
             "ЧТО ИМЕННО следует из данных целиком — и почему оно не построено: "
-            "половины нет · нашлась бы пустота (146) · очередь (182)")
+            "половины нет · нашлась бы пустота (146) · очередь (182)"
+        )
     if mech == "skill" and v >= (1, 4) and _пусто(rec.get("skill")):
         out.append(
             "держится навыком, а каким — не сказано. Поле `skill` принимает "
             "адрес каталога навыка, `.claude/skills/<имя>`, или навык плагина "
-            "каталога, `<плагин>:<имя>` (183)")
+            "каталога, `<плагин>:<имя>` (183)"
+        )
     if mech in МАШИННЫЕ and not _пусто(rec.get("awaiting")):
         out.append(
             "механизм краснеет, а поле awaiting осталось. Оно значит «ждём "
             "предмета, чтобы строить», и при готовом механизме утверждает "
-            "неправду — уберите его")
+            "неправду — уберите его"
+        )
     if mech not in МАШИННЫЕ and (что := держимость_неверна(rec, schema)):
         out.append(что)
     return out
@@ -490,21 +540,25 @@ def держимость_неверна(rec: dict, schema: object) -> str | None
             "машинной половины нет вовсе; `not-yet`: она есть и не "
             "построена; `conditional`: станет возможна, когда появится "
             "предмет из `awaiting`; `refused`: замерена в `machine_half`, "
-            "и строить её отказались (182, 057, 213)")
+            "и строить её отказались (182, 057, 213)"
+        )
     if _пусто(rec.get("why")):
         return (
             "`holdable` есть, а причины нет. Слово выбирается не думая — "
             "причину не написать, не подумав (154). Скажите, ЧТО именно "
-            "не проверяется машиной")
+            "не проверяется машиной"
+        )
     if выбор == "conditional" and _пусто(rec.get("awaiting")):
         return (
             "`holdable: conditional` без события. Условие — это ПРЕДМЕТ, "
-            "которого ждут, и он называется в `awaiting` (146)")
+            "которого ждут, и он называется в `awaiting` (146)"
+        )
     if выбор == "refused" and _пусто(rec.get("machine_half")):
         return (
             "`holdable: refused` без замера. Отказ — это ЗАМЕРЕННАЯ "
             "половина, и замер называется в `machine_half`: без него "
-            "«отказались» неотличимо от «не смотрели» (213)")
+            "«отказались» неотличимо от «не смотрели» (213)"
+        )
     return None
 
 
@@ -521,21 +575,25 @@ def даты_неверны(rec: dict) -> list[str]:
             out.append(
                 f"`{поле}` — не дата вида ГГГГ-ММ-ДД: «{str(сырое)[:40]}». Даты "
                 "в ответе сравнивает машина, а «16.09» и «Sep 16» она сравнить "
-                "не может")
+                "не может"
+            )
         elif дата(сырое) > СЕГОДНЯ:
             out.append(
                 f"`{поле}` в будущем — {дата(сырое).isoformat()}. Сверка, "
-                "которой ещё не было, записана как бывшая")
+                "которой ещё не было, записана как бывшая"
+            )
     сверено, решено = дата(rec.get("analysed")), дата(rec.get("decided"))
     if решено is not None and сверено is None:
         out.append(
             "вердикт датирован, а сверка — нет. Вынести вердикт, не посмотрев "
             "на дерево, нельзя: `decided` без `analysed` означает решение без "
-            "предмета")
+            "предмета"
+        )
     elif решено is not None and сверено is not None and решено > сверено:
         out.append(
             f"вердикт {решено.isoformat()} новее сверки {сверено.isoformat()}. "
-            "Решают, посмотрев: `decided` не может быть позже `analysed`")
+            "Решают, посмотрев: `decided` не может быть позже `analysed`"
+        )
     return out
 
 
@@ -543,16 +601,15 @@ def запись(rid: str, rec: object, schema: object) -> list[str]:
     """Все находки формы одной записи — то, что сверяют все три читателя."""
     if not isinstance(rec, dict):
         return [f"{rid}: запись — {type(rec).__name__}, а ждётся объект"]
-    out: list[str] = [f"{rid}: {что}" for что in
-                      обязательные(rec, schema) + даты_неверны(rec)]
-    for что in (происхождение(rec, schema), проба_неверна(rec, schema),
-                заметка_неверна(rec)):
+    out: list[str] = [f"{rid}: {что}" for что in обязательные(rec, schema) + даты_неверны(rec)]
+    for что in (происхождение(rec, schema), проба_неверна(rec, schema), заметка_неверна(rec)):
         if что:
             out.append(f"{rid}: {что}")
     лишние = незнакомые(rec, schema)
     if лишние:
-        out.append(f"{rid}: ключи вне контракта — {', '.join(лишние)}. Форма "
-                   "записи закрытая с 1.9: то, что не ложится в поля, пишется в "
-                   "`note`, замер — в `metric`")
+        out.append(
+            f"{rid}: ключи вне контракта — {', '.join(лишние)}. Форма "
+            "записи закрытая с 1.9: то, что не ложится в поля, пишется в "
+            "`note`, замер — в `metric`"
+        )
     return out
-

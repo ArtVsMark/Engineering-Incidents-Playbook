@@ -6,7 +6,6 @@
 вместо «замер не отработал» (039).
 """
 
-
 import json
 from pathlib import Path
 
@@ -47,11 +46,10 @@ def дерево(repo: Path) -> None:
     write(repo / ".github/workflows/ci.yml", ПРОГОН)
     write(repo / ".github/workflows/badges.yml", ТОЛЬКО_ТОЛЧОК)
     write(repo / "pyproject.toml", 'requires-python = ">=3.12"\n')
-    write(repo / "tests/test_a.py", "def test_one():\n    pass\n\n"
-                                    "async def test_two():\n    pass\n")
+    write(
+        repo / "tests/test_a.py", "def test_one():\n    pass\n\nasync def test_two():\n    pass\n"
+    )
     write(repo / "tests/test_b.py", "def test_three():\n    pass\n")
-
-
 
 
 def подставить(monkeypatch, repo: Path) -> None:
@@ -79,8 +77,7 @@ def test_считает_функции_и_модули_набора(monkeypatch,
     assert bf.tests()[0] == {"functions": 3, "modules": 2}
 
 
-def test_проверкой_на_изменении_считается_разбуженная_изменением(
-        monkeypatch, repo):
+def test_проверкой_на_изменении_считается_разбуженная_изменением(monkeypatch, repo):
     """Работа, которую будит толчок в ветку, проверкой ИЗМЕНЕНИЯ не является.
 
     Снаружи её видно в тех же проверках коммита, и медиана «по семи
@@ -96,8 +93,7 @@ def test_проверкой_на_изменении_считается_разб�
     assert "publish" not in раздел["names"]
 
 
-def test_нет_прогона_на_изменении_раздела_нет_и_причина_названа(
-        monkeypatch, repo):
+def test_нет_прогона_на_изменении_раздела_нет_и_причина_названа(monkeypatch, repo):
     """Вторая сторона (140): пустого раздела не возникает, возникает пропуск."""
     write(repo / ".github/workflows/badges.yml", ТОЛЬКО_ТОЛЧОК)
     подставить(monkeypatch, repo)
@@ -113,12 +109,6 @@ def test_версии_и_исполнители_берутся_у_прогоно
     assert раздел["supported"] == ["3.12"]
     assert раздел["floor"] == "3.12"
     assert раздел["os"] == ["macos-latest", "ubuntu-latest"]
-
-
-
-
-
-
 
 
 def test_покрытие_без_замера_это_пропуск_а_не_ноль(monkeypatch, repo):
@@ -137,8 +127,7 @@ def test_покрытие_без_замера_это_пропуск_а_не_но
     assert any(п.startswith("coverage_percent:") for п in пропуски)
 
 
-def test_замер_с_чужого_дерева_это_пропуск_с_причиной_а_не_падение(
-        monkeypatch, repo):
+def test_замер_с_чужого_дерева_это_пропуск_с_причиной_а_не_падение(monkeypatch, repo):
     """Данные покрытия есть, но ссылаются на файл, которого нет: сборка фактов
     не падает, а пропускает раздел и называет, что не разобралось (158)."""
     дерево(repo)
@@ -180,27 +169,22 @@ def test_без_имени_репозитория_файл_не_пишется(m
     """Пустой ответ хуже отсутствующего — это третий исход, а не пустой файл."""
     дерево(repo)
     подставить(monkeypatch, repo)
-    monkeypatch.setattr(bf.check_own_name, "own_slug",
-                        lambda root: ("", "origin не спросить"))
+    monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("", "origin не спросить"))
     assert bf.main([]) == 2
     assert "не отработал" in capsys.readouterr().err
     assert not (repo / ".github/badges/facts.json").exists()
 
 
-def test_записанный_файл_разбирается_и_несёт_объявленную_схему(
-        monkeypatch, repo):
+def test_записанный_файл_разбирается_и_несёт_объявленную_схему(monkeypatch, repo):
     дерево(repo)
     подставить(monkeypatch, repo)
     monkeypatch.setattr(bf, "git", lambda *a: (0, "deadbeef"))
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     assert bf.main([]) == 0
-    записано = json.loads((repo / ".github/badges/facts.json")
-                          .read_text(encoding="utf-8"))
+    записано = json.loads((repo / ".github/badges/facts.json").read_text(encoding="utf-8"))
     assert записано["schema"] == "2.0"
     # Номер схемы обязан сказать, ЧЕГО он: ключ `schema` носят четыре предмета.
     assert "164" in записано["schema_of"]
-
-
 
 
 def test_измерять_нечего_это_исход_один_и_он_достижим(monkeypatch, repo, capsys):
@@ -240,19 +224,13 @@ def test_хотя_бы_один_измеренный_раздел_публику
     monkeypatch.setattr(bf.check_own_name, "own_slug", lambda root: ("своё/имя", ""))
     monkeypatch.setattr(bf.coverage_badge, "measured", lambda: None)
     assert bf.main([]) == 0
-    записано = json.loads((repo / ".github/badges/facts.json")
-                          .read_text(encoding="utf-8"))
+    записано = json.loads((repo / ".github/badges/facts.json").read_text(encoding="utf-8"))
     assert записано["tests"] == {"functions": 1, "modules": 1}
     assert "rules" not in записано
 
 
-
-
-
-
-
-
 # ── договор фактов 1.2: значение либо причина, третьего нет (#632) ───────────
+
 
 def собрать(monkeypatch, repo: Path) -> dict:
     дерево(repo)
@@ -347,6 +325,7 @@ def test_токен_записи_живёт_только_в_шаге_публи�
     не оставляет, прописывает его шаг публикации — после проверки — и снимает
     на выходе из шага."""
     import re
+
     прогон = (bf.ROOT / ".github" / "workflows" / "badges.yml").read_text(encoding="utf-8")
     шаги = re.split(r"^      - (?=name:|uses:)", прогон, flags=re.M)
     checkout = [ш for ш in шаги if ш.startswith("uses: actions/checkout")]
@@ -355,16 +334,19 @@ def test_токен_записи_живёт_только_в_шаге_публи�
     assert len(с_токеном) == 1 and с_токеном[0].startswith("name: положить на ветку badges")
     # Снятие стоит в trap на EXIT, а не строкой после толчка: упавший толчок
     # до строки не дошёл бы (обзор #806).
-    assert re.search(r"trap '[^']*--unset-all http\.https://github\.com/\.extraheader[^']*' EXIT",
-                     с_токеном[0])
+    assert re.search(
+        r"trap '[^']*--unset-all http\.https://github\.com/\.extraheader[^']*' EXIT", с_токеном[0]
+    )
     assert шаги.index(с_токеном[0]) > next(
-        i for i, ш in enumerate(шаги) if ш.startswith("name: Факты отвечают договору семьи"))
+        i for i, ш in enumerate(шаги) if ш.startswith("name: Факты отвечают договору семьи")
+    )
 
 
 def test_серия_договора_одна_и_без_перевода_строки():
     """Номер ``2.0\\n`` и ``2.0.0\\n`` разбирает один код, и серия не несёт перевода строки (обзор #901)."""
     import pytest
     import check_facts
+
     assert check_facts.contract_series("2.0.0\n") == "2.0"
     with pytest.raises(ValueError):
-        check_facts.contract_series("2.0\n")       # форма X.Y.Z обязательна — отказ, а не «2.0\n»
+        check_facts.contract_series("2.0\n")  # форма X.Y.Z обязательна — отказ, а не «2.0\n»

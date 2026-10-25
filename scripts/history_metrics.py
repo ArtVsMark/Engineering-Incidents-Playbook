@@ -62,7 +62,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import io
 import json
@@ -112,6 +111,7 @@ RULE_PATH_RE = re.compile(r"^rules/ru/\d{3}-[a-z0-9-]+\.md$")
 #: Строка «Область» разбирается там, где её разбирает указатель каталога (214).
 from build_rules_index import AREA_RE as _AREA_RE  # noqa: E402
 from build_rules_index import день_utc, заменено_в_тексте  # noqa: E402
+
 AREA_RE = _AREA_RE["ru"]
 #: Ячейка «Ключевое» со ссылкой — см. заголовок: строка сверяется по дереву,
 #: в котором сама и лежит.
@@ -125,8 +125,13 @@ def release(tag: str) -> str:
 
 
 def git(root: Path, *args: str) -> subprocess.CompletedProcess:
-    return proc.run(["git", "-C", str(root), *args],
-                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+    return proc.run(
+        ["git", "-C", str(root), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
 
 
 def tags(root: Path) -> tuple[list[str] | None, str | None]:
@@ -136,19 +141,22 @@ def tags(root: Path) -> tuple[list[str] | None, str | None]:
         return None, f"{root} — git не ответил: {done.stderr.strip()[:120]}"
     found = [t for t in done.stdout.split() if TAG_RE.match(t)]
     if not found:
-        return None, (f"{root} — тегов выпуска нет ни одного. Мелкий клон "
-                      "тегов не приносит, а без них сверять строки не с чем")
+        return None, (
+            f"{root} — тегов выпуска нет ни одного. Мелкий клон "
+            "тегов не приносит, а без них сверять строки не с чем"
+        )
     # не проза: номер версии — «1.2» режется на числа для сортировки.
     return sorted(found, key=lambda t: [int(p) for p in release(t).split(".")]), None
 
 
 def files_at_tag(root: Path, tag: str) -> tuple[dict[str, str] | None, str | None]:
     """Дерево тега целиком: путь → текст. Вторым — причина отказа с адресом."""
-    done = proc.run(["git", "-C", str(root), "archive", tag],
-                    capture_output=True, timeout=60)
+    done = proc.run(["git", "-C", str(root), "archive", tag], capture_output=True, timeout=60)
     if done.returncode != 0:
-        return None, (f"тег {tag} — дерево не выгрузилось: "
-                      f"{done.stderr.decode('utf-8', 'replace').strip()[:120]}")
+        return None, (
+            f"тег {tag} — дерево не выгрузилось: "
+            f"{done.stderr.decode('utf-8', 'replace').strip()[:120]}"
+        )
     out: dict[str, str] = {}
     try:
         with tarfile.open(fileobj=io.BytesIO(done.stdout)) as tar:
@@ -205,10 +213,12 @@ def snapshot(files: dict[str, str]) -> dict[str, str]:
     """
     # ЗАМЕЩЁННОЕ В СЧЁТ НЕ ВХОДИТ (17.10): файл остаётся ради ссылок, но
     # правилом больше не является — иначе слияние «растило» бы каталог.
-    rules = [n for n in files if RULE_PATH_RE.match(n)
-             and not заменено_в_тексте(files[n], "ru")]
-    выбыли = {n.split("/")[-1][:3] for n in files if RULE_PATH_RE.match(n)
-              and заменено_в_тексте(files[n], "ru")}
+    rules = [n for n in files if RULE_PATH_RE.match(n) and not заменено_в_тексте(files[n], "ru")]
+    выбыли = {
+        n.split("/")[-1][:3]
+        for n in files
+        if RULE_PATH_RE.match(n) and заменено_в_тексте(files[n], "ru")
+    }
 
     areas: set[str] = set()
     for name in rules:
@@ -231,12 +241,10 @@ def snapshot(files: dict[str, str]) -> dict[str, str]:
     raw = files.get(".rules/bindings.json")
     if raw:
         try:
-            answers = [a for rid, a in json.loads(raw)["rules"].items()
-                       if rid not in выбыли]
+            answers = [a for rid, a in json.loads(raw)["rules"].items() if rid not in выбыли]
         except ValueError, KeyError, TypeError, AttributeError:
             answers = []
-        active = [a for a in answers if isinstance(a, dict)
-                  and a.get("status") == "active"]
+        active = [a for a in answers if isinstance(a, dict) and a.get("status") == "active"]
         if active and all("mechanism" in a for a in active):
             none = sum(1 for a in active if a["mechanism"] == "none")
             nothing = f"{none} из {len(active)}"
@@ -244,9 +252,14 @@ def snapshot(files: dict[str, str]) -> dict[str, str]:
     modules = [n for n in files if TEST_MODULE_RE.match(n)]
     tests = sum(len(TEST_DEF_RE.findall(files[n])) for n in modules)
 
-    return {"правил": str(len(rules)), "областей": str(len(areas)),
-            "ссылок": str(links), "тестов": str(tests),
-            "модулей": str(len(modules)), "ничем": nothing}
+    return {
+        "правил": str(len(rules)),
+        "областей": str(len(areas)),
+        "ссылок": str(links),
+        "тестов": str(tests),
+        "модулей": str(len(modules)),
+        "ничем": nothing,
+    }
 
 
 def table(text: str) -> tuple[list[str] | None, int | None]:
@@ -276,14 +289,31 @@ def table(text: str) -> tuple[list[str] | None, int | None]:
 
 #: Месяцы родительным падежом: заголовок читается «28 августа 2026», а не
 #: «2026-08-28». Формат взят у уже написанных разделов, а не выдуман.
-MONTHS = ("января", "февраля", "марта", "апреля", "мая", "июня", "июля",
-          "августа", "сентября", "октября", "ноября", "декабря")
+MONTHS = (
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря",
+)
 
 
 def tag_date(root: Path, tag: str) -> tuple[str, str]:
     """Дата тега словами. Ошибка возвращается строкой, а не трассировкой."""
-    done = proc.run(["git", "-C", str(root), "log", "-1", "--format=%cI",
-                     tag], capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), "log", "-1", "--format=%cI", tag],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0 or not done.stdout.strip():
         return "", f"у тега {tag} не спросить дату: {done.stderr.strip()}"
     # В UTC, как дата появления правила: пояс коммита — пояс машины (#706).
@@ -299,16 +329,17 @@ def close_section(text: str, tag: str, date: str) -> tuple[str, str]:
     метрик, — и сломалась бы вторично, тем же способом.
     """
     if RELEASE_HEAD_RE.search(text) and any(
-            release(m.group(1)) == release(tag)
-            for m in RELEASE_HEAD_RE.finditer(text)):
-        return text, ""                 # раздел уже под своим номером
+        release(m.group(1)) == release(tag) for m in RELEASE_HEAD_RE.finditer(text)
+    ):
+        return text, ""  # раздел уже под своим номером
     m = OPEN_HEAD_RE.search(text)
     if not m:
-        return text, (f"раздела о выпуске в {HISTORY} нет: ни «## {tag} · …», "
-                      "ни «## Не выпущено · …». Строка метрик встанет, а "
-                      "решения выпуска останутся нерассказанными")
-    return (text[:m.start()] + f"## {tag} · {date} · {m.group(1)}"
-            + text[m.end():]), ""
+        return text, (
+            f"раздела о выпуске в {HISTORY} нет: ни «## {tag} · …», "
+            "ни «## Не выпущено · …». Строка метрик встанет, а "
+            "решения выпуска останутся нерассказанными"
+        )
+    return (text[: m.start()] + f"## {tag} · {date} · {m.group(1)}" + text[m.end() :]), ""
 
 
 def cells(row: str) -> list[str]:
@@ -319,13 +350,18 @@ def check(root: Path) -> int:
     path = root / HISTORY
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not path.exists():
-        print(f"проверка не отработала: нет {path} — документа, в котором "
-              "живёт эволюция метрик", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {path} — документа, в котором живёт эволюция метрик",
+            file=sys.stderr,
+        )
         return 2
     rows, _ = table(path.read_text(encoding="utf-8"))
     if rows is None:
-        print(f"проверка не отработала: в {HISTORY} нет таблицы под заголовком "
-              f"«{SECTION}» — сверять теги не с чем", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {HISTORY} нет таблицы под заголовком "
+            f"«{SECTION}» — сверять теги не с чем",
+            file=sys.stderr,
+        )
         return 2
     found, err = tags(root)
     if err:
@@ -347,12 +383,14 @@ def check(root: Path) -> int:
                 f"выпуск {tag} состоялся, а раздела о нём ни в {HISTORY}, "
                 f"ни в {ARCHIVE} нет. "
                 "Единица истории — выпуск: без раздела его решения остаются "
-                "нерассказанными, и рядом с рядом тегов стоит пустое место")
+                "нерассказанными, и рядом с рядом тегов стоит пустое место"
+            )
         if num not in written:
             problems.append(
                 f"выпуск {tag} состоялся, а строки о нём в «{SECTION}» нет. "
                 "Ряд обрывается молча: читатель видит последний выпуск и "
-                "думает, что он и есть текущий")
+                "думает, что он и есть текущий"
+            )
             continue
         got = cells(written.pop(num))
         want = snapshot_or_none(root, tag, problems)
@@ -365,23 +403,27 @@ def check(root: Path) -> int:
             if got[i] != value:
                 problems.append(
                     f"строка {tag}: «{name}» = {got[i] or 'пусто'}, а по дереву "
-                    f"тега {value}. Снимок разошёлся с тем, что был снимком")
+                    f"тега {value}. Снимок разошёлся с тем, что был снимком"
+                )
         key = got[-1] if len(got) > len(want) else ""
         if not key:
             problems.append(
                 f"строка {tag}: «Ключевое» пусто — ряд чисел без ответа на "
                 "вопрос «что это был за выпуск» читается как отчёт, а не как "
-                "история")
+                "история"
+            )
         elif CELL_LINK_RE.search(key):
             problems.append(
                 f"строка {tag}: в «Ключевом» ссылка. Строка сверяется по "
                 "дереву, в котором сама и лежит, и ссылка делает её неверной "
-                "о себе самой")
+                "о себе самой"
+            )
 
     for num, row in written.items():
         problems.append(
             f"строка v{num}: такого тега нет. Строка пережила выпуск либо "
-            "поставлена вперёд него и обещает то, чего не было")
+            "поставлена вперёд него и обещает то, чего не было"
+        )
 
     if problems:
         print("эволюция метрик разошлась с выпусками:", file=sys.stderr)
@@ -389,8 +431,10 @@ def check(root: Path) -> int:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
-    print(f"история сошлась с выпусками: их {len(found)}, у каждого свой раздел "
-          "и строка метрик, и числа сходятся с деревом тега")
+    print(
+        f"история сошлась с выпусками: их {len(found)}, у каждого свой раздел "
+        "и строка метрик, и числа сходятся с деревом тега"
+    )
     return 0
 
 
@@ -411,24 +455,28 @@ def add(root: Path, tag: str, key: str, at_tag: bool) -> int:
     text = path.read_text(encoding="utf-8")
     rows, after = table(text)
     if rows is None or after is None:
-        print(f"дописать некуда: в {HISTORY} нет таблицы под заголовком "
-              f"«{SECTION}»", file=sys.stderr)
+        print(
+            f"дописать некуда: в {HISTORY} нет таблицы под заголовком «{SECTION}»", file=sys.stderr
+        )
         return 2
     if release(tag) in {release(cells(r)[0]) for r in rows}:
-        print(f"строка про {tag} уже есть — номера не переиспользуются",
-              file=sys.stderr)
+        print(f"строка про {tag} уже есть — номера не переиспользуются", file=sys.stderr)
         return 1
     if not key.strip():
-        print("«Ключевое» пусто: ряд чисел без ответа «что это был за выпуск» "
-              "историей не является", file=sys.stderr)
+        print(
+            "«Ключевое» пусто: ряд чисел без ответа «что это был за выпуск» историей не является",
+            file=sys.stderr,
+        )
         return 1
     if CELL_LINK_RE.search(key):
-        print("в «Ключевом» ссылка: строка сверяется по дереву, в котором сама "
-              "и лежит, и ссылка сделает её неверной о себе самой",
-              file=sys.stderr)
+        print(
+            "в «Ключевом» ссылка: строка сверяется по дереву, в котором сама "
+            "и лежит, и ссылка сделает её неверной о себе самой",
+            file=sys.stderr,
+        )
         return 1
 
-    files, err = (files_at_tag(root, tag) if at_tag else files_in_tree(root))
+    files, err = files_at_tag(root, tag) if at_tag else files_in_tree(root)
     if err:
         print(f"снимок не собрался: {err}", file=sys.stderr)
         return 2
@@ -467,16 +515,14 @@ def key_of(root: Path, tag: str) -> int:
         return 2
     rows, _ = table(path.read_text(encoding="utf-8"))
     if rows is None:
-        print(f"читать нечего: в {HISTORY} нет таблицы под заголовком "
-              f"«{SECTION}»", file=sys.stderr)
+        print(f"читать нечего: в {HISTORY} нет таблицы под заголовком «{SECTION}»", file=sys.stderr)
         return 2
     for row in rows:
         c = cells(row)
         if release(c[0]) == release(tag):
             print(c[-1])
             return 0
-    print(f"строки про {tag} нет: выпуск до строки метрик не дошёл",
-          file=sys.stderr)
+    print(f"строки про {tag} нет: выпуск до строки метрик не дошёл", file=sys.stderr)
     return 1
 
 
@@ -498,8 +544,9 @@ def recount(root: Path) -> int:
     text = path.read_text(encoding="utf-8")
     rows, _ = table(text)
     if not rows:
-        print(f"пересчитывать нечего: в {HISTORY} нет строк выпусков под "
-              f"«{SECTION}»", file=sys.stderr)
+        print(
+            f"пересчитывать нечего: в {HISTORY} нет строк выпусков под «{SECTION}»", file=sys.stderr
+        )
         return 2
 
     known = {release(tag): tag for tag in tags(root)[0]}
@@ -508,15 +555,13 @@ def recount(root: Path) -> int:
         got = cells(row)
         tag = known.get(release(got[0]))
         if tag is None:
-            print(f"пересчитывать нечего: строка {got[0]} — тега такого нет",
-                  file=sys.stderr)
+            print(f"пересчитывать нечего: строка {got[0]} — тега такого нет", file=sys.stderr)
             return 2
         files, err = files_at_tag(root, tag)
         if err:
             print(f"пересчёт не отработал: {err}", file=sys.stderr)
             return 2
-        fresh = "| " + " | ".join([got[0], *snapshot(files).values(),
-                                   got[-1]]) + " |"
+        fresh = "| " + " | ".join([got[0], *snapshot(files).values(), got[-1]]) + " |"
         if fresh != row:
             text = text.replace(row, fresh, 1)
             changed += 1
@@ -527,23 +572,32 @@ def recount(root: Path) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
-    parser.add_argument("--check", action="store_true",
-                        help="сверить строки выпусков с тегами")
-    parser.add_argument("--recount", action="store_true",
-                        help="пересчитать числа всех строк по их тегам: нужен "
-                             "при смене состава колонок, «Ключевое» сохраняется")
-    parser.add_argument("--add", metavar="ТЕГ",
-                        help="дописать строку выпуска, посчитав числа")
-    parser.add_argument("--key-of", metavar="ТЕГ",
-                        help="напечатать «Ключевое» строки выпуска: его берёт "
-                             "дозавершение, чтобы не спрашивать второй раз")
-    parser.add_argument("--key", default="",
-                        help="колонка «Ключевое»: что принёс выпуск, одной фразой")
-    parser.add_argument("--at-tag", action="store_true",
-                        help="считать по дереву тега, а не по рабочему: так "
-                             "досыпают строки выпускам, которые уже состоялись")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
+    parser.add_argument("--check", action="store_true", help="сверить строки выпусков с тегами")
+    parser.add_argument(
+        "--recount",
+        action="store_true",
+        help="пересчитать числа всех строк по их тегам: нужен "
+        "при смене состава колонок, «Ключевое» сохраняется",
+    )
+    parser.add_argument("--add", metavar="ТЕГ", help="дописать строку выпуска, посчитав числа")
+    parser.add_argument(
+        "--key-of",
+        metavar="ТЕГ",
+        help="напечатать «Ключевое» строки выпуска: его берёт "
+        "дозавершение, чтобы не спрашивать второй раз",
+    )
+    parser.add_argument(
+        "--key", default="", help="колонка «Ключевое»: что принёс выпуск, одной фразой"
+    )
+    parser.add_argument(
+        "--at-tag",
+        action="store_true",
+        help="считать по дереву тега, а не по рабочему: так "
+        "досыпают строки выпускам, которые уже состоялись",
+    )
     args = parser.parse_args(argv)
 
     if args.recount:

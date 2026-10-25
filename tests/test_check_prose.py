@@ -14,7 +14,6 @@
 список файлов гейт берёт у git — непрослеживаемый мусор проверять незачем.
 """
 
-
 import subprocess
 from pathlib import Path
 
@@ -34,6 +33,7 @@ def repo_with(tmp_path: Path, files: dict[str, str]) -> Path:
 
 # ── сворачиваемые блоки (008) ──────────────────────────────────────────────
 
+
 def test_spoyler_v_tekste_nahodka(tmp_path):
     root = repo_with(tmp_path, {"README.md": "# Витрина\n\n<details>\n<summary>что-то</summary>\n"})
     assert cp.main(["--root", str(root)]) == 1
@@ -41,7 +41,9 @@ def test_spoyler_v_tekste_nahodka(tmp_path):
 
 def test_spoyler_v_obratnyh_kavychkah_ne_narushenie(tmp_path):
     """Запись 008 объясняет, чем плох спойлер, и обязана его назвать."""
-    root = repo_with(tmp_path, {"r.md": "На странице `<details>` даёт заголовок без содержимого.\n"})
+    root = repo_with(
+        tmp_path, {"r.md": "На странице `<details>` даёт заголовок без содержимого.\n"}
+    )
     assert cp.main(["--root", str(root)]) == 0
 
 
@@ -71,16 +73,19 @@ def test_stroki_schitayutsya_ot_edinitsy():
 
 # ── версия в манифесте (035) ───────────────────────────────────────────────
 
+
 def test_vpisannaya_versiya_nahodka(tmp_path):
-    root = repo_with(tmp_path, {"a.md": "текст\n",
-                                "pyproject.toml": '[project]\nversion = "1.1.0"\n'})
+    root = repo_with(
+        tmp_path, {"a.md": "текст\n", "pyproject.toml": '[project]\nversion = "1.1.0"\n'}
+    )
     assert cp.main(["--root", str(root)]) == 1
 
 
 def test_zaglushka_ne_narushenie(tmp_path):
     """`0.0.0` означает «версия приходит из тега» — это соблюдение, а не обход."""
-    root = repo_with(tmp_path, {"a.md": "текст\n",
-                                "pyproject.toml": '[project]\nversion = "0.0.0"\n'})
+    root = repo_with(
+        tmp_path, {"a.md": "текст\n", "pyproject.toml": '[project]\nversion = "0.0.0"\n'}
+    )
     assert cp.main(["--root", str(root)]) == 0
 
 
@@ -93,6 +98,7 @@ def test_versiya_v_proze_ne_nahodka(tmp_path):
 
 
 # ── три исхода ─────────────────────────────────────────────────────────────
+
 
 def test_chisto_eto_nol(tmp_path):
     root = repo_with(tmp_path, {"a.md": "обычный текст\n"})
@@ -113,34 +119,47 @@ def test_ne_repozitoriy_eto_dva(tmp_path):
 
 # ── номер задачи в объяснении (025) ────────────────────────────────────────
 
+
 def запись(тело: str) -> str:
     return "# Заголовок\n\n**Область.** процесс\n\n" + тело
 
 
 def test_nomer_v_pochemu_nahodka(tmp_path):
-    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
-        "## Почему\n\nМеханизм описан в #123, читайте там.\n")})
+    root = repo_with(
+        tmp_path,
+        {"rules/ru/001-x.md": запись("## Почему\n\nМеханизм описан в #123, читайте там.\n")},
+    )
     assert cp.main(["--root", str(root)]) == 1
 
 
 def test_nomer_v_intsidente_ne_narushenie(tmp_path):
     """В инциденте номер — это датировка, и она там на месте."""
-    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
-        "## Инцидент\n\nPR #1294: 16 записей, дублей нет.\n")})
+    root = repo_with(
+        tmp_path,
+        {"rules/ru/001-x.md": запись("## Инцидент\n\nPR #1294: 16 записей, дублей нет.\n")},
+    )
     assert cp.main(["--root", str(root)]) == 0
 
 
 def test_nomer_v_sledе_ne_narushenie(tmp_path):
     """След обязан быть разрешимым, то есть как раз номером задачи."""
-    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
-        "## След\n\nArtVsMark/Engineering-Incidents-Playbook#213\n")})
+    root = repo_with(
+        tmp_path,
+        {"rules/ru/001-x.md": запись("## След\n\nArtVsMark/Engineering-Incidents-Playbook#213\n")},
+    )
     assert cp.main(["--root", str(root)]) == 0
 
 
 def test_nomer_v_bloke_koda_ne_narushenie(tmp_path):
     """Пример чек-листа цитирует строку с номером — это показ, а не ссылка."""
-    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
-        "## Почему\n\n```\n- [x] Находка A — исправлено в #123\n```\n")})
+    root = repo_with(
+        tmp_path,
+        {
+            "rules/ru/001-x.md": запись(
+                "## Почему\n\n```\n- [x] Находка A — исправлено в #123\n```\n"
+            )
+        },
+    )
     assert cp.main(["--root", str(root)]) == 0
 
 
@@ -152,24 +171,43 @@ def test_reshyotka_zagolovka_ne_schitaetsya_nomerom():
 
 # ── ссылка из оригинала в копию (089) ──────────────────────────────────────
 
+
 def test_ssylka_v_ukazatel_nahodka(tmp_path):
-    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
-        "## Почему\n\nСписок — в [указателе](../README.md), см. rules/README.md.\n"
-        "Точнее: [тут](../../rules/README.md).\n")})
+    root = repo_with(
+        tmp_path,
+        {
+            "rules/ru/001-x.md": запись(
+                "## Почему\n\nСписок — в [указателе](../README.md), см. rules/README.md.\n"
+                "Точнее: [тут](../../rules/README.md).\n"
+            )
+        },
+    )
     assert cp.main(["--root", str(root)]) == 1
 
 
 def test_ssylka_v_vygruzku_nahodka(tmp_path):
-    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
-        "## Почему\n\nДанные лежат в [выгрузке](../../export/rules.json).\n")})
+    root = repo_with(
+        tmp_path,
+        {
+            "rules/ru/001-x.md": запись(
+                "## Почему\n\nДанные лежат в [выгрузке](../../export/rules.json).\n"
+            )
+        },
+    )
     assert cp.main(["--root", str(root)]) == 1
 
 
 def test_ssylka_na_sosednyuyu_zapis_ne_narushenie(tmp_path):
     """Запись на запись — связь оригиналов, и она обязательна: правило без
     соседей обычно либо дубль, либо слишком общее."""
-    root = repo_with(tmp_path, {"rules/ru/001-x.md": запись(
-        "## Почему\n\nСмежное: [022](022-one-canonical-document.md).\n")})
+    root = repo_with(
+        tmp_path,
+        {
+            "rules/ru/001-x.md": запись(
+                "## Почему\n\nСмежное: [022](022-one-canonical-document.md).\n"
+            )
+        },
+    )
     assert cp.main(["--root", str(root)]) == 0
 
 
@@ -186,8 +224,9 @@ def test_dokument_vne_zapisey_ne_proveryaetsya_na_ssylki(tmp_path):
 
 
 def test_obe_litsenzii_na_meste_chisto(tmp_path):
-    root = repo_with(tmp_path, {"README.md": ВИТРИНА,
-                                "LICENSE": "CC BY\n", "LICENSE-CODE": "MIT\n"})
+    root = repo_with(
+        tmp_path, {"README.md": ВИТРИНА, "LICENSE": "CC BY\n", "LICENSE-CODE": "MIT\n"}
+    )
     assert cp.main(["--root", str(root)]) == 0
 
 
@@ -199,17 +238,29 @@ def test_propavshaya_litsenziya_koda_nahodka(tmp_path):
 def test_litsenziya_o_kotoroy_vitrina_molchit_nahodka(tmp_path, capsys):
     """Площадка показывает одну лицензию — ту, что в LICENSE. Вторая существует
     ровно настолько, насколько на неё ссылается витрина."""
-    root = repo_with(tmp_path, {"README.md": "# Проект\n\nЛицензия: LICENSE.\n",
-                                "LICENSE": "CC BY\n", "LICENSE-CODE": "MIT\n"})
+    root = repo_with(
+        tmp_path,
+        {
+            "README.md": "# Проект\n\nЛицензия: LICENSE.\n",
+            "LICENSE": "CC BY\n",
+            "LICENSE-CODE": "MIT\n",
+        },
+    )
     assert cp.main(["--root", str(root)]) == 1
     assert "LICENSE-CODE" in capsys.readouterr().err
 
 
 def test_angliyskaya_vitrina_tozhe_schitaetsya(tmp_path):
     """Назвать лицензию можно в любой из двух витрин: читатель приходит в свою."""
-    root = repo_with(tmp_path, {"README.md": "# Проект\n",
-                                "README.en.md": ВИТРИНА,
-                                "LICENSE": "CC BY\n", "LICENSE-CODE": "MIT\n"})
+    root = repo_with(
+        tmp_path,
+        {
+            "README.md": "# Проект\n",
+            "README.en.md": ВИТРИНА,
+            "LICENSE": "CC BY\n",
+            "LICENSE-CODE": "MIT\n",
+        },
+    )
     assert cp.main(["--root", str(root)]) == 0
 
 
@@ -219,9 +270,11 @@ def test_angliyskaya_vitrina_tozhe_schitaetsya(tmp_path):
 # версионирует ФОРМАТ. Замер: вопрос владельца «почему 1.2, если версия 1.1»,
 # а следом чужой файл, где номер схемы ВЫГРУЗКИ уехал в поле схемы ОТВЕТА.
 
+
 def дерево(tmp_path, файл: str, схема: str, versioning: str) -> Path:
-    return repo_with(tmp_path, {файл: f'{{\n  "schema": "{схема}"\n}}\n',
-                                "docs/VERSIONING.md": versioning})
+    return repo_with(
+        tmp_path, {файл: f'{{\n  "schema": "{схема}"\n}}\n', "docs/VERSIONING.md": versioning}
+    )
 
 
 def test_nazvannaya_shema_prohodit(tmp_path):
@@ -259,6 +312,7 @@ def test_bez_politiki_versiy_predmeta_net(tmp_path):
 # а не из достигнутого, и порог, отвергающий живую витрину, приучали бы
 # обходить (051).
 
+
 def test_vitrina_sverh_predela_nahodka(tmp_path, capsys):
     """Регресс, который правило само называет неизбежным, гейт называет."""
     root = repo_with(tmp_path, {"README.md": "слово " * (cp.ВИТРИНА_СЛОВ + 1)})
@@ -286,7 +340,8 @@ def test_zhivaya_vitrina_prohodit_s_zapasom():
 
     assert сказано < cp.ВИТРИНА_СЛОВ, f"витрина уже за пределом: {сказано}"
     assert cp.ВИТРИНА_СЛОВ - сказано > 50, (
-        f"запас {cp.ВИТРИНА_СЛОВ - сказано} слов — предел стал храповиком")
+        f"запас {cp.ВИТРИНА_СЛОВ - сказано} слов — предел стал храповиком"
+    )
 
 
 def test_perelivka_abzatsev_chisla_ne_menyaet():
@@ -317,7 +372,8 @@ def test_poryadok_zamen_znachim_na_zhivoy_vitrine():
 
     assert cp.prose_words(текст) > наоборот, (
         "порядок замен перестал быть значим — проверьте, не съедает ли "
-        "голая ссылка адрес внутри скобок")
+        "голая ссылка адрес внутри скобок"
+    )
 
 
 def test_granitsa_nazvana_poimyonno_i_sushchestvuet():

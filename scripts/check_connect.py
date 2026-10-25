@@ -39,7 +39,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import re
 import sys
@@ -62,9 +61,11 @@ ENTRY = ("README.md", "START.md")
 
 def tools(text: str) -> list[str]:
     """Первые ячейки таблицы инструментов: пути скриптов и ссылки `uses:`."""
-    return [m.group(1) for m in (ROW_RE.match(line) for line in text.splitlines())
-            if m and (m.group(1).startswith("scripts/")
-                      or m.group(1).startswith("uses: "))]
+    return [
+        m.group(1)
+        for m in (ROW_RE.match(line) for line in text.splitlines())
+        if m and (m.group(1).startswith("scripts/") or m.group(1).startswith("uses: "))
+    ]
 
 
 def action_path(uses: str) -> Path:
@@ -74,7 +75,7 @@ def action_path(uses: str) -> Path:
     — action.yml по этому пути. Тег отрезается: он закрепляется сборкой и к
     существованию файла отношения не имеет.
     """
-    ref = uses[len("uses: "):].split("@", 1)[0].strip()
+    ref = uses[len("uses: ") :].split("@", 1)[0].strip()
     parts = ref.split("/")
     tail = "/".join(parts[2:]) if len(parts) > 2 else ""
     return Path(tail) / "action.yml" if tail else Path("action.yml")
@@ -101,27 +102,36 @@ def declared(root: Path) -> tuple[list[str], list[str]]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = parser.parse_args(argv)
     root: Path = args.root
     connect = root / CONNECT
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not connect.exists():
-        print(f"проверка не отработала: нет {connect} — документа входа, в "
-              "котором и живёт список инструментов", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {connect} — документа входа, в "
+            "котором и живёт список инструментов",
+            file=sys.stderr,
+        )
         return 2
     if not (root / "scripts").is_dir():
-        print(f"проверка не отработала: нет {root / 'scripts'} — сверять "
-              "таблицу не с чем", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {root / 'scripts'} — сверять таблицу не с чем",
+            file=sys.stderr,
+        )
         return 2
     text = connect.read_text(encoding="utf-8")
     named = tools(text)
     if not named:
-        print(f"проверка не отработала: в {CONNECT} не разобралось ни одной "
-              "строки таблицы инструментов. Это ошибка разбора, а не пустой "
-              "список: инструменты существуют", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {CONNECT} не разобралось ни одной "
+            "строки таблицы инструментов. Это ошибка разбора, а не пустой "
+            "список: инструменты существуют",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -133,14 +143,16 @@ def main(argv: list[str] | None = None) -> int:
         if not (root / target).exists():
             problems.append(
                 f"{CONNECT} обещает «{item}», а {target} не существует. "
-                "Потребитель придёт по названному адресу и не найдёт ничего")
+                "Потребитель придёт по названному адресу и не найдёт ничего"
+            )
 
     for script in marked:
         if script not in named:
             problems.append(
                 f"{script} объявлен маркером «{MARK}», а в {CONNECT} не назван. "
                 "Инструмент, о котором сказано только в коде и журнале, для "
-                "новичка не существует")
+                "новичка не существует"
+            )
 
     for doc in ENTRY:
         path = root / doc
@@ -149,7 +161,8 @@ def main(argv: list[str] | None = None) -> int:
         if CONNECT not in path.read_text(encoding="utf-8"):
             problems.append(
                 f"{doc} не ведёт на {CONNECT}. Вход, не назвавший инструментов, "
-                "оставляет читателю единственный путь — копировать руками")
+                "оставляет читателю единственный путь — копировать руками"
+            )
 
     if problems:
         print("вход в проект разошёлся с инструментами:", file=sys.stderr)
@@ -160,11 +173,15 @@ def main(argv: list[str] | None = None) -> int:
     if suspect:
         print("на что стоит посмотреть (не отказ):")
         for script in suspect:
-            print(f"  ~ {script}: говорит о запуске у потребителя, а маркера "
-                  f"«{MARK}» не несёт — инструмент это или наш гейт, решает автор")
+            print(
+                f"  ~ {script}: говорит о запуске у потребителя, а маркера "
+                f"«{MARK}» не несёт — инструмент это или наш гейт, решает автор"
+            )
 
-    print(f"вход в порядке: инструментов {len(named)}, объявлено маркером "
-          f"{len(marked)}, все названы и все существуют")
+    print(
+        f"вход в порядке: инструментов {len(named)}, объявлено маркером "
+        f"{len(marked)}, все названы и все существуют"
+    )
     return 0
 
 

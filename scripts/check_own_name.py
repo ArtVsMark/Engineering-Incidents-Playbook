@@ -48,7 +48,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import json
 import re
@@ -76,20 +75,24 @@ TAIL = re.compile(r"(?:\.git)?[.,;:!?)»\]]*$")
 #: месяц станет свалкой, куда дописывают, чтобы гейт замолчал (068).
 ASIDE = {
     "ArtVsMark/Other": "подделка в самопроверке scripts/link_trails.py — "
-                       "«чужой проект», у которого следа быть не должно",
+    "«чужой проект», у которого следа быть не должно",
     "ArtVsMark/claude-code-usage-dat": "бывший потребитель, убранный из "
-                                       "реестра 28 августа; назван в журнале "
-                                       "как факт истории, а не как адрес",
+    "реестра 28 августа; назван в журнале "
+    "как факт истории, а не как адрес",
 }
 
 
 def own_slug(root: Path) -> tuple[str, str]:
     """«владелец/имя» по адресу origin. Ошибка строкой, а не трассировкой."""
-    done = proc.run(["git", "-C", str(root), "remote", "get-url", "origin"],
-                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), "remote", "get-url", "origin"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0 or not done.stdout.strip():
-        return "", ("не спросить адрес origin: "
-                    + (done.stderr.strip() or "пустой ответ"))
+        return "", ("не спросить адрес origin: " + (done.stderr.strip() or "пустой ответ"))
     url = done.stdout.strip()
     m = re.search(r"[:/]([^/:]+)/([^/]+?)(?:\.git)?/?$", url)
     if not m:
@@ -121,12 +124,20 @@ OWN_SUITE = "tests/test_check_own_name.py"
 
 
 def files(root: Path) -> list[Path]:
-    done = proc.run(["git", "-C", str(root), "ls-files", "-z"],
-                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), "ls-files", "-z"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         return []
-    return [root / f for f in done.stdout.split("\0")
-            if f.endswith(SUFFIXES) and f != OWN_SUITE and (root / f).exists()]
+    return [
+        root / f
+        for f in done.stdout.split("\0")
+        if f.endswith(SUFFIXES) and f != OWN_SUITE and (root / f).exists()
+    ]
 
 
 def strangers(root: Path, mine: str, allowed: set[str]) -> list[str]:
@@ -151,18 +162,24 @@ def strangers(root: Path, mine: str, allowed: set[str]) -> list[str]:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--root", type=Path, default=ROOT,
-                    help="корень каталога; по умолчанию сам этот репозиторий")
-    ap.add_argument("--slug", help="своё имя вместо ответа origin: так набор "
-                                   "подставляет подделку, не трогая машину")
+    ap.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
+    ap.add_argument(
+        "--slug",
+        help="своё имя вместо ответа origin: так набор подставляет подделку, не трогая машину",
+    )
     args = ap.parse_args(argv)
     root: Path = args.root
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     mine, err = (args.slug, "") if args.slug else own_slug(root)
     if err:
-        print(f"проверка не отработала: {err}. Своё имя брать неоткуда, а "
-              "константой оно быть не должно (005)", file=sys.stderr)
+        print(
+            f"проверка не отработала: {err}. Своё имя брать неоткуда, а "
+            "константой оно быть не должно (005)",
+            file=sys.stderr,
+        )
         return 2
     allowed, err = known(root)
     if err:
@@ -170,8 +187,11 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     looked = files(root)
     if not looked:
-        print(f"проверка не отработала: под {root} просмотрено ноль файлов — "
-              "это отказ, а не чистый прогон (075)", file=sys.stderr)
+        print(
+            f"проверка не отработала: под {root} просмотрено ноль файлов — "
+            "это отказ, а не чистый прогон (075)",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -186,24 +206,33 @@ def main(argv: list[str] | None = None) -> int:
         found.append(
             f"своего имени нет в реестре потребителей: площадка знает каталог "
             f"как {mine}, а {REGISTRY} называет "
-            + (", ".join(sorted(s for s in allowed
-                                if s.split('/')[0] == mine.split('/')[0]))
-               or "другого владельца")
-            + ". После переименования это первое, что расходится")
+            + (
+                ", ".join(sorted(s for s in allowed if s.split("/")[0] == mine.split("/")[0]))
+                or "другого владельца"
+            )
+            + ". После переименования это первое, что расходится"
+        )
     found += strangers(root, mine, allowed)
     if found:
-        print(f"дерево называет репозитории владельца, которых оно не знает "
-              f"(своё имя — {mine}):", file=sys.stderr)
+        print(
+            f"дерево называет репозитории владельца, которых оно не знает (своё имя — {mine}):",
+            file=sys.stderr,
+        )
         for f in found:
             print(f"  • {f}", file=sys.stderr)
-        print("\n  Либо это устаревшее имя — тогда перепишите его; либо новый "
-              "потребитель —\n  тогда заведите его в .rules/consumers.json. "
-              "Перенаправление площадки\n  скрывает расхождение до того дня, "
-              "когда старое имя займут (035).", file=sys.stderr)
+        print(
+            "\n  Либо это устаревшее имя — тогда перепишите его; либо новый "
+            "потребитель —\n  тогда заведите его в .rules/consumers.json. "
+            "Перенаправление площадки\n  скрывает расхождение до того дня, "
+            "когда старое имя займут (035).",
+            file=sys.stderr,
+        )
         return 1
 
-    print(f"каталог знает своё имя: {mine}; просмотрено файлов {len(looked)}, "
-          f"чужих репозиториев владельца нет, в реестре {len(allowed)}")
+    print(
+        f"каталог знает своё имя: {mine}; просмотрено файлов {len(looked)}, "
+        f"чужих репозиториев владельца нет, в реестре {len(allowed)}"
+    )
     return 0
 
 

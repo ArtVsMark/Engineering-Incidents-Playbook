@@ -6,7 +6,6 @@
 «проверять было нечего», причём последнее не зеленеет (правило 075).
 """
 
-
 from pathlib import Path
 
 import check_links as cl
@@ -85,6 +84,7 @@ def test_документы_без_локальных_ссылок_это_тре
 # внутри каталога они разрешаются, а у получателя, в чужом дереве, мертвы.
 # Признак 076 дословно: «подсказка выглядит идеально при чтении в репозитории».
 
+
 def свой(monkeypatch, slug: str = "o/cat") -> None:
     monkeypatch.setattr(cl, "own_slug", lambda root: (slug, ""))
 
@@ -99,8 +99,10 @@ def test_zagotovka_so_ssylkoy_iz_templates_nahodka(monkeypatch, repo, capsys):
 
 def test_navyk_plagina_so_ssylkoy_v_derevo_nahodka(monkeypatch, repo, capsys):
     """Плагин ставится папкой: ссылка из неё в наше дерево у потребителя мертва (076)."""
-    write(repo / "plugins" / "p" / "skills" / "s" / "SKILL.md",
-          "см. [правило](../../../../rules/ru/001-x.md)\n")
+    write(
+        repo / "plugins" / "p" / "skills" / "s" / "SKILL.md",
+        "см. [правило](../../../../rules/ru/001-x.md)\n",
+    )
     write(repo / "rules" / "ru" / "001-x.md", "# X\n")
     prepare(monkeypatch, repo)
     assert cl.main() == 1
@@ -134,10 +136,12 @@ def test_ssylka_vnutri_templates_ne_nahodka(monkeypatch, repo):
 
 
 def test_svoya_absolyutnaya_ssylka_proveryaetsya_kak_lokalnaya(monkeypatch, repo, capsys):
-    write(repo / "templates" / "CLAUDE.md",
-          "см. [жива](https://github.com/o/cat/blob/main/rules/ru/001-x.md) "
-          "и [мертва](https://github.com/o/cat/blob/main/rules/ru/999-y.md)\n"
-          "и [локальная](b.md)\n")
+    write(
+        repo / "templates" / "CLAUDE.md",
+        "см. [жива](https://github.com/o/cat/blob/main/rules/ru/001-x.md) "
+        "и [мертва](https://github.com/o/cat/blob/main/rules/ru/999-y.md)\n"
+        "и [локальная](b.md)\n",
+    )
     write(repo / "templates" / "b.md", "# B\n")
     write(repo / "rules" / "ru" / "001-x.md", "# X\n")
     prepare(monkeypatch, repo)

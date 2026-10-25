@@ -59,7 +59,6 @@
         Асимметрия односторонняя — предмет найден отказ, не найден молчание.
 """
 
-
 import argparse
 import json
 import re
@@ -97,10 +96,17 @@ def badges_in_tree(root) -> list[str]:
     рисует их локально и обязан это делать — он кладёт их на свою ветку.
     """
     import subprocess
-    import proc                                                # noqa: PLC0415
+    import proc  # noqa: PLC0415
+
     try:
-        out = proc.run(["git", "-C", str(root), "ls-files", "-z", BADGES_DIR],
-                       capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
+        out = proc.run(
+            ["git", "-C", str(root), "ls-files", "-z", BADGES_DIR],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=True,
+            timeout=60,
+        ).stdout
     except OSError, subprocess.CalledProcessError:
         return []
     return sorted(line for line in out.split("\0") if line.strip())
@@ -145,8 +151,9 @@ def refuted(qid: str, root: Path) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--root", type=Path, default=ROOT,
-                    help="корень дерева; по умолчанию сам репозиторий")
+    ap.add_argument(
+        "--root", type=Path, default=ROOT, help="корень дерева; по умолчанию сам репозиторий"
+    )
     args = ap.parse_args(argv)
     root: Path = args.root
     declared = root / ".rules" / "showcase.json"
@@ -156,19 +163,25 @@ def main(argv: list[str] | None = None) -> int:
         doc = json.loads(declared.read_text(encoding="utf-8"))
         questions = doc["questions"]
     except (OSError, ValueError, KeyError) as e:
-        print(f"проверка не отработала: набор вопросов витрины не прочитан — {e}",
-              file=sys.stderr)
+        print(f"проверка не отработала: набор вопросов витрины не прочитан — {e}", file=sys.stderr)
         return 2
     if not questions:
-        print(f"проверка не отработала: {root / SET} не называет ни одного "
-              "вопроса — витрина без вопросов не витрина", file=sys.stderr)
+        print(
+            f"проверка не отработала: {root / SET} не называет ни одного "
+            "вопроса — витрина без вопросов не витрина",
+            file=sys.stderr,
+        )
         return 2
 
-    shown = "\n".join((root / name).read_text(encoding="utf-8")
-                      for name in SHOWCASES if (root / name).exists())
+    shown = "\n".join(
+        (root / name).read_text(encoding="utf-8") for name in SHOWCASES if (root / name).exists()
+    )
     if not shown:
-        print(f"проверка не отработала: под {root} нет ни одной витрины из "
-              f"{list(SHOWCASES)} — показывать ответы негде", file=sys.stderr)
+        print(
+            f"проверка не отработала: под {root} нет ни одной витрины из "
+            f"{list(SHOWCASES)} — показывать ответы негде",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -184,7 +197,8 @@ def main(argv: list[str] | None = None) -> int:
             problems.append(
                 f"{qid} «{ask}»: не назван адресат. `for` — одно из "
                 + " · ".join(READERS)
-                + ". Без него «значка нет» и «источник назван» неразличимы")
+                + ". Без него «значка нет» и «источник назван» неразличимы"
+            )
             continue
 
         # ── вопрос сопровождающего: адрес источника, а не значок ───────────
@@ -193,33 +207,38 @@ def main(argv: list[str] | None = None) -> int:
                 problems.append(
                     f"{qid}: вопросу сопровождающего отвечает значок. Число, "
                     "которое дёргается от каждого изменения, шумит там, куда "
-                    "смотрят один раз, — ответ ему адрес источника")
+                    "смотрят один раз, — ответ ему адрес источника"
+                )
                 continue
             if not where:
                 problems.append(
                     f"{qid} «{ask}»: нет `where`. «Значка нет» сопровождающему "
                     "не ответ: источник, названный прозой, не проверяется "
-                    "ничем и расходится молча (044)")
+                    "ничем и расходится молча (044)"
+                )
                 continue
             найдено = PATH_RE.findall(where)
             if not найдено:
                 problems.append(
                     f"{qid}: в `where` нет ни одного разрешимого пути — это "
-                    "рецепт для человека, а не адрес живого источника (049)")
+                    "рецепт для человека, а не адрес живого источника (049)"
+                )
                 continue
             пропали = [p for p in найдено if not (root / p).exists()]
             if пропали:
                 problems.append(
                     f"{qid}: источник назван, а его нет — "
                     + ", ".join(пропали)
-                    + ". Декларация разошлась с деревом (044)")
+                    + ". Декларация разошлась с деревом (044)"
+                )
             continue
 
         # ── вопрос посетителя: значок либо названная причина ───────────────
         if where:
             problems.append(
                 f"{qid}: `where` у вопроса посетителя. Посетитель не ходит в "
-                "исходники — ему отвечает значок либо причина его отсутствия")
+                "исходники — ему отвечает значок либо причина его отсутствия"
+            )
             continue
         if badge and absent:
             problems.append(f"{qid}: и значок, и причина отсутствия — ответ один")
@@ -228,12 +247,14 @@ def main(argv: list[str] | None = None) -> int:
             problems.append(
                 f"{qid} «{ask}»: ответа нет вовсе. Либо значок, либо строка "
                 "absent с причиной — пропуск и отсутствие предмета обязаны "
-                "выглядеть по-разному")
+                "выглядеть по-разному"
+            )
             continue
         if absent:
             if len(absent.strip()) < 20:
-                problems.append(f"{qid}: причина отсутствия слишком коротка, "
-                                "чтобы ею что-то объяснить")
+                problems.append(
+                    f"{qid}: причина отсутствия слишком коротка, чтобы ею что-то объяснить"
+                )
             elif absent.strip().lower().startswith(ABSENCE_PREFIX):
                 улика = refuted(qid, root)
                 if улика:
@@ -241,7 +262,8 @@ def main(argv: list[str] | None = None) -> int:
                         f"{qid}: ответ утверждает «{ABSENCE_PREFIX}», а в дереве "
                         f"есть {улика}. Такое утверждение устаревает молча и "
                         "выглядит осознанным решением — хуже выдуманного числа "
-                        "(175)")
+                        "(175)"
+                    )
                 elif qid not in REFUTED_BY:
                     unchecked.append(qid)
             continue
@@ -250,12 +272,13 @@ def main(argv: list[str] | None = None) -> int:
         # общую ветку. Требовать файл здесь значило бы требовать того, чего
         # быть не может, — ложный отказ (правило 097).
         if q.get("branch", "main") == "main" and not (root / badge).exists():
-            problems.append(f"{qid}: значок {badge} объявлен, а файла нет — "
-                            "витрина обещает ответ, которого не существует")
+            problems.append(
+                f"{qid}: значок {badge} объявлен, а файла нет — "
+                "витрина обещает ответ, которого не существует"
+            )
             continue
         if Path(badge).name not in shown:
-            problems.append(f"{qid}: значок {badge} есть, но в витрине его "
-                            "нет — ответ в пустоту")
+            problems.append(f"{qid}: значок {badge} есть, но в витрине его нет — ответ в пустоту")
 
     # ВЕРНУВШИЙСЯ АРТЕФАКТ — НАХОДКА, А НЕ МЕЛОЧЬ (правило 160). Игнор его
     # накрывает, но при слиянии не спрашивается: `--theirs` вернул сюда четыре
@@ -267,7 +290,8 @@ def main(argv: list[str] | None = None) -> int:
             f"{f}: артефакт витрины лежит в дереве общей ветки. Он "
             "пересобирается чаще, чем идут изменения, и потому даёт коммит на "
             "каждый пересбор; его место — ветка `badges`, откуда витрина его и "
-            "читает (160)")
+            "читает (160)"
+        )
 
     # СВЕЖЕСТЬ ЗДЕСЬ НЕ ПРОВЕРЯЕТСЯ, И ЭТО РЕШЕНИЕ. Значки живут на ветке
     # `badges`, в дереве общей ветки их нет — сверять не с чем. Держать их в
@@ -280,9 +304,12 @@ def main(argv: list[str] | None = None) -> int:
         print("витрина отвечает не на весь объявленный набор:", file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
-        print("\n  Значок, которого нет, и значок, который застыл, с витрины "
-              "неотличимы.\n  Поэтому вопрос без предмета называется, а не "
-              "опускается (правила 046, 075).", file=sys.stderr)
+        print(
+            "\n  Значок, которого нет, и значок, который застыл, с витрины "
+            "неотличимы.\n  Поэтому вопрос без предмета называется, а не "
+            "опускается (правила 046, 075).",
+            file=sys.stderr,
+        )
         return 1
 
     # ── исход 0 ────────────────────────────────────────────────────────────
@@ -293,11 +320,15 @@ def main(argv: list[str] | None = None) -> int:
     sourced = sum(1 for q in questions if q.get("where"))
     named = len(questions) - live - sourced
     for qid in unchecked:
-        print(f"  · «{ABSENCE_PREFIX}» у вопроса {qid} ничем не опровергается — "
-              "пробы нет, и утверждение держится словом (175)")
-    print(f"витрина отвечает на весь набор: вопросов {len(questions)}, "
-          f"живым числом {live}, адресом источника {sourced}, "
-          f"названо без предмета {named}")
+        print(
+            f"  · «{ABSENCE_PREFIX}» у вопроса {qid} ничем не опровергается — "
+            "пробы нет, и утверждение держится словом (175)"
+        )
+    print(
+        f"витрина отвечает на весь набор: вопросов {len(questions)}, "
+        f"живым числом {live}, адресом источника {sourced}, "
+        f"названо без предмета {named}"
+    )
     return 0
 
 

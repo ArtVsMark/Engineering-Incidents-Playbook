@@ -10,7 +10,6 @@
 формой отказа.
 """
 
-
 import re
 from pathlib import Path
 
@@ -29,21 +28,34 @@ def check(monkeypatch, repo, body: str) -> int:
 
 # ── разбор: что считается связью ───────────────────────────────────────────
 
-@pytest.mark.parametrize("line", [
-    "Closes #83", "closes #83", "CLOSES #83",
-    "Fixes #83", "fixed #83", "Resolves #83", "resolve #83",
-    "- Closes #83", "> Closes #83",
-    "Closes https://github.com/owner/repo/issues/83",
-])
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "Closes #83",
+        "closes #83",
+        "CLOSES #83",
+        "Fixes #83",
+        "fixed #83",
+        "Resolves #83",
+        "resolve #83",
+        "- Closes #83",
+        "> Closes #83",
+        "Closes https://github.com/owner/repo/issues/83",
+    ],
+)
 def test_закрывающие_слова_площадки_считаются_связью(line):
     assert pb.linked(f"Текст.\n\n{line}\n") == "83"
 
 
-@pytest.mark.parametrize("body", [
-    "См. задачу #83.\n",
-    "Правило 145 (#83)\n",
-    "Это closes-подобное, но не строка: закрывает #83\n",
-])
+@pytest.mark.parametrize(
+    "body",
+    [
+        "См. задачу #83.\n",
+        "Правило 145 (#83)\n",
+        "Это closes-подобное, но не строка: закрывает #83\n",
+    ],
+)
 def test_упоминание_связью_не_является(body):
     assert pb.linked(body) is None
 
@@ -55,6 +67,7 @@ def test_освобождение_требует_причины():
 
 
 # ── сборка ─────────────────────────────────────────────────────────────────
+
 
 def test_задача_из_хвоста_заголовка_становится_связью():
     out, problem = pb.build("Правило 145: что-то (#83)", f"Тело.\n\n{TRAILERS}\n")
@@ -87,14 +100,14 @@ def test_без_задачи_и_без_освобождения_сборка_н�
 
 # ── три исхода у --check ───────────────────────────────────────────────────
 
+
 def test_связь_есть_это_чисто(monkeypatch, repo, capsys):
     assert check(monkeypatch, repo, f"Тело.\n\nCloses #83\n\n{TRAILERS}\n") == 0
     assert "#83" in capsys.readouterr().out
 
 
 def test_освобождение_заполнено_это_чисто(monkeypatch, repo, capsys):
-    assert check(monkeypatch, repo,
-                 "Тело.\n\nБез задачи, потому что так решили.\n") == 0
+    assert check(monkeypatch, repo, "Тело.\n\nБез задачи, потому что так решили.\n") == 0
 
 
 def test_только_упоминание_это_находка(monkeypatch, repo, capsys):
@@ -118,12 +131,12 @@ def test_тело_не_передано_это_третий_исход(capsys):
 
 # ── третий ответ: сделана часть (173) ──────────────────────────────────────
 
+
 def test_chast_s_ostatkom_prohodit(tmp_path):
     """«Часть» — такой же полноправный ответ, как закрытие: без него автор
     вынужден соврать в одну из сторон."""
     f = tmp_path / "b.md"
-    f.write_text("Правка витрины.\n\nPart of #186\n\nОстаётся: два ответа.\n",
-                 encoding="utf-8")
+    f.write_text("Правка витрины.\n\nPart of #186\n\nОстаётся: два ответа.\n", encoding="utf-8")
     assert pb.main(["--check", "--body-file", str(f)]) == 0
 
 
@@ -148,8 +161,8 @@ def test_sborka_ne_zakryvaet_chastichnoe(tmp_path):
     assert "Closes" not in out
 
 
-
 # ── снятие заметки внешнего взгляда: форма проверяется машинно ─────────────
+
 
 def test_snyatie_slovami_otvergaetsya(tmp_path, capsys):
     """ГЛАВНЫЙ СЛУЧАЙ, и он про подделку, неотличимую при чтении (140).
@@ -159,8 +172,7 @@ def test_snyatie_slovami_otvergaetsya(tmp_path, capsys):
     с чем — и ни один гейт об этом не сказал.
     """
     f = tmp_path / "b.md"
-    f.write_text("Починка.\n\nРазобрано: 202-boundary\n\nCloses #1\n",
-                 encoding="utf-8")
+    f.write_text("Починка.\n\nРазобрано: 202-boundary\n\nCloses #1\n", encoding="utf-8")
     assert pb.main(["--check", "--body-file", str(f)]) == 1
     assert "ничего не снимет" in capsys.readouterr().err
 
@@ -168,17 +180,18 @@ def test_snyatie_slovami_otvergaetsya(tmp_path, capsys):
 def test_otpechatok_prohodit(tmp_path):
     """Зелёная сторона: семь шестнадцатеричных знаков и хвост при них."""
     f = tmp_path / "b.md"
-    f.write_text("Починка.\n\nРазобрано: 8f60732 · #479 — заголовок находки\n"
-                 "\nCloses #1\n", encoding="utf-8")
+    f.write_text(
+        "Починка.\n\nРазобрано: 8f60732 · #479 — заголовок находки\n\nCloses #1\n", encoding="utf-8"
+    )
     assert pb.main(["--check", "--body-file", str(f)]) == 0
 
 
 def test_dlina_otpechatka_nesushchaya():
     """Шесть знаков и восемь — не отпечаток: гейт принимает РОВНО то, что
     примет уборщик, иначе он пропустит строку, которая ничего не снимет."""
-    assert pb.dead_marks("Разобрано: fdfddd\n")        # шесть
-    assert pb.dead_marks("Разобрано: fdfddd6a\n")      # восемь
-    assert not pb.dead_marks("Разобрано: fdfddd6\n")   # семь
+    assert pb.dead_marks("Разобрано: fdfddd\n")  # шесть
+    assert pb.dead_marks("Разобрано: fdfddd6a\n")  # восемь
+    assert not pb.dead_marks("Разобрано: fdfddd6\n")  # семь
 
 
 def test_telo_bez_snyatiy_ne_zadeto():
@@ -194,6 +207,7 @@ def test_forma_odna_u_geyta_i_u_uborshchika():
     которую уборщик не примет, — ровно инцидент 10 сентября.
     """
     import review_findings as rf
+
     assert rf.РАЗОБРАНО is pb.РАЗОБРАНО
 
 
@@ -210,4 +224,5 @@ def test_obyavlenie_kodov_nazyvaet_vse_istochniki():
     докстрока = pb.__doc__ or ""
     объявлено = len(re.findall(r"^\s*\d+\.\s+\S", докстрока, re.M))
     assert отказов == объявлено, (
-        f"отказов с кодом 1 в коде {отказов}, названо в докстроке {объявлено}")
+        f"отказов с кодом 1 в коде {отказов}, названо в докстроке {объявлено}"
+    )

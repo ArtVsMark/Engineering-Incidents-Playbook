@@ -90,7 +90,6 @@ NUL без `%x00` в формате, молча перестал находит�
         ghcli, и обход двери его теряет.
 """
 
-
 import argparse
 import ast
 import sys
@@ -117,7 +116,6 @@ LISTING = ("ls-files", "--name-only", "--porcelain", "--diff-filter")
 ДВЕРЬ = {
     "ghcli.py": "он и есть дверь: мерит остаток и отдаёт исчерпанию свой код",
 }
-
 
 
 #: Модули, чей `run` — это `subprocess.run`. `proc` — обёртка каталога с
@@ -159,8 +157,7 @@ def resolve_calls(tree: ast.AST) -> tuple[set[str], dict[str, str]]:
     return модули, функции
 
 
-def called_name(node: ast.Call, модули: set[str],
-                функции: dict[str, str]) -> str:
+def called_name(node: ast.Call, модули: set[str], функции: dict[str, str]) -> str:
     """Исходное имя функции subprocess у этого вызова; пусто — вызов чужой."""
     if isinstance(node.func, ast.Attribute):
         владелец = node.func.value
@@ -170,6 +167,7 @@ def called_name(node: ast.Call, модули: set[str],
     if isinstance(node.func, ast.Name):
         return функции.get(node.func.id, "")
     return ""
+
 
 def offenders(source: str) -> list[tuple[int, str]]:
     """Строки текстовых вызовов без `encoding=`. Разбор дерева, а не поиск строк.
@@ -249,8 +247,11 @@ def unseparated(source: str) -> list[tuple[int, str]]:
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
-        слова = [a.value for a in ast.walk(node)
-                 if isinstance(a, ast.Constant) and isinstance(a.value, str)]
+        слова = [
+            a.value
+            for a in ast.walk(node)
+            if isinstance(a, ast.Constant) and isinstance(a.value, str)
+        ]
         if "git" not in слова:
             continue
         подкоманда = next((с for с in слова if с in LISTING), "")
@@ -291,11 +292,13 @@ def _списочный_z(node: ast.AST) -> bool:
     """
     if not isinstance(node, ast.Call):
         return False
-    слова = [a.value for арг in (*node.args, *(k.value for k in node.keywords))
-             for a in ast.walk(арг)
-             if isinstance(a, ast.Constant) and isinstance(a.value, str)]
-    return ("git" in слова and "-z" in слова
-            and any(с in LISTING for с in слова))
+    слова = [
+        a.value
+        for арг in (*node.args, *(k.value for k in node.keywords))
+        for a in ast.walk(арг)
+        if isinstance(a, ast.Constant) and isinstance(a.value, str)
+    ]
+    return "git" in слова and "-z" in слова and any(с in LISTING for с in слова)
 
 
 def _корень(node: ast.AST) -> ast.AST:
@@ -322,8 +325,11 @@ def _режет_не_по_nul(call: ast.Call) -> bool:
     """
     if call.func.attr == "splitlines":
         return True
-    sep = call.args[0] if call.args else next(
-        (k.value for k in call.keywords if k.arg == "sep"), None)
+    sep = (
+        call.args[0]
+        if call.args
+        else next((k.value for k in call.keywords if k.arg == "sep"), None)
+    )
     if sep is None:
         return True
     if isinstance(sep, ast.Constant):
@@ -401,13 +407,17 @@ def unsplit(source: str) -> list[tuple[int, str]]:
 
         def привязка(где: ast.AST, цель: ast.AST, связать: bool) -> None:
             for имя in _имена(цель):
-                события.append(((где.end_lineno, где.end_col_offset), 1,
-                                "связать" if связать else "развязать",
-                                ast.Name(id=имя)))
+                события.append(
+                    (
+                        (где.end_lineno, где.end_col_offset),
+                        1,
+                        "связать" if связать else "развязать",
+                        ast.Name(id=имя),
+                    )
+                )
 
         for n in _узлы_области(область):
-            if isinstance(n, (ast.Assign, ast.AnnAssign, ast.NamedExpr)) \
-                    and n.value is not None:
+            if isinstance(n, (ast.Assign, ast.AnnAssign, ast.NamedExpr)) and n.value is not None:
                 цели = n.targets if isinstance(n, ast.Assign) else [n.target]
                 for ц in цели:
                     привязка(n.value, ц, _вывод_z(n.value))
@@ -419,8 +429,12 @@ def unsplit(source: str) -> list[tuple[int, str]]:
                 for item in n.items:
                     if item.optional_vars is not None:
                         привязка(item.context_expr, item.optional_vars, False)
-            elif (isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
-                    and n.func.attr in РЕЖУЩИЕ and _режет_не_по_nul(n)):
+            elif (
+                isinstance(n, ast.Call)
+                and isinstance(n.func, ast.Attribute)
+                and n.func.attr in РЕЖУЩИЕ
+                and _режет_не_по_nul(n)
+            ):
                 события.append(((n.lineno, n.col_offset), 0, "разбор", n))
         связанные: set[str] = set()
         for _, _, что, n in sorted(события, key=lambda e: (e[0], e[1])):
@@ -430,8 +444,9 @@ def unsplit(source: str) -> list[tuple[int, str]]:
                 связанные.discard(n.id)
             else:
                 корень = _корень(n.func.value)
-                if ((isinstance(корень, ast.Name) and корень.id in связанные)
-                        or _списочный_z(корень)):
+                if (isinstance(корень, ast.Name) and корень.id in связанные) or _списочный_z(
+                    корень
+                ):
                     found.append((n.lineno, n.func.attr))
     return sorted(set(found))
 
@@ -453,8 +468,7 @@ def мимо_двери(source: str) -> list[int]:
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call) or not node.args:
             continue
-        имя = (getattr(node.func, "attr", None)
-               or getattr(node.func, "id", None) or "")
+        имя = getattr(node.func, "attr", None) or getattr(node.func, "id", None) or ""
         if имя not in CALLS:
             continue
         первый = node.args[0]
@@ -474,56 +488,69 @@ def main(argv: list[str] | None = None) -> int:
 
     # Хуки окна — тоже механизмы: охват мета-гейта — все механизмы дерева, а
     # не место рождения правила (220). До 16.10 их здесь не было.
-    файлы = sorted(list((args.root / "scripts").glob("*.py"))
-                   + list((args.root / "tests").glob("*.py"))
-                   + list((args.root / "templates").glob("*.py"))
-                   + list((args.root / ".claude" / "hooks").glob("*.py")))
+    файлы = sorted(
+        list((args.root / "scripts").glob("*.py"))
+        + list((args.root / "tests").glob("*.py"))
+        + list((args.root / "templates").glob("*.py"))
+        + list((args.root / ".claude" / "hooks").glob("*.py"))
+    )
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not файлы:
-        print(f"проверка не отработала: в {args.root}/{{scripts,tests,"
-              "templates}} не нашлось ни одного *.py — проверять нечего, и "
-              "зеленеть на этом нельзя", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {args.root}/{{scripts,tests,"
+            "templates}} не нашлось ни одного *.py — проверять нечего, и "
+            "зеленеть на этом нельзя",
+            file=sys.stderr,
+        )
         return 2
 
     находки: list[str] = []
     for f in файлы:
         текст = f.read_text(encoding="utf-8", errors="replace")
         for строка, имя in offenders(текст):
-            находки.append(f"{f.relative_to(args.root)}:{строка} — "
-                           f"subprocess.{имя} в текстовом режиме без encoding=")
+            находки.append(
+                f"{f.relative_to(args.root)}:{строка} — "
+                f"subprocess.{имя} в текстовом режиме без encoding="
+            )
         for строка, имя in no_deadline(текст):
-            находки.append(f"{f.relative_to(args.root)}:{строка} — "
-                           f"subprocess.{имя} без timeout=")
+            находки.append(f"{f.relative_to(args.root)}:{строка} — subprocess.{имя} без timeout=")
         for строка, подкоманда in unseparated(текст):
-            находки.append(f"{f.relative_to(args.root)}:{строка} — "
-                           f"git {подкоманда} отдаёт список путей без -z")
+            находки.append(
+                f"{f.relative_to(args.root)}:{строка} — git {подкоманда} отдаёт список путей без -z"
+            )
         for строка, разбор in unsplit(текст):
-            находки.append(f"{f.relative_to(args.root)}:{строка} — "
-                           f"вывод git -z режется {разбор}(), а не по NUL")
+            находки.append(
+                f"{f.relative_to(args.root)}:{строка} — "
+                f"вывод git -z режется {разбор}(), а не по NUL"
+            )
         if f.name not in ДВЕРЬ:
             for строка in мимо_двери(текст):
-                находки.append(f"{f.relative_to(args.root)}:{строка} — "
-                               "gh зовут мимо scripts/ghcli.py")
+                находки.append(
+                    f"{f.relative_to(args.root)}:{строка} — gh зовут мимо scripts/ghcli.py"
+                )
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if находки:
-        print("вызовы наружу берут у окружения то, что обязаны задать:",
-              file=sys.stderr)
+        print("вызовы наружу берут у окружения то, что обязаны задать:", file=sys.stderr)
         for n in находки:
             print(f"  • {n}", file=sys.stderr)
-        print("\n  Кодировка: допишите encoding=\"utf-8\" — матрица этого не"
-              "\n  поймает, дефект требует совпадения платформы и данных (176)."
-              "\n  Список путей: допишите -z и разбирайте по NUL — иначе"
-              "\n  не-ASCII имя выпадет из обработки молча (165)."
-              "\n  Площадка: зовите через ghcli.run — он мерит остаток квоты при"
-              "\n  первом отказе и отдаёт исчерпанию свой код; мимо двери «лимит"
-              "\n  кончился» неотличимо от «ничего не нашлось» (017, 058).",
-              file=sys.stderr)
+        print(
+            '\n  Кодировка: допишите encoding="utf-8" — матрица этого не'
+            "\n  поймает, дефект требует совпадения платформы и данных (176)."
+            "\n  Список путей: допишите -z и разбирайте по NUL — иначе"
+            "\n  не-ASCII имя выпадет из обработки молча (165)."
+            "\n  Площадка: зовите через ghcli.run — он мерит остаток квоты при"
+            "\n  первом отказе и отдаёт исчерпанию свой код; мимо двери «лимит"
+            "\n  кончился» неотличимо от «ничего не нашлось» (017, 058).",
+            file=sys.stderr,
+        )
         return 1
 
-    print("вызовы наружу задают своё явно: просмотрено файлов "
-          f"{len(файлы)} — дедлайн у каждого вызова, кроме Popen и **kwargs, кодировка у текстовых, -z у списков путей, "
-          "площадка через одну дверь")
+    print(
+        "вызовы наружу задают своё явно: просмотрено файлов "
+        f"{len(файлы)} — дедлайн у каждого вызова, кроме Popen и **kwargs, кодировка у текстовых, -z у списков путей, "
+        "площадка через одну дверь"
+    )
     return 0
 
 

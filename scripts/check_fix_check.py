@@ -68,7 +68,8 @@ TESTS = "tests/"
 #: Пробелы — только внутри строки: `\s` перешагнул бы перевод строки, и пустая
 #: причина взяла бы следующую строку тела (обзор #830).
 WAIVER_RE = re.compile(
-    r"(?m)^[ \t]*Проверка:[ \t]*не[ \t]+требуется[ \t]*[—–-][ \t]*(?P<why>\S[^\n]*?)[ \t]*$")
+    r"(?m)^[ \t]*Проверка:[ \t]*не[ \t]+требуется[ \t]*[—–-][ \t]*(?P<why>\S[^\n]*?)[ \t]*$"
+)
 
 
 class NotRun(Exception):
@@ -82,19 +83,26 @@ def без_прозы(текст: str, имя: str) -> str:
     except SyntaxError as exc:
         raise NotRun(f"{имя} не разбирается: {exc.msg}, строка {exc.lineno}") from exc
     for узел in ast.walk(дерево):
-        if isinstance(узел, (ast.Module, ast.ClassDef, ast.FunctionDef,
-                             ast.AsyncFunctionDef)):
+        if isinstance(узел, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
             тело = узел.body
-            if (тело and isinstance(тело[0], ast.Expr)
-                    and isinstance(тело[0].value, ast.Constant)
-                    and isinstance(тело[0].value.value, str)):
+            if (
+                тело
+                and isinstance(тело[0], ast.Expr)
+                and isinstance(тело[0].value, ast.Constant)
+                and isinstance(тело[0].value.value, str)
+            ):
                 узел.body = тело[1:] or [ast.Pass()]
     return ast.dump(дерево, include_attributes=False)
 
 
 def git(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
-    return proc.run(["git", "-C", str(root), *args],
-                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+    return proc.run(
+        ["git", "-C", str(root), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
 
 
 def прежний(root: Path, base: str, путь: str) -> str | None:
@@ -117,34 +125,39 @@ def код_тронут(root: Path, base: str, путь: str) -> bool:
     """Изменилось ли исполняемое: новый файл — да, удалённый — нет, иначе деревья."""
     файл = root / путь
     if not файл.exists():
-        return False                      # удалён: проверять больше нечего
+        return False  # удалён: проверять больше нечего
     try:
         новый = файл.read_text(encoding="utf-8")
     except OSError as exc:
         raise NotRun(f"{путь} не прочитан: {exc}") from exc
     старый = прежний(root, base, путь)
     if старый is None:
-        return True                       # новый скрипт — новое поведение
+        return True  # новый скрипт — новое поведение
     return без_прозы(старый, f"{путь}@{base}") != без_прозы(новый, путь)
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=ROOT)
-    ap.add_argument("--paths-from", type=Path, required=True,
-                    help="файл со списком путей изменения, по одному в строке")
+    ap.add_argument(
+        "--paths-from",
+        type=Path,
+        required=True,
+        help="файл со списком путей изменения, по одному в строке",
+    )
     ap.add_argument("--base", required=True, help="коммит базы изменения")
-    ap.add_argument("--body-file", type=Path, required=True,
-                    help="файл с телом изменения")
+    ap.add_argument("--body-file", type=Path, required=True, help="файл с телом изменения")
     args = ap.parse_args(argv)
 
     try:
-        пути = [p.strip() for p in args.paths_from.read_text(encoding="utf-8").splitlines()
-                if p.strip()]
+        пути = [
+            p.strip() for p in args.paths_from.read_text(encoding="utf-8").splitlines() if p.strip()
+        ]
         тело = args.body_file.read_text(encoding="utf-8")
     except OSError as exc:
-        print(f"проверка не отработала: не прочитан {exc.filename}: {exc.strerror}",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: не прочитан {exc.filename}: {exc.strerror}", file=sys.stderr
+        )
         return 2
 
     починка = [p for p in пути if FIXED_RE.match(p)]
@@ -177,10 +190,13 @@ def main(argv: list[str] | None = None) -> int:
     print("починка тронула код механизмов и не принесла проверки:", file=sys.stderr)
     for p in код:
         print(f"  • {p}", file=sys.stderr)
-    print("\n  Без проверки, краснеющей до починки, доказывать нечем (014): убрано\n"
-          "  поведение, а не дефект, и вернуться он может молча. Добавьте случай в\n"
-          "  tests/ — либо строку «Проверка: не требуется — <причина>» в тело\n"
-          "  изменения, если проверять и правда нечем.", file=sys.stderr)
+    print(
+        "\n  Без проверки, краснеющей до починки, доказывать нечем (014): убрано\n"
+        "  поведение, а не дефект, и вернуться он может молча. Добавьте случай в\n"
+        "  tests/ — либо строку «Проверка: не требуется — <причина>» в тело\n"
+        "  изменения, если проверять и правда нечем.",
+        file=sys.stderr,
+    )
     return 1
 
 

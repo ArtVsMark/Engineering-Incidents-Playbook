@@ -38,7 +38,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import ast
 import sys
@@ -49,8 +48,13 @@ ROOT = Path(__file__).resolve().parent.parent
 #: Формы пропуска, встречающиеся в наборах. Список разрешительный и короткий:
 #: новая форма получит отказ и придёт с этим (правило 068), а не растворится в
 #: широком выражении.
-MARKS = {("pytest", "mark", "skip"), ("pytest", "mark", "skipif"),
-         ("unittest", "skip"), ("unittest", "skipIf"), ("unittest", "skipUnless")}
+MARKS = {
+    ("pytest", "mark", "skip"),
+    ("pytest", "mark", "skipif"),
+    ("unittest", "skip"),
+    ("unittest", "skipIf"),
+    ("unittest", "skipUnless"),
+}
 CALLS = {("pytest", "skip"), ("unittest", "skip")}
 
 
@@ -68,11 +72,13 @@ def dotted(node: ast.AST) -> tuple[str, ...]:
 def named(node: ast.Call) -> bool:
     """Есть ли у вызова непустая причина: `reason=` либо строка доводом."""
     for kw in node.keywords:
-        if kw.arg == "reason" and isinstance(kw.value, ast.Constant) \
-                and str(kw.value.value).strip():
+        if (
+            kw.arg == "reason"
+            and isinstance(kw.value, ast.Constant)
+            and str(kw.value.value).strip()
+        ):
             return True
-    args = [a for a in node.args if isinstance(a, ast.Constant)
-            and isinstance(a.value, str)]
+    args = [a for a in node.args if isinstance(a, ast.Constant) and isinstance(a.value, str)]
     return bool(args and args[-1].value.strip())
 
 
@@ -101,22 +107,28 @@ def skips(path: Path) -> tuple[list[tuple[int, str]], str | None]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = parser.parse_args(argv)
     root: Path = args.root
     folder = root / "tests"
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not folder.is_dir():
-        print(f"проверка не отработала: нет {folder} — предмета проверки, "
-              "то есть самого набора тестов", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {folder} — предмета проверки, "
+            "то есть самого набора тестов",
+            file=sys.stderr,
+        )
         return 2
     files = sorted(p for p in folder.glob("test_*.py"))
     if not files:
-        print(f"проверка не отработала: в {folder} нет ни одного модуля "
-              "test_*.py. Ноль пропусков при нуле тестов ничего не значит",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: в {folder} нет ни одного модуля "
+            "test_*.py. Ноль пропусков при нуле тестов ничего не значит",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -124,13 +136,13 @@ def main(argv: list[str] | None = None) -> int:
     for path in files:
         found, err = skips(path)
         if err:
-            print(f"проверка не отработала: набор не разобрался — {err}",
-                  file=sys.stderr)
+            print(f"проверка не отработала: набор не разобрался — {err}", file=sys.stderr)
             return 2
         for line_no, what in found:
             problems.append(
                 f"{path.relative_to(root)}:{line_no} — {what} без причины. "
-                "Без неё пропущенный тест неотличим от забытого")
+                "Без неё пропущенный тест неотличим от забытого"
+            )
 
     if problems:
         print("пропуски без причины:", file=sys.stderr)

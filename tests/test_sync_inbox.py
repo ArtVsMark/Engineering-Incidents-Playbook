@@ -24,7 +24,6 @@
 Сеть не трогается: экспорт и `gh` подменяются.
 """
 
-
 import json
 
 import pytest
@@ -59,12 +58,13 @@ def arm(monkeypatch, rules, answered, issue=None):
 
     # Подменяется тот шов, который зовёт main: выгрузка читается целиком,
     # потому что ступени 0 нужен блок contracts, а не только правила.
-    monkeypatch.setattr(si, "fetch_export",
-                        lambda c, r: ({"rules": rules,
-                                       "contracts": {"bindings": "1.1"}}, None))
+    monkeypatch.setattr(
+        si, "fetch_export", lambda c, r: ({"rules": rules, "contracts": {"bindings": "1.1"}}, None)
+    )
     monkeypatch.setattr(si, "gh", fake_gh)
     monkeypatch.setenv("GH_TOKEN", "x")
     import json, pathlib, tempfile
+
     path = pathlib.Path(tempfile.mkdtemp()) / "bindings.json"
     path.write_text(json.dumps({"schema": "1.1", "rules": answered}), encoding="utf-8")
     monkeypatch.setattr("sys.argv", ["sync_inbox.py", "--bindings", str(path)])
@@ -93,8 +93,7 @@ def verbs(calls):
     return из_вызова
 
 
-RULES = [{"id": "001", "title": {"ru": "первое"}},
-         {"id": "002", "title": {"ru": "второе"}}]
+RULES = [{"id": "001", "title": {"ru": "первое"}}, {"id": "002", "title": {"ru": "второе"}}]
 ANSWERED_ALL = {"001": {"status": "active"}, "002": {"status": "active"}}
 
 
@@ -110,7 +109,7 @@ def test_zakrytaya_zadacha_nahoditsya_i_ne_dublitsya(monkeypatch, capsys):
     calls = arm(monkeypatch, RULES, ANSWERED_ALL, issue=("52", "CLOSED"))
     assert si.main() == 0
     assert "create" not in verbs(calls)
-    assert "close" not in verbs(calls)      # уже закрыта — трогать нечего
+    assert "close" not in verbs(calls)  # уже закрыта — трогать нечего
     # Списков задач теперь два: свои открытые — для подсказок, и поиск самой
     # задачи-«входящих». Берётся ВТОРОЙ по признаку, а не по порядку: порядок
     # вызовов — не предмет случая, и привязка к нему ломает его на первой же
@@ -129,8 +128,12 @@ def test_poyavilos_nerassmotrennoe_zadacha_otkryvaetsya_zanovo(monkeypatch, caps
 def test_otkrytaya_s_rabotoy_ostayotsya_otkrytoy(monkeypatch, capsys):
     """Ложное срабатывание здесь дороже пропуска: закрыть задачу с работой —
     значит спрятать её от того, кто обязан её увидеть."""
-    calls = arm(monkeypatch, RULES, {"001": {"status": "unreviewed"}, "002": {"status": "active"}},
-                issue=("52", "OPEN"))
+    calls = arm(
+        monkeypatch,
+        RULES,
+        {"001": {"status": "unreviewed"}, "002": {"status": "active"}},
+        issue=("52", "OPEN"),
+    )
     assert si.main() == 1
     assert "close" not in verbs(calls)
     assert "reopen" not in verbs(calls)
@@ -164,12 +167,13 @@ def test_treker_ne_otvetil_eto_tretiy_ishod(monkeypatch, capsys):
     # выгрузку целиком. Тест ходил в сеть за настоящей выгрузкой, а без сети
     # проходил по чужой причине: код 2 давал отказ выгрузки, а не трекера.
     # Нашёл это гейт сирот (211): подменённое имя было сиротой.
-    monkeypatch.setattr(si, "fetch_export",
-                        lambda c, r: ({"rules": RULES,
-                                       "contracts": {"bindings": "1.1"}}, None))
+    monkeypatch.setattr(
+        si, "fetch_export", lambda c, r: ({"rules": RULES, "contracts": {"bindings": "1.1"}}, None)
+    )
     monkeypatch.setattr(si, "gh", lambda *a: (1, "HTTP 403"))
     monkeypatch.setenv("GH_TOKEN", "x")
     import json, pathlib, tempfile
+
     path = pathlib.Path(tempfile.mkdtemp()) / "b.json"
     path.write_text(json.dumps({"rules": ANSWERED_ALL}), encoding="utf-8")
     monkeypatch.setattr("sys.argv", ["sync_inbox.py", "--bindings", str(path)])
@@ -178,6 +182,7 @@ def test_treker_ne_otvetil_eto_tretiy_ishod(monkeypatch, capsys):
 
 
 # ── «у соседей это уже решено» (доставка сводки во входящие) ────────────────
+
 
 def сосед(repo: str, rid: str, mechanism: str = "gate", where: str = "s/g.py") -> dict:
     return {"repo": repo, "holds": {rid: {"mechanism": mechanism, "where": where}}}
@@ -189,9 +194,9 @@ def сосед(repo: str, rid: str, mechanism: str = "gate", where: str = "s/g.p
 def test_sosedskiy_mehanizm_popadaet_s_adresom():
     out = si.solved_next_door(НИЧЕМ, [сосед("o/grader", "001")], "o/me")
 
-    assert out == [{"rule": "001",
-                    "held": [{"repo": "o/grader", "mechanism": "gate",
-                              "where": "s/g.py"}]}]
+    assert out == [
+        {"rule": "001", "held": [{"repo": "o/grader", "mechanism": "gate", "where": "s/g.py"}]}
+    ]
 
 
 def test_svoy_mehanizm_sosedskim_ne_schitaetsya():
@@ -214,8 +219,7 @@ def test_sosed_bez_adresa_ne_pomogaet():
 
 
 def test_sosed_u_kotorogo_tozhe_nichem_ne_schitaetsya():
-    оба = [{"repo": "o/grader",
-            "holds": {"001": {"mechanism": "none", "where": "нигде"}}}]
+    оба = [{"repo": "o/grader", "holds": {"001": {"mechanism": "none", "where": "нигде"}}}]
 
     assert si.solved_next_door(НИЧЕМ, оба, "o/me") == []
 
@@ -229,22 +233,24 @@ def test_nedeystvuyushchee_pravilo_v_razdel_ne_idyot():
 
 # ── «держать нельзя» у нас, а сосед держит машиной (#509) ────────────────────
 
-НЕЛЬЗЯ = {"001": {"status": "active", "mechanism": "document",
-                  "holdable": "no", "why": "строить нечего"}}
+НЕЛЬЗЯ = {
+    "001": {"status": "active", "mechanism": "document", "holdable": "no", "why": "строить нечего"}
+}
 
 
 def test_nelzya_protiv_geyta_soseda_popadaet():
     out = si.machine_next_door(НЕЛЬЗЯ, [сосед("o/grader", "001")], "o/me")
 
-    assert out == [{"rule": "001",
-                    "held": [{"repo": "o/grader", "mechanism": "gate",
-                              "where": "s/g.py"}]}]
+    assert out == [
+        {"rule": "001", "held": [{"repo": "o/grader", "mechanism": "gate", "where": "s/g.py"}]}
+    ]
 
 
 def test_dokument_soseda_nelzya_ne_oprovergaet():
     """Документ соседа — тоже текст: «строить нечего» он не опровергает."""
-    assert si.machine_next_door(
-        НЕЛЬЗЯ, [сосед("o/grader", "001", mechanism="document")], "o/me") == []
+    assert (
+        si.machine_next_door(НЕЛЬЗЯ, [сосед("o/grader", "001", mechanism="document")], "o/me") == []
+    )
 
 
 def test_ne_postroeno_v_svedku_ne_idyot():
@@ -262,9 +268,17 @@ def test_u_geyta_slovo_derzhimosti_nichego_ne_znachit():
 
 
 def test_razdel_pechataetsya_v_tele_zadachi():
-    body = si.body_for([], [], "o/cat", solved=[
-        {"rule": "001", "held": [{"repo": "o/grader", "mechanism": "gate",
-                                  "where": "s/g.py — что делает"}]}])
+    body = si.body_for(
+        [],
+        [],
+        "o/cat",
+        solved=[
+            {
+                "rule": "001",
+                "held": [{"repo": "o/grader", "mechanism": "gate", "where": "s/g.py — что делает"}],
+            }
+        ],
+    )
 
     assert "У соседей это уже решено" in body
     # Путь чужого дерева — ссылкой в ЕГО репозиторий, а не голым текстом: в
@@ -272,13 +286,20 @@ def test_razdel_pechataetsya_v_tele_zadachi():
     assert "[`s/g.py`](https://github.com/o/grader/blob/HEAD/s/g.py) — что делает" in body
 
 
-@pytest.mark.parametrize("где, ожидаем", [
-    (".github/workflows/*.yml — прогоны",
-     "[`.github/workflows/*.yml`](https://github.com/o/n/tree/HEAD/.github/workflows) — прогоны"),
-    ("CLAUDE.md § Режим ответов",
-     "[`CLAUDE.md`](https://github.com/o/n/blob/HEAD/CLAUDE.md) § Режим ответов"),
-    ("механизм в конвейере", "[o/n](https://github.com/o/n): механизм в конвейере"),
-])
+@pytest.mark.parametrize(
+    "где, ожидаем",
+    [
+        (
+            ".github/workflows/*.yml — прогоны",
+            "[`.github/workflows/*.yml`](https://github.com/o/n/tree/HEAD/.github/workflows) — прогоны",
+        ),
+        (
+            "CLAUDE.md § Режим ответов",
+            "[`CLAUDE.md`](https://github.com/o/n/blob/HEAD/CLAUDE.md) § Режим ответов",
+        ),
+        ("механизм в конвейере", "[o/n](https://github.com/o/n): механизм в конвейере"),
+    ],
+)
 def test_adres_soseda_vsegda_vedyot_v_ego_derevo(где, ожидаем):
     """Образец ведёт в свою папку, документ — в файл, проза без адреса — в сам
     репозиторий соседа: голого пути чужого дерева в задаче не остаётся ни в одной форме."""
@@ -317,9 +338,13 @@ def test_nayidennaya_zadacha_razbiraetsya():
 # абстракцией, которую откладывают — «понятно, но не про нас». Список
 # кандидатов превращает его в вопрос о конкретной задаче.
 
+
 def правило(rid, title, areas=("гейты",)):
-    return {"id": rid, "title": {"ru": title, "en": title},
-            "areas": {"ru": list(areas), "en": list(areas)}}
+    return {
+        "id": rid,
+        "title": {"ru": title, "en": title},
+        "areas": {"ru": list(areas), "en": list(areas)},
+    }
 
 
 def задача(number, title):
@@ -329,7 +354,8 @@ def задача(number, title):
 def test_dve_obshchie_slova_svyazyvayut():
     out = si.candidates_here(
         [правило("001", "Пропущенный тест называет причину")],
-        [задача(7, "Пропущенный тест в наборе загрузчика — причину не помню")])
+        [задача(7, "Пропущенный тест в наборе загрузчика — причину не помню")],
+    )
 
     assert out and out[0]["issues"][0]["number"] == 7
 
@@ -338,7 +364,8 @@ def test_odno_redkoe_slovo_svyazyvaet():
     """Одно совпадение — совпадение, а не связь, если слово не редкое."""
     out = si.candidates_here(
         [правило("001", "Атрибуция коммитов сверяется со списком")],
-        [задача(9, "Атрибуция уехала в объединяющем коммите")])
+        [задача(9, "Атрибуция уехала в объединяющем коммите")],
+    )
 
     assert out
 
@@ -347,7 +374,8 @@ def test_odno_chastoe_slovo_ne_svyazyvaet():
     """Ложная подсказка стоит взгляда, но связывать всё со всем нельзя."""
     out = si.candidates_here(
         [правило("001", "Пропущенный тест называет причину")],
-        [задача(9, "Причину падения не нашли")])
+        [задача(9, "Причину падения не нашли")],
+    )
 
     assert not out
 
@@ -356,7 +384,8 @@ def test_obshchie_slova_kataloga_v_schyot_ne_idut():
     """«Правило», «механизм», «проект» стоят и там и там — связывают всё."""
     out = si.candidates_here(
         [правило("001", "Правило без механизма это обещание")],
-        [задача(9, "Правило проекта: механизм не описан")])
+        [задача(9, "Правило проекта: механизм не описан")],
+    )
 
     assert not out
 
@@ -365,7 +394,8 @@ def test_bolshe_dvuh_zadach_ne_pokazyvaetsya():
     """Список — подсказка, а не отчёт: длинный никто не читает (016)."""
     out = si.candidates_here(
         [правило("001", "Пропущенный тест называет причину")],
-        [задача(n, "Пропущенный тест в наборе") for n in (1, 2, 3, 4)])
+        [задача(n, "Пропущенный тест в наборе") for n in (1, 2, 3, 4)],
+    )
 
     assert out and len(out[0]["issues"]) == 2
 
@@ -379,9 +409,17 @@ def test_bez_zadach_razdela_prosto_net():
 def test_razdel_nazyvaet_svoyu_granicu():
     """Граница живёт в самом разделе, а не только в скрипте: читает его
     человек, и вердиктом он этот список считать не должен."""
-    body = si.body_for([], [], "o/r", candidates=[{
-        "rule": правило("001", "Пропущенный тест называет причину"),
-        "issues": [{"number": 7, "title": "Пропущенный тест", "words": ["тест"]}]}])
+    body = si.body_for(
+        [],
+        [],
+        "o/r",
+        candidates=[
+            {
+                "rule": правило("001", "Пропущенный тест называет причину"),
+                "issues": [{"number": 7, "title": "Пропущенный тест", "words": ["тест"]}],
+            }
+        ],
+    )
 
     assert "подсказка, а не вердикт" in body
     assert "#7" in body
@@ -389,13 +427,16 @@ def test_razdel_nazyvaet_svoyu_granicu():
 
 # ── ступень 0: три лица незакрытой работы (правило 177) ────────────────────
 
+
 def test_ступень_ноль_считает_три_лица_долга():
     """Каждое лицо считается отдельно: смешать их значило бы потерять предмет."""
-    ответ = {"001": {"status": "active", "mechanism": "gate"},
-             "002": {"status": "active", "mechanism": "none"},
-             "003": {"status": "active"},
-             "004": {"status": "unreviewed"},
-             "005": {"status": "not-applicable", "mechanism": "none"}}
+    ответ = {
+        "001": {"status": "active", "mechanism": "gate"},
+        "002": {"status": "active", "mechanism": "none"},
+        "003": {"status": "active"},
+        "004": {"status": "unreviewed"},
+        "005": {"status": "not-applicable", "mechanism": "none"},
+    }
 
     assert si.held_by_nothing(ответ) == ["002", "003"]
 
@@ -403,26 +444,38 @@ def test_ступень_ноль_считает_три_лица_долга():
 def test_не_применимо_и_не_рассмотрено_долгом_ничем_не_считаются():
     """Обратная сторона (140). «Не применимо» — объявленное состояние, а не долг;
     `unreviewed` честно говорит «ещё не смотрели» и считается своим числом."""
-    ответ = {"005": {"status": "not-applicable", "mechanism": "none"},
-             "004": {"status": "unreviewed"}}
+    ответ = {
+        "005": {"status": "not-applicable", "mechanism": "none"},
+        "004": {"status": "unreviewed"},
+    }
 
     assert si.held_by_nothing(ответ) == []
 
 
 def test_задача_про_правила_ищется_ссылкой_а_не_словом():
     """«Правила игры» предметом не является: ищется НОМЕР, а не слово (166)."""
-    задачи = [{"number": 1, "title": "Правило 128: поле на полноту"},
-              {"number": 2, "title": "rules/ru/062-a-role.md — завести роль"},
-              {"number": 3, "title": "Правила игры для новичков"},
-              {"number": 4, "title": "Обновить README"}]
+    задачи = [
+        {"number": 1, "title": "Правило 128: поле на полноту"},
+        {"number": 2, "title": "rules/ru/062-a-role.md — завести роль"},
+        {"number": 3, "title": "Правила игры для новичков"},
+        {"number": 4, "title": "Обновить README"},
+    ]
 
     assert [i["number"] for i in si.started_here(задачи)] == [1, 2]
 
 
 def test_ступень_ноль_печатается_и_при_нулях():
     """Число, видное лишь при поломке, молчит о том, закрыт ли долг (027, 041)."""
-    тело = si.body_for(missing=[], unreviewed=[], catalogue="o/r", total=1,
-                       answered=1, started=[], nothing=[], contract=None)
+    тело = si.body_for(
+        missing=[],
+        unreviewed=[],
+        catalogue="o/r",
+        total=1,
+        answered=1,
+        started=[],
+        nothing=[],
+        contract=None,
+    )
 
     assert "Ступень 0" in тело and "Долга по правилам нет" in тело
 
@@ -439,14 +492,12 @@ def test_ступень_ноль_печатается_и_при_нулях():
 
 
 def test_все_три_номера_сошлись_молчание():
-    assert si.contract_gaps(
-        {"bindings": "1.2", "proposals": "1.1", "export": "1.7"}, ЖДЁМ) == []
+    assert si.contract_gaps({"bindings": "1.2", "proposals": "1.1", "export": "1.7"}, ЖДЁМ) == []
 
 
 def test_каждый_разошедшийся_номер_назван_отдельно():
     """Слитые в одну фразу расхождения читаются как одно, а чинятся порознь."""
-    беды = si.contract_gaps(
-        {"bindings": "1.1", "proposals": "1.0", "export": "1.5"}, ЖДЁМ)
+    беды = si.contract_gaps({"bindings": "1.1", "proposals": "1.0", "export": "1.5"}, ЖДЁМ)
     assert len(беды) == 3
     assert any("answers_to" in x and "1.5" in x for x in беды)
     assert any("предложения" in x and "1.0" in x for x in беды)
@@ -463,28 +514,35 @@ def test_одинаковое_поле_в_разных_файлах_не_пут�
 
 def test_файла_предложений_нет_это_не_находка():
     """Проект, не шлющий предложений, не обязан объявлять их формат (051)."""
-    assert si.contract_gaps(
-        {"bindings": "1.2", "proposals": None, "export": "1.7"}, ЖДЁМ) == []
+    assert si.contract_gaps({"bindings": "1.2", "proposals": None, "export": "1.7"}, ЖДЁМ) == []
 
 
 def test_файл_есть_а_номера_нет_это_находка():
     """Отличие от отсутствия файла: несверенное не считается сошедшимся (075)."""
-    (беда,) = si.contract_gaps(
-        {"bindings": "1.2", "proposals": "", "export": "1.7"}, ЖДЁМ)
+    (беда,) = si.contract_gaps({"bindings": "1.2", "proposals": "", "export": "1.7"}, ЖДЁМ)
     assert "не объявлен" in беда
 
 
 def test_каталог_не_объявил_номер_тоже_находка():
     """Третий исход: сверять нечем — это не «сходится» (039)."""
-    беды = si.contract_gaps({"bindings": "1.2", "proposals": "1.1", "export": "1.7"},
-                            {"bindings": "1.2"})
+    беды = si.contract_gaps(
+        {"bindings": "1.2", "proposals": "1.1", "export": "1.7"}, {"bindings": "1.2"}
+    )
     assert len(беды) == 2 and all("сверить нечем" in x for x in беды)
 
 
 def test_задача_называет_каждое_расхождение():
-    тело = si.body_for([], [], "o/r", stale=[], total=1, answered=1,
-                       started=[], nothing=[],
-                       contract=["первое расхождение", "второе расхождение"])
+    тело = si.body_for(
+        [],
+        [],
+        "o/r",
+        stale=[],
+        total=1,
+        answered=1,
+        started=[],
+        nothing=[],
+        contract=["первое расхождение", "второе расхождение"],
+    )
     assert "Контракт разошёлся: 2" in тело
     assert "- первое расхождение" in тело and "- второе расхождение" in тело
 
@@ -502,14 +560,16 @@ def test_каждый_опубликованный_контракт_разнес
     import json
     from pathlib import Path
 
-    опубликовано = set(json.loads(
-        Path("export/rules.json").read_text(encoding="utf-8"))["contracts"])
+    опубликовано = set(
+        json.loads(Path("export/rules.json").read_text(encoding="utf-8"))["contracts"]
+    )
     сверяем = {имя for имя, _, _ in si.СВОИ_КОНТРАКТЫ}
     наши = set(si.ЧУЖОМУ_НЕ_НУЖНЫ)
     assert not (сверяем & наши), "номер числится и сверяемым, и нашим"
     незакрытые = опубликовано - сверяем - наши
     assert незакрытые == set(), (
-        f"опубликованы, но не отнесены ни к одному списку: {sorted(незакрытые)}")
+        f"опубликованы, но не отнесены ни к одному списку: {sorted(незакрытые)}"
+    )
 
 
 def test_polya_answers_to_net_eto_nakhodka():
@@ -526,17 +586,18 @@ def test_polya_answers_to_net_eto_nakhodka():
     assert si.ответ_на_версию({"answers_to": "1.5"}) == "1.5"
 
     (беда,) = si.contract_gaps(
-        {"bindings": "1.2", "proposals": None,
-         "export": si.ответ_на_версию({"schema": "1.2"})}, ЖДЁМ)
+        {"bindings": "1.2", "proposals": None, "export": si.ответ_на_версию({"schema": "1.2"})},
+        ЖДЁМ,
+    )
     assert "answers_to" in беда and "не объявлен" in беда
 
 
 def test_fayla_otveta_net_pro_versiyu_vygruzki_molchim():
     """Факт один — файла нет, — и повторять его дважды значит шуметь (051)."""
     беды = si.contract_gaps(
-        {"bindings": "", "proposals": None, "export": si.ответ_на_версию({})}, ЖДЁМ)
+        {"bindings": "", "proposals": None, "export": si.ответ_на_версию({})}, ЖДЁМ
+    )
     assert len(беды) == 1 and "schema" in беды[0]
-
 
 
 # ── навыки каталога доезжают до проекта (аналогия со 142) ─────────────────
@@ -551,14 +612,16 @@ def test_навык_копией_плагином_или_никак(tmp_path):
     assert [s["here"] for s in got] == ["копия", ""]
 
     (tmp_path / ".claude/settings.json").write_text(
-        '{"enabledPlugins": {"catalogue@incidents-playbook": true}}')
+        '{"enabledPlugins": {"catalogue@incidents-playbook": true}}'
+    )
     got = si.навыки_здесь(НАВЫКИ, str(tmp_path))
     assert [s["here"] for s in got] == ["копия", "плагин"]
 
 
 def test_раздел_навыков_называет_не_поставленный():
-    тело = si.body_for([], [], "o/cat", skills=[
-        {"name": "merge-rules", "when": "сводит правила", "here": ""}])
+    тело = si.body_for(
+        [], [], "o/cat", skills=[{"name": "merge-rules", "when": "сводит правила", "here": ""}]
+    )
     assert "## Навыки каталога" in тело
     assert "| `merge-rules` | сводит правила | не стоит |" in тело
     assert "не стоит: 1" in тело
@@ -576,12 +639,14 @@ def test_пустой_разбор_списка_это_названная_оши
     assert навыки is None
     assert ошибка == "https://x — ни одной строки навыка в таблице"
     навыки, ошибка = si.разбор_навыков(
-        "| Навык | Когда |\n|---|---|\n| `a-b` | когда-то |\n", "https://x")
+        "| Навык | Когда |\n|---|---|\n| `a-b` | когда-то |\n", "https://x"
+    )
     assert ошибка is None and навыки == [("a-b", "когда-то")]
 
 
 def test_строки_списка_и_listed_читают_одно():
     import check_skills
+
     текст = "| Навык | Когда |\n|---|---|\n| `a-b` | когда-то |\n"
     assert check_skills.строки_списка(текст) == [("a-b", "когда-то")]
     assert check_skills.listed(текст) == ["a-b"]
@@ -589,14 +654,24 @@ def test_строки_списка_и_listed_читают_одно():
 
 def test_замещённое_не_требует_ответа_и_не_лишнее(monkeypatch, capsys):
     """Ответа о замещённом не ждут, а данный — не лишний: счёт по действующим (17.10)."""
-    правила = [{"id": "001", "title": {"ru": "старое"}, "superseded_by": "002"},
-               {"id": "002", "title": {"ru": "сводное"}}]
-    arm(monkeypatch, правила, {"002": {"status": "active", "mechanism": "gate"}},
-        issue=("52", "OPEN"))
+    правила = [
+        {"id": "001", "title": {"ru": "старое"}, "superseded_by": "002"},
+        {"id": "002", "title": {"ru": "сводное"}},
+    ]
+    arm(
+        monkeypatch,
+        правила,
+        {"002": {"status": "active", "mechanism": "gate"}},
+        issue=("52", "OPEN"),
+    )
     assert si.main() == 0
     assert "правил 1, разобрано 1, ответа нет у 0" in capsys.readouterr().out
-    arm(monkeypatch, правила, {"001": {"status": "active"}, "002": {"status": "active"}},
-        issue=("52", "OPEN"))
+    arm(
+        monkeypatch,
+        правила,
+        {"001": {"status": "active"}, "002": {"status": "active"}},
+        issue=("52", "OPEN"),
+    )
     assert si.main() == 0
     assert "лишних 0" in capsys.readouterr().out
 
@@ -619,6 +694,7 @@ def test_ссылки_на_правила_в_тексте_входящих_ве�
     """
     import re
     from pathlib import Path
+
     корень = Path(si.__file__).resolve().parent.parent
     текст = Path(si.__file__).read_text(encoding="utf-8")
     адреса = re.findall(r"/blob/main/(rules/(?:ru|en)/[\w.-]+\.md)", текст)

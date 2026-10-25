@@ -53,7 +53,6 @@ v1.0.0», а НЕ «семнадцатый патч-релиз»: релиза �
   0 — версия определена;  2 — тега схемы не видно, версия недостоверна.
 """
 
-
 import argparse
 import json
 import re
@@ -92,8 +91,14 @@ SYNC_MERGE_RE = re.compile(
 def git(*args: str, root: Path = ROOT) -> str | None:
     """stdout git-команды без хвостового перевода строки; None при любой ошибке."""
     try:
-        done = proc.run(("git", "-C", str(root), *args),
-                        capture_output=True, text=True, encoding="utf-8", check=False, timeout=60)
+        done = proc.run(
+            ("git", "-C", str(root), *args),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+            timeout=60,
+        )
     except OSError:
         return None
     return done.stdout.strip() if done.returncode == 0 else None
@@ -119,8 +124,7 @@ def pr_numbers(lines: list[str]) -> set[str]:
 
 def countable_unnumbered(subject: str) -> bool:
     """Коммит без номера — прямой пуш, и он реален. Кроме бота и склеек."""
-    return (not any(mark in subject for mark in BOT_COMMITS)
-            and not SYNC_MERGE_RE.match(subject))
+    return not any(mark in subject for mark in BOT_COMMITS) and not SYNC_MERGE_RE.match(subject)
 
 
 def accepted_since(rev_range: str) -> int:
@@ -135,9 +139,9 @@ def accepted_since(rev_range: str) -> int:
     """
     numbered = pr_numbers(subjects(rev_range))
     unnumbered = [
-        s for s in subjects(rev_range, first_parent=True)
-        if not PR_RE.search(s) and not MERGE_PR_RE.match(s)
-        and countable_unnumbered(s)
+        s
+        for s in subjects(rev_range, first_parent=True)
+        if not PR_RE.search(s) and not MERGE_PR_RE.match(s) and countable_unnumbered(s)
     ]
     return len(numbered) + len(unnumbered)
 
@@ -171,10 +175,15 @@ def write_badges(release: str, full: str) -> list[Path]:
         ("version", "version", full, "blue"),
     ):
         path = BADGES / f"{name}.json"
-        path.write_text(json.dumps(
-            {"schemaVersion": 1, "label": label, "message": message,
-             "color": color}, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8")
+        path.write_text(
+            json.dumps(
+                {"schemaVersion": 1, "label": label, "message": message, "color": color},
+                ensure_ascii=False,
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
         written.append(path)
     return written
 
@@ -194,8 +203,10 @@ def pin(tag: str) -> str | None:
     for path in PINNED:
         text = path.read_text(encoding="utf-8")
         if not PIN_RE.search(text):
-            return (f"{path.name}: маркера <!--m:ref--> нет. Пример подключения, "
-                    f"который некому переписать, вернётся к устаревшему тегу молча")
+            return (
+                f"{path.name}: маркера <!--m:ref--> нет. Пример подключения, "
+                f"который некому переписать, вернётся к устаревшему тегу молча"
+            )
         path.write_text(PIN_RE.sub(rf"\g<1>{tag}\g<2>", text), encoding="utf-8")
     return None
 
@@ -203,12 +214,13 @@ def pin(tag: str) -> str | None:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     group = ap.add_mutually_exclusive_group()
-    group.add_argument("--release", action="store_true",
-                       help="печатать только релизную часть «X.Y»")
-    group.add_argument("--badges", action="store_true",
-                       help="записать значки release и version")
-    group.add_argument("--pin", action="store_true",
-                       help="подставить последний релизный тег в пример контракта")
+    group.add_argument(
+        "--release", action="store_true", help="печатать только релизную часть «X.Y»"
+    )
+    group.add_argument("--badges", action="store_true", help="записать значки release и version")
+    group.add_argument(
+        "--pin", action="store_true", help="подставить последний релизный тег в пример контракта"
+    )
     args = ap.parse_args(argv)
 
     got = version()
@@ -216,9 +228,12 @@ def main(argv: list[str] | None = None) -> int:
         # Третий исход, а не правдоподобное «0.0.N». Клон без тегов неотличим
         # от репозитория до первого релиза, и молчаливое число здесь хуже
         # отказа: значок выглядел бы свежим (правило 075).
-        print("проверка не отработала: релизного тега вида vX.Y.0 не видно. "
-              "Либо схема ещё не начата, либо клон без тегов — "
-              "подтяните: git fetch --tags", file=sys.stderr)
+        print(
+            "проверка не отработала: релизного тега вида vX.Y.0 не видно. "
+            "Либо схема ещё не начата, либо клон без тегов — "
+            "подтяните: git fetch --tags",
+            file=sys.stderr,
+        )
         return 2
 
     release, full = got

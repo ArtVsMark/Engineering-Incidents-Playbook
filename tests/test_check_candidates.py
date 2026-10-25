@@ -12,7 +12,6 @@
 краснеющий на ней, был бы хуже отсутствующего.
 """
 
-
 from pathlib import Path
 
 import pytest
@@ -68,6 +67,7 @@ def run(root: Path) -> int:
 
 # ── здоровые предметы: гейт обязан пропустить ──────────────────────────────
 
+
 def test_кандидат_по_форме_проходит(repo, capsys):
     prepare(repo, {"model-per-task.md": GOOD})
     assert run(repo) == 0
@@ -92,23 +92,31 @@ def test_readme_кандидатом_не_считается(repo):
 
 
 def test_источник_задачей_тоже_разрешается(repo):
-    prepare(repo, {"a.md": GOOD.replace("https://github.com/owner/other-project#12",
-                                        "owner/repo#12")})
+    prepare(
+        repo, {"a.md": GOOD.replace("https://github.com/owner/other-project#12", "owner/repo#12")}
+    )
     assert run(repo) == 0
 
 
 def test_правило_рядом_с_похожим_именем_ссылкой_не_считается(repo):
     """Здоровый предмет у самой границы: имя совпало, папка другая."""
-    prepare(repo, {"a.md": GOOD},
-            rules={"002-b.md": "# Правило\n\nСм. [соседа](001-a.md) и [a.md](../en/a.md).\n"})
+    prepare(
+        repo,
+        {"a.md": GOOD},
+        rules={"002-b.md": "# Правило\n\nСм. [соседа](001-a.md) и [a.md](../en/a.md).\n"},
+    )
     assert run(repo) == 0
 
 
 # ── предметы, которые гейт обязан отвергнуть ───────────────────────────────
 
+
 def test_ссылка_из_правила_на_кандидата_это_находка(repo, capsys):
-    prepare(repo, {"a.md": GOOD},
-            rules={"002-b.md": "# Правило\n\nСм. [гипотезу](../../candidates/a.md).\n"})
+    prepare(
+        repo,
+        {"a.md": GOOD},
+        rules={"002-b.md": "# Правило\n\nСм. [гипотезу](../../candidates/a.md).\n"},
+    )
     assert run(repo) == 1
     assert "ссылается на кандидата" in capsys.readouterr().err
 
@@ -138,15 +146,27 @@ def test_нет_раздела_чем_подтвердится_это_наход
 
 
 def test_пустой_обязательный_раздел_это_находка(repo, capsys):
-    prepare(repo, {"a.md": GOOD.replace(
-        "У нас кончится бюджет окна на механической работе, и цена будет названа.", "")})
+    prepare(
+        repo,
+        {
+            "a.md": GOOD.replace(
+                "У нас кончится бюджет окна на механической работе, и цена будет названа.", ""
+            )
+        },
+    )
     assert run(repo) == 1
     assert "пуст" in capsys.readouterr().err
 
 
 def test_источник_прозой_это_находка(repo, capsys):
-    prepare(repo, {"a.md": GOOD.replace("https://github.com/owner/other-project#12",
-                                        "видел в каком-то проекте")})
+    prepare(
+        repo,
+        {
+            "a.md": GOOD.replace(
+                "https://github.com/owner/other-project#12", "видел в каком-то проекте"
+            )
+        },
+    )
     assert run(repo) == 1
     assert "не разрешается" in capsys.readouterr().err
 
@@ -158,6 +178,7 @@ def test_имя_не_по_форме_это_находка(repo, capsys):
 
 
 # ── третий исход ───────────────────────────────────────────────────────────
+
 
 def test_нет_дерева_правил_это_третий_исход(repo, capsys):
     (repo / "candidates").mkdir(parents=True, exist_ok=True)
@@ -172,8 +193,10 @@ def test_нет_дерева_правил_это_третий_исход(repo, c
 # нет, и там кандидат легче всего тихо станет правилом. Набор двусторонний
 # (140) и стережёт именно то, что этому мешает.
 
+
 def test_кандидат_в_выгрузке_помечен_гипотезой(repo, monkeypatch):
     import build_rules_index as bri
+
     prepare(repo, {"model-per-task.md": GOOD})
     monkeypatch.setattr(bri, "ROOT", repo)
 
@@ -192,6 +215,7 @@ def test_у_кандидата_в_выгрузке_нет_поля_номера(
     номера запрещено. Проверяется ОТСУТСТВИЕ ключа, а не его значение.
     """
     import build_rules_index as bri
+
     prepare(repo, {"model-per-task.md": GOOD})
     monkeypatch.setattr(bri, "ROOT", repo)
 
@@ -208,6 +232,7 @@ def test_чем_подтвердится_едет_вместе_с_гипотез
     чем дальше от места, где её записали.
     """
     import build_rules_index as bri
+
     prepare(repo, {"model-per-task.md": GOOD})
     monkeypatch.setattr(bri, "ROOT", repo)
 
@@ -220,6 +245,7 @@ def test_чем_подтвердится_едет_вместе_с_гипотез
 def test_пустая_папка_даёт_пустой_список_а_не_отказ(repo, monkeypatch):
     """Кандидатов может не быть — это объявленное состояние (091)."""
     import build_rules_index as bri
+
     prepare(repo, {})
     monkeypatch.setattr(bri, "ROOT", repo)
 
@@ -227,6 +253,7 @@ def test_пустая_папка_даёт_пустой_список_а_не_от
 
 
 # ── кандидат уехал в корпус (022, 026) ─────────────────────────────────────
+
 
 def дерево(root, слаг: str, правило: str = "") -> None:
     """Минимальное дерево: один кандидат и, если задано, одно правило."""
@@ -236,7 +263,9 @@ def дерево(root, слаг: str, правило: str = "") -> None:
         "## Источник\n\nArtVsMark/Engineering-Incidents-Playbook#1\n\n"
         "## Предполагаемая причина\n\nПричина.\n\n"
         "## Чем подтвердится\n\nПризнак.\n\n"
-        "## Применимость\n\nГраница.\n", encoding="utf-8")
+        "## Применимость\n\nГраница.\n",
+        encoding="utf-8",
+    )
     (root / "rules" / "ru").mkdir(parents=True, exist_ok=True)
     if правило:
         (root / "rules" / "ru" / правило).write_text("# Правило\n", encoding="utf-8")
@@ -262,11 +291,10 @@ def test_prinyatoe_predlozhenie_s_tem_zhe_slagom_otkaz(tmp_path):
     дерево(tmp_path, "принятая", "")
     (tmp_path / ".rules").mkdir(parents=True, exist_ok=True)
     (tmp_path / ".rules" / "proposals.json").write_text(
-        '{"verdicts": {"ArtVsMark/Сосед:принятая": {"status": "admitted"}}}',
-        encoding="utf-8")
+        '{"verdicts": {"ArtVsMark/Сосед:принятая": {"status": "admitted"}}}', encoding="utf-8"
+    )
     отказы, _ = cc.promoted(tmp_path, sorted((tmp_path / "candidates").glob("*.md")))
     assert отказы and "принято как правило" in отказы[0]
-
 
 
 # ── раздел «Данные потребителей» (#798): необязателен, но с формой ─────────
@@ -284,32 +312,45 @@ def с_данными(раздел: str) -> str:
     return GOOD.replace("## Применимость", раздел.strip() + "\n\n## Применимость")
 
 
-
-@pytest.mark.parametrize("раздел", [
-    РАЗДЕЛ,
-    РАЗДЕЛ.replace("9 октября 2026", "2026-10-09"),                 # ISO-дата
-    РАЗДЕЛ.replace("o/other#5", "https://example.org/run/5"),       # адрес
-    РАЗДЕЛ.replace("К ветке «опровергнется».", "Не сдвигает."),     # регистр
-    РАЗДЕЛ.replace("К ветке «опровергнется».", "«Подтвердится»."),  # ответ в начале
-])
+@pytest.mark.parametrize(
+    "раздел",
+    [
+        РАЗДЕЛ,
+        РАЗДЕЛ.replace("9 октября 2026", "2026-10-09"),  # ISO-дата
+        РАЗДЕЛ.replace("o/other#5", "https://example.org/run/5"),  # адрес
+        РАЗДЕЛ.replace("К ветке «опровергнется».", "Не сдвигает."),  # регистр
+        РАЗДЕЛ.replace("К ветке «опровергнется».", "«Подтвердится»."),  # ответ в начале
+    ],
+)
 def test_данные_по_форме_проходят(repo, раздел):
     prepare(repo, {"model-per-task.md": с_данными(раздел)})
     assert run(repo) == 0
 
 
-@pytest.mark.parametrize("порча, слово", [
-    (lambda r: "\n## Данные потребителей\n\n   \n", "пуст"),
-    (lambda r: r.replace("o/other#5", "сказали в чате"), "нет разрешимого источника"),
-    (lambda r: r.replace("9 октября 2026", "недавно"), "нет даты замера"),
-    (lambda r: r.replace("**Куда это сдвигает гипотезу.** К ветке «опровергнется».",
-                         "Похоже, против."), "Куда это сдвигает гипотезу"),
-    (lambda r: r.replace("«опровергнется»", "«скорее против»"), "Куда это сдвигает гипотезу"),
-    # отрицание отменяет ответ, а не повторяет его (обзор #822)
-    (lambda r: r.replace("К ветке «опровергнется».", "Не подтвердится."),
-     "Куда это сдвигает гипотезу"),
-    (lambda r: r.replace("К ветке «опровергнется».", "не «опровергнется»."),
-     "Куда это сдвигает гипотезу"),
-])
+@pytest.mark.parametrize(
+    "порча, слово",
+    [
+        (lambda r: "\n## Данные потребителей\n\n   \n", "пуст"),
+        (lambda r: r.replace("o/other#5", "сказали в чате"), "нет разрешимого источника"),
+        (lambda r: r.replace("9 октября 2026", "недавно"), "нет даты замера"),
+        (
+            lambda r: r.replace(
+                "**Куда это сдвигает гипотезу.** К ветке «опровергнется».", "Похоже, против."
+            ),
+            "Куда это сдвигает гипотезу",
+        ),
+        (lambda r: r.replace("«опровергнется»", "«скорее против»"), "Куда это сдвигает гипотезу"),
+        # отрицание отменяет ответ, а не повторяет его (обзор #822)
+        (
+            lambda r: r.replace("К ветке «опровергнется».", "Не подтвердится."),
+            "Куда это сдвигает гипотезу",
+        ),
+        (
+            lambda r: r.replace("К ветке «опровергнется».", "не «опровергнется»."),
+            "Куда это сдвигает гипотезу",
+        ),
+    ],
+)
 def test_данные_не_по_форме_отказ(repo, capsys, порча, слово):
     prepare(repo, {"model-per-task.md": с_данными(порча(РАЗДЕЛ))})
     assert run(repo) == 1

@@ -25,7 +25,6 @@
 проходить, иначе необязательное поле станет обязательным молча.
 """
 
-
 from pathlib import Path
 
 import audit_catalogue as ac
@@ -46,8 +45,12 @@ RELEASE = """## v1.0.0 · 27 августа 2026 · конвейер стал а
 
 def history(root: Path, text: str) -> Path:
     return write(root / "docs" / "HISTORY.md", text)
+
+
 RU = "# Правило\n\n**Область.** процесс\n\n**Правило.** Что-то.\n\n{f}## Инцидент\n\nБыло.\n"
-EN = "# A rule\n\n**Area.** process\n\n**The rule.** Something.\n\n{f}## The incident\n\nHappened.\n"
+EN = (
+    "# A rule\n\n**Area.** process\n\n**The rule.** Something.\n\n{f}## The incident\n\nHappened.\n"
+)
 P_RU = "**Переносится вне Claude Code.** да — не зависит от площадки.\n\n"
 P_EN = "**Portable beyond Claude Code.** yes — platform-independent.\n\n"
 
@@ -57,6 +60,7 @@ def slot(repo: Path, ru: str, en: str) -> dict:
 
 
 # ── здоровые предметы ──────────────────────────────────────────────────────
+
 
 def test_раздел_выпуска_по_форме_проходит(repo):
     history(repo, RELEASE)
@@ -80,8 +84,13 @@ def test_ссылка_задачей_без_адреса_тоже_разреша
 
 def test_образец_формы_в_заборе_кода_находкой_не_считается(repo):
     """Предмет у самой границы: критерий описывает форму и сам ей не следует."""
-    history(repo, "# История\n\n```\n" + RELEASE.replace(
-        "конвейер стал автором", "<чем этот выпуск был>") + "```\n" + RELEASE)
+    history(
+        repo,
+        "# История\n\n```\n"
+        + RELEASE.replace("конвейер стал автором", "<чем этот выпуск был>")
+        + "```\n"
+        + RELEASE,
+    )
     assert ac.check_history(repo) == []
 
 
@@ -91,6 +100,7 @@ def test_обычные_разделы_истории_выпусками_не_с
 
 
 # ── предметы, которые гейт обязан отвергнуть ───────────────────────────────
+
 
 def test_раздел_без_решений_это_находка(repo):
     history(repo, RELEASE.replace("**Решения.**", "**Что ещё думали.**"))
@@ -104,9 +114,13 @@ def test_раздел_без_итога_это_находка(repo):
 
 
 def test_что_вошло_без_ссылки_это_находка(repo):
-    history(repo, RELEASE.replace(
-        "Номер присуждается здесь — задача\n[#91](https://github.com/o/r/issues/91).",
-        "Из этого много чего выросло."))
+    history(
+        repo,
+        RELEASE.replace(
+            "Номер присуждается здесь — задача\n[#91](https://github.com/o/r/issues/91).",
+            "Из этого много чего выросло.",
+        ),
+    )
     out = ac.check_history(repo)
     assert out and "рассказом" in out[0]
 
@@ -117,29 +131,39 @@ def test_ссылка_в_итоге_вместо_что_вошло_не_спас
     В «Итоге» ссылке делать нечего — он про смысл, а не про артефакт, и
     зачёт ссылки где угодно превратил бы проверку в поиск ссылки по разделу.
     """
-    history(repo, RELEASE.replace(
-        "Номер присуждается здесь — задача\n[#91](https://github.com/o/r/issues/91).",
-        "Номер присуждается здесь.").replace(
-        "**Итог.** Каталог перестал быть складом.",
-        "**Итог.** Склад кончился — [#91](https://github.com/o/r/issues/91)."))
+    history(
+        repo,
+        RELEASE.replace(
+            "Номер присуждается здесь — задача\n[#91](https://github.com/o/r/issues/91).",
+            "Номер присуждается здесь.",
+        ).replace(
+            "**Итог.** Каталог перестал быть складом.",
+            "**Итог.** Склад кончился — [#91](https://github.com/o/r/issues/91).",
+        ),
+    )
     out = ac.check_history(repo)
     assert out and "рассказом" in out[0]
 
 
 def test_второй_выпуск_проверяется_отдельно_от_первого(repo):
-    history(repo, RELEASE + "\n" + RELEASE.replace(
-        "## v1.0.0 · 27 августа 2026 · конвейер стал автором",
-        "## v1.1.0 · 28 августа 2026 · контракт с потребителями").replace(
-        "**Решения.** Раздавать номера в проектах отвергнуто: займут один.\n\n", ""))
+    history(
+        repo,
+        RELEASE
+        + "\n"
+        + RELEASE.replace(
+            "## v1.0.0 · 27 августа 2026 · конвейер стал автором",
+            "## v1.1.0 · 28 августа 2026 · контракт с потребителями",
+        ).replace("**Решения.** Раздавать номера в проектах отвергнуто: займут один.\n\n", ""),
+    )
     out = ac.check_history(repo)
     assert len(out) == 1 and "v1.1.0" in out[0]
 
 
 # ── архив истории: туда уходит только вышедшее за окно (108) ──────────────
 
+
 def выпуск(n: int) -> str:
-    return RELEASE.replace("## v1.0.0 · 27 августа 2026",
-                           f"## v1.{n}.0 · 27 августа 2026")
+    return RELEASE.replace("## v1.0.0 · 27 августа 2026", f"## v1.{n}.0 · 27 августа 2026")
 
 
 def архив(root: Path, text: str) -> Path:
@@ -182,10 +206,19 @@ def test_поле_с_причиной_проходит(repo):
 
 
 def test_частично_с_причиной_проходит(repo):
-    assert ac.check_portable("001", slot(
-        repo,
-        RU.format(f="**Переносится вне Claude Code.** частично — приём да, лекарство нет.\n\n"),
-        EN.format(f="**Portable beyond Claude Code.** partly — device yes, remedy no.\n\n"))) == []
+    assert (
+        ac.check_portable(
+            "001",
+            slot(
+                repo,
+                RU.format(
+                    f="**Переносится вне Claude Code.** частично — приём да, лекарство нет.\n\n"
+                ),
+                EN.format(f="**Portable beyond Claude Code.** partly — device yes, remedy no.\n\n"),
+            ),
+        )
+        == []
+    )
 
 
 def test_одно_дерево_отсутствует_паритет_не_судится(repo):
@@ -196,24 +229,29 @@ def test_одно_дерево_отсутствует_паритет_не_суд
 
 # ── предметы, которые проверка обязана отвергнуть ──────────────────────────
 
+
 def test_поле_только_в_одном_дереве_это_находка(repo):
     out = ac.check_portable("001", slot(repo, RU.format(f=P_RU), EN.format(f="")))
     assert out and "только в дереве ru" in out[0]
 
 
 def test_значение_вне_набора_это_находка(repo):
-    out = ac.check_portable("001", slot(
-        repo,
-        RU.format(f="**Переносится вне Claude Code.** наверное — кто знает.\n\n"),
-        EN.format(f=P_EN)))
+    out = ac.check_portable(
+        "001",
+        slot(
+            repo,
+            RU.format(f="**Переносится вне Claude Code.** наверное — кто знает.\n\n"),
+            EN.format(f=P_EN),
+        ),
+    )
     assert out and "вне набора" in out[0]
 
 
 def test_ответ_без_причины_это_находка(repo):
-    out = ac.check_portable("001", slot(
-        repo,
-        RU.format(f="**Переносится вне Claude Code.** частично\n\n"),
-        EN.format(f=P_EN)))
+    out = ac.check_portable(
+        "001",
+        slot(repo, RU.format(f="**Переносится вне Claude Code.** частично\n\n"), EN.format(f=P_EN)),
+    )
     assert out and "без причины" in out[0]
 
 
@@ -223,10 +261,12 @@ def test_ответ_без_причины_это_находка(repo):
 # недавно» и не сообщает об этом. Гейт держит только СЧЁТ: дословность
 # переноса в архив машинно не проверить, и это сказано в самом скрипте.
 
+
 def releases(n: int) -> str:
-    return "\n".join(RELEASE.replace("## v1.0.0 · 27 августа 2026 ·",
-                                     f"## v2.{i}.0 · 1 сентября 2026 ·")
-                     for i in range(n))
+    return "\n".join(
+        RELEASE.replace("## v1.0.0 · 27 августа 2026 ·", f"## v2.{i}.0 · 1 сентября 2026 ·")
+        for i in range(n)
+    )
 
 
 def test_окно_не_переполнено_проходит(repo):
@@ -267,14 +307,16 @@ def test_предел_выражен_числом_а_не_наречием():
 # Набор заглушек закрытый и берётся из самих заготовок: широкий образец «любые
 # угловые скобки» краснел бы на законном `<отпечаток>` в прозе правил.
 
+
 def test_zaglushki_berutsya_iz_zagotovok(repo):
     """Без русской заготовки в дереве набор всё равно есть — из английской."""
     assert "<What broke, with numbers and dates." in ac.placeholders(repo)
 
 
 def test_svezhiy_karkas_krasneet_za_zaglushki(repo):
-    каркас = ac.EN_SKELETON.format(area_en="process", tier_n=3,
-                                   tier_en="gates and processes", trail="o/r#1")
+    каркас = ac.EN_SKELETON.format(
+        area_en="process", tier_n=3, tier_en="gates and processes", trail="o/r#1"
+    )
     assert ac.unfilled(каркас, ac.placeholders(repo))
 
 

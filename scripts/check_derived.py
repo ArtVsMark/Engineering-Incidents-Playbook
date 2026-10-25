@@ -39,7 +39,6 @@ scripts/aggregate_bindings.py». Запрет читался как «не пр�
   051 — отказ на достоверном: файл в диапазоне — факт, а не подозрение.
 """
 
-
 import argparse
 import subprocess
 import sys
@@ -54,11 +53,10 @@ ROOT = Path(__file__).resolve().parent.parent
 #: пропустил бы новый файл (068).
 OWNED_BY_JOB = {
     "export/where.md": "badges.yml → ветка `badges`: сводка живёт там же, где "
-                       "картинка витрины, и в общей ветке её нет вовсе",
-    "export/where.json": "badges.yml → ветка `badges`: тот же владелец и то же "
-                         "место",
+    "картинка витрины, и в общей ветке её нет вовсе",
+    "export/where.json": "badges.yml → ветка `badges`: тот же владелец и то же место",
     "export/family.json": "badges.yml → ветка `badges`: сводка манифестов семьи "
-                          "собирается там же, где сводка «где действует»",
+    "собирается там же, где сводка «где действует»",
 }
 
 #: Каталог, уезжающий на ветку `badges` ЦЕЛИКОМ: в общей ветке его содержимого
@@ -98,9 +96,13 @@ def changed(rng: str, root: Path) -> tuple[list[str] | None, str]:
     # потому что путь стоит в разнице в обе стороны. Ложный отказ на верной
     # работе (051), и притом на единственной работе, которая гейт удовлетворяет.
     # `--diff-filter=d` — строчная буква исключает удалённые.
-    done = proc.run(["git", "-C", str(root), "diff", "--name-only", "-z",
-                     "--diff-filter=d", rng],
-                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), "diff", "--name-only", "-z", "--diff-filter=d", rng],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         return None, (done.stderr or "").strip()
     # По NUL, а не по строкам: имя с не-ASCII символами git отдаёт
@@ -125,7 +127,11 @@ def tracked_paths(root: Path) -> set[str]:
     """Что git отслеживает в дереве. Пусто — спросить не удалось."""
     done = proc.run(  # noqa: S603 — аргументы свои
         ["git", "-C", str(root), "ls-files", "-z", "--", "export/"],
-        capture_output=True, text=True, encoding="utf-8", timeout=60)
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         return set()
     return {p for p in done.stdout.split("\0") if p}
@@ -133,8 +139,7 @@ def tracked_paths(root: Path) -> set[str]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--range", default="origin/main...HEAD",
-                        help="диапазон изменения")
+    parser.add_argument("--range", default="origin/main...HEAD", help="диапазон изменения")
     parser.add_argument("--branch", default="", help="имя ветки изменения")
     parser.add_argument("--root", type=Path, default=ROOT)
     args = parser.parse_args(argv)
@@ -142,27 +147,34 @@ def main(argv: list[str] | None = None) -> int:
     paths, err = changed(args.range, args.root)
     # ── исход 2 ────────────────────────────────────────────────────────────
     if paths is None:
-        print(f"проверка не отработала: диапазон {args.range} не разобран — "
-              f"{err or 'git промолчал'}. Мелкий клон или ветка без основания",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: диапазон {args.range} не разобран — "
+            f"{err or 'git промолчал'}. Мелкий клон или ветка без основания",
+            file=sys.stderr,
+        )
         return 2
 
     found = findings(paths, args.branch, tracked_paths(args.root))
     # ── исход 1 ────────────────────────────────────────────────────────────
     if found:
-        print("производные вернулись в общую ветку, а место им на `badges`:",
-              file=sys.stderr)
+        print("производные вернулись в общую ветку, а место им на `badges`:", file=sys.stderr)
         for p in found:
             print(f"  • {p} — {OWNED_BY_JOB[p]}", file=sys.stderr)
-        print("\n  Уберите их из дерева: `git rm --cached "
-              + " ".join(found) + "`.\n  Собирает и публикует их badges.yml на "
-              "ветке `badges`, рядом с картинкой витрины; читатели ходят туда.\n"
-              "  Замер: шесть конфликтов за одну смену, и все — в этих файлах; "
-              "ни один не был поломкой.", file=sys.stderr)
+        print(
+            "\n  Уберите их из дерева: `git rm --cached "
+            + " ".join(found)
+            + "`.\n  Собирает и публикует их badges.yml на "
+            "ветке `badges`, рядом с картинкой витрины; читатели ходят туда.\n"
+            "  Замер: шесть конфликтов за одну смену, и все — в этих файлах; "
+            "ни один не был поломкой.",
+            file=sys.stderr,
+        )
         return 1
 
-    print(f"производные в порядке: тронуто путей {len(paths)}, "
-          f"чужого владения нет ({len(OWNED_BY_JOB)} под охраной)")
+    print(
+        f"производные в порядке: тронуто путей {len(paths)}, "
+        f"чужого владения нет ({len(OWNED_BY_JOB)} под охраной)"
+    )
     return 0
 
 

@@ -48,7 +48,6 @@
   217 — работа без числа версии исполняет код системным python раннера.
 """
 
-
 import argparse
 import re
 import sys
@@ -76,8 +75,8 @@ PREVIEW_RE = re.compile(r'^\s*allow-prereleases:\s*"?true"?\s*$')
 #: Буквальным образцом `CI_RE` она не видна, и значок рисовал гоняемую ячейку
 #: «проектом не проверяется», а гейт считал шаг «без числа».
 MATRIX_RE = re.compile(
-    r"""^\s*python-version:\s*["']?\$\{\{\s*matrix\.([\w-]+)\s*\}\}["']?\s*(?:#.*)?$""",
-    re.M)
+    r"""^\s*python-version:\s*["']?\$\{\{\s*matrix\.([\w-]+)\s*\}\}["']?\s*(?:#.*)?$""", re.M
+)
 #: Ячейка матрицы: «3.14», '3.14', 3.14 — тот же номер, что у `CI_RE`.
 ЯЧЕЙКА_RE = re.compile(r"""^["']?(\d+)\.(\d+)["']?$""")
 
@@ -118,7 +117,7 @@ def _отступ(строка: str) -> int:
 def _блок(строки: list[str], i: int) -> list[str]:
     """Строки под ключом `строки[i]` — с отступом больше, до первой меньше или равной."""
     out = []
-    for строка in строки[i + 1:]:
+    for строка in строки[i + 1 :]:
         if строка.strip() and _отступ(строка) <= _отступ(строки[i]):
             break
         out.append(строка)
@@ -140,14 +139,17 @@ def _значения(строки: list[str], i: int) -> list[str] | None:
         return None
     if после.startswith("["):
         текст, j = после, i
-        while "]" not in текст and j + 1 < len(строки):   # список в скобках на нескольких строках
+        while "]" not in текст and j + 1 < len(строки):  # список в скобках на нескольких строках
             j += 1
             текст += " " + _без_комментария(строки[j]).strip()
         return [х.strip() for х in текст.strip("[]").split(",") if х.strip()]
     if после:
         return [после]
-    return [_без_комментария(с).strip()[1:].strip() for с in _блок(строки, i)
-            if с.strip().startswith("- ")]
+    return [
+        _без_комментария(с).strip()[1:].strip()
+        for с in _блок(строки, i)
+        if с.strip().startswith("- ")
+    ]
 
 
 def ось(тело: str, имя: str) -> tuple[list[tuple[int, int]], str | None]:
@@ -186,7 +188,7 @@ def ось(тело: str, имя: str) -> tuple[list[tuple[int, int]], str | Non
                 if строка.split(":", 1)[0].strip() == имя:
                     нашлась = True
                     значения = _значения(блок, к)
-                    if значения is None:   # выражение в ячейке — отказ, как у оси (обзор #928)
+                    if значения is None:  # выражение в ячейке — отказ, как у оси (обзор #928)
                         return [], f"ячейка include с matrix.{имя} — выражение, а не версия"
                     сырые += значения
     if not нашлась:
@@ -203,6 +205,7 @@ def _матричные(text: str) -> list[tuple[str, int, str, list[tuple[int, 
     """(работа, смещение в теле, тело, номера, отказ) для каждой матричной python-version."""
     # Работы разбирает check_runtime_deps — один разбор на территорию (214).
     from check_runtime_deps import работы
+
     out = []
     for имя, тело in работы(text).items():
         for m in MATRIX_RE.finditer(тело):
@@ -211,8 +214,7 @@ def _матричные(text: str) -> list[tuple[str, int, str, list[tuple[int, 
     return out
 
 
-def in_workflows(root: Path, *, preview: bool = False
-                 ) -> list[tuple[str, tuple[int, int]]]:
+def in_workflows(root: Path, *, preview: bool = False) -> list[tuple[str, tuple[int, int]]]:
     """Версия, объявленная каждым прогоном: (файл, версия).
 
     preview=False — прогоны, закрывающие изменение; True — только
@@ -234,10 +236,12 @@ def in_workflows(root: Path, *, preview: bool = False
 
 def отказы_матриц(root: Path) -> list[str]:
     """Матричные python-version, ось которых не разобралась, — с адресом (#926)."""
-    return [f".github/workflows/{p.name}: работа {работа}: {отказ}"
-            for p in sorted((root / ".github" / "workflows").glob("*.yml"))
-            for работа, _, _, _, отказ in _матричные(p.read_text(encoding="utf-8"))
-            if отказ]
+    return [
+        f".github/workflows/{p.name}: работа {работа}: {отказ}"
+        for p in sorted((root / ".github" / "workflows").glob("*.yml"))
+        for работа, _, _, _, отказ in _матричные(p.read_text(encoding="utf-8"))
+        if отказ
+    ]
 
 
 #: Вызов интерпретатора в теле шага: `python3 scripts/x.py`, `python -m …`,
@@ -282,10 +286,12 @@ def без_числа(шаги: list[tuple[int, list[str]]], тело: str = "")
     `.python-version` или версия раннера — гейту не с чем сверять (#678).
     Ось матрицы работы, которая разобралась, — число (#926); не разобралась —
     шаг остаётся без числа, а адрес отказа называет `отказы_матриц`."""
+
     def с_числом(строки: list[str]) -> bool:
         if any(CI_RE.match(л) for л in строки):
             return True
         return any((м := MATRIX_RE.match(л)) and ось(тело, м.group(1))[0] for л in строки)
+
     return sum(1 for _, строки in шаги if not с_числом(строки))
 
 
@@ -301,6 +307,7 @@ def мимо_планки(root: Path) -> list[str]:
     out: list[str] = []
     # Работы разбирает check_runtime_deps — один разбор на территорию (214).
     from check_runtime_deps import работы
+
     for p in sorted((root / ".github" / "workflows").glob("*.yml")):
         for имя, тело in работы(p.read_text(encoding="utf-8")).items():
             шаги = шаги_установки(тело)
@@ -308,7 +315,8 @@ def мимо_планки(root: Path) -> list[str]:
                 out.append(
                     f".github/workflows/{p.name}: работа {имя} ставит python "
                     "шагом setup-python без числа в python-version — версию не с "
-                    "чем сверить с планкой, и ниже неё она пройдёт молча")
+                    "чем сверить с планкой, и ниже неё она пройдёт молча"
+                )
             установка = шаги[0][0] if шаги else -1
             for строка_m in re.finditer(r"^.*$", тело, re.M):
                 строка = строка_m.group(0).strip()
@@ -320,7 +328,8 @@ def мимо_планки(root: Path) -> list[str]:
                             f".github/workflows/{p.name}: работа {имя} зовёт "
                             "python раньше setup-python — код исполняется системным "
                             "python раннера, а не версией планки, и число этого не "
-                            "выдаёт: его нет")
+                            "выдаёт: его нет"
+                        )
                     break
     return out
 
@@ -354,12 +363,14 @@ def действия_мимо_планки(root: Path, планка: tuple[int, 
                 out.append(
                     f"{имя}: ставит {версия[0]}.{версия[1]}, а pyproject.toml "
                     f"объявляет >={планка[0]}.{планка[1]} — код каталога "
-                    "исполняется версией, на которой он не написан")
+                    "исполняется версией, на которой он не написан"
+                )
         шаги = шаги_установки(text)
         if без_числа(шаги):
             out.append(
                 f"{имя}: шаг setup-python без числа в python-version — версию "
-                "не с чем сверить с планкой, и ниже неё она пройдёт молча")
+                "не с чем сверить с планкой, и ниже неё она пройдёт молча"
+            )
         установка = шаги[0][0] if шаги else -1
         for строка_m in re.finditer(r"^.*$", text, re.M):
             строка = строка_m.group(0).strip()
@@ -370,15 +381,18 @@ def действия_мимо_планки(root: Path, планка: tuple[int, 
                     out.append(
                         f"{имя}: зовёт python раньше setup-python — код "
                         "исполняется системным python раннера, а не версией "
-                        "планки")
+                        "планки"
+                    )
                 break
     return out
 
 
-def findings(планка: tuple[int, int], прогоны: list[tuple[str, tuple[int, int]]],
-             окно: tuple[int, int],
-             предварительные: list[tuple[str, tuple[int, int]]] | None = None
-             ) -> list[str]:
+def findings(
+    планка: tuple[int, int],
+    прогоны: list[tuple[str, tuple[int, int]]],
+    окно: tuple[int, int],
+    предварительные: list[tuple[str, tuple[int, int]]] | None = None,
+) -> list[str]:
     """Расхождения трёх чисел. Каждое — со своим сообщением, а не одним общим."""
     out: list[str] = []
     верх = max((в for _, в in прогоны), default=планка)
@@ -388,13 +402,15 @@ def findings(планка: tuple[int, int], прогоны: list[tuple[str, tupl
                 f".github/workflows/{имя}: предварительный прогон на "
                 f"{версия[0]}.{версия[1]}, а прогоны уже гоняют "
                 f"{верх[0]}.{верх[1]} — он ничего не спрашивает о следующей "
-                "версии, а выглядит так, будто спрашивает (051)")
+                "версии, а выглядит так, будто спрашивает (051)"
+            )
     for имя, версия in прогоны:
         if версия < планка:
             out.append(
                 f".github/workflows/{имя}: гоняет {версия[0]}.{версия[1]}, а "
                 f"pyproject.toml объявляет >={планка[0]}.{планка[1]} — конвейер "
-                "проверяет версию, которую проект не поддерживает")
+                "проверяет версию, которую проект не поддерживает"
+            )
     # НЕСКОЛЬКО ВЕРСИЙ ЗАКОННО, ЕСЛИ МЛАДШАЯ — ПЛАНКА (решение владельца
     # 14 октября: с выходом 3.15 планка осталась 3.14, а 3.15 стала
     # обязательной проверкой). Вопрос «какая закрывает изменение» отвечен:
@@ -403,16 +419,19 @@ def findings(планка: tuple[int, int], прогоны: list[tuple[str, tupl
     разные = {в for _, в in прогоны}
     if len(разные) > 1 and min(разные) != планка:
         какие = ", ".join(f"{a}.{b}" for a, b in sorted(разные))
-        out.append(f"прогоны гоняют разные версии — {какие}, а планки "
-                   f"{планка[0]}.{планка[1]} среди них нет. Зелёное на одной не "
-                   "переносится на другую, и обещание потребителю не проверяет "
-                   "ни один прогон")
+        out.append(
+            f"прогоны гоняют разные версии — {какие}, а планки "
+            f"{планка[0]}.{планка[1]} среди них нет. Зелёное на одной не "
+            "переносится на другую, и обещание потребителю не проверяет "
+            "ни один прогон"
+        )
     if окно < планка:
         out.append(
             f"прогон перед толчком запущен на {окно[0]}.{окно[1]}, а планка "
             f">={планка[0]}.{планка[1]}. «Чисто локально» снято НИЖЕ объявленной "
             "поверхности: доступное конвейеру здесь упадёт, и починят это вниз "
-            f"(037). Запускайте: python{планка[0]}.{планка[1]} scripts/preflight.py")
+            f"(037). Запускайте: python{планка[0]}.{планка[1]} scripts/preflight.py"
+        )
     return out
 
 
@@ -424,40 +443,49 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not манифест.exists():
-        print(f"проверка не отработала: нет {манифест} — планку версии "
-              "объявляет он", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {манифест} — планку версии объявляет он", file=sys.stderr
+        )
         return 2
     планка = floor(манифест.read_text(encoding="utf-8"))
     if планка is None:
-        print(f"проверка не отработала: в {манифест} нет requires-python — "
-              "сверять не с чем", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {манифест} нет requires-python — сверять не с чем",
+            file=sys.stderr,
+        )
         return 2
     прогоны = in_workflows(args.root)
     if not прогоны:
-        print(f"проверка не отработала: в {args.root}/.github/workflows ни один "
-              "прогон не объявляет python-version — предмета нет, и зеленеть на "
-              "этом нельзя (075)", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {args.root}/.github/workflows ни один "
+            "прогон не объявляет python-version — предмета нет, и зеленеть на "
+            "этом нельзя (075)",
+            file=sys.stderr,
+        )
         return 2
 
     окно = sys.version_info[:2]
     предварительные = in_workflows(args.root, preview=True)
-    найдено = (findings(планка, прогоны, окно, предварительные)
-              + мимо_планки(args.root) + действия_мимо_планки(args.root, планка)
-              + отказы_матриц(args.root))
+    найдено = (
+        findings(планка, прогоны, окно, предварительные)
+        + мимо_планки(args.root)
+        + действия_мимо_планки(args.root, планка)
+        + отказы_матриц(args.root)
+    )
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if найдено:
-        print("объявленная версия питона разошлась с фактической:",
-              file=sys.stderr)
+        print("объявленная версия питона разошлась с фактической:", file=sys.stderr)
         for n in найдено:
             print(f"  • {n}", file=sys.stderr)
         return 1
 
-    вопрос = "".join(f", предварительный {a}.{b} ({имя})"
-                     for имя, (a, b) in предварительные)
-    print(f"версии сходятся: планка >={планка[0]}.{планка[1]}, прогонов "
-          f"{len(прогоны)}, действий {len(действия(args.root))}, окно "
-          f"{окно[0]}.{окно[1]}{вопрос}")
+    вопрос = "".join(f", предварительный {a}.{b} ({имя})" for имя, (a, b) in предварительные)
+    print(
+        f"версии сходятся: планка >={планка[0]}.{планка[1]}, прогонов "
+        f"{len(прогоны)}, действий {len(действия(args.root))}, окно "
+        f"{окно[0]}.{окно[1]}{вопрос}"
+    )
     return 0
 
 

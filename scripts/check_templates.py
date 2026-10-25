@@ -30,7 +30,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import re
 import sys
@@ -61,8 +60,9 @@ def rows(readme: str) -> dict[str, str]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = parser.parse_args(argv)
     root: Path = args.root
     folder = root / "templates"
@@ -70,21 +70,28 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not readme.exists():
-        print(f"проверка не отработала: нет {readme} — документа о заготовках, "
-              "в котором и живёт ответ", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {readme} — документа о заготовках, "
+            "в котором и живёт ответ",
+            file=sys.stderr,
+        )
         return 2
-    files = sorted(p.name for p in folder.iterdir()
-                   if p.is_file() and p.name != "README.md")
+    files = sorted(p.name for p in folder.iterdir() if p.is_file() and p.name != "README.md")
     if not files:
-        print("проверка не отработала: в templates/ нет ни одной заготовки — "
-              "проверять нечего, и зеленеть на этом нельзя", file=sys.stderr)
+        print(
+            "проверка не отработала: в templates/ нет ни одной заготовки — "
+            "проверять нечего, и зеленеть на этом нельзя",
+            file=sys.stderr,
+        )
         return 2
 
     table = rows(readme.read_text(encoding="utf-8"))
     if not table:
-        print("проверка не отработала: в templates/README.md не разобралось ни "
-              "одной строки таблицы — это ошибка разбора, а не пустой каталог",
-              file=sys.stderr)
+        print(
+            "проверка не отработала: в templates/README.md не разобралось ни "
+            "одной строки таблицы — это ошибка разбора, а не пустой каталог",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -93,13 +100,15 @@ def main(argv: list[str] | None = None) -> int:
         if name not in table:
             problems.append(
                 f"{name}: заготовка есть, а строки о ней в templates/README.md "
-                "нет. Потребитель видит файл, о котором каталог молчит")
+                "нет. Потребитель видит файл, о котором каталог молчит"
+            )
             continue
         answer = table[name]
         if not answer:
             problems.append(
                 f"{name}: не сказано, чем эта заготовка применяется у себя. "
-                "Либо адрес своего артефакта, либо «нет: причина» (155)")
+                "Либо адрес своего артефакта, либо «нет: причина» (155)"
+            )
             continue
         if ABSENT_RE.match(answer):
             continue
@@ -108,16 +117,19 @@ def main(argv: list[str] | None = None) -> int:
         if not found:
             problems.append(
                 f"{name}: ответ «{answer[:50]}» адреса не называет. Проза не "
-                "адрес: применение, которое нельзя открыть, не проверить")
+                "адрес: применение, которое нельзя открыть, не проверить"
+            )
         elif not alive:
             problems.append(
                 f"{name}: назван адрес «{found[0]}», а его не существует — "
-                "декларация разошлась с фактом")
+                "декларация разошлась с фактом"
+            )
 
     for name in sorted(set(table) - set(files)):
         problems.append(
             f"{name}: назван в таблице, а файла в templates/ нет. Строка "
-            "пережила заготовку и обещает то, чего нет")
+            "пережила заготовку и обещает то, чего нет"
+        )
 
     if problems:
         print("заготовки разошлись со своим документом:", file=sys.stderr)
@@ -125,8 +137,10 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
-    print(f"заготовки в порядке: {len(files)}, у каждой сказано, "
-          "чем она применяется у самого каталога")
+    print(
+        f"заготовки в порядке: {len(files)}, у каждой сказано, "
+        "чем она применяется у самого каталога"
+    )
     return 0
 
 

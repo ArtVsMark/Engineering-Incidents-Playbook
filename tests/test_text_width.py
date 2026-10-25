@@ -40,11 +40,18 @@ def своя_ширина(исходник: str) -> list[str]:
     дерево = ast.parse(исходник)
 
     def длина(узел: ast.AST) -> bool:
-        return (isinstance(узел, ast.Call) and isinstance(узел.func, ast.Name)
-                and узел.func.id == "len")
+        return (
+            isinstance(узел, ast.Call) and isinstance(узел.func, ast.Name) and узел.func.id == "len"
+        )
 
-    из_длины = {ц.id for у in ast.walk(дерево) if isinstance(у, ast.Assign)
-                and длина(у.value) for ц in у.targets if isinstance(ц, ast.Name)}
+    из_длины = {
+        ц.id
+        for у in ast.walk(дерево)
+        if isinstance(у, ast.Assign) and длина(у.value)
+        for ц in у.targets
+        if isinstance(ц, ast.Name)
+    }
+
     def знаков(узел: ast.AST) -> bool:
         return длина(узел) or (isinstance(узел, ast.Name) and узел.id in из_длины)
 
@@ -56,33 +63,46 @@ def своя_ширина(исходник: str) -> list[str]:
 
     находки = []
     for у in ast.walk(дерево):
-        if isinstance(у, ast.BinOp) and isinstance(у.op, ast.Mult) and (
-                знаков(у.left) and коэффициент(у.right)
-                or знаков(у.right) and коэффициент(у.left)):
+        if (
+            isinstance(у, ast.BinOp)
+            and isinstance(у.op, ast.Mult)
+            and (знаков(у.left) and коэффициент(у.right) or знаков(у.right) and коэффициент(у.left))
+        ):
             находки.append(f"строка {у.lineno}: ширина по числу знаков")
-        if isinstance(у, ast.Dict) and sum(
-                isinstance(к, ast.Constant) and isinstance(к.value, str)
-                and len(к.value) == 1 for к in у.keys) > 10:
+        if (
+            isinstance(у, ast.Dict)
+            and sum(
+                isinstance(к, ast.Constant) and isinstance(к.value, str) and len(к.value) == 1
+                for к in у.keys
+            )
+            > 10
+        ):
             находки.append(f"строка {у.lineno}: своя таблица ширин знаков")
     return находки
 
 
-@pytest.mark.parametrize("исходник", [
-    "w = round(len(текст) * 7.2) + 14",
-    "n = len(подпись)\nw = n * LABEL_K",
-    "w = K * len(t)",
-    "ШИРИНЫ = {" + ", ".join(f"'{c}': 7" for c in "abcdefghijkl") + "}",
-])
+@pytest.mark.parametrize(
+    "исходник",
+    [
+        "w = round(len(текст) * 7.2) + 14",
+        "n = len(подпись)\nw = n * LABEL_K",
+        "w = K * len(t)",
+        "ШИРИНЫ = {" + ", ".join(f"'{c}': 7" for c in "abcdefghijkl") + "}",
+    ],
+)
 def test_вторая_реализация_ловится(исходник):
     assert своя_ширина(исходник)
 
 
-@pytest.mark.parametrize("исходник", [
-    "x = len(текст) + 1",
-    "n = len(строки)\nвысота = 20 + 14",
-    "низ = TOP + row * len(data)",
-    "цвета = {'ok': 'green', 'bad': 'red'}",
-])
+@pytest.mark.parametrize(
+    "исходник",
+    [
+        "x = len(текст) + 1",
+        "n = len(строки)\nвысота = 20 + 14",
+        "низ = TOP + row * len(data)",
+        "цвета = {'ok': 'green', 'bad': 'red'}",
+    ],
+)
 def test_не_вторая_реализация_не_ловится(исходник):
     assert not своя_ширина(исходник)
 
@@ -92,18 +112,23 @@ def test_узкая_надпись_уже_широкой_при_равной_д�
     assert tw.ширина("lili", шрифт, вес=вес) < tw.ширина("mwmw", шрифт, вес=вес)
 
 
-@pytest.mark.parametrize("текст, px", [
-    # Сумма advance width из hmtx Verdana 2.35 (sha256 96ed14949ca4) × 11/2048,
-    # округлённая, плюс поля 5 + 5. До обзора #795 здесь стояло 113 — число
-    # таблицы, подогнанной под эти же надписи, тест её только повторял.
-    ("coverage / all (os)", 112), ("windows", 57), ("linux", 36), ("3.14", 35),
-])
+@pytest.mark.parametrize(
+    "текст, px",
+    [
+        # Сумма advance width из hmtx Verdana 2.35 (sha256 96ed14949ca4) × 11/2048,
+        # округлённая, плюс поля 5 + 5. До обзора #795 здесь стояло 113 — число
+        # таблицы, подогнанной под эти же надписи, тест её только повторял.
+        ("coverage / all (os)", 112),
+        ("windows", 57),
+        ("linux", 36),
+        ("3.14", 35),
+    ],
+)
 def test_часть_значка_по_ширине_знаков(текст, px):
     assert pb._ширина(текст) == px
 
 
-@pytest.mark.parametrize("текст", ["coverage / all (os)", "release / PyPI",
-                                   "WWWW", "linux"])
+@pytest.mark.parametrize("текст", ["coverage / all (os)", "release / PyPI", "WWWW", "linux"])
 def test_текст_в_части_не_обрезается(текст):
     assert pb._ширина(текст) >= tw.ширина(текст)
 
@@ -137,8 +162,7 @@ def test_начертание_берётся_не_легче_запрошенн�
 
 def test_в_генераторах_картинок_нет_своей_формулы_ширины():
     """Следующий генератор SVG берёт text_width, а не заводит свой k (214)."""
-    генераторы = [p for p in SCRIPTS.glob("*.py")
-                  if "<svg" in p.read_text(encoding="utf-8")]
+    генераторы = [p for p in SCRIPTS.glob("*.py") if "<svg" in p.read_text(encoding="utf-8")]
     assert {p.name for p in генераторы} >= {"python_badge.py", "consumers_picture.py"}
     for p in генераторы:
         текст = p.read_text(encoding="utf-8")

@@ -46,7 +46,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import re
 import sys
@@ -103,21 +102,24 @@ def reader_of(path: Path) -> tuple[str | None, str]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = parser.parse_args(argv)
     root: Path = args.root
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not root.is_dir():
-        print(f"проверка не отработала: нет {root} — читать нечего",
-              file=sys.stderr)
+        print(f"проверка не отработала: нет {root} — читать нечего", file=sys.stderr)
         return 2
     docs = documents(root)
     if not docs:
-        print(f"проверка не отработала: в {root} не нашлось ни одного "
-              "документа. Пустой корень — это ошибка обхода, а не проект без "
-              "документации", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {root} не нашлось ни одного "
+            "документа. Пустой корень — это ошибка обхода, а не проект без "
+            "документации",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -129,18 +131,21 @@ def main(argv: list[str] | None = None) -> int:
         if reader is None:
             problems.append(
                 f"{name}: не сказано, кто это читает. Строкой под заголовком: "
-                "«> **Читатель:** <кто> — <на какой вопрос отвечает>»")
+                "«> **Читатель:** <кто> — <на какой вопрос отвечает>»"
+            )
             continue
         if reader not in READERS:
             problems.append(
                 f"{name}: читатель «{reader}» вне словаря {sorted(READERS)}. "
-                "Опечатка иначе заводит новую аудиторию молча")
+                "Опечатка иначе заводит новую аудиторию молча"
+            )
             continue
         if not question:
             problems.append(
                 f"{name}: читатель назван, а вопрос — нет. «Кому» без «зачем» "
                 "не разводит документы: два текста для одного читателя "
-                "остаются неразличимы")
+                "остаются неразличимы"
+            )
             continue
         by_reader[reader].append(name)
 
@@ -149,7 +154,8 @@ def main(argv: list[str] | None = None) -> int:
             problems.append(
                 f"читатель «{reader}» объявлен словарём, а документа для него "
                 "нет ни одного. Аудитория, которой некуда прийти, — это не "
-                "пустая полка, а обещание, которого никто не выполнил")
+                "пустая полка, а обещание, которого никто не выполнил"
+            )
 
     if problems:
         print("документы разошлись с читателями:", file=sys.stderr)

@@ -76,7 +76,6 @@
         и строки при этом пишутся: «находок 0» рядом с находкой её не теряет.
 """
 
-
 import argparse
 import hashlib
 import json
@@ -141,6 +140,7 @@ def без_оформления(строка: str) -> str:
     пара = ОБЁРТКА.match(голая)
     return пара.group(2).strip() if пара else голая
 
+
 #: Снятие: автор починки называет отпечаток в теле СВОЕГО изменения. Форма
 #: намеренно близка к `Closes #N` — тому же приёму, которым площадка закрывает
 #: задачу: снятие едет вместе с работой, а не отдельным жестом (002).
@@ -164,11 +164,10 @@ def comments(repo: str, pr: int) -> tuple[list[dict] | None, str | None]:
     ушёл бы как раз последний заход ревьюера — ради которого их и читают.
     """
     code, записи, почему = ghcli.список(
-        f"repos/{repo}/issues/{pr}/comments?per_page=100",
-        ".[] | {login: .user.login, body}")
+        f"repos/{repo}/issues/{pr}/comments?per_page=100", ".[] | {login: .user.login, body}"
+    )
     if code != 0:
-        return None, (f"gh api issues/{pr}/comments — "
-                      f"{почему.strip()[:160] or f'код {code}'}")
+        return None, (f"gh api issues/{pr}/comments — {почему.strip()[:160] or f'код {code}'}")
     return записи, None
 
 
@@ -250,7 +249,8 @@ def live_issue(repo: str) -> tuple[int | None, str | None, str | None]:
     """
     code, задачи, почему = ghcli.список(
         f"repos/{repo}/issues?state=open&per_page=100",
-        ".[] | select(.pull_request == null) | {number, body}")
+        ".[] | select(.pull_request == null) | {number, body}",
+    )
     if code != 0:
         return None, None, (f"gh api issues — {почему.strip()[:160] or f'код {code}'}")
     for з in задачи:
@@ -280,8 +280,10 @@ def body_for(записи: dict[str, tuple[int, str]], repo: str) -> str:
     слитого изменения. Галочка в трекере была бы тем же жестом дисциплины, что
     и всё, что надо помнить, — и терялась бы так же (002).
     """
-    строки = [f"- `{о}` · #{pr} — {з}"
-              for о, (pr, з) in sorted(записи.items(), key=lambda x: (-x[1][0], x[0]))]
+    строки = [
+        f"- `{о}` · #{pr} — {з}"
+        for о, (pr, з) in sorted(записи.items(), key=lambda x: (-x[1][0], x[0]))
+    ]
     хвост = "\n".join(строки) if строки else "_пусто — всё разобрано_"
     return (
         f"{МАРКЕР}\n\n"
@@ -299,7 +301,8 @@ def body_for(записи: dict[str, tuple[int, str]], repo: str) -> str:
         "работа или просто опустел список.\n\n"
         f"## Не разобрано: {len(строки)}\n\n{хвост}\n\n"
         f"Подробности — в комментариях ревьюера на самих изменениях: "
-        f"https://github.com/{repo}/pulls?q=is%3Apr\n")
+        f"https://github.com/{repo}/pulls?q=is%3Apr\n"
+    )
 
 
 def снятые(repo: str, сколько: int = 30) -> tuple[set[str] | None, str | None]:
@@ -314,8 +317,11 @@ def снятые(repo: str, сколько: int = 30) -> tuple[set[str] | None, 
     задаче — и это честнее, чем тихо потерять её из виду.
     """
     code, out = ghcli.run(
-        "api", f"repos/{repo}/pulls?state=closed&per_page={сколько}",
-        "--jq", "[.[] | select(.merged_at != null) | .body]")
+        "api",
+        f"repos/{repo}/pulls?state=closed&per_page={сколько}",
+        "--jq",
+        "[.[] | select(.merged_at != null) | .body]",
+    )
     if code != 0:
         return None, f"gh api pulls?state=closed — {out.strip()[:160] or f'код {code}'}"
     try:
@@ -335,14 +341,16 @@ def write_issue(repo: str, записи: dict[str, tuple[int, str]]) -> tuple[in
         return 2, почему
     новое = body_for(записи, repo)
     if номер is not None:
-        code, out = ghcli.run("api", "--method", "PATCH",
-                              f"repos/{repo}/issues/{номер}", "-f", f"body={новое}")
+        code, out = ghcli.run(
+            "api", "--method", "PATCH", f"repos/{repo}/issues/{номер}", "-f", f"body={новое}"
+        )
         что = f"задача #{номер} обновлена: записей {len(записи)}"
     else:
         if not записи:
             return 0, "записей нет и задачи нет — заводить нечего"
-        code, out = ghcli.run("api", f"repos/{repo}/issues",
-                              "-f", f"title={ЗАГОЛОВОК}", "-f", f"body={новое}")
+        code, out = ghcli.run(
+            "api", f"repos/{repo}/issues", "-f", f"title={ЗАГОЛОВОК}", "-f", f"body={новое}"
+        )
         что = f"задача заведена: {out.strip()[:120]}"
     if code != 0:
         return 2, f"трекер не принял запись — {out.strip()[:160]}"
@@ -353,10 +361,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--repo", required=True, help="владелец/репозиторий")
     parser.add_argument("--pr", type=int, help="номер изменения")
-    parser.add_argument("--sweep", action="store_true",
-                        help="только снять разобранное, новых находок не искать")
-    parser.add_argument("--apply", action="store_true",
-                        help="завести или обновить задачу-адресата")
+    parser.add_argument(
+        "--sweep", action="store_true", help="только снять разобранное, новых находок не искать"
+    )
+    parser.add_argument("--apply", action="store_true", help="завести или обновить задачу-адресата")
     args = parser.parse_args(argv)
     if not args.pr and not args.sweep:
         print("не отработал: нужен либо --pr NNN, либо --sweep", file=sys.stderr)
@@ -378,8 +386,7 @@ def main(argv: list[str] | None = None) -> int:
         имелось = записи_из(тело)
         осталось = {о: v for о, v in имелось.items() if о not in было_снято}
         ушло = len(имелось) - len(осталось)
-        print(f"записей было {len(имелось)}, названо разобранными {ушло}, "
-              f"осталось {len(осталось)}")
+        print(f"записей было {len(имелось)}, названо разобранными {ушло}, осталось {len(осталось)}")
         if not ушло:
             return 0 if not осталось else 1
         if not args.apply:
@@ -396,10 +403,12 @@ def main(argv: list[str] | None = None) -> int:
 
     находок = verdict_of(записи)
     if находок is None:
-        print(f"не отработал: у изменения #{args.pr} нет вердикта ревьюера — "
-              "строки «ВЕРДИКТ: находок N» в его комментариях не найдено. "
-              "Либо ревью не отработало, либо промпт разошёлся с этим разбором",
-              file=sys.stderr)
+        print(
+            f"не отработал: у изменения #{args.pr} нет вердикта ревьюера — "
+            "строки «ВЕРДИКТ: находок N» в его комментариях не найдено. "
+            "Либо ревью не отработало, либо промпт разошёлся с этим разбором",
+            file=sys.stderr,
+        )
         return 2
 
     # ВЕРДИКТ, РАСХОДЯЩИЙСЯ СО СВОИМ СПИСКОМ, ОБЪЯВЛЯЕТСЯ (142, 083). Прежде
@@ -409,8 +418,10 @@ def main(argv: list[str] | None = None) -> int:
     # ценнее числа, а расхождение называется вслух.
     свежие = findings_of(last_pass(записи))
     if находок != len(свежие) and свежие:
-        print(f"::warning::вердикт называет {находок} находок, а строк «НАХОДКА: …» "
-              f"в том же заходе {len(свежие)} — записаны строки, число не совпало")
+        print(
+            f"::warning::вердикт называет {находок} находок, а строк «НАХОДКА: …» "
+            f"в том же заходе {len(свежие)} — записаны строки, число не совпало"
+        )
 
     if находок == 0 and not свежие:
         print(f"#{args.pr}: вердикт есть, находок нет — адресата не требуется")
@@ -422,15 +433,20 @@ def main(argv: list[str] | None = None) -> int:
         # (075): предмет проверки не найден там, где он объявлен. Судится по
         # СВОЕМУ заходу, а не по ленте: строки прежнего захода подставились бы
         # за нынешнее число молча — нашёл внешний взгляд на #584.
-        print(f"не отработал: вердикт называет {находок} находок, а строк "
-              "«НАХОДКА: …» в том же заходе ревьюера нет — промпт разошёлся с "
-              "этим разбором", file=sys.stderr)
+        print(
+            f"не отработал: вердикт называет {находок} находок, а строк "
+            "«НАХОДКА: …» в том же заходе ревьюера нет — промпт разошёлся с "
+            "этим разбором",
+            file=sys.stderr,
+        )
         return 2
 
     заголовки = findings_of(записи)
 
-    print(f"#{args.pr}: находок {находок}, заметок разобрано {len(заголовки)} — "
-          "слияние их не задержало (084), адресат нужен")
+    print(
+        f"#{args.pr}: находок {находок}, заметок разобрано {len(заголовки)} — "
+        "слияние их не задержало (084), адресат нужен"
+    )
     for з in заголовки:
         print(f"  {отпечаток(з)} · {з}")
     if not args.apply:

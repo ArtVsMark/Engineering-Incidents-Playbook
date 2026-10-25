@@ -77,15 +77,23 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def команды(настройки: dict) -> list[tuple[str, str]]:
     """Пары (событие, команда) всех хуков из настроек."""
-    return [(событие, str(h.get("command", "")))
-            for событие, группы in настройки.get("hooks", {}).items()
-            for г in группы for h in г.get("hooks", [])]
+    return [
+        (событие, str(h.get("command", "")))
+        for событие, группы in настройки.get("hooks", {}).items()
+        for г in группы
+        for h in г.get("hooks", [])
+    ]
 
 
 def стартовые(пары: list[tuple[str, str]]) -> set[str]:
     """Имена файлов хуков, зарегистрированных на старт окна."""
-    return {m[1] for событие, к in пары if событие == СТАРТ
-            for m in [re.search(r"hooks/([\w.-]+)", к)] if m}
+    return {
+        m[1]
+        for событие, к in пары
+        if событие == СТАРТ
+        for m in [re.search(r"hooks/([\w.-]+)", к)]
+        if m
+    }
 
 
 def голые_вызовы(текст: str) -> list[tuple[int, str]]:
@@ -93,8 +101,7 @@ def голые_вызовы(текст: str) -> list[tuple[int, str]]:
     out = []
     for n, строка in enumerate(текст.splitlines(), 1):
         код = КОММЕНТАРИЙ.sub("", строка)
-        команды_строки = [к for к in РАЗДЕЛИТЕЛИ.split(код)
-                          if not re.match(r"\s*echo\b", к)]
+        команды_строки = [к for к in РАЗДЕЛИТЕЛИ.split(код) if not re.match(r"\s*echo\b", к)]
         if any(ГОЛЫЙ.search(к) for к in команды_строки):
             out.append((n, строка.strip()))
     return out
@@ -112,12 +119,17 @@ def main(argv: list[str] | None = None) -> int:
         print(f"проверка не отработала: {путь} не прочитан — {exc} (075)", file=sys.stderr)
         return 2
     if not пары:
-        print(f"проверять нечего: в {путь} нет ни одного хука — зеленеть на этом нельзя (075)",
-              file=sys.stderr)
+        print(
+            f"проверять нечего: в {путь} нет ни одного хука — зеленеть на этом нельзя (075)",
+            file=sys.stderr,
+        )
         return 2
-    находки = [f"{НАСТРОЙКИ}: {событие} зовёт интерпретатор напрямую — «{к[:80]}». "
-               "Хук зовётся обёрткой, которая ищет планку через floor.sh"
-               for событие, к in пары if КОМАНДА_PYTHON.search(к)]
+    находки = [
+        f"{НАСТРОЙКИ}: {событие} зовёт интерпретатор напрямую — «{к[:80]}». "
+        "Хук зовётся обёрткой, которая ищет планку через floor.sh"
+        for событие, к in пары
+        if КОМАНДА_PYTHON.search(к)
+    ]
     исключены = стартовые(пары)
     for f in sorted((args.root / ХУКИ).glob("*.sh")):
         if f.name in исключены:
@@ -125,13 +137,15 @@ def main(argv: list[str] | None = None) -> int:
         for n, строка in голые_вызовы(f.read_text(encoding="utf-8")):
             находки.append(f"{ХУКИ / f.name}:{n}: «{строка[:90]}» — интерпретатор не по планке")
     if находки:
-        print("хук окна исполняется не интерпретатором планки — ровно инцидент 217:",
-              file=sys.stderr)
+        print(
+            "хук окна исполняется не интерпретатором планки — ровно инцидент 217:", file=sys.stderr
+        )
         for н in находки:
             print(f"  • {н}", file=sys.stderr)
         return 1
-    print(f"хуки окна исполняются планкой: команд {len(пары)}, "
-          f"стартовых исключено {len(исключены)}")
+    print(
+        f"хуки окна исполняются планкой: команд {len(пары)}, стартовых исключено {len(исключены)}"
+    )
     return 0
 
 

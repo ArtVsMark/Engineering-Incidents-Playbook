@@ -35,7 +35,6 @@
   2 — проверка не отработала.
 """
 
-
 import argparse
 import ast
 import re
@@ -54,7 +53,6 @@ ROOT = Path(__file__).resolve().parent.parent
 ВЫЗОВ = re.compile(r"python[0-9.]*\s+(scripts/[\w_]+\.py)")
 #: Установка зависимостей внутри шага.
 СТАВИТ = re.compile(r"pip install[^\n]*?(?:-r\s+(\S+)|\s([A-Za-z][\w.-]*))")
-
 
 
 def работы(text: str) -> dict[str, str]:
@@ -142,8 +140,7 @@ def импорты(путь: Path) -> set[str]:
 def чужие(имена: set[str], root: Path) -> set[str]:
     """Отсев своего и стандартного: предмет — только внешние пакеты."""
     свои = {p.stem for p in (root / "scripts").glob("*.py")}
-    return {и for и in имена
-            if и not in sys.stdlib_module_names and и not in свои}
+    return {и for и in имена if и not in sys.stdlib_module_names and и not in свои}
 
 
 def находки(text: str, root: Path) -> tuple[list[str], int]:
@@ -171,7 +168,8 @@ def находки(text: str, root: Path) -> tuple[list[str], int]:
                         список.append(
                             f"работа «{работа}» зовёт {имя_скрипта}, а тот "
                             f"импортирует «{пакет}» — к этому шагу пакет ещё "
-                            "не поставлен")
+                            "не поставлен"
+                        )
     return список, разобрано
 
 
@@ -190,11 +188,12 @@ def разбить_на_шаги(тело: str) -> list[str]:
 
 
 def selftest() -> int:
-    основа = ("jobs:\n  catalogue:\n    steps:\n"
-              "      - run: python scripts/{s}\n")
-    с_установкой = ("jobs:\n  tests:\n    steps:\n"
-                    "      - run: python -m pip install -r requirements-test.txt\n"
-                    "      - run: python scripts/{s}\n")
+    основа = "jobs:\n  catalogue:\n    steps:\n      - run: python scripts/{s}\n"
+    с_установкой = (
+        "jobs:\n  tests:\n    steps:\n"
+        "      - run: python -m pip install -r requirements-test.txt\n"
+        "      - run: python scripts/{s}\n"
+    )
     случаи = [
         (основа, "check_bindings.py", 0, "скрипт без внешних пакетов"),
         (с_установкой, "check_bindings.py", 0, "он же в работе с установкой"),
@@ -225,12 +224,16 @@ def selftest() -> int:
         свой = ROOT / "_проба_requirements.txt"
         свой.write_text("чудо-пакет  # модуль: диковина\n", encoding="utf-8")
         подопытный.write_text("import диковина\n", encoding="utf-8")
-        прогон = ("jobs:\n  tests:\n    steps:\n"
-                  f"      - run: python -m pip install -r {свой.name}\n"
-                  f"      - run: python scripts/{подопытный.name}\n")
+        прогон = (
+            "jobs:\n  tests:\n    steps:\n"
+            f"      - run: python -m pip install -r {свой.name}\n"
+            f"      - run: python scripts/{подопытный.name}\n"
+        )
         сп3, _ = находки(прогон, ROOT)
-        print(f"  {'находка ' if сп3 else 'чисто   '} — модуль, объявленный "
-              "строкой «# модуль:» в самом файле")
+        print(
+            f"  {'находка ' if сп3 else 'чисто   '} — модуль, объявленный "
+            "строкой «# модуль:» в самом файле"
+        )
         if сп3:
             плохо.append(f"объявленный модуль принят за находку: {сп3}")
         свой.unlink(missing_ok=True)
@@ -242,46 +245,56 @@ def selftest() -> int:
         print(f"РАСХОЖДЕНИЕ: {с}", file=sys.stderr)
     if плохо:
         return 1
-    print("самопроверка пройдена: разрыв отличается от обеспеченности, "
-          "стандартная библиотека и свои модули предметом не являются")
+    print(
+        "самопроверка пройдена: разрыв отличается от обеспеченности, "
+        "стандартная библиотека и свои модули предметом не являются"
+    )
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--root", type=Path, default=ROOT)
-    p.add_argument("--selftest", action="store_true",
-                   help="прогнать гейт по случаям, а не по дереву (140)")
+    p.add_argument(
+        "--selftest", action="store_true", help="прогнать гейт по случаям, а не по дереву (140)"
+    )
     args = p.parse_args(argv)
     if args.selftest:
         return selftest()
 
     прогон = args.root / ".github" / "workflows" / "ci.yml"
     if not прогон.exists():
-        print(f"проверка не отработала: нет {прогон.relative_to(args.root)} — "
-              "предмет берётся из него, и зеленеть без него нельзя",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {прогон.relative_to(args.root)} — "
+            "предмет берётся из него, и зеленеть без него нельзя",
+            file=sys.stderr,
+        )
         return 2
 
     список, разобрано = находки(прогон.read_text(encoding="utf-8"), args.root)
 
     if разобрано == 0:
-        print(f"проверка не отработала: в {прогон.relative_to(args.root)} не "
-              "нашлось ни одного шага вида `python scripts/…` — либо форма "
-              "вызова изменилась, либо разбор работ сломан", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {прогон.relative_to(args.root)} не "
+            "нашлось ни одного шага вида `python scripts/…` — либо форма "
+            "вызова изменилась, либо разбор работ сломан",
+            file=sys.stderr,
+        )
         return 2
 
     if список:
         print("окно и прогон разошлись окружением:", file=sys.stderr)
         for с in список:
             print(f"  • {с}", file=sys.stderr)
-        print("  Локально пакет есть, и «чисто» печатается с поверхности, на "
-              "которой изменение не поедет (018). Либо поставьте пакет в этой "
-              "работе, либо уберите импорт.", file=sys.stderr)
+        print(
+            "  Локально пакет есть, и «чисто» печатается с поверхности, на "
+            "которой изменение не поедет (018). Либо поставьте пакет в этой "
+            "работе, либо уберите импорт.",
+            file=sys.stderr,
+        )
         return 1
 
-    print(f"окружение сходится: разобрано вызовов {разобрано}, "
-          "каждый обеспечен своей работой")
+    print(f"окружение сходится: разобрано вызовов {разобрано}, каждый обеспечен своей работой")
     return 0
 
 

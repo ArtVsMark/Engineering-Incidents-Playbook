@@ -24,7 +24,6 @@
   064 — объявленный набор меток применяется к репозиторию, а расхождения называются.
 """
 
-
 import argparse
 import json
 import os
@@ -63,9 +62,11 @@ def declared() -> tuple[list[dict], str | None]:
             out[-1]["description"] = _value(line.split(":", 1)[1])
     bad = [l for l in out if not l.get("color")]
     if bad:
-        return [], ("без цвета объявлены: "
-                    + ", ".join(l["name"] for l in bad)
-                    + " — файл разобран неверно или запись неполна")
+        return [], (
+            "без цвета объявлены: "
+            + ", ".join(l["name"] for l in bad)
+            + " — файл разобран неверно или запись неполна"
+        )
     return out, None
 
 
@@ -76,10 +77,12 @@ def _value(chunk: str) -> str:
 #: Вызов gh живёт в одном месте на весь каталог (правила 090).
 gh_json = ghcli.run
 
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--dry-run", action="store_true",
-                    help="показать расхождения и ничего не менять")
+    ap.add_argument(
+        "--dry-run", action="store_true", help="показать расхождения и ничего не менять"
+    )
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", ""))
     args = ap.parse_args()
 
@@ -89,22 +92,23 @@ def main() -> int:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
     if not want:
-        print(f"проверка не отработала: {LABELS.relative_to(ROOT)} не объявляет "
-              "ни одной метки — применять нечего, а молчать нельзя",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: {LABELS.relative_to(ROOT)} не объявляет "
+            "ни одной метки — применять нечего, а молчать нельзя",
+            file=sys.stderr,
+        )
         return 2
     if not args.repo:
-        print("проверка не отработала: репозиторий не определён — задайте --repo",
-              file=sys.stderr)
+        print("проверка не отработала: репозиторий не определён — задайте --repo", file=sys.stderr)
         return 2
 
     # ВСЕ СТРАНИЦЫ (212): меток у каталога 14, но край страницы — не
     # решение, а забытое место, и метка за ним считалась бы отсутствующей.
-    code, метки, почему = ghcli.список(f"repos/{args.repo}/labels?per_page=100",
-                                       ".[] | {name, color, description}", вызов=gh_json)
+    code, метки, почему = ghcli.список(
+        f"repos/{args.repo}/labels?per_page=100", ".[] | {name, color, description}", вызов=gh_json
+    )
     if code != 0:
-        print(f"проверка не отработала: список меток не прочитан — {почему}",
-              file=sys.stderr)
+        print(f"проверка не отработала: список меток не прочитан — {почему}", file=sys.stderr)
         return 2
     have = {l["name"]: l for l in метки}
 
@@ -116,24 +120,45 @@ def main() -> int:
         if current is None:
             created.append(name)
             if not args.dry_run:
-                code, msg = gh_json("api", "-X", "POST",
-                                    f"repos/{args.repo}/labels",
-                                    "-f", f"name={name}", "-f", f"color={color}",
-                                    "-f", f"description={desc}")
+                code, msg = gh_json(
+                    "api",
+                    "-X",
+                    "POST",
+                    f"repos/{args.repo}/labels",
+                    "-f",
+                    f"name={name}",
+                    "-f",
+                    f"color={color}",
+                    "-f",
+                    f"description={desc}",
+                )
                 if code != 0:
-                    print(f"проверка не отработала: метка {name!r} не заведена — "
-                          f"{msg}", file=sys.stderr)
+                    print(
+                        f"проверка не отработала: метка {name!r} не заведена — {msg}",
+                        file=sys.stderr,
+                    )
                     return 2
-        elif (current.get("color") or "").lower() != color.lower() or \
-                (current.get("description") or "") != desc:
+        elif (current.get("color") or "").lower() != color.lower() or (
+            current.get("description") or ""
+        ) != desc:
             fixed.append(name)
             if not args.dry_run:
-                code, msg = gh_json("api", "-X", "PATCH",
-                                    f"repos/{args.repo}/labels/{name}",
-                                    "-f", f"color={color}", "-f", f"description={desc}")
+                code, msg = gh_json(
+                    "api",
+                    "-X",
+                    "PATCH",
+                    f"repos/{args.repo}/labels/{name}",
+                    "-f",
+                    f"color={color}",
+                    "-f",
+                    f"description={desc}",
+                )
                 if code != 0:
-                    print(f"проверка не отработала: метка {name!r} не приведена "
-                          f"к объявленной — {msg}", file=sys.stderr)
+                    print(
+                        f"проверка не отработала: метка {name!r} не приведена "
+                        f"к объявленной — {msg}",
+                        file=sys.stderr,
+                    )
                     return 2
 
     extra = sorted(set(have) - {l["name"] for l in want})
@@ -142,19 +167,22 @@ def main() -> int:
     if created:
         print(f"{verb}: {', '.join(created)}")
     if fixed:
-        print(f"{'привелись бы' if args.dry_run else 'приведены'} к объявленному: "
-              f"{', '.join(fixed)}")
+        print(
+            f"{'привелись бы' if args.dry_run else 'приведены'} к объявленному: {', '.join(fixed)}"
+        )
     if not created and not fixed:
         print("объявленные метки на месте и совпадают")
 
     # ── исход 1: находки ───────────────────────────────────────────────────
     if extra:
-        print("\nв репозитории есть метки, которых файл не объявляет:",
-              file=sys.stderr)
+        print("\nв репозитории есть метки, которых файл не объявляет:", file=sys.stderr)
         print("  " + ", ".join(extra), file=sys.stderr)
-        print("  Не удаляю: удаление снимает метку со всех задач разом, и это "
-              "решение\n  человека. Либо вычеркнуть их в репозитории, либо "
-              "вписать в файл с причиной.", file=sys.stderr)
+        print(
+            "  Не удаляю: удаление снимает метку со всех задач разом, и это "
+            "решение\n  человека. Либо вычеркнуть их в репозитории, либо "
+            "вписать в файл с причиной.",
+            file=sys.stderr,
+        )
         return 1
     return 0
 

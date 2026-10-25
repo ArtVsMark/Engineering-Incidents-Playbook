@@ -54,7 +54,6 @@
   158 — третий исход называет предмет: файл и команду, которые не ответили.
 """
 
-
 import argparse
 import json
 import re
@@ -79,8 +78,13 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def git(root: Path, *args: str) -> tuple[int, str, str]:
     """Вызов git с явной кодировкой (176)."""
-    done = proc.run(["git", "-C", str(root), *args],
-                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     return done.returncode, done.stdout, done.stderr
 
 
@@ -93,8 +97,7 @@ def версия_в_базе(root: Path, base: str) -> tuple[dict | None, str | 
         # Первый законен: так выглядит первый ответ проекта.
         if "does not exist" in текст or "exists on disk, but not in" in текст:
             return None, None
-        return None, (f"`git show {base}:{ОТВЕТ}` — "
-                      f"{(err or '').strip()[:160] or f'код {code}'}")
+        return None, (f"`git show {base}:{ОТВЕТ}` — {(err or '').strip()[:160] or f'код {code}'}")
     try:
         return json.loads(out), None
     except ValueError as e:
@@ -103,8 +106,7 @@ def версия_в_базе(root: Path, base: str) -> tuple[dict | None, str | 
 
 def подпись_сдвинулась(было: dict, стало: dict) -> list[str]:
     """Какие из номеров подписи изменились. Пустой список — ни один."""
-    return [к for к in ПОДПИСЬ
-            if (было.get(к) or "") != (стало.get(к) or "")]
+    return [к for к in ПОДПИСЬ if (было.get(к) or "") != (стало.get(к) or "")]
 
 
 def записей_изменилось(было: dict, стало: dict) -> int:
@@ -116,26 +118,25 @@ def записей_изменилось(было: dict, стало: dict) -> int
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень дерева; по умолчанию сам этот репозиторий")
-    parser.add_argument("--base", default="origin/main",
-                        help="общая ветка, с которой сравнивается ответ")
-    parser.add_argument("--body-file",
-                        help="тело изменения; «-» читает stdin")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень дерева; по умолчанию сам этот репозиторий"
+    )
+    parser.add_argument(
+        "--base", default="origin/main", help="общая ветка, с которой сравнивается ответ"
+    )
+    parser.add_argument("--body-file", help="тело изменения; «-» читает stdin")
     args = parser.parse_args(argv)
     root: Path = args.root
 
     # ── исход 2: сверять нечем ─────────────────────────────────────────────
     свой = root / ОТВЕТ
     if not свой.exists():
-        print(f"проверка не отработала: {ОТВЕТ} не найден в {root}",
-              file=sys.stderr)
+        print(f"проверка не отработала: {ОТВЕТ} не найден в {root}", file=sys.stderr)
         return 2
     try:
         стало = json.loads(свой.read_text(encoding="utf-8"))
     except ValueError as e:
-        print(f"проверка не отработала: {ОТВЕТ} не разобран — {e}",
-              file=sys.stderr)
+        print(f"проверка не отработала: {ОТВЕТ} не разобран — {e}", file=sys.stderr)
         return 2
 
     было, почему = версия_в_базе(root, args.base)
@@ -143,50 +144,56 @@ def main(argv: list[str] | None = None) -> int:
         print(f"проверка не отработала: {почему}", file=sys.stderr)
         return 2
     if было is None:
-        print(f"{ОТВЕТ} в {args.base} ещё нет — это первый ответ, "
-              "перечитывать нечего")
+        print(f"{ОТВЕТ} в {args.base} ещё нет — это первый ответ, перечитывать нечего")
         return 0
 
     # ── предмета нет: подпись стоит на месте ───────────────────────────────
     сдвинулось = подпись_сдвинулась(было, стало)
     if not сдвинулось:
         нынешние = " · ".join(f"{к} {стало.get(к) or '—'}" for к in ПОДПИСЬ)
-        print(f"подпись не двигалась ({нынешние}) — перечитывания это "
-              "изменение не требует")
+        print(f"подпись не двигалась ({нынешние}) — перечитывания это изменение не требует")
         return 0
 
-    двинулись = ", ".join(
-        f"{к}: {было.get(к) or '—'} → {стало.get(к) or '—'}" for к in сдвинулось)
+    двинулись = ", ".join(f"{к}: {было.get(к) or '—'} → {стало.get(к) or '—'}" for к in сдвинулось)
     изменено = записей_изменилось(было, стало)
 
     # ── подпись сдвинулась: нужен замер обхода ─────────────────────────────
     if not args.body_file:
-        print("проверка не отработала: подпись сдвинулась, а тела изменения "
-              "не дали (--body-file) — судить о замере не по чему",
-              file=sys.stderr)
+        print(
+            "проверка не отработала: подпись сдвинулась, а тела изменения "
+            "не дали (--body-file) — судить о замере не по чему",
+            file=sys.stderr,
+        )
         return 2
     try:
-        тело = (sys.stdin.read() if args.body_file == "-"
-                else Path(args.body_file).read_text(encoding="utf-8"))
+        тело = (
+            sys.stdin.read()
+            if args.body_file == "-"
+            else Path(args.body_file).read_text(encoding="utf-8")
+        )
     except OSError as e:
-        print(f"проверка не отработала: тело {args.body_file} не "
-              f"прочитано — {e}", file=sys.stderr)
+        print(f"проверка не отработала: тело {args.body_file} не прочитано — {e}", file=sys.stderr)
         return 2
     if ЗАМЕР.search(тело):
-        print(f"подпись сдвинулась ({двинулись}), обход назван в теле "
-              f"изменения; записей изменено {изменено}")
+        print(
+            f"подпись сдвинулась ({двинулись}), обход назван в теле "
+            f"изменения; записей изменено {изменено}"
+        )
         return 0
 
-    print(f"подпись под перечитыванием едет одна:\n"
-          f"  • {ОТВЕТ}: {двинулись}, а размер обхода не назван "
-          f"(записей изменено {изменено} — это не замер обхода)\n\n"
-          "  Подъём версии контракта требует перечитать ОТВЕТЫ, а не только\n"
-          "  проверить, что они разбираются: записи остаются валидными, означая\n"
-          "  уже другое (157). Пройдите по записям, где стояло старое значение,\n"
-          "  и назовите обход в теле изменения ЧИСЛОМ: «перечитано N записей\n"
-          "  предмета, изменено M». Число правок замером не считается — их\n"
-          "  бывает одна при предмете в семьдесят восемь. Слово без числа\n"
-          "  неотличимо от «я посмотрел» (166).", file=sys.stderr)
+    print(
+        f"подпись под перечитыванием едет одна:\n"
+        f"  • {ОТВЕТ}: {двинулись}, а размер обхода не назван "
+        f"(записей изменено {изменено} — это не замер обхода)\n\n"
+        "  Подъём версии контракта требует перечитать ОТВЕТЫ, а не только\n"
+        "  проверить, что они разбираются: записи остаются валидными, означая\n"
+        "  уже другое (157). Пройдите по записям, где стояло старое значение,\n"
+        "  и назовите обход в теле изменения ЧИСЛОМ: «перечитано N записей\n"
+        "  предмета, изменено M». Число правок замером не считается — их\n"
+        "  бывает одна при предмете в семьдесят восемь. Слово без числа\n"
+        "  неотличимо от «я посмотрел» (166).",
+        file=sys.stderr,
+    )
     return 1
 
 

@@ -54,8 +54,12 @@ def run(args: Sequence[Any], *, timeout: float, **kwargs: Any) -> subprocess.Com
     try:
         return subprocess.run(args, timeout=timeout, **kwargs)  # noqa: S603 — аргументы вызывающего
     except subprocess.TimeoutExpired as exc:
-        текстом = bool(kwargs.get("text") or kwargs.get("encoding")
-                       or kwargs.get("universal_newlines") or kwargs.get("errors"))
+        текстом = bool(
+            kwargs.get("text")
+            or kwargs.get("encoding")
+            or kwargs.get("universal_newlines")
+            or kwargs.get("errors")
+        )
         вызов = " ".join(map(str, args))[:120]
         причина = f"не ответил за {timeout:g} с: {вызов} (100)"
         вывод, ошибка = _как_вызов(exc.stdout, текстом), _как_вызов(причина, текстом)

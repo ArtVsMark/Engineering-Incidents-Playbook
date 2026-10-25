@@ -92,8 +92,13 @@ def цвет_доли(n: int, m: int) -> str:
     if not m:
         return СЕРЫЙ
     часть = n / m
-    return ("#cf222e" if часть < 0.34 else "#bf8700" if часть < 0.67
-            else python_badge.ЦВЕТ_ПОКРЫТИЯ["green"])
+    return (
+        "#cf222e"
+        if часть < 0.34
+        else "#bf8700"
+        if часть < 0.67
+        else python_badge.ЦВЕТ_ПОКРЫТИЯ["green"]
+    )
 
 
 def серая(подпись: str, почему: str) -> Зоны:
@@ -114,24 +119,27 @@ def зоны_правил(ответ: object, в_силе: set[str] | None) -> t
     if в_силе is None:
         почему = f"выгрузка каталога {ВЫГРУЗКА.name} не прочитана — действующих не отличить"
         return серая("rules", почему), почему
-    все = [r for rid, r in ответ["rules"].items()
-           if isinstance(r, dict) and rid in в_силе]
+    все = [r for rid, r in ответ["rules"].items() if isinstance(r, dict) and rid in в_силе]
     машинные = [r for r in все if r.get("mechanism") in answer_form.МАШИННЫЕ]
     взяты = sum(1 for r in машинные if r.get("origin_kind") in ВЗЯТО)
-    return [[
-        ("rules", python_badge.ПОДПИСЬ, ""),
-        (f"machine {доля(len(машинные), len(все))}", цвет_доли(len(машинные), len(все)),
-         "правил каталога держится механизмом"),
-        (f"own {len(машинные) - взяты}", python_badge.СИНИЙ, "механизм свой"),
-        (f"taken {взяты}", python_badge.СИНИЙ, "механизм взят у другого проекта"),
-    ]], ""
+    return [
+        [
+            ("rules", python_badge.ПОДПИСЬ, ""),
+            (
+                f"machine {доля(len(машинные), len(все))}",
+                цвет_доли(len(машинные), len(все)),
+                "правил каталога держится механизмом",
+            ),
+            (f"own {len(машинные) - взяты}", python_badge.СИНИЙ, "механизм свой"),
+            (f"taken {взяты}", python_badge.СИНИЙ, "механизм взят у другого проекта"),
+        ]
+    ], ""
 
 
 def зоны_семьи(путь: Path) -> tuple[Зоны, str]:
     """Зоны семьи без просвета между подписью и сегментами (владелец 15.10)."""
     try:
-        подпись, сегменты, *хвост = family_check.зоны(
-            json.loads(путь.read_text(encoding="utf-8")))
+        подпись, сегменты, *хвост = family_check.зоны(json.loads(путь.read_text(encoding="utf-8")))
         return [подпись + сегменты, *хвост], ""
     except (OSError, ValueError, KeyError, TypeError) as exc:
         почему = f"разбор семьи {путь.name} не прочитан: {exc}"
@@ -142,11 +150,19 @@ def зоны_состояния(путь: Path) -> tuple[Зоны, str]:
     """Зоны первой строки из `python.zones.json`, положенного `python_badge.py`."""
     try:
         зоны = json.loads(путь.read_text(encoding="utf-8"))
-        if not (isinstance(зоны, list) and зоны and all(
-                isinstance(з, list) and з and all(
+        if not (
+            isinstance(зоны, list)
+            and зоны
+            and all(
+                isinstance(з, list)
+                and з
+                and all(
                     isinstance(ч, list) and len(ч) == 3 and all(isinstance(x, str) for x in ч)
-                    for ч in з)
-                for з in зоны)):
+                    for ч in з
+                )
+                for з in зоны
+            )
+        ):
             raise ValueError("не список зон")
         return [[(ч[0], ч[1], ч[2]) for ч in з] for з in зоны], ""
     except (OSError, ValueError) as exc:
@@ -169,7 +185,7 @@ def выровнять(верх: Зоны, низ: Зоны) -> tuple[dict[int, 
     if len(верх) <= ЗОНА_ОС or not низ:
         return {}, {}
     w1, w2 = ширины(верх), ширины(низ)
-    конец_ос = sum(w1[:ЗОНА_ОС + 1]) + ЗОНА_ОС * python_badge.ЗАЗОР
+    конец_ос = sum(w1[: ЗОНА_ОС + 1]) + ЗОНА_ОС * python_badge.ЗАЗОР
     if w2[0] < конец_ос:
         return {}, {0: конец_ос - w2[0]}
     if w2[0] > конец_ос:
@@ -186,7 +202,8 @@ def собрать(root: Path, python_zones: Path, family_json: Path) -> tuple[s
         ответ = None
     try:
         в_силе: set[str] | None = действующие_в_выгрузке(
-            json.loads(ВЫГРУЗКА.read_text(encoding="utf-8")))
+            json.loads(ВЫГРУЗКА.read_text(encoding="utf-8"))
+        )
     except OSError, ValueError, KeyError:
         в_силе = None
     правила, почему_2 = зоны_правил(ответ, в_силе)
@@ -196,16 +213,20 @@ def собрать(root: Path, python_zones: Path, family_json: Path) -> tuple[s
     тела, подсказки = [], []
     for зоны, сдвиг, о in ((верх, 0, о1), (низ, СТРОКА + ПРОСВЕТ, о2)):
         svg = python_badge.рисунок(зоны, сдвиг, о)
-        тела.append(svg[svg.find("</title>") + len("</title>"):svg.rfind("</svg>")])
-        подсказки.append(svg[svg.find("<title>") + len("<title>"):svg.find("</title>")])
-    ширина = max(sum(ширины(з)) + sum(о.values()) + (len(з) - 1) * python_badge.ЗАЗОР
-                 for з, о in ((верх, о1), (низ, о2)))
+        тела.append(svg[svg.find("</title>") + len("</title>") : svg.rfind("</svg>")])
+        подсказки.append(svg[svg.find("<title>") + len("<title>") : svg.find("</title>")])
+    ширина = max(
+        sum(ширины(з)) + sum(о.values()) + (len(з) - 1) * python_badge.ЗАЗОР
+        for з, о in ((верх, о1), (низ, о2))
+    )
     подсказка = "; ".join(подсказки)
     # Подсказки уже экранированы для текста; в атрибуте нужна ещё кавычка.
     в_атрибуте = подсказка.replace('"', "&quot;")
-    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="{ширина}" '
-           f'height="{2 * СТРОКА + ПРОСВЕТ}" role="img" aria-label="{в_атрибуте}">'
-           f"<title>{подсказка}</title>{тела[0]}{тела[1]}</svg>\n")
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{ширина}" '
+        f'height="{2 * СТРОКА + ПРОСВЕТ}" role="img" aria-label="{в_атрибуте}">'
+        f"<title>{подсказка}</title>{тела[0]}{тела[1]}</svg>\n"
+    )
     return svg, [п for п in (почему_1, почему_2, почему_3) if п]
 
 

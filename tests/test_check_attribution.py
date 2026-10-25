@@ -9,7 +9,6 @@
 подтверждает ничего (правило 075).
 """
 
-
 import subprocess
 from pathlib import Path
 
@@ -20,23 +19,41 @@ AGREED = "Claude <noreply@anthropic.com>"
 
 
 def run(repo: Path, *args: str) -> None:
-    subprocess.run(["git", "-C", str(repo), *args], check=True,
-                   capture_output=True, text=True, encoding="utf-8", timeout=60)
+    subprocess.run(
+        ["git", "-C", str(repo), *args],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
 
 
-def commit(repo: Path, subject: str, body: str = "",
-           author: tuple[str, str] = ("Владелец", "owner@example.com")) -> None:
+def commit(
+    repo: Path,
+    subject: str,
+    body: str = "",
+    author: tuple[str, str] = ("Владелец", "owner@example.com"),
+) -> None:
     write(repo / "f.txt", subject)
     run(repo, "add", "-A")
     message = f"{subject}\n\n{body}" if body else subject
-    subprocess.run(["git", "-C", str(repo), "commit", "-q", "-m", message],
-                   check=True, capture_output=True, text=True, encoding="utf-8",
-                   env={"PATH": "/usr/bin:/bin:/usr/local/bin",
-                        "HOME": str(repo),
-                        "GIT_AUTHOR_NAME": author[0],
-                        "GIT_AUTHOR_EMAIL": author[1],
-                        "GIT_COMMITTER_NAME": "Владелец",
-                        "GIT_COMMITTER_EMAIL": "owner@example.com"}, timeout=60)
+    subprocess.run(
+        ["git", "-C", str(repo), "commit", "-q", "-m", message],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env={
+            "PATH": "/usr/bin:/bin:/usr/local/bin",
+            "HOME": str(repo),
+            "GIT_AUTHOR_NAME": author[0],
+            "GIT_AUTHOR_EMAIL": author[1],
+            "GIT_COMMITTER_NAME": "Владелец",
+            "GIT_COMMITTER_EMAIL": "owner@example.com",
+        },
+        timeout=60,
+    )
 
 
 def make_repo(repo: Path) -> Path:
@@ -70,6 +87,7 @@ def test_список_имён_без_комментариев_и_пустых(r
 # Ключ отдельный и по умолчанию выключен: у проекта раздела «[авторы]» может
 # не быть, и требовать его тогда — отказ на пустом месте.
 
+
 def test_раздел_авторов_читается_отдельно_от_соавторов(repo):
     path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
     co, people = ca.agreed(path)
@@ -83,9 +101,19 @@ def test_объявленный_автор_проходит(repo, capsys, monkey
     commit(repo, "первый", f"Co-Authored-By: {AGREED}")
     commit(repo, "второй", f"Co-Authored-By: {AGREED}")
     path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path), "--require-declared-author"])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+            "--require-declared-author",
+        ],
+    )
     assert ca.main() == 0
 
 
@@ -95,9 +123,19 @@ def test_бот_автором_это_находка(repo, capsys, monkeypatch):
     commit(repo, "первый", f"Co-Authored-By: {AGREED}")
     commit(repo, "от бота", f"Co-Authored-By: {AGREED}", author=BOT)
     path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path), "--require-declared-author"])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+            "--require-declared-author",
+        ],
+    )
     assert ca.main() == 1
     assert "не объявлен в разделе" in capsys.readouterr().err
 
@@ -108,24 +146,42 @@ def test_то_же_лицо_под_другим_именем_проходит(re
     же. Краснеть на смене настройки машины значило бы ловить не то (097)."""
     make_repo(repo)
     commit(repo, "первый", f"Co-Authored-By: {AGREED}")
-    commit(repo, "второй", f"Co-Authored-By: {AGREED}",
-           author=("owner", "owner@example.com"))
+    commit(repo, "второй", f"Co-Authored-By: {AGREED}", author=("owner", "owner@example.com"))
     path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path), "--require-declared-author"])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+            "--require-declared-author",
+        ],
+    )
     assert ca.main() == 0
 
 
 def test_почта_в_другом_регистре_отказом_не_считается(repo, monkeypatch):
     make_repo(repo)
     commit(repo, "первый", f"Co-Authored-By: {AGREED}")
-    commit(repo, "второй", f"Co-Authored-By: {AGREED}",
-           author=("Владелец", "Owner@Example.com"))
+    commit(repo, "второй", f"Co-Authored-By: {AGREED}", author=("Владелец", "Owner@Example.com"))
     path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path), "--require-declared-author"])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+            "--require-declared-author",
+        ],
+    )
     assert ca.main() == 0
 
 
@@ -135,9 +191,18 @@ def test_без_ключа_бот_автором_проходит_как_ран�
     commit(repo, "первый", f"Co-Authored-By: {AGREED}")
     commit(repo, "от бота", f"Co-Authored-By: {AGREED}", author=BOT)
     path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path)])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+        ],
+    )
     assert ca.main() == 0
 
 
@@ -146,9 +211,19 @@ def test_ключ_без_раздела_авторов_это_третий_ис�
     commit(repo, "первый", f"Co-Authored-By: {AGREED}")
     commit(repo, "второй", f"Co-Authored-By: {AGREED}")
     path = authors_file(repo, AGREED)
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path), "--require-declared-author"])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+            "--require-declared-author",
+        ],
+    )
     assert ca.main() == 2
     assert "требовать нечем" in capsys.readouterr().err
 
@@ -181,8 +256,14 @@ def test_соавтор_вне_списка_это_находка(repo, capsys):
 def test_объявленное_начало_подрезает_долг(repo, capsys):
     make_repo(repo)
     commit(repo, "старый без подписи")
-    old = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
-                         capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout.strip()
+    old = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "HEAD"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=True,
+        timeout=60,
+    ).stdout.strip()
     commit(repo, "новый", f"Co-Authored-By: {AGREED}")
     # Без --since долг виден числом; с ним — спрашивается только новое.
     assert ca.first_parents(repo, "main", None, {AGREED}) == 1
@@ -199,8 +280,14 @@ def test_недоступная_ветка_это_третий_исход(repo, 
 def test_пустой_диапазон_это_третий_исход(repo, capsys):
     make_repo(repo)
     commit(repo, "один", f"Co-Authored-By: {AGREED}")
-    head = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
-                          capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout.strip()
+    head = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "HEAD"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=True,
+        timeout=60,
+    ).stdout.strip()
     # Диапазон от головы до головы пуст. Зелёное здесь означало бы, что гейт
     # подтвердил историю, которую не смотрел.
     assert ca.first_parents(repo, "main", head, {AGREED}) == 2
@@ -235,8 +322,9 @@ def test_nastoyashchiy_treyler_chitaetsya():
 def test_hvost_s_prozoy_blokom_ne_schitaetsya():
     """Один прозаический хвост делает абзац прозой ЦЕЛИКОМ: иначе разбор снова
     начнёт угадывать, где кончается объяснение."""
-    смешанный = ("Заголовок\n\nCo-Authored-By: Claude <noreply@anthropic.com>\n"
-                 "и вот почему так вышло\n")
+    смешанный = (
+        "Заголовок\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nи вот почему так вышло\n"
+    )
     assert ca.tail(смешанный) == ""
 
 
@@ -256,14 +344,27 @@ def test_proza_v_tele_ne_otvergaet_izmenenie(repo, monkeypatch):
     отверг его, приняв середину фразы за соавтора."""
     make_repo(repo)
     commit(repo, "первый", f"Co-Authored-By: {AGREED}")
-    commit(repo, "объясняет атрибуцию",
-           "Абзац про то, почему площадка дописывает\n"
-           "Co-authored-by: github-actions[bot] в уплотнённый коммит.\n\n"
-           f"Co-Authored-By: {AGREED}")
+    commit(
+        repo,
+        "объясняет атрибуцию",
+        "Абзац про то, почему площадка дописывает\n"
+        "Co-authored-by: github-actions[bot] в уплотнённый коммит.\n\n"
+        f"Co-Authored-By: {AGREED}",
+    )
     path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path), "--require-declared-author"])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+            "--require-declared-author",
+        ],
+    )
 
     assert ca.main() == 0
 
@@ -275,9 +376,19 @@ def test_chuzhoy_soavtor_v_hvoste_po_prezhnemu_nahodka(repo, monkeypatch):
     commit(repo, "первый", f"Co-Authored-By: {AGREED}")
     commit(repo, "с чужим соавтором", "Co-Authored-By: Кто-то <nobody@example.com>")
     path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path), "--require-declared-author"])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+            "--require-declared-author",
+        ],
+    )
 
     assert ca.main() == 1
 
@@ -285,10 +396,10 @@ def test_chuzhoy_soavtor_v_hvoste_po_prezhnemu_nahodka(repo, monkeypatch):
 def test_подпись_проекта_это_первая_строка_раздела(repo, capsys, monkeypatch):
     """Прогон выпуска подписывается ею: порядок в файле значим, а не случаен."""
     make_repo(repo)
-    path = authors_file(
-        repo, f"{AGREED}\n\n[авторы]\n{OWNER}\nВторой <second@example.com>\n")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--authors", str(path), "--print-author"])
+    path = authors_file(repo, f"{AGREED}\n\n[авторы]\n{OWNER}\nВторой <second@example.com>\n")
+    monkeypatch.setattr(
+        "sys.argv", ["check_attribution.py", "--authors", str(path), "--print-author"]
+    )
 
     assert ca.main() == 0
     assert capsys.readouterr().out.strip() == OWNER
@@ -302,8 +413,9 @@ def test_пустой_раздел_авторов_подписи_не_даёт(r
     """
     make_repo(repo)
     path = authors_file(repo, f"{AGREED}\n")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--authors", str(path), "--print-author"])
+    monkeypatch.setattr(
+        "sys.argv", ["check_attribution.py", "--authors", str(path), "--print-author"]
+    )
 
     assert ca.main() == 2
     assert capsys.readouterr().out.strip() == ""
@@ -311,20 +423,29 @@ def test_пустой_раздел_авторов_подписи_не_даёт(r
 
 # ── слияние только уплотнением: поле автора не проверяется (#695) ─────────
 
+
 def _окно(repo: Path) -> Path:
     """Ветка облачного окна: автором честно стоит согласованный соавтор."""
     make_repo(repo)
     commit(repo, "первый", f"Co-Authored-By: {AGREED}")
-    commit(repo, "от окна", f"Co-Authored-By: {AGREED}",
-           author=("Claude", "noreply@anthropic.com"))
+    commit(repo, "от окна", f"Co-Authored-By: {AGREED}", author=("Claude", "noreply@anthropic.com"))
     return authors_file(repo)
 
 
 def test_окно_автором_при_merge_находка(repo, capsys, monkeypatch):
     path = _окно(repo)
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path)])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+        ],
+    )
     assert ca.main() == 1
     assert "СОАВТОР, а не автор" in capsys.readouterr().err
 
@@ -332,9 +453,20 @@ def test_окно_автором_при_merge_находка(repo, capsys, monke
 def test_окно_автором_при_squash_проходит_и_это_названо(repo, capsys, monkeypatch):
     """Ложный отказ из #695: при уплотнении поле автора в историю не едет."""
     path = _окно(repo)
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path), "--merge-method", "squash"])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+            "--merge-method",
+            "squash",
+        ],
+    )
     assert ca.main() == 0
     assert "поле автора не проверялось" in capsys.readouterr().out
 
@@ -344,9 +476,20 @@ def test_squash_не_снимает_проверку_трейлеров(repo, ca
     commit(repo, "первый", f"Co-Authored-By: {AGREED}")
     commit(repo, "чужой", "Co-Authored-By: Чужой <x@example.com>")
     path = authors_file(repo)
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path), "--merge-method", "squash"])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+            "--merge-method",
+            "squash",
+        ],
+    )
     assert ca.main() == 1
     assert "соавтор вне списка" in capsys.readouterr().err
 
@@ -356,15 +499,27 @@ def test_squash_вместе_с_объявленным_автором_это_т�
     называется, а не решается молча за проект."""
     path = _окно(repo)
     write(path, f"{AGREED}\n\n[авторы]\n{OWNER}\n")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path), "--merge-method", "squash",
-        "--require-declared-author"])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+            "--merge-method",
+            "squash",
+            "--require-declared-author",
+        ],
+    )
     assert ca.main() == 2
     assert "снимите один из ключей" in capsys.readouterr().err
 
 
 # ── объявление squash сверяется с общей веткой (обзор #784) ────────────────
+
 
 def test_squash_при_слиянии_в_общей_ветке_предупреждает(repo, capsys, monkeypatch):
     """Устаревший вход снимал бы проверку автора молча: коммит слияния
@@ -379,12 +534,24 @@ def test_squash_при_слиянии_в_общей_ветке_предупре�
     commit(repo, "в main", f"Co-Authored-By: {AGREED}")
     run(repo, "merge", "-q", "--no-ff", "-m", "слияние темы", "тема")
     run(repo, "branch", "база", "main")
-    commit(repo, "от окна", f"Co-Authored-By: {AGREED}",
-           author=("Claude", "noreply@anthropic.com"))
+    commit(repo, "от окна", f"Co-Authored-By: {AGREED}", author=("Claude", "noreply@anthropic.com"))
     path = authors_file(repo)
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "база..HEAD",
-        "--authors", str(path), "--merge-method", "squash", "--baseline", ""])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "база..HEAD",
+            "--authors",
+            str(path),
+            "--merge-method",
+            "squash",
+            "--baseline",
+            "",
+        ],
+    )
     assert ca.main() == 0
     вывод = capsys.readouterr().out
     assert вывод.count("::warning::") == 1 and "верните merge" in вывод
@@ -393,9 +560,22 @@ def test_squash_при_слиянии_в_общей_ветке_предупре�
 def test_squash_без_слияний_молчит(repo, capsys, monkeypatch):
     path = _окно(repo)
     run(repo, "branch", "база", "HEAD~1")
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "база..HEAD",
-        "--authors", str(path), "--merge-method", "squash", "--baseline", ""])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "база..HEAD",
+            "--authors",
+            str(path),
+            "--merge-method",
+            "squash",
+            "--baseline",
+            "",
+        ],
+    )
     assert ca.main() == 0
     assert "::warning::" not in capsys.readouterr().out
 
@@ -413,21 +593,42 @@ def test_squash_после_перехода_молчит(repo, capsys, monkeypat
     run(repo, "merge", "-q", "--no-ff", "-m", "старое слияние", "тема")
     commit(repo, "уплотнённое", f"Co-Authored-By: {AGREED}")
     run(repo, "branch", "база", "main")
-    commit(repo, "от окна", f"Co-Authored-By: {AGREED}",
-           author=("Claude", "noreply@anthropic.com"))
+    commit(repo, "от окна", f"Co-Authored-By: {AGREED}", author=("Claude", "noreply@anthropic.com"))
     path = authors_file(repo)
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "база..HEAD",
-        "--authors", str(path), "--merge-method", "squash", "--baseline", ""])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "база..HEAD",
+            "--authors",
+            str(path),
+            "--merge-method",
+            "squash",
+            "--baseline",
+            "",
+        ],
+    )
     assert ca.main() == 0
     assert "::warning::" not in capsys.readouterr().out
 
 
 def test_отказ_при_merge_подсказывает_вход(repo, capsys, monkeypatch):
     path = _окно(repo)
-    monkeypatch.setattr("sys.argv", [
-        "check_attribution.py", "--repo", str(repo), "--range", "HEAD~1..HEAD",
-        "--authors", str(path)])
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "check_attribution.py",
+            "--repo",
+            str(repo),
+            "--range",
+            "HEAD~1..HEAD",
+            "--authors",
+            str(path),
+        ],
+    )
     assert ca.main() == 1
     err = capsys.readouterr().err
     assert "объединяющем слиянии" in err and "--merge-method squash" in err

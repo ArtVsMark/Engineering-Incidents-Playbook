@@ -12,7 +12,6 @@
 значит копить находки о состоянии, которого не знаешь (039).
 """
 
-
 import ast
 
 import check_verdict_order as cv
@@ -23,6 +22,7 @@ def находки(src: str) -> list[str]:
 
 
 # ── здоровые предметы ──────────────────────────────────────────────────────
+
 
 def test_verdikt_posle_cikla_prohodit():
     assert not находки("""
@@ -88,6 +88,7 @@ def check(items):
 
 # ── предметы, которые гейт обязан отвергнуть ───────────────────────────────
 
+
 def test_ranniy_verdikt_eto_nahodka():
     """Ровно предмет правила: половина случаев осталась непроверенной."""
     out = находки("""
@@ -148,14 +149,17 @@ def test_gate_otvechaet_otkazom_na_poddelannom_dereve(repo, capsys):
     """Решение спрашивается у САМОГО ГЕЙТА через main(), а не у функции
     разбора: случай, повторяющий условие, проверяет условие (правило 150)."""
     (repo / "scripts").mkdir(parents=True, exist_ok=True)
-    (repo / "scripts" / "ранний.py").write_text("""
+    (repo / "scripts" / "ранний.py").write_text(
+        """
 def check(items):
     problems = []
     for i in items:
         problems.append(i)
         return problems
     return problems
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
 
     assert cv.main(["--root", str(repo)]) == 1
     err = capsys.readouterr().err
@@ -166,7 +170,8 @@ def test_gate_propuskaet_zdorovoe_derevo(repo, capsys):
     """Вторая половина набора: гейт из одних отказов проверен наполовину
     (правило 140) — здоровый предмет обязан пройти."""
     (repo / "scripts").mkdir(parents=True, exist_ok=True)
-    (repo / "scripts" / "здоровый.py").write_text("""
+    (repo / "scripts" / "здоровый.py").write_text(
+        """
 def check(items):
     problems = []
     for i in items:
@@ -174,13 +179,16 @@ def check(items):
             return 2
         problems.append(i)
     return problems
-""", encoding="utf-8")
+""",
+        encoding="utf-8",
+    )
 
     assert cv.main(["--root", str(repo)]) == 0
     assert "ранних вердиктов нет" in capsys.readouterr().out
 
 
 # ── третий исход: проверка не отработала ──────────────────────────────────
+
 
 def test_nerazobrannyy_fayl_eto_tretiy_ishod(repo, capsys):
     (repo / "scripts").mkdir(parents=True, exist_ok=True)

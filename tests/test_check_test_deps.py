@@ -11,7 +11,6 @@
 спрашиваются у метаданных.
 """
 
-
 import pytest
 
 import check_test_deps as td
@@ -30,6 +29,7 @@ def run(repo) -> int:
 
 
 # ── здоровые предметы: гейт обязан пропустить ──────────────────────────────
+
 
 def test_стандартная_библиотека_объявления_не_требует(repo):
     assert run(tree(repo, "import json\nimport pathlib\n")) == 0
@@ -80,6 +80,7 @@ def test_проверка_не_трогает_установленное(repo):
     от порядка шагов в конвейере — а порядок шагов невидим из кода гейта.
     """
     import inspect
+
     src = inspect.getsource(td)
     assert "importlib" not in src and "packages_distributions" not in src
 
@@ -89,6 +90,7 @@ def test_подмодуль_считается_по_верхнему_имени(
 
 
 # ── предмет, который гейт обязан отвергнуть ────────────────────────────────
+
 
 def test_необъявленный_импорт_это_находка(repo, capsys):
     assert run(tree(repo, "import requests\n")) == 1
@@ -103,6 +105,7 @@ def test_находка_называет_файл_и_модуль(repo, capsys):
 
 
 # ── три исхода ─────────────────────────────────────────────────────────────
+
 
 def test_нет_тестов_это_третий_исход(repo, capsys):
     write(repo / "requirements-test.txt", "pytest<10\n")
@@ -125,18 +128,21 @@ def test_неразбираемый_тест_это_третий_исход(repo
 # ── имя пакета отсекается от указателя версии (задача #444, гейт 195) ───────
 
 
-@pytest.mark.parametrize("строка", [
-    "pytest != 8.0",          # ЭТОТ случай терялся: «!=» не было в перечислении
-    "pytest!=8.0",
-    "pytest~=8.0",
-    "pytest>=8",
-    "pytest<=9",
-    "pytest==8.0",
-    "pytest===8.0",
-    "pytest[extra]",
-    "pytest; python_version<'3.13'",
-    "pytest",
-])
+@pytest.mark.parametrize(
+    "строка",
+    [
+        "pytest != 8.0",  # ЭТОТ случай терялся: «!=» не было в перечислении
+        "pytest!=8.0",
+        "pytest~=8.0",
+        "pytest>=8",
+        "pytest<=9",
+        "pytest==8.0",
+        "pytest===8.0",
+        "pytest[extra]",
+        "pytest; python_version<'3.13'",
+        "pytest",
+    ],
+)
 def test_ukazatel_versii_ne_popadaet_v_imya(строка):
     """Указатель версии, extras и маркер к имени пакета не принадлежат.
 
@@ -150,22 +156,40 @@ def test_ukazatel_versii_ne_popadaet_v_imya(строка):
 def test_defis_v_imeni_privoditsya_k_podcherku():
     """Имя сравнивается с именем в `import`, а там дефиса не бывает."""
     assert td.объявлено(["python-dateutil  # модуль: dateutil"]) == {
-        "python_dateutil": {"dateutil"}}
+        "python_dateutil": {"dateutil"}
+    }
 
 
 # ── верхняя граница версии (правило 073) ──────────────────────────────────
 
-@pytest.mark.parametrize("строка", ["pytest", "pytest>=9", "pytest!=9.0",
-                                    'pytest>=9; python_version<"3.13"',
-                                    'pytest[x]>=9; python_version=="3.14"'])
+
+@pytest.mark.parametrize(
+    "строка",
+    [
+        "pytest",
+        "pytest>=9",
+        "pytest!=9.0",
+        'pytest>=9; python_version<"3.13"',
+        'pytest[x]>=9; python_version=="3.14"',
+    ],
+)
 def test_без_верхней_границы_это_находка(repo, capsys, строка):
     assert run(tree(repo, "import pytest\n", строка + "\n")) == 1
     assert "без верхней границы" in capsys.readouterr().err
 
 
-@pytest.mark.parametrize("строка", ["pytest<10", "pytest>=9,<10", "pytest==9.1.1",
-                                    "pytest~=9.1", "pytest<=9.9", "pytest ~= 9.1",
-                                    "pytest[x]>=9,<10",
-                                    'pytest<10; python_version>="3.14"'])
+@pytest.mark.parametrize(
+    "строка",
+    [
+        "pytest<10",
+        "pytest>=9,<10",
+        "pytest==9.1.1",
+        "pytest~=9.1",
+        "pytest<=9.9",
+        "pytest ~= 9.1",
+        "pytest[x]>=9,<10",
+        'pytest<10; python_version>="3.14"',
+    ],
+)
 def test_верхняя_граница_проходит(repo, строка):
     assert run(tree(repo, "import pytest\n", строка + "\n")) == 0

@@ -16,7 +16,6 @@
 а прогон подделывается собственным скриптом-заглушкой.
 """
 
-
 from pathlib import Path
 
 import preflight
@@ -45,6 +44,7 @@ def names(steps: list[preflight.Step]) -> list[str]:
 
 
 # ── разбор: что попадает в план, а что называется ──────────────────────────
+
 
 def test_shag_konveyera_popal_v_plan():
     steps = preflight.parse_steps(STEP)
@@ -83,6 +83,7 @@ def test_predel_vremeni_u_testov_svoy():
 
 # ── разъезд с конвейером: то, ради чего план не хранится ───────────────────
 
+
 def test_plan_sobran_iz_zhivogo_konveyera_a_ne_iz_spiska():
     """Каждый шаг `ci.yml`, зовущий python, обязан оказаться в плане.
 
@@ -90,14 +91,19 @@ def test_plan_sobran_iz_zhivogo_konveyera_a_ne_iz_spiska():
     конвейером молча, и узналось бы это на красном.
     """
     text = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    in_pipeline = {ln.split("python ", 1)[1].split()[0]
-                   for ln in text.splitlines() if "python " in ln}
-    in_plan = {s.command[1] if s.command[1] != "-m" else "-m"
-               for s in preflight.parse_steps(text) if s.command}
+    in_pipeline = {
+        ln.split("python ", 1)[1].split()[0] for ln in text.splitlines() if "python " in ln
+    }
+    in_plan = {
+        s.command[1] if s.command[1] != "-m" else "-m"
+        for s in preflight.parse_steps(text)
+        if s.command
+    }
     assert in_pipeline - in_plan == set()
 
 
 # ── три исхода ─────────────────────────────────────────────────────────────
+
 
 def stub(tmp_path: Path, body: str, run_line: str) -> Path:
     """Каталог-подделка: свой `ci.yml` и скрипт, отвечающий заданным кодом."""
@@ -106,8 +112,9 @@ def stub(tmp_path: Path, body: str, run_line: str) -> Path:
     work = tmp_path / ".github" / "workflows"
     work.mkdir(parents=True, exist_ok=True)
     (work / "ci.yml").write_text(
-        "jobs:\n  catalogue:\n    steps:\n"
-        f"      - name: подделка\n        run: {run_line}\n", encoding="utf-8")
+        f"jobs:\n  catalogue:\n    steps:\n      - name: подделка\n        run: {run_line}\n",
+        encoding="utf-8",
+    )
     return tmp_path
 
 
@@ -139,8 +146,7 @@ def test_konveyer_bez_shagov_eto_dva_a_ne_chisto(tmp_path):
     """Ноль шагов — ошибка разбора, и зеленеть на ней нельзя (правило 075)."""
     work = tmp_path / ".github" / "workflows"
     work.mkdir(parents=True)
-    (work / "ci.yml").write_text("jobs:\n  catalogue:\n    steps: []\n",
-                                 encoding="utf-8")
+    (work / "ci.yml").write_text("jobs:\n  catalogue:\n    steps: []\n", encoding="utf-8")
     assert preflight.main(["--root", str(tmp_path)]) == 2
 
 
@@ -160,10 +166,12 @@ def test_nezapuskaemye_nazvany_v_itoge(tmp_path, capsys):
     """Итог обязан сказать, чего не запускали: иначе «чисто» читается шире."""
     root = stub(tmp_path, "import sys; sys.exit(0)\n", "python scripts/stub.py")
     work = root / ".github" / "workflows" / "ci.yml"
-    work.write_text(work.read_text(encoding="utf-8")
-                    + "      - name: только на изменении\n"
-                      "        if: github.event_name == 'pull_request'\n"
-                      "        run: python scripts/stub.py\n", encoding="utf-8")
+    work.write_text(
+        work.read_text(encoding="utf-8") + "      - name: только на изменении\n"
+        "        if: github.event_name == 'pull_request'\n"
+        "        run: python scripts/stub.py\n",
+        encoding="utf-8",
+    )
     assert preflight.main(["--root", str(root)]) == 0
     assert "не запускалось локально" in capsys.readouterr().out
 
@@ -180,8 +188,15 @@ import subprocess
 
 def репо(tmp_path: Path, *тела: str) -> Path:
     def git(*args):
-        subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
-                       capture_output=True, text=True, encoding="utf-8", timeout=60)
+        subprocess.run(
+            ["git", "-C", str(tmp_path), *args],
+            check=True,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=60,
+        )
+
     git("init", "-q", "-b", "main")
     git("config", "user.name", "Владелец")
     git("config", "user.email", "owner@example.com")
@@ -192,8 +207,7 @@ def репо(tmp_path: Path, *тела: str) -> Path:
     for i, тело in enumerate(тела):
         (tmp_path / f"f{i}.txt").write_text(str(i), encoding="utf-8")
         git("add", "-A")
-        git("-c", "commit.gpgsign=false", "commit", "-q", "-m",
-            f"работа {i}\n\n{тело}")
+        git("-c", "commit.gpgsign=false", "commit", "-q", "-m", f"работа {i}\n\n{тело}")
     return tmp_path
 
 
@@ -250,8 +264,7 @@ def test_zamena_stoit_na_shage_zhivogo_konveyera():
     """Имя в таблице должно совпадать с шагом ci.yml дословно: разойдясь,
     замена молча перестанет срабатывать (141)."""
     корень = Path(preflight.__file__).resolve().parent.parent
-    шаги = preflight.parse_steps(
-        (корень / ".github/workflows/ci.yml").read_text(encoding="utf-8"))
+    шаги = preflight.parse_steps((корень / ".github/workflows/ci.yml").read_text(encoding="utf-8"))
 
     имена = {s.name for s in шаги}
     assert set(preflight.STAND_IN) <= имена
@@ -262,6 +275,7 @@ def test_zamena_stoit_na_shage_zhivogo_konveyera():
 # Красное до толчка не доходит: --push зовёт толчок только после чистого
 # прогона. Сам `git push` здесь не исполняется ни разу — подделка толчка
 # записывает вызов, а сторож и приставки проверяются на своих подделках.
+
 
 def test_pri_nahodke_tolchka_net(tmp_path, monkeypatch):
     толкали: list[Path] = []
@@ -287,17 +301,23 @@ def test_push_s_only_eto_dva(tmp_path):
 
 def _для_толчка(tmp_path: Path, ветка: str, сторож_код: int) -> Path:
     root = репо(tmp_path)
-    subprocess.run(["git", "-C", str(root), "checkout", "-q", "-b", ветка],
-                   check=True, capture_output=True, timeout=60)
+    subprocess.run(
+        ["git", "-C", str(root), "checkout", "-q", "-b", ветка],
+        check=True,
+        capture_output=True,
+        timeout=60,
+    )
     work = root / ".github" / "workflows"
     work.mkdir(parents=True, exist_ok=True)
     (work / "agent-pr.yml").write_text(
-        'on:\n  push:\n    branches:\n      - "agent/**"\n', encoding="utf-8")
+        'on:\n  push:\n    branches:\n      - "agent/**"\n', encoding="utf-8"
+    )
     hooks = root / ".claude" / "hooks"
     hooks.mkdir(parents=True, exist_ok=True)
     (hooks / "push_guard.py").write_text(
         f"import sys; print('отказ сторожа', file=sys.stderr); sys.exit({сторож_код})\n",
-        encoding="utf-8")
+        encoding="utf-8",
+    )
     return root
 
 
@@ -333,7 +353,9 @@ def test_pristavka_tolko_iz_spiska_branches(tmp_path):
     root = _для_толчка(tmp_path, "agent/x", 0)
     (root / ".github" / "workflows" / "agent-pr.yml").write_text(
         'on:\n  push:\n    branches:\n      - "agent/**"\n'
-        'jobs:\n  a:\n    paths:\n      - "docs/**"\n', encoding="utf-8")
+        'jobs:\n  a:\n    paths:\n      - "docs/**"\n',
+        encoding="utf-8",
+    )
     assert preflight.приставки(root) == ("agent/",)
 
 
@@ -343,6 +365,7 @@ def _подложить_git(tmp_path: Path, monkeypatch, на_толчок: str)
     import os
     import shutil
     import stat
+
     журнал = tmp_path / "git-calls.txt"
     настоящий = shutil.which("git")
     assert настоящий, "git не найден в PATH"
@@ -353,7 +376,9 @@ def _подложить_git(tmp_path: Path, monkeypatch, на_толчок: str)
     подделка.write_text(
         "#!/bin/sh\n"
         f'if [ "$1" = push ]; then echo "$@" >> "{журнал}"; {на_толчок}; fi\n'
-        f'exec "{настоящий}" "$@"\n', encoding="utf-8")
+        f'exec "{настоящий}" "$@"\n',
+        encoding="utf-8",
+    )
     подделка.chmod(подделка.stat().st_mode | stat.S_IEXEC)
     monkeypatch.setenv("PATH", f"{подделка.parent}{os.pathsep}{os.environ['PATH']}")
     return журнал
@@ -382,7 +407,8 @@ def test_zavisshiy_storozh_derzhit_tolchok(tmp_path, monkeypatch, capsys):
     """Предел сторожа исполняется, и до толчка зависание не доходит."""
     root = _для_толчка(tmp_path, "agent/x", 0)
     (root / ".claude" / "hooks" / "push_guard.py").write_text(
-        "import time; time.sleep(5)\n", encoding="utf-8")
+        "import time; time.sleep(5)\n", encoding="utf-8"
+    )
     журнал = _подложить_git(tmp_path, monkeypatch, "exit 0")
     monkeypatch.setattr(preflight, "ПРЕДЕЛ_СТОРОЖА", 0.5)
     assert preflight.толкнуть(root) == 2
@@ -396,7 +422,8 @@ def test_vtoroy_spisok_branches_ne_teryaetsya(tmp_path):
     (root / ".github" / "workflows" / "agent-pr.yml").write_text(
         'on:\n  push:\n    branches:\n      - "agent/**"\n'
         '  pull_request:\n    branches:\n      - "bot/**"\n      - "agent/**"\n',
-        encoding="utf-8")
+        encoding="utf-8",
+    )
     assert preflight.приставки(root) == ("agent/", "bot/")
 
 
@@ -409,10 +436,14 @@ def test_istechenie_git_pri_tolchke_nazvano(tmp_path, monkeypatch, capsys):
     import subprocess
 
     import proc
+
     root = _для_толчка(tmp_path, "agent/x", 0)
+
     def завис(args, *, timeout, **kw):
-        return subprocess.CompletedProcess(args, proc.TIMED_OUT, "",
-                                           f"не ответил за {timeout:g} с: git (100)")
+        return subprocess.CompletedProcess(
+            args, proc.TIMED_OUT, "", f"не ответил за {timeout:g} с: git (100)"
+        )
+
     monkeypatch.setattr(preflight.proc, "run", завис)
     assert preflight.толкнуть(root) == 2
     err = capsys.readouterr().err

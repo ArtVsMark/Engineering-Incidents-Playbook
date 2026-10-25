@@ -59,14 +59,17 @@ from typing import Any
 import family
 import python_badge
 from aggregate_bindings import fetch
+
 # Что такое полный SHA, решает одно место каталога (214).
 from collect_proposals import SHA_RE
 from version import latest_tag
 
 ROOT = Path(__file__).resolve().parent.parent
 #: Сводка семьи по умолчанию — там, где её публикует каталог.
-СВОДКА = ("https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook"
-          "/badges/export/family.json")
+СВОДКА = (
+    "https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook"
+    "/badges/export/family.json"
+)
 SVG = Path(".github") / "badges" / "family.svg"
 РАЗБОР = Path(".github") / "badges" / "family-check.json"
 ФАКТЫ = Path(".github") / "badges" / "facts.json"
@@ -76,18 +79,22 @@ SVG = Path(".github") / "badges" / "family.svg"
 USES_RE = re.compile(r"^\s*-?\s*uses:\s*([\w.-]+)/([\w.-]+)(?:/[^@\s]*)?@([^\s#]+)", re.M)
 
 СЕГМЕНТЫ = ("gives", "family", "pairs", "external")
-ПОДПИСЬ_СЕГМЕНТА = {"gives": "gives", "family": "family", "pairs": "pairs",
-                    "external": "ext"}
+ПОДПИСЬ_СЕГМЕНТА = {"gives": "gives", "family": "family", "pairs": "pairs", "external": "ext"}
 #: Состояние → цвет и знак (вариант Б, решение владельца 09.10). Контраст
 #: белого текста — тот же, что у значка Python: зелёный 5,1:1, красный 5,4:1.
 #: `none` — связи с издателем нет и отказ не объявлен: красный; `skipped` —
 #: отказ объявлен с причиной: серый.
 #: `partial` — у механизмов: шаги взяты, а конвейер не подключён (решение
 #: владельца 14.10): связь есть, но частичная — серый, а не зелёный.
-ЦВЕТ = {"ok": "#1a7f37", "behind": "#cf222e", "unknown": "#6e7781",
-        "none": "#cf222e", "skipped": "#6e7781", "partial": "#6e7781"}
-ЗНАК = {"ok": "✓", "behind": "✗", "unknown": "?", "none": "—", "skipped": "·",
-        "partial": "◐"}
+ЦВЕТ = {
+    "ok": "#1a7f37",
+    "behind": "#cf222e",
+    "unknown": "#6e7781",
+    "none": "#cf222e",
+    "skipped": "#6e7781",
+    "partial": "#6e7781",
+}
+ЗНАК = {"ok": "✓", "behind": "✗", "unknown": "?", "none": "—", "skipped": "·", "partial": "◐"}
 
 #: Издатели контрактов семьи и их короткие имена на значке. Список закрытый и
 #: с причиной (068): это проекты, отдающие контракты всей семье, — правила,
@@ -95,8 +102,7 @@ USES_RE = re.compile(r"^\s*-?\s*uses:\s*([\w.-]+)/([\w.-]+)(?:/[^@\s]*)?@([^\s#]
 #: facts 2.0 — читатель фактов, а не издатель: договор переехал к каталогу, и
 #: блок `AVM` снят тем же изменением (решение владельца 14.10, #843). Парный
 #: издатель (глоссарий) сюда не входит: его связь видна в сегменте `pairs`.
-ИЗДАТЕЛИ = {family.своё_имя(): "EIP",
-            "ArtVsMark/Engineering-Pipeline-Mechanisms": "EPM"}
+ИЗДАТЕЛИ = {family.своё_имя(): "EIP", "ArtVsMark/Engineering-Pipeline-Mechanisms": "EPM"}
 #: Чем издатель узнаётся в сводке, когда его имя разошлось с умолчанием
 #: (обзор #809): механизмы — тот, кто отдаёт `steps`. Каталог узнаётся своим
 #: именем из выгрузки, ему отдельный признак не нужен.
@@ -116,8 +122,7 @@ USES_RE = re.compile(r"^\s*-?\s*uses:\s*([\w.-]+)/([\w.-]+)(?:/[^@\s]*)?@([^\s#]
 
 def претенденты(сводка: dict, контракт: str) -> list[str]:
     """Проекты сводки, отдающие контракт, — все, а не первый (#473)."""
-    return sorted(p["repo"] for p in издатели(сводка).values()
-                  if контракт in p.get("gives", {}))
+    return sorted(p["repo"] for p in издатели(сводка).values() if контракт in p.get("gives", {}))
 
 
 def издатели_семьи(сводка: dict) -> dict[str, str]:
@@ -141,22 +146,33 @@ def споры_издателей(сводка: dict) -> list[Связь]:
     out = []
     for код, контракт in ПРИЗНАК_ИЗДАТЕЛЯ.items():
         if len(кто := претенденты(сводка, контракт)) > 1:
-            out.append(Связь("family", код, "publisher", None, None, "сводка семьи",
-                             "unknown", f"контракт {контракт} отдают {len(кто)}: "
-                             f"{', '.join(кто)} — издатель {код} не выбран"))
+            out.append(
+                Связь(
+                    "family",
+                    код,
+                    "publisher",
+                    None,
+                    None,
+                    "сводка семьи",
+                    "unknown",
+                    f"контракт {контракт} отдают {len(кто)}: "
+                    f"{', '.join(кто)} — издатель {код} не выбран",
+                )
+            )
     return out
 
 
 @dataclass(frozen=True)
 class Связь:
     """Одна сверка: что, у кого, что держу я, что свежее, где это лежит."""
+
     segment: str
     publisher: str
     what: str
     mine: str | None
     latest: str | None
     where: str
-    state: str          # ok · behind · unknown
+    state: str  # ok · behind · unknown
     why: str = ""
 
 
@@ -171,8 +187,15 @@ def номер(версия: str) -> tuple[int, ...] | None:
     return tuple(int(x) for x in m[1].split(".")) if m else None
 
 
-def сверить(segment: str, publisher: str, what: str, mine: str | None,
-            latest: str | None, where: str, sha: str | None = None) -> Связь:
+def сверить(
+    segment: str,
+    publisher: str,
+    what: str,
+    mine: str | None,
+    latest: str | None,
+    where: str,
+    sha: str | None = None,
+) -> Связь:
     """Одна связь: равенство — ok; нет одной из сторон — unknown; моё старше
     свежего — behind; моё НОВЕЕ свежего — unknown (обзор #807): опережение
     значит, что сводка отстала от издателя, а не что отстал я."""
@@ -182,12 +205,28 @@ def сверить(segment: str, publisher: str, what: str, mine: str | None,
     if mine == latest or (sha is not None and mine == sha):
         return Связь(segment, publisher, what, mine, latest, where, "ok")
     if SHA_RE.match(mine):
-        return Связь(segment, publisher, what, mine, latest, where, "behind",
-                     "прибит не к последнему выпуску")
+        return Связь(
+            segment,
+            publisher,
+            what,
+            mine,
+            latest,
+            where,
+            "behind",
+            "прибит не к последнему выпуску",
+        )
     моё, свежее = номер(mine), номер(latest)
     if моё is not None and свежее is not None and моё > свежее:
-        return Связь(segment, publisher, what, mine, latest, where, "unknown",
-                     "опережает опубликованное — сводка отстала от издателя")
+        return Связь(
+            segment,
+            publisher,
+            what,
+            mine,
+            latest,
+            where,
+            "unknown",
+            "опережает опубликованное — сводка отстала от издателя",
+        )
     return Связь(segment, publisher, what, mine, latest, where, "behind")
 
 
@@ -197,16 +236,22 @@ def сверить_факты(mine: str | None, latest: str | None) -> Связ�
     # не проза: номер версии «мажор.минор».
     мажоры = (str(mine).split(".")[0], str(latest).split(".")[0])
     if связь.state == "behind" and мажоры == ПЕРЕЕЗД_ФАКТОВ and str(mine) == ПОСЛЕДНИЙ_1X:
-        return Связь(**{**asdict(связь), "state": "unknown",
-                        "why": "договор переехал в каталог (2.0), форма та же: подъём "
-                               "номера ждёт, пока витрина читает мажор 2 (#845)"})
+        return Связь(
+            **{
+                **asdict(связь),
+                "state": "unknown",
+                "why": "договор переехал в каталог (2.0), форма та же: подъём "
+                "номера ждёт, пока витрина читает мажор 2 (#845)",
+            }
+        )
     return связь
 
 
 def издатели(сводка: dict) -> dict[str, dict]:
     """Опубликованные манифесты сводки по имени проекта в нижнем регистре."""
-    return {p["repo"].lower(): p for p in сводка.get("projects", [])
-            if p.get("state") == "published"}
+    return {
+        p["repo"].lower(): p for p in сводка.get("projects", []) if p.get("state") == "published"
+    }
 
 
 def все_проекты(сводка: dict) -> set[str]:
@@ -215,8 +260,10 @@ def все_проекты(сводка: dict) -> set[str]:
 
 def прибитые(root: Path) -> list[tuple[str, str, str]]:
     """(владелец/репозиторий, ссылка, файл) для каждого `uses:` в прогонах и действиях."""
-    файлы = [*sorted((root / ".github" / "workflows").glob("*.y*ml")),
-             *sorted((root / ".github" / "actions").glob("*/action.y*ml"))]
+    файлы = [
+        *sorted((root / ".github" / "workflows").glob("*.y*ml")),
+        *sorted((root / ".github" / "actions").glob("*/action.y*ml")),
+    ]
     out = []
     for f in файлы:
         for m in USES_RE.finditer(f.read_text(encoding="utf-8")):
@@ -238,18 +285,35 @@ def семья(root: Path, сводка: dict, свой: str) -> list[Связь
     for repo, ссылка, где in прибитые(root):
         ключ = repo.lower()
         if ключ == свой.lower() or ключ not in известны:
-            continue                       # своё и чужое вне семьи — не здесь
+            continue  # своё и чужое вне семьи — не здесь
         выпуск = (опубликовано.get(ключ) or {}).get("release") or {}
-        связи.append(сверить("family", repo, "release", ссылка, выпуск.get("tag"),
-                             где, выпуск.get("sha")))
+        связи.append(
+            сверить("family", repo, "release", ссылка, выпуск.get("tag"), где, выпуск.get("sha"))
+        )
     каталог = опубликовано.get(family.своё_имя().lower(), {}).get("gives", {})
     # Файл не объект — не та форма: сверять нечего, а не падение. Так читаются
     # оба файла дерева, ответ и факты.
     if isinstance(ответ := _json(root / ОТВЕТ), dict):
-        связи.append(сверить("family", family.своё_имя(), "bindings",
-                             ответ.get("schema"), каталог.get("bindings"), str(ОТВЕТ)))
-        связи.append(сверить("family", family.своё_имя(), "export",
-                             ответ.get("answers_to"), каталог.get("export"), str(ОТВЕТ)))
+        связи.append(
+            сверить(
+                "family",
+                family.своё_имя(),
+                "bindings",
+                ответ.get("schema"),
+                каталог.get("bindings"),
+                str(ОТВЕТ),
+            )
+        )
+        связи.append(
+            сверить(
+                "family",
+                family.своё_имя(),
+                "export",
+                ответ.get("answers_to"),
+                каталог.get("export"),
+                str(ОТВЕТ),
+            )
+        )
     if isinstance(факты := _json(root / ФАКТЫ), dict):
         # Договор фактов с 2.0 отдаёт каталог (#843): сверка с его номером.
         связи.append(сверить_факты(факты.get("schema"), каталог.get("facts")))
@@ -279,7 +343,7 @@ def шаги(root: Path, сводка: dict) -> list[Связь]:
     """
     файл = root / КОНВЕЙЕР
     if not файл.is_file():
-        return []                          # шагов механизмов не берёт
+        return []  # шагов механизмов не берёт
     кто = next((r for r, к in издатели_семьи(сводка).items() if к == "EPM"), "EPM")
     где = f"{КОНВЕЙЕР}:contract"
 
@@ -302,9 +366,13 @@ def шаги(root: Path, сводка: dict) -> list[Связь]:
     свежий_н = номер(свежий) if isinstance(свежий, str) else None
     if свежий_н is None:
         return серый(диапазон, "у издателя не опубликовано")
-    сравнить = {">=": lambda a, b: a >= b, ">": lambda a, b: a > b,
-                "<=": lambda a, b: a <= b, "<": lambda a, b: a < b,
-                "==": lambda a, b: a == b}
+    сравнить = {
+        ">=": lambda a, b: a >= b,
+        ">": lambda a, b: a > b,
+        "<=": lambda a, b: a <= b,
+        "<": lambda a, b: a < b,
+        "==": lambda a, b: a == b,
+    }
     мимо = [у for у in условия if not сравнить[у[1]](свежий_н, номер(у[2]))]
     if not мимо:
         return [Связь("family", кто, "steps", диапазон, свежий, где, "ok")]
@@ -312,10 +380,30 @@ def шаги(root: Path, сводка: dict) -> list[Связь]:
     # опережает сводку так же, как «>=0.8», и красить его красным значило
     # бы судить одну запись по-разному в двух формах (обзор #831).
     if all(у[1] in СНИЗУ or (у[1] == "==" and свежий_н < номер(у[2])) for у in мимо):
-        return [Связь("family", кто, "steps", диапазон, свежий, где, "unknown",
-                      "диапазон опережает опубликованное — сводка отстала от издателя")]
-    return [Связь("family", кто, "steps", диапазон, свежий, где, "behind",
-                  "свежий контракт шагов вне объявленного диапазона")]
+        return [
+            Связь(
+                "family",
+                кто,
+                "steps",
+                диапазон,
+                свежий,
+                где,
+                "unknown",
+                "диапазон опережает опубликованное — сводка отстала от издателя",
+            )
+        ]
+    return [
+        Связь(
+            "family",
+            кто,
+            "steps",
+            диапазон,
+            свежий,
+            где,
+            "behind",
+            "свежий контракт шагов вне объявленного диапазона",
+        )
+    ]
 
 
 #: Плавающая метка исполнителя: площадка сама решает, какая ОС под ней.
@@ -344,11 +432,22 @@ def внешние(root: Path) -> tuple[list[Связь], str]:
     связи = []
     for метка in метки:
         if ПЛАВАЕТ_RE.search(метка):
-            связи.append(Связь("external", "runner", метка, метка, None, f"{ФАКТЫ}:python.os",
-                               "behind", "плавающая метка: ОС сменится без изменения в дереве"))
+            связи.append(
+                Связь(
+                    "external",
+                    "runner",
+                    метка,
+                    метка,
+                    None,
+                    f"{ФАКТЫ}:python.os",
+                    "behind",
+                    "плавающая метка: ОС сменится без изменения в дереве",
+                )
+            )
         else:
-            связи.append(Связь("external", "runner", метка, метка, метка,
-                               f"{ФАКТЫ}:python.os", "ok"))
+            связи.append(
+                Связь("external", "runner", метка, метка, метка, f"{ФАКТЫ}:python.os", "ok")
+            )
     return связи, ""
 
 
@@ -357,17 +456,35 @@ def пары(root: Path, сводка: dict, манифест: dict | None) -> l
     опубликовано = издатели(сводка)
     связи = []
     for t in (манифест or {}).get("takes", []):
-        if not isinstance(t, dict) or not all(isinstance(t.get(k), str)
-                                              for k in ("from", "contract", "where", "field")):
+        if not isinstance(t, dict) or not all(
+            isinstance(t.get(k), str) for k in ("from", "contract", "where", "field")
+        ):
             # Неполная запись — данные, а не падение (обзор #807).
-            связи.append(Связь("pairs", str((t or {}).get("from", "?")) if isinstance(t, dict)
-                               else "?", "takes", None, None, str(family.MANIFEST),
-                               "unknown", "запись takes неполна: нужны from, contract, where, field"))
+            связи.append(
+                Связь(
+                    "pairs",
+                    str((t or {}).get("from", "?")) if isinstance(t, dict) else "?",
+                    "takes",
+                    None,
+                    None,
+                    str(family.MANIFEST),
+                    "unknown",
+                    "запись takes неполна: нужны from, contract, where, field",
+                )
+            )
             continue
         файл = _json(root / t["where"]) or {}
         latest = (опубликовано.get(t["from"].lower()) or {}).get("gives", {}).get(t["contract"])
-        связи.append(сверить("pairs", t["from"], t["contract"], файл.get(t["field"]),
-                             latest, f"{t['where']}:{t['field']}"))
+        связи.append(
+            сверить(
+                "pairs",
+                t["from"],
+                t["contract"],
+                файл.get(t["field"]),
+                latest,
+                f"{t['where']}:{t['field']}",
+            )
+        )
     return связи
 
 
@@ -383,22 +500,59 @@ def отдаю(root: Path, сводка: dict, свой: str, манифест: 
     Что номера в манифесте верны своим файлам, держит сборщик манифеста.
     """
     if манифест is None:
-        return []                          # не издатель — сегмент серый
-    связи = [сверить("gives", свой, "release", (манифест.get("release") or {}).get("tag"),
-                     latest_tag(root), str(family.MANIFEST))]
+        return []  # не издатель — сегмент серый
+    связи = [
+        сверить(
+            "gives",
+            свой,
+            "release",
+            (манифест.get("release") or {}).get("tag"),
+            latest_tag(root),
+            str(family.MANIFEST),
+        )
+    ]
     изъян = family.изъян_формы(манифест)
-    связи.append(Связь("gives", свой, "form", манифест.get("schema"), family.FAMILY_SCHEMA,
-                       str(family.MANIFEST), "behind" if изъян else "ok", изъян or ""))
+    связи.append(
+        Связь(
+            "gives",
+            свой,
+            "form",
+            манифест.get("schema"),
+            family.FAMILY_SCHEMA,
+            str(family.MANIFEST),
+            "behind" if изъян else "ok",
+            изъян or "",
+        )
+    )
     опубликован = издатели(сводка).get(свой.lower())
     if опубликован is None:
-        связи.append(Связь("gives", свой, "published", None, "yes", "сводка семьи",
-                           "unknown", "манифеста нет в сводке семьи"))
+        связи.append(
+            Связь(
+                "gives",
+                свой,
+                "published",
+                None,
+                "yes",
+                "сводка семьи",
+                "unknown",
+                "манифеста нет в сводке семьи",
+            )
+        )
         return связи
     for контракт, номер_ in sorted(манифест.get("gives", {}).items()):
         там = опубликован.get("gives", {}).get(контракт)
-        связи.append(Связь("gives", свой, контракт, номер_, там, "сводка семьи",
-                           "ok" if там == номер_ else "unknown",
-                           "" if там == номер_ else "сводка ещё не перечитала манифест"))
+        связи.append(
+            Связь(
+                "gives",
+                свой,
+                контракт,
+                номер_,
+                там,
+                "сводка семьи",
+                "ok" if там == номер_ else "unknown",
+                "" if там == номер_ else "сводка ещё не перечитала манифест",
+            )
+        )
     return связи
 
 
@@ -423,15 +577,25 @@ def разобрать(root: Path, сводка: dict, свой: str) -> dict[st
         "external": (внешнее := внешние(root))[0],
     }
     по_сегментам["gives"] += изъяны_отказов(
-        манифест, издатели_, по_сегментам["family"] + по_сегментам["pairs"])
-    причины = {"gives": "манифеста нет — проект не издатель" if манифест is None else "",
-               "pairs": "парных связей не объявлено" if not по_сегментам["pairs"] else "",
-               "external": внешнее[1]}
-    разбор = {"schema": family.FAMILY_SCHEMA, "project": свой,
-              "segments": {с: {"state": итог(по_сегментам[с]),
-                               "why": причины.get(с, "") if not по_сегментам[с] else "",
-                               "links": [asdict(x) for x in по_сегментам[с]]}
-                           for с in СЕГМЕНТЫ}}
+        манифест, издатели_, по_сегментам["family"] + по_сегментам["pairs"]
+    )
+    причины = {
+        "gives": "манифеста нет — проект не издатель" if манифест is None else "",
+        "pairs": "парных связей не объявлено" if not по_сегментам["pairs"] else "",
+        "external": внешнее[1],
+    }
+    разбор = {
+        "schema": family.FAMILY_SCHEMA,
+        "project": свой,
+        "segments": {
+            с: {
+                "state": итог(по_сегментам[с]),
+                "why": причины.get(с, "") if not по_сегментам[с] else "",
+                "links": [asdict(x) for x in по_сегментам[с]],
+            }
+            for с in СЕГМЕНТЫ
+        },
+    }
     разбор["publishers"] = по_издателям(разбор, свой, манифест, издатели_)
     if (переход := uptake(сводка, свой, издатели_)) is not None:
         разбор["uptake"] = переход
@@ -460,8 +624,13 @@ def uptake(сводка: dict, свой: str, издатели_: dict[str, str])
     другие = [p for p in сводка.get("projects", []) if p.get("repo", "").lower() != свой.lower()]
     прочитаны = [p for p in другие if isinstance(p.get("links"), dict)]
     перешли = sorted(p["repo"] for p in прочитаны if p["links"].get(код) in ПЕРЕШЁЛ)
-    return {"code": код, "taken": len(перешли), "of": len(другие),
-            "unread": len(другие) - len(прочитаны), "by": перешли}
+    return {
+        "code": код,
+        "taken": len(перешли),
+        "of": len(другие),
+        "unread": len(другие) - len(прочитаны),
+        "by": перешли,
+    }
 
 
 def надпись(сегмент: str, данные: dict) -> str:
@@ -471,8 +640,9 @@ def надпись(сегмент: str, данные: dict) -> str:
     return f"{ПОДПИСЬ_СЕГМЕНТА[сегмент]} {ЗНАК[данные['state']]}{хвост}"
 
 
-def изъяны_отказов(манифест: dict | None, издатели_: dict[str, str],
-                   связи: list[Связь]) -> list[Связь]:
+def изъяны_отказов(
+    манифест: dict | None, издатели_: dict[str, str], связи: list[Связь]
+) -> list[Связь]:
     """Отказы `skips`, которые молча не работали бы (обзор #809): ключ вне
     списка издателей — опечатка, отказ при живой связи — противоречие."""
     out = []
@@ -481,19 +651,38 @@ def изъяны_отказов(манифест: dict | None, издатели_
     for ключ, причина in ((манифест or {}).get("skips") or {}).items():
         repo = коды.get(str(ключ).lower()) or имена.get(str(ключ).lower())
         if repo is None:
-            out.append(Связь("gives", str(ключ), "skips", str(ключ), None,
-                             str(family.MANIFEST), "behind",
-                             f"отказ от «{ключ}», а такого издателя нет: "
-                             f"{', '.join(sorted(издатели_.values()))}"))
+            out.append(
+                Связь(
+                    "gives",
+                    str(ключ),
+                    "skips",
+                    str(ключ),
+                    None,
+                    str(family.MANIFEST),
+                    "behind",
+                    f"отказ от «{ключ}», а такого издателя нет: "
+                    f"{', '.join(sorted(издатели_.values()))}",
+                )
+            )
         elif any(с.publisher.lower() == repo.lower() for с in связи):
-            out.append(Связь("gives", repo, "skips", "отказ", "связь есть",
-                             str(family.MANIFEST), "behind",
-                             f"отказ от {ключ} объявлен, а связь с ним в дереве есть"))
+            out.append(
+                Связь(
+                    "gives",
+                    repo,
+                    "skips",
+                    "отказ",
+                    "связь есть",
+                    str(family.MANIFEST),
+                    "behind",
+                    f"отказ от {ключ} объявлен, а связь с ним в дереве есть",
+                )
+            )
     return out
 
 
-def по_издателям(разбор: dict, свой: str, манифест: dict | None,
-                 издатели_: dict[str, str] | None = None) -> list[dict]:
+def по_издателям(
+    разбор: dict, свой: str, манифест: dict | None, издатели_: dict[str, str] | None = None
+) -> list[dict]:
     """Состояние связи проекта с каждым издателем семьи (решение владельца 09.10).
 
     Связи — из сегментов `family` и `pairs`. Нет ни одной — красный `—`, если
@@ -507,15 +696,26 @@ def по_издателям(разбор: dict, свой: str, манифест:
     out = []
     for repo, код in (издатели_ or ИЗДАТЕЛИ).items():
         if repo.lower() == свой.lower():
-            out.append({"code": код, "repo": repo, "state": разбор["segments"]["gives"]["state"],
-                        "why": "свой: состояние отдачи"})
+            out.append(
+                {
+                    "code": код,
+                    "repo": repo,
+                    "state": разбор["segments"]["gives"]["state"],
+                    "why": "свой: состояние отдачи",
+                }
+            )
             continue
         свои = [x for x in связи if x["publisher"].lower() == repo.lower()]
         причина = отказы.get(код.lower()) or отказы.get(repo.lower())
         if not свои:
-            out.append({"code": код, "repo": repo,
-                        "state": "skipped" if причина else "none",
-                        "why": причина or "связи с издателем нет и отказ не объявлен"})
+            out.append(
+                {
+                    "code": код,
+                    "repo": repo,
+                    "state": "skipped" if причина else "none",
+                    "why": причина or "связи с издателем нет и отказ не объявлен",
+                }
+            )
             continue
         # У МЕХАНИЗМОВ «ПОДКЛЮЧЁН» — ЭТО КОНВЕЙЕР, А НЕ ПИН (решение владельца
         # 14.10). Связь `steps` появляется только из `.pipeline.yml`; без неё
@@ -527,15 +727,19 @@ def по_издателям(разбор: dict, свой: str, манифест:
         # `✗` (обзор #839): отставший пин без конвейера остаётся красным.
         # Считаются связи `uses:` с механизмами, а не «шаги»: составное
         # действие и многоразовый прогон издателя тоже связь.
-        if код == "EPM" and состояние != "behind" and not any(
-                x["what"] == "steps" for x in свои):
+        if код == "EPM" and состояние != "behind" and not any(x["what"] == "steps" for x in свои):
             связей = sum(x["what"] == "release" for x in свои)
-            out.append({"code": код, "repo": repo, "state": "partial",
-                        "why": f"связей с механизмами {связей}, конвейер не подключён "
-                               "(.pipeline.yml нет)"})
+            out.append(
+                {
+                    "code": код,
+                    "repo": repo,
+                    "state": "partial",
+                    "why": f"связей с механизмами {связей}, конвейер не подключён "
+                    "(.pipeline.yml нет)",
+                }
+            )
             continue
-        out.append({"code": код, "repo": repo, "state": состояние,
-                    "why": отставание(свои)})
+        out.append({"code": код, "repo": repo, "state": состояние, "why": отставание(свои)})
     return out
 
 
@@ -551,8 +755,7 @@ def отставание(свои: list[dict]) -> str:
     группы: dict[tuple[str, str, str], list[str]] = {}
     for x in свои:
         if x["state"] != "ok":
-            группы.setdefault((x["what"], str(x["mine"]), str(x["latest"])),
-                              []).append(x["where"])
+            группы.setdefault((x["what"], str(x["mine"]), str(x["latest"])), []).append(x["where"])
     части = []
     for (что, было, стало), где in группы.items():
         файлы = ", ".join(sorted(set(где)))
@@ -563,11 +766,17 @@ def отставание(свои: list[dict]) -> str:
 
 def зоны(разбор: dict) -> list[list[python_badge.Часть]]:
     """Зоны семейного значка: подпись, сегменты, издатели. Их же берёт единый значок."""
-    зоны_ = [[("family", python_badge.ПОДПИСЬ, "")],
-             [(надпись(с, д), ЦВЕТ[д["state"]], д["why"] or д["state"])
-              for с, д in разбор["segments"].items()],
-             [(f"{и['code']} {ЗНАК[и['state']]}", ЦВЕТ[и["state"]], и["why"] or и["state"])
-              for и in разбор["publishers"]]]
+    зоны_ = [
+        [("family", python_badge.ПОДПИСЬ, "")],
+        [
+            (надпись(с, д), ЦВЕТ[д["state"]], д["why"] or д["state"])
+            for с, д in разбор["segments"].items()
+        ],
+        [
+            (f"{и['code']} {ЗНАК[и['state']]}", ЦВЕТ[и["state"]], и["why"] or и["state"])
+            for и in разбор["publishers"]
+        ],
+    ]
     if (п := разбор.get("uptake")) is not None:
         зоны_.append(зона_uptake(п))
     return зоны_
@@ -575,8 +784,9 @@ def зоны(разбор: dict) -> list[list[python_badge.Часть]]:
 
 def зона_uptake(п: dict) -> list[python_badge.Часть]:
     """`uptake │ 3/5`: сколько проектов семьи перешли на этого издателя."""
-    почему = (f"перешли на {п['code']}: {', '.join(п['by']) or 'никто'}"
-              + (f"; не прочитано у {п['unread']}" if п["unread"] else ""))
+    почему = f"перешли на {п['code']}: {', '.join(п['by']) or 'никто'}" + (
+        f"; не прочитано у {п['unread']}" if п["unread"] else ""
+    )
     цвет = ЦВЕТ["unknown"] if п["unread"] == п["of"] else python_badge.СИНИЙ
     return [("uptake", python_badge.ПОДПИСЬ, ""), (f"{п['taken']}/{п['of']}", цвет, почему)]
 
@@ -606,9 +816,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--family", default=СВОДКА, help="адрес или путь сводки семьи")
     ap.add_argument("--repo", default=family.своё_имя(), help="владелец/имя проекта")
-    ap.add_argument("--out", type=Path, default=None,
-                    help=f"куда положить SVG (по умолчанию {SVG} под --root); "
-                         f"разбор {РАЗБОР.name} ложится рядом с ним")
+    ap.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help=f"куда положить SVG (по умолчанию {SVG} под --root); "
+        f"разбор {РАЗБОР.name} ложится рядом с ним",
+    )
     args = ap.parse_args(argv)
     сводка, беда = прочесть_сводку(args.family)
     if сводка is None:
@@ -620,14 +834,15 @@ def main(argv: list[str] | None = None) -> int:
     svg = args.out or args.root / SVG
     family.записать(svg.with_name(РАЗБОР.name), разбор)
     svg.write_text(значок(разбор), encoding="utf-8")
-    print("издатели: " + " ".join(f"{и['code']} {ЗНАК[и['state']]}"
-                                  for и in разбор["publishers"]))
+    print("издатели: " + " ".join(f"{и['code']} {ЗНАК[и['state']]}" for и in разбор["publishers"]))
     for с, д in разбор["segments"].items():
         print(f"{надпись(с, д)}" + (f" — {д['why']}" if д["why"] else ""))
         for x in д["links"]:
             if x["state"] != "ok":
-                print(f"  · {x['publisher']} {x['what']}: у себя {x['mine']}, "
-                      f"свежее {x['latest']} ({x['where']}) {x['why']}".rstrip())
+                print(
+                    f"  · {x['publisher']} {x['what']}: у себя {x['mine']}, "
+                    f"свежее {x['latest']} ({x['where']}) {x['why']}".rstrip()
+                )
     return 0
 
 

@@ -10,7 +10,6 @@
 отвечает площадка на `--jq` из самого скрипта (170).
 """
 
-
 import json
 import sys
 from pathlib import Path
@@ -32,10 +31,12 @@ def подделка(комментарии=(), задачи=(), слитые=()
     отдаются по элементу — строкой JSON на элемент; третий — намеренный
     предел, одним массивом.
     """
+
     def run(*args):
         адрес = next((a for a in args if a.startswith("repos/")), "")
         пишущий = "--method" in args or any(
-            a.startswith("title=") or a.startswith("body=") for a in args)
+            a.startswith("title=") or a.startswith("body=") for a in args
+        )
         if пишущий:
             if пишет is not None:
                 пишет.append(args)
@@ -49,6 +50,7 @@ def подделка(комментарии=(), задачи=(), слитые=()
         if "/pulls?" in адрес:
             return 0, json.dumps(list(слитые), ensure_ascii=False)
         return 0, "[]"
+
     return run
 
 
@@ -71,6 +73,7 @@ def тело_записанное(писало: list) -> str:
 
 # ── вердикт: есть, нет, чужой ──────────────────────────────────────────────
 
+
 def test_verdikta_net_eto_tretiy_ishod(monkeypatch, capsys):
     """«Ревью не отработало» и «находок нет» — разные ответы (027, 039)."""
     monkeypatch.setattr(rf.ghcli, "run", подделка([отзыв("Обычный разбор.")]))
@@ -80,8 +83,7 @@ def test_verdikta_net_eto_tretiy_ishod(monkeypatch, capsys):
 
 
 def test_nol_nahodok_adresata_ne_trebuet(monkeypatch, capsys):
-    monkeypatch.setattr(rf.ghcli, "run",
-                        подделка([отзыв("Разбор.\n\nВЕРДИКТ: находок 0")]))
+    monkeypatch.setattr(rf.ghcli, "run", подделка([отзыв("Разбор.\n\nВЕРДИКТ: находок 0")]))
 
     assert rf.main(["--repo", "o/r", "--pr", "1"]) == 0
     assert "находок нет" in capsys.readouterr().out
@@ -90,8 +92,9 @@ def test_nol_nahodok_adresata_ne_trebuet(monkeypatch, capsys):
 def test_verdikt_iz_chuzhogo_kommentariya_ne_schitaetsya(monkeypatch):
     """Текст изменения пишет тот, кого проверяют, и вписать «ВЕРДИКТ: находок 0»
     он может свободно. Считается только комментарий ревьюера (085)."""
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        [отзыв("ВЕРДИКТ: находок 0", кто="кто-то-другой")]))
+    monkeypatch.setattr(
+        rf.ghcli, "run", подделка([отзыв("ВЕРДИКТ: находок 0", кто="кто-то-другой")])
+    )
 
     assert rf.main(["--repo", "o/r", "--pr", "1"]) == 2
 
@@ -107,13 +110,17 @@ def test_chislo_bez_zametok_eto_otkaz(monkeypatch, capsys):
 
 # ── запись: в задачу едет сама заметка, а не счётчик ───────────────────────
 
+
 def test_zametka_zapisyvaetsya_tekstom_a_ne_chislom(monkeypatch):
     """РОВНО ПРЕДМЕТ, ЗАМЕР 8 сентября: изменение #392 слилось на 2,3 минуты
     раньше вердикта, и две верные находки не увидел никто. «Находок 2» этого не
     чинит — чтобы понять, что делать, нужен текст заметки."""
     писало: list = []
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        [отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 1")], пишет=писало))
+    monkeypatch.setattr(
+        rf.ghcli,
+        "run",
+        подделка([отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 1")], пишет=писало),
+    )
 
     assert rf.main(["--repo", "o/r", "--pr", "392", "--apply"]) == 1
     тело = тело_записанное(писало)
@@ -123,8 +130,11 @@ def test_zametka_zapisyvaetsya_tekstom_a_ne_chislom(monkeypatch):
 def test_bez_apply_zadachu_ne_trogayut(monkeypatch, capsys):
     """Умолчание сухое: скрипт пишет в трекер."""
     писало: list = []
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        [отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 1")], пишет=писало))
+    monkeypatch.setattr(
+        rf.ghcli,
+        "run",
+        подделка([отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 1")], пишет=писало),
+    )
 
     assert rf.main(["--repo", "o/r", "--pr", "392"]) == 1
     assert писало == []
@@ -136,10 +146,19 @@ def test_vtoraya_zametka_dopisyvaetsya_v_tu_zhe_zadachu(monkeypatch):
     бы трекер и приучила листать его мимо (051)."""
     писало: list = []
     было = f"{rf.МАРКЕР}\n\n## Не разобрано: 1\n\n- `{ОТП}` · #392 — {ЗАМЕТКА}\n"
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        [отзыв("НАХОДКА: исключительное утверждение не выдерживает грепа\n\n"
-               "ВЕРДИКТ: находок 1")],
-        задачи=[{"number": 500, "body": было}], пишет=писало))
+    monkeypatch.setattr(
+        rf.ghcli,
+        "run",
+        подделка(
+            [
+                отзыв(
+                    "НАХОДКА: исключительное утверждение не выдерживает грепа\n\nВЕРДИКТ: находок 1"
+                )
+            ],
+            задачи=[{"number": 500, "body": было}],
+            пишет=писало,
+        ),
+    )
 
     assert rf.main(["--repo", "o/r", "--pr", "394", "--apply"]) == 1
     тело = тело_записанное(писало)
@@ -150,23 +169,31 @@ def test_vtoraya_zametka_dopisyvaetsya_v_tu_zhe_zadachu(monkeypatch):
 def test_posledniy_verdikt_perekryvaet_promezhutochnyy(monkeypatch):
     """Действие обновляет свой комментарий по ходу: промежуточное «находок 0»
     до разбора не должно перекрывать итог."""
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        [отзыв("идёт разбор\n\nВЕРДИКТ: находок 0"),
-         отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 1")]))
+    monkeypatch.setattr(
+        rf.ghcli,
+        "run",
+        подделка(
+            [
+                отзыв("идёт разбор\n\nВЕРДИКТ: находок 0"),
+                отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 1"),
+            ]
+        ),
+    )
 
     assert rf.main(["--repo", "o/r", "--pr", "1"]) == 1
 
 
 def test_treker_ne_prinyal_eto_tretiy_ishod(monkeypatch, capsys):
     """Отказ записи — не «находки есть», а «механизм не отработал» (039)."""
+
     def run(*args):
         адрес = next((a for a in args if a.startswith("repos/")), "")
         if "/comments" in адрес:
-            return 0, построчно(
-                [отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 1")])
+            return 0, построчно([отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 1")])
         if "/issues?" in адрес:
             return 0, ""
         return 1, "403 Forbidden"
+
     monkeypatch.setattr(rf.ghcli, "run", run)
 
     assert rf.main(["--repo", "o/r", "--pr", "1", "--apply"]) == 2
@@ -175,16 +202,25 @@ def test_treker_ne_prinyal_eto_tretiy_ishod(monkeypatch, capsys):
 
 # ── снятие: механизмом, а не жестом ────────────────────────────────────────
 
+
 def test_razobrannoe_snimaetsya_slovom_v_tele_izmeneniya(monkeypatch):
     """ВТОРАЯ ПОЛОВИНА МЕХАНИЗМА. Автор починки называет отпечаток в теле
     СВОЕГО изменения — тем же приёмом, каким площадка закрывает задачу по
     `Closes`. Снятие едет вместе с работой, а не остаётся жестом (002)."""
     писало: list = []
-    было = (f"{rf.МАРКЕР}\n\n## Не разобрано: 2\n\n"
-            f"- `{ОТП}` · #392 — {ЗАМЕТКА}\n- `abc1234` · #390 — другая заметка\n")
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        задачи=[{"number": 500, "body": было}],
-        слитые=[f"Починка.\n\nРазобрано: {ОТП}\n"], пишет=писало))
+    было = (
+        f"{rf.МАРКЕР}\n\n## Не разобрано: 2\n\n"
+        f"- `{ОТП}` · #392 — {ЗАМЕТКА}\n- `abc1234` · #390 — другая заметка\n"
+    )
+    monkeypatch.setattr(
+        rf.ghcli,
+        "run",
+        подделка(
+            задачи=[{"number": 500, "body": было}],
+            слитые=[f"Починка.\n\nРазобрано: {ОТП}\n"],
+            пишет=писало,
+        ),
+    )
 
     assert rf.main(["--repo", "o/r", "--sweep", "--apply"]) == 1
     тело = тело_записанное(писало)
@@ -195,9 +231,13 @@ def test_razobrannoe_snimaetsya_slovom_v_tele_izmeneniya(monkeypatch):
 def test_snyatie_bez_apply_zadachu_ne_trogaet(monkeypatch, capsys):
     писало: list = []
     было = f"{rf.МАРКЕР}\n\n- `{ОТП}` · #392 — {ЗАМЕТКА}\n"
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        задачи=[{"number": 500, "body": было}],
-        слитые=[f"Разобрано: {ОТП}"], пишет=писало))
+    monkeypatch.setattr(
+        rf.ghcli,
+        "run",
+        подделка(
+            задачи=[{"number": 500, "body": было}], слитые=[f"Разобрано: {ОТП}"], пишет=писало
+        ),
+    )
 
     assert rf.main(["--repo", "o/r", "--sweep"]) == 1
     assert писало == []
@@ -209,9 +249,13 @@ def test_pustoy_spisok_eto_chisto(monkeypatch):
     что механизм не знает, кончилась ли работа или просто опустел список."""
     писало: list = []
     было = f"{rf.МАРКЕР}\n\n- `{ОТП}` · #392 — {ЗАМЕТКА}\n"
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        задачи=[{"number": 500, "body": было}],
-        слитые=[f"Разобрано: {ОТП}"], пишет=писало))
+    monkeypatch.setattr(
+        rf.ghcli,
+        "run",
+        подделка(
+            задачи=[{"number": 500, "body": было}], слитые=[f"Разобрано: {ОТП}"], пишет=писало
+        ),
+    )
 
     assert rf.main(["--repo", "o/r", "--sweep", "--apply"]) == 0
     assert "пусто" in тело_записанное(писало)
@@ -287,8 +331,7 @@ def test_обратные_кавычки_остаются_в_заголовке(
 
 def test_вердикт_в_жирном_читается():
     """Число вердикта — тем же приёмом: обрамление не прячет ответа."""
-    for тело in ("ВЕРДИКТ: находок 0", "**ВЕРДИКТ: находок 0**",
-                 "> ВЕРДИКТ: находок 0"):
+    for тело in ("ВЕРДИКТ: находок 0", "**ВЕРДИКТ: находок 0**", "> ВЕРДИКТ: находок 0"):
         assert rf.verdict_of(записи(тело)) == 0, тело
 
 
@@ -306,10 +349,10 @@ def test_содержательные_звёздочки_остаются():
     «называется id_» — «называется id». Тот довод, которым здесь защищены
     обратные кавычки, до них не дотянулся.
     """
-    assert rf.findings_of(записи("НАХОДКА: **kwargs игнорируется в обёртке")) \
-        == ["**kwargs игнорируется в обёртке"]
-    assert rf.findings_of(записи("НАХОДКА: аргумент называется id_")) \
-        == ["аргумент называется id_"]
+    assert rf.findings_of(записи("НАХОДКА: **kwargs игнорируется в обёртке")) == [
+        "**kwargs игнорируется в обёртке"
+    ]
+    assert rf.findings_of(записи("НАХОДКА: аргумент называется id_")) == ["аргумент называется id_"]
 
 
 def test_парная_обёртка_вокруг_содержательных_знаков_снимается():
@@ -320,8 +363,9 @@ def test_парная_обёртка_вокруг_содержательных_�
 
 def test_непарный_знак_обёрткой_не_считается():
     """Вторая сторона (140): хвост без пары — текст, а не оформление."""
-    assert rf.findings_of(записи("НАХОДКА: строка кончается звёздочкой *")) \
-        == ["строка кончается звёздочкой *"]
+    assert rf.findings_of(записи("НАХОДКА: строка кончается звёздочкой *")) == [
+        "строка кончается звёздочкой *"
+    ]
 
 
 def test_буллет_звёздочкой_распознаётся():
@@ -331,8 +375,7 @@ def test_буллет_звёздочкой_распознаётся():
     разметки наравне с `-`, перестала распознаваться вовсе. Отличает буллет от
     жирного ровно одно: за буллетом идёт пробел.
     """
-    assert rf.findings_of(записи("* НАХОДКА: буллет звёздочкой")) \
-        == ["буллет звёздочкой"]
+    assert rf.findings_of(записи("* НАХОДКА: буллет звёздочкой")) == ["буллет звёздочкой"]
 
 
 def test_буллет_и_жирное_вместе_не_калечат_строку():
@@ -342,18 +385,20 @@ def test_буллет_и_жирное_вместе_не_калечат_стро�
     `* **НАХОДКА: текст**` давала `**НАХОДКА: текст*` с висящим знаком — та
     самая порча содержимого, ради устранения которой правка и делалась.
     """
-    assert rf.findings_of(записи("* **НАХОДКА: буллет и жирное**")) \
-        == ["буллет и жирное"]
-    assert rf.findings_of(записи("> * **НАХОДКА: цитата, буллет, жирное**")) \
-        == ["цитата, буллет, жирное"]
+    assert rf.findings_of(записи("* **НАХОДКА: буллет и жирное**")) == ["буллет и жирное"]
+    assert rf.findings_of(записи("> * **НАХОДКА: цитата, буллет, жирное**")) == [
+        "цитата, буллет, жирное"
+    ]
 
 
 def test_звёздочка_без_пробела_буллетом_не_считается():
     """Вторая сторона (140): `**` — это жирное, а не два буллета подряд."""
-    assert rf.findings_of(записи("**НАХОДКА: жирное остаётся жирным**")) \
-        == ["жирное остаётся жирным"]
-    assert rf.findings_of(записи("НАХОДКА: **kwargs в начале заголовка")) \
-        == ["**kwargs в начале заголовка"]
+    assert rf.findings_of(записи("**НАХОДКА: жирное остаётся жирным**")) == [
+        "жирное остаётся жирным"
+    ]
+    assert rf.findings_of(записи("НАХОДКА: **kwargs в начале заголовка")) == [
+        "**kwargs в начале заголовка"
+    ]
 
 
 # ── вердикт сверяется со строками своего захода (083, 142) ─────────────────
@@ -364,25 +409,27 @@ def test_звёздочка_без_пробела_буллетом_не_счит
 # списком, объявляется». Сверка — со строками ТОГО ЖЕ захода: на повторном
 # ревью находки прежних заходов в ленте остаются законно.
 
+
 def test_nol_pri_stroke_nahodki_ne_teryaet_eyo(monkeypatch, capsys):
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        [отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 0")]))
+    monkeypatch.setattr(
+        rf.ghcli, "run", подделка([отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 0")])
+    )
     assert rf.main(["--repo", "o/r", "--pr", "1"]) == 1
     out = capsys.readouterr().out
     assert "::warning::вердикт называет 0 находок" in out and ЗАМЕТКА in out
 
 
 def test_chislo_ne_sovpalo_so_strokami_obyavleno(monkeypatch, capsys):
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        [отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 3")]))
+    monkeypatch.setattr(
+        rf.ghcli, "run", подделка([отзыв(f"НАХОДКА: {ЗАМЕТКА}\n\nВЕРДИКТ: находок 3")])
+    )
     assert rf.main(["--repo", "o/r", "--pr", "1"]) == 1
     assert "называет 3 находок, а строк «НАХОДКА: …» в том же заходе 1" in capsys.readouterr().out
 
 
 def test_nahodka_net_nahodkoy_ne_schitaetsya(monkeypatch, capsys):
     """Живые #515 и #547: «НАХОДКА: нет» рядом с «находок 0» — это чисто."""
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        [отзыв("НАХОДКА: нет\n\nВЕРДИКТ: находок 0")]))
+    monkeypatch.setattr(rf.ghcli, "run", подделка([отзыв("НАХОДКА: нет\n\nВЕРДИКТ: находок 0")]))
     assert rf.main(["--repo", "o/r", "--pr", "1"]) == 0
     assert "::warning::" not in capsys.readouterr().out
 
@@ -390,9 +437,16 @@ def test_nahodka_net_nahodkoy_ne_schitaetsya(monkeypatch, capsys):
 def test_povtornoe_revyu_ne_krasneet_na_proshlyh_nahodkah(monkeypatch, capsys):
     """Два захода: находка первого остаётся в ленте, вердикт второго сверен со
     своими строками — расхождения нет, предупреждения нет."""
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        [отзыв("НАХОДКА: первая\n\nВЕРДИКТ: находок 1"),
-         отзыв("НАХОДКА: вторая\n\nВЕРДИКТ: находок 1")]))
+    monkeypatch.setattr(
+        rf.ghcli,
+        "run",
+        подделка(
+            [
+                отзыв("НАХОДКА: первая\n\nВЕРДИКТ: находок 1"),
+                отзыв("НАХОДКА: вторая\n\nВЕРДИКТ: находок 1"),
+            ]
+        ),
+    )
     assert rf.main(["--repo", "o/r", "--pr", "1"]) == 1
     assert "::warning::" not in capsys.readouterr().out
 
@@ -400,9 +454,11 @@ def test_povtornoe_revyu_ne_krasneet_na_proshlyh_nahodkah(monkeypatch, capsys):
 def test_chislo_bez_strok_svoego_zahoda_eto_otkaz(monkeypatch, capsys):
     """Находка обзора на #584: последний заход назвал число и не дал строк, а
     строки прежнего захода подставились бы за него молча. Судится свой заход."""
-    monkeypatch.setattr(rf.ghcli, "run", подделка(
-        [отзыв("НАХОДКА: старая\n\nВЕРДИКТ: находок 1"),
-         отзыв("ВЕРДИКТ: находок 2")]))
+    monkeypatch.setattr(
+        rf.ghcli,
+        "run",
+        подделка([отзыв("НАХОДКА: старая\n\nВЕРДИКТ: находок 1"), отзыв("ВЕРДИКТ: находок 2")]),
+    )
     assert rf.main(["--repo", "o/r", "--pr", "1"]) == 2
     captured = capsys.readouterr()
     assert "в том же заходе ревьюера нет" in captured.err

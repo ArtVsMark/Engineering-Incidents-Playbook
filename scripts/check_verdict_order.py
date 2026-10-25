@@ -37,7 +37,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import ast
 import sys
@@ -57,8 +56,11 @@ def accumulators(fn: ast.AST) -> set[str]:
     for node in ast.walk(fn):
         if isinstance(node, ast.Assign) and isinstance(node.value, ast.List):
             out |= {t.id for t in node.targets if isinstance(t, ast.Name)}
-        elif (isinstance(node, ast.AnnAssign) and isinstance(node.value, ast.List)
-              and isinstance(node.target, ast.Name)):
+        elif (
+            isinstance(node, ast.AnnAssign)
+            and isinstance(node.value, ast.List)
+            and isinstance(node.target, ast.Name)
+        ):
             out.add(node.target.id)
     return out
 
@@ -87,10 +89,13 @@ def early(tree: ast.AST, where: str) -> list[str]:
             if not isinstance(loop, (ast.For, ast.While)):
                 continue
             копит = any(
-                isinstance(c, ast.Call) and isinstance(c.func, ast.Attribute)
+                isinstance(c, ast.Call)
+                and isinstance(c.func, ast.Attribute)
                 and c.func.attr in ("append", "extend")
-                and isinstance(c.func.value, ast.Name) and c.func.value.id in acc
-                for c in ast.walk(loop))
+                and isinstance(c.func.value, ast.Name)
+                and c.func.value.id in acc
+                for c in ast.walk(loop)
+            )
             if not копит:
                 continue
             for ret in ast.walk(loop):
@@ -101,21 +106,26 @@ def early(tree: ast.AST, where: str) -> list[str]:
                     out.append(
                         f"{where}::{fn.name}, строка {ret.lineno}: вердикт "
                         "читает накопитель ВНУТРИ цикла — всё, что идёт "
-                        "следом, останется непроверенным молча")
+                        "следом, останется непроверенным молча"
+                    )
     return out
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--root", type=Path, default=ROOT,
-                    help="корень каталога; по умолчанию сам этот репозиторий")
+    ap.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = ap.parse_args(argv)
 
     files = sorted(p for d in WHERE for p in (args.root / d).glob("*.py"))
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not files:
-        print(f"проверка не отработала: в {', '.join(WHERE)} нет ни одного "
-              "файла — просматривать нечего (075)", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {', '.join(WHERE)} нет ни одного "
+            "файла — просматривать нечего (075)",
+            file=sys.stderr,
+        )
         return 2
 
     problems: list[str] = []
@@ -123,8 +133,10 @@ def main(argv: list[str] | None = None) -> int:
         try:
             tree = ast.parse(path.read_text(encoding="utf-8"))
         except (OSError, SyntaxError) as exc:
-            print(f"проверка не отработала: {path.relative_to(args.root)} не "
-                  f"разобран — {exc}", file=sys.stderr)
+            print(
+                f"проверка не отработала: {path.relative_to(args.root)} не разобран — {exc}",
+                file=sys.stderr,
+            )
             return 2
         problems += early(tree, str(path.relative_to(args.root)))
 
@@ -133,14 +145,15 @@ def main(argv: list[str] | None = None) -> int:
         print("вердикт выносится посреди перебора:", file=sys.stderr)
         for p in problems:
             print(f"  • {p}", file=sys.stderr)
-        print("\n  Список находок читают ПОСЛЕ последнего случая (правило 159).\n"
-              "  Ранний выход законен только третьим исходом — «проверка не\n"
-              "  отработала», и он возвращает 2, а не накопитель.",
-              file=sys.stderr)
+        print(
+            "\n  Список находок читают ПОСЛЕ последнего случая (правило 159).\n"
+            "  Ранний выход законен только третьим исходом — «проверка не\n"
+            "  отработала», и он возвращает 2, а не накопитель.",
+            file=sys.stderr,
+        )
         return 1
 
-    print(f"вердикты на месте: просмотрено файлов {len(files)}, "
-          "ранних вердиктов нет")
+    print(f"вердикты на месте: просмотрено файлов {len(files)}, ранних вердиктов нет")
     return 0
 
 

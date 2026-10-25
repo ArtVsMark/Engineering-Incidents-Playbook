@@ -16,7 +16,7 @@ GraphQL уронило дежурного и заморозило очередь
 ЧТО СЧИТАЕТСЯ ПРЕДМЕТОМ. Вызов `gh` с подкомандой, которую gh исполняет через
 GraphQL. Список семейств ниже — из документации gh и подтверждён живыми
 отказами площадки, которые называют транспорт сами: «GraphQL: API rate limit
-already exceeded» на `gh pr merge`, «GraphQL: Resource not accessible … 
+already exceeded» на `gh pr merge`, «GraphQL: Resource not accessible …
 (addComment)» на `gh issue comment`.
 
 ЧТО НАХОДКОЙ НЕ ЯВЛЯЕТСЯ (правило 051 — гейт отвергает свой предмет):
@@ -46,7 +46,6 @@ already exceeded» на `gh pr merge`, «GraphQL: Resource not accessible …
   1 — есть вызов через GraphQL без имени в списке исключений;
   2 — проверка не отработала (файл списка не прочитан, дерево не разобрано).
 """
-
 
 import argparse
 import ast
@@ -97,8 +96,7 @@ def в_питоне(текст: str, файл: str) -> list[tuple[str, str]]:
         if not isinstance(узел, ast.Call) or not узел.args:
             continue
         имя = узел.func
-        зовут = (getattr(имя, "id", None) == "gh"
-                 or getattr(имя, "attr", None) == "run")
+        зовут = getattr(имя, "id", None) == "gh" or getattr(имя, "attr", None) == "run"
         if not зовут:
             continue
         первый = узел.args[0]
@@ -127,14 +125,12 @@ def предметы(root: Path) -> list[tuple[str, str]]:
     """Все вызовы через GraphQL в дереве, с адресом каждого."""
     найдено: list[tuple[str, str]] = []
     for путь in sorted((root / "scripts").glob("*.py")):
-        найдено += в_питоне(путь.read_text(encoding="utf-8"),
-                            str(путь.relative_to(root)))
+        найдено += в_питоне(путь.read_text(encoding="utf-8"), str(путь.relative_to(root)))
     места = sorted((root / ".github" / "workflows").glob("*.yml"))
     if (root / "action.yml").exists():
         места.append(root / "action.yml")
     for путь in места:
-        найдено += в_оболочке(путь.read_text(encoding="utf-8"),
-                              str(путь.relative_to(root)))
+        найдено += в_оболочке(путь.read_text(encoding="utf-8"), str(путь.relative_to(root)))
     return найдено
 
 
@@ -143,7 +139,7 @@ def selftest() -> int:
         ('gh("issue", "list")', 1, "вызов задачи через дверь"),
         ('ghcli.run("pr", "list")', 1, "вызов изменения через дверь"),
         ('gh("api", "repos/{owner}/{repo}/issues")', 0, "REST находкой не является"),
-        ('# gh issue list — так было раньше', 0, "упоминание в комментарии"),
+        ("# gh issue list — так было раньше", 0, "упоминание в комментарии"),
         ('"""Раньше звали gh issue view."""', 0, "упоминание в документации"),
         ('gh("run", "list")', 0, "run идёт по REST"),
     ]
@@ -155,7 +151,7 @@ def selftest() -> int:
             плохо.append(f"{что}: ждали {ждём}, вышло {вышло}")
     оболочка = [
         ('            out=$(gh pr merge "$PR" --auto)', 1, "вызов в оболочке"),
-        ('          # gh pr merge умеет только GraphQL', 0, "комментарий в оболочке"),
+        ("          # gh pr merge умеет только GraphQL", 0, "комментарий в оболочке"),
         ('            gh api "repos/$R/pulls/$PR"', 0, "REST в оболочке"),
     ]
     for текст, ждём, что in оболочка:
@@ -174,8 +170,9 @@ def selftest() -> int:
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--root", type=Path, default=ROOT)
-    p.add_argument("--selftest", action="store_true",
-                   help="прогнать гейт по случаям, а не по дереву (140)")
+    p.add_argument(
+        "--selftest", action="store_true", help="прогнать гейт по случаям, а не по дереву (140)"
+    )
     args = p.parse_args(argv)
     if args.selftest:
         return selftest()
@@ -206,18 +203,25 @@ def main(argv: list[str] | None = None) -> int:
             continue
         находки.append((где, что))
     if находки:
-        print("транспорт разошёлся с объявленным — вызовы идут через GraphQL, "
-              "а правило 001 требует REST:", file=sys.stderr)
+        print(
+            "транспорт разошёлся с объявленным — вызовы идут через GraphQL, "
+            "а правило 001 требует REST:",
+            file=sys.stderr,
+        )
         for где, что in находки:
             print(f"  • {где}: {что} — {ЧЕРЕЗ_GRAPHQL[что.split()[1]]}", file=sys.stderr)
-        print("  Одна операция GraphQL стоит ~300 points из часовых 5000, REST — 1.\n"
-              "  Либо переведите на `gh api`, либо назовите вызов поимённо в "
-              f"{СПИСОК.relative_to(args.root)} с причиной, как требует само правило.",
-              file=sys.stderr)
+        print(
+            "  Одна операция GraphQL стоит ~300 points из часовых 5000, REST — 1.\n"
+            "  Либо переведите на `gh api`, либо назовите вызов поимённо в "
+            f"{СПИСОК.relative_to(args.root)} с причиной, как требует само правило.",
+            file=sys.stderr,
+        )
         return 1
 
-    print(f"транспорт совпадает с объявленным: вызовов через GraphQL "
-          f"{len(названы)}, и каждый назван поимённо")
+    print(
+        f"транспорт совпадает с объявленным: вызовов через GraphQL "
+        f"{len(названы)}, и каждый назван поимённо"
+    )
     return 0
 
 

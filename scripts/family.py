@@ -83,8 +83,11 @@ REGISTRY = Path(".rules") / "consumers.json"
 #: Ключи манифеста и их тип. Форма проверяется этим, а не схемой JSON:
 #: зависимостей набора каталог не заводит (тесты — только от объявленного).
 ФОРМА: dict[str, type | tuple[type, ...]] = {
-    "schema": str, "project": str, "release": (dict, type(None)),
-    "gives": dict, "takes": list,
+    "schema": str,
+    "project": str,
+    "release": (dict, type(None)),
+    "gives": dict,
+    "takes": list,
 }
 
 
@@ -128,7 +131,8 @@ def изъян_формы(doc: Any) -> str | None:
             return f"«{ключ}» не того типа"
     отказы = doc.get("skips", {})
     if not isinstance(отказы, dict) or not all(
-            isinstance(k, str) and isinstance(v, str) and v.strip() for k, v in отказы.items()):
+        isinstance(k, str) and isinstance(v, str) and v.strip() for k, v in отказы.items()
+    ):
         return "«skips» — не объект «издатель: причина» с непустыми причинами"
     # не проза: номер формата «мажор.минор», сверяется мажор.
     if doc["schema"].split(".")[0] != FAMILY_SCHEMA.split(".")[0]:
@@ -144,10 +148,16 @@ def запись(repo: str, doc: Any, err: str | None) -> dict[str, Any]:
     if (изъян := изъян_формы(doc)) is not None:
         return {"repo": repo, "state": "unreadable", "why": изъян}
     if doc["project"] != repo:
-        return {"repo": repo, "state": "unreadable",
-                "why": f"манифест называет себя {doc['project']}"}
-    return {"repo": repo, "state": "published",
-            **{k: doc[k] for k in ("schema", "release", "gives", "takes")}}
+        return {
+            "repo": repo,
+            "state": "unreadable",
+            "why": f"манифест называет себя {doc['project']}",
+        }
+    return {
+        "repo": repo,
+        "state": "published",
+        **{k: doc[k] for k in ("schema", "release", "gives", "takes")},
+    }
 
 
 def связи(разбор: Any) -> dict[str, str] | None:
@@ -158,9 +168,12 @@ def связи(разбор: Any) -> dict[str, str] | None:
     return {к: v for к, v in out.items() if isinstance(к, str) and isinstance(v, str)}
 
 
-def сводка(реестр: list[dict], свой: dict[str, Any],
-           прочесть: Callable[[str], tuple[Any, str | None]] | None = None,
-           свой_разбор: Any = None) -> dict[str, Any]:
+def сводка(
+    реестр: list[dict],
+    свой: dict[str, Any],
+    прочесть: Callable[[str], tuple[Any, str | None]] | None = None,
+    свой_разбор: Any = None,
+) -> dict[str, Any]:
     """Манифесты всех проектов реестра со связями; свой берётся без сети."""
     прочесть = прочесть or fetch
     проекты = []
@@ -184,25 +197,22 @@ def сводка(реестр: list[dict], свой: dict[str, Any],
         if строка["state"] == "published" and (с := связи(разбор)) is not None:
             строка["links"] = с
         проекты.append(строка)
-    return {"schema": FAMILY_SCHEMA,
-            "generated": dt.date.today().isoformat(),
-            "projects": проекты}
+    return {"schema": FAMILY_SCHEMA, "generated": dt.date.today().isoformat(), "projects": проекты}
 
 
 def записать(путь: Path, doc: dict[str, Any]) -> None:
     путь.parent.mkdir(parents=True, exist_ok=True)
-    путь.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n",
-                    encoding="utf-8")
+    путь.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--root", type=Path, default=ROOT)
     что = ap.add_mutually_exclusive_group(required=True)
-    что.add_argument("--manifest", action="store_true",
-                     help=f"записать свой манифест в {MANIFEST}")
-    что.add_argument("--summary", action="store_true",
-                     help=f"собрать манифесты реестра в {SUMMARY}")
+    что.add_argument("--manifest", action="store_true", help=f"записать свой манифест в {MANIFEST}")
+    что.add_argument(
+        "--summary", action="store_true", help=f"собрать манифесты реестра в {SUMMARY}"
+    )
     args = ap.parse_args(argv)
 
     # Пустого `gives` не бывает: свой номер выгрузки `contracts_now` берёт из
@@ -215,19 +225,21 @@ def main(argv: list[str] | None = None) -> int:
     try:
         реестр = json.loads((args.root / REGISTRY).read_text(encoding="utf-8"))
     except (OSError, ValueError) as e:
-        print(f"сводка не собрана: реестр {args.root / REGISTRY} — {e}",
-              file=sys.stderr)
+        print(f"сводка не собрана: реестр {args.root / REGISTRY} — {e}", file=sys.stderr)
         return 2
     try:
         свой_разбор = json.loads((args.root / РАЗБОР).read_text(encoding="utf-8"))
     except OSError, ValueError:
-        свой_разбор = None            # первый прогон: разбор ещё не нарисован
+        свой_разбор = None  # первый прогон: разбор ещё не нарисован
     doc = сводка(реестр["consumers"], свой, свой_разбор=свой_разбор)
     записать(args.root / SUMMARY, doc)
-    счёт = {s: sum(p["state"] == s for p in doc["projects"])
-            for s in ("published", "absent", "unreadable")}
-    print(f"сводка семьи: {args.root / SUMMARY} — " +
-          ", ".join(f"{k} {v}" for k, v in счёт.items()))
+    счёт = {
+        s: sum(p["state"] == s for p in doc["projects"])
+        for s in ("published", "absent", "unreadable")
+    }
+    print(
+        f"сводка семьи: {args.root / SUMMARY} — " + ", ".join(f"{k} {v}" for k, v in счёт.items())
+    )
     return 0
 
 

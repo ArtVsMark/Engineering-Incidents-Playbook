@@ -55,7 +55,6 @@
   2 — проверка не отработала (список не прочитан, модуль не разобран).
 """
 
-
 import argparse
 import ast
 import json
@@ -67,7 +66,7 @@ ROOT = Path(__file__).resolve().parent.parent
 #: Где лежит рабочий код: то, что исполняют прогон, хук и команда из свода.
 РАБОЧИЙ_КОД = ("scripts", ".claude/hooks")
 
-Имя = tuple[str, str]          # (модуль, имя)
+Имя = tuple[str, str]  # (модуль, имя)
 
 
 def объявления(дерево: ast.Module) -> dict[str, ast.stmt]:
@@ -129,8 +128,8 @@ class Модуль:
         self.имя = имя
         self.путь = путь
         self.объявлено = объявления(дерево)
-        self.псевдонимы: dict[str, str] = {}      # имя в модуле → модуль каталога
-        self.ввезено: dict[str, Имя] = {}         # имя в модуле → (модуль, имя)
+        self.псевдонимы: dict[str, str] = {}  # имя в модуле → модуль каталога
+        self.ввезено: dict[str, Имя] = {}  # имя в модуле → (модуль, имя)
         for узел in ast.walk(дерево):
             if isinstance(узел, ast.Import):
                 for а in узел.names:
@@ -184,8 +183,11 @@ class Модуль:
                     вышло.add((self.имя, у.id))
                 elif у.id in self.ввезено:
                     вышло.add(self.ввезено[у.id])
-            elif (isinstance(у, ast.Attribute) and isinstance(у.value, ast.Name)
-                  and у.value.id in self.псевдонимы):
+            elif (
+                isinstance(у, ast.Attribute)
+                and isinstance(у.value, ast.Name)
+                and у.value.id in self.псевдонимы
+            ):
                 вышло.add((self.псевдонимы[у.value.id], у.attr))
         return вышло
 
@@ -250,8 +252,12 @@ def соседи(root: Path) -> tuple[list[dict] | None, str]:
     if not isinstance(записи, list):
         return None, f"{имя}: нет списка allowed"
     for з in записи:
-        if not (isinstance(з, dict) and з.get("where") and з.get("what")
-                and str(з.get("why", "")).strip()):
+        if not (
+            isinstance(з, dict)
+            and з.get("where")
+            and з.get("what")
+            and str(з.get("why", "")).strip()
+        ):
             return None, f"{имя}: у записи нет where, what или why — {з}"
     return записи, ""
 
@@ -259,56 +265,130 @@ def соседи(root: Path) -> tuple[list[dict] | None, str]:
 def selftest() -> int:
     """Гейт отличает достигнутое от сироты, в том числе через цепочку и импорт."""
     import tempfile
+
     случаи = [
-        ("зовёт main", {"a": "def f(): pass\ndef main(): f()\n"
-                        "if __name__ == '__main__': main()\n"}, set()),
-        ("никто не зовёт", {"a": "def f(): pass\ndef main(): pass\n"
-                            "if __name__ == '__main__': main()\n"}, {"f"}),
-        ("зовёт одна сирота — тоже сирота",
-         {"a": "def g(): pass\ndef f(): g()\ndef main(): pass\n"
-               "if __name__ == '__main__': main()\n"}, {"f", "g"}),
-        ("через import модуль",
-         {"a": "import b\ndef main(): b.f()\nif __name__ == '__main__': main()\n",
-          "b": "def f(): pass\ndef h(): pass\n"}, {"h"}),
-        ("через from модуль import",
-         {"a": "from b import f\ndef main(): f()\nif __name__ == '__main__': main()\n",
-          "b": "def f(): pass\n"}, set()),
-        ("константа в значении другой константы",
-         {"a": "X = 1\nY = [X]\ndef main(): print(Y)\n"
-               "if __name__ == '__main__': main()\n"}, set()),
-        ("одноимённое в соседнем модуле не спасает",
-         {"a": "ROOT = 1\ndef main(): pass\nif __name__ == '__main__': main()\n",
-          "b": "ROOT = 2\nprint(ROOT)\n"}, {"ROOT"}),
-        ("декоратор исполняется при импорте",
-         {"a": "def d(f): return f\n@d\ndef g(): pass\n"}, {"g"}),
-        ("вызов в значении присваивания исполняется, даже если имя не читают",
-         {"a": "def f(): return 1\nX = f()\n"}, {"X"}),
-        ("ссылка в значении мёртвой константы не держит функцию",
-         {"a": "def f(): return 1\nX = f\n"}, {"X", "f"}),
-        ("вызов в теле lambda при импорте не исполняется",
-         {"a": "def f(): return 1\nX = lambda: f()\n"}, {"X", "f"}),
-        ("lambda, вызванная сразу, исполняет тело",
-         {"a": "def f(): return 1\nX = (lambda: f())()\n"}, {"X"}),
-        ("умолчание lambda вычисляется сразу",
-         {"a": "def f(): return 1\nX = lambda y=f(): y\n"}, {"X"}),
-        ("генератор считается исполненным: ложной сироты нет",
-         {"a": "def f(): return 1\nX = (f() for _ in range(2))\n"}, {"X"}),
-        ("первый итерируемый генератора вычисляется сразу",
-         {"a": "def f(): return []\nX = (i for i in f())\n"}, {"X"}),
-        ("генератор, потреблённый включением, исполняется",
-         {"a": "def f(): return 1\nX = [x for x in (f() for _ in range(1))]\n"}, {"X"}),
-        ("генератор, потреблённый распаковкой, исполняется",
-         {"a": "def f(): return 1\nX = [*(f() for _ in range(1))]\n"}, {"X"}),
-        ("тело класса исполняется при импорте",
-         {"a": "def f(): return 1\nclass A:\n    x = f()\n"}, {"A"}),
-        ("тело lambda в умолчании функции не исполняется",
-         {"a": "def f(): return 1\ndef g(x=lambda: f()): pass\n"}, {"f", "g"}),
-        ("вызов в умолчании функции исполняется",
-         {"a": "def f(): return 1\ndef g(x=f()): pass\n"}, {"g"}),
-        ("декоратор-lambda вызывается при определении",
-         {"a": "def f(): return 1\n@(lambda fn: f() and fn)\ndef g(): pass\n"}, {"g"}),
-        ("метод класса не исполняется при импорте",
-         {"a": "def f(): return 1\nclass A:\n    def m(self): f()\n"}, {"A", "f"}),
+        (
+            "зовёт main",
+            {"a": "def f(): pass\ndef main(): f()\nif __name__ == '__main__': main()\n"},
+            set(),
+        ),
+        (
+            "никто не зовёт",
+            {"a": "def f(): pass\ndef main(): pass\nif __name__ == '__main__': main()\n"},
+            {"f"},
+        ),
+        (
+            "зовёт одна сирота — тоже сирота",
+            {
+                "a": "def g(): pass\ndef f(): g()\ndef main(): pass\n"
+                "if __name__ == '__main__': main()\n"
+            },
+            {"f", "g"},
+        ),
+        (
+            "через import модуль",
+            {
+                "a": "import b\ndef main(): b.f()\nif __name__ == '__main__': main()\n",
+                "b": "def f(): pass\ndef h(): pass\n",
+            },
+            {"h"},
+        ),
+        (
+            "через from модуль import",
+            {
+                "a": "from b import f\ndef main(): f()\nif __name__ == '__main__': main()\n",
+                "b": "def f(): pass\n",
+            },
+            set(),
+        ),
+        (
+            "константа в значении другой константы",
+            {"a": "X = 1\nY = [X]\ndef main(): print(Y)\nif __name__ == '__main__': main()\n"},
+            set(),
+        ),
+        (
+            "одноимённое в соседнем модуле не спасает",
+            {
+                "a": "ROOT = 1\ndef main(): pass\nif __name__ == '__main__': main()\n",
+                "b": "ROOT = 2\nprint(ROOT)\n",
+            },
+            {"ROOT"},
+        ),
+        (
+            "декоратор исполняется при импорте",
+            {"a": "def d(f): return f\n@d\ndef g(): pass\n"},
+            {"g"},
+        ),
+        (
+            "вызов в значении присваивания исполняется, даже если имя не читают",
+            {"a": "def f(): return 1\nX = f()\n"},
+            {"X"},
+        ),
+        (
+            "ссылка в значении мёртвой константы не держит функцию",
+            {"a": "def f(): return 1\nX = f\n"},
+            {"X", "f"},
+        ),
+        (
+            "вызов в теле lambda при импорте не исполняется",
+            {"a": "def f(): return 1\nX = lambda: f()\n"},
+            {"X", "f"},
+        ),
+        (
+            "lambda, вызванная сразу, исполняет тело",
+            {"a": "def f(): return 1\nX = (lambda: f())()\n"},
+            {"X"},
+        ),
+        (
+            "умолчание lambda вычисляется сразу",
+            {"a": "def f(): return 1\nX = lambda y=f(): y\n"},
+            {"X"},
+        ),
+        (
+            "генератор считается исполненным: ложной сироты нет",
+            {"a": "def f(): return 1\nX = (f() for _ in range(2))\n"},
+            {"X"},
+        ),
+        (
+            "первый итерируемый генератора вычисляется сразу",
+            {"a": "def f(): return []\nX = (i for i in f())\n"},
+            {"X"},
+        ),
+        (
+            "генератор, потреблённый включением, исполняется",
+            {"a": "def f(): return 1\nX = [x for x in (f() for _ in range(1))]\n"},
+            {"X"},
+        ),
+        (
+            "генератор, потреблённый распаковкой, исполняется",
+            {"a": "def f(): return 1\nX = [*(f() for _ in range(1))]\n"},
+            {"X"},
+        ),
+        (
+            "тело класса исполняется при импорте",
+            {"a": "def f(): return 1\nclass A:\n    x = f()\n"},
+            {"A"},
+        ),
+        (
+            "тело lambda в умолчании функции не исполняется",
+            {"a": "def f(): return 1\ndef g(x=lambda: f()): pass\n"},
+            {"f", "g"},
+        ),
+        (
+            "вызов в умолчании функции исполняется",
+            {"a": "def f(): return 1\ndef g(x=f()): pass\n"},
+            {"g"},
+        ),
+        (
+            "декоратор-lambda вызывается при определении",
+            {"a": "def f(): return 1\n@(lambda fn: f() and fn)\ndef g(): pass\n"},
+            {"g"},
+        ),
+        (
+            "метод класса не исполняется при импорте",
+            {"a": "def f(): return 1\nclass A:\n    def m(self): f()\n"},
+            {"A", "f"},
+        ),
     ]
     плохо = []
     for что, файлы, ждём in случаи:
@@ -326,16 +406,19 @@ def selftest() -> int:
         print(f"РАСХОЖДЕНИЕ: {строка}", file=sys.stderr)
     if плохо:
         return 1
-    print("самопроверка пройдена: достижимость идёт цепочкой от корня, "
-          "набор и одноимённое её не заменяют")
+    print(
+        "самопроверка пройдена: достижимость идёт цепочкой от корня, "
+        "набор и одноимённое её не заменяют"
+    )
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--root", type=Path, default=ROOT)
-    p.add_argument("--selftest", action="store_true",
-                   help="прогнать гейт по случаям, а не по дереву (140)")
+    p.add_argument(
+        "--selftest", action="store_true", help="прогнать гейт по случаям, а не по дереву (140)"
+    )
     args = p.parse_args(argv)
     if args.selftest:
         return selftest()
@@ -356,26 +439,32 @@ def main(argv: list[str] | None = None) -> int:
     плохо = False
     if настоящие:
         плохо = True
-        print("имя рабочего кода не достигается ни одним рабочим путём (211):",
-              file=sys.stderr)
+        print("имя рабочего кода не достигается ни одним рабочим путём (211):", file=sys.stderr)
         for файл, имя in настоящие:
             print(f"  • {файл}::{имя}", file=sys.stderr)
-        print("  Набор, зовущий его напрямую, здесь не доказательство: он зелёный и "
-              "тогда, когда путь оборван.\n"
-              "  Либо позовите его из рабочего пути, либо удалите, либо назовите "
-              "законным соседом в .rules/orphans.json с причиной.", file=sys.stderr)
+        print(
+            "  Набор, зовущий его напрямую, здесь не доказательство: он зелёный и "
+            "тогда, когда путь оборван.\n"
+            "  Либо позовите его из рабочего пути, либо удалите, либо назовите "
+            "законным соседом в .rules/orphans.json с причиной.",
+            file=sys.stderr,
+        )
     if мёртвые:
         плохо = True
-        print("записи .rules/orphans.json, которым в дереве больше нечего "
-              "разрешать (102):", file=sys.stderr)
+        print(
+            "записи .rules/orphans.json, которым в дереве больше нечего разрешать (102):",
+            file=sys.stderr,
+        )
         for з in мёртвые:
             print(f"  • {з['where']}::{з['what']}", file=sys.stderr)
     if плохо:
         return 1
 
     всего = sum(len(м.объявлено) for м in мод.values())
-    print(f"рабочий путь доходит до каждого имени: имён {всего} в {len(мод)} "
-          f"модулях, законных соседей {len(записи)}, и каждый назван с причиной")
+    print(
+        f"рабочий путь доходит до каждого имени: имён {всего} в {len(мод)} "
+        f"модулях, законных соседей {len(записи)}, и каждый назван с причиной"
+    )
     return 0
 
 

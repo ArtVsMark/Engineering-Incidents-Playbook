@@ -30,7 +30,6 @@
          python scripts/coverage_badge.py --check    # проверить, не устарел ли
 """
 
-
 import argparse
 import json
 import sys
@@ -44,8 +43,7 @@ LABEL = "coverage"
 
 #: Порог цвета. Нижняя граница названа явно: значок, зелёный при любом числе,
 #: перестают читать так же, как гейт, красный всегда.
-COLORS = ((90, "brightgreen"), (75, "green"), (50, "yellow"),
-          (25, "orange"), (0, "red"))
+COLORS = ((90, "brightgreen"), (75, "green"), (50, "yellow"), (25, "orange"), (0, "red"))
 
 
 class Unreadable(Exception):
@@ -97,20 +95,24 @@ def render(percent: float) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true",
-                    help="только проверить, не устарел ли значок")
+    ap.add_argument("--check", action="store_true", help="только проверить, не устарел ли значок")
     args = ap.parse_args()
 
     try:
         percent = measured()
     except Unreadable as отказ:
-        print(f"замер не отработал: {отказ}. Данные ссылаются на то, чего в "
-              "дереве нет, либо повреждены — пересобрать: "
-              "`coverage run -m pytest`", file=sys.stderr)
+        print(
+            f"замер не отработал: {отказ}. Данные ссылаются на то, чего в "
+            "дереве нет, либо повреждены — пересобрать: "
+            "`coverage run -m pytest`",
+            file=sys.stderr,
+        )
         return 2
     if percent is None:
-        print(f"замер не отработал: {DATA} не прочитан — сначала "
-              "`coverage run -m pytest`", file=sys.stderr)
+        print(
+            f"замер не отработал: {DATA} не прочитан — сначала `coverage run -m pytest`",
+            file=sys.stderr,
+        )
         return 2
 
     want = render(percent)
@@ -120,10 +122,12 @@ def main() -> int:
         if have == want:
             print(f"значок покрытия актуален: {percent:.0f}%")
             return 0
-        print(f"значок покрытия устарел: замер даёт {percent:.0f}%, "
-              f"в ветке лежит другое.\n  Пересобрать: "
-              f"coverage run -m pytest && python scripts/coverage_badge.py",
-              file=sys.stderr)
+        print(
+            f"значок покрытия устарел: замер даёт {percent:.0f}%, "
+            f"в ветке лежит другое.\n  Пересобрать: "
+            f"coverage run -m pytest && python scripts/coverage_badge.py",
+            file=sys.stderr,
+        )
         return 1
 
     BADGE.parent.mkdir(parents=True, exist_ok=True)

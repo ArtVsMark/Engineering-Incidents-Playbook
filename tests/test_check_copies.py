@@ -6,7 +6,6 @@
 список и неразобранный модуль — третий исход, а не зелень.
 """
 
-
 import json
 import sys
 from pathlib import Path
@@ -32,12 +31,11 @@ def модуль(дерево: Path, имя: str, текст: str) -> None:
 
 def список(дерево: Path, записи: list[dict]) -> None:
     (дерево / ".rules" / "copies.json").write_text(
-        json.dumps({"_": "проба", "allowed": записи}, ensure_ascii=False),
-        encoding="utf-8")
+        json.dumps({"_": "проба", "allowed": записи}, ensure_ascii=False), encoding="utf-8"
+    )
 
 
-def test_kopiya_v_dvukh_modulyakh_otkaz(дерево: Path,
-                                        capsys: pytest.CaptureFixture[str]) -> None:
+def test_kopiya_v_dvukh_modulyakh_otkaz(дерево: Path, capsys: pytest.CaptureFixture[str]) -> None:
     модуль(дерево, "a", КОПИЯ)
     модуль(дерево, "b", КОПИЯ)
     список(дерево, [])
@@ -60,22 +58,24 @@ def test_import_vmesto_kopii_chisto(дерево: Path) -> None:
     assert cc.main(["--root", str(дерево)]) == 0
 
 
-def test_zapis_bez_predmeta_otkaz(дерево: Path,
-                                  capsys: pytest.CaptureFixture[str]) -> None:
+def test_zapis_bez_predmeta_otkaz(дерево: Path, capsys: pytest.CaptureFixture[str]) -> None:
     модуль(дерево, "a", КОПИЯ)
     список(дерево, [{"pattern": "^\\d{3}$", "why": "было совпадение"}])
     assert cc.main(["--root", str(дерево)]) == 1
     assert "нечего" in capsys.readouterr().err
 
 
-@pytest.mark.parametrize("содержимое, почему", [
-    (None, "не найден"),
-    ("{не json", "не разобран"),
-    ('{"allowed": [{"pattern": "x"}]}', "нет pattern или why"),
-])
+@pytest.mark.parametrize(
+    "содержимое, почему",
+    [
+        (None, "не найден"),
+        ("{не json", "не разобран"),
+        ('{"allowed": [{"pattern": "x"}]}', "нет pattern или why"),
+    ],
+)
 def test_spisok_ne_prochitan_tretiy_iskhod(
-        дерево: Path, capsys: pytest.CaptureFixture[str],
-        содержимое: str | None, почему: str) -> None:
+    дерево: Path, capsys: pytest.CaptureFixture[str], содержимое: str | None, почему: str
+) -> None:
     модуль(дерево, "a", КОПИЯ)
     if содержимое is not None:
         (дерево / ".rules" / "copies.json").write_text(содержимое, encoding="utf-8")

@@ -16,21 +16,20 @@
 кто запускает (правила 039, 145).
 """
 
-
 import json
 from pathlib import Path
 
 import sync_labels as sl
 from conftest import write
 
-FILE = '''# комментарий
+FILE = """# комментарий
 - name: "area/rules"
   color: "1d76db"
   description: "Зона: записи"
 - name: "bug"
   color: "d73a4a"
   description: "Дефект"
-'''
+"""
 
 
 def prepare(monkeypatch, repo: Path, text: str = FILE) -> Path:
@@ -47,13 +46,15 @@ def cli(monkeypatch, *argv: str) -> None:
 def fake_gh(monkeypatch, have: list[dict], code: int = 0) -> None:
     # Метки читаются постранично и по элементу (212): строка JSON на метку.
     def gh(*args: str) -> tuple[int, str]:
-        if "-X" not in args:                 # чтение, а не запись метки
+        if "-X" not in args:  # чтение, а не запись метки
             assert "--paginate" in args
         return code, ("".join(json.dumps(m) + "\n" for m in have) if code == 0 else "нет")
+
     monkeypatch.setattr(sl, "gh_json", gh)
 
 
 # ── разбор файла ───────────────────────────────────────────────────────────
+
 
 def test_разбор_читает_имя_цвет_и_описание(monkeypatch, repo):
     prepare(monkeypatch, repo)
@@ -87,10 +88,13 @@ def test_репозиторий_не_назван_это_третий_исход
 
 # ── отсутствие инструмента: ветка, которой не было ─────────────────────────
 
+
 def test_без_gh_это_третий_исход_а_не_находка(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo)
+
     def boom(*a, **k):
         raise FileNotFoundError(2, "No such file or directory", "gh")
+
     monkeypatch.setattr(sl.subprocess, "run", boom)
     cli(monkeypatch, "--dry-run", "--repo", "o/r")
     assert sl.main() == 2
@@ -99,11 +103,16 @@ def test_без_gh_это_третий_исход_а_не_находка(monkeyp
 
 # ── чисто и находки ────────────────────────────────────────────────────────
 
+
 def test_объявленные_на_месте_это_чисто(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo)
-    fake_gh(monkeypatch, [
-        {"name": "area/rules", "color": "1d76db", "description": "Зона: записи"},
-        {"name": "bug", "color": "d73a4a", "description": "Дефект"}])
+    fake_gh(
+        monkeypatch,
+        [
+            {"name": "area/rules", "color": "1d76db", "description": "Зона: записи"},
+            {"name": "bug", "color": "d73a4a", "description": "Дефект"},
+        ],
+    )
     cli(monkeypatch, "--dry-run", "--repo", "o/r")
     assert sl.main() == 0
     assert "на месте и совпадают" in capsys.readouterr().out
@@ -112,30 +121,36 @@ def test_объявленные_на_месте_это_чисто(monkeypatch, r
 def test_цвет_в_другом_регистре_расхождением_не_считается(monkeypatch, repo):
     """Здоровый предмет у самой границы: площадка отдаёт цвет как угодно."""
     prepare(monkeypatch, repo)
-    fake_gh(monkeypatch, [
-        {"name": "area/rules", "color": "1D76DB", "description": "Зона: записи"},
-        {"name": "bug", "color": "D73A4A", "description": "Дефект"}])
+    fake_gh(
+        monkeypatch,
+        [
+            {"name": "area/rules", "color": "1D76DB", "description": "Зона: записи"},
+            {"name": "bug", "color": "D73A4A", "description": "Дефект"},
+        ],
+    )
     cli(monkeypatch, "--dry-run", "--repo", "o/r")
     assert sl.main() == 0
 
 
 def test_неучтённая_метка_это_находка_и_её_не_удаляют(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo)
-    fake_gh(monkeypatch, [
-        {"name": "area/rules", "color": "1d76db", "description": "Зона: записи"},
-        {"name": "bug", "color": "d73a4a", "description": "Дефект"},
-        {"name": "wontfix", "color": "ffffff", "description": ""}])
+    fake_gh(
+        monkeypatch,
+        [
+            {"name": "area/rules", "color": "1d76db", "description": "Зона: записи"},
+            {"name": "bug", "color": "d73a4a", "description": "Дефект"},
+            {"name": "wontfix", "color": "ffffff", "description": ""},
+        ],
+    )
     cli(monkeypatch, "--dry-run", "--repo", "o/r")
     assert sl.main() == 1
     err = capsys.readouterr().err
     assert "wontfix" in err and "Не удаляю" in err
 
 
-def test_недостающая_метка_показана_но_не_заведена_на_сухом_прогоне(
-        monkeypatch, repo, capsys):
+def test_недостающая_метка_показана_но_не_заведена_на_сухом_прогоне(monkeypatch, repo, capsys):
     prepare(monkeypatch, repo)
-    fake_gh(monkeypatch, [
-        {"name": "bug", "color": "d73a4a", "description": "Дефект"}])
+    fake_gh(monkeypatch, [{"name": "bug", "color": "d73a4a", "description": "Дефект"}])
     cli(monkeypatch, "--dry-run", "--repo", "o/r")
     assert sl.main() == 0
     assert "завелись бы: area/rules" in capsys.readouterr().out

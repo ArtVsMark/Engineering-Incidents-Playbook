@@ -54,7 +54,6 @@
          python scripts/check_attribution.py --first-parents --ref main --since d1297ff
 """
 
-
 import argparse
 import re
 import subprocess
@@ -104,8 +103,14 @@ def tail(body: str) -> str:
 
 
 def git(repo: Path, *args: str) -> str:
-    return proc.run(["git", "-C", str(repo), *args],
-                    capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
+    return proc.run(
+        ["git", "-C", str(repo), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=True,
+        timeout=60,
+    ).stdout
 
 
 #: Заголовок, после которого перечисляются АВТОРЫ, а не соавторы. До него —
@@ -184,25 +189,29 @@ def first_parents(repo: Path, ref: str, since: str | None, names: set[str]) -> i
     try:
         git(repo, "rev-parse", "--verify", ref)
     except subprocess.CalledProcessError:
-        print(f"проверка не отработала: {ref} недоступен — "
-              "нужен полный клон и общая ветка", file=sys.stderr)
+        print(
+            f"проверка не отработала: {ref} недоступен — нужен полный клон и общая ветка",
+            file=sys.stderr,
+        )
         return 2
 
     scope = f"{since}..{ref}" if since else ref
     try:
-        out = git(repo, "log", "--first-parent",
-                  "--format=%H%x00%s%x00%b%x00", scope)
+        out = git(repo, "log", "--first-parent", "--format=%H%x00%s%x00%b%x00", scope)
     except subprocess.CalledProcessError as e:
-        print(f"проверка не отработала: {scope!r} не разобран — "
-              f"{e.stderr.strip()}", file=sys.stderr)
+        print(
+            f"проверка не отработала: {scope!r} не разобран — {e.stderr.strip()}", file=sys.stderr
+        )
         return 2
 
     records = [r for r in out.split("\x00\n") if r.strip()]
     if not records:
         # Пусто — это состояние, а не тишина (правило 027). И это не «чисто»:
         # проверка, которой нечего смотреть, не подтверждает ничего (075).
-        print(f"проверка не отработала: в {scope} нет первопредков — "
-              "подтверждать нечего", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {scope} нет первопредков — подтверждать нечего",
+            file=sys.stderr,
+        )
         return 2
 
     missing: list[str] = []
@@ -223,24 +232,31 @@ def first_parents(repo: Path, ref: str, since: str | None, names: set[str]) -> i
 
     total = len(records)
     if missing or stranger:
-        print(f"атрибуция в итоговой истории {scope}: "
-              f"первопредков {total}, без атрибуции {len(missing)}",
-              file=sys.stderr)
+        print(
+            f"атрибуция в итоговой истории {scope}: "
+            f"первопредков {total}, без атрибуции {len(missing)}",
+            file=sys.stderr,
+        )
         for line in missing[:5]:
             print(f"  • {line}", file=sys.stderr)
         if len(missing) > 5:
             print(f"  • …и ещё {len(missing) - 5}", file=sys.stderr)
         for line in stranger:
             print(f"  • {line}", file=sys.stderr)
-        print("\n  Прошлое не переписать: общая ветка защищена, и это долг, а не "
-              "задача (правило 114).\n  Красное здесь означает, что коммит в общей "
-              "ветке составляется без трейлеров — чинится\n  на стороне слияния, "
-              "а не правкой истории. Объявить долг и спрашивать с\n  определённого "
-              "коммита — ключ --since.", file=sys.stderr)
+        print(
+            "\n  Прошлое не переписать: общая ветка защищена, и это долг, а не "
+            "задача (правило 114).\n  Красное здесь означает, что коммит в общей "
+            "ветке составляется без трейлеров — чинится\n  на стороне слияния, "
+            "а не правкой истории. Объявить долг и спрашивать с\n  определённого "
+            "коммита — ключ --since.",
+            file=sys.stderr,
+        )
         return 1
 
-    print(f"атрибуция в итоговой истории в порядке: {scope}, "
-          f"объединяющих коммитов {total}, без атрибуции 0")
+    print(
+        f"атрибуция в итоговой истории в порядке: {scope}, "
+        f"объединяющих коммитов {total}, без атрибуции 0"
+    )
     return 0
 
 
@@ -269,54 +285,83 @@ def последний_слиянием(repo: Path, ref: str) -> str | None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--range", default=None,
-                    help="диапазон коммитов, по умолчанию origin/main..HEAD")
-    ap.add_argument("--first-parents", action="store_true",
-                    help="проверить первопредки общей ветки, а не коммиты ветки")
-    ap.add_argument("--ref", default="origin/main",
-                    help="общая ветка для --first-parents, по умолчанию origin/main")
-    ap.add_argument("--repo", default=str(ROOT),
-                    help="репозиторий, чью историю проверяем; по умолчанию тот, "
-                         "где лежит скрипт")
-    ap.add_argument("--authors", default=None,
-                    help="список согласованных имён проверяемого проекта; "
-                         "по умолчанию .github/authors.txt рядом со скриптом")
-    ap.add_argument("--baseline", default=BASELINE,
-                    help="коммит, с которого атрибуция обязательна; пустая "
-                         "строка отключает подрезку")
+    ap.add_argument(
+        "--range", default=None, help="диапазон коммитов, по умолчанию origin/main..HEAD"
+    )
+    ap.add_argument(
+        "--first-parents",
+        action="store_true",
+        help="проверить первопредки общей ветки, а не коммиты ветки",
+    )
+    ap.add_argument(
+        "--ref",
+        default="origin/main",
+        help="общая ветка для --first-parents, по умолчанию origin/main",
+    )
+    ap.add_argument(
+        "--repo",
+        default=str(ROOT),
+        help="репозиторий, чью историю проверяем; по умолчанию тот, где лежит скрипт",
+    )
+    ap.add_argument(
+        "--authors",
+        default=None,
+        help="список согласованных имён проверяемого проекта; "
+        "по умолчанию .github/authors.txt рядом со скриптом",
+    )
+    ap.add_argument(
+        "--baseline",
+        default=BASELINE,
+        help="коммит, с которого атрибуция обязательна; пустая строка отключает подрезку",
+    )
     # Требование трейлеров — договорённость про АГЕНТСКИЕ коммиты, и по
     # умолчанию коммит человека со стороны она не отвергает: «без атрибуции N»
     # честным числом это решение по 041. Но потребителю, у которого весь поток
     # идёт через облачные окна, нужен отказ, а выразить его было нечем
     # (задача #80, найдено первым сторонним потребителем). Умолчание сохраняет
     # и поведение, и прежнее решение — включает его проект, а не инструмент.
-    ap.add_argument("--require-declared-author", action="store_true",
-                    help="автором каждого коммита обязан стоять человек из "
-                         "раздела «[авторы]» списка. Ключ отдельный и "
-                         "необязательный: у проекта такого раздела может не "
-                         "быть, и тогда требовать его нечем")
-    ap.add_argument("--merge-method", choices=("merge", "squash"),
-                    default="merge",
-                    help="как проект сливает изменения. squash — поле автора "
-                         "в общую ветку не едет и не проверяется (#695); "
-                         "по умолчанию merge — проверяется, как раньше")
-    ap.add_argument("--require-coauthor", action="store_true",
-                    help="считать отказом коммит вовсе без атрибуции; по "
-                         "умолчанию такие только считаются и печатаются числом")
+    ap.add_argument(
+        "--require-declared-author",
+        action="store_true",
+        help="автором каждого коммита обязан стоять человек из "
+        "раздела «[авторы]» списка. Ключ отдельный и "
+        "необязательный: у проекта такого раздела может не "
+        "быть, и тогда требовать его нечем",
+    )
+    ap.add_argument(
+        "--merge-method",
+        choices=("merge", "squash"),
+        default="merge",
+        help="как проект сливает изменения. squash — поле автора "
+        "в общую ветку не едет и не проверяется (#695); "
+        "по умолчанию merge — проверяется, как раньше",
+    )
+    ap.add_argument(
+        "--require-coauthor",
+        action="store_true",
+        help="считать отказом коммит вовсе без атрибуции; по "
+        "умолчанию такие только считаются и печатаются числом",
+    )
     # ПОЧЕМУ ПОДПИСЬ ОТДАЁТ ГЕЙТ, А НЕ ПРОГОН ПИШЕТ ЕЁ СЕБЕ. Прогон выпуска
     # коммитит в общую ветку и ставит АННОТИРОВАННЫЙ тег — обоим нужна подпись,
     # и она обязана быть автором из раздела «[авторы]», иначе тот же гейт
     # отвергнет собственный коммит выпуска. Третья копия почты в дереве
     # разошлась бы с этим списком молча (049), поэтому подпись берётся оттуда,
     # где список уже разбирается.
-    ap.add_argument("--print-author", action="store_true",
-                    help="напечатать подпись проекта — первую строку раздела "
-                         "«[авторы]» — и выйти. Ею подписывают коммиты, "
-                         "которые проект делает сам")
-    ap.add_argument("--since", default=None,
-                    help="объявленное начало для --first-parents: раньше него "
-                         "не спрашивать. Без него спрашивается вся история — "
-                         "долг виден числом, а не спрятан подрезкой")
+    ap.add_argument(
+        "--print-author",
+        action="store_true",
+        help="напечатать подпись проекта — первую строку раздела "
+        "«[авторы]» — и выйти. Ею подписывают коммиты, "
+        "которые проект делает сам",
+    )
+    ap.add_argument(
+        "--since",
+        default=None,
+        help="объявленное начало для --first-parents: раньше него "
+        "не спрашивать. Без него спрашивается вся история — "
+        "долг виден числом, а не спрятан подрезкой",
+    )
     args = ap.parse_args()
 
     repo = Path(args.repo).resolve()
@@ -329,12 +374,13 @@ def main() -> int:
         try:
             _, people = sections(authors)
         except OSError as e:
-            print(f"проверка не отработала: список имён не прочитан — {e}",
-                  file=sys.stderr)
+            print(f"проверка не отработала: список имён не прочитан — {e}", file=sys.stderr)
             return 2
         if not people:
-            print(f"проверка не отработала: раздел «[авторы]» в {authors} пуст "
-                  f"— подписывать нечем", file=sys.stderr)
+            print(
+                f"проверка не отработала: раздел «[авторы]» в {authors} пуст — подписывать нечем",
+                file=sys.stderr,
+            )
             return 2
         print(people[0])
         return 0
@@ -346,20 +392,27 @@ def main() -> int:
         print(f"проверка не отработала: список имён не прочитан — {e}", file=sys.stderr)
         return 2
     if args.require_declared_author and not people:
-        print(f"проверка не отработала: запрошен разрешительный список авторов, "
-              f"а раздел «[авторы]» в {authors} пуст — требовать нечем",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: запрошен разрешительный список авторов, "
+            f"а раздел «[авторы]» в {authors} пуст — требовать нечем",
+            file=sys.stderr,
+        )
         return 2
     if not names:
-        print(f"проверка не отработала: {authors} пуст — "
-              "сверять не с чем, а молча пропускать нельзя", file=sys.stderr)
+        print(
+            f"проверка не отработала: {authors} пуст — сверять не с чем, а молча пропускать нельзя",
+            file=sys.stderr,
+        )
         return 2
 
     squash = args.merge_method == "squash"
     if squash and args.require_declared_author and not args.first_parents:
-        print("проверка не отработала: --require-declared-author требует поле "
-              "автора, а при --merge-method squash оно в общую ветку не едет — "
-              "требовать нечего; снимите один из ключей", file=sys.stderr)
+        print(
+            "проверка не отработала: --require-declared-author требует поле "
+            "автора, а при --merge-method squash оно в общую ветку не едет — "
+            "требовать нечего; снимите один из ключей",
+            file=sys.stderr,
+        )
         return 2
 
     if args.first_parents:
@@ -371,8 +424,11 @@ def main() -> int:
             git(repo, "rev-parse", "--verify", "origin/main")
             rng = "origin/main..HEAD"
         except subprocess.CalledProcessError:
-            print("проверка не отработала: origin/main недоступен, диапазон "
-                  "не определён — задайте --range", file=sys.stderr)
+            print(
+                "проверка не отработала: origin/main недоступен, диапазон "
+                "не определён — задайте --range",
+                file=sys.stderr,
+            )
             return 2
     # Диапазон не уходит глубже объявленного начала: до него история писалась
     # без трейлеров, переписать её нельзя, и требовать оттуда нечего (114).
@@ -383,10 +439,19 @@ def main() -> int:
         low, _, high = rng.partition("..")
         # Сравниваем разрешённые хеши, а не строки: «d1297ff» и полный хеш —
         # один коммит, и сообщать о подрезке там, где её нет, значит шуметь.
-        same = low and git(repo, "rev-parse", low).strip() == git(repo, "rev-parse", baseline).strip()
-        if low and not same and proc.run(
-            ["git", "-C", str(repo), "merge-base", "--is-ancestor", low, baseline],
-            capture_output=True, timeout=60).returncode == 0:
+        same = (
+            low and git(repo, "rev-parse", low).strip() == git(repo, "rev-parse", baseline).strip()
+        )
+        if (
+            low
+            and not same
+            and proc.run(
+                ["git", "-C", str(repo), "merge-base", "--is-ancestor", low, baseline],
+                capture_output=True,
+                timeout=60,
+            ).returncode
+            == 0
+        ):
             rng = f"{baseline}..{high or 'HEAD'}"
             print(f"диапазон подрезан до объявленного начала: {rng}")
     except subprocess.CalledProcessError:
@@ -394,11 +459,12 @@ def main() -> int:
 
     try:
         # Слияния пропускаем: их сообщение составляет площадка, а не автор.
-        out = git(repo, "log", "--no-merges",
-                  "--format=%H%x00%an <%ae>%x00%s%x00%b%x00", rng)
+        out = git(repo, "log", "--no-merges", "--format=%H%x00%an <%ae>%x00%s%x00%b%x00", rng)
     except subprocess.CalledProcessError as e:
-        print(f"проверка не отработала: диапазон {rng!r} не разобран — "
-              f"{e.stderr.strip()}", file=sys.stderr)
+        print(
+            f"проверка не отработала: диапазон {rng!r} не разобран — {e.stderr.strip()}",
+            file=sys.stderr,
+        )
         return 2
 
     records = [r for r in out.split("\x00\n") if r.strip()]
@@ -429,7 +495,8 @@ def main() -> int:
                 f"СОАВТОР, а не автор\n"
                 f"        при объединяющем слиянии коммит уедет в общую "
                 f"ветку с этой подписью, и там её не переписать; если проект "
-                f"сливает только уплотнением — объявите --merge-method squash")
+                f"сливает только уплотнением — объявите --merge-method squash"
+            )
         elif args.require_declared_author and mail_of(author) not in people:
             # Разрешительный список, а не запретительный. Запрет ловил одно
             # написание и молчал на `claude[bot]` — так #78 и уехало в общую
@@ -438,26 +505,30 @@ def main() -> int:
                 f"{sha[:7]} {subject[:56]}\n"
                 f"        автор {author!r} не объявлен в разделе «[авторы]»\n"
                 f"        объявлены почты: "
-                f"{', '.join(sorted(people)) or '— никто'}")
+                f"{', '.join(sorted(people)) or '— никто'}"
+            )
 
         for name in coauthors:
             if name not in names:
                 findings.append(
                     f"{sha[:7]} {subject[:56]}\n"
                     f"        соавтор вне списка: {name!r}\n"
-                    f"        согласованы: {', '.join(sorted(names))}")
+                    f"        согласованы: {', '.join(sorted(names))}"
+                )
         if session and not coauthors:
             findings.append(
                 f"{sha[:7]} {subject[:56]}\n"
                 f"        есть Claude-Session, но нет Co-Authored-By: "
-                f"след сессии без соавторства")
+                f"след сессии без соавторства"
+            )
         if not coauthors and not session:
             unattributed += 1
             if args.require_coauthor:
                 findings.append(
                     f"{sha[:7]} {subject[:56]}\n"
                     f"        атрибуции нет вовсе, а проект её требует "
-                    f"(--require-coauthor)")
+                    f"(--require-coauthor)"
+                )
 
     if findings:
         print("атрибуция расходится со списком:", file=sys.stderr)
@@ -466,8 +537,7 @@ def main() -> int:
         return 1
 
     # ── исход 0 ────────────────────────────────────────────────────────────
-    print(f"атрибуция в порядке: {len(records)} коммитов в {rng}, "
-          f"без атрибуции {unattributed}")
+    print(f"атрибуция в порядке: {len(records)} коммитов в {rng}, без атрибуции {unattributed}")
     if squash and (low := rng.partition("..")[0]):
         # ПРЕДУПРЕЖДЕНИЕ, А НЕ ОТКАЗ (051): последний коммит слияния —
         # вероятный, а не достоверный признак устаревшего объявления: его мог
@@ -475,15 +545,19 @@ def main() -> int:
         # строку зелёного прогона не читает никто, а `::warning::` площадка
         # показывает рядом с изменением.
         if слияние := последний_слиянием(repo, low):
-            print(f"::warning::объявлено --merge-method squash, а последний "
-                  f"первопредок {low} — коммит слияния {слияние}: если "
-                  f"объединяющее слияние разрешено, верните merge — иначе "
-                  f"поле автора уедет в общую ветку непроверенным")
+            print(
+                f"::warning::объявлено --merge-method squash, а последний "
+                f"первопредок {low} — коммит слияния {слияние}: если "
+                f"объединяющее слияние разрешено, верните merge — иначе "
+                f"поле автора уедет в общую ветку непроверенным"
+            )
     if squash:
         # Снятая проверка называется, а не исчезает молча (075).
-        print("поле автора не проверялось: слияние только уплотнением "
-              "(--merge-method squash), автора общей ветки задаёт открывший "
-              "изменение (131)")
+        print(
+            "поле автора не проверялось: слияние только уплотнением "
+            "(--merge-method squash), автора общей ветки задаёт открывший "
+            "изменение (131)"
+        )
     return 0
 
 

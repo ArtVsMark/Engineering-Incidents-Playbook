@@ -55,7 +55,6 @@
 Коды:    0 чисто · 1 есть находки · 2 проверка не отработала
 """
 
-
 import argparse
 import datetime as dt
 import json
@@ -106,11 +105,18 @@ MARKER_RE = re.compile(r"(<!--m:rules-->)\d+(<!--/m:rules-->)")
 #: тогда правился бы при каждом изменении — гейт свежести стал бы конфликтом
 #: на каждом слиянии (051). Она и не утверждает ничего о контрактах.
 CONTRACT_DOC = ROOT / "export" / "README.md"
-CONTRACTS_MARKER_RE = re.compile(
-    r"(<!--m:contracts-->).*?(<!--/m:contracts-->)", re.S)
+CONTRACTS_MARKER_RE = re.compile(r"(<!--m:contracts-->).*?(<!--/m:contracts-->)", re.S)
 #: Порядок ключей в примере — тот же, что в выгрузке: читатель сверяет глазами.
-CONTRACTS_ORDER = ("export", "bindings", "consumers", "proposals",
-                   "showcase", "where", "family", "facts")
+CONTRACTS_ORDER = (
+    "export",
+    "bindings",
+    "consumers",
+    "proposals",
+    "showcase",
+    "where",
+    "family",
+    "facts",
+)
 
 #: ЗНАЧКА С ЧИСЛОМ ПРАВИЛ БОЛЬШЕ НЕТ, и это решение владельца 1 октября, а
 #: не пропажа. Первая строка обоих README несёт то же число маркером
@@ -144,9 +150,9 @@ SHAPE = {
 #: закрывается — завтра появится tools/foo (правило 068).
 CONSUMERS = ROOT / ".rules" / "consumers.json"
 TRAIL_RE = re.compile(
-    r"([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)#(\d+)"   # владелец/репозиторий#номер
-    r"|([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)"          # репозиторий без номера — контекст
-    r"|#(\d+)"                                     # голый номер — к последнему контексту
+    r"([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)#(\d+)"  # владелец/репозиторий#номер
+    r"|([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)"  # репозиторий без номера — контекст
+    r"|#(\d+)"  # голый номер — к последнему контексту
 )
 
 #: СЛЕД-ДОКУМЕНТ — ВТОРАЯ ЗАКОННАЯ ФОРМА, и до 7 сентября выгрузка её теряла.
@@ -488,7 +494,6 @@ TIER_RE = {
 }
 
 
-
 #: Переносимость записи за пределы Claude Code. Поле НЕОБЯЗАТЕЛЬНОЕ и задним
 #: числом не проставляется: у README каталога есть общее предупреждение «не
 #: копируйте целиком, половина заточена под агентские окна», и это поле делает
@@ -579,8 +584,11 @@ def mentions_of(path: Path, lang: str, известные: set[str]) -> list[str
     не подходит вовсе.
     """
     я = path.stem[:3]
-    цели = {n for n in ВНУТРЕННЯЯ_ССЫЛКА.findall(path.read_text(encoding="utf-8"))
-            if n in известные and n != я}
+    цели = {
+        n
+        for n in ВНУТРЕННЯЯ_ССЫЛКА.findall(path.read_text(encoding="utf-8"))
+        if n in известные and n != я
+    }
     return sorted(цели)
 
 
@@ -607,7 +615,7 @@ def предшественники(root: Path) -> dict[str, set[str]]:
     """
     прямые: dict[str, set[str]] = {}
     for path in sorted((root / "rules" / "ru").glob("[0-9][0-9][0-9]-*.md")):
-        if (куда := superseded_of(path, "ru")):
+        if куда := superseded_of(path, "ru"):
             прямые.setdefault(куда, set()).add(path.name[:3])
     out: dict[str, set[str]] = {}
     for новое in прямые:
@@ -631,8 +639,9 @@ def действующие(found: dict[str, dict[str, Path]]) -> list[str]:
     врало бы: шесть слияний #645 дали бы +7 новых и ни одного выбывшего, и
     каталог «вырос», сжавшись. Решение владельца 17.10.
     """
-    return [n for n in sorted(found)
-            if not (found[n].get("ru") and superseded_of(found[n]["ru"], "ru"))]
+    return [
+        n for n in sorted(found) if not (found[n].get("ru") and superseded_of(found[n]["ru"], "ru"))
+    ]
 
 
 def действующие_в_выгрузке(export: dict) -> set[str]:
@@ -651,9 +660,12 @@ def действующие_в_выгрузке(export: dict) -> set[str]:
     if not isinstance(export, dict) or not isinstance(export.get("rules"), list):
         raise KeyError("в выгрузке нет списка «rules»")
     # Выгрузка 1.9 называет статус словом; до 1.9 — отсутствием `superseded_by`.
-    return {r["id"] for r in export["rules"]
-            if r.get("status", СТАТУС_ЗАМЕНЕНО if r.get("superseded_by")
-                     else СТАТУС_ДЕЙСТВУЕТ) == СТАТУС_ДЕЙСТВУЕТ}
+    return {
+        r["id"]
+        for r in export["rules"]
+        if r.get("status", СТАТУС_ЗАМЕНЕНО if r.get("superseded_by") else СТАТУС_ДЕЙСТВУЕТ)
+        == СТАТУС_ДЕЙСТВУЕТ
+    }
 
 
 def superseded_of(path: Path, lang: str) -> str | None:
@@ -747,8 +759,9 @@ def collect() -> tuple[dict[str, dict[str, Path]], list[str], list[str]]:
                 problems.append(f"{lang}: номер {num} встречается дважды")
             slot[lang] = f
     if not found:
-        blockers.append("в дереве не нашлось ни одного правила — "
-                        "это ошибка входа, а не пустой каталог")
+        blockers.append(
+            "в дереве не нашлось ни одного правила — это ошибка входа, а не пустой каталог"
+        )
     return found, problems, blockers
 
 
@@ -780,7 +793,8 @@ def check_shape(found: dict[str, dict[str, Path]]) -> list[str]:
                 problems.append(
                     f"{num}: {lang}/{path.name} — нет разделов "
                     f"{', '.join(chr(171) + m[3:] + chr(187) for m in missing)}. "
-                    "Форма записи объявлена в своде и одинакова для всех")
+                    "Форма записи объявлена в своде и одинакова для всех"
+                )
     return problems
 
 
@@ -804,9 +818,7 @@ def check_pairs(found: dict[str, dict[str, Path]]) -> list[str]:
         missing = [l for l in LANGS if l not in slot]
         if missing:
             have = next(iter(slot.values())).name
-            problems.append(
-                f"{num}: нет перевода на {', '.join(missing)} — есть только {have}"
-            )
+            problems.append(f"{num}: нет перевода на {', '.join(missing)} — есть только {have}")
         elif len({p.name for p in slot.values()}) > 1:
             names = " / ".join(f"{l}:{slot[l].name}" for l in LANGS)
             problems.append(f"{num}: имена файлов расходятся — {names}")
@@ -860,30 +872,34 @@ def check_tiers(found: dict[str, dict[str, Path]]) -> tuple[dict[str, int], list
     for num in sorted(found):
         slot = found[num]
         if not all(l in slot for l in LANGS):
-            continue                      # об этом уже скажет check_pairs
-        got: dict[str, tuple[int | None, str]] = {
-            lang: tier_of(slot[lang], lang) for lang in LANGS
-        }
+            continue  # об этом уже скажет check_pairs
+        got: dict[str, tuple[int | None, str]] = {lang: tier_of(slot[lang], lang) for lang in LANGS}
         missing = [l for l in LANGS if got[l][0] is None]
         if missing:
             for lang in missing:
                 problems.append(
                     f"{num}: нет строки «Ступень» в {lang}/{slot[lang].name} — "
                     f"ступени {', '.join(str(n) for n in sorted(TIERS))}; "
-                    f"формат «**Ступень.** N — имя»")
+                    f"формат «**Ступень.** N — имя»"
+                )
             continue
         if got["ru"][0] != got["en"][0]:
             problems.append(
-                f"{num}: ступени деревьев расходятся — ru {got['ru'][0]}, en {got['en'][0]}")
+                f"{num}: ступени деревьев расходятся — ru {got['ru'][0]}, en {got['en'][0]}"
+            )
             continue
         tier = got["ru"][0]
         if tier not in TIERS:
             problems.append(
                 f"{num}: ступень {tier} вне словаря TIERS — "
-                f"есть {', '.join(str(n) for n in sorted(TIERS))}")
+                f"есть {', '.join(str(n) for n in sorted(TIERS))}"
+            )
             continue
-        wrong = [f"{l} «{got[l][1]}» ждёт «{TIERS[tier][l]}»"
-                 for l in LANGS if got[l][1] != TIERS[tier][l]]
+        wrong = [
+            f"{l} «{got[l][1]}» ждёт «{TIERS[tier][l]}»"
+            for l in LANGS
+            if got[l][1] != TIERS[tier][l]
+        ]
         if wrong:
             problems.append(f"{num}: имя ступени разошлось со словарём — {'; '.join(wrong)}")
             continue
@@ -902,7 +918,7 @@ def check_areas(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list[str]]
     for num in sorted(found):
         slot = found[num]
         if not all(l in slot for l in LANGS):
-            continue                      # об этом уже скажет check_pairs
+            continue  # об этом уже скажет check_pairs
         ru = areas_of(slot["ru"], "ru")
         en = areas_of(slot["en"], "en")
         for lang, got in (("ru", ru), ("en", en)):
@@ -974,16 +990,39 @@ def added_dates() -> tuple[dict[str, str], list[str]]:
     try:
         shallow = proc.run(
             ["git", "-C", str(ROOT), "rev-parse", "--is-shallow-repository"],
-            capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout.strip()
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=True,
+            timeout=60,
+        ).stdout.strip()
         if shallow == "true":
-            return {}, [("клон мелкий: истории нет, а дата появления взялась бы от "
-                        "единственного коммита — правдоподобная и неверная. "
-                        "Нужен полный клон (fetch-depth: 0)")]
+            return {}, [
+                (
+                    "клон мелкий: истории нет, а дата появления взялась бы от "
+                    "единственного коммита — правдоподобная и неверная. "
+                    "Нужен полный клон (fetch-depth: 0)"
+                )
+            ]
         out = proc.run(
-            ["git", "-C", str(ROOT), "log", "--diff-filter=A", "--name-only",
-             "-z", "--format=%aI%x00", "--",
-             "rules/ru/[0-9][0-9][0-9]-*.md"],
-            capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
+            [
+                "git",
+                "-C",
+                str(ROOT),
+                "log",
+                "--diff-filter=A",
+                "--name-only",
+                "-z",
+                "--format=%aI%x00",
+                "--",
+                "rules/ru/[0-9][0-9][0-9]-*.md",
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=True,
+            timeout=60,
+        ).stdout
     except (OSError, subprocess.CalledProcessError) as e:
         return {}, [f"история недоступна, дату появления взять неоткуда: {e}"]
 
@@ -1069,14 +1108,17 @@ def contracts_now(root: Path | None = None) -> dict[str, str]:
     # же издатель пишет в `schema` своего facts.json.
     try:
         out["facts"] = check_facts.contract_series(
-            (база / FACTS_VERSION).read_text(encoding="utf-8"))
+            (база / FACTS_VERSION).read_text(encoding="utf-8")
+        )
     except OSError:
         pass
     except UnicodeDecodeError as exc:
         # Не прочитан — не «не той формы»: UnicodeDecodeError — подкласс
         # ValueError и иначе попал бы в ветку ниже с чужой причиной (обзор #907).
-        print(f"проверка не отработала: {FACTS_VERSION} не прочитан как UTF-8 — {exc}",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: {FACTS_VERSION} не прочитан как UTF-8 — {exc}",
+            file=sys.stderr,
+        )
         raise SystemExit(2) from exc
     except ValueError as exc:
         # Номер есть, но не той формы — это не «договора нет», а сломанный
@@ -1119,41 +1161,50 @@ def same_export(path: Path, built: str) -> bool:
     return лежит == собрано
 
 
-def render_export(found: dict[str, dict[str, Path]], areas: dict[str, list[str]],
-                  dates: dict[str, str], trails: dict[str, list],
-                  tiers: dict[str, int]) -> str:
+def render_export(
+    found: dict[str, dict[str, Path]],
+    areas: dict[str, list[str]],
+    dates: dict[str, str],
+    trails: dict[str, list],
+    tiers: dict[str, int],
+) -> str:
     rules = []
     for num in sorted(found):
         ru, en = found[num]["ru"], found[num]["en"]
         names = areas.get(num, [])
-        rules.append({
-            "id": num,
-            "slug": ru.stem[4:],
-            "title": {"ru": title_of(ru), "en": title_of(en)},
-            "areas": {"ru": names, "en": [AREAS[a]["en"] for a in names]},
-            # Ступень внедрения: КОГДА правило берут, а не о чём оно. Номер —
-            # для машины (по нему сортируют), имя — для человека. Порядок
-            # ступеней и есть смысл поля, поэтому отдаётся число, а не слаг:
-            # слаг пришлось бы упорядочивать на той стороне, и порядок разошёлся
-            # бы у двух потребителей молча (049).
-            "tier": {"n": tiers[num],
-                     "ru": TIERS[tiers[num]]["ru"], "en": TIERS[tiers[num]]["en"]},
-            # ПРАВИЛО ЕДЕТ ВМЕСТЕ С ЗАГОЛОВКОМ, а не вместо него. Заголовок
-            # отвечает «о чём», буква — «что требуется», граница — «где это не
-            # действует». Втроём они и есть контекст, которого хватает, чтобы
-            # ответить, не додумывая; инцидент в выгрузку не берётся — он
-            # объясняет мотив, а не предмет, и удваивает файл (замер: +106 КиБ
-            # при 231 исходных).
-            "claim": {"ru": claim_of(ru, "ru"), "en": claim_of(en, "en")},
-            "applies": {"ru": applies_of(ru, "ru"), "en": applies_of(en, "en")},
-            "added": dates[num],
-            "files": {"ru": f"rules/ru/{ru.name}", "en": f"rules/en/{en.name}"},
-            "trails": trails.get(num, []),
-            # Где поломка показалась впервые. Ключ есть всегда: замер при
-            # заведении дал проект у всех 152 записей. Если его вдруг нет —
-            # это находка, а не пустота, и её видно как отсутствие ключа.
-            **({"origin": origin} if (origin := origin_of(ru, "ru", KNOWN)) else {}),
-        })
+        rules.append(
+            {
+                "id": num,
+                "slug": ru.stem[4:],
+                "title": {"ru": title_of(ru), "en": title_of(en)},
+                "areas": {"ru": names, "en": [AREAS[a]["en"] for a in names]},
+                # Ступень внедрения: КОГДА правило берут, а не о чём оно. Номер —
+                # для машины (по нему сортируют), имя — для человека. Порядок
+                # ступеней и есть смысл поля, поэтому отдаётся число, а не слаг:
+                # слаг пришлось бы упорядочивать на той стороне, и порядок разошёлся
+                # бы у двух потребителей молча (049).
+                "tier": {
+                    "n": tiers[num],
+                    "ru": TIERS[tiers[num]]["ru"],
+                    "en": TIERS[tiers[num]]["en"],
+                },
+                # ПРАВИЛО ЕДЕТ ВМЕСТЕ С ЗАГОЛОВКОМ, а не вместо него. Заголовок
+                # отвечает «о чём», буква — «что требуется», граница — «где это не
+                # действует». Втроём они и есть контекст, которого хватает, чтобы
+                # ответить, не додумывая; инцидент в выгрузку не берётся — он
+                # объясняет мотив, а не предмет, и удваивает файл (замер: +106 КиБ
+                # при 231 исходных).
+                "claim": {"ru": claim_of(ru, "ru"), "en": claim_of(en, "en")},
+                "applies": {"ru": applies_of(ru, "ru"), "en": applies_of(en, "en")},
+                "added": dates[num],
+                "files": {"ru": f"rules/ru/{ru.name}", "en": f"rules/en/{en.name}"},
+                "trails": trails.get(num, []),
+                # Где поломка показалась впервые. Ключ есть всегда: замер при
+                # заведении дал проект у всех 152 записей. Если его вдруг нет —
+                # это находка, а не пустота, и её видно как отсутствие ключа.
+                **({"origin": origin} if (origin := origin_of(ru, "ru", KNOWN)) else {}),
+            }
+        )
         # Необязательное поле: отсутствует у записи — отсутствует и в экспорте.
         # Ключ со значением null означал бы «ответили не знаю», а мы не
         # отвечали вовсе (правило 128 про полноту поля, а не про его наличие).
@@ -1263,18 +1314,20 @@ def candidates_export() -> list[dict]:
         text = path.read_text(encoding="utf-8")
         m = re.search(r"(?im)^\*\*Гипотеза\.\*\*\s+(.+?)(?=\n\n)", text, re.S)
         area = re.search(r"(?im)^\*\*Область\.\*\*\s+(.+)$", text)
-        out.append({
-            "kind": "hypothesis",
-            "slug": path.stem,
-            "lang": "ru",
-            "title": title_of(path),
-            "area": area.group(1).strip() if area else "",
-            "hypothesis": " ".join(m.group(1).split()) if m else "",
-            "source": section_of(text, "Источник"),
-            "confirmed_by": section_of(text, "Чем подтвердится"),
-            "applicability": section_of(text, "Применимость"),
-            "file": str(path.relative_to(ROOT)),
-        })
+        out.append(
+            {
+                "kind": "hypothesis",
+                "slug": path.stem,
+                "lang": "ru",
+                "title": title_of(path),
+                "area": area.group(1).strip() if area else "",
+                "hypothesis": " ".join(m.group(1).split()) if m else "",
+                "source": section_of(text, "Источник"),
+                "confirmed_by": section_of(text, "Чем подтвердится"),
+                "applicability": section_of(text, "Применимость"),
+                "file": str(path.relative_to(ROOT)),
+            }
+        )
     return out
 
 
@@ -1289,13 +1342,17 @@ def known_consumers() -> tuple[set[str], str | None]:
     try:
         data = json.loads(CONSUMERS.read_text(encoding="utf-8"))
     except (OSError, ValueError) as e:
-        return set(), (f"реестр потребителей не прочитан — {e}. Без него "
-                       "следы разбирать нечем, а разбирать наугад нельзя")
+        return set(), (
+            f"реестр потребителей не прочитан — {e}. Без него "
+            "следы разбирать нечем, а разбирать наугад нельзя"
+        )
     repos = {c.get("repo") for c in data.get("consumers", []) if c.get("repo")}
     if not repos:
-        return set(), (f"{CONSUMERS.relative_to(ROOT)} не называет ни одного "
-                       "потребителя — пустой список это состояние, но не "
-                       "основание разбирать следы")
+        return set(), (
+            f"{CONSUMERS.relative_to(ROOT)} не называет ни одного "
+            "потребителя — пустой список это состояние, но не "
+            "основание разбирать следы"
+        )
     return repos, None
 
 
@@ -1358,9 +1415,11 @@ def trails_of(path: Path, lang: str, known: set[str]) -> tuple[list[dict[str, st
         full, num, repo_only, bare = m.groups()
         if full:
             if full not in known:
-                return [], (f"след ведёт в {full}#{num}, а такого потребителя "
-                            f"нет в {CONSUMERS.relative_to(ROOT)}. Либо опечатка, "
-                            "либо реестр пора дополнить — осознанно, а не молча")
+                return [], (
+                    f"след ведёт в {full}#{num}, а такого потребителя "
+                    f"нет в {CONSUMERS.relative_to(ROOT)}. Либо опечатка, "
+                    "либо реестр пора дополнить — осознанно, а не молча"
+                )
             current = full
             key = (full, num)
         elif repo_only:
@@ -1384,8 +1443,10 @@ def trails_of(path: Path, lang: str, known: set[str]) -> tuple[list[dict[str, st
             # ссылку и рядом мёртвое число (правило 049 — вычисляемое
             # состояние расходится с показанным молча). След затем и нужен,
             # чтобы по нему пройти.
-            return [], (f"голый #{bare} в разделе следа: разбирается, но не "
-                        f"кликается. Полная форма — {current}#{bare}")
+            return [], (
+                f"голый #{bare} в разделе следа: разбирается, но не "
+                f"кликается. Полная форма — {current}#{bare}"
+            )
         if key not in seen:
             seen.add(key)
             out.append({"repo": key[0], "issue": key[1]})
@@ -1397,7 +1458,7 @@ def trails_of(path: Path, lang: str, known: set[str]) -> tuple[list[dict[str, st
     for m in DOC_TRAIL_RE.finditer(text[at:]):
         репо, файл, раздел = m.groups()
         if репо not in known:
-            continue                       # не потребитель — проза или путь
+            continue  # не потребитель — проза или путь
         запись = {"repo": репо, "doc": файл}
         if раздел and раздел.strip():
             # ИМЯ РАЗДЕЛА КОНЧАЕТСЯ ВМЕСТЕ С ПРЕДЛОЖЕНИЕМ. Скобка, запятая и
@@ -1411,8 +1472,9 @@ def trails_of(path: Path, lang: str, known: set[str]) -> tuple[list[dict[str, st
             # Режется точка С ПРОБЕЛОМ ПОСЛЕ: расширение внутри имени
             # (`§ Обновление CHANGELOG.md / HISTORY.md`) пробела за точкой не
             # имеет и остаётся целым.
-            запись["section"] = (ТОЧКА_ПРЕДЛОЖЕНИЯ.split(раздел.strip())[0]
-                                 .strip().rstrip(".").strip("`").strip())
+            запись["section"] = (
+                ТОЧКА_ПРЕДЛОЖЕНИЯ.split(раздел.strip())[0].strip().rstrip(".").strip("`").strip()
+            )
         if запись not in out:
             out.append(запись)
     return out, None
@@ -1437,21 +1499,24 @@ def check_refines(found: dict[str, dict[str, Path]]) -> list[str]:
         if пара["ru"] != пара["en"]:
             problems.append(
                 f"{num}: пометка «уточняет» разошлась между деревьями — "
-                f"ru {пара['ru'] or '—'}, en {пара['en'] or '—'}")
+                f"ru {пара['ru'] or '—'}, en {пара['en'] or '—'}"
+            )
             continue
         if пара["ru"]:
             marks[num] = пара["ru"]
 
     for num, target in sorted(marks.items()):
         if target == num:
-            problems.append(f"{num}: уточняет само себя — это опечатка, а "
-                            "запись при этом читается как обычная")
+            problems.append(
+                f"{num}: уточняет само себя — это опечатка, а запись при этом читается как обычная"
+            )
             continue
         if target not in found:
             problems.append(
                 f"{num}: уточняет запись {target}, а такой в каталоге нет. "
                 "Ссылка в пустоту хуже отсутствия пометки: обратная сторона "
-                "соберётся ни на что")
+                "соберётся ни на что"
+            )
             continue
         # Цикл: A уточняет B, B уточняет A. Тогда ни одна не общая, и порядок
         # чтения не определён вовсе — а ради него пометка и заведена.
@@ -1462,7 +1527,8 @@ def check_refines(found: dict[str, dict[str, Path]]) -> list[str]:
         if шаг in цепочка:
             problems.append(
                 f"{num}: уточнения образуют цикл {' → '.join(цепочка)} → {шаг}. "
-                "Порядок чтения не определён: общей записи в кольце нет")
+                "Порядок чтения не определён: общей записи в кольце нет"
+            )
     return problems
 
 
@@ -1493,21 +1559,25 @@ def check_superseded(found: dict[str, dict[str, Path]]) -> list[str]:
         if пара["ru"] != пара["en"]:
             problems.append(
                 f"{num}: пометка «заменено» разошлась между деревьями — "
-                f"ru {пара['ru'] or '—'}, en {пара['en'] or '—'}")
+                f"ru {пара['ru'] or '—'}, en {пара['en'] or '—'}"
+            )
             continue
         if пара["ru"]:
             marks[num] = пара["ru"]
 
     for num, target in sorted(marks.items()):
         if target == num:
-            problems.append(f"{num}: заменено само собой — это опечатка, а "
-                            "запись при этом читается как действующая")
+            problems.append(
+                f"{num}: заменено само собой — это опечатка, а "
+                "запись при этом читается как действующая"
+            )
             continue
         if target not in found:
             problems.append(
                 f"{num}: заменено записью {target}, а такой в каталоге нет. "
                 "Ссылка в пустоту хуже отсутствия пометки: по старой ссылке "
-                "читатель приходит и упирается")
+                "читатель приходит и упирается"
+            )
             continue
         # Цикл: идём по цепочке, пока не вернёмся в начало или не кончится.
         видели, шаг = {num}, target
@@ -1515,7 +1585,8 @@ def check_superseded(found: dict[str, dict[str, Path]]) -> list[str]:
             if шаг in видели:
                 problems.append(
                     f"{num}: цепочка замен зациклена на {шаг} — история "
-                    "перехода теряется целиком, а её и бережёт правило 043")
+                    "перехода теряется целиком, а её и бережёт правило 043"
+                )
                 break
             видели.add(шаг)
             шаг = marks[шаг]
@@ -1591,7 +1662,9 @@ def check_trails(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list], li
                 f"{num}: {lang}/{slot[lang].name}: раздел следа непуст, а "
                 "разобрать в нём нечего. Форма — «Владелец/Репозиторий — "
                 "`путь/файл.расширение`» либо «Владелец/Репозиторий#номер», "
-                "и артефакт идёт сразу за тире")
+                "и артефакт идёт сразу за тире"
+            )
+
         # СРАВНИВАЮТСЯ ОБА ВИДА, А НЕ ТОЛЬКО ЗАДАЧИ. Пока запись следа знала
         # одну форму, ключ строился как (repo, issue); с появлением следа-
         # документа такой ключ падал бы на нём с KeyError — то есть сборка
@@ -1601,14 +1674,17 @@ def check_trails(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list], li
             return (d["repo"], d.get("issue"), d.get("doc"), d.get("section"))
 
         def показать(следы: list[dict[str, str]]) -> list[str]:
-            return [f"{d['repo']}#{d['issue']}" if "issue" in d
-                    else f"{d['repo']} — {d['doc']}" + (f" § {d['section']}" if d.get("section") else "")
-                    for d in следы]
+            return [
+                f"{d['repo']}#{d['issue']}"
+                if "issue" in d
+                else f"{d['repo']} — {d['doc']}"
+                + (f" § {d['section']}" if d.get("section") else "")
+                for d in следы
+            ]
 
         if {ключ(d) for d in ru} != {ключ(d) for d in en}:
             problems.append(
-                f"{num}: следы деревьев расходятся — "
-                f"ru {показать(ru)}, en {показать(en)}"
+                f"{num}: следы деревьев расходятся — ru {показать(ru)}, en {показать(en)}"
             )
             continue
         result[num] = ru
@@ -1619,9 +1695,11 @@ def marked(path: Path, count: int) -> tuple[str, str | None]:
     """Подставляет число в маркер. Возвращает текст и находку, если маркера нет."""
     text = path.read_text(encoding="utf-8")
     if not MARKER_RE.search(text):
-        return text, (f"{path.name}: маркера <!--m:rules--> нет. Число, которое "
-                      "некому переписать, устареет молча — а витрина будет "
-                      "выглядеть свежей")
+        return text, (
+            f"{path.name}: маркера <!--m:rules--> нет. Число, которое "
+            "некому переписать, устареет молча — а витрина будет "
+            "выглядеть свежей"
+        )
     return MARKER_RE.sub(rf"\g<1>{count}\g<2>", text), None
 
 
@@ -1634,9 +1712,11 @@ def contracts_marked(path: Path, numbers: dict[str, str]) -> tuple[str, str | No
     """
     text = path.read_text(encoding="utf-8")
     if not CONTRACTS_MARKER_RE.search(text):
-        return text, (f"{path.name}: маркера <!--m:contracts--> нет. Номера "
-                      "контрактов, которые некому переписать, устареют молча — "
-                      "а контрактный документ будет выглядеть свежим (005)")
+        return text, (
+            f"{path.name}: маркера <!--m:contracts--> нет. Номера "
+            "контрактов, которые некому переписать, устареют молча — "
+            "а контрактный документ будет выглядеть свежим (005)"
+        )
     пары = [f'"{k}": "{numbers[k]}"' for k in CONTRACTS_ORDER if k in numbers]
     # РАЗРЕЗ ПО ФАКТИЧЕСКОЙ ДЛИНЕ, А НЕ ПО ШЕСТИ. Первая редакция резала
     # `пары[:3]` / `пары[3:]`, то есть предполагала, что известны все шесть
@@ -1653,14 +1733,14 @@ def contracts_marked(path: Path, numbers: dict[str, str]) -> tuple[str, str | No
     # Живой набор сегодня полон, но `contracts_now` молча пропускает контракт,
     # чей файл не прочитался, — значит частичный набор это «пока все шесть
     # читаются», а не «никогда».
-    строки = ([", ".join(пары)] if len(пары) <= 3
-              else [", ".join(пары[:(len(пары) + 1) // 2]),
-                    ", ".join(пары[(len(пары) + 1) // 2:])])
-    тело = ('<!--m:contracts-->"schema": "{}",\n'
-            '  "contracts": {{\n{}\n'
-            '  }},<!--/m:contracts-->').format(
-                numbers.get("export", ""),
-                ",\n".join("    " + с for с in строки))
+    строки = (
+        [", ".join(пары)]
+        if len(пары) <= 3
+        else [", ".join(пары[: (len(пары) + 1) // 2]), ", ".join(пары[(len(пары) + 1) // 2 :])]
+    )
+    тело = (
+        '<!--m:contracts-->"schema": "{}",\n  "contracts": {{\n{}\n  }},<!--/m:contracts-->'
+    ).format(numbers.get("export", ""), ",\n".join("    " + с for с in строки))
     return CONTRACTS_MARKER_RE.sub(lambda _: тело, text, count=1), None
 
 
@@ -1678,8 +1758,7 @@ def area_stats(areas: dict[str, list[str]]) -> tuple[int, int]:
     return len(buckets), sum(1 for n in buckets.values() if n == 1)
 
 
-def render(found: dict[str, dict[str, Path]], gaps: list[int],
-           areas: dict[str, list[str]]) -> str:
+def render(found: dict[str, dict[str, Path]], gaps: list[int], areas: dict[str, list[str]]) -> str:
     rows = []
     в_силе = set(действующие(found))
     for num in sorted(found):
@@ -1699,8 +1778,14 @@ def render(found: dict[str, dict[str, Path]], gaps: list[int],
         rows.append(f"| {num} | {статус} | {t_ru} | {t_en} | {l_ru} {l_en} | {both} |")
 
     выбыли = len(found) - len(в_силе)
-    замещено = (f" (ещё {выбыли} заменены и остаются ради старых ссылок ·"
-                f" {выбыли} more superseded, kept for old links)") if выбыли else ""
+    замещено = (
+        (
+            f" (ещё {выбыли} заменены и остаются ради старых ссылок ·"
+            f" {выбыли} more superseded, kept for old links)"
+        )
+        if выбыли
+        else ""
+    )
     gap_note = ""
     if gaps:
         gap_note = (
@@ -1836,9 +1921,12 @@ def main() -> int:
     # Клон полный (иначе вышли бы выше), значит правила просто ещё не в истории:
     # их только что завели. Сказать про «мелкий клон» здесь значит отправить
     # автора чинить не то: сторож обязан называть настоящую причину.
-    undated = [f"{n}: правило ещё не в истории — закоммитьте его и пересоберите. "
-               "Дата появления берётся из истории, а не из поля (правило 049)"
-               for n in sorted(found) if n not in dates]
+    undated = [
+        f"{n}: правило ещё не в истории — закоммитьте его и пересоберите. "
+        "Дата появления берётся из истории, а не из поля (правило 049)"
+        for n in sorted(found)
+        if n not in dates
+    ]
     if undated:
         print("указатель не собран:", file=sys.stderr)
         for u in undated:
@@ -1881,14 +1969,18 @@ def main() -> int:
         # предупреждает 051. Сверяется всё, кроме летучих ключей.
         if not same_export(EXPORT, export):
             stale.append(EXPORT)
-        stale += [p for p, want in marks.items()
-                  if p.read_text(encoding="utf-8") != want]
+        stale += [p for p, want in marks.items() if p.read_text(encoding="utf-8") != want]
         if stale:
-            print("устарело — пересоберите (python scripts/build_rules_index.py): "
-                  + ", ".join(str(p.relative_to(ROOT)) for p in stale), file=sys.stderr)
+            print(
+                "устарело — пересоберите (python scripts/build_rules_index.py): "
+                + ", ".join(str(p.relative_to(ROOT)) for p in stale),
+                file=sys.stderr,
+            )
             return 1
-        print(f"указатель актуален: {len(в_силе)} правил{заменены} на {len(LANGS)} языках,"
-              f" областей {total_areas} (с одним правилом {singles})")
+        print(
+            f"указатель актуален: {len(в_силе)} правил{заменены} на {len(LANGS)} языках,"
+            f" областей {total_areas} (с одним правилом {singles})"
+        )
         return 0
 
     OUT.write_text(text, encoding="utf-8")
@@ -1896,9 +1988,11 @@ def main() -> int:
     EXPORT.write_text(export, encoding="utf-8")
     for path, body in marks.items():
         path.write_text(body, encoding="utf-8")
-    print(f"собрано: {len(в_силе)} правил{заменены}, языков {len(LANGS)},"
-          f" областей {total_areas} (с одним правилом {singles}),"
-          f" пропуски в нумерации: {gaps or 'нет'}")
+    print(
+        f"собрано: {len(в_силе)} правил{заменены}, языков {len(LANGS)},"
+        f" областей {total_areas} (с одним правилом {singles}),"
+        f" пропуски в нумерации: {gaps or 'нет'}"
+    )
     return 0
 
 

@@ -39,7 +39,6 @@
   109 — терминальный статус обязателен — 0, 1 или 2, и третий не растворяется во втором.
 """
 
-
 import argparse
 import json
 import os
@@ -108,8 +107,10 @@ def changed(root: Path) -> tuple[list[str] | None, str]:
     производных на таком имени молча не совпадёт, а человек в жалобе прогона
     увидит мусор вместо имени файла. Поймано самопроверкой, а не глазом.
     """
-    rc, out = run(["git", "-c", "core.quotePath=false",
-                   "status", "--porcelain", "--untracked-files=all"], root)
+    rc, out = run(
+        ["git", "-c", "core.quotePath=false", "status", "--porcelain", "--untracked-files=all"],
+        root,
+    )
     if rc != 0:
         return None, out
     names = []
@@ -145,9 +146,14 @@ def опубликовано(root: Path, name: str) -> tuple[str | None, str, st
 
     rc, _ = run(["git", "rev-parse", "--verify", "--quiet", PUBLISHED_REF], root)
     if rc != 0:
-        return None, PUBLISHED_REF, (
-            f"{name}: в общей ветке файла нет, а ветка публикации "
-            f"{PUBLISHED_REF} недоступна — сверить не с чем, считаю изменением")
+        return (
+            None,
+            PUBLISHED_REF,
+            (
+                f"{name}: в общей ветке файла нет, а ветка публикации "
+                f"{PUBLISHED_REF} недоступна — сверить не с чем, считаю изменением"
+            ),
+        )
 
     rc, out = run(["git", "show", f"{PUBLISHED_REF}:{name}"], root)
     # Файла на ветке публикации ещё нет — это первая публикация, а не отказ.
@@ -210,7 +216,7 @@ def differ(root: Path) -> tuple[list[str] | None, str, list[str]]:
     for name in DERIVED:
         путь = root / name
         if not путь.exists():
-            continue                    # сборщик его не делает — не наш предмет
+            continue  # сборщик его не делает — не наш предмет
         try:
             стало = путь.read_text(encoding="utf-8")
         except OSError as e:
@@ -271,8 +277,7 @@ def refresh(root: Path) -> tuple[int, list[str], list[str]]:
     # не то, что объявлено.
     stray = sorted(set(after) - set(before) - set(DERIVED))
     if stray:
-        problems.append("сборщик тронул файлы вне объявленного набора: "
-                        + ", ".join(stray))
+        problems.append("сборщик тронул файлы вне объявленного набора: " + ", ".join(stray))
         return 2, [], problems
 
     touched, _, жалобы = differ(root)
@@ -286,6 +291,7 @@ def refresh(root: Path) -> tuple[int, list[str], list[str]]:
 #
 # Набор двусторонний (140): у каждого исхода есть предмет, который обязан его
 # дать. Проверяется именно граница — ради неё скрипт и существует.
+
 
 def selftest() -> int:
     import tempfile
@@ -303,9 +309,13 @@ def selftest() -> int:
             f.parent.mkdir(parents=True, exist_ok=True)
             f.write_text("исходное\n", encoding="utf-8")
         if json_seed:
-            (d / "export" / "where.json").write_text(json.dumps(
-                {"consumers": [{"repo": "o/a", "read_at": "вчера", "answered": 1}]},
-                ensure_ascii=False), encoding="utf-8")
+            (d / "export" / "where.json").write_text(
+                json.dumps(
+                    {"consumers": [{"repo": "o/a", "read_at": "вчера", "answered": 1}]},
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
         (d / "чужой.txt").write_text("исходное\n", encoding="utf-8")
         for script, _ in BUILDERS:
             (d / script).write_text(builder, encoding="utf-8")
@@ -321,15 +331,18 @@ def selftest() -> int:
         bad.append(f"тихий сборщик обязан дать 0 и пустой список, дал {rc} {names}")
 
     # Исход 1: сборщик обновил объявленное производное.
-    d = repo("from pathlib import Path\n"
-             "Path('export/where.md').write_text('свежее\\n', encoding='utf-8')\n")
+    d = repo(
+        "from pathlib import Path\n"
+        "Path('export/where.md').write_text('свежее\\n', encoding='utf-8')\n"
+    )
     rc, names, _ = refresh(d)
     if rc != 1 or names != ["export/where.md"]:
         bad.append(f"обновление производного обязано дать 1 и его имя, дало {rc} {names}")
 
     # Исход 2: сборщик тронул файл ВНЕ набора. Ради этой границы всё и написано.
-    d = repo("from pathlib import Path\n"
-             "Path('чужой.txt').write_text('свежее\\n', encoding='utf-8')\n")
+    d = repo(
+        "from pathlib import Path\nPath('чужой.txt').write_text('свежее\\n', encoding='utf-8')\n"
+    )
     rc, _, problems = refresh(d)
     if rc != 2 or not any("вне объявленного набора" in p for p in problems):
         bad.append(f"файл вне набора обязан дать 2 и назвать его, дал {rc} {problems}")
@@ -350,8 +363,10 @@ def selftest() -> int:
     # сводка в непустом репозитории приезжает именно так. Раньше предметом
     # этого случая была картинка витрины — она ушла из набора вместе с уходом
     # из дерева общей ветки (правило 160), и случай переехал на сводку.
-    d = repo("from pathlib import Path\n"
-             "Path('export/where.md').write_text('новая\\n', encoding='utf-8')\n")
+    d = repo(
+        "from pathlib import Path\n"
+        "Path('export/where.md').write_text('новая\\n', encoding='utf-8')\n"
+    )
     (d / "export/where.md").unlink()
     run(["git", "commit", "-qam", "сводки не было"], d)
     rc, names, _ = refresh(d)
@@ -368,8 +383,10 @@ def selftest() -> int:
         bad.append(f"чужая незакоммиченная правка обязана дать 0, дала {rc} {problems}")
 
     # ...но сборщик, ТРОНУВШИЙ вне набора на грязном дереве, всё равно находка.
-    d = repo("from pathlib import Path\n"
-             "Path('свой-мусор.txt').write_text('сборщик\\n', encoding='utf-8')\n")
+    d = repo(
+        "from pathlib import Path\n"
+        "Path('свой-мусор.txt').write_text('сборщик\\n', encoding='utf-8')\n"
+    )
     (d / "чужой.txt").write_text("правка человека\n", encoding="utf-8")
     rc, _, problems = refresh(d)
     if rc != 2 or not any("свой-мусор.txt" in p for p in problems):
@@ -377,8 +394,10 @@ def selftest() -> int:
 
     # ДВА ЗАПУСКА ПОДРЯД ОТВЕЧАЮТ ОДИНАКОВО. Пока производное отличается от
     # истории, работа есть — независимо от того, кто её сделал и когда.
-    d = repo("from pathlib import Path\n"
-             "Path('export/where.md').write_text('свежее\\n', encoding='utf-8')\n")
+    d = repo(
+        "from pathlib import Path\n"
+        "Path('export/where.md').write_text('свежее\\n', encoding='utf-8')\n"
+    )
     first = refresh(d)[0]
     second = refresh(d)[0]
     if (first, second) != (1, 1):
@@ -386,24 +405,28 @@ def selftest() -> int:
 
     # ТОЛЬКО ДАТА ЧТЕНИЯ — НЕ ИЗМЕНЕНИЕ. Ловушка, ради которой всё это писано:
     # иначе пересборка заводила бы изменение каждый день, ничего не меняя.
-    d = repo("import json, pathlib\n"
-             "p = pathlib.Path('export/where.json')\n"
-             "d = json.loads(p.read_text(encoding='utf-8'))\n"
-             "d['consumers'][0]['read_at'] = 'завтра'\n"
-             "p.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')\n",
-             json_seed=True)
+    d = repo(
+        "import json, pathlib\n"
+        "p = pathlib.Path('export/where.json')\n"
+        "d = json.loads(p.read_text(encoding='utf-8'))\n"
+        "d['consumers'][0]['read_at'] = 'завтра'\n"
+        "p.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')\n",
+        json_seed=True,
+    )
     rc, names, problems = refresh(d)
     if rc != 0 or names:
         bad.append(f"смена одной даты чтения обязана дать 0, дала {rc} {names}")
 
     # ...а данные рядом с той же датой — изменение. Обратная сторона (140).
-    d = repo("import json, pathlib\n"
-             "p = pathlib.Path('export/where.json')\n"
-             "d = json.loads(p.read_text(encoding='utf-8'))\n"
-             "d['consumers'][0]['read_at'] = 'завтра'\n"
-             "d['consumers'][0]['answered'] = 99\n"
-             "p.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')\n",
-             json_seed=True)
+    d = repo(
+        "import json, pathlib\n"
+        "p = pathlib.Path('export/where.json')\n"
+        "d = json.loads(p.read_text(encoding='utf-8'))\n"
+        "d['consumers'][0]['read_at'] = 'завтра'\n"
+        "d['consumers'][0]['answered'] = 99\n"
+        "p.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')\n",
+        json_seed=True,
+    )
     rc, names, _ = refresh(d)
     if rc != 1 or names != ["export/where.json"]:
         bad.append(f"данные рядом с датой обязаны дать 1, дали {rc} {names}")
@@ -413,24 +436,28 @@ def selftest() -> int:
     # внутренний уровень. 3 сентября пересборка стала заводить изменение на
     # каждый толчок в общую ветку — слияние рождало новое время, новое время
     # рождало слияние (#304, #305, в каждом одна строка).
-    d = repo("import json, pathlib\n"
-             "p = pathlib.Path('export/where.json')\n"
-             "d = json.loads(p.read_text(encoding='utf-8'))\n"
-             "d['generated_at'] = 'завтра'\n"
-             "p.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')\n",
-             json_seed=True)
+    d = repo(
+        "import json, pathlib\n"
+        "p = pathlib.Path('export/where.json')\n"
+        "d = json.loads(p.read_text(encoding='utf-8'))\n"
+        "d['generated_at'] = 'завтра'\n"
+        "p.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')\n",
+        json_seed=True,
+    )
     rc, names, _ = refresh(d)
     if rc != 0 or names:
         bad.append(f"одно время сборки обязано дать 0, дало {rc} {names}")
 
     # ...и обратная сторона: данные рядом с новым временем — изменение (140).
-    d = repo("import json, pathlib\n"
-             "p = pathlib.Path('export/where.json')\n"
-             "d = json.loads(p.read_text(encoding='utf-8'))\n"
-             "d['generated_at'] = 'завтра'\n"
-             "d['consumers'][0]['answered'] = 99\n"
-             "p.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')\n",
-             json_seed=True)
+    d = repo(
+        "import json, pathlib\n"
+        "p = pathlib.Path('export/where.json')\n"
+        "d = json.loads(p.read_text(encoding='utf-8'))\n"
+        "d['generated_at'] = 'завтра'\n"
+        "d['consumers'][0]['answered'] = 99\n"
+        "p.write_text(json.dumps(d, ensure_ascii=False), encoding='utf-8')\n",
+        json_seed=True,
+    )
     rc, names, _ = refresh(d)
     if rc != 1 or names != ["export/where.json"]:
         bad.append(f"данные рядом со временем обязаны дать 1, дали {rc} {names}")
@@ -472,36 +499,43 @@ def selftest() -> int:
         # Опубликованное отличается от пересобранного — это работа.
         rc, names, _ = refresh(вне_общей("опубликовано\n", "пересобрано\n"))
         if rc != 1 or names != sorted(DERIVED):
-            bad.append(f"игнорируемое производное, отличное от опубликованного, "
-                       f"обязано дать 1 и оба имени, дало {rc} {names}")
+            bad.append(
+                f"игнорируемое производное, отличное от опубликованного, "
+                f"обязано дать 1 и оба имени, дало {rc} {names}"
+            )
 
         # ...и обратная сторона: совпало — значит будить публикацию незачем.
         rc, names, _ = refresh(вне_общей("одно и то же\n", "одно и то же\n"))
         if rc != 0 or names:
-            bad.append(f"игнорируемое производное, равное опубликованному, "
-                       f"обязано дать 0, дало {rc} {names}")
+            bad.append(
+                f"игнорируемое производное, равное опубликованному, "
+                f"обязано дать 0, дало {rc} {names}"
+            )
 
         # Ветки публикации нет — считаем изменением и ГОВОРИМ об этом (039, 051).
-        rc, names, problems = refresh(
-            вне_общей("всё равно\n", "всё равно\n", с_веткой=False))
+        rc, names, problems = refresh(вне_общей("всё равно\n", "всё равно\n", с_веткой=False))
         if rc != 1 or not any("недоступна" in p for p in problems):
-            bad.append(f"недоступная ветка публикации обязана дать 1 и жалобу, "
-                       f"дала {rc} {problems}")
+            bad.append(
+                f"недоступная ветка публикации обязана дать 1 и жалобу, дала {rc} {problems}"
+            )
     finally:
         PUBLISHED_REF = прежняя_ветка
 
     for b in bad:
         print(f"  ✗ {b}", file=sys.stderr)
-    print(f"самопроверка обновления производных: случаев 16, провалов {len(bad)}",
-          file=sys.stderr if bad else sys.stdout)
+    print(
+        f"самопроверка обновления производных: случаев 16, провалов {len(bad)}",
+        file=sys.stderr if bad else sys.stdout,
+    )
     return 1 if bad else 0
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=ROOT)
-    ap.add_argument("--selftest", action="store_true",
-                    help="прогнать все объявленные исходы и выйти")
+    ap.add_argument(
+        "--selftest", action="store_true", help="прогнать все объявленные исходы и выйти"
+    )
     args = ap.parse_args(argv)
 
     if args.selftest:
@@ -511,8 +545,10 @@ def main(argv: list[str] | None = None) -> int:
     for p in problems:
         print(f"  ✗ {p}", file=sys.stderr)
     if rc == 2:
-        print(f"обновление производных НЕ отработало: смотрите {DERIVED} — "
-              "это чинит человек", file=sys.stderr)
+        print(
+            f"обновление производных НЕ отработало: смотрите {DERIVED} — это чинит человек",
+            file=sys.stderr,
+        )
         return 2
     if rc == 0:
         print("производные совпадают с тем, что отдают потребители")

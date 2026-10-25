@@ -5,16 +5,19 @@
 сравнения, а не решение гейта.
 """
 
-
 from pathlib import Path
 
 import check_locale as cl
 from conftest import write
 
-РУССКИЙ = ("# Правило одной строкой\n\n**Область.** гейты\n\n"
-           "Запись целиком по-русски: инцидент, механизм поломки и граница.\n")
-АНГЛИЙСКИЙ = ("# A rule in one line\n\n**Area.** gates\n\n"
-              "The record in English: the incident, the mechanism and the boundary.\n")
+РУССКИЙ = (
+    "# Правило одной строкой\n\n**Область.** гейты\n\n"
+    "Запись целиком по-русски: инцидент, механизм поломки и граница.\n"
+)
+АНГЛИЙСКИЙ = (
+    "# A rule in one line\n\n**Area.** gates\n\n"
+    "The record in English: the incident, the mechanism and the boundary.\n"
+)
 
 
 def подделка(repo: Path, ru: str = РУССКИЙ, en: str = АНГЛИЙСКИЙ) -> Path:
@@ -61,6 +64,7 @@ def test_net_derevev_eto_tretiy_ishod(repo, capsys):
 
 # ── запас порога — проверяемое утверждение (правило 070) ──────────────────
 
+
 def test_английское_у_самого_потолка_это_находка(repo, capsys):
     """Ниже потолка, но выше половины: порог прошёл бы, запас — нет."""
     англ = АНГЛИЙСКИЙ + "Цитата: " + "щ" * 2 + "\n"
@@ -84,11 +88,11 @@ def test_сдвиг_порога_запас_не_двигает(repo, capsys):
     воспроизводит: производное от порога уже вычислено, и тест зеленел бы на
     коде, где запас едет вместе с порогом."""
     import importlib.util
+
     исходник = Path(cl.__file__).read_text(encoding="utf-8")
     assert "EN_CEIL = 0.15" in исходник
     правка = repo / "check_locale_ослаблен.py"
-    правка.write_text(исходник.replace("EN_CEIL = 0.15", "EN_CEIL = 0.30"),
-                      encoding="utf-8")
+    правка.write_text(исходник.replace("EN_CEIL = 0.15", "EN_CEIL = 0.30"), encoding="utf-8")
     spec = importlib.util.spec_from_file_location("ослаблен", правка)
     ослаблен = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(ослаблен)
@@ -103,11 +107,11 @@ def test_сдвиг_пола_запас_не_двигает(repo, capsys):
     `RU_MARGIN` к производной от `RU_FLOOR` (`RU_FLOOR * 1.5`) оставался
     зелёным: доля 0.67 прошла бы запас 0.60 ослабленного пола."""
     import importlib.util
+
     исходник = Path(cl.__file__).read_text(encoding="utf-8")
     assert "RU_FLOOR = 0.50" in исходник
     правка = repo / "check_locale_ослаблен_ru.py"
-    правка.write_text(исходник.replace("RU_FLOOR = 0.50", "RU_FLOOR = 0.40"),
-                      encoding="utf-8")
+    правка.write_text(исходник.replace("RU_FLOOR = 0.50", "RU_FLOOR = 0.40"), encoding="utf-8")
     spec = importlib.util.spec_from_file_location("ослаблен_ru", правка)
     ослаблен = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(ослаблен)

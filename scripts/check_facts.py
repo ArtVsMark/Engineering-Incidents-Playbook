@@ -85,9 +85,22 @@ MANIFEST_PATH = ".github/badges/contracts.json"
 FAMILY_MAJOR = "1"
 
 #: Ключевые слова, которые разбор понимает. Служебные — только подписи.
-KEYWORDS = {"type", "required", "properties", "additionalProperties", "items",
-            "pattern", "minLength", "minimum", "maximum", "minItems", "enum",
-            "anyOf", "allOf", "propertyNames"}
+KEYWORDS = {
+    "type",
+    "required",
+    "properties",
+    "additionalProperties",
+    "items",
+    "pattern",
+    "minLength",
+    "minimum",
+    "maximum",
+    "minItems",
+    "enum",
+    "anyOf",
+    "allOf",
+    "propertyNames",
+}
 ANNOTATIONS = {"$schema", "$id", "$comment", "title", "description"}
 
 TYPES = {
@@ -113,8 +126,9 @@ def validate(value: object, schema: dict, path: str = "") -> list[str]:
     """
     unknown = set(schema) - KEYWORDS - ANNOTATIONS
     if unknown:
-        raise ValueError(f"схема у {path or 'корня'} просит незнакомого: "
-                         f"{', '.join(sorted(unknown))}")
+        raise ValueError(
+            f"схема у {path or 'корня'} просит незнакомого: {', '.join(sorted(unknown))}"
+        )
     where = path or "файл"
     kind = schema.get("type")
     if kind is not None and not TYPES[kind](value):
@@ -131,16 +145,17 @@ def validate(value: object, schema: dict, path: str = "") -> list[str]:
         for name, item in value.items():
             sub = f"{path}.{name}" if path else name
             if names is not None:
-                found += [f"{sub}: имя не из допустимых — {msg.split(': ', 1)[1]}"
-                          for msg in validate(name, names, sub)]
+                found += [
+                    f"{sub}: имя не из допустимых — {msg.split(': ', 1)[1]}"
+                    for msg in validate(name, names, sub)
+                ]
             if name in props:
                 found += validate(item, props[name], sub)
             elif isinstance(extra, dict):
                 found += validate(item, extra, sub)
     if isinstance(value, list):
         if len(value) < schema.get("minItems", 0):
-            found.append(f"{where}: элементов {len(value)}, нужно не меньше "
-                         f"{schema['minItems']}")
+            found.append(f"{where}: элементов {len(value)}, нужно не меньше {schema['minItems']}")
         if "items" in schema:
             for index, item in enumerate(value):
                 found += validate(item, schema["items"], f"{where}[{index}]")
@@ -158,10 +173,13 @@ def validate(value: object, schema: dict, path: str = "") -> list[str]:
         found.append(f"{where}: «{value}» — допустимы {', '.join(map(str, schema['enum']))}")
     for part in schema.get("allOf", []):
         found += validate(value, part, path)
-    if "anyOf" in schema and not any(not validate(value, option, path)
-                                     for option in schema["anyOf"]):
-        found.append(f"{where}: нет ни поля, ни причины — "
-                     f"{schema.get('description', 'ни одна из форм не подошла')}")
+    if "anyOf" in schema and not any(
+        not validate(value, option, path) for option in schema["anyOf"]
+    ):
+        found.append(
+            f"{where}: нет ни поля, ни причины — "
+            f"{schema.get('description', 'ни одна из форм не подошла')}"
+        )
     return found
 
 
@@ -184,16 +202,24 @@ def check(facts: object, repo: str, schema: dict) -> list[str]:
     # схемой, и вторая находка о той же причине была бы шумом, а не сведением.
     version, release = facts.get("version"), facts.get("release")
     series = schema.get("properties", {}).get("release", {}).get("pattern", "")
-    if isinstance(version, str) and isinstance(release, str) \
-            and re.search(series, release) and not version.startswith(f"{release}."):
-        found.append(f"version: «{version}» — не сборка выпуска «{release}»: "
-                     f"версия обязана начинаться с «{release}.»")
+    if (
+        isinstance(version, str)
+        and isinstance(release, str)
+        and re.search(series, release)
+        and not version.startswith(f"{release}.")
+    ):
+        found.append(
+            f"version: «{version}» — не сборка выпуска «{release}»: "
+            f"версия обязана начинаться с «{release}.»"
+        )
     return found
 
 
 #: Подсказка к отставшему мажору 1: форма та же, сменились держатель и адрес (#843).
-MOVED = ("; договор с 2.0 держит каталог ArtVsMark/Engineering-Incidents-Playbook — "
-         "подъём: тег facts-v2.0.0 каталога в шаге CI и schema «2.0», форма та же")
+MOVED = (
+    "; договор с 2.0 держит каталог ArtVsMark/Engineering-Incidents-Playbook — "
+    "подъём: тег facts-v2.0.0 каталога в шаге CI и schema «2.0», форма та же"
+)
 #: Поля корня, которые договор знает, но не держит: подпись-комментарий ``_``.
 COMMENT_KEYS = {"_"}
 
@@ -215,20 +241,29 @@ def advise(facts: object, schema: dict, current: str) -> list[str]:
     known = set(schema.get("properties", {})) | COMMENT_KEYS
     for name in sorted(set(facts) - known):
         if name == "rules":
-            said.append("rules: доли механизмов считает каталог по ответу проекта — "
-                        "в фактах это второй источник того же числа (090); убрать")
+            said.append(
+                "rules: доли механизмов считает каталог по ответу проекта — "
+                "в фактах это второй источник того же числа (090); убрать"
+            )
         else:
-            said.append(f"{name}: поле вне договора в корне — место ему в "
-                        f"exchange.<тема> со своей schema")
+            said.append(
+                f"{name}: поле вне договора в корне — место ему в exchange.<тема> со своей schema"
+            )
     published = facts.get("schema")
     if isinstance(published, str) and re.fullmatch(r"\d+\.\d+", published):
         # не проза: номер версии «мажор.минор[.патч]».
         if tuple(map(int, published.split("."))) < tuple(map(int, current.split("."))):
-            said.append(f"schema: формат {published} при договоре {current} — файл отстал"
-                        # не проза: номер версии «мажор.минор[.патч]».
-                        + (MOVED if published.split(".")[0] < current.split(".")[0]
-                           # не проза: номер версии «мажор.минор[.патч]».
-                           and current.split(".")[0] == "2" else ""))
+            said.append(
+                f"schema: формат {published} при договоре {current} — файл отстал"
+                + (
+                    MOVED
+                    # не проза: номер версии «мажор.минор[.патч]».
+                    if published.split(".")[0] < current.split(".")[0]
+                    # не проза: номер версии «мажор.минор[.патч]».
+                    and current.split(".")[0] == "2"
+                    else ""
+                )
+            )
     return said
 
 
@@ -242,15 +277,22 @@ def advise_family(manifest: object | None) -> list[str]:
     манифест обязателен (решение владельца 9 октября, #309, #316).
     """
     if manifest is None:
-        return [f"манифеста семьи нет: {MANIFEST_PATH} в ветке {FACTS_REF} рядом с "
-                f"facts.json — форма у каталога (контракт family {FAMILY_MAJOR}.x); "
-                f"следующим мажором обязателен"]
+        return [
+            f"манифеста семьи нет: {MANIFEST_PATH} в ветке {FACTS_REF} рядом с "
+            f"facts.json — форма у каталога (контракт family {FAMILY_MAJOR}.x); "
+            f"следующим мажором обязателен"
+        ]
     published = manifest.get("schema") if isinstance(manifest, dict) else None
-    if not (isinstance(published, str) and re.fullmatch(r"\d+\.\d+", published)
-            # не проза: номер версии «мажор.минор[.патч]».
-            and published.split(".")[0] == FAMILY_MAJOR):
-        return [f"манифест семьи: формат {published!r} — не family {FAMILY_MAJOR}.x "
-                f"строкой; форму держит каталог (scripts/family.py, изъян_формы)"]
+    if not (
+        isinstance(published, str)
+        and re.fullmatch(r"\d+\.\d+", published)
+        # не проза: номер версии «мажор.минор[.патч]».
+        and published.split(".")[0] == FAMILY_MAJOR
+    ):
+        return [
+            f"манифест семьи: формат {published!r} — не family {FAMILY_MAJOR}.x "
+            f"строкой; форму держит каталог (scripts/family.py, изъян_формы)"
+        ]
     return []
 
 
@@ -283,7 +325,7 @@ def ci_step(prose: str) -> str | None:
     start, end = prose.find(STEP_OPEN), prose.find(STEP_CLOSE)
     if start < 0 or end < start:
         return None
-    return prose[start + len(STEP_OPEN):end].strip()
+    return prose[start + len(STEP_OPEN) : end].strip()
 
 
 def contract_drift(number: str, schema: dict, prose: str) -> list[str]:
@@ -297,11 +339,12 @@ def contract_drift(number: str, schema: dict, prose: str) -> list[str]:
     series = ".".join(number.split(".")[:2])
     found: list[str] = []
     if not str(schema.get("title", "")).endswith(f"договор {series}"):
-        found.append(f"facts.schema.json: заголовок «{schema.get('title')}» не "
-                     f"кончается на «договор {series}»")
+        found.append(
+            f"facts.schema.json: заголовок «{schema.get('title')}» не "
+            f"кончается на «договор {series}»"
+        )
     if f"## Единые требования · договор {series}" not in prose:
-        found.append(f"facts-contract.md: нет заголовка «## Единые требования · "
-                     f"договор {series}»")
+        found.append(f"facts-contract.md: нет заголовка «## Единые требования · договор {series}»")
     # Тег в шаге для CI — третье место номера: устаревший тег прибил бы
     # издателей к прошлому выпуску молча, и шаг остался бы зелёным.
     step = ci_step(prose)
@@ -309,11 +352,14 @@ def contract_drift(number: str, schema: dict, prose: str) -> list[str]:
         found.append(f"facts-contract.md: нет шага для CI между {STEP_OPEN} и {STEP_CLOSE}")
     elif f"FACTS_CONTRACT: facts-v{number}" not in step:
         found.append(f"facts-contract.md: шаг для CI прибит не к facts-v{number}")
-    if not re.fullmatch(schema.get("properties", {}).get("schema", {}).get("pattern", "^$"),
-                        series):
-        found.append(f"facts.schema.json: schema.pattern не принимает мажор "
-                     # не проза: номер версии «мажор.минор[.патч]».
-                     f"{series.split('.')[0]} договора")
+    if not re.fullmatch(
+        schema.get("properties", {}).get("schema", {}).get("pattern", "^$"), series
+    ):
+        found.append(
+            f"facts.schema.json: schema.pattern не принимает мажор "
+            # не проза: номер версии «мажор.минор[.патч]».
+            f"{series.split('.')[0]} договора"
+        )
     return found
 
 
@@ -332,17 +378,28 @@ def selftest() -> int:
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
     repo = "Owner/Name"
     good = {
-        "schema": "1.2", "schema_of": "факты проекта для витрины", "repo": repo,
-        "generated_at": "2026-10-01T07:22:31+00:00", "commit": "a" * 40,
-        "ci": {"workflow": "ci.yml"}, "version": "1.3.45", "release": "1.3",
-        "coverage_percent": 92.1, "tests": {"functions": 10, "modules": 2},
+        "schema": "1.2",
+        "schema_of": "факты проекта для витрины",
+        "repo": repo,
+        "generated_at": "2026-10-01T07:22:31+00:00",
+        "commit": "a" * 40,
+        "ci": {"workflow": "ci.yml"},
+        "version": "1.3.45",
+        "release": "1.3",
+        "coverage_percent": 92.1,
+        "tests": {"functions": 10, "modules": 2},
         "python": {"supported": ["3.12"]},
         "checks_per_pr": {"count": 3, "names": ["a", "b", "c"]},
     }
-    reasons = {k: v for k, v in good.items()
-               if k not in ("version", "release", "tests", "checks_per_pr")}
-    reasons["none"] = {"version": "не версионируется", "release": "выпусков нет",
-                       "tests": "кода нет", "checks_per_pr": "проверок нет"}
+    reasons = {
+        k: v for k, v in good.items() if k not in ("version", "release", "tests", "checks_per_pr")
+    }
+    reasons["none"] = {
+        "version": "не версионируется",
+        "release": "выпусков нет",
+        "tests": "кода нет",
+        "checks_per_pr": "проверок нет",
+    }
 
     def without(key: str) -> dict:
         return {k: v for k, v in good.items() if k != key}
@@ -354,31 +411,45 @@ def selftest() -> int:
         ("эталон", good, None),
         ("предмета нет — причиной в none", reasons, None),
         ("незнакомое поле сверх договора — не находка", with_(extra={"x": 1}), None),
-        ("доли правил любой формы — не предмет договора",
-         with_(rules={"by_mechanism": {"gate": 3}}), None),
-        ("причина о долях правил — не из договора", {**good, "none": {"rules": "нет"}},
-         "имя не из допустимых"),
+        (
+            "доли правил любой формы — не предмет договора",
+            with_(rules={"by_mechanism": {"gate": 3}}),
+            None,
+        ),
+        (
+            "причина о долях правил — не из договора",
+            {**good, "none": {"rules": "нет"}},
+            "имя не из допустимых",
+        ),
         ("нет repo", without("repo"), "«repo»"),
         ("нет commit", without("commit"), "«commit»"),
         ("нет ci", without("ci"), "«ci»"),
         ("нет версии и нет причины", without("version"), "none.version"),
         ("нет выпуска и нет причины", without("release"), "none.release"),
         ("нет покрытия и нет причины", without("coverage_percent"), "none.coverage_percent"),
-        ("python_versions вместо python", {**without("python"), "python_versions": ["3.12"]},
-         "none.python"),
+        (
+            "python_versions вместо python",
+            {**without("python"), "python_versions": ["3.12"]},
+            "none.python",
+        ),
         ("схема числом", with_(schema=1), "ожидался string"),
         ("схема чужого мажора", with_(schema="3.0"), "не той формы"),
         ("мажор 1 — та же форма у прежнего держателя", with_(schema="1.6"), None),
         ("время без пояса", with_(generated_at="2026-10-01T07:22:31"), "не той формы"),
         ("короткий SHA", with_(commit="abc123"), "не той формы"),
         ("покрытие больше ста", with_(coverage_percent=120), "больше 100"),
-        ("тестов дробное число", with_(tests={"functions": 1.5, "modules": 1}),
-         "ожидался integer"),
+        ("тестов дробное число", with_(tests={"functions": 1.5, "modules": 1}), "ожидался integer"),
         ("пустой список версий Python", with_(python={"supported": []}), "не меньше 1"),
-        ("причина пустая", {**reasons, "none": {**reasons["none"], "version": ""}},
-         "пустая строка"),
-        ("причина о незнакомом показателе", {**good, "none": {"stars": "нет"}},
-         "имя не из допустимых"),
+        (
+            "причина пустая",
+            {**reasons, "none": {**reasons["none"], "version": ""}},
+            "пустая строка",
+        ),
+        (
+            "причина о незнакомом показателе",
+            {**good, "none": {"stars": "нет"}},
+            "имя не из допустимых",
+        ),
         ("прогон CI не файлом", with_(ci={"workflow": "CI"}), "не той формы"),
         ("файл о другом репозитории", with_(repo="Owner/Other"), "лежит у Owner/Name"),
         # Выпуск — серия X.Y, версия — сборка X.Y.Z внутри неё (договор 1.3).
@@ -388,11 +459,17 @@ def selftest() -> int:
         ("версия из двух чисел", with_(version="1.3"), "version: «1.3» не той формы"),
         ("версия с v", with_(version="v1.3.45"), "version: «v1.3.45» не той формы"),
         ("версия из чужой серии", with_(version="1.4.2"), "не сборка выпуска «1.3»"),
-        ("серия — префикс без точки не считается", with_(release="1.1", version="1.11.157"),
-         "не сборка выпуска «1.1»"),
+        (
+            "серия — префикс без точки не считается",
+            with_(release="1.1", version="1.11.157"),
+            "не сборка выпуска «1.1»",
+        ),
         ("двузначные части — законно", with_(release="1.11", version="1.11.157"), None),
-        ("версия без выпуска — сверять не с чем", {**without("release"),
-                                                  "none": {"release": "выпусков нет"}}, None),
+        (
+            "версия без выпуска — сверять не с чем",
+            {**without("release"), "none": {"release": "выпусков нет"}},
+            None,
+        ),
         ("не объект", [1, 2], "ожидался object"),
     ]
     broken = []
@@ -403,27 +480,38 @@ def selftest() -> int:
         else:
             ok = (not found) if expected is None else any(expected in line for line in found)
         if not ok:
-            broken.append(f"{name}: ждали {'чисто' if expected is None else expected!r}, "
-                          f"вышло {found}")
+            broken.append(
+                f"{name}: ждали {'чисто' if expected is None else expected!r}, вышло {found}"
+            )
         print(f"  {'да ' if ok else 'НЕТ'} — {name}")
 
     # Обмен между проектами (1.4): тема со своей версией — законна; тема без
     # версии и тема с именем не той формы — находки, а не советы.
     exchange_cases = [
-        ("тема обмена со своей версией", with_(exchange={"glossary": {"schema": "1.0",
-                                                                     "cards": 2817}}), None),
-        ("тема без своей версии", with_(exchange={"glossary": {"cards": 1}}),
-         "exchange.glossary: нет обязательного поля «schema»"),
+        (
+            "тема обмена со своей версией",
+            with_(exchange={"glossary": {"schema": "1.0", "cards": 2817}}),
+            None,
+        ),
+        (
+            "тема без своей версии",
+            with_(exchange={"glossary": {"cards": 1}}),
+            "exchange.glossary: нет обязательного поля «schema»",
+        ),
         ("версия темы числом", with_(exchange={"glossary": {"schema": 1}}), "ожидался string"),
-        ("имя темы не той формы", with_(exchange={"Glossary!": {"schema": "1.0"}}),
-         "имя не из допустимых"),
+        (
+            "имя темы не той формы",
+            with_(exchange={"Glossary!": {"schema": "1.0"}}),
+            "имя не из допустимых",
+        ),
     ]
     for name, facts, expected in exchange_cases:
         found = check(facts, repo, schema)
         ok = (not found) if expected is None else any(expected in line for line in found)
         if not ok:
-            broken.append(f"{name}: ждали {'чисто' if expected is None else expected!r}, "
-                          f"вышло {found}")
+            broken.append(
+                f"{name}: ждали {'чисто' if expected is None else expected!r}, вышло {found}"
+            )
         print(f"  {'да ' if ok else 'НЕТ'} — {name}")
 
     # Советы — обе стороны: что следующий мажор запретит, названо; договорное и
@@ -440,8 +528,11 @@ def selftest() -> int:
     ]
     for name, facts, expected in advise_cases:
         said = advise(facts, schema, "1.4")
-        ok = (not said) if not expected else all(any(part in line for line in said)
-                                                 for part in expected)
+        ok = (
+            (not said)
+            if not expected
+            else all(any(part in line for line in said) for part in expected)
+        )
         if not ok:
             broken.append(f"совет, {name}: ждали {expected or 'молчание'}, вышло {said}")
         print(f"  {'да ' if ok else 'НЕТ'} — совет: {name}")
@@ -474,18 +565,36 @@ def selftest() -> int:
 
     # Номер договора один: заголовки схемы и прозы сверяются с источником.
     titled = {**schema, "title": "facts.json — договор 1.4"}
-    prose = ("x\n## Единые требования · договор 1.4\n"
-             f"{STEP_OPEN}\n    FACTS_CONTRACT: facts-v1.4.0\n{STEP_CLOSE}\n")
+    prose = (
+        "x\n## Единые требования · договор 1.4\n"
+        f"{STEP_OPEN}\n    FACTS_CONTRACT: facts-v1.4.0\n{STEP_CLOSE}\n"
+    )
     drift_cases = [
         ("заголовки совпадают с номером", "1.4.0", titled, prose, 0),
         ("схема на прежнем номере", "1.4.0", {**titled, "title": "договор 1.3"}, prose, 1),
-        ("проза на прежнем номере", "1.4.0", titled, prose.replace("договор 1.4", "договор 1.3"), 1),
-        ("мажор договора не принят схемой", "3.0.0",
-         {**titled, "title": "договор 3.0"}, prose.replace("1.4", "3.0"), 1),
+        (
+            "проза на прежнем номере",
+            "1.4.0",
+            titled,
+            prose.replace("договор 1.4", "договор 1.3"),
+            1,
+        ),
+        (
+            "мажор договора не принят схемой",
+            "3.0.0",
+            {**titled, "title": "договор 3.0"},
+            prose.replace("1.4", "3.0"),
+            1,
+        ),
         ("тег шага на прежнем номере", "1.4.7", titled, prose, 1),
         ("шага для CI нет вовсе", "1.4.0", titled, prose.split(STEP_OPEN)[0], 1),
-        ("метки шага перепутаны", "1.4.0", titled,
-         prose.replace(STEP_OPEN, "@@").replace(STEP_CLOSE, STEP_OPEN).replace("@@", STEP_CLOSE), 1),
+        (
+            "метки шага перепутаны",
+            "1.4.0",
+            titled,
+            prose.replace(STEP_OPEN, "@@").replace(STEP_CLOSE, STEP_OPEN).replace("@@", STEP_CLOSE),
+            1,
+        ),
     ]
     for name, number_, schema_, prose_, expected in drift_cases:
         got = len(contract_drift(number_, schema_, prose_))
@@ -495,22 +604,27 @@ def selftest() -> int:
     # Живой путь --contract: main на подставной прозе. Старый номер в
     # заголовке — исход 1, верный — 0; сравнение прямо с main(), так его
     # считает и храповик непрогнанных исходов (check_mechanisms).
-    import contextlib                                          # noqa: PLC0415
-    import io                                                  # noqa: PLC0415
-    import tempfile                                            # noqa: PLC0415
+    import contextlib  # noqa: PLC0415
+    import io  # noqa: PLC0415
+    import tempfile  # noqa: PLC0415
+
     real_prose = CONTRACT_PATH.read_text(encoding="utf-8")
     before = len(broken)
     saved_path, saved_argv = CONTRACT_PATH, sys.argv
     with tempfile.TemporaryDirectory(dir=os.environ.get("RUNNER_TEMP")) as tmp:
         stale = pathlib.Path(tmp) / "facts-contract.md"
-        stale.write_text(re.sub(r"(## Единые требования · договор )\d+\.\d+",
-                                r"\g<1>0.9", real_prose), encoding="utf-8")
+        stale.write_text(
+            re.sub(r"(## Единые требования · договор )\d+\.\d+", r"\g<1>0.9", real_prose),
+            encoding="utf-8",
+        )
         fresh = pathlib.Path(tmp) / "fresh.md"
         fresh.write_text(real_prose, encoding="utf-8")
         sys.argv = ["check_facts.py", "--contract"]
         try:
-            with contextlib.redirect_stdout(io.StringIO()), \
-                    contextlib.redirect_stderr(io.StringIO()):
+            with (
+                contextlib.redirect_stdout(io.StringIO()),
+                contextlib.redirect_stderr(io.StringIO()),
+            ):
                 globals()["CONTRACT_PATH"] = stale
                 if main() != 1:
                     broken.append("--contract: проза на старом номере не отвергнута")
@@ -520,7 +634,9 @@ def selftest() -> int:
         finally:
             globals()["CONTRACT_PATH"] = saved_path
             sys.argv = saved_argv
-    print(f"  {'да ' if len(broken) == before else 'НЕТ'} — --contract: старый номер в прозе — 1, верный — 0")
+    print(
+        f"  {'да ' if len(broken) == before else 'НЕТ'} — --contract: старый номер в прозе — 1, верный — 0"
+    )
 
     for bad in ("1.4", "v1.4.0", " ", "1.4.0.1"):
         try:
@@ -537,17 +653,22 @@ def selftest() -> int:
     example = json.loads(EXAMPLE_PATH.read_text(encoding="utf-8"))
     said = check(example, str(example.get("repo")), schema) + advise(example, schema, current)
     if said or example.get("schema") != current:
-        broken.append(f"образец: формат {example.get('schema')} при договоре {current}, "
-                      f"находок и советов {len(said)} — {said}")
-    print(f"  {'да ' if not said and example.get('schema') == current else 'НЕТ'} — "
-          f"образец по договору {current} без находок и советов")
+        broken.append(
+            f"образец: формат {example.get('schema')} при договоре {current}, "
+            f"находок и советов {len(said)} — {said}"
+        )
+    print(
+        f"  {'да ' if not said and example.get('schema') == current else 'НЕТ'} — "
+        f"образец по договору {current} без находок и советов"
+    )
 
     # Проба переноса: файл, скопированный в пустой каталог со схемой, номером и
     # образцом, — ровно так он лежит в выпуске, — работает без дерева каталога.
     # Обе стороны: образец — исход 0, испорченный образец — исход 1.
-    import shutil                                              # noqa: PLC0415
-    import subprocess                                          # noqa: PLC0415
-    import proc                                                # noqa: PLC0415
+    import shutil  # noqa: PLC0415
+    import subprocess  # noqa: PLC0415
+    import proc  # noqa: PLC0415
+
     with tempfile.TemporaryDirectory(dir=os.environ.get("RUNNER_TEMP")) as tmp:
         for source in (pathlib.Path(__file__), SCHEMA_PATH, VERSION_PATH, EXAMPLE_PATH):
             shutil.copy(source, tmp)
@@ -560,21 +681,39 @@ def selftest() -> int:
         (family / "contracts.json").write_text('{"schema": "1.1"}', encoding="utf-8")
         shutil.copy(EXAMPLE_PATH, family / "facts.json")
         for name, target, expected, warns in (
-                ("образец", EXAMPLE_PATH.name, 0, True),
-                ("испорченный образец", spoiled.name, 1, True),
-                ("образец с манифестом рядом", "family/facts.json", 0, False)):
-            run = proc.run([sys.executable, "-I", "check_facts.py", "--file", target,
-                            "--repo", str(example["repo"])], cwd=tmp,
-                           capture_output=True, text=True, encoding="utf-8", timeout=600)
+            ("образец", EXAMPLE_PATH.name, 0, True),
+            ("испорченный образец", spoiled.name, 1, True),
+            ("образец с манифестом рядом", "family/facts.json", 0, False),
+        ):
+            run = proc.run(
+                [
+                    sys.executable,
+                    "-I",
+                    "check_facts.py",
+                    "--file",
+                    target,
+                    "--repo",
+                    str(example["repo"]),
+                ],
+                cwd=tmp,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                timeout=600,
+            )
             warned = "манифеста семьи нет" in run.stdout
             ok = run.returncode == expected and warned == warns
             if not ok:
                 last = (run.stderr.strip().splitlines() or ["вывода нет"])[-1]
-                broken.append(f"перенос, {name}: ждали исход {expected} и совет "
-                              f"{'есть' if warns else 'нет'}, вышло {run.returncode} и "
-                              f"{'есть' if warned else 'нет'} — последняя строка: {last}")
-            print(f"  {'да ' if ok else 'НЕТ'} — перенос без дерева каталога: {name} — "
-                  f"исход {run.returncode}, совет о манифесте {'есть' if warned else 'нет'}")
+                broken.append(
+                    f"перенос, {name}: ждали исход {expected} и совет "
+                    f"{'есть' if warns else 'нет'}, вышло {run.returncode} и "
+                    f"{'есть' if warned else 'нет'} — последняя строка: {last}"
+                )
+            print(
+                f"  {'да ' if ok else 'НЕТ'} — перенос без дерева каталога: {name} — "
+                f"исход {run.returncode}, совет о манифесте {'есть' if warned else 'нет'}"
+            )
 
     # Незнакомое ключевое слово в схеме — отказ, а не пропуск требования.
     try:
@@ -596,15 +735,28 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--file", help="проверить локальный файл вместо соседей")
     parser.add_argument("--repo", help="чей это файл — для --file")
-    parser.add_argument("--manifest", type=pathlib.Path,
-                        help="манифест семьи для --file; по умолчанию — contracts.json "
-                             "рядом с файлом фактов")
-    parser.add_argument("--schema", type=pathlib.Path, default=SCHEMA_PATH,
-                        help="схема договора; по умолчанию — из дерева или рядом")
-    parser.add_argument("--version", type=pathlib.Path, default=VERSION_PATH,
-                        help="номер договора; по умолчанию — из дерева или рядом")
-    parser.add_argument("--contract", action="store_true",
-                        help="только сверить номер договора со схемой и прозой — без сети")
+    parser.add_argument(
+        "--manifest",
+        type=pathlib.Path,
+        help="манифест семьи для --file; по умолчанию — contracts.json рядом с файлом фактов",
+    )
+    parser.add_argument(
+        "--schema",
+        type=pathlib.Path,
+        default=SCHEMA_PATH,
+        help="схема договора; по умолчанию — из дерева или рядом",
+    )
+    parser.add_argument(
+        "--version",
+        type=pathlib.Path,
+        default=VERSION_PATH,
+        help="номер договора; по умолчанию — из дерева или рядом",
+    )
+    parser.add_argument(
+        "--contract",
+        action="store_true",
+        help="только сверить номер договора со схемой и прозой — без сети",
+    )
     parser.add_argument("--selftest", action="store_true")
     args = parser.parse_args()
 
@@ -614,8 +766,12 @@ def main() -> int:
         schema = json.loads(args.schema.read_text(encoding="utf-8"))
         number = contract_version(args.version.read_text(encoding="utf-8"))
     except (OSError, ValueError) as error:
-        print(annotate("error", f"проверка не отработала: схема или номер договора "
-                              f"не прочитаны — {error}"), file=sys.stderr)
+        print(
+            annotate(
+                "error", f"проверка не отработала: схема или номер договора не прочитаны — {error}"
+            ),
+            file=sys.stderr,
+        )
         return 2
     # не проза: номер версии «мажор.минор[.патч]».
     current = ".".join(number.split(".")[:2])
@@ -624,8 +780,7 @@ def main() -> int:
         try:
             drift = contract_drift(number, schema, CONTRACT_PATH.read_text(encoding="utf-8"))
         except OSError as error:
-            print(f"проверка не отработала: проза договора не прочитана — {error}",
-                  file=sys.stderr)
+            print(f"проверка не отработала: проза договора не прочитана — {error}", file=sys.stderr)
             return 2
         for line in drift:
             print(annotate("error", line), file=sys.stderr)
@@ -641,8 +796,9 @@ def main() -> int:
         try:
             facts = json.loads(pathlib.Path(args.file).read_text(encoding="utf-8"))
             found = check(facts, args.repo, schema)
-            manifest = read_manifest(args.manifest
-                                     or pathlib.Path(args.file).parent / "contracts.json")
+            manifest = read_manifest(
+                args.manifest or pathlib.Path(args.file).parent / "contracts.json"
+            )
         except (OSError, ValueError) as error:
             print(f"проверка не отработала: файл не прочитан — {error}", file=sys.stderr)
             return 2
@@ -653,9 +809,13 @@ def main() -> int:
         print(f"{args.repo}: {'договору отвечает' if not found else f'расхождений {len(found)}'}")
         return 1 if found else 0
 
-    print("проверка не отработала: нужен --file <facts.json> --repo <владелец/имя>; "
-          "факты соседей читает их читатель, а не каталог", file=sys.stderr)
+    print(
+        "проверка не отработала: нужен --file <facts.json> --repo <владелец/имя>; "
+        "факты соседей читает их читатель, а не каталог",
+        file=sys.stderr,
+    )
     return 2
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

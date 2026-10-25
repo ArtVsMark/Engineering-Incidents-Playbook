@@ -15,7 +15,6 @@
   075 — непустой раздел следа, разобравшийся в ноль, — находка.
 """
 
-
 import glob
 import os
 import subprocess
@@ -38,8 +37,8 @@ def test_bukva_ne_sovpadaet_s_zagolovkom():
     заголовок = b.title_of(запись_114)
     буква = b.claim_of(запись_114, "ru")
 
-    assert "от нуля" in заголовок          # направление миграции
-    assert "только" in буква               # идемпотентность ступени
+    assert "от нуля" in заголовок  # направление миграции
+    assert "только" in буква  # идемпотентность ступени
     assert "не проходило" in буква
     # То, ради чего поле заведено: по заголовку предмета не восстановить.
     assert "идемпотент" not in заголовок.lower()
@@ -60,8 +59,8 @@ def test_granica_neset_obe_storony_i_perenosy():
     граница = b.applies_of(запись("114"), "ru")
     assert "**Работает**" in граница
     assert "**Не работает**" in граница
-    assert "\n" in граница                 # переносы сохранены намеренно
-    assert not граница.startswith("##")    # заголовок раздела не едет
+    assert "\n" in граница  # переносы сохранены намеренно
+    assert not граница.startswith("##")  # заголовок раздела не едет
 
 
 def test_bukva_shlopyvaet_perenosy():
@@ -109,9 +108,9 @@ def подделка(tmp_path: Path, номер: str, тело: str) -> Path:
 МЕТКА = {"ru": "**Уточняет.**", "en": "**Refines.**"}
 
 
-def дерево(tmp_path: Path,
-           уточнения: dict[str, str | None],
-           только_ru: set[str] = frozenset()) -> dict[str, dict[str, Path]]:
+def дерево(
+    tmp_path: Path, уточнения: dict[str, str | None], только_ru: set[str] = frozenset()
+) -> dict[str, dict[str, Path]]:
     """Оба дерева подделкой: номер → кого уточняет (None — пометки нет).
 
     Пометка пишется НА ЯЗЫКЕ ДЕРЕВА — иначе разбор проверял бы не цикл и не
@@ -126,8 +125,11 @@ def дерево(tmp_path: Path,
             каталог = tmp_path / lang
             каталог.mkdir(exist_ok=True)
             путь = каталог / f"{номер}-подделка.md"
-            строка = ("" if цель is None or (lang != "ru" and номер in только_ru)
-                      else f"\n{МЕТКА[lang]} {цель}\n")
+            строка = (
+                ""
+                if цель is None or (lang != "ru" and номер in только_ru)
+                else f"\n{МЕТКА[lang]} {цель}\n"
+            )
             путь.write_text(f"# З\n{строка}", encoding="utf-8")
             out[номер][lang] = путь
     return out
@@ -237,7 +239,7 @@ def test_vygruzka_neset_obe_storony_svyazi():
     d = json.loads(Path("export/rules.json").read_text(encoding="utf-8"))
     по = {r["id"]: r for r in d["rules"]}
     assert по["057"]["refines"] == "002"
-    assert по["002"]["refined_by"] == ["057"]      # 002 не правилась ни на знак
+    assert по["002"]["refined_by"] == ["057"]  # 002 не правилась ни на знак
     assert "refines" not in по["002"]
     assert "002" in по["057"]["mentions"]
     assert "057" in по["002"]["mentioned_by"]
@@ -283,10 +285,10 @@ def test_imya_razdela_konchaetsya_s_predlozheniem():
 
 def test_rasshirenie_vnutri_imeni_razdela_ne_rezhetsya():
     """Граница реза: точка С ПРОБЕЛОМ, иначе `CHANGELOG.md` терял бы хвост."""
-    m = b.DOC_TRAIL_RE.search(
-        "o/r — `CLAUDE.md` § Обновление CHANGELOG.md / HISTORY.md\n")
+    m = b.DOC_TRAIL_RE.search("o/r — `CLAUDE.md` § Обновление CHANGELOG.md / HISTORY.md\n")
     assert m and b.ТОЧКА_ПРЕДЛОЖЕНИЯ.split(m.group(3).strip())[0] == (
-        "Обновление CHANGELOG.md / HISTORY.md")
+        "Обновление CHANGELOG.md / HISTORY.md"
+    )
 
 
 def test_gate_lovit_nerazobrannyy_sled(tmp_path):
@@ -294,10 +296,13 @@ def test_gate_lovit_nerazobrannyy_sled(tmp_path):
     found, _, _ = b.collect()
     подделка: dict[str, dict[str, Path]] = {}
     for номер, было, стало in (
-            ("094", "`docs/dev/adr/README.md` § ADR-0004, раздел\n«Альтернативы»",
-             "ADR-0004 § Альтернативы"),
-            ("152", "ArtVsMark/ArtVsMark — `.github",
-             "`ArtVsMark/ArtVsMark` — `.github")):
+        (
+            "094",
+            "`docs/dev/adr/README.md` § ADR-0004, раздел\n«Альтернативы»",
+            "ADR-0004 § Альтернативы",
+        ),
+        ("152", "ArtVsMark/ArtVsMark — `.github", "`ArtVsMark/ArtVsMark` — `.github"),
+    ):
         подделка[номер] = {}
         for lang in b.LANGS:
             каталог = tmp_path / lang
@@ -318,11 +323,13 @@ def test_stroka_smezhnykh_sledom_ne_schitaetsya(tmp_path):
     гейт молчал бы ровно там, где предмет.
     """
     путь = tmp_path / "900-подделка.md"
-    путь.write_text("# З\n\n## След\n\nСмежное: [002](002-x.md),\n[003](003-y.md).\n",
-                    encoding="utf-8")
+    путь.write_text(
+        "# З\n\n## След\n\nСмежное: [002](002-x.md),\n[003](003-y.md).\n", encoding="utf-8"
+    )
     assert b.заявленный_след(путь, "ru") is False
-    путь.write_text("# З\n\n## След\n\no/r — `scripts/x.py`\n\nСмежное: [002](002-x.md).\n",
-                    encoding="utf-8")
+    путь.write_text(
+        "# З\n\n## След\n\no/r — `scripts/x.py`\n\nСмежное: [002](002-x.md).\n", encoding="utf-8"
+    )
     assert b.заявленный_след(путь, "ru") is True
 
 
@@ -342,7 +349,8 @@ def test_nomera_kontraktov_v_dokumente_zhivye():
     живые = json.loads(Path("export/rules.json").read_text(encoding="utf-8"))["contracts"]
     текст = b.CONTRACT_DOC.read_text(encoding="utf-8")
     (блок,) = b.CONTRACTS_MARKER_RE.findall(текст) and [
-        b.CONTRACTS_MARKER_RE.search(текст).group(0)]
+        b.CONTRACTS_MARKER_RE.search(текст).group(0)
+    ]
     for имя, номер in живые.items():
         assert f'"{имя}": "{номер}"' in блок, (имя, номер)
 
@@ -365,11 +373,18 @@ def разобрался(тело: str) -> dict:
 def test_blok_razbiraetsya_pri_lyubom_chisle_kontraktov(tmp_path):
     """Ноль, один, два, три и шесть — форма остаётся валидной у всех пяти."""
     подделка = tmp_path / "README.md"
-    все = {"export": "1.7", "bindings": "1.2", "consumers": "1.1",
-           "proposals": "1.1", "showcase": "1.1", "where": "1.2"}
+    все = {
+        "export": "1.7",
+        "bindings": "1.2",
+        "consumers": "1.1",
+        "proposals": "1.1",
+        "showcase": "1.1",
+        "where": "1.2",
+    }
     for сколько in (0, 1, 2, 3, 6):
-        подделка.write_text("до\n<!--m:contracts-->старое<!--/m:contracts-->\nпосле\n",
-                            encoding="utf-8")
+        подделка.write_text(
+            "до\n<!--m:contracts-->старое<!--/m:contracts-->\nпосле\n", encoding="utf-8"
+        )
         числа = dict(list(все.items())[:сколько])
         тело, пробел = b.contracts_marked(подделка, числа)
         assert пробел is None
@@ -385,12 +400,13 @@ def test_sborka_perepisyvaet_ustarevshie_nomera(tmp_path):
     подделка.write_text(
         'до\n<!--m:contracts-->"schema": "1.4",\n  "contracts": {\n'
         '    "export": "1.4", "bindings": "1.1"\n  },<!--/m:contracts-->\nпосле\n',
-        encoding="utf-8")
-    тело, пробел = b.contracts_marked(подделка, {"export": "1.7", "bindings": "1.2",
-                                                 "consumers": "1.1"})
+        encoding="utf-8",
+    )
+    тело, пробел = b.contracts_marked(
+        подделка, {"export": "1.7", "bindings": "1.2", "consumers": "1.1"}
+    )
     assert пробел is None
-    assert разобрался(тело)["contracts"] == {"export": "1.7", "bindings": "1.2",
-                                             "consumers": "1.1"}
+    assert разобрался(тело)["contracts"] == {"export": "1.7", "bindings": "1.2", "consumers": "1.1"}
     assert '"1.4"' not in тело
     assert тело.startswith("до\n") and тело.endswith("после\n")
 
@@ -437,6 +453,7 @@ def test_zagotovka_pokazyvaet_kazhduyu_pometku():
 
 # ── дата появления — в UTC, а не в поясе слившего (находка обзора #706) ───
 
+
 def test_день_utc_переводит_пояс_коммита():
     """Squash #703: 00:24 +03:00 — это ещё 7 октября по UTC."""
     assert b.день_utc("2026-10-08T00:24:00+03:00") == "2026-10-07"
@@ -446,17 +463,36 @@ def test_день_utc_переводит_пояс_коммита():
 
 def test_дата_появления_не_зависит_от_пояса_автора(tmp_path, monkeypatch):
     def git(*args: str, **env: str) -> None:
-        subprocess.run(["git", "-C", str(tmp_path), "-c", "commit.gpgsign=false",
-                        "-c", "user.name=Владелец", "-c", "user.email=o@example.com",
-                        *args], check=True, capture_output=True,
-                       env={**os.environ, **env}, timeout=60)
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(tmp_path),
+                "-c",
+                "commit.gpgsign=false",
+                "-c",
+                "user.name=Владелец",
+                "-c",
+                "user.email=o@example.com",
+                *args,
+            ],
+            check=True,
+            capture_output=True,
+            env={**os.environ, **env},
+            timeout=60,
+        )
 
     git("init", "-q")
     (tmp_path / "rules" / "ru").mkdir(parents=True)
     (tmp_path / "rules" / "ru" / "218-x.md").write_text("# x\n", encoding="utf-8")
     git("add", "-A")
-    git("commit", "-qm", "218", GIT_AUTHOR_DATE="2026-10-08T00:24:00+03:00",
-        GIT_COMMITTER_DATE="2026-10-08T00:24:00+03:00")
+    git(
+        "commit",
+        "-qm",
+        "218",
+        GIT_AUTHOR_DATE="2026-10-08T00:24:00+03:00",
+        GIT_COMMITTER_DATE="2026-10-08T00:24:00+03:00",
+    )
     monkeypatch.setattr(b, "ROOT", tmp_path)
     dates, problems = b.added_dates()
     assert not problems and dates == {"218": "2026-10-07"}
@@ -478,8 +514,12 @@ def test_predshestvenniki_chitayut_pometku_zameny(tmp_path):
     """Цепочка «новое → заменённые» строится из пометок, один разбор на каталог (#645)."""
     папка = tmp_path / "rules" / "ru"
     папка.mkdir(parents=True)
-    for н, хвост in (("001", "**Заменено.** 003\n"), ("002", "**Заменено.** 003\n"),
-                     ("003", ""), ("004", "")):
+    for н, хвост in (
+        ("001", "**Заменено.** 003\n"),
+        ("002", "**Заменено.** 003\n"),
+        ("003", ""),
+        ("004", ""),
+    ):
         (папка / f"{н}-r.md").write_text(f"# П\n\n**Правило.** x\n\n{хвост}", encoding="utf-8")
     assert b.предшественники(tmp_path) == {"003": {"001", "002"}}
 
@@ -488,16 +528,20 @@ def test_predshestvenniki_tranzitivny(tmp_path):
     """Вторая замена не теряет первого предка: механизм, называющий 001, держит и 004 (обзор #897)."""
     папка = tmp_path / "rules" / "ru"
     папка.mkdir(parents=True)
-    for н, хвост in (("001", "**Заменено.** 003\n"), ("002", "**Заменено.** 003\n"),
-                     ("003", "**Заменено.** 004\n"), ("004", "")):
+    for н, хвост in (
+        ("001", "**Заменено.** 003\n"),
+        ("002", "**Заменено.** 003\n"),
+        ("003", "**Заменено.** 004\n"),
+        ("004", ""),
+    ):
         (папка / f"{н}-r.md").write_text(f"# П\n\n**Правило.** x\n\n{хвост}", encoding="utf-8")
-    assert b.предшественники(tmp_path) == {"003": {"001", "002"},
-                                          "004": {"001", "002", "003"}}
+    assert b.предшественники(tmp_path) == {"003": {"001", "002"}, "004": {"001", "002", "003"}}
 
 
 def test_номер_договора_фактов_не_той_формы_третий_исход(tmp_path, capsys):
     """`facts.version` вида «2.0» — исход 2 с причиной, а не трассировка (обзор #904)."""
     import pytest
+
     (tmp_path / "export" / "facts").mkdir(parents=True)
     (tmp_path / "export" / "facts" / "facts.version").write_text("2.0\n", encoding="utf-8")
     with pytest.raises(SystemExit) as выход:
@@ -509,6 +553,7 @@ def test_номер_договора_фактов_не_той_формы_тре�
 def test_нечитаемый_номер_договора_не_той_формы_не_называется(tmp_path, capsys):
     """Не UTF-8 — «не прочитан», а не «не той формы» (обзор #907)."""
     import pytest
+
     (tmp_path / "export" / "facts").mkdir(parents=True)
     (tmp_path / "export" / "facts" / "facts.version").write_bytes(b"\xff\xfe2.0.0")
     with pytest.raises(SystemExit) as выход:
@@ -519,8 +564,10 @@ def test_нечитаемый_номер_договора_не_той_формы
 
 def test_deystvuyushchie_v_vygruzke_ne_berut_zameshchyonnye():
     """Кто читает экспорт, а не дерево, считает тем же правилом: без `superseded_by` (17.10)."""
-    export = {"count": 3, "rules": [{"id": "001", "superseded_by": "003"},
-                                    {"id": "002"}, {"id": "003"}]}
+    export = {
+        "count": 3,
+        "rules": [{"id": "001", "superseded_by": "003"}, {"id": "002"}, {"id": "003"}],
+    }
     assert b.действующие_в_выгрузке(export) == {"002", "003"}
 
 
@@ -543,6 +590,7 @@ def test_deystvuyushchie_bez_spiska_eto_otkaz_a_ne_nol(выгрузка):
 def test_status_slovom_u_kazhdoy_zapisi_vygruzki():
     """1.9: статус каждой записи назван словом, а не отсутствием ключа (владелец 21.10)."""
     import json
+
     выгрузка = json.loads((b.ROOT / "export" / "rules.json").read_text(encoding="utf-8"))
     статусы = {r["id"]: r.get("status") for r in выгрузка["rules"]}
     assert set(статусы.values()) == {b.СТАТУС_ДЕЙСТВУЕТ, b.СТАТУС_ЗАМЕНЕНО}
@@ -551,12 +599,15 @@ def test_status_slovom_u_kazhdoy_zapisi_vygruzki():
     assert sum(с == b.СТАТУС_ДЕЙСТВУЕТ for с in статусы.values()) == выгрузка["active"]
 
 
-@pytest.mark.parametrize("запись, действует", [
-    ({"id": "001", "status": "active"}, True),
-    ({"id": "001", "status": "superseded", "superseded_by": "002"}, False),
-    ({"id": "001"}, True),                                   # до 1.9: ключа нет — действует
-    ({"id": "001", "superseded_by": "002"}, False),          # до 1.9: по ключу
-])
+@pytest.mark.parametrize(
+    "запись, действует",
+    [
+        ({"id": "001", "status": "active"}, True),
+        ({"id": "001", "status": "superseded", "superseded_by": "002"}, False),
+        ({"id": "001"}, True),  # до 1.9: ключа нет — действует
+        ({"id": "001", "superseded_by": "002"}, False),  # до 1.9: по ключу
+    ],
+)
 def test_deystvuyushchie_chitayut_status_i_staruyu_formu(запись, действует):
     assert (b.действующие_в_выгрузке({"rules": [запись]}) == {"001"}) is действует
 

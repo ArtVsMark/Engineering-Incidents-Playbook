@@ -42,7 +42,6 @@
          python scripts/collect_changelog.py --close v1.2.0   # закрыть раздел
 """
 
-
 import argparse
 import datetime as dt
 import re
@@ -55,6 +54,7 @@ import proc
 # Что считается тегом выпуска, решает одно место на весь каталог: у второго
 # выражения разъехались бы границы, а разъехавшись — молча (правило 090).
 import history_metrics
+
 # Что считается ответом о соседях, решает гейт, который его требует: сборка
 # режет ровно то, что он принимает (214).
 from check_narrowing import СОСЕДИ
@@ -68,8 +68,7 @@ BEHAVIOUR = ("scripts/", ".github/workflows/", ".github/actions/")
 #: Названный выход из требования. Без выхода гейт обходили бы пустым
 #: фрагментом, а пустой фрагмент хуже отсутствующего — он выглядит памятью
 #: (правило 126: у заморозки должен быть выход, не проходящий через неё саму).
-WAIVER_RE = re.compile(
-    r"(?m)^\s*Журнал:\s*не\s+требуется\s*[—–-]\s*(?P<why>.+?)\s*$")
+WAIVER_RE = re.compile(r"(?m)^\s*Журнал:\s*не\s+требуется\s*[—–-]\s*(?P<why>.+?)\s*$")
 
 
 def entry_required(paths: list[str], body: str) -> tuple[bool, str]:
@@ -94,9 +93,13 @@ def entry_required(paths: list[str], body: str) -> tuple[bool, str]:
     m = WAIVER_RE.search(body or "")
     if m and m.group("why").strip():
         return False, f"освобождено с причиной: {m.group('why').strip()}"
-    return True, ("изменение трогает поведение и не несёт записи журнала: "
-                  + ", ".join(sorted(трогает)[:5])
-                  + (" и другие" if len(трогает) > 5 else ""))
+    return True, (
+        "изменение трогает поведение и не несёт записи журнала: "
+        + ", ".join(sorted(трогает)[:5])
+        + (" и другие" if len(трогает) > 5 else "")
+    )
+
+
 CHANGELOG = ROOT / "CHANGELOG.md"
 
 #: Порядок фиксирован: «что нового» читается раньше, чем «что починили».
@@ -115,8 +118,7 @@ RELEASE_RE = re.compile(r"^## \[(\d+\.\d+\.\d+)\]", re.M)
 #: Пустой раздел говорит, что он пуст (правило 027): голый заголовок читается
 #: как «журнал сломался». Строка не начинается с «-» и потому записью не
 #: считается, а первая же сборка её заменяет.
-EMPTY_NOTE = ("Пока пусто: записи приезжают фрагментами и собираются "
-              "перед выпуском.")
+EMPTY_NOTE = "Пока пусто: записи приезжают фрагментами и собираются перед выпуском."
 
 
 #: Строка вердикта. Начинается с «>», в журнал НЕ едет и живёт только во
@@ -127,8 +129,7 @@ RULE_RE = re.compile(r"(?i)правил\w*\s+№?\s*\d{3}|rules/(?:ru|en)/\d{3}-
 #: Заполненный отказ. Причина обязательна: «не правило» без неё — это пустота,
 #: которую зададут заново следующей починкой (правило 026).
 NOT_A_RULE_RE = re.compile(r"(?i)не\s+(?:станови\w+|стало|тянет|правило)[^.]*?потому что\s+\S+")
-VERDICT_HINT = ("> правило NNN — <как связано>   ·   "
-                "> правилом не становится, потому что <причина>")
+VERDICT_HINT = "> правило NNN — <как связано>   ·   > правилом не становится, потому что <причина>"
 
 
 def без_соседей(text: str) -> tuple[str, bool]:
@@ -172,8 +173,10 @@ def split_verdict(text: str) -> tuple[str, str]:
     body, verdict = [], []
     for line in text.splitlines():
         (verdict if line.lstrip().startswith(VERDICT_PREFIX) else body).append(line)
-    return ("\n".join(body).strip(),
-            " ".join(l.lstrip().lstrip(VERDICT_PREFIX).strip() for l in verdict).strip())
+    return (
+        "\n".join(body).strip(),
+        " ".join(l.lstrip().lstrip(VERDICT_PREFIX).strip() for l in verdict).strip(),
+    )
 
 
 def verdict_problems(paths: list[Path]) -> list[str]:
@@ -201,11 +204,15 @@ def verdict_problems(paths: list[Path]) -> list[str]:
             continue
         _, verdict = split_verdict(path.read_text(encoding="utf-8"))
         if not verdict:
-            out.append(f"{path.name}: починка не ответила, тянет ли она на "
-                       f"правило. Строкой с «>»:\n        {VERDICT_HINT}")
+            out.append(
+                f"{path.name}: починка не ответила, тянет ли она на "
+                f"правило. Строкой с «>»:\n        {VERDICT_HINT}"
+            )
         elif not (RULE_RE.search(verdict) or NOT_A_RULE_RE.search(verdict)):
-            out.append(f"{path.name}: вердикт есть, но не разбирается — нужен "
-                       f"номер правила либо отказ С ПРИЧИНОЙ.\n        {VERDICT_HINT}")
+            out.append(
+                f"{path.name}: вердикт есть, но не разбирается — нужен "
+                f"номер правила либо отказ С ПРИЧИНОЙ.\n        {VERDICT_HINT}"
+            )
     return out
 
 
@@ -213,9 +220,22 @@ def added_since(ref: str) -> tuple[list[Path], str | None]:
     """Фрагменты, ДОБАВЛЕННЫЕ этим изменением. Спрашивать со всех нельзя."""
     try:
         done = proc.run(
-            ["git", "diff", "--name-only", "-z", "--diff-filter=A",
-             f"{ref}...HEAD", "--", FRAGMENTS.name],
-            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
+            [
+                "git",
+                "diff",
+                "--name-only",
+                "-z",
+                "--diff-filter=A",
+                f"{ref}...HEAD",
+                "--",
+                FRAGMENTS.name,
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=60,
+        )
     except FileNotFoundError:
         return [], "нет команды git"
     if done.returncode != 0:
@@ -257,9 +277,22 @@ def новые_правила(ref: str) -> tuple[int, str | None]:
     """Сколько записей `rules/ru/` добавило изменение."""
     try:
         done = proc.run(
-            ["git", "diff", "--name-only", "-z", "--diff-filter=A",
-             f"{ref}...HEAD", "--", "rules/ru"],
-            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
+            [
+                "git",
+                "diff",
+                "--name-only",
+                "-z",
+                "--diff-filter=A",
+                f"{ref}...HEAD",
+                "--",
+                "rules/ru",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=60,
+        )
     except FileNotFoundError:
         return 0, "нет команды git"
     if done.returncode != 0:
@@ -304,30 +337,35 @@ def validate() -> tuple[dict[str, list[str]], list[str]]:
         m = NAME_RE.match(path.name)
         if not m:
             problems.append(
-                f"{path.name}: имя не по форме «<слаг>.<секция>.md», "
-                f"секции — {', '.join(SECTIONS)}")
+                f"{path.name}: имя не по форме «<слаг>.<секция>.md», секции — {', '.join(SECTIONS)}"
+            )
             continue
         text, _ = split_verdict(path.read_text(encoding="utf-8"))
         text, не_отделён = без_соседей(text)
         text = text.strip()
         if не_отделён:
-            problems.append(f"{path.name}: ответ «Соседи:» стоит внутри абзаца — "
-                            "отдельным абзацем, иначе сборка не отделит его от "
-                            "поведения")
+            problems.append(
+                f"{path.name}: ответ «Соседи:» стоит внутри абзаца — "
+                "отдельным абзацем, иначе сборка не отделит его от "
+                "поведения"
+            )
             continue
         if not text:
-            problems.append(f"{path.name}: фрагмент пуст — запись, которой нет, "
-                            "хуже отсутствующего файла: он выглядит сделанным")
+            problems.append(
+                f"{path.name}: фрагмент пуст — запись, которой нет, "
+                "хуже отсутствующего файла: он выглядит сделанным"
+            )
             continue
         if text.startswith("-"):
-            problems.append(f"{path.name}: ведущий «-» подставит сборка, "
-                            "в тексте он лишний")
+            problems.append(f"{path.name}: ведущий «-» подставит сборка, в тексте он лишний")
             continue
         if ЗАГЛУШКА_ФРАГМЕНТА in text:
-            problems.append(f"{path.name}: заглушка каркаса не заполнена — "
-                            f"«{ЗАГЛУШКА_ФРАГМЕНТА}». Запись о правиле без его "
-                            "утверждения уйдёт в выпуск, как 02.09 ушла строка "
-                            "о 164 (191)")
+            problems.append(
+                f"{path.name}: заглушка каркаса не заполнена — "
+                f"«{ЗАГЛУШКА_ФРАГМЕНТА}». Запись о правиле без его "
+                "утверждения уйдёт в выпуск, как 02.09 ушла строка "
+                "о 164 (191)"
+            )
             continue
         found[m.group(2)].append(retarget(" ".join(text.split())))
     return found, problems
@@ -391,8 +429,7 @@ def missing_releases() -> tuple[list[str], str | None]:
     if err:
         return [], err
     have = set(RELEASE_RE.findall(CHANGELOG.read_text(encoding="utf-8")))
-    return [t for t in found
-            if history_metrics.release(t) not in have], None
+    return [t for t in found if history_metrics.release(t) not in have], None
 
 
 def неразобранное(text: str) -> tuple[str, str, str]:
@@ -421,8 +458,8 @@ def закрытый_раздел(text: str, num: str) -> str:
     m = re.search(rf"(?m)^## \[{re.escape(num)}\][^\n]*\n?", text)
     if not m:
         return ""
-    tail = text[m.end():]
-    return tail[:конец_раздела(tail)]
+    tail = text[m.end() :]
+    return tail[: конец_раздела(tail)]
 
 
 #: Предел тела выпуска у площадки — 125 000 знаков. Замер 27 сентября:
@@ -432,8 +469,9 @@ def закрытый_раздел(text: str, num: str) -> str:
 ПРЕДЕЛ_ТЕЛА = 125_000
 
 
-def тело_выпуска(text: str, tag: str, key: str, repo: str, *,
-                 закрытый: bool = False) -> tuple[str | None, str]:
+def тело_выпуска(
+    text: str, tag: str, key: str, repo: str, *, закрытый: bool = False
+) -> tuple[str | None, str]:
     """Тело страницы выпуска: раздел журнала, а длинный — кратко со ссылкой.
 
     КОРОТКАЯ ФОРМА — НЕ ОБРЕЗКА. Обрезанный журнал читался бы как полный, и
@@ -449,39 +487,43 @@ def тело_выпуска(text: str, tag: str, key: str, repo: str, *,
     if закрытый:
         раздел = закрытый_раздел(text, num)
         if not раздел.strip():
-            return None, (f"раздела [{num}] в журнале нет или он пуст: выпуск "
-                          "до закрытия журнала не дошёл — дозавершать нечего")
+            return None, (
+                f"раздела [{num}] в журнале нет или он пуст: выпуск "
+                "до закрытия журнала не дошёл — дозавершать нечего"
+            )
     else:
         _, раздел, _ = неразобранное(text)
         if not раздел.strip():
-            return None, ("раздел [Unreleased] пуст: соберите фрагменты — "
-                          "python scripts/collect_changelog.py --collect")
+            return None, (
+                "раздел [Unreleased] пуст: соберите фрагменты — "
+                "python scripts/collect_changelog.py --collect"
+            )
     полное = f"# {num}\n\n{раздел.strip()}\n"
     if len(полное) <= ПРЕДЕЛ_ТЕЛА:
         return полное, ""
     счёт = по_секциям(раздел)
     всего = sum(len(v) for v in счёт.values())
     разбивка = ", ".join(
-        f"{TITLES[s].split(' · ')[0].lower()} — {len(счёт[s])}"
-        for s in SECTIONS if счёт[s])
+        f"{TITLES[s].split(' · ')[0].lower()} — {len(счёт[s])}" for s in SECTIONS if счёт[s]
+    )
     адрес = f"https://github.com/{repo}/blob/{tag}"
-    return (f"# {num}\n\n{key.strip()}\n\n"
-            f"{всего} записей журнала: {разбивка}.\n\n"
-            f"Полный список — раздел [{num}] в CHANGELOG.md: {адрес}/CHANGELOG.md\n"
-            f"Решения выпуска — docs/HISTORY.md: {адрес}/docs/HISTORY.md\n"), ""
+    return (
+        f"# {num}\n\n{key.strip()}\n\n"
+        f"{всего} записей журнала: {разбивка}.\n\n"
+        f"Полный список — раздел [{num}] в CHANGELOG.md: {адрес}/CHANGELOG.md\n"
+        f"Решения выпуска — docs/HISTORY.md: {адрес}/docs/HISTORY.md\n"
+    ), ""
 
 
 def close(tag: str, date: str) -> int:
     """Переименовывает [Unreleased] в раздел выпуска и заводит пустой заново."""
     text = CHANGELOG.read_text(encoding="utf-8")
     if UNRELEASED not in text:
-        print(f"закрывать нечего: в {CHANGELOG.name} нет раздела {UNRELEASED!r}",
-              file=sys.stderr)
+        print(f"закрывать нечего: в {CHANGELOG.name} нет раздела {UNRELEASED!r}", file=sys.stderr)
         return 2
     num = history_metrics.release(tag)
     if f"## [{num}]" in text:
-        print(f"раздел [{num}] уже есть — номера не переиспользуются",
-              file=sys.stderr)
+        print(f"раздел [{num}] уже есть — номера не переиспользуются", file=sys.stderr)
         return 1
     # НЕСОБРАННЫЙ ФРАГМЕНТ — ОТКАЗ, А НЕ ХВОСТ СЛЕДУЮЩЕГО ВЫПУСКА (030). Сборка
     # держалась шагом руки в изменении-подготовке, а между подготовкой и
@@ -490,19 +532,24 @@ def close(tag: str, date: str) -> int:
     # неизменяемой странице выпуска их нет. Выпуск теперь собирает сам, перед
     # телом страницы; отказ здесь ловит закрытие в обход этого шага.
     if остаток := fragments():
-        print(f"в {FRAGMENTS.name}/ несобранных фрагментов: {len(остаток)} — "
-              "раздел закрылся бы без них, а их код ушёл бы в тег. Сначала: "
-              "python scripts/collect_changelog.py --collect", file=sys.stderr)
+        print(
+            f"в {FRAGMENTS.name}/ несобранных фрагментов: {len(остаток)} — "
+            "раздел закрылся бы без них, а их код ушёл бы в тег. Сначала: "
+            "python scripts/collect_changelog.py --collect",
+            file=sys.stderr,
+        )
         return 1
     head, body, rest = неразобранное(text)
     if not body.strip():
-        print("раздел [Unreleased] пуст: выпуск без записей читается как "
-              "«ничего не изменилось» — хуже, чем отсутствие выпуска (075)",
-              file=sys.stderr)
+        print(
+            "раздел [Unreleased] пуст: выпуск без записей читается как "
+            "«ничего не изменилось» — хуже, чем отсутствие выпуска (075)",
+            file=sys.stderr,
+        )
         return 1
     CHANGELOG.write_text(
-        f"{head}{UNRELEASED}\n\n{EMPTY_NOTE}\n\n## [{num}] — {date}{body}{rest}",
-        encoding="utf-8")
+        f"{head}{UNRELEASED}\n\n{EMPTY_NOTE}\n\n## [{num}] — {date}{body}{rest}", encoding="utf-8"
+    )
     print(f"раздел [{num}] закрыт датой {date}; [Unreleased] заведён пустым")
     return 0
 
@@ -513,36 +560,57 @@ def main() -> int:
     mode.add_argument("--check", action="store_true", help="только проверить")
     mode.add_argument("--preview", action="store_true", help="показать сборку")
     mode.add_argument("--collect", action="store_true", help="собрать в [Unreleased]")
-    mode.add_argument("--close", metavar="ТЕГ",
-                      help="закрыть [Unreleased] разделом выпуска")
-    mode.add_argument("--notes", metavar="ТЕГ",
-                      help="напечатать тело страницы выпуска: раздел "
-                           "[Unreleased], а длиннее предела площадки — кратко "
-                           "со ссылкой на раздел в теге")
-    ap.add_argument("--closed", action="store_true",
-                    help="с --notes: тело из закрытого раздела выпуска, а не "
-                         "из [Unreleased] — дозавершение выпуска, упавшего "
-                         "после тега")
-    ap.add_argument("--changelog", type=Path, metavar="ФАЙЛ",
-                    help="с --notes: читать журнал отсюда — дозавершение "
-                         "читает его в дереве тега")
-    ap.add_argument("--key", default="",
-                    help="«Ключевое» выпуска для краткой формы --notes")
-    ap.add_argument("--repo", default="",
-                    help="владелец/репозиторий для ссылок краткой формы --notes")
-    ap.add_argument("--date", default=dt.date.today().isoformat(),
-                    help="дата выпуска для --close; по умолчанию сегодня")
-    ap.add_argument("--added-since", metavar="REF",
-                    help="спросить у ДОБАВЛЕННЫХ с этой точки починок, "
-                         "тянут ли они на правило")
-    ap.add_argument("--require-entry", action="store_true",
-                    help="изменение, трогающее поведение, обязано нести запись "
-                         "журнала — либо освобождение строкой «Журнал: не "
-                         "требуется — причина»")
-    ap.add_argument("--paths-from", type=Path, metavar="ФАЙЛ",
-                    help="файл со списком изменённых путей, по строке на путь")
-    ap.add_argument("--body-file", type=Path, metavar="ФАЙЛ",
-                    help="тело изменения: в нём ищется освобождение")
+    mode.add_argument("--close", metavar="ТЕГ", help="закрыть [Unreleased] разделом выпуска")
+    mode.add_argument(
+        "--notes",
+        metavar="ТЕГ",
+        help="напечатать тело страницы выпуска: раздел "
+        "[Unreleased], а длиннее предела площадки — кратко "
+        "со ссылкой на раздел в теге",
+    )
+    ap.add_argument(
+        "--closed",
+        action="store_true",
+        help="с --notes: тело из закрытого раздела выпуска, а не "
+        "из [Unreleased] — дозавершение выпуска, упавшего "
+        "после тега",
+    )
+    ap.add_argument(
+        "--changelog",
+        type=Path,
+        metavar="ФАЙЛ",
+        help="с --notes: читать журнал отсюда — дозавершение читает его в дереве тега",
+    )
+    ap.add_argument("--key", default="", help="«Ключевое» выпуска для краткой формы --notes")
+    ap.add_argument(
+        "--repo", default="", help="владелец/репозиторий для ссылок краткой формы --notes"
+    )
+    ap.add_argument(
+        "--date",
+        default=dt.date.today().isoformat(),
+        help="дата выпуска для --close; по умолчанию сегодня",
+    )
+    ap.add_argument(
+        "--added-since",
+        metavar="REF",
+        help="спросить у ДОБАВЛЕННЫХ с этой точки починок, тянут ли они на правило",
+    )
+    ap.add_argument(
+        "--require-entry",
+        action="store_true",
+        help="изменение, трогающее поведение, обязано нести запись "
+        "журнала — либо освобождение строкой «Журнал: не "
+        "требуется — причина»",
+    )
+    ap.add_argument(
+        "--paths-from",
+        type=Path,
+        metavar="ФАЙЛ",
+        help="файл со списком изменённых путей, по строке на путь",
+    )
+    ap.add_argument(
+        "--body-file", type=Path, metavar="ФАЙЛ", help="тело изменения: в нём ищется освобождение"
+    )
     args = ap.parse_args()
     if (args.closed or args.changelog) and not args.notes:
         ap.error("--closed и --changelog задают только тело выпуска: нужен --notes")
@@ -550,44 +618,54 @@ def main() -> int:
     # ── запись едет вместе с изменением (правило 138) ──────────────────────
     if args.require_entry:
         if args.paths_from is None:
-            print("проверка не отработала: --require-entry без --paths-from — "
-                  "спрашивать не о чем", file=sys.stderr)
+            print(
+                "проверка не отработала: --require-entry без --paths-from — спрашивать не о чем",
+                file=sys.stderr,
+            )
             return 2
         try:
-            paths = [s.strip() for s in
-                     args.paths_from.read_text(encoding="utf-8").splitlines()
-                     if s.strip()]
+            paths = [
+                s.strip()
+                for s in args.paths_from.read_text(encoding="utf-8").splitlines()
+                if s.strip()
+            ]
         except OSError as exc:
-            print(f"проверка не отработала: список путей не прочитан — {exc}",
-                  file=sys.stderr)
+            print(f"проверка не отработала: список путей не прочитан — {exc}", file=sys.stderr)
             return 2
         body = ""
         if args.body_file is not None:
             try:
                 body = args.body_file.read_text(encoding="utf-8")
             except OSError as exc:
-                print(f"проверка не отработала: тело изменения не прочитано — "
-                      f"{exc}", file=sys.stderr)
+                print(
+                    f"проверка не отработала: тело изменения не прочитано — {exc}", file=sys.stderr
+                )
                 return 2
         нужна, почему = entry_required(paths, body)
         if нужна:
-            print(почему + ".\n\n  Решение оседает артефактом ТЕМ ЖЕ заходом, а "
-                  "не перед выпуском (правило 138):\n  отложенная запись "
-                  "означает, что следующее окно разбирает тот же вопрос "
-                  "заново.\n  Выход назван: строка «Журнал: не требуется — "
-                  "<причина>» в теле изменения.", file=sys.stderr)
+            print(
+                почему + ".\n\n  Решение оседает артефактом ТЕМ ЖЕ заходом, а "
+                "не перед выпуском (правило 138):\n  отложенная запись "
+                "означает, что следующее окно разбирает тот же вопрос "
+                "заново.\n  Выход назван: строка «Журнал: не требуется — "
+                "<причина>» в теле изменения.",
+                file=sys.stderr,
+            )
             return 1
         print(почему)
         return 0
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not FRAGMENTS.is_dir():
-        print(f"проверка не отработала: нет каталога {FRAGMENTS.relative_to(ROOT)}",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: нет каталога {FRAGMENTS.relative_to(ROOT)}", file=sys.stderr
+        )
         return 2
     if not CHANGELOG.exists():
-        print(f"проверка не отработала: нет {CHANGELOG.relative_to(ROOT)} — "
-              "собирать некуда", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {CHANGELOG.relative_to(ROOT)} — собирать некуда",
+            file=sys.stderr,
+        )
         return 2
 
     if args.close:
@@ -597,11 +675,9 @@ def main() -> int:
         try:
             журнал = путь.read_text(encoding="utf-8")
         except OSError as exc:
-            print(f"проверка не отработала: журнал не прочитан — {exc}",
-                  file=sys.stderr)
+            print(f"проверка не отработала: журнал не прочитан — {exc}", file=sys.stderr)
             return 2
-        тело, отказ = тело_выпуска(журнал, args.notes, args.key, args.repo,
-                                   закрытый=args.closed)
+        тело, отказ = тело_выпуска(журнал, args.notes, args.key, args.repo, закрытый=args.closed)
         if тело is None:
             print(отказ, file=sys.stderr)
             return 1
@@ -613,36 +689,41 @@ def main() -> int:
     if args.added_since:
         paths, err = added_since(args.added_since)
         if err:
-            print(f"проверка не отработала: список добавленных фрагментов не "
-                  f"получен — {err}", file=sys.stderr)
+            print(
+                f"проверка не отработала: список добавленных фрагментов не получен — {err}",
+                file=sys.stderr,
+            )
             return 2
         problems += verdict_problems(paths)
         правил, err = новые_правила(args.added_since)
         if err:
-            print(f"проверка не отработала: добавленные правила не получены — {err}",
-                  file=sys.stderr)
+            print(
+                f"проверка не отработала: добавленные правила не получены — {err}", file=sys.stderr
+            )
             return 2
         if темы := сборное([p.name for p in paths], правил):
             # Аннотация площадки видна на изменении, а исход шага не меняется:
             # это предупреждение, а не отказ (132, 051).
-            print(f"::warning::изменение везёт {len(темы)} внешних темы фрагментами "
-                  f"журнала: {', '.join(темы)}. Одна тема — одно изменение (132); "
-                  "если это одна широкая тема, так и оставьте")
+            print(
+                f"::warning::изменение везёт {len(темы)} внешних темы фрагментами "
+                f"журнала: {', '.join(темы)}. Одна тема — одно изменение (132); "
+                "если это одна широкая тема, так и оставьте"
+            )
 
     # У КАЖДОГО ТЕГА ВЫПУСКА — СВОЙ РАЗДЕЛ. Спрашивается всегда, кроме сборки
     # и показа: те правят или печатают [Unreleased] и о вышедшем не говорят.
     if not (args.collect or args.preview):
         missing, err = missing_releases()
         if err:
-            print(f"проверка не отработала: теги выпусков не читаются — {err}",
-                  file=sys.stderr)
+            print(f"проверка не отработала: теги выпусков не читаются — {err}", file=sys.stderr)
             return 2
         for tag in missing:
             problems.append(
                 f"выпуск {tag} состоялся, а раздела [{history_metrics.release(tag)}] "
                 "в журнале нет. Его записи остались в [Unreleased], где их "
                 "читают как ещё не вышедшие — закройте: "
-                f"python scripts/collect_changelog.py --close {tag}")
+                f"python scripts/collect_changelog.py --close {tag}"
+            )
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     if problems:
@@ -652,10 +733,13 @@ def main() -> int:
         # Пояснение печатается только к своей находке: приложенное к чужой,
         # оно отправляет чинить не то (правило 158).
         if any("тянет ли она на правило" in p for p in problems):
-            print("\n  Вопрос «тянет ли эта поломка на правило» задаётся здесь "
-                  "потому, что\n  здесь инцидент ещё цел: известны причина, цена и "
-                  "чем чинили. Ответ\n  «нет» так же полезен, как «да», — но "
-                  "только если он записан (026).", file=sys.stderr)
+            print(
+                "\n  Вопрос «тянет ли эта поломка на правило» задаётся здесь "
+                "потому, что\n  здесь инцидент ещё цел: известны причина, цена и "
+                "чем чинили. Ответ\n  «нет» так же полезен, как «да», — но "
+                "только если он записан (026).",
+                file=sys.stderr,
+            )
         return 1
 
     body = render(found)
@@ -668,8 +752,10 @@ def main() -> int:
     if args.collect:
         text = CHANGELOG.read_text(encoding="utf-8")
         if UNRELEASED not in text:
-            print(f"проверка не отработала: в {CHANGELOG.name} нет раздела "
-                  f"{UNRELEASED!r}", file=sys.stderr)
+            print(
+                f"проверка не отработала: в {CHANGELOG.name} нет раздела {UNRELEASED!r}",
+                file=sys.stderr,
+            )
             return 2
         if not body:
             print("фрагментов нет — собирать нечего")
@@ -680,13 +766,14 @@ def main() -> int:
         was = existing(text)
         merged = {s: sorted(set(was[s]) | set(found[s])) for s in SECTIONS}
         head, _, tail = text.partition(UNRELEASED)
-        rest = tail[tail.index("## ["):] if "## [" in tail else ""
-        CHANGELOG.write_text(f"{head}{UNRELEASED}\n\n{render(merged)}\n{rest}",
-                             encoding="utf-8")
+        rest = tail[tail.index("## [") :] if "## [" in tail else ""
+        CHANGELOG.write_text(f"{head}{UNRELEASED}\n\n{render(merged)}\n{rest}", encoding="utf-8")
         for path in fragments():
             path.unlink()
-        print(f"собрано записей: {total}, в разделе стало "
-              f"{sum(len(v) for v in merged.values())}; фрагменты удалены")
+        print(
+            f"собрано записей: {total}, в разделе стало "
+            f"{sum(len(v) for v in merged.values())}; фрагменты удалены"
+        )
         return 0
 
     # ── исход 0 ────────────────────────────────────────────────────────────

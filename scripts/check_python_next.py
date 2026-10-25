@@ -46,7 +46,6 @@ Engineering-Pipeline-Mechanisms (сверено 02.10).
   214 — разбор прогона, чтение по сети и поиск задачи — общие швы, а не копии.
 """
 
-
 import argparse
 import json
 import re
@@ -62,8 +61,9 @@ import main_red
 ROOT = Path(__file__).resolve().parent.parent
 
 #: Манифест версий, которые умеет ставить `actions/setup-python`.
-MANIFEST_URL = ("https://raw.githubusercontent.com/actions/python-versions/"
-                "main/versions-manifest.json")
+MANIFEST_URL = (
+    "https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json"
+)
 
 #: По этой строке задача находится снова; заголовок правят руками.
 MARKER = "<!-- python-next: не удаляйте, по этой строке задача находится снова -->"
@@ -109,11 +109,16 @@ def расхождения(следующая: tuple[int, int], manifest: list[A
     out: list[str] = []
     if следующая in стабильные:
         дальше = [f"{a}.{b}" for a, b in пробные if (a, b) > следующая]
-        куда = (f"навести python-next на {дальше[-1]}" if дальше else
-                "следующей предрелизной ветки у площадки пока нет — python-next "
-                "снять с пометки или ждать её")
-        out.append(f"{имя} уже стабильна, а python-next гоняет её как "
-                   f"предрелизную: {куда}; {имя} теперь — вопрос планки, а не прогона")
+        куда = (
+            f"навести python-next на {дальше[-1]}"
+            if дальше
+            else "следующей предрелизной ветки у площадки пока нет — python-next "
+            "снять с пометки или ждать её"
+        )
+        out.append(
+            f"{имя} уже стабильна, а python-next гоняет её как "
+            f"предрелизную: {куда}; {имя} теперь — вопрос планки, а не прогона"
+        )
     elif следующая not in пробные:
         # СЛЕДУЮЩАЯ ЗА СТАБИЛЬНОЙ, ПОКА АЛЬФЫ НЕТ, — ОЖИДАНИЕ, А НЕ НАХОДКА
         # (решение владельца 14 октября: 3.15 вышла, совещательной стала 3.16
@@ -122,28 +127,38 @@ def расхождения(следующая: tuple[int, int], manifest: list[A
         # находка: такой ветки площадка не поставит и потом.
         старшая = стабильные[-1]
         if not (следующая == (старшая[0], старшая[1] + 1) and not пробные):
-            out.append(f"python-next гоняет {имя}, а площадка такой ветки не знает — "
-                       "setup-python её не поставит")
+            out.append(
+                f"python-next гоняет {имя}, а площадка такой ветки не знает — "
+                "setup-python её не поставит"
+            )
     else:
         новее = [f"{a}.{b}" for a, b in пробные if (a, b) > следующая]
         if новее:
-            out.append(f"предрелизная у площадки уже {новее[-1]}, а python-next "
-                       f"держит {имя}")
+            out.append(f"предрелизная у площадки уже {новее[-1]}, а python-next держит {имя}")
     return out
 
 
 def тело(найдено: list[str], run_url: str) -> str:
     """Тело задачи: маркер, находки, что делать, ссылка на прогон."""
-    return "\n".join([
-        MARKER, "",
-        "Сверка прогона `python-next` с манифестом `actions/python-versions` "
-        "(правило 203) нашла расхождение:", "",
-        *[f"- {н}" for н in найдено], "",
-        "Это источник работы, а не поломка: выход версии у CPython ничего не "
-        "ломает. Задача закрывается человеком вместе с правкой прогона.", "",
-        f"Источник: {MANIFEST_URL}",
-        f"Прогон: {run_url}" if run_url else "",
-    ]).rstrip() + "\n"
+    return (
+        "\n".join(
+            [
+                MARKER,
+                "",
+                "Сверка прогона `python-next` с манифестом `actions/python-versions` "
+                "(правило 203) нашла расхождение:",
+                "",
+                *[f"- {н}" for н in найдено],
+                "",
+                "Это источник работы, а не поломка: выход версии у CPython ничего не "
+                "ломает. Задача закрывается человеком вместе с правкой прогона.",
+                "",
+                f"Источник: {MANIFEST_URL}",
+                f"Прогон: {run_url}" if run_url else "",
+            ]
+        ).rstrip()
+        + "\n"
+    )
 
 
 def записать(body: str, marker: str = MARKER, title: str = TITLE) -> tuple[int, str]:
@@ -154,13 +169,26 @@ def записать(body: str, marker: str = MARKER, title: str = TITLE) -> tup
     if отказ is not None:
         return НЕТ_АДРЕСАТА, f"трекер не прочитан — {отказ}"
     if номер is not None:
-        code, out = ghcli.run("api", "--method", "PATCH",
-                              f"repos/{{owner}}/{{repo}}/issues/{номер}", "-f", f"body={body}")
+        code, out = ghcli.run(
+            "api",
+            "--method",
+            "PATCH",
+            f"repos/{{owner}}/{{repo}}/issues/{номер}",
+            "-f",
+            f"body={body}",
+        )
         что = f"задача #{номер} обновлена"
     else:
-        code, out = ghcli.run("api", "repos/{owner}/{repo}/issues",
-                              "-f", f"title={title}", "-f", f"body={body}",
-                              "-f", "labels[]=area/gates")
+        code, out = ghcli.run(
+            "api",
+            "repos/{owner}/{repo}/issues",
+            "-f",
+            f"title={title}",
+            "-f",
+            f"body={body}",
+            "-f",
+            "labels[]=area/gates",
+        )
         что = "задача заведена"
     if code != 0:
         return НЕТ_АДРЕСАТА, f"трекер не принял запись — {out}"
@@ -177,9 +205,16 @@ def снять_отказ() -> tuple[int, str]:
         return НЕТ_АДРЕСАТА, f"трекер не прочитан — {отказ}"
     if номер is None:
         return 0, ""
-    code, out = ghcli.run("api", "--method", "PATCH",
-                          f"repos/{{owner}}/{{repo}}/issues/{номер}",
-                          "-f", "state=closed", "-f", "state_reason=completed")
+    code, out = ghcli.run(
+        "api",
+        "--method",
+        "PATCH",
+        f"repos/{{owner}}/{{repo}}/issues/{номер}",
+        "-f",
+        "state=closed",
+        "-f",
+        "state_reason=completed",
+    )
     if code != 0:
         return НЕТ_АДРЕСАТА, f"задача отказа #{номер} не закрыта — {out}"
     return 0, f"задача отказа #{номер} закрыта: сверка снова отработала"
@@ -187,29 +222,40 @@ def снять_отказ() -> tuple[int, str]:
 
 def отказ_тело(причина: str, run_url: str) -> str:
     """Тело задачи для третьего исхода: сверка не отработала, и почему."""
-    return "\n".join([
-        MARKER_ОТКАЗ, "",
-        "Сверка прогона `python-next` с манифестом `actions/python-versions` "
-        "(правило 203) **не отработала**:", "",
-        f"- {причина}", "",
-        "Общая ветка от этого не красная: это сбой сверки, а не работы. "
-        "Задачу закроет сама сверка, когда снова отработает; задачу находки, "
-        "если она открыта, этот отказ не трогает.", "",
-        f"Источник: {MANIFEST_URL}",
-        f"Прогон: {run_url}" if run_url else "",
-    ]).rstrip() + "\n"
+    return (
+        "\n".join(
+            [
+                MARKER_ОТКАЗ,
+                "",
+                "Сверка прогона `python-next` с манифестом `actions/python-versions` "
+                "(правило 203) **не отработала**:",
+                "",
+                f"- {причина}",
+                "",
+                "Общая ветка от этого не красная: это сбой сверки, а не работы. "
+                "Задачу закроет сама сверка, когда снова отработает; задачу находки, "
+                "если она открыта, этот отказ не трогает.",
+                "",
+                f"Источник: {MANIFEST_URL}",
+                f"Прогон: {run_url}" if run_url else "",
+            ]
+        ).rstrip()
+        + "\n"
+    )
 
 
-def сверить(root: Path, manifest_path: Path | None
-            ) -> tuple[list[str], str] | str:
+def сверить(root: Path, manifest_path: Path | None) -> tuple[list[str], str] | str:
     """(находки, охват) — сверка отработала; строка — причина третьего исхода."""
     предварительные = cv.in_workflows(root, preview=True)
     if not предварительные:
-        return ("в .github/workflows нет прогона с allow-prereleases — "
-                "предрелизной версии, которую сверять, нет")
+        return (
+            "в .github/workflows нет прогона с allow-prereleases — "
+            "предрелизной версии, которую сверять, нет"
+        )
     if len({в for _, в in предварительные}) > 1:
-        return ("предрелизных версий несколько — "
-                + ", ".join(f"{a}.{b} ({ф})" for ф, (a, b) in предварительные))
+        return "предрелизных версий несколько — " + ", ".join(
+            f"{a}.{b} ({ф})" for ф, (a, b) in предварительные
+        )
     файл, следующая = предварительные[0]
 
     if manifest_path is not None:
@@ -230,17 +276,23 @@ def сверить(root: Path, manifest_path: Path | None
         return f"манифест {источник}: {e} (075)"
 
     стабильные, пробные = ветки(manifest)
-    охват = (f"{файл}: {следующая[0]}.{следующая[1]}; у площадки стабильная "
-             f"{стабильные[-1][0]}.{стабильные[-1][1]}, предрелизных "
-             + (", ".join(f"{a}.{b}" for a, b in пробные) or "нет"))
+    охват = (
+        f"{файл}: {следующая[0]}.{следующая[1]}; у площадки стабильная "
+        f"{стабильные[-1][0]}.{стабильные[-1][1]}, предрелизных "
+        + (", ".join(f"{a}.{b}" for a, b in пробные) or "нет")
+    )
     return найдено, охват
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", type=Path, default=ROOT)
-    ap.add_argument("--manifest", type=Path, default=None,
-                    help="манифест файлом вместо сети — для набора и разбора")
+    ap.add_argument(
+        "--manifest",
+        type=Path,
+        default=None,
+        help="манифест файлом вместо сети — для набора и разбора",
+    )
     ap.add_argument("--run-url", default="", help="ссылка на текущий прогон")
     ap.add_argument("--apply", action="store_true", help="писать в трекер, а не только печатать")
     args = ap.parse_args(argv)
@@ -289,8 +341,11 @@ def уборка(apply: bool, исход: int) -> int:
         return исход
     код, что = снять_отказ()
     if код:
-        print(f"::warning::сверка отработала, задача отказа осталась открытой — {что}; "
-              "её закроет следующая отработавшая сверка", file=sys.stderr)
+        print(
+            f"::warning::сверка отработала, задача отказа осталась открытой — {что}; "
+            "её закроет следующая отработавшая сверка",
+            file=sys.stderr,
+        )
     elif что:
         print(что)
     return исход

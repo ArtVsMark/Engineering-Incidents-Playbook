@@ -40,7 +40,6 @@
 Коды:    0 чисто · 1 есть находки · 2 проверка не отработала
 """
 
-
 import argparse
 import json
 import re
@@ -78,10 +77,14 @@ EVENT_VARS = ("$BASE", "$HEAD_SHA", "$PR", "$RUNNER_TEMP", "$GH_TOKEN")
 #: Запускается ТОТ ЖЕ скрипт тем же ключом; подменяется только источник текста.
 #: Второй проверки здесь нет и быть не должно.
 STAND_IN = {
-    "изменение связано с задачей или освобождено с причиной":
-        ("body", "тело первого коммита ветки"),
-    "запись журнала едет вместе с изменением":
-        ("journal", "изменённые пути и тело первого коммита"),
+    "изменение связано с задачей или освобождено с причиной": (
+        "body",
+        "тело первого коммита ветки",
+    ),
+    "запись журнала едет вместе с изменением": (
+        "journal",
+        "изменённые пути и тело первого коммита",
+    ),
     # ТРЕТИЙ ШАГ ПОДДАЁТСЯ ТОЙ ЖЕ ЗАМЕНЕ, и это выяснилось дорого. Он числился
     # непроверяемым только потому, что его команда поминает `$BASE`, — а
     # `$BASE` это и есть общая ветка, которая лежит здесь как `origin/main`.
@@ -94,14 +97,18 @@ STAND_IN = {
     # Цена не в одном круге. Прогон, УМАЛЯЮЩИЙ свою способность, толкает окно
     # узнавать результат из конвейера — а там ответ стоит минут стены и общего
     # ресурса на всех (задача #287).
-    "починка ответила, тянет ли она на правило":
-        ("fix_verdict", "фрагменты, добавленные поверх origin/main"),
+    "починка ответила, тянет ли она на правило": (
+        "fix_verdict",
+        "фрагменты, добавленные поверх origin/main",
+    ),
     # Четвёртый той же замены: шагу нужны база и тело, и оба здесь есть —
     # общая ветка лежит как origin/main, тело берётся у коммита ветки. Без
     # замены он числился бы непроверяемым, а узнавать про уехавшую подпись из
     # конвейера дороже всего: тело изменения на площадке ставится один раз.
-    "подпись под перечитыванием не едет одна":
-        ("reread", "ответ в origin/main и тело первого коммита"),
+    "подпись под перечитыванием не едет одна": (
+        "reread",
+        "ответ в origin/main и тело первого коммита",
+    ),
 }
 
 
@@ -111,18 +118,29 @@ def branch_body(root: Path, base: str = "origin/main") -> tuple[str, str]:
     Ошибка возвращается строкой: «спросить не вышло» и «строки нет» — разные
     ответы, и путать их значит врать прогоном (039).
     """
-    done = proc.run(["git", "-C", str(root), "rev-list", "--reverse",
-                     f"{base}..HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), "rev-list", "--reverse", f"{base}..HEAD"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         return "", f"не спросить коммиты ветки: {done.stderr.strip()}"
     first = done.stdout.split("\n")[0].strip()
     if not first:
         return "", f"ветка не несёт своих коммитов поверх {base}"
-    done = proc.run(["git", "-C", str(root), "log", "-1", "--format=%b",
-                     first], capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), "log", "-1", "--format=%b", first],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         return "", f"не спросить тело коммита {first[:7]}: {done.stderr.strip()}"
     return done.stdout, ""
+
 
 STEP_RE = re.compile(r"^      - (name|uses):\s*(.*)$")
 FIELD_RE = re.compile(r"^        (\w+):\s*(.*)$")
@@ -190,8 +208,7 @@ def parse_steps(text: str) -> list[Step]:
 
 def build(name: str, cond: str, run: str) -> Step:
     """Собирает шаг и решает, запускается ли он без изменения."""
-    calls = [ln.strip() for ln in run.splitlines()
-             if ln.strip().startswith("python ")]
+    calls = [ln.strip() for ln in run.splitlines() if ln.strip().startswith("python ")]
     command = calls[-1].split() if calls else []
     why = ""
     if cond:
@@ -209,7 +226,12 @@ def run_step(step: Step, root: Path) -> tuple[int, str]:
     try:
         done = subprocess.run(  # noqa: S603 — команда взята из своего же ci.yml
             [sys.executable, *step.command[1:]],
-            cwd=root, capture_output=True, text=True, encoding="utf-8", timeout=step.timeout_s)
+            cwd=root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=step.timeout_s,
+        )
     except subprocess.TimeoutExpired:
         return 2, f"шаг не уложился в {step.timeout_s} с"
     except OSError as exc:
@@ -221,8 +243,13 @@ def run_step(step: Step, root: Path) -> tuple[int, str]:
 
 def branch_paths(root: Path, base: str = "origin/main") -> tuple[list[str], str]:
     """Пути, которые изменение тронет, — тот же вопрос, что задаёт прогон."""
-    done = proc.run(["git", "-C", str(root), "diff", "--name-only", "-z",
-                     f"{base}...HEAD"], capture_output=True, text=True, encoding="utf-8", timeout=60)
+    done = proc.run(
+        ["git", "-C", str(root), "diff", "--name-only", "-z", f"{base}...HEAD"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if done.returncode != 0:
         return [], f"не спросить изменённые пути: {done.stderr.strip()}"
     return [s for s in done.stdout.split("\0") if s.strip()], ""
@@ -240,16 +267,14 @@ def stand_in_call(kind: str, root: Path) -> tuple[list[str], str, str]:
     # и тот же ключ; подменяется только база — `$BASE` площадки это общая
     # ветка, и локально она называется origin/main.
     if kind == "fix_verdict":
-        return (["scripts/collect_changelog.py", "--check",
-                 "--added-since", "origin/main"], "", "")
+        return (["scripts/collect_changelog.py", "--check", "--added-since", "origin/main"], "", "")
     текст, ошибка = branch_body(root)
     if ошибка:
         return [], "", ошибка
     if kind == "body":
         return ["scripts/pr_body.py", "--check", "--body-file", "-"], текст, ""
     if kind == "reread":
-        return (["scripts/check_reread.py", "--base", "origin/main",
-                 "--body-file", "-"], текст, "")
+        return (["scripts/check_reread.py", "--base", "origin/main", "--body-file", "-"], текст, "")
     if kind == "journal":
         пути, ошибка = branch_paths(root)
         if ошибка:
@@ -261,53 +286,77 @@ def stand_in_call(kind: str, root: Path) -> tuple[list[str], str, str]:
         путь_тела = Path(сумка) / "body.md"
         путь_путей.write_text("\n".join(пути) + "\n", encoding="utf-8")
         путь_тела.write_text(текст, encoding="utf-8")
-        return (["scripts/collect_changelog.py", "--require-entry",
-                 "--paths-from", str(путь_путей),
-                 "--body-file", str(путь_тела)], "", "")
+        return (
+            [
+                "scripts/collect_changelog.py",
+                "--require-entry",
+                "--paths-from",
+                str(путь_путей),
+                "--body-file",
+                str(путь_тела),
+            ],
+            "",
+            "",
+        )
     return [], "", f"замены «{kind}» нет"
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
-    parser.add_argument("--list", action="store_true",
-                        help="показать план и выйти, ничего не запуская")
-    parser.add_argument("--only", metavar="ПОДСТРОКА",
-                        help="запустить шаги, чьё имя или скрипт её содержат")
-    parser.add_argument("--push", action="store_true",
-                        help="толкнуть текущую ветку, ЕСЛИ прогон чист: "
-                             "проверка и действие одним заходом (208)")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
+    parser.add_argument(
+        "--list", action="store_true", help="показать план и выйти, ничего не запуская"
+    )
+    parser.add_argument(
+        "--only", metavar="ПОДСТРОКА", help="запустить шаги, чьё имя или скрипт её содержат"
+    )
+    parser.add_argument(
+        "--push",
+        action="store_true",
+        help="толкнуть текущую ветку, ЕСЛИ прогон чист: проверка и действие одним заходом (208)",
+    )
     args = parser.parse_args(argv)
     if args.push and (args.only or args.list):
-        print("проверка не отработала: --push толкает только после ПОЛНОГО "
-              "прогона — с --only или --list чистота не доказана", file=sys.stderr)
+        print(
+            "проверка не отработала: --push толкает только после ПОЛНОГО "
+            "прогона — с --only или --list чистота не доказана",
+            file=sys.stderr,
+        )
         return 2
     root: Path = args.root
     pipeline = root / ".github" / "workflows" / "ci.yml"
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not pipeline.exists():
-        print(f"проверка не отработала: нет {pipeline} — "
-              "список шагов брать неоткуда", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {pipeline} — список шагов брать неоткуда", file=sys.stderr
+        )
         return 2
     steps = parse_steps(pipeline.read_text(encoding="utf-8"))
     runnable = [s for s in steps if not s.skip_why]
     if not runnable:
-        print("проверка не отработала: в ci.yml не нашлось ни одного шага, "
-              "запускаемого локально — это ошибка разбора, а не пустой "
-              "конвейер", file=sys.stderr)
+        print(
+            "проверка не отработала: в ci.yml не нашлось ни одного шага, "
+            "запускаемого локально — это ошибка разбора, а не пустой "
+            "конвейер",
+            file=sys.stderr,
+        )
         return 2
 
     skipped = [s for s in steps if s.skip_why]
     if args.only:
         needle = args.only.lower()
-        runnable = [s for s in runnable
-                    if needle in s.name.lower()
-                    or needle in " ".join(s.command).lower()]
+        runnable = [
+            s for s in runnable if needle in s.name.lower() or needle in " ".join(s.command).lower()
+        ]
         if not runnable:
-            print(f"проверка не отработала: под «{args.only}» не подошёл ни "
-                  "один шаг — выборка пуста, а не чиста", file=sys.stderr)
+            print(
+                f"проверка не отработала: под «{args.only}» не подошёл ни "
+                "один шаг — выборка пуста, а не чиста",
+                file=sys.stderr,
+            )
             return 2
 
     if args.list:
@@ -350,7 +399,13 @@ def main(argv: list[str] | None = None) -> int:
             continue
         done = proc.run(  # noqa: S603 — команда собрана таблицей замен
             [sys.executable, *argv_],
-            cwd=root, input=stdin_, capture_output=True, text=True, encoding="utf-8", timeout=600)
+            cwd=root,
+            input=stdin_,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=600,
+        )
         подменено.append(step.name)
         mark = {0: "✓"}.get(done.returncode, "✗")
         print(f"{mark} {step.name}  ({откуда})")
@@ -365,20 +420,18 @@ def main(argv: list[str] | None = None) -> int:
     # итогом. Строка «прогон чист» без этого списка читалась бы как «проверено
     # всё», а проверено четырьмя шагами меньше (075).
     if skipped:
-        print(f"\nне запускалось локально — {len(skipped)}, "
-              "предмет появляется только на изменении:")
+        print(
+            f"\nне запускалось локально — {len(skipped)}, предмет появляется только на изменении:"
+        )
         for s in skipped:
             print(f"  ~ {s.name}")
 
     if broken:
-        print(f"\nне отработало шагов: {len(broken)} — "
-              + ", ".join(broken), file=sys.stderr)
-        print("  Это третий исход, а не находка: проверка не состоялась "
-              "(039).", file=sys.stderr)
+        print(f"\nне отработало шагов: {len(broken)} — " + ", ".join(broken), file=sys.stderr)
+        print("  Это третий исход, а не находка: проверка не состоялась (039).", file=sys.stderr)
         return 2
     if findings:
-        print(f"\nнаходки в шагах: {len(findings)} — "
-              + ", ".join(findings), file=sys.stderr)
+        print(f"\nнаходки в шагах: {len(findings)} — " + ", ".join(findings), file=sys.stderr)
         return 1
     print(f"\nчисто: {len(runnable)} шагов конвейера прошли локально")
     if args.push:
@@ -411,11 +464,17 @@ def приставки(root: Path) -> tuple[str, ...]:
     # ТОЛЬКО СПИСКИ ПОД `branches:` (обзор #793): строка того же вида в другом
     # списке файла прочиталась бы приставкой. Блоков берётся СКОЛЬКО ЕСТЬ
     # (обзор #796): второй `branches:` не теряется молча.
-    списки = (б.group(2) for б in re.finditer(
-        r"^([ \t]*)branches:[ \t]*\n((?:\1[ \t]+- .*\n?)+)", текст, re.M))
-    return tuple(dict.fromkeys(
-        m.group(1) for список in списки
-        for m in re.finditer(r'^[ \t]+- "?([\w./-]+?)\*\*"?[ \t]*$', список, re.M)))
+    списки = (
+        б.group(2)
+        for б in re.finditer(r"^([ \t]*)branches:[ \t]*\n((?:\1[ \t]+- .*\n?)+)", текст, re.M)
+    )
+    return tuple(
+        dict.fromkeys(
+            m.group(1)
+            for список in списки
+            for m in re.finditer(r'^[ \t]+- "?([\w./-]+?)\*\*"?[ \t]*$', список, re.M)
+        )
+    )
 
 
 def толкнуть(root: Path) -> int:
@@ -431,14 +490,18 @@ def толкнуть(root: Path) -> int:
     назван (154); неназванный стоил соседу трёх толчков при красном из
     пятнадцати.
     """
-    названа = proc.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
-                       cwd=root, capture_output=True, text=True,
-                       encoding="utf-8", timeout=60)
+    названа = proc.run(
+        ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
     if названа.returncode != 0:
         # Истечение и отказ git — «ветку не узнать», а не «ветка без приставки»:
         # пустое имя под чужой причиной было бы тем же враньём прогоном (039).
-        print(f"толчок не сделан: ветка не названа — {названа.stderr.strip()}",
-              file=sys.stderr)
+        print(f"толчок не сделан: ветка не названа — {названа.stderr.strip()}", file=sys.stderr)
         return 2
     ветка = названа.stdout.strip()
     try:
@@ -447,36 +510,50 @@ def толкнуть(root: Path) -> int:
         print(f"толчок не сделан: приставки не прочитаны — {e}", file=sys.stderr)
         return 2
     if not можно or not ветка.startswith(можно):
-        print(f"толчок не сделан: ветка «{ветка}» без приставки "
-              f"{' или '.join(можно) or '—'} — изменения по ней не откроется (003)",
-              file=sys.stderr)
+        print(
+            f"толчок не сделан: ветка «{ветка}» без приставки "
+            f"{' или '.join(можно) or '—'} — изменения по ней не откроется (003)",
+            file=sys.stderr,
+        )
         return 2
     команда = f"git push -u origin {ветка}"
     событие = json.dumps({"tool_name": "Bash", "tool_input": {"command": команда}})
     try:
-        сторож = subprocess.run([sys.executable, str(root / СТОРОЖ)], cwd=root,
-                                input=событие, capture_output=True, text=True,
-                                encoding="utf-8", timeout=ПРЕДЕЛ_СТОРОЖА)
+        сторож = subprocess.run(
+            [sys.executable, str(root / СТОРОЖ)],
+            cwd=root,
+            input=событие,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=ПРЕДЕЛ_СТОРОЖА,
+        )
     except subprocess.TimeoutExpired:
-        print(f"толчок не сделан: сторож {СТОРОЖ} не ответил за "
-              f"{ПРЕДЕЛ_СТОРОЖА} с", file=sys.stderr)
+        print(
+            f"толчок не сделан: сторож {СТОРОЖ} не ответил за {ПРЕДЕЛ_СТОРОЖА} с", file=sys.stderr
+        )
         return 2
     if сторож.returncode != 0:
-        print(f"толчок не сделан — сторож отказал:\n{сторож.stderr.strip()}",
-              file=sys.stderr)
+        print(f"толчок не сделан — сторож отказал:\n{сторож.stderr.strip()}", file=sys.stderr)
         return 2
     try:
-        толчок = subprocess.run(команда.split(), cwd=root, capture_output=True,
-                                text=True, encoding="utf-8",
-                                timeout=ПРЕДЕЛ_ТОЛЧКА)
+        толчок = subprocess.run(
+            команда.split(),
+            cwd=root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=ПРЕДЕЛ_ТОЛЧКА,
+        )
     except subprocess.TimeoutExpired:
-        print(f"толчок не прошёл: {команда} не закончился за "
-              f"{ПРЕДЕЛ_ТОЛЧКА} с", file=sys.stderr)
+        print(f"толчок не прошёл: {команда} не закончился за {ПРЕДЕЛ_ТОЛЧКА} с", file=sys.stderr)
         return 2
     print((толчок.stdout + толчок.stderr).strip())
     if толчок.returncode != 0:
-        print(f"толчок не прошёл: {команда} — код {толчок.returncode}, вывод git выше",
-              file=sys.stderr)
+        print(
+            f"толчок не прошёл: {команда} — код {толчок.returncode}, вывод git выше",
+            file=sys.stderr,
+        )
         return 2
     print(f"толкнуто: {ветка}")
     return 0

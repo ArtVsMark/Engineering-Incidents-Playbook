@@ -24,16 +24,23 @@ import invisible
 
 ROOT = Path(__file__).resolve().parent.parent
 #: Что раздаётся окнам: путь от корня и маска.
-ОХВАТ = (("rules", "**/*.md"), ("candidates", "*.md"), ("export", "**/*.json"),
-         (".claude/skills", "**/*.md"),
-         # Читаются первыми или раздаются потребителям (обзор #874): свод и
-         # корневые документы, docs/, заготовки и плагин каталога.
-         (".", "*.md"), ("docs", "**/*.md"), ("templates", "**/*"),
-         ("plugins", "**/*.md"), ("plugins", "**/*.json"),
-         # Фрагменты журнала: из них выпуск собирает CHANGELOG.md коммитом
-         # `[skip ci]`, и символ, не пойманный во фрагменте, всплывает уже на
-         # общей ветке — так U+200B доехал до v2.1.0 (CHANGELOG.md:67).
-         ("changelog.d", "*.md"))
+ОХВАТ = (
+    ("rules", "**/*.md"),
+    ("candidates", "*.md"),
+    ("export", "**/*.json"),
+    (".claude/skills", "**/*.md"),
+    # Читаются первыми или раздаются потребителям (обзор #874): свод и
+    # корневые документы, docs/, заготовки и плагин каталога.
+    (".", "*.md"),
+    ("docs", "**/*.md"),
+    ("templates", "**/*"),
+    ("plugins", "**/*.md"),
+    ("plugins", "**/*.json"),
+    # Фрагменты журнала: из них выпуск собирает CHANGELOG.md коммитом
+    # `[skip ci]`, и символ, не пойманный во фрагменте, всплывает уже на
+    # общей ветке — так U+200B доехал до v2.1.0 (CHANGELOG.md:67).
+    ("changelog.d", "*.md"),
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -44,8 +51,10 @@ def main(argv: list[str] | None = None) -> int:
     файлы = sorted({p for d, маска in ОХВАТ for p in (args.root / d).glob(маска) if p.is_file()})
     if not файлы:
         охват = ", ".join(f"{args.root / d}/{м}" for d, м in ОХВАТ)
-        print(f"проверять нечего: в охвате ни одного файла ({охват}) — зеленеть на "
-              "этом нельзя (075)", file=sys.stderr)
+        print(
+            f"проверять нечего: в охвате ни одного файла ({охват}) — зеленеть на этом нельзя (075)",
+            file=sys.stderr,
+        )
         return 2
     находки = []
     for путь in файлы:
@@ -59,15 +68,23 @@ def main(argv: list[str] | None = None) -> int:
             try:
                 данные = json.loads(текст)
             except ValueError as exc:
-                print(f"проверка не отработала: {путь.relative_to(args.root)} не "
-                      f"разобран как JSON — {exc}", file=sys.stderr)
+                print(
+                    f"проверка не отработала: {путь.relative_to(args.root)} не "
+                    f"разобран как JSON — {exc}",
+                    file=sys.stderr,
+                )
                 return 2
             for поле, c in invisible.в_данных(данные):
-                находки.append(f"{путь.relative_to(args.root)}: {поле}: "
-                               f"{invisible.назвать(c)} (после разбора JSON)")
+                находки.append(
+                    f"{путь.relative_to(args.root)}: {поле}: "
+                    f"{invisible.назвать(c)} (после разбора JSON)"
+                )
     if находки:
-        print("в тексте, который читают окна, есть невидимые символы — человек их "
-              "не видит, а модель читает (085, #873):", file=sys.stderr)
+        print(
+            "в тексте, который читают окна, есть невидимые символы — человек их "
+            "не видит, а модель читает (085, #873):",
+            file=sys.stderr,
+        )
         for н in находки:
             print(f"  • {н}", file=sys.stderr)
         return 1

@@ -11,11 +11,11 @@
 `scripts/check_text_cuts.py`.
 """
 
-
 import check_text_cuts as ct
 
 
 # ── что гейт обязан отвергнуть ─────────────────────────────────────────────
+
 
 def test_razrez_po_tochke_bez_pometki_nahodka():
     код = 'куски = текст.split(".")\n'
@@ -36,6 +36,7 @@ def test_partition_eto_tozhe_rezak():
 
 # ── что гейт обязан пропустить ─────────────────────────────────────────────
 
+
 def test_pometka_na_svoey_stroke():
     код = 'путь = имя.split(".")[0]  # не проза: путь модуля\n'
     assert ct.объявлено(код.splitlines(), 1)
@@ -43,18 +44,14 @@ def test_pometka_na_svoey_stroke():
 
 def test_pometka_strokoy_vyshe():
     """Вызов часто переносят, и пометка оказывается над ним."""
-    код = ("# не проза: номер версии\n"
-           'major, minor, _ = tag.split(".")\n')
+    код = '# не проза: номер версии\nmajor, minor, _ = tag.split(".")\n'
     assert ct.объявлено(код.splitlines(), 2)
 
 
 def test_pometka_dalshe_dvuh_strok_ne_schitaetsya():
     """ГРАНИЦА: больше двух строк — уже не «рядом», и пометка начала бы
     засчитываться от ЧУЖОГО разреза."""
-    код = ("# не проза: номер версии\n"
-           "пусто = 1\n"
-           "ещё = 2\n"
-           'куски = текст.split(".")\n')
+    код = '# не проза: номер версии\nпусто = 1\nещё = 2\nкуски = текст.split(".")\n'
     assert not ct.объявлено(код.splitlines(), 4)
 
 
@@ -62,7 +59,7 @@ def test_razrez_po_drugomu_razdelitelyu_ne_predmet():
     """ГРАНИЦА: по запятой, пробелу и переводу строки режут свободно —
     правило про точку, и красное на прочем было бы ложным отказом (051)."""
     assert ct.разрезы('куски = текст.split(",")\n') == []
-    assert ct.разрезы('куски = текст.split()\n') == []
+    assert ct.разрезы("куски = текст.split()\n") == []
     assert ct.разрезы('абзацы = текст.split("\\n\\n")\n') == []
 
 
@@ -72,6 +69,7 @@ def test_stroka_v_dokstroke_ne_vyzov():
 
 
 # ── исходы через main ──────────────────────────────────────────────────────
+
 
 def дерево(tmp_path, текст: str):
     (tmp_path / "scripts").mkdir(exist_ok=True)

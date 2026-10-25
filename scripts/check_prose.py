@@ -41,7 +41,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import re
 import subprocess
@@ -87,8 +86,14 @@ FENCE_RE = re.compile(r"^\s*```")
 #: там он и есть датировка, — а ошибиться в другую сторону значит краснеть на
 #: верной записи, чему цена выше (051). Новый раздел объяснения гейт пропустит;
 #: пропущенный номер стоит правки строки, ложный отказ — доверия к гейту.
-EXPLAINING = ("Почему", "Why", "Применимость", "Where it applies",
-              "Практические границы", "Practical boundaries")
+EXPLAINING = (
+    "Почему",
+    "Why",
+    "Применимость",
+    "Where it applies",
+    "Практические границы",
+    "Practical boundaries",
+)
 #: Номер задачи: `#123` и `владелец/репо#123`. Не путать с якорем и решёткой
 #: заголовка — отсюда требование цифр и границы слова.
 ISSUE_RE = re.compile(r"(?<![\w/])#\d{1,5}\b")
@@ -138,8 +143,16 @@ LINK_RE = re.compile(r"\]\(([^)]+)\)")
 #: на любой старт, — но это предмет 029, отдельной записи и отдельного решения:
 #: замер 17.09 даёт 3911 слов, и потолок там пришлось бы вводить вместе с
 #: выносом в канон.
-БЕЗ_ПОТОЛКА = ("docs/", "rules/", "changelog.d/", "templates/", "export/",
-               "AGENTS.md", "CLAUDE.md", "CONTRIBUTING.md")
+БЕЗ_ПОТОЛКА = (
+    "docs/",
+    "rules/",
+    "changelog.d/",
+    "templates/",
+    "export/",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "CONTRIBUTING.md",
+)
 
 
 def prose_words(text: str) -> int:
@@ -157,8 +170,14 @@ def prose_words(text: str) -> int:
 def tracked(root: Path) -> list[Path]:
     """Отслеживаемые файлы. Непрослеживаемый мусор проверять незачем."""
     try:
-        out = proc.run(["git", "-C", str(root), "ls-files", "-z"],
-                       capture_output=True, text=True, encoding="utf-8", check=True, timeout=60).stdout
+        out = proc.run(
+            ["git", "-C", str(root), "ls-files", "-z"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=True,
+            timeout=60,
+        ).stdout
     except OSError, subprocess.CalledProcessError:
         return []
     return [root / line for line in out.split("\0") if line]
@@ -216,8 +235,7 @@ def issue_numbers(text: str) -> list[tuple[str, str]]:
 
 def links_to_derived(text: str) -> list[str]:
     """Ссылки записи в производные каталога — указатель, выгрузку, значки."""
-    return [t for t in LINK_RE.findall(text)
-            if any(d in t for d in DERIVED)]
+    return [t for t in LINK_RE.findall(text) if any(d in t for d in DERIVED)]
 
 
 def schema_unnamed(root: Path) -> list[str]:
@@ -244,14 +262,16 @@ def schema_unnamed(root: Path) -> list[str]:
             out.append(
                 f"{rel}: номер формата объявлен, а в {VERSIONS_DOC} о нём ни "
                 "слова. Читатель прочтёт его как версию каталога — так и "
-                "случилось с выгрузкой правил")
+                "случилось с выгрузкой правил"
+            )
     return out
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=ROOT,
-                        help="корень каталога; по умолчанию сам этот репозиторий")
+    parser.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = parser.parse_args(argv)
     root: Path = args.root
 
@@ -260,9 +280,12 @@ def main(argv: list[str] | None = None) -> int:
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not prose:
-        print(f"проверка не отработала: `git -C {root} ls-files` не назвал ни "
-              "одного отслеживаемого текстового файла — смотреть нечего, и "
-              "зеленеть на этом нельзя", file=sys.stderr)
+        print(
+            f"проверка не отработала: `git -C {root} ls-files` не назвал ни "
+            "одного отслеживаемого текстового файла — смотреть нечего, и "
+            "зеленеть на этом нельзя",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
@@ -276,7 +299,8 @@ def main(argv: list[str] | None = None) -> int:
             problems.append(
                 f"{path.relative_to(root)}:{line}: сворачиваемый блок. В "
                 "текстовой выгрузке он схлопывается в строку `summary`, и "
-                "раздел читается как оборванный — раскройте или не пишите (008)")
+                "раздел читается как оборванный — раскройте или не пишите (008)"
+            )
 
     # ── ВИТРИНА В ПРЕДЕЛЕ ПЯТИ МИНУТ (023) ─────────────────────────────
     # ЧТО ГЕЙТ ДЕРЖИТ: РЕГРЕСС, который правило само называет неизбежным —
@@ -298,23 +322,27 @@ def main(argv: list[str] | None = None) -> int:
                 "минуту. Уносите подробности по ссылке и оставляйте то, что "
                 "нужно ещё не решившему: описание, быстрый старт, режимы, "
                 "ссылки (023). Считаются слова, а не строки, — переливка "
-                "абзацев число не меняет")
+                "абзацев число не меняет"
+            )
 
     # Записи каталога — оригинал; указатель и выгрузка — его копии.
-    for path in sorted(p for p in prose if p.parent.name in ("ru", "en")
-                       and p.parent.parent.name == "rules"):
+    for path in sorted(
+        p for p in prose if p.parent.name in ("ru", "en") and p.parent.parent.name == "rules"
+    ):
         text = path.read_text(encoding="utf-8")
         rel = path.relative_to(root)
         for section, num in issue_numbers(text):
             problems.append(
                 f"{rel}: номер задачи {num} в разделе «{section}». Номер "
                 "датирует, а не объясняет: в инциденте и следе он на месте, "
-                "в объяснении уводит читателя от механизма поломки (025)")
+                "в объяснении уводит читателя от механизма поломки (025)"
+            )
         for target in links_to_derived(text):
             problems.append(
                 f"{rel}: ссылка в производное «{target}». Копия отстаёт всегда, "
                 "и ссылка отсюда отправляет читателя в прошлое из того места, "
-                "где лежит настоящее (089)")
+                "где лежит настоящее (089)"
+            )
 
     # ЛИЦЕНЗИЙ ДВЕ, И ОБЕ ОБЯЗАНЫ БЫТЬ НАЗВАНЫ. Площадка показывает одну — ту,
     # что в LICENSE, — и вторая существует ровно настолько, насколько на неё
@@ -322,18 +350,23 @@ def main(argv: list[str] | None = None) -> int:
     # ПРЕДМЕТ — РЕПОЗИТОРИЙ, ОБЪЯВИВШИЙ ЛИЦЕНЗИЮ. Там, где её нет вовсе,
     # требовать вторую половину не с чего: это не смягчение, а граница —
     # проверка без предмета обязана молчать, а не краснеть (075, 097).
-    for lic in (("LICENSE", "LICENSE-CODE") if (root / "LICENSE").exists() else ()):
+    for lic in ("LICENSE", "LICENSE-CODE") if (root / "LICENSE").exists() else ():
         if not (root / lic).exists():
-            problems.append(f"{lic}: файла нет. Лицензий у каталога две — "
-                            "проза и исполняемое, — и обе обязаны лежать")
+            problems.append(
+                f"{lic}: файла нет. Лицензий у каталога две — "
+                "проза и исполняемое, — и обе обязаны лежать"
+            )
             continue
-        названа = any(lic in (root / doc).read_text(encoding="utf-8")
-                      for doc in ("README.md", "README.en.md")
-                      if (root / doc).exists())
+        названа = any(
+            lic in (root / doc).read_text(encoding="utf-8")
+            for doc in ("README.md", "README.en.md")
+            if (root / doc).exists()
+        )
         if not названа:
             problems.append(
                 f"{lic}: лежит, а витрина о нём молчит. Лицензия, которую не "
-                "нашли, не действует в глазах того, кто берёт")
+                "нашли, не действует в глазах того, кто берёт"
+            )
 
     problems += schema_unnamed(root)
 
@@ -346,7 +379,8 @@ def main(argv: list[str] | None = None) -> int:
             problems.append(
                 f"{name}: версия «{m.group(1)}» вписана в манифест. Источник "
                 "версии один — тег; вписанная расходится с ним молча и "
-                "обнаруживается после публикации (035)")
+                "обнаруживается после публикации (035)"
+            )
 
     if problems:
         print("в тексте каталога есть вписанное рукой:", file=sys.stderr)
@@ -354,9 +388,11 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  • {p}", file=sys.stderr)
         return 1
 
-    print(f"текст в порядке: просмотрено {len(prose)} документов — "
-          "сворачиваемых блоков нет, номера задач стоят в инциденте и следе, "
-          "ссылок в производные нет, версия в манифестах не вписана")
+    print(
+        f"текст в порядке: просмотрено {len(prose)} документов — "
+        "сворачиваемых блоков нет, номера задач стоят в инциденте и следе, "
+        "ссылок в производные нет, версия в манифестах не вписана"
+    )
     return 0
 
 

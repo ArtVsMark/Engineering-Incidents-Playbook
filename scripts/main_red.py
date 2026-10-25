@@ -48,7 +48,6 @@ ArtVsMark/ArtVsMark#56 — `attribution-history` покраснел, и увид
         вердиктом, а работу, у которой все прогоны отменены, называет третьим исходом.
 """
 
-
 import argparse
 import json
 import subprocess
@@ -134,8 +133,7 @@ def red_names(runs: list[dict], excluded: frozenset[str]) -> list[str]:
     причине.
     """
     latest, _ = _fold(runs, excluded)
-    return sorted(name for name, run in latest.items()
-                  if run.get("conclusion") != "success")
+    return sorted(name for name, run in latest.items() if run.get("conclusion") != "success")
 
 
 def body_for(template: str, red: list[str], run_url: str) -> str:
@@ -144,11 +142,17 @@ def body_for(template: str, red: list[str], run_url: str) -> str:
     Шаблон лежит файлом у потребителя, а не строкой внутри YAML: иначе между
     ним и площадкой встали бы две интерпретации подряд (правило 013).
     """
-    return "\n".join([
-        MARKER, "", template.strip(), "",
-        "Красные работы: " + ", ".join(red), "",
-        f"Прогон: {run_url}",
-    ])
+    return "\n".join(
+        [
+            MARKER,
+            "",
+            template.strip(),
+            "",
+            "Красные работы: " + ", ".join(red),
+            "",
+            f"Прогон: {run_url}",
+        ]
+    )
 
 
 def find_issue(title_marker: str = MARKER) -> tuple[int | None, str | None]:
@@ -169,7 +173,9 @@ def find_issue(title_marker: str = MARKER) -> tuple[int | None, str | None]:
     # ВСЕ СТРАНИЦЫ (212): изменения лежат в том же списке и съедают сотню.
     code, found, почему = ghcli.список(
         "repos/{owner}/{repo}/issues?state=open&per_page=100",
-        ".[] | select(.pull_request == null) | {number, body}", вызов=gh)
+        ".[] | select(.pull_request == null) | {number, body}",
+        вызов=gh,
+    )
     if code != 0:
         return None, почему
     for issue in found:
@@ -193,30 +199,63 @@ def selftest() -> int:
         ("красная работа", [R("ci", "completed", "failure")], set(), ["ci"]),
         ("зелёная работа", [R("ci", "completed", "success")], set(), []),
         ("ещё идёт — не отказ", [R("ci", "in_progress", None)], set(), []),
-        ("отменённый прогон рядом со свежим успехом",
-         [R("ci", "completed", "cancelled", "2026-01-01"),
-          R("ci", "completed", "success", "2026-01-02")], set(), []),
-        ("свежий отказ поверх старого успеха",
-         [R("ci", "completed", "success", "2026-01-01"),
-          R("ci", "completed", "failure", "2026-01-02")], set(), ["ci"]),
-        ("исключённая работа не считается",
-         [R("attribution-history", "completed", "failure")], {"attribution-history"}, []),
-        ("исключение не глушит остальных",
-         [R("attribution-history", "completed", "failure"), R("ci", "completed", "failure")],
-         {"attribution-history"}, ["ci"]),
-        ("отмена последней, успех под ней — основание зелёное",
-         [R("ci", "completed", "success", "2026-01-01"),
-          R("ci", "completed", "cancelled", "2026-01-02"),
-          R("ci", "completed", "cancelled", "2026-01-03")], set(), []),
-        ("красное под отменой красным и остаётся",
-         [R("ci", "completed", "failure", "2026-01-01"),
-          R("ci", "completed", "cancelled", "2026-01-02")], set(), ["ci"]),
-        ("одни отмены — не красное и не зелёное",
-         [R("ci", "completed", "cancelled")], set(), []),
+        (
+            "отменённый прогон рядом со свежим успехом",
+            [
+                R("ci", "completed", "cancelled", "2026-01-01"),
+                R("ci", "completed", "success", "2026-01-02"),
+            ],
+            set(),
+            [],
+        ),
+        (
+            "свежий отказ поверх старого успеха",
+            [
+                R("ci", "completed", "success", "2026-01-01"),
+                R("ci", "completed", "failure", "2026-01-02"),
+            ],
+            set(),
+            ["ci"],
+        ),
+        (
+            "исключённая работа не считается",
+            [R("attribution-history", "completed", "failure")],
+            {"attribution-history"},
+            [],
+        ),
+        (
+            "исключение не глушит остальных",
+            [R("attribution-history", "completed", "failure"), R("ci", "completed", "failure")],
+            {"attribution-history"},
+            ["ci"],
+        ),
+        (
+            "отмена последней, успех под ней — основание зелёное",
+            [
+                R("ci", "completed", "success", "2026-01-01"),
+                R("ci", "completed", "cancelled", "2026-01-02"),
+                R("ci", "completed", "cancelled", "2026-01-03"),
+            ],
+            set(),
+            [],
+        ),
+        (
+            "красное под отменой красным и остаётся",
+            [
+                R("ci", "completed", "failure", "2026-01-01"),
+                R("ci", "completed", "cancelled", "2026-01-02"),
+            ],
+            set(),
+            ["ci"],
+        ),
+        ("одни отмены — не красное и не зелёное", [R("ci", "completed", "cancelled")], set(), []),
         ("прогонов нет вовсе", [], set(), []),
-        ("несколько красных — по алфавиту",
-         [R("release", "completed", "failure"), R("ci", "completed", "timed_out")], set(),
-         ["ci", "release"]),
+        (
+            "несколько красных — по алфавиту",
+            [R("release", "completed", "failure"), R("ci", "completed", "timed_out")],
+            set(),
+            ["ci", "release"],
+        ),
     ]
     broken: list[str] = []
     for name, runs, excluded, expected in cases:
@@ -240,8 +279,13 @@ def selftest() -> int:
     if "ci" not in body or "Текст потребителя." not in body:
         broken.append("тело задачи не несёт ни списка работ, ни шаблона потребителя")
 
-    probe = proc.run([sys.executable, __file__, "--body-file", "/nonexistent"],
-                     capture_output=True, text=True, encoding="utf-8", timeout=600)
+    probe = proc.run(
+        [sys.executable, __file__, "--body-file", "/nonexistent"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=600,
+    )
     if probe.returncode != 2:
         broken.append(f"исход «дежурный не отработал» дал код {probe.returncode}, а не 2")
     print(f"  код {probe.returncode}                            — шаблон не прочитан")
@@ -258,14 +302,22 @@ def selftest() -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--branch", default="main", help="общая ветка")
-    parser.add_argument("--exclude", action="append", default=[],
-                        help="имя работы, чьё красное не считается; можно повторять")
-    parser.add_argument("--title", default="Общая ветка красная: работу не начинают, пока это не починено")
+    parser.add_argument(
+        "--exclude",
+        action="append",
+        default=[],
+        help="имя работы, чьё красное не считается; можно повторять",
+    )
+    parser.add_argument(
+        "--title", default="Общая ветка красная: работу не начинают, пока это не починено"
+    )
     parser.add_argument("--label", default="", help="метка задачи; зоны у проектов разные")
     parser.add_argument("--body-file", required=False, help="файл с текстом задачи")
     parser.add_argument("--run-url", default="", help="ссылка на текущий прогон")
     parser.add_argument("--limit", type=int, default=40, help="сколько прогонов спрашивать")
-    parser.add_argument("--apply", action="store_true", help="писать в трекер, а не только печатать")
+    parser.add_argument(
+        "--apply", action="store_true", help="писать в трекер, а не только печатать"
+    )
     parser.add_argument("--selftest", action="store_true")
     args = parser.parse_args()
 
@@ -284,13 +336,23 @@ def main() -> int:
     # ПРЕДЕЛ НАМЕРЕННЫЙ (212): свежие прогоны от новых к старым, и свёртке
     # нужен последний с вердиктом у каждой работы, а не история. Назван в
     # .rules/limits.json; обхода страниц у `gh run list` нет вовсе.
-    code, out = gh("run", "list", "--branch", args.branch, "--limit", str(args.limit),
-                   "--json", "name,status,conclusion,createdAt")
+    code, out = gh(
+        "run",
+        "list",
+        "--branch",
+        args.branch,
+        "--limit",
+        str(args.limit),
+        "--json",
+        "name,status,conclusion,createdAt",
+    )
     if code != 0:
         print(f"дежурный не отработал: вкладка прогонов не прочитана — {out}", file=sys.stderr)
-        print("Права на Actions API отдельные: без `actions: read` первый же запрос "
-              "получает 403, и дежурный по красноте молчит о собственной слепоте.",
-              file=sys.stderr)
+        print(
+            "Права на Actions API отдельные: без `actions: read` первый же запрос "
+            "получает 403, и дежурный по красноте молчит о собственной слепоте.",
+            file=sys.stderr,
+        )
         return 2
     try:
         runs = json.loads(out or "[]")
@@ -307,9 +369,11 @@ def main() -> int:
     if not red:
         print(f"общая ветка {args.branch} зелёная: красных работ нет")
         if number is not None:
-            print(f"задача дежурного #{number} ещё открыта — закройте её вместе с починкой. "
-                  "Закрытие оставлено человеку: оно говорит «я посмотрел», а механизм "
-                  "такого сказать не может.")
+            print(
+                f"задача дежурного #{number} ещё открыта — закройте её вместе с починкой. "
+                "Закрытие оставлено человеку: оно говорит «я посмотрел», а механизм "
+                "такого сказать не может."
+            )
         return 0
 
     print(f"красные работы на {args.branch}: {', '.join(red)}")
@@ -320,12 +384,24 @@ def main() -> int:
 
     if number is not None:
         # ПО REST (001) — см. отбор открытых задач выше.
-        code, out = gh("api", "--method", "PATCH",
-                       f"repos/{{owner}}/{{repo}}/issues/{number}", "-f", f"body={body}")
+        code, out = gh(
+            "api",
+            "--method",
+            "PATCH",
+            f"repos/{{owner}}/{{repo}}/issues/{number}",
+            "-f",
+            f"body={body}",
+        )
         action = f"задача #{number} обновлена"
     else:
-        create = ["api", "repos/{owner}/{repo}/issues",
-                  "-f", f"title={args.title}", "-f", f"body={body}"]
+        create = [
+            "api",
+            "repos/{owner}/{repo}/issues",
+            "-f",
+            f"title={args.title}",
+            "-f",
+            f"body={body}",
+        ]
         if args.label:
             create += ["-f", f"labels[]={args.label}"]
         code, out = gh(*create)

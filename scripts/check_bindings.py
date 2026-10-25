@@ -54,7 +54,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import ast
 import datetime as dt
 import json
@@ -81,9 +80,21 @@ EXPORT = ROOT / "export" / "rules.json"
 #: answer_form.py: тем же модулем сверяет себя каталог и проект (214).
 #: Имена остаются доступны отсюда — их берут соседние скрипты.
 from answer_form import (  # noqa: E402,F401
-    ADDRESS_RE, BARE_DOCS, BARE_RE, MECHANISMS, STATUSES, ДАТА_RE, ДЕРЖИМО,
-    ЛЕГАСИ_ПОЛЕ, ЛЕГАСИ_СЛОВА, МАШИННЫЕ, СЕГОДНЯ, addressed, дата,
-    слово_держимости)
+    ADDRESS_RE,
+    BARE_DOCS,
+    BARE_RE,
+    MECHANISMS,
+    STATUSES,
+    ДАТА_RE,
+    ДЕРЖИМО,
+    ЛЕГАСИ_ПОЛЕ,
+    ЛЕГАСИ_СЛОВА,
+    МАШИННЫЕ,
+    СЕГОДНЯ,
+    addressed,
+    дата,
+    слово_держимости,
+)
 
 
 #: «НЕ ПРИМЕНИМО» — ЭТО УТВЕРЖДЕНИЕ О ПРОЕКТЕ, А НЕ ОБОРОТ РЕЧИ (правило 175).
@@ -103,18 +114,12 @@ from answer_form import (  # noqa: E402,F401
 #: молчание. «Не нашли» и «нет» — разные ответы, и в мелком клоне первое
 #: происходит постоянно (039).
 REFUTED_BY: dict[str, tuple[str, str, str]] = {
-    "017": (".github/workflows", "gh ",
-            "прогоны зовут gh — квота площадки расходуется"),
-    "033": (".github/workflows", "gh ",
-            "прогоны зовут gh, то есть упираются в тот же лимит"),
-    "058": (".github/workflows", "gh ",
-            "прогоны зовут gh — есть чему упереться в квоту"),
-    "001": ("scripts", "urlopen",
-            "код ходит наружу сам, а не только через gh"),
-    "032": ("pyproject.toml", "[project.scripts]",
-            "манифест объявляет запускаемую команду"),
+    "017": (".github/workflows", "gh ", "прогоны зовут gh — квота площадки расходуется"),
+    "033": (".github/workflows", "gh ", "прогоны зовут gh, то есть упираются в тот же лимит"),
+    "058": (".github/workflows", "gh ", "прогоны зовут gh — есть чему упереться в квоту"),
+    "001": ("scripts", "urlopen", "код ходит наружу сам, а не только через gh"),
+    "032": ("pyproject.toml", "[project.scripts]", "манифест объявляет запускаемую команду"),
 }
-
 
 
 #: Ступень 0 каталога: то же, что механизм отдаёт потребителю, спрошенное с себя.
@@ -122,19 +127,23 @@ REFUTED_BY: dict[str, tuple[str, str, str]] = {
 #: стороны, и обе обязаны быть, иначе каталог требует того, чего не делает сам
 #: (правило 128 в его же формулировке: спрашивают с каждого, а не с тех, до кого
 #: дошли руки).
-def tier_zero(answered: dict, rules: set[str], schema: str | None,
-              expected: str | None) -> tuple[list[str], bool]:
+def tier_zero(
+    answered: dict, rules: set[str], schema: str | None, expected: str | None
+) -> tuple[list[str], bool]:
     """Три числа ступени 0 и признак «долг есть».
 
     ПЕЧАТАЮТСЯ ВСЕГДА, включая нули: число, видное лишь при поломке, отвечает на
     вопрос «что сломалось» и молчит о том, закрыт ли долг вообще (027, 041).
     """
     нет_ответа = sorted(rules - set(answered))
-    не_рассмотрено = sorted(rid for rid, rec in answered.items()
-                            if rec.get("status") == "unreviewed")
-    без_механизма = [rid for rid, rec in answered.items()
-                     if rec.get("status") == "active"
-                     and (rec.get("mechanism") or "none") == "none"]
+    не_рассмотрено = sorted(
+        rid for rid, rec in answered.items() if rec.get("status") == "unreviewed"
+    )
+    без_механизма = [
+        rid
+        for rid, rec in answered.items()
+        if rec.get("status") == "active" and (rec.get("mechanism") or "none") == "none"
+    ]
     # ОТЛОЖЕННОЕ — НЕ ДОЛГ, И БЕЗ ЭТОГО РАЗЛИЧИЯ 177 НЕИСПОЛНИМО. Правило 177
     # требует довести числа до нуля прежде новой работы. Правило 146 запрещает
     # строить гейт на нулевом предмете: он зеленел бы, не держа ничего. Три
@@ -148,8 +157,7 @@ def tier_zero(answered: dict, rules: set[str], schema: str | None,
     # и читает его только каталог, поэтому контракт с потребителями не
     # двигается — в отличие от нового значения `mechanism`, цену которого
     # объясняет why_split ниже.
-    отложено = sorted(rid for rid in без_механизма
-                      if (answered[rid].get("awaiting") or "").strip())
+    отложено = sorted(rid for rid in без_механизма if (answered[rid].get("awaiting") or "").strip())
     ничем = sorted(rid for rid in без_механизма if rid not in set(отложено))
     строки = [
         "ступень 0 — незакрытая работа по правилам у самого каталога:",
@@ -159,10 +167,11 @@ def tier_zero(answered: dict, rules: set[str], schema: str | None,
     if ничем:
         строки.append("    " + " ".join(ничем))
     if отложено:
-        строки.append(f"  отложено до появления предмета: {len(отложено)} — "
-                      + " ".join(отложено))
-        строки.append("    у каждого названо событие, при котором механизм "
-                      "строится; это очередь с условием, а не долг (146)")
+        строки.append(f"  отложено до появления предмета: {len(отложено)} — " + " ".join(отложено))
+        строки.append(
+            "    у каждого названо событие, при котором механизм "
+            "строится; это очередь с условием, а не долг (146)"
+        )
     # ── `document` РАЗЛОЖЕН, И ЧИСЛО ВИДНО СО СТОРОНЫ ────────────────────
     # ЗАЧЕМ ЭТО В СТУПЕНИ 0, А НЕ В ДОЛГЕ. Счёт по семье (181 механизм из 656
     # правил у шестерых) считается со знаменателем, где «законно документом» и
@@ -188,28 +197,31 @@ def tier_zero(answered: dict, rules: set[str], schema: str | None,
     # применимо» отвечают на тот же вопрос — исполнение не проверяется ничем, —
     # и оставались вне числа. Витрина сложила их в одну плашку по тому же
     # доводу: порознь они обещают определённость, которой нет.
-    не_машиной = [rid for rid, rec in answered.items()
-                  if rec.get("status") in ("active", "not-applicable")
-                  and (rec.get("mechanism") or "none") not in МАШИННЫЕ]
-    нельзя = sorted(rid for rid in не_машиной
-                    if держимость(answered[rid], schema) == "no")
-    не_построено = sorted(rid for rid in не_машиной
-                          if держимость(answered[rid], schema) == "not-yet")
-    при_условии = sorted(rid for rid in не_машиной
-                         if держимость(answered[rid], schema) == "conditional")
+    не_машиной = [
+        rid
+        for rid, rec in answered.items()
+        if rec.get("status") in ("active", "not-applicable")
+        and (rec.get("mechanism") or "none") not in МАШИННЫЕ
+    ]
+    нельзя = sorted(rid for rid in не_машиной if держимость(answered[rid], schema) == "no")
+    не_построено = sorted(
+        rid for rid in не_машиной if держимость(answered[rid], schema) == "not-yet"
+    )
+    при_условии = sorted(
+        rid for rid in не_машиной if держимость(answered[rid], schema) == "conditional"
+    )
     # ОТКАЗ ПО ЗАМЕРУ — НЕ ДОЛГ И НЕ «НЕЛЬЗЯ», И ЭТО ТРЕТЬЯ ГРАНЬ ЗНАМЕНАТЕЛЯ.
     # В `not-yet` он завышал бы долг ровно там, где разбор был глубже всего, в
     # `no` — лгал бы о дереве: половина считается командой (213).
-    отказано = sorted(rid for rid in не_машиной
-                      if держимость(answered[rid], schema) == "refused")
-    без_разбора = sorted(rid for rid in не_машиной
-                         if держимость(answered[rid], schema) is None)
+    отказано = sorted(rid for rid in не_машиной if держимость(answered[rid], schema) == "refused")
+    без_разбора = sorted(rid for rid in не_машиной if держимость(answered[rid], schema) is None)
     if не_машиной:
         строки.append(
             f"  не держится машиной: {len(не_машиной)} — держать нельзя у "
             f"{len(нельзя)}, можно и не построено у {len(не_построено)}, "
             f"при названном условии у {len(при_условии)}, "
-            f"отказано по замеру у {len(отказано)}")
+            f"отказано по замеру у {len(отказано)}"
+        )
         if не_построено:
             строки.append("    не построено: " + " ".join(не_построено))
         if при_условии:
@@ -217,10 +229,11 @@ def tier_zero(answered: dict, rules: set[str], schema: str | None,
         if отказано:
             строки.append("    отказано по замеру: " + " ".join(отказано))
         if без_разбора:
-            строки.append(f"    вердикт не разобран: {len(без_разбора)} — "
-                          + " ".join(без_разбора))
-            строки.append("      в счёт «держать нельзя» они не идут: "
-                          "неспрошенное не выдаётся за чистое (039)")
+            строки.append(f"    вердикт не разобран: {len(без_разбора)} — " + " ".join(без_разбора))
+            строки.append(
+                "      в счёт «держать нельзя» они не идут: "
+                "неспрошенное не выдаётся за чистое (039)"
+            )
 
     # ── ДВЕ ДАТЫ, И ОНИ ОТВЕЧАЮТ НА РАЗНОЕ ───────────────────────────────
     # `analysed` — когда запись в последний раз СВЕРЯЛИ с деревом. `decided` —
@@ -235,14 +248,16 @@ def tier_zero(answered: dict, rules: set[str], schema: str | None,
     # («решено у соседа: правил N (записей M)»), и случай, стерегущий тот блок,
     # ловил бы эту строку заодно. Два числа под одним словом в одном выводе
     # читаются как одно (041).
-    строки.append(
-        f"  сверка с деревом: дата есть у {len(даты)}, нет у {len(ни_разу)}")
+    строки.append(f"  сверка с деревом: дата есть у {len(даты)}, нет у {len(ни_разу)}")
     if даты:
-        строки.append(f"    самая старая сверка: {даты[0].isoformat()} · "
-                      f"самая свежая: {даты[-1].isoformat()}")
+        строки.append(
+            f"    самая старая сверка: {даты[0].isoformat()} · самая свежая: {даты[-1].isoformat()}"
+        )
     if ни_разу:
-        строки.append("      отсутствие даты — ответ «не сверяли», а не "
-                      "«свежо»: пустое поле не выдаётся за чистое (039)")
+        строки.append(
+            "      отсутствие даты — ответ «не сверяли», а не "
+            "«свежо»: пустое поле не выдаётся за чистое (039)"
+        )
 
     # ── НАВЫК СЧИТАЕТСЯ ДВУМЯ ЧИСЛАМИ, А НЕ ОДНИМ ────────────────────────
     # ПОЧЕМУ ДВА. Навык бывает единственным, что держит правило, и бывает
@@ -259,15 +274,14 @@ def tier_zero(answered: dict, rules: set[str], schema: str | None,
     # ДОЛГОМ НЕ СЧИТАЕТСЯ НИ ТО НИ ДРУГОЕ: правило действует и держится. Но
     # навык НЕ КРАСНЕЕТ, и доля механизмов, не умеющих отказать, обязана быть
     # видна числом, а не выводиться чтением прозы (057, 182).
-    навыком = [rid for rid, rec in answered.items()
-               if rec.get("status") == "active" and навык(rec)]
-    целиком = sorted(rid for rid in навыком
-                     if answered[rid].get("mechanism") == "skill")
+    навыком = [rid for rid, rec in answered.items() if rec.get("status") == "active" and навык(rec)]
+    целиком = sorted(rid for rid in навыком if answered[rid].get("mechanism") == "skill")
     половиной = sorted(rid for rid in навыком if rid not in set(целиком))
     if навыком:
         строки.append(
             f"  держится навыком: {len(навыком)} — целиком у {len(целиком)}, "
-            f"второй половиной при другом механизме у {len(половиной)}")
+            f"второй половиной при другом механизме у {len(половиной)}"
+        )
         if целиком:
             строки.append("    целиком: " + " ".join(целиком))
 
@@ -275,16 +289,20 @@ def tier_zero(answered: dict, rules: set[str], schema: str | None,
     # правила 164 был ровно здесь: у потребителя стоял номер ЧУЖОГО формата, и
     # заметить это можно было только сверкой, а не чтением.
     if not expected:
-        строки.append("  контракт: свой номер формата ответа не с чем сверить — "
-                      "выгрузка не объявляет contracts.bindings")
+        строки.append(
+            "  контракт: свой номер формата ответа не с чем сверить — "
+            "выгрузка не объявляет contracts.bindings"
+        )
     elif schema != expected:
-        строки.append(f"  контракт: свой ответ объявлен как {schema}, а выгрузка "
-                      f"публикует {expected} — ответы перечитываются (157)")
+        строки.append(
+            f"  контракт: свой ответ объявлен как {schema}, а выгрузка "
+            f"публикует {expected} — ответы перечитываются (157)"
+        )
     else:
         строки.append(f"  контракт: свой ответ и выгрузка сходятся на {expected}")
-    долг = bool(нет_ответа or не_рассмотрено or ничем
-                or (expected and schema != expected))
+    долг = bool(нет_ответа or не_рассмотрено or ничем or (expected and schema != expected))
     return строки, долг
+
 
 def refuted(rid: str, root: Path) -> str:
     """Опровержение утверждения «не применимо», если оно нашлось.
@@ -347,9 +365,22 @@ def refuted(rid: str, root: Path) -> str:
 СОБЫТИЕ_RE = re.compile(r"\bСОБЫТИ[ЕЯ]\b")
 ВЫРОЖДЕНИЕ_RE = re.compile(r"вырожда", re.IGNORECASE)
 ПОХОЖЕ_НА_ДЕРЕВО_RE = re.compile(r"[\s./_\-:=*]")
-СЛОВАРЬ_ОТВЕТА = {"active", "rejected", "not-applicable", "unreviewed", "gate",
-                  "pipeline", "skill", "document", "none", "process-step",
-                  "no", "not-yet", "conditional", "refused"}
+СЛОВАРЬ_ОТВЕТА = {
+    "active",
+    "rejected",
+    "not-applicable",
+    "unreviewed",
+    "gate",
+    "pipeline",
+    "skill",
+    "document",
+    "none",
+    "process-step",
+    "no",
+    "not-yet",
+    "conditional",
+    "refused",
+}
 
 
 #: ПЕРЕБОР ПРЕДМЕТОВ НАЗВАН (правило 136). Отрицательный вердикт выносится
@@ -367,7 +398,8 @@ def refuted(rid: str, root: Path) -> str:
 #: которую держит у себя проект механизмов, перенесённая на ответ.
 ПЕРЕБОР_RE = re.compile(
     r"(?i)(?<!\w)(?:все|всех|всё|всем|каждый|каждого|каждое|каждая|целиком|"
-    r"ни\s+(?:\w{1,2}\s+)?од(?:ин|н\w*))(?!\w)|(?<![\w.#:])\d+(?![\w.:])")
+    r"ни\s+(?:\w{1,2}\s+)?од(?:ин|н\w*))(?!\w)|(?<![\w.#:])\d+(?![\w.:])"
+)
 #: Числа, которые ничего не считают (обзор #794): номер правила, `#N`,
 #: дата, время, версия, год. Цифра в них — адрес или момент, а не счёт
 #: предметов, и вердикт «по одному факту с датой» перебором не становится.
@@ -378,16 +410,17 @@ def refuted(rid: str, root: Path) -> str:
     # Точка после номера — конец предложения, «правило 136.» (обзор #800);
     # продолжением номера считается только «.цифра».
     r"|(?i:правил\w*\s+\d{3}(?:(?:\s*,\s*|\s+и\s+|\s+)\d{3})*)(?!\w|\.\d)"
-    r"|#\d+"                                          # изменение или задача
+    r"|#\d+"  # изменение или задача
     # Дата — только через точку и с месяцем до 12: «14/14» — доля, то есть
     # перебор, а не дата (обзор #799).
     r"|(?<![\w.])(?:0?[1-9]|[12]\d|3[01])\.(?:0?[1-9]|1[0-2])(?:\.\d{2,4})?(?![\w.])"
-    r"|(?<!\w)\d{4}-\d{2}-\d{2}(?!\w)"              # дата ISO
-    r"|(?<!\w)\d{1,2}:\d{2}(?!\w)"                   # время
-    r"|(?<![\w.])v?\d+(?:\.\d+)+(?![\w.])"           # версия 1.9, v1.10.0
+    r"|(?<!\w)\d{4}-\d{2}-\d{2}(?!\w)"  # дата ISO
+    r"|(?<!\w)\d{1,2}:\d{2}(?!\w)"  # время
+    r"|(?<![\w.])v?\d+(?:\.\d+)+(?![\w.])"  # версия 1.9, v1.10.0
     # Год — только в обороте года: «2000 прогонов» — счёт (обзор #799).
     r"|(?i:(?<!\w)(?:в|с|до|к|от|по)\s+(?:19|20)\d{2}(?![\w-])"
-    r"|(?<!\w)(?:19|20)\d{2}\s+г(?:од\w*|\.)?(?!\w))")
+    r"|(?<!\w)(?:19|20)\d{2}\s+г(?:од\w*|\.)?(?!\w))"
+)
 
 
 def перебор_назван(why: str) -> bool:
@@ -408,7 +441,6 @@ def предикат_назван(why: str) -> bool:
         if имя not in СЛОВАРЬ_ОТВЕТА and ПОХОЖЕ_НА_ДЕРЕВО_RE.search(имя):
             return True
     return False
-
 
 
 #: ПРОИСХОЖДЕНИЕ МЕХАНИЗМА (контракт ответа 1.8, задача #701). Ответ говорил,
@@ -449,9 +481,7 @@ import answer_form  # noqa: E402
 #: входе, но в отчёте ему места нет — иначе колонка жила бы вечно.
 
 
-
 MECHANISM_ORDER = ("gate", "pipeline", "skill", "document", "none")
-
 
 
 def держимость(rec: dict, schema: object) -> str | None:
@@ -568,8 +598,7 @@ def навык(rec: dict) -> tuple[Path, str] | None:
     return None
 
 
-def навык_в_дереве(имя: str, root: Path,
-                   папка: Path = НАВЫКИ_ОКНА) -> str | None:
+def навык_в_дереве(имя: str, root: Path, папка: Path = НАВЫКИ_ОКНА) -> str | None:
     """Чего не хватает объявленному навыку. None — всё на месте.
 
     `папка` — где навык лежит: навыки окна в `.claude/skills`, навыки плагина
@@ -592,8 +621,10 @@ def навык_в_дереве(имя: str, root: Path,
             return f"{адрес} {чего}"
         return f"у навыка {имя} {чего}"
     if поля["name"] != имя:
-        return (f"у навыка {имя} имя объявлено как «{поля['name']}» — "
-                "два имени у одного навыка расходятся молча (035)")
+        return (
+            f"у навыка {имя} имя объявлено как «{поля['name']}» — "
+            "два имени у одного навыка расходятся молча (035)"
+        )
     return None
 
 
@@ -629,7 +660,6 @@ def поля_навыка(текст: str) -> tuple[dict[str, str] | None, str |
 #: надо не форму записи, а то, что заявленное существует (правило 082 —
 #: направление без владельца; здесь владелец машинный).
 PATH_RE = re.compile(r"[\w./-]+\.(?:py|yml|yaml|json|md|txt)")
-
 
 
 #: Скрипт, названный механизмом. Отдельно от ADDRESS_RE: там любой адрес, здесь
@@ -686,11 +716,10 @@ def declares(path) -> set[str] | None:
     at = text.find(DECLARES_HEAD)
     if at < 0:
         return None
-    rest = text[at + len(DECLARES_HEAD):]
+    rest = text[at + len(DECLARES_HEAD) :]
     # Блок кончается пустой строкой: дальше идёт обычная проза докстроки.
     конец = rest.find("\n\n")
     return set(DECLARES_RE.findall(rest if конец < 0 else rest[:конец]))
-
 
 
 #: ВТОРАЯ ЗАКОННАЯ ФОРМА АДРЕСА — ЗАДАЧА. `addressed` её не знает и знать не
@@ -720,7 +749,8 @@ def разрешимый_адрес(текст: str) -> bool:
 #: «не проверяется» — про механизм, «нет» — про предмет. Ловим только второе,
 #: иначе шум забьёт находку (правило 051).
 ABSENCE_RE = re.compile(
-    r"\b(нет|не существует|отсутству\w*|не заведён\w*|не заведена|не создан\w*)\b")
+    r"\b(нет|не существует|отсутству\w*|не заведён\w*|не заведена|не создан\w*)\b"
+)
 
 #: Окно разбора — фрагмент вокруг имени, а не всё поле: в длинном пояснении
 #: «нет» из соседнего предложения относилось бы не к тому (правило 144).
@@ -799,8 +829,9 @@ def next_door(rules: dict) -> list[str]:
     except (ValueError, KeyError, TypeError) as e:
         return [f"решено у соседа: не считалось — {WHERE} не разобрать ({e})"]
 
-    return _solved_lines(sync_inbox.solved_next_door(rules, consumers, me)) \
-        + _machine_lines(rules, sync_inbox.machine_next_door(rules, consumers, me))
+    return _solved_lines(sync_inbox.solved_next_door(rules, consumers, me)) + _machine_lines(
+        rules, sync_inbox.machine_next_door(rules, consumers, me)
+    )
 
 
 def сосед_назван(rec: dict, held: list[dict]) -> bool:
@@ -818,9 +849,9 @@ def сосед_назван(rec: dict, held: list[dict]) -> bool:
     # имя репозитория — `api`, `docs` — внутри любого слова причины, и пара
     # ушла бы в число «назван» без единого упоминания (находка ревью #635).
     # Дефис в границу входит: имена репозиториев им сшиты.
-    return all(re.search(rf"(?<![\w-]){re.escape(h['repo'].split('/')[-1])}(?![\w-])",
-                         текст)
-               for h in held)
+    return all(
+        re.search(rf"(?<![\w-]){re.escape(h['repo'].split('/')[-1])}(?![\w-])", текст) for h in held
+    )
 
 
 def _machine_lines(rules: dict, pairs: list[dict]) -> list[str]:
@@ -832,18 +863,24 @@ def _machine_lines(rules: dict, pairs: list[dict]) -> list[str]:
     """
     if not pairs:
         return ["«держать нельзя», а сосед держит машиной: ни одного"]
-    не_названы = [row for row in pairs
-                    if not сосед_назван(rules.get(row["rule"]) or {}, row["held"])]
-    lines = [f"«держать нельзя», а сосед держит машиной: правил {len(pairs)}, "
-             f"из них сосед в причине не назван у {len(не_названы)}"]
+    не_названы = [
+        row for row in pairs if not сосед_назван(rules.get(row["rule"]) or {}, row["held"])
+    ]
+    lines = [
+        f"«держать нельзя», а сосед держит машиной: правил {len(pairs)}, "
+        f"из них сосед в причине не назван у {len(не_названы)}"
+    ]
     if не_названы:
-        lines += ["  " + " · ".join(
-                      f"{row['rule']} — " + ", ".join(
-                          h["repo"].split("/")[-1] for h in row["held"])
-                      for row in не_названы),
-                  "  имя соседа в причине — вопрос задан, а не решён; пара "
-                  "решается чтением: «нельзя» с причиной, пережившей сверку, "
-                  "либо not-yet с названной половиной (#509)"]
+        lines += [
+            "  "
+            + " · ".join(
+                f"{row['rule']} — " + ", ".join(h["repo"].split("/")[-1] for h in row["held"])
+                for row in не_названы
+            ),
+            "  имя соседа в причине — вопрос задан, а не решён; пара "
+            "решается чтением: «нельзя» с причиной, пережившей сверку, "
+            "либо not-yet с названной половиной (#509)",
+        ]
     return lines
 
 
@@ -861,9 +898,11 @@ def _solved_lines(solved: list[dict]) -> list[str]:
     # данных — самым дорогим объяснением из возможных. Дешёвая гипотеза «мы
     # считаем одну величину дважды» закрывается не рассуждением, а печатью
     # числа уникальных идентификаторов рядом с числом строк.
-    расхождение = ("" if записей == len(solved)
-                   else f" (записей {записей} — одно правило держат несколько "
-                        "соседей, 178)")
+    расхождение = (
+        ""
+        if записей == len(solved)
+        else f" (записей {записей} — одно правило держат несколько соседей, 178)"
+    )
     return [
         f"решено у соседа: правил {len(solved)}{расхождение}",
         "  " + " · ".join(f"{repo} {n}" for repo, n in who.most_common()),
@@ -894,13 +933,17 @@ def print_tier_zero(answer: dict, export: dict) -> None:
     строки, долг = tier_zero(
         {rid: rec for rid, rec in answer.get("rules", {}).items() if rid in в_силе},
         в_силе,
-        answer.get("schema"), (export.get("contracts") or {}).get("bindings"))
+        answer.get("schema"),
+        (export.get("contracts") or {}).get("bindings"),
+    )
     print()
     for line in строки:
         print(line)
     if долг:
-        print("  пока эти числа не ноль, новая работа по правилам — очередь, "
-              "а не работа (правило 177)")
+        print(
+            "  пока эти числа не ноль, новая работа по правилам — очередь, "
+            "а не работа (правило 177)"
+        )
 
 
 def main() -> int:
@@ -919,8 +962,11 @@ def main() -> int:
     rules = answer.get("rules")
     своя_схема = answer.get("schema") or ""
     if not isinstance(rules, dict) or not rules:
-        print(f"проверка не отработала: в {BINDINGS.relative_to(ROOT)} нет ни "
-              "одной записи — сверять нечего", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {BINDINGS.relative_to(ROOT)} нет ни "
+            "одной записи — сверять нечего",
+            file=sys.stderr,
+        )
         return 2
 
     known = {r["id"]: r for r in export["rules"]}
@@ -936,8 +982,9 @@ def main() -> int:
     # ОТВЕТ ОБЯЗАТЕЛЕН ПО ДЕЙСТВУЮЩИМ. Ответ о замещённом законен — он держит
     # цепочку механизмов, — но долгом его отсутствие не считается.
     for rid in sorted(в_силе - set(rules)):
-        problems.append(f"{rid}: ответа нет. «Не дошли руки» — это статус "
-                        "unreviewed, а не отсутствующая запись")
+        problems.append(
+            f"{rid}: ответа нет. «Не дошли руки» — это статус unreviewed, а не отсутствующая запись"
+        )
     for rid in sorted(set(rules) - set(known)):
         problems.append(f"{rid}: ответ есть, а правила такого в каталоге нет")
 
@@ -990,7 +1037,8 @@ def main() -> int:
                         f"{rid}: назван механизмом {путь}, а тот о правиле не "
                         "упоминает. Механизм, не знающий, что он чей-то, — "
                         "совпадение, а не связь: назовите номер в комментарии "
-                        "либо в докстроке рядом с тем, что его держит")
+                        "либо в докстроке рядом с тем, что его держит"
+                    )
             for s in sorted(set(SCRIPT_RE.findall(rec.get("where") or ""))):
                 path = ROOT / "scripts" / s
                 if not path.exists():
@@ -1001,12 +1049,14 @@ def main() -> int:
                         f"{rid}: назван механизмом scripts/{s}, а тот не "
                         "объявляет своих правил. Нужен блок «Реализует правила "
                         "каталога:» в докстроке, строкой «NNN — что он для "
-                        "этого правила делает»")
+                        "этого правила делает»"
+                    )
                 elif not (имена & set(names)):
                     problems.append(
                         f"{rid}: назван механизмом scripts/{s}, а тот его не "
                         f"называет. Связь односторонняя только на бумаге: "
-                        f"{s} перечисляет {', '.join(sorted(names)) or '—'}")
+                        f"{s} перечисляет {', '.join(sorted(names)) or '—'}"
+                    )
 
         # Ревизия: заявленное должно существовать, а не звучать правдоподобно.
         #
@@ -1032,30 +1082,32 @@ def main() -> int:
             if token in OWNED_BY_JOB or token.startswith(PROJECTED_TO_BADGES):
                 continue
             if not (ROOT / token).exists():
-                problems.append(f"{rid}: заявлено «{token}», а такого файла нет — "
-                                "декларация разошлась с фактом")
+                problems.append(
+                    f"{rid}: заявлено «{token}», а такого файла нет — декларация разошлась с фактом"
+                )
         # Утверждение об отсутствии документа, который есть. Предупреждение,
         # а не отказ: «нет» рядом с именем — подозрение, а не факт, и живая
         # проза даёт достаточно законных сочетаний (правило 051).
         for m in BARE_RE.finditer(claim):
-            near = claim[max(0, m.start() - ABSENCE_WINDOW):
-                         m.end() + ABSENCE_WINDOW]
+            near = claim[max(0, m.start() - ABSENCE_WINDOW) : m.end() + ABSENCE_WINDOW]
             if not ABSENCE_RE.search(near):
                 continue
             name = m.group(1)
-            found = [c for c in (name, f"{name}.md", f"{name}.txt")
-                     if (ROOT / c).exists()]
+            found = [c for c in (name, f"{name}.md", f"{name}.txt") if (ROOT / c).exists()]
             if found:
                 warnings.append(
                     f"{rid}: сказано, что {name} нет, а {found[0]} есть — "
-                    f"похоже на устаревший ответ")
+                    f"похоже на устаревший ответ"
+                )
 
         # Правило 051: запрещают достоверное, предупреждают о вероятном.
         # Несуществующий путь — факт. Число словом — подозрение: «два дерева»
         # не устареет, «четыре гейта» устареет. Отказ здесь был бы ложным.
         if COUNT_RE.search(claim):
-            warnings.append(f"{rid}: число словом — «{claim.strip()[:60]}». "
-                            "Считать должен тот, кто печатает метрику")
+            warnings.append(
+                f"{rid}: число словом — «{claim.strip()[:60]}». "
+                "Считать должен тот, кто печатает метрику"
+            )
 
         if status == "not-applicable":
             улика = refuted(rid, ROOT)
@@ -1063,7 +1115,8 @@ def main() -> int:
                 problems.append(
                     f"{rid}: ответ «не применимо», а условия проекта уже другие: "
                     f"{улика}. Такое утверждение устаревает молча и выглядит "
-                    "решением — перечитайте его (175)")
+                    "решением — перечитайте его (175)"
+                )
             elif rid not in REFUTED_BY:
                 unproved.append(rid)
             if rec.get("why") and not предикат_назван(rec["why"]):
@@ -1072,15 +1125,16 @@ def main() -> int:
                     "пути, ни команды или имени дерева в обратных кавычках, "
                     "ни названного СОБЫТИЯ вместе с причиной, почему предикат "
                     "здесь вырождается. Неприменимость, которую нечем перечитать, "
-                    "держится рассуждением, а не деревом (205)")
+                    "держится рассуждением, а не деревом (205)"
+                )
 
-        if status == "rejected" and rec.get("why") \
-                and not перебор_назван(rec["why"]):
+        if status == "rejected" and rec.get("why") and not перебор_назван(rec["why"]):
             problems.append(
                 f"{rid}: отрицательный вердикт без перебора — в причине нет ни "
                 "слова охвата («все», «каждый», «ни одного»), ни числа: "
                 "отклонено по одному примеру, а не по всем предметам правила "
-                "(136)")
+                "(136)"
+            )
 
         # Правило 154. `none` без причины означает сразу две разные вещи —
         # «пробовали, машинно нельзя» и «никто не пробовал», — а стоят они
@@ -1132,7 +1186,6 @@ def main() -> int:
         # `analysed`/`decided` живут в answer_form.обязательные и
         # answer_form.даты_неверны: их вызов стоит в начале цикла.
 
-
         # ── НАВЫК НАЗЫВАЕТ СЕБЯ АДРЕСОМ, И АДРЕС СВЕРЯЕТСЯ С ДЕРЕВОМ ──
         # ДВА СЛУЧАЯ, И ОНИ РАЗНЫЕ. Навык бывает единственным, что держит
         # правило (`mechanism: skill`), и бывает ВТОРОЙ ПОЛОВИНОЙ: гейт берёт
@@ -1159,21 +1212,23 @@ def main() -> int:
                 f"{rid}: поле `skill` — «{назван[:60]}», а это не адрес. "
                 "Ждётся `.claude/skills/<имя>` или `<плагин>:<имя>`: площадка "
                 "ищет навыки там, и проза вместо места повторила бы историю "
-                "`process-step` (099)")
-        elif назван and status == "active" \
-                and (rec.get("mechanism") or "none") == "none":
+                "`process-step` (099)"
+            )
+        elif назван and status == "active" and (rec.get("mechanism") or "none") == "none":
             problems.append(
                 f"{rid}: механизм `none`, а навык назван — оба утверждения "
                 "верными быть не могут. Если навык держит хотя бы половину, "
                 "сильнейшее из держащего и есть механизм: поставьте `skill` "
-                "либо уберите поле (181)")
+                "либо уберите поле (181)"
+            )
         elif назван and (место := навык(rec)):
             папка, имя = место
             чего_нет = навык_в_дереве(имя, ROOT, папка)
             if чего_нет:
                 problems.append(
                     f"{rid}: назван навык `{назван}`, но {чего_нет}. "
-                    "Механизм, которого нет в дереве, — обещание, а не механизм")
+                    "Механизм, которого нет в дереве, — обещание, а не механизм"
+                )
 
     # ── ОТВЕТ «ГЕЙТ» УКАЗЫВАЕТ НА ИСПОЛНЯЕМОЕ ────────────────────────────
     # ЧТО ИМЕННО ПРОВЕРЯЕТСЯ. `mechanism: gate` утверждает, что нарушение
@@ -1204,7 +1259,8 @@ def main() -> int:
                 "адрес. Гейт — это утверждение, что нарушение остановит МАШИНА; "
                 "значит должно быть названо то, что она исполняет: scripts/*.py, "
                 ".github/workflows/*.yml, tests/*.py, action.yml или хук в "
-                ".claude/. Проза рядом с «гейт» обещает больше, чем держит (139)")
+                ".claude/. Проза рядом с «гейт» обещает больше, чем держит (139)"
+            )
 
     # ── ОТЛОЖЕННОЕ ОБЪЯВЛЯЕТСЯ ЗАМЕРОМ, А НЕ ОБЕЩАНИЕМ ───────────────────
     # ПОЛЕ `awaiting` — ЭТО ЛАЗЕЙКА, ЕСЛИ ЕГО НЕ ДЕРЖАТЬ. Оно выводит правило
@@ -1217,7 +1273,9 @@ def main() -> int:
     # Число здесь то же, чего каталог требует от записи правила: утверждение
     # опирается на инцидент с числами, а не на принцип. Проверяется, что
     # вопрос ЗАМЕРЕН, а не что замер верен, — второе требует чтения (182).
-    ЧИСЛО = re.compile(r"\d|\bноль\b|\bни одного\b|\bни одной\b|\bпервый\b|\bпервая\b|\bпервое\b", re.I)
+    ЧИСЛО = re.compile(
+        r"\d|\bноль\b|\bни одного\b|\bни одной\b|\bпервый\b|\bпервая\b|\bпервое\b", re.I
+    )
     for rid, rec in sorted(rules.items()):
         ждёт = (rec.get("awaiting") or "").strip()
         if not ждёт:
@@ -1237,7 +1295,8 @@ def main() -> int:
                 f"{rid}: отложено, но отсутствие предмета не измерено. В "
                 "awaiting нет ни одного числа — значит сказано «построим "
                 "потом», а не «предмета сейчас столько-то». Без замера поле "
-                "выводит правило из долга даром (146, 177)")
+                "выводит правило из долга даром (146, 177)"
+            )
 
     # ── МЕХАНИЗМ ДЕРЖИТ ПРАВИЛО, КОТОРОГО У НАС «НЕТ» ─────────────────────
     # ЭТО НЕ ТА АСИММЕТРИЯ, ЧТО ОБЪЯСНЕНА ВЫШЕ. Там сказано, почему нельзя
@@ -1271,7 +1330,8 @@ def main() -> int:
                     f"{rid}: scripts/{путь.name} объявляет, что держит это "
                     f"правило, а ответ каталога — «{rec.get('status')}». Либо "
                     "ответ устарел, либо скрипт ссылается не туда: механизм "
-                    "не может держать то, чего у нас нет (181)")
+                    "не может держать то, чего у нас нет (181)"
+                )
 
     if problems:
         print("ответ каталога о себе не в порядке:", file=sys.stderr)
@@ -1287,8 +1347,7 @@ def main() -> int:
     счёт = {rid: r for rid, r in rules.items() if rid in в_силе}
     выбыли = len(rules) - len(счёт)
     by_status = Counter(r["status"] for r in счёт.values())
-    by_mech = Counter(r.get("mechanism") for r in счёт.values()
-                      if r["status"] == "active")
+    by_mech = Counter(r.get("mechanism") for r in счёт.values() if r["status"] == "active")
 
     unreviewed = [rid for rid, r in счёт.items() if r["status"] == "unreviewed"]
     oldest = ""
@@ -1303,29 +1362,31 @@ def main() -> int:
         for w in warnings:
             print(f"  ~ {w}")
     if unproved:
-        print(f"  · «не применимо» без пробы: {len(unproved)} из "
-              f"{len(unproved) + sum(1 for r in REFUTED_BY if r in rules)} — "
-              "утверждение о проекте, которое ничем не перечитывается (175)")
+        print(
+            f"  · «не применимо» без пробы: {len(unproved)} из "
+            f"{len(unproved) + sum(1 for r in REFUTED_BY if r in rules)} — "
+            "утверждение о проекте, которое ничем не перечитывается (175)"
+        )
 
     заменены = f" (ещё {выбыли} заменены — в счёт не входят)" if выбыли else ""
     print(f"ответ каталога о себе полон: {len(счёт)} правил{заменены}")
     legacy = by_mech["process-step"]
     tail = f", шагом процесса {legacy} (слово устарело)" if legacy else ""
-    print(f"  действует {by_status['active']}: "
-          f"гейтом {by_mech['gate']}, конвейером {by_mech['pipeline']}, "
-          f"навыком {by_mech['skill']}, документом {by_mech['document']}, "
-          f"НИЧЕМ {by_mech['none']}{tail}")
+    print(
+        f"  действует {by_status['active']}: "
+        f"гейтом {by_mech['gate']}, конвейером {by_mech['pipeline']}, "
+        f"навыком {by_mech['skill']}, документом {by_mech['document']}, "
+        f"НИЧЕМ {by_mech['none']}{tail}"
+    )
     by_why, other = why_split(счёт)
     if by_why or other:
-        parts = [f"{label} {n}" for label, n in
-                 sorted(by_why.items(), key=lambda kv: -kv[1])]
+        parts = [f"{label} {n}" for label, n in sorted(by_why.items(), key=lambda kv: -kv[1])]
         if other:
             parts.append(f"прочее {other}")
         print("    из них: " + " · ".join(parts))
     for line in next_door(счёт):
         print(f"    {line}")
-    print(f"  отклонено {by_status['rejected']}, "
-          f"нет предмета {by_status['not-applicable']}")
+    print(f"  отклонено {by_status['rejected']}, нет предмета {by_status['not-applicable']}")
     print(f"  не рассмотрено {by_status['unreviewed']}{oldest}")
 
     # ЗАСЛОН 177 СПРОШЕН С СЕБЯ, И ЭТО НЕ УКРАШЕНИЕ. Каталог отдаёт потребителю

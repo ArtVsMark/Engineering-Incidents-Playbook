@@ -7,7 +7,6 @@
 каждого потребителя, поле `proposals`).
 """
 
-
 import collect_proposals as cp
 import pytest
 
@@ -16,12 +15,15 @@ import pytest
 
 
 def подменить(monkeypatch, предложения: list[dict]) -> None:
-    monkeypatch.setattr(cp, "fetch",
-                        lambda url: ({"proposals": предложения}, None))
+    monkeypatch.setattr(cp, "fetch", lambda url: ({"proposals": предложения}, None))
 
 
-ГОДНОЕ = {"slug": "a-good-one", "claim": "утверждение",
-          "incident": "инцидент с числами", "trail": "o/r#1"}
+ГОДНОЕ = {
+    "slug": "a-good-one",
+    "claim": "утверждение",
+    "incident": "инцидент с числами",
+    "trail": "o/r#1",
+}
 
 
 def test_годное_предложение_читается(monkeypatch):
@@ -51,7 +53,8 @@ def test_вынесенное_решение_снимает_возражение
     """
     подменить(monkeypatch, [{**ГОДНОЕ, "rule": "текст утверждения, а не номер"}])
     pending, problems = cp.gather(
-        ПОТРЕБИТЕЛЬ, {cp.key_of("o/r", "a-good-one"): {"status": "admitted"}})
+        ПОТРЕБИТЕЛЬ, {cp.key_of("o/r", "a-good-one"): {"status": "admitted"}}
+    )
     assert problems == []
     assert pending == []
 
@@ -60,7 +63,8 @@ def test_разобранное_не_попадает_в_очередь_и_бе�
     """Вторая сторона: решение снимает предложение с очереди в любом случае."""
     подменить(monkeypatch, [ГОДНОЕ])
     pending, problems = cp.gather(
-        ПОТРЕБИТЕЛЬ, {cp.key_of("o/r", "a-good-one"): {"status": "rejected"}})
+        ПОТРЕБИТЕЛЬ, {cp.key_of("o/r", "a-good-one"): {"status": "rejected"}}
+    )
     assert (pending, problems) == ([], [])
 
 
@@ -91,9 +95,11 @@ def test_след_прозой_это_находка(monkeypatch):
 
 def test_след_адресом_возражения_не_вызывает(monkeypatch):
     """Вторая сторона набора (140): законные формы проходят все три."""
-    for след in ("scripts/build_metrics.py",
-                 ".github/workflows/*.yml — все прогоны разом",
-                 "CONTRIBUTING § вход новичка"):
+    for след in (
+        "scripts/build_metrics.py",
+        ".github/workflows/*.yml — все прогоны разом",
+        "CONTRIBUTING § вход новичка",
+    ):
         подменить(monkeypatch, [{**ГОДНОЕ, "trail": след}])
         _, problems = cp.gather(ПОТРЕБИТЕЛЬ, {})
         assert problems == [], (след, problems)
@@ -108,6 +114,7 @@ def test_след_без_расширения_не_считается_адрес
 
 # ── задача-«входящие снизу» ищется по всем страницам (212) ─────────────────
 
+
 def test_zadacha_ishchetsya_po_vsem_stranitsam(monkeypatch, capsys):
     """Поиск идёт с --paginate, и найденная — где бы она ни лежала — правится,
     а не заводится вторая."""
@@ -117,7 +124,7 @@ def test_zadacha_ishchetsya_po_vsem_stranitsam(monkeypatch, capsys):
         вызовы.append(args)
         if any("issues?state=open" in a for a in args):
             assert "--paginate" in args
-            return 0, "7\n"                   # совпадение — строкой на элемент
+            return 0, "7\n"  # совпадение — строкой на элемент
         return 0, "ok"
 
     monkeypatch.setattr(cp, "read_json", lambda p: {"consumers": ["o/r"], "verdicts": {}})
@@ -137,14 +144,22 @@ def test_zadacha_ishchetsya_po_vsem_stranitsam(monkeypatch, capsys):
 # `.claude/skills/incident-triage/SKILL.md` этого каталога.
 
 SHA = "0123456789abcdef0123456789abcdef01234567"
-НАВЫК = {"kind": "skill", "slug": "answer-a-rule",
-         "path": ".claude/skills/answer-a-rule/SKILL.md", "sha": SHA,
-         "holds": ["157"], "measurement": "звали 12 раз, нашёл 3 неверных ответа"}
-ТЕКСТ = "---\nname: answer-a-rule\ndescription: Звать, когда отвечаете на правило.\n---\n\n# Ответ\n"
+НАВЫК = {
+    "kind": "skill",
+    "slug": "answer-a-rule",
+    "path": ".claude/skills/answer-a-rule/SKILL.md",
+    "sha": SHA,
+    "holds": ["157"],
+    "measurement": "звали 12 раз, нашёл 3 неверных ответа",
+}
+ТЕКСТ = (
+    "---\nname: answer-a-rule\ndescription: Звать, когда отвечаете на правило.\n---\n\n# Ответ\n"
+)
 
 
-def подменить_с_навыком(monkeypatch, предложения: list[dict], текст: str = ТЕКСТ,
-                         отказ: str | None = None) -> list[str]:
+def подменить_с_навыком(
+    monkeypatch, предложения: list[dict], текст: str = ТЕКСТ, отказ: str | None = None
+) -> list[str]:
     адреса: list[str] = []
 
     def поддельный(url, **kw):
@@ -152,6 +167,7 @@ def подменить_с_навыком(monkeypatch, предложения: li
         if url.endswith("SKILL.md"):
             return (None, отказ) if отказ else (kw.get("разобрать", str)(текст), None)
         return {"proposals": предложения}, None
+
     monkeypatch.setattr(cp, "fetch", поддельный)
     return адреса
 
@@ -186,7 +202,9 @@ def test_путь_навыка_расходится_со_слагом(monkeypatc
 
 
 def test_имя_в_тексте_расходится_со_слагом(monkeypatch):
-    подменить_с_навыком(monkeypatch, [НАВЫК], текст=ТЕКСТ.replace("name: answer-a-rule", "name: other"))
+    подменить_с_навыком(
+        monkeypatch, [НАВЫК], текст=ТЕКСТ.replace("name: answer-a-rule", "name: other")
+    )
     _, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, {"157"})
     assert any("два имени" in p for p in problems)
 
@@ -222,8 +240,10 @@ def test_неизвестный_вид_пропускается_с_возраж�
 def test_вердикт_навыку_снимает_его_и_не_задевает_правило_того_же_слага(monkeypatch):
     подменить_с_навыком(monkeypatch, [НАВЫК, {**ГОДНОЕ, "slug": "answer-a-rule"}])
     pending, _ = cp.gather(
-        ПОТРЕБИТЕЛЬ, {cp.key_of("o/r", "answer-a-rule", "skill"): {"status": "rejected", "why": "x"}},
-        {"157"})
+        ПОТРЕБИТЕЛЬ,
+        {cp.key_of("o/r", "answer-a-rule", "skill"): {"status": "rejected", "why": "x"}},
+        {"157"},
+    )
     assert [p.get("kind", "rule") for p in pending] == ["rule"]
 
 
@@ -231,10 +251,18 @@ def test_вердикт_принят_называет_навык_каталог�
     (tmp_path / "rules" / "ru").mkdir(parents=True)
     (tmp_path / ".rules").mkdir()
     import json
-    (tmp_path / ".rules" / "proposals.json").write_text(json.dumps({"verdicts": {
-        "o/r:skill/answer-a-rule": {"status": "admitted", "skill": "answer-a-rule"}}}),
-        encoding="utf-8")
-    assert cp.check_verdicts(tmp_path) == 1          # навыка в дереве нет
+
+    (tmp_path / ".rules" / "proposals.json").write_text(
+        json.dumps(
+            {
+                "verdicts": {
+                    "o/r:skill/answer-a-rule": {"status": "admitted", "skill": "answer-a-rule"}
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert cp.check_verdicts(tmp_path) == 1  # навыка в дереве нет
     файл = tmp_path / ".claude" / "skills" / "answer-a-rule" / "SKILL.md"
     файл.parent.mkdir(parents=True)
     файл.write_text(ТЕКСТ, encoding="utf-8")
@@ -244,39 +272,52 @@ def test_вердикт_принят_называет_навык_каталог�
 def вердикты_навыкам(tmp_path, вердикты: dict) -> int:
     """Дерево с одним навыком каталога и данными вердиктами; исход гейта."""
     import json
+
     (tmp_path / "rules" / "ru").mkdir(parents=True, exist_ok=True)
     (tmp_path / ".rules").mkdir(exist_ok=True)
     файл = tmp_path / ".claude" / "skills" / "answer-a-rule" / "SKILL.md"
     файл.parent.mkdir(parents=True, exist_ok=True)
     файл.write_text(ТЕКСТ, encoding="utf-8")
     (tmp_path / ".rules" / "proposals.json").write_text(
-        json.dumps({"verdicts": вердикты}), encoding="utf-8")
+        json.dumps({"verdicts": вердикты}), encoding="utf-8"
+    )
     return cp.check_verdicts(tmp_path)
 
 
 def test_принятый_навык_без_поля_skill_находка(tmp_path, capsys):
-    assert вердикты_навыкам(tmp_path, {
-        "o/r:skill/answer-a-rule": {"status": "admitted"}}) == 1
+    assert вердикты_навыкам(tmp_path, {"o/r:skill/answer-a-rule": {"status": "admitted"}}) == 1
     assert "в поле skill" in capsys.readouterr().err
 
 
 def test_отказ_навыку_без_причины_находка(tmp_path, capsys):
-    assert вердикты_навыкам(tmp_path, {
-        "o/r:skill/answer-a-rule": {"status": "rejected"}}) == 1
+    assert вердикты_навыкам(tmp_path, {"o/r:skill/answer-a-rule": {"status": "rejected"}}) == 1
     assert "обязан назвать причину" in capsys.readouterr().err
 
 
 def test_два_принятых_в_один_навык_находка(tmp_path, capsys):
     """Второе предложение, влитое в принятый навык, — merged-into, а не «принят»."""
     принят = {"status": "admitted", "skill": "answer-a-rule"}
-    assert вердикты_навыкам(tmp_path, {
-        "o/r:skill/answer-a-rule": принят,
-        "o/q:skill/answer-rules": принят}) == 1
+    assert (
+        вердикты_навыкам(
+            tmp_path, {"o/r:skill/answer-a-rule": принят, "o/q:skill/answer-rules": принят}
+        )
+        == 1
+    )
     assert "уже занят" in capsys.readouterr().err
-    assert вердикты_навыкам(tmp_path, {
-        "o/r:skill/answer-a-rule": принят,
-        "o/q:skill/answer-rules": {"status": "merged-into", "skill": "answer-a-rule",
-                                   "why": "та же работа, взята правка шага 3"}}) == 0
+    assert (
+        вердикты_навыкам(
+            tmp_path,
+            {
+                "o/r:skill/answer-a-rule": принят,
+                "o/q:skill/answer-rules": {
+                    "status": "merged-into",
+                    "skill": "answer-a-rule",
+                    "why": "та же работа, взята правка шага 3",
+                },
+            },
+        )
+        == 0
+    )
 
 
 def test_принятый_в_плагин_навык_ищется_в_плагине(tmp_path, capsys):
@@ -286,13 +327,23 @@ def test_принятый_в_плагин_навык_ищется_в_плаги�
     — и ни одного навыка для потребителей принять не мог.
     """
     import json
+
     (tmp_path / "rules" / "ru").mkdir(parents=True)
     (tmp_path / ".rules").mkdir()
-    (tmp_path / ".rules" / "proposals.json").write_text(json.dumps({"verdicts": {
-        "o/r:skill/answer-a-rule": {"status": "admitted",
-                                    "skill": "catalogue:answer-a-rule"}}}),
-        encoding="utf-8")
-    assert cp.check_verdicts(tmp_path) == 1          # в плагине навыка нет
+    (tmp_path / ".rules" / "proposals.json").write_text(
+        json.dumps(
+            {
+                "verdicts": {
+                    "o/r:skill/answer-a-rule": {
+                        "status": "admitted",
+                        "skill": "catalogue:answer-a-rule",
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    assert cp.check_verdicts(tmp_path) == 1  # в плагине навыка нет
     assert "plugins/catalogue/skills/answer-a-rule/SKILL.md" in capsys.readouterr().err
     файл = tmp_path / "plugins" / "catalogue" / "skills" / "answer-a-rule" / "SKILL.md"
     файл.parent.mkdir(parents=True)
@@ -301,17 +352,35 @@ def test_принятый_в_плагин_навык_ищется_в_плаги�
 
 
 def test_адрес_навыка_не_той_формы_находка(tmp_path, capsys):
-    assert вердикты_навыкам(tmp_path, {
-        "o/r:skill/answer-a-rule": {"status": "admitted",
-                                    "skill": "plugins/catalogue:answer-a-rule"}}) == 1
+    assert (
+        вердикты_навыкам(
+            tmp_path,
+            {
+                "o/r:skill/answer-a-rule": {
+                    "status": "admitted",
+                    "skill": "plugins/catalogue:answer-a-rule",
+                }
+            },
+        )
+        == 1
+    )
     assert "не адрес навыка" in capsys.readouterr().err
 
 
 def test_форма_ответа_для_навыка_окна_принимается(tmp_path):
     """Находка ревью #639: форма окна у ответа — `.claude/skills/<имя>`."""
-    assert вердикты_навыкам(tmp_path, {
-        "o/r:skill/answer-a-rule": {"status": "admitted",
-                                    "skill": ".claude/skills/answer-a-rule"}}) == 0
+    assert (
+        вердикты_навыкам(
+            tmp_path,
+            {
+                "o/r:skill/answer-a-rule": {
+                    "status": "admitted",
+                    "skill": ".claude/skills/answer-a-rule",
+                }
+            },
+        )
+        == 0
+    )
 
 
 def test_повтор_навыка_ловится_и_при_пробеле_и_в_другой_форме(tmp_path, capsys):
@@ -320,10 +389,19 @@ def test_повтор_навыка_ловится_и_при_пробеле_и_в
     Голое имя и `.claude/skills/<имя>` называют одно место, пробел вокруг
     адреса — тоже. Второй «принят» на то же место — повтор.
     """
-    assert вердикты_навыкам(tmp_path, {
-        "o/r:skill/answer-a-rule": {"status": "admitted", "skill": "answer-a-rule"},
-        "o/q:skill/answer-rules": {"status": "admitted",
-                                   "skill": " .claude/skills/answer-a-rule "}}) == 1
+    assert (
+        вердикты_навыкам(
+            tmp_path,
+            {
+                "o/r:skill/answer-a-rule": {"status": "admitted", "skill": "answer-a-rule"},
+                "o/q:skill/answer-rules": {
+                    "status": "admitted",
+                    "skill": " .claude/skills/answer-a-rule ",
+                },
+            },
+        )
+        == 1
+    )
     assert "уже занят" in capsys.readouterr().err
 
 
@@ -342,9 +420,13 @@ def test_голое_имя_с_той_же_границей_что_у_формы_
 
 # ── слияние 2–3 правил в одно (формат 1.3, #728) ─────────────────────────
 
-СЛИЯНИЕ = {"kind": "merge", "slug": "one-whole", "rules": ["131", "135"],
-           "why": "отвечают на один вопрос с двух сторон",
-           "claim": "запись из облачного окна уходит в конвейер"}
+СЛИЯНИЕ = {
+    "kind": "merge",
+    "slug": "one-whole",
+    "rules": ["131", "135"],
+    "why": "отвечают на один вопрос с двух сторон",
+    "claim": "запись из облачного окна уходит в конвейер",
+}
 
 
 def test_слияние_читается_и_ложится_во_входящие(monkeypatch):
@@ -365,16 +447,18 @@ def test_вердикт_снимает_слияние_своим_ключом(mo
     assert [p["slug"] for p in pending] == ["one-whole"]
 
 
-
-@pytest.mark.parametrize("порча, слово", [
-    ({"rules": ["131"]}, "одно правило"),
-    ({"rules": ["131", "131"]}, "разных"),
-    ({"rules": ["131", "999"]}, "999 в каталоге нет"),
-    ({"rules": ["131", "abc"]}, "не номер"),
-    ({"why": ""}, "why пусто"),
-    ({"claim": ""}, "claim пусто"),
-    ({"rule": "220"}, "присваивает каталог"),
-])
+@pytest.mark.parametrize(
+    "порча, слово",
+    [
+        ({"rules": ["131"]}, "одно правило"),
+        ({"rules": ["131", "131"]}, "разных"),
+        ({"rules": ["131", "999"]}, "999 в каталоге нет"),
+        ({"rules": ["131", "abc"]}, "не номер"),
+        ({"why": ""}, "why пусто"),
+        ({"claim": ""}, "claim пусто"),
+        ({"rule": "220"}, "присваивает каталог"),
+    ],
+)
 def test_форма_слияния_возражает_но_не_теряет_предложение(monkeypatch, порча, слово):
     подменить(monkeypatch, [{**СЛИЯНИЕ, **порча}])
     pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, {"131", "135"})
@@ -386,10 +470,15 @@ def test_форма_слияния_возражает_но_не_теряет_п�
 # Источник подделки: запись `kind: evidence` — форма из templates/proposals.json,
 # слаг гипотезы — кандидат каталога `newer-is-a-contract-not-a-speedup`.
 
-ДАННЫЕ = {"kind": "evidence", "slug": "py314-no-speedup",
-          "hypothesis": "newer-is-a-contract-not-a-speedup", "direction": "against",
-          "data": "3.13.14 — 495/487 с, 3.14.8 — 490/493 с",
-          "source": "ArtVsMark/Stepik-Python-Grader#1570", "measured_at": "2026-10-09"}
+ДАННЫЕ = {
+    "kind": "evidence",
+    "slug": "py314-no-speedup",
+    "hypothesis": "newer-is-a-contract-not-a-speedup",
+    "direction": "against",
+    "data": "3.13.14 — 495/487 с, 3.14.8 — 490/493 с",
+    "source": "ArtVsMark/Stepik-Python-Grader#1570",
+    "measured_at": "2026-10-09",
+}
 ГИПОТЕЗЫ = {"newer-is-a-contract-not-a-speedup"}
 
 
@@ -404,19 +493,27 @@ def test_данные_читаются_и_ложатся_во_входящие(m
 
 def test_вердикт_снимает_данные_своим_ключом(monkeypatch):
     подменить(monkeypatch, [ДАННЫЕ, ГОДНОЕ | {"slug": "py314-no-speedup"}])
-    pending, _ = cp.gather(ПОТРЕБИТЕЛЬ, {"o/r:evidence/py314-no-speedup": {"measured_at": "2026-10-09"}}, None, ГИПОТЕЗЫ)
+    pending, _ = cp.gather(
+        ПОТРЕБИТЕЛЬ,
+        {"o/r:evidence/py314-no-speedup": {"measured_at": "2026-10-09"}},
+        None,
+        ГИПОТЕЗЫ,
+    )
     assert [p.get("kind", "rule") for p in pending] == ["rule"]
 
 
-@pytest.mark.parametrize("порча, слово", [
-    ({"hypothesis": ""}, "hypothesis пусто"),
-    ({"hypothesis": "no-such-candidate"}, "кандидата 'no-such-candidate'"),
-    ({"direction": "maybe"}, "direction 'maybe'"),
-    ({"data": " "}, "data пусто"),
-    ({"source": "сказали в чате"}, "source не адрес"),
-    ({"measured_at": "вчера"}, "measured_at 'вчера'"),
-    ({"number": "201"}, "у данных номера нет"),
-])
+@pytest.mark.parametrize(
+    "порча, слово",
+    [
+        ({"hypothesis": ""}, "hypothesis пусто"),
+        ({"hypothesis": "no-such-candidate"}, "кандидата 'no-such-candidate'"),
+        ({"direction": "maybe"}, "direction 'maybe'"),
+        ({"data": " "}, "data пусто"),
+        ({"source": "сказали в чате"}, "source не адрес"),
+        ({"measured_at": "вчера"}, "measured_at 'вчера'"),
+        ({"number": "201"}, "у данных номера нет"),
+    ],
+)
 def test_форма_данных_возражает_но_не_теряет_запись(monkeypatch, порча, слово):
     подменить(monkeypatch, [ДАННЫЕ | порча])
     pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {}, None, ГИПОТЕЗЫ)
@@ -427,16 +524,17 @@ def test_форма_данных_возражает_но_не_теряет_за�
 def вердикты_данным(tmp_path, вердикт: dict, кандидат: str | None) -> int:
     """Дерево с одним кандидатом (текст или None — файла нет) и вердиктом."""
     import json
+
     (tmp_path / "rules" / "ru").mkdir(parents=True, exist_ok=True)
     (tmp_path / ".rules").mkdir(exist_ok=True)
     if кандидат is not None:
         (tmp_path / "candidates").mkdir(exist_ok=True)
         (tmp_path / "candidates" / "hyp-one.md").write_text(кандидат, encoding="utf-8")
     # Вердикт отвечает на замер: дата по умолчанию; None — поля нет вовсе.
-    вердикт = {к: з for к, з in ({"measured_at": "2026-10-09"} | вердикт).items()
-               if з is not None}
+    вердикт = {к: з for к, з in ({"measured_at": "2026-10-09"} | вердикт).items() if з is not None}
     (tmp_path / ".rules" / "proposals.json").write_text(
-        json.dumps({"verdicts": {"o/r:evidence/e-one": вердикт}}), encoding="utf-8")
+        json.dumps({"verdicts": {"o/r:evidence/e-one": вердикт}}), encoding="utf-8"
+    )
     return cp.check_verdicts(tmp_path)
 
 
@@ -444,28 +542,47 @@ def вердикты_данным(tmp_path, вердикт: dict, кандида
 С_РАЗДЕЛОМ = f"# Г\n\n## Данные потребителей\n\n{МЕТКА}\n**o/r** …\n\n## Применимость\n\nx\n"
 
 
-@pytest.mark.parametrize("вердикт, кандидат, исход, слово", [
-    ({"status": "admitted", "candidate": "hyp-one"}, С_РАЗДЕЛОМ, 0, ""),
-    ({"status": "admitted"}, С_РАЗДЕЛОМ, 1, "назвать кандидата"),
-    ({"status": "admitted", "candidate": "hyp-one"}, None, 1, "кандидата 'hyp-one' нет"),
-    ({"status": "admitted", "candidate": "hyp-one"}, "# Г\n\n## Применимость\n\nx\n", 1,
-     "нет раздела «Данные потребителей»"),
-    ({"status": "admitted", "candidate": "hyp-one"},
-     С_РАЗДЕЛОМ.replace(МЕТКА, ""), 1, "внесённое не найдено"),
-    # метка вне раздела — не внесено: раздел и есть место хранения
-    ({"status": "admitted", "candidate": "hyp-one"},
-     f"# Г\n\n{МЕТКА}\n\n## Данные потребителей\n\nx\n", 1, "внесённое не найдено"),
-    ({"status": "rejected", "why": "замер на другой машине"}, None, 0, ""),
-    ({"status": "rejected"}, None, 1, "назвать причину"),
-    ({"status": "neighbours", "why": "x"}, None, 1, "ответов два"),
-    ({"status": "merged-into", "rule": "001", "why": "x"}, None, 1, "ответов два"),
-    ({"status": "rejected", "why": "x", "measured_at": None}, None, 1, "назвать measured_at"),
-    ({"status": "rejected", "why": "x", "measured_at": "вчера"}, None, 1, "назвать measured_at"),
-])
+@pytest.mark.parametrize(
+    "вердикт, кандидат, исход, слово",
+    [
+        ({"status": "admitted", "candidate": "hyp-one"}, С_РАЗДЕЛОМ, 0, ""),
+        ({"status": "admitted"}, С_РАЗДЕЛОМ, 1, "назвать кандидата"),
+        ({"status": "admitted", "candidate": "hyp-one"}, None, 1, "кандидата 'hyp-one' нет"),
+        (
+            {"status": "admitted", "candidate": "hyp-one"},
+            "# Г\n\n## Применимость\n\nx\n",
+            1,
+            "нет раздела «Данные потребителей»",
+        ),
+        (
+            {"status": "admitted", "candidate": "hyp-one"},
+            С_РАЗДЕЛОМ.replace(МЕТКА, ""),
+            1,
+            "внесённое не найдено",
+        ),
+        # метка вне раздела — не внесено: раздел и есть место хранения
+        (
+            {"status": "admitted", "candidate": "hyp-one"},
+            f"# Г\n\n{МЕТКА}\n\n## Данные потребителей\n\nx\n",
+            1,
+            "внесённое не найдено",
+        ),
+        ({"status": "rejected", "why": "замер на другой машине"}, None, 0, ""),
+        ({"status": "rejected"}, None, 1, "назвать причину"),
+        ({"status": "neighbours", "why": "x"}, None, 1, "ответов два"),
+        ({"status": "merged-into", "rule": "001", "why": "x"}, None, 1, "ответов два"),
+        ({"status": "rejected", "why": "x", "measured_at": None}, None, 1, "назвать measured_at"),
+        (
+            {"status": "rejected", "why": "x", "measured_at": "вчера"},
+            None,
+            1,
+            "назвать measured_at",
+        ),
+    ],
+)
 def test_вердикт_данным(tmp_path, capsys, вердикт, кандидат, исход, слово):
     assert вердикты_данным(tmp_path, вердикт, кандидат) == исход
     assert слово in capsys.readouterr().err
-
 
 
 # ── вердикт отвечает на замер, а не на слаг (обзор #822) ─────────────────
@@ -473,22 +590,53 @@ def test_вердикт_данным(tmp_path, capsys, вердикт, канд�
 КЛЮЧ = "o/r:evidence/py314-no-speedup"
 
 
-@pytest.mark.parametrize("вердикт, в_очереди, слово", [
-    # тот же замер, тот же кандидат — разобрано, молчит
-    ({"status": "admitted", "candidate": "newer-is-a-contract-not-a-speedup",
-      "measured_at": "2026-10-09"}, False, ""),
-    # тот же замер, вердикт внёс не к тому кандидату
-    ({"status": "admitted", "candidate": "the-repository-root-is-a-showcase",
-      "measured_at": "2026-10-09"}, False, "к кандидату 'the-repository-root-is-a-showcase'"),
-    # пробелы вокруг имени кандидата — тот же кандидат, как у гейта вердиктов
-    ({"status": "admitted", "candidate": " newer-is-a-contract-not-a-speedup ",
-      "measured_at": "2026-10-09"}, False, ""),
-    # отказ — кандидата не называет, и сверять нечего
-    ({"status": "rejected", "why": "x", "measured_at": "2026-10-09"}, False, ""),
-    # новый замер под старым слагом — не пропадает, ждёт вердикта
-    ({"status": "admitted", "candidate": "newer-is-a-contract-not-a-speedup",
-      "measured_at": "2026-09-01"}, True, "слаг уже разобран для замера '2026-09-01'"),
-])
+@pytest.mark.parametrize(
+    "вердикт, в_очереди, слово",
+    [
+        # тот же замер, тот же кандидат — разобрано, молчит
+        (
+            {
+                "status": "admitted",
+                "candidate": "newer-is-a-contract-not-a-speedup",
+                "measured_at": "2026-10-09",
+            },
+            False,
+            "",
+        ),
+        # тот же замер, вердикт внёс не к тому кандидату
+        (
+            {
+                "status": "admitted",
+                "candidate": "the-repository-root-is-a-showcase",
+                "measured_at": "2026-10-09",
+            },
+            False,
+            "к кандидату 'the-repository-root-is-a-showcase'",
+        ),
+        # пробелы вокруг имени кандидата — тот же кандидат, как у гейта вердиктов
+        (
+            {
+                "status": "admitted",
+                "candidate": " newer-is-a-contract-not-a-speedup ",
+                "measured_at": "2026-10-09",
+            },
+            False,
+            "",
+        ),
+        # отказ — кандидата не называет, и сверять нечего
+        ({"status": "rejected", "why": "x", "measured_at": "2026-10-09"}, False, ""),
+        # новый замер под старым слагом — не пропадает, ждёт вердикта
+        (
+            {
+                "status": "admitted",
+                "candidate": "newer-is-a-contract-not-a-speedup",
+                "measured_at": "2026-09-01",
+            },
+            True,
+            "слаг уже разобран для замера '2026-09-01'",
+        ),
+    ],
+)
 def test_вердикт_данным_сверяется_с_записью(monkeypatch, вердикт, в_очереди, слово):
     подменить(monkeypatch, [ДАННЫЕ])
     pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {КЛЮЧ: вердикт}, None, ГИПОТЕЗЫ)
@@ -501,12 +649,16 @@ def test_вердикт_данным_сверяется_с_записью(monkey
 
 # ── невидимые символы в канале (#873) ──────────────────────────────────────
 
-@pytest.mark.parametrize("символ", [
-    "\U000E0041",   # блок Tag: «ASCII smuggling»
-    "​",       # нулевая ширина
-    "‮",       # переворот направления
-    "ㅤ",       # заполнитель хангыля, категория Lo
-])
+
+@pytest.mark.parametrize(
+    "символ",
+    [
+        "\U000e0041",  # блок Tag: «ASCII smuggling»
+        "​",  # нулевая ширина
+        "‮",  # переворот направления
+        "ㅤ",  # заполнитель хангыля, категория Lo
+    ],
+)
 def test_невидимое_в_предложении_канал_пропущен(monkeypatch, символ):
     подменить(monkeypatch, [{**ГОДНОЕ, "claim": f"утвер{символ}ждение"}])
     pending, problems = cp.gather(ПОТРЕБИТЕЛЬ, {})
@@ -523,31 +675,41 @@ def test_невидимое_в_ключе_тоже_найдено(monkeypatch):
 
 # ── одно слияние от двух проектов (#645) ──────────────────────────────────
 
+
 def вердикты_слиянию(tmp_path, вердикты: dict) -> int:
     """Дерево: 001 и 002 заменены на 004, 003 — на 005; 004 и 005 действуют."""
     import json
+
     папка = tmp_path / "rules" / "ru"
     папка.mkdir(parents=True, exist_ok=True)
-    for н, куда in (("001", "004"), ("002", "004"), ("003", "005"), ("004", None),
-                    ("005", None)):
+    for н, куда in (("001", "004"), ("002", "004"), ("003", "005"), ("004", None), ("005", None)):
         пометка = f"\n**Заменено.** {куда}\n" if куда else ""
-        (папка / f"{н}-r.md").write_text(f"# П\n\n**Правило.** x\n{пометка}",
-                                         encoding="utf-8")
+        (папка / f"{н}-r.md").write_text(f"# П\n\n**Правило.** x\n{пометка}", encoding="utf-8")
     (tmp_path / ".rules").mkdir(exist_ok=True)
     (tmp_path / ".rules" / "proposals.json").write_text(
-        json.dumps({"verdicts": вердикты}), encoding="utf-8")
+        json.dumps({"verdicts": вердикты}), encoding="utf-8"
+    )
     return cp.check_verdicts(tmp_path)
 
 
 def test_одно_слияние_от_двух_проектов_принимается_одним_номером(tmp_path):
     принято = {"status": "admitted", "rule": "004", "replaces": ["001", "002"]}
-    assert вердикты_слиянию(tmp_path, {"a/x:merge/m": принято,
-                                       "b/y:merge/n": принято}) == 0
+    assert вердикты_слиянию(tmp_path, {"a/x:merge/m": принято, "b/y:merge/n": принято}) == 0
 
 
 def test_разные_слияния_под_одним_номером_отвергаются(tmp_path, capsys):
-    assert вердикты_слиянию(tmp_path, {
-        "a/x:merge/m": {"status": "admitted", "rule": "004", "replaces": ["001", "002"]},
-        "b/y:merge/n": {"status": "admitted", "rule": "004", "replaces": ["002", "001", "003"]},
-    }) == 1
+    assert (
+        вердикты_слиянию(
+            tmp_path,
+            {
+                "a/x:merge/m": {"status": "admitted", "rule": "004", "replaces": ["001", "002"]},
+                "b/y:merge/n": {
+                    "status": "admitted",
+                    "rule": "004",
+                    "replaces": ["002", "001", "003"],
+                },
+            },
+        )
+        == 1
+    )
     assert "уже занят" in capsys.readouterr().err

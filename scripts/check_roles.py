@@ -53,7 +53,6 @@
   0 — чисто;  1 — есть находки;  2 — проверка не отработала.
 """
 
-
 import argparse
 import re
 import sys
@@ -82,7 +81,7 @@ def rows(text: str) -> list[list[str]] | None:
     except StopIteration:
         return None
     out: list[list[str]] = []
-    for line in lines[start + 1:]:
+    for line in lines[start + 1 :]:
         if not line.startswith("|"):
             break
         if SEP_RE.match(line):
@@ -103,8 +102,10 @@ def problems(table: list[list[str]]) -> list[str]:
     for row in table:
         роль = plain(row[0])
         if len(row) < 5:
-            out.append(f"{роль}: в строке {len(row)} колонок вместо пяти — "
-                       "какой из них нет, читателю не видно")
+            out.append(
+                f"{роль}: в строке {len(row)} колонок вместо пяти — "
+                "какой из них нет, читателю не видно"
+            )
             continue
         for имя, значение in zip(COLUMNS, row[1:]):
             if not значение:
@@ -114,20 +115,27 @@ def problems(table: list[list[str]]) -> list[str]:
         if not m:
             out.append(
                 f"{роль}: возражение не называет адресата. Форма — «Роль — "
-                "«довод»»: возражение в пустоту не останавливает никого")
+                "«довод»»: возражение в пустоту не останавливает никого"
+            )
             continue
         адресат, довод = plain(m.group(1)), m.group(2).strip()
         if адресат not in known:
-            out.append(f"{роль}: возражает «{адресат}», а такой роли в карте "
-                       "нет — адресат должен быть тут же")
+            out.append(
+                f"{роль}: возражает «{адресат}», а такой роли в карте "
+                "нет — адресат должен быть тут же"
+            )
         elif адресат == роль:
-            out.append(f"{роль}: возражает сама себе — спор с собой проходит "
-                       "всегда и не останавливает ничего")
+            out.append(
+                f"{роль}: возражает сама себе — спор с собой проходит "
+                "всегда и не останавливает ничего"
+            )
         прежняя = seen.get(довод)
         if прежняя:
-            out.append(f"{роль}: возражение дословно повторяет «{прежняя}». "
-                       "Два направления с одним возражением — одно "
-                       "направление, записанное дважды (009)")
+            out.append(
+                f"{роль}: возражение дословно повторяет «{прежняя}». "
+                "Два направления с одним возражением — одно "
+                "направление, записанное дважды (009)"
+            )
         else:
             seen[довод] = роль
     return out
@@ -135,41 +143,52 @@ def problems(table: list[list[str]]) -> list[str]:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--root", type=Path, default=ROOT,
-                    help="корень каталога; по умолчанию сам этот репозиторий")
+    ap.add_argument(
+        "--root", type=Path, default=ROOT, help="корень каталога; по умолчанию сам этот репозиторий"
+    )
     args = ap.parse_args(argv)
     path = args.root / CHARTER
 
     # ── исход 2 ────────────────────────────────────────────────────────────
     if not path.exists():
-        print(f"проверка не отработала: нет {path} — документа, в котором "
-              "живёт карта направлений", file=sys.stderr)
+        print(
+            f"проверка не отработала: нет {path} — документа, в котором живёт карта направлений",
+            file=sys.stderr,
+        )
         return 2
     table = rows(path.read_text(encoding="utf-8"))
     if table is None:
-        print(f"проверка не отработала: в {CHARTER} нет таблицы с шапкой "
-              "«| Направление |» — проверять нечего", file=sys.stderr)
+        print(
+            f"проверка не отработала: в {CHARTER} нет таблицы с шапкой "
+            "«| Направление |» — проверять нечего",
+            file=sys.stderr,
+        )
         return 2
     if not table:
-        print(f"проверка не отработала: карта направлений в {CHARTER} пуста. "
-              "Ноль ролей — это отказ, а не чистый прогон (075)",
-              file=sys.stderr)
+        print(
+            f"проверка не отработала: карта направлений в {CHARTER} пуста. "
+            "Ноль ролей — это отказ, а не чистый прогон (075)",
+            file=sys.stderr,
+        )
         return 2
 
     # ── исход 1 ────────────────────────────────────────────────────────────
     found = problems(table)
     if found:
-        print("карта направлений принимает то, что ролью не является:",
-              file=sys.stderr)
+        print("карта направлений принимает то, что ролью не является:", file=sys.stderr)
         for p in found:
             print(f"  • {p}", file=sys.stderr)
-        print("\n  Направление без своего возражения — раздел документации, а "
-              "не роль:\n  оно не может ничего остановить (правило 062).",
-              file=sys.stderr)
+        print(
+            "\n  Направление без своего возражения — раздел документации, а "
+            "не роль:\n  оно не может ничего остановить (правило 062).",
+            file=sys.stderr,
+        )
         return 1
 
-    print(f"карта направлений в порядке: ролей {len(table)}, "
-          "у каждой своё возражение и назван его адресат")
+    print(
+        f"карта направлений в порядке: ролей {len(table)}, "
+        "у каждой своё возражение и назван его адресат"
+    )
     return 0
 
 

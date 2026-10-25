@@ -9,23 +9,26 @@
 https://code.claude.com/docs/en/plugins/marketplace-reference.md
 """
 
-
 import json
 from pathlib import Path
 
 import check_plugins as cp
 from conftest import write
 
-ВИТРИНА = {"name": "incidents-playbook", "owner": {"name": "o"},
-           "plugins": [{"name": "catalogue", "source": "./plugins/catalogue"}]}
+ВИТРИНА = {
+    "name": "incidents-playbook",
+    "owner": {"name": "o"},
+    "plugins": [{"name": "catalogue", "source": "./plugins/catalogue"}],
+}
 
 
-def дерево(repo: Path, витрина: dict | None = ВИТРИНА,
-           манифест: dict | None = None) -> Path:
+def дерево(repo: Path, витрина: dict | None = ВИТРИНА, манифест: dict | None = None) -> Path:
     if витрина is not None:
         write(repo / ".claude-plugin" / "marketplace.json", json.dumps(витрина))
-    write(repo / "plugins" / "catalogue" / ".claude-plugin" / "plugin.json",
-          json.dumps(манифест or {"name": "catalogue"}))
+    write(
+        repo / "plugins" / "catalogue" / ".claude-plugin" / "plugin.json",
+        json.dumps(манифест or {"name": "catalogue"}),
+    )
     return repo
 
 
