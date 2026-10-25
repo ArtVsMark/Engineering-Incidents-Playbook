@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 77 | 45 | 215 | 0 | 0 | 199 | 153 | 12 | 5 | 19 | 10 | 146 |  |
+| `Engineering-Incidents-Playbook` | подключён | 77 | 45 | 215 | 0 | 0 | 199 | 153 | 12 | 5 | 19 | 10 | 145 |  |
 | `Stepik-Python-Grader` | подключён | 195 | 133 | 205 | 10 | 0 | 200 | 85 | 43 | 0 | 72 | 0 | 146 |  |
 | `ArtVsMark` | подключён | 33 | 18 | 215 | 0 | 0 | 168 | 130 | 31 | 0 | 7 | 0 | 66 |  |
 | `Claude-Code_Usage-Token` | подключён | 18 | 15 | 205 | 10 | 0 | 174 | 93 | 9 | 0 | 55 | 17 | 106 |  |
@@ -72,7 +72,7 @@
 
 | Проект · Project | Механизм · Mechanism | Держит правил · Rules held |
 |---|---|---|
-| `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 21 |
+| `Engineering-Incidents-Playbook` | `.github/workflows/ci.yml` | 24 |
 | `Engineering-Incidents-Playbook` | `scripts/check_bindings.py` | 21 |
 | `Engineering-Incidents-Playbook` | `scripts/build_rules_index.py` | 19 |
 | `Engineering-Incidents-Playbook` | `AGENTS.md` | 16 |
@@ -116,7 +116,6 @@
 | `Engineering-Incidents-Playbook` | `.github/labels.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/badges.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/consumers-sync.yml` | 3 |
-| `Engineering-Incidents-Playbook` | `.github/workflows/mechanisms.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `.github/workflows/release.yml` | 3 |
 | `Engineering-Incidents-Playbook` | `docs/VERSIONING.md` | 3 |
 | `Engineering-Incidents-Playbook` | `scripts/answer_form.py` | 3 |
