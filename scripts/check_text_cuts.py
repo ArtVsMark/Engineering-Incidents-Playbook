@@ -87,10 +87,7 @@ def объявлено(строки: list[str], номер: int) -> bool:
     естественно оказывается над ним. Больше двух — уже не «рядом», и пометка
     начала бы засчитываться от чужого разреза.
     """
-    for i in (номер - 1, номер - 2):
-        if 0 <= i < len(строки) and ПОМЕТКА in строки[i]:
-            return True
-    return False
+    return any(0 <= i < len(строки) and ПОМЕТКА in строки[i] for i in (номер - 1, номер - 2))
 
 
 def main(argv: list[str] | None = None) -> int:

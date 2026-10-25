@@ -176,9 +176,12 @@ def называет_предмет_узла(узел: ast.AST) -> bool:
             часть, (ast.FormattedValue, ast.Call, ast.Name, ast.Attribute, ast.Subscript)
         ):
             return True
-        if isinstance(часть, ast.Constant) and isinstance(часть.value, str):
-            if АДРЕС.search(часть.value):
-                return True
+        if (
+            isinstance(часть, ast.Constant)
+            and isinstance(часть.value, str)
+            and АДРЕС.search(часть.value)
+        ):
+            return True
     return False
 
 

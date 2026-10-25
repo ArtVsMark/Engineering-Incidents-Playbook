@@ -60,7 +60,7 @@ def test_разбор_читает_имя_цвет_и_описание(monkeypat
     prepare(monkeypatch, repo)
     out, err = sl.declared()
     assert err is None
-    assert [l["name"] for l in out] == ["area/rules", "bug"]
+    assert [метка["name"] for метка in out] == ["area/rules", "bug"]
     assert out[0]["color"] == "1d76db"
 
 

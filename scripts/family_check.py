@@ -648,7 +648,7 @@ def изъяны_отказов(
     out = []
     коды = {к.lower(): r for r, к in издатели_.items()}
     имена = {r.lower(): r for r in издатели_}
-    for ключ, причина in ((манифест or {}).get("skips") or {}).items():
+    for ключ in (манифест or {}).get("skips") or {}:
         repo = коды.get(str(ключ).lower()) or имена.get(str(ключ).lower())
         if repo is None:
             out.append(

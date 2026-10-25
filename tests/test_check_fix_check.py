@@ -9,9 +9,8 @@
 import subprocess
 from pathlib import Path
 
-import pytest
-
 import check_fix_check as fc
+import pytest
 
 СКРИПТ = '''"""Модуль."""
 

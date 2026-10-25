@@ -371,7 +371,8 @@ def test_в_документе_нет_общих_идентификаторов(
     """Обе темы попадают в один документ витрины: общий id столкнулся бы."""
     срез(repo, [подключён("a")])
 
-    ids = lambda s: {e.get("id") for e in ET.fromstring(s).iter() if e.get("id")}
+    def ids(s):
+        return {e.get("id") for e in ET.fromstring(s).iter() if e.get("id")}
 
     assert ids(рисуй(repo, dark=False)) == set()
     assert ids(рисуй(repo, dark=True)) == set()
@@ -422,7 +423,9 @@ def test_незнакомое_состояние_остаётся_как_ест�
 def test_подпись_для_чтения_с_экрана_на_языке_витрины(repo):
     import re
 
-    брать = lambda s: re.search(r'aria-label="([^"]+)"', s).group(1)
+    def брать(s):
+        return re.search(r'aria-label="([^"]+)"', s).group(1)
+
     срез(repo, [подключён("a")])
 
     assert брать(рисуй(repo, lang="en")) == cp.LANG["en"]["title"]
@@ -558,8 +561,12 @@ def test_perenos_ne_shiryaet_kartinku_a_udlinyaet(repo):
     зависит масштаб всего текста."""
     узкое = рисуй(срез(repo, [подключён("a")]))
     широкое = рисуй(срез(repo, [подключён("a" * 40)]))
-    ш = lambda s: int(re.search(r'<svg width="(\d+)"', s).group(1))
-    в = lambda s: int(re.search(r'height="(\d+)"', s).group(1))
+
+    def ш(s):
+        return int(re.search(r'<svg width="(\d+)"', s).group(1))
+
+    def в(s):
+        return int(re.search(r'height="(\d+)"', s).group(1))
 
     assert ш(узкое) == ш(широкое)
     assert в(широкое) > в(узкое)
@@ -698,7 +705,10 @@ def test_prosvet_mezhdu_blokami_bolshe_chem_vnutri(repo):
     """
     данные = [подключён("a")]
     band = полоса(данные)
-    зазор = lambda a, b: band[b][0] - (band[a][0] + band[a][1])
+
+    def зазор(a, b):
+        return band[b][0] - (band[a][0] + band[a][1])
+
     первый_держится = cp.shown(cp.rows({"consumers": данные}))[0]
 
     assert зазор("born", первый_держится) == cp.COL_BETWEEN
@@ -747,9 +757,13 @@ def test_raznaya_dlina_chisla_kolonku_ne_dvigaet(repo):
     """Обратная сторона середины: однозначное и трёхзначное стоят на одной оси."""
     одно = рисуй(срез(repo, [подключён("a", answered=9)]))
     три = рисуй(срез(repo, [подключён("a", answered=140)]))
-    ось = lambda s, t: [
-        int(e.get("x")) for e in ET.fromstring(s).iter() if e.tag.endswith("text") and e.text == t
-    ][0]
+
+    def ось(s, t):
+        return [
+            int(e.get("x"))
+            for e in ET.fromstring(s).iter()
+            if e.tag.endswith("text") and e.text == t
+        ][0]
 
     assert ось(одно, "разобрано") == ось(одно, "9")
     assert ось(три, "разобрано") == ось(три, "140")

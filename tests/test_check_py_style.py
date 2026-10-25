@@ -9,9 +9,8 @@
 
 import subprocess
 
-import pytest
-
 import check_py_style as st
+import pytest
 from conftest import SCRIPTS, write
 
 ROOT = SCRIPTS.parent

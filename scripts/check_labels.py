@@ -173,7 +173,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     try:
         paths = [
-            l.strip() for l in args.paths_from.read_text(encoding="utf-8").splitlines() if l.strip()
+            строка.strip()
+            for строка in args.paths_from.read_text(encoding="utf-8").splitlines()
+            if строка.strip()
         ]
     except OSError as e:
         print(f"проверка не отработала: список путей не прочитан — {e}", file=sys.stderr)

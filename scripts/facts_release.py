@@ -167,7 +167,8 @@ def notes(number: str, repo: str) -> str:
             "",
             step,
             "",
-            f"Источник по тегу — [`export/facts/facts-contract.md`]({tree}/export/facts/facts-contract.md); "
+            "Источник по тегу — "
+            f"[`export/facts/facts-contract.md`]({tree}/export/facts/facts-contract.md); "
             f"как договор меняется — там же, раздел «Как контракт меняется».",
         ]
     )

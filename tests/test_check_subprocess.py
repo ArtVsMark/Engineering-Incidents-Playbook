@@ -9,9 +9,8 @@
 трогаются.
 """
 
-import pytest
-
 import check_subprocess as cs
+import pytest
 
 
 def test_tekstovyy_vyzov_bez_kodirovki_nahodka():

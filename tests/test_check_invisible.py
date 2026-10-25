@@ -2,10 +2,9 @@
 
 from pathlib import Path
 
-import pytest
-
 import check_invisible as ci
 import invisible
+import pytest
 
 
 def дерево(tmp_path: Path, файлы: dict[str, str]) -> Path:

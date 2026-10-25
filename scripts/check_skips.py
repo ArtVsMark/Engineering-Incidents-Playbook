@@ -99,9 +99,8 @@ def skips(path: Path) -> tuple[list[tuple[int, str]], str | None]:
                 # Голая метка без скобок причины не несёт по построению.
                 if not isinstance(dec, ast.Call) or not named(dec):
                     out.append((dec.lineno, f"пропуск {node.name}"))
-        elif isinstance(node, ast.Call) and dotted(node.func) in CALLS:
-            if not named(node):
-                out.append((node.lineno, "вызов пропуска"))
+        elif isinstance(node, ast.Call) and dotted(node.func) in CALLS and not named(node):
+            out.append((node.lineno, "вызов пропуска"))
     return sorted(out), None
 
 

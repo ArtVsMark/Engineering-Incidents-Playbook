@@ -224,11 +224,11 @@ def in_workflows(root: Path, *, preview: bool = False) -> list[tuple[str, tuple[
     for p in sorted((root / ".github" / "workflows").glob("*.yml")):
         text = p.read_text(encoding="utf-8")
         for m in CI_RE.finditer(text):
-            помечен = any(PREVIEW_RE.match(l) for l in _в_том_же_with(text, m.end()))
+            помечен = any(PREVIEW_RE.match(строка) for строка in _в_том_же_with(text, m.end()))
             if помечен == preview:
                 out.append((p.name, (int(m.group(1)), int(m.group(2)))))
         for _, конец, тело, номера, _ in _матричные(text):
-            помечен = any(PREVIEW_RE.match(l) for l in _в_том_же_with(тело, конец))
+            помечен = any(PREVIEW_RE.match(строка) for строка in _в_том_же_with(тело, конец))
             if помечен == preview:
                 out += [(p.name, номер) for номер in номера]
     return out

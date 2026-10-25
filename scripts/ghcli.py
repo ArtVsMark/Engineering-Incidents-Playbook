@@ -46,7 +46,10 @@
 
 import json
 import re
-import subprocess
+
+# Не мёртвый: набор подменяет `ghcli.subprocess.run`, а это тот же объект, что
+# зовёт обёртка `proc.run` (tests/test_ghcli.py, `no_gh`).
+import subprocess  # noqa: F401
 from collections.abc import Callable
 
 import proc

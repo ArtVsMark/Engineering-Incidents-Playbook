@@ -10,7 +10,6 @@
 import collect_proposals as cp
 import pytest
 
-
 ПОТРЕБИТЕЛЬ = [{"repo": "o/r", "proposals": "https://example.invalid/p.json"}]
 
 

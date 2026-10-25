@@ -3,9 +3,8 @@
 import subprocess
 import sys
 
-import pytest
-
 import proc
+import pytest
 
 СПИТ = [sys.executable, "-c", "import time; time.sleep(5)"]
 

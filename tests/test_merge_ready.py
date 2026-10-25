@@ -471,6 +471,7 @@ def test_предварительный_прогон_исключён_и_оче�
     зелёном наборе, и красный 3.15 заморозит очередь (140, 146)."""
     import re
     from pathlib import Path
+
     import check_python_version as cv
 
     корень = Path(__file__).resolve().parent.parent
@@ -553,6 +554,7 @@ def test_sovetniki_skhodyatsya_s_rabotami_mechanisms_yml():
 def _обязательные_шаги() -> set[str]:
     """Шаги механизмов (`работа / шаг`) с классом required в `.pipeline.yml`."""
     from pathlib import Path
+
     import yaml
 
     ответ = yaml.safe_load(

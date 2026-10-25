@@ -12,10 +12,9 @@
 
 from pathlib import Path
 
+import check_skills as cs
 import pytest
 import yaml
-
-import check_skills as cs
 from conftest import write
 
 ЗАГОТОВКА = """# Навык

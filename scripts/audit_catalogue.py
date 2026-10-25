@@ -33,7 +33,8 @@
         факт, иначе названный раздел — подозрение;
   039 — у проверки три исхода, а не два;
   075 — «не смогли прочитать» не должно быть неотличимо от «всё хорошо»;
-  056 — у находки печатается и то, чего она не означает: разделы на месте проверяет сборка, здесь — содержание;
+  056 — у находки печатается и то, чего она не означает: разделы на месте
+        проверяет сборка, здесь — содержание;
   108 — заготовка записи сверяется с каноном разделов, а не переписывается вслед за ним;
   161 — раздел выпуска в истории несёт четыре части и разрешимую ссылку:
         выпуск без неё остаётся рассказом, а рассказ не проверить.
@@ -327,7 +328,7 @@ def check_portable(num: str, slot: dict) -> list[str]:
         seen[lang] = (
             PORTABLE_RE[lang].search(path.read_text(encoding="utf-8")) if path is not None else None
         )
-    if all(slot.get(l) is not None for l in LANGS) and bool(seen["ru"]) != bool(seen["en"]):
+    if all(slot.get(lang) is not None for lang in LANGS) and bool(seen["ru"]) != bool(seen["en"]):
         has = "ru" if seen["ru"] else "en"
         out.append(
             f"{num}: переносимость объявлена только в дереве {has} — "
@@ -460,7 +461,7 @@ def main(argv: list[str] | None = None) -> int:
                     f"{len(heads['en'])} — деревья разошлись по структуре"
                 )
                 continue
-            for i, (a, b) in enumerate(zip(heads["ru"], heads["en"])):
+            for i, (a, b) in enumerate(zip(heads["ru"], heads["en"], strict=False)):
                 a, b = a.strip(), b.strip()
                 # Правило 051: имя раздела — не факт расхождения. Свободные
                 # разделы каталогу разрешены, и синоним ещё не поломка.

@@ -8,10 +8,9 @@
 
 import json
 
-import pytest
-
 import build_rules_index as bri
 import family
+import pytest
 
 ХОРОШИЙ = {"schema": "1.0", "project": "o/a", "release": None, "gives": {"x": "1.0"}, "takes": []}
 

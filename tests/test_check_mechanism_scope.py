@@ -3,9 +3,8 @@
 import json
 from pathlib import Path
 
-import pytest
-
 import check_mechanism_scope as ms
+import pytest
 
 МЕСТА = {"scripts": '"scripts"', ".claude/hooks": 'hooks"'}
 #: Гейт называет правило блоком объявлений, как его читает check_bindings (обзор #891).

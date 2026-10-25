@@ -15,9 +15,8 @@
 а не для одного «представителя»: расходились они именно поодиночке.
 """
 
-import pytest
-
 import ghcli
+import pytest
 
 
 @pytest.fixture(autouse=True)

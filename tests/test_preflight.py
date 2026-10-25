@@ -16,6 +16,7 @@
 а прогон подделывается собственным скриптом-заглушкой.
 """
 
+import subprocess
 from pathlib import Path
 
 import preflight
@@ -182,8 +183,6 @@ def test_nezapuskaemye_nazvany_v_itoge(tmp_path, capsys):
 # строки связи с задачей и вернулись красными. Прогон говорил «предмет
 # появляется только на изменении» — и был неправ: предмет появляется в момент
 # коммита, а тело изменения собирается из ПЕРВОГО коммита ветки.
-
-import subprocess
 
 
 def репо(tmp_path: Path, *тела: str) -> Path:

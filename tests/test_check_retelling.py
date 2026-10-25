@@ -7,9 +7,8 @@ ArtVsMark/Engineering-Incidents-Playbook#631, слитое 27.09.
 
 from pathlib import Path
 
-import pytest
-
 import check_retelling as cr
+import pytest
 
 ТЕЛО_631 = """Две находки по #629 закрыты ещё коммитом 18ca670 в самом #629 — ревью
 его третьего прогона дало «находок 0», — а из списка не сняты.

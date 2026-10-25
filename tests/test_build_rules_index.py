@@ -20,9 +20,8 @@ import os
 import subprocess
 from pathlib import Path
 
-import pytest
-
 import build_rules_index as b
+import pytest
 
 
 def запись(номер: str, lang: str = "ru") -> Path:
@@ -525,7 +524,10 @@ def test_predshestvenniki_chitayut_pometku_zameny(tmp_path):
 
 
 def test_predshestvenniki_tranzitivny(tmp_path):
-    """Вторая замена не теряет первого предка: механизм, называющий 001, держит и 004 (обзор #897)."""
+    """Вторая замена не теряет первого предка.
+
+    Механизм, называющий 001, держит и 004 (обзор #897).
+    """
     папка = tmp_path / "rules" / "ru"
     папка.mkdir(parents=True)
     for н, хвост in (

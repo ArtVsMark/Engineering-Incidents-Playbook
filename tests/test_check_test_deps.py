@@ -11,9 +11,8 @@
 спрашиваются у метаданных.
 """
 
-import pytest
-
 import check_test_deps as td
+import pytest
 from conftest import write
 
 

@@ -9,9 +9,8 @@
 
 from pathlib import Path
 
-import pytest
-
 import flaky_reruns as fr
+import pytest
 
 
 def прогон(id_: int, попытка: int, исход: str = "success") -> dict:

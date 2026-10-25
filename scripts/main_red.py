@@ -50,7 +50,6 @@ ArtVsMark/ArtVsMark#56 — `attribution-history` покраснел, и увид
 
 import argparse
 import json
-import subprocess
 import sys
 
 import ghcli
@@ -194,7 +193,10 @@ def selftest() -> int:
     Прогоняется и третий объявленный исход (правило 145): «дежурный не
     отработал» живёт в `main`, и вызовом свёртки его не достать.
     """
-    R = lambda n, s, c, t="2026-01-01": {"name": n, "status": s, "conclusion": c, "createdAt": t}
+
+    def R(n, s, c, t="2026-01-01"):
+        return {"name": n, "status": s, "conclusion": c, "createdAt": t}
+
     cases = [
         ("красная работа", [R("ci", "completed", "failure")], set(), ["ci"]),
         ("зелёная работа", [R("ci", "completed", "success")], set(), []),
@@ -328,7 +330,8 @@ def main() -> int:
         print("дежурный не отработал: не задан --body-file", file=sys.stderr)
         return 2
     try:
-        template = open(args.body_file, encoding="utf-8").read()
+        with open(args.body_file, encoding="utf-8") as fh:
+            template = fh.read()
     except OSError as e:
         print(f"дежурный не отработал: шаблон не прочитан — {e}", file=sys.stderr)
         return 2

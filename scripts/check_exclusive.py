@@ -125,7 +125,9 @@ def утверждения(root: Path) -> list[tuple[str, str, str]]:
         номер = 1
         for абзац in re.split(r"\n\s*\n", текст):
             без_таблиц = [
-                l for l in абзац.splitlines() if not l.lstrip().startswith(СТРОКА_ТАБЛИЦЫ)
+                строка_абзаца
+                for строка_абзаца in абзац.splitlines()
+                if not строка_абзаца.lstrip().startswith(СТРОКА_ТАБЛИЦЫ)
             ]
             строка = " ".join(" ".join(без_таблиц).split())
             if МАРКЕР.search(строка) and len(строка) >= МИНИМУМ:

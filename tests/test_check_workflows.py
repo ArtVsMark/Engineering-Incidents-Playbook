@@ -17,9 +17,8 @@
 
 from pathlib import Path
 
-import pytest
-
 import check_workflows as cw
+import pytest
 
 BUTTON = "on:\n  push:\n  workflow_dispatch:\n"
 
@@ -181,7 +180,8 @@ def test_opasnoe_sobytie_s_zakrepleniem_chisto(tmp_path):
         "risky.yml",
         "on:\n  pull_request_target:\n  workflow_dispatch:\n"
         "jobs:\n  a:\n    timeout-minutes: 5\n    steps:\n"
-        "      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09\n        with:\n          ref: main\n",
+        "      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09\n "
+        "       with:\n          ref: main\n",
     )
     assert cw.main(["--root", str(tmp_path)]) == 0
 
@@ -764,9 +764,16 @@ def агент(разрешено: str, *, python: bool = True, проверки
     """Прогон с агентом: разрешения и, по выбору, шаги, делающие их исполнимыми."""
     шаги = "    steps:\n      - uses: actions/checkout@v4\n"
     if python:
-        шаги += '      - uses: actions/setup-python@v5\n        with:\n          python-version: "3.12"\n'
+        шаги += (
+            "      - uses: actions/setup-python@v5\n"
+            "        with:\n"
+            '          python-version: "3.12"\n'
+        )
     if проверки:
-        шаги += "      - name: обвязка\n        run: python -m pip install --quiet -r requirements-test.txt\n"
+        шаги += (
+            "      - name: обвязка\n"
+            "        run: python -m pip install --quiet -r requirements-test.txt\n"
+        )
     шаги += (
         "      - uses: anthropics/claude-code-action@v1\n        with:\n"
         "          claude_args: >-\n            --allowedTools\n"

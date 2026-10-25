@@ -67,12 +67,12 @@ from pathlib import Path
 # (ревью #497, #500, #501), и каждая починка шла бы теперь в двух местах.
 from check_bindings import НАВЫКИ_ОКНА, навык_в_дереве
 
+# Где лежат плагины, знает гейт витрины: папка плагина — его имя там же (035).
+from check_plugins import PLUGINS
+
 # Строка читателя и словарь — тоже чужие: читателей закрытый список, и второй
 # словарь разошёлся бы с первым на первом же новом читателе.
 from check_readers import EN, HEAD, LINE_RE, READERS, reader_of
-
-# Где лежат плагины, знает гейт витрины: папка плагина — его имя там же (035).
-from check_plugins import PLUGINS
 
 ROOT = Path(__file__).resolve().parent.parent
 

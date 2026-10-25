@@ -27,7 +27,6 @@
 import json
 
 import pytest
-
 import sync_inbox as si
 
 
@@ -63,7 +62,8 @@ def arm(monkeypatch, rules, answered, issue=None):
     )
     monkeypatch.setattr(si, "gh", fake_gh)
     monkeypatch.setenv("GH_TOKEN", "x")
-    import json, pathlib, tempfile
+    import pathlib
+    import tempfile
 
     path = pathlib.Path(tempfile.mkdtemp()) / "bindings.json"
     path.write_text(json.dumps({"schema": "1.1", "rules": answered}), encoding="utf-8")
@@ -81,7 +81,10 @@ def verbs(calls):
     из_вызова = []
     for c in calls:
         поля = [a for a in c if isinstance(a, str)]
-        если_поле = lambda имя: any(a.startswith(имя) for a in поля)
+
+        def если_поле(имя: str, поля: list[str] = поля) -> bool:
+            return any(a.startswith(имя) for a in поля)
+
         if "PATCH" in поля and если_поле("state=closed"):
             из_вызова.append("close")
         elif "PATCH" in поля and если_поле("state=open"):
@@ -172,7 +175,8 @@ def test_treker_ne_otvetil_eto_tretiy_ishod(monkeypatch, capsys):
     )
     monkeypatch.setattr(si, "gh", lambda *a: (1, "HTTP 403"))
     monkeypatch.setenv("GH_TOKEN", "x")
-    import json, pathlib, tempfile
+    import pathlib
+    import tempfile
 
     path = pathlib.Path(tempfile.mkdtemp()) / "b.json"
     path.write_text(json.dumps({"rules": ANSWERED_ALL}), encoding="utf-8")
@@ -291,7 +295,8 @@ def test_razdel_pechataetsya_v_tele_zadachi():
     [
         (
             ".github/workflows/*.yml — прогоны",
-            "[`.github/workflows/*.yml`](https://github.com/o/n/tree/HEAD/.github/workflows) — прогоны",
+            "[`.github/workflows/*.yml`](https://github.com/o/n/tree/HEAD/.github/workflows) "
+            "— прогоны",
         ),
         (
             "CLAUDE.md § Режим ответов",
@@ -557,7 +562,6 @@ def test_каждый_опубликованный_контракт_разнес
     потребителя и сверяется, либо про файл каталога и назван таким явно.
     Седьмой контракт, заведённый без решения, краснеет здесь.
     """
-    import json
     from pathlib import Path
 
     опубликовано = set(

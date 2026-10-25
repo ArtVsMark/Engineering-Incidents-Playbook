@@ -15,9 +15,8 @@ import json
 import re
 from pathlib import Path
 
-import pytest
-
 import check_bindings as cb
+import pytest
 from conftest import write
 
 
@@ -1031,7 +1030,8 @@ def test_pri_uslovii_s_sobytiem_chisto(monkeypatch, repo):
             {
                 "holdable": "conditional",
                 "why": "предмета пока нет: гейт зеленел бы вокруг пустоты",
-                "awaiting": "проектов с этим предметом сейчас 1, на одном признак не отличить от совпадения",
+                "awaiting": "проектов с этим предметом сейчас 1, на одном "
+                "признак не отличить от совпадения",
             }
         ),
         export_of("001"),
