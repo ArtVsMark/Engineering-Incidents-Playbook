@@ -741,6 +741,12 @@ jobs:
   # соседа не переставляются, и это доверие, а не проверка (039). На 25.10
   # v1.11.0 указывает на 96c2c93b52cd5a433e06a2984a0919e655ad9b73.
   #
+  # `contract` НЕ ПОДКЛЮЧЁН: поверхностью контракта шаг считает прогоны и
+  # классы проверок самого дерева и требует фрагмент рода `contract`. У
+  # механизмов прогоны и есть то, что они отдают; у каталога наружу уходят
+  # выгрузка правил и действия, а рода `contract` в его журнале нет. Замер
+  # на этом изменении (#959), расхождение — EPM, #958 пункт 1.
+  #
   # ШАГИ О ИЗМЕНЕНИИ НА ТОЛЧКЕ В main НЕ ИДУТ (`if: … != 'push'`), как в ci.yml
   # самих механизмов: им не о чем спрашивать, и красное на общей ветке
   # заморозило бы очередь (053). `pipeline` спрашивает о дереве и идёт везде.
@@ -774,14 +780,6 @@ jobs:
   journal:
     if: github.event_name != 'push'
     uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-journal.yml@v1.11.0
-    permissions:
-      contents: read
-      checks: read
-      pull-requests: read
-      issues: read
-  contract:
-    if: github.event_name != 'push'
-    uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/workflows/step-contract.yml@v1.11.0
     permissions:
       contents: read
       checks: read
