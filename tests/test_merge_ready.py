@@ -461,7 +461,40 @@ def test_sovetniki_skhodyatsya_s_rabotami_mechanisms_yml():
     работы = re.findall(
         r"^  ([\w-]+):\n    uses: [^\n]*/step-([\w-]+)\.yml@", прогон, re.M)
     assert работы, "в mechanisms.yml не найдено ни одной работы-вызова"
-    assert set(mr.СОВЕТНИКИ) == {f"{работа} / {шаг}" for работа, шаг in работы}
+    шаги = {f"{работа} / {шаг}" for работа, шаг in работы}
+    # Каждый шаг — ровно в одном списке: советник или обязательный (#930).
+    обязательные = _обязательные_шаги()
+    assert not set(mr.СОВЕТНИКИ) & обязательные
+    assert {*mr.СОВЕТНИКИ, *обязательные} == шаги
+
+
+def _обязательные_шаги() -> set[str]:
+    """Шаги механизмов (`работа / шаг`) с классом required в `.pipeline.yml`."""
+    from pathlib import Path
+    import yaml
+    ответ = yaml.safe_load((Path(mr.__file__).resolve().parent.parent
+                            / ".pipeline.yml").read_text(encoding="utf-8"))
+    return {имя for имя, класс in ответ["checks"].items()
+            if " / " in имя and класс == "required"}
+
+
+def test_obyazatelnye_shagi_nazvany_avtomerzhu():
+    """Шаг, ушедший из советников, автомерж требует поимённо (168, #930).
+
+    Иначе он выпадает из обоих списков на пути очереди: не советник — его
+    красное держит, но и не обязательный — его ОТСУТСТВИЕ на голове
+    засчиталось бы пройденным.
+    """
+    from pathlib import Path
+    прогон = (Path(mr.__file__).resolve().parent.parent
+              / ".github" / "workflows" / "automerge.yml").read_text(encoding="utf-8")
+    вызовы = [строка for строка in прогон.splitlines() if "merge_ready.py --required" in строка]
+    assert вызовы, "в automerge.yml нет вызова merge_ready с --required"
+    обязательные = _обязательные_шаги()
+    assert обязательные, "в .pipeline.yml нет обязательных шагов механизмов"
+    for строка in вызовы:
+        for шаг in обязательные:
+            assert шаг in строка, f"{шаг!r} не назван в: {строка.strip()}"
 
 
 def test_vzvod_ne_zhdyot_idushchih_proverok(monkeypatch, capsys):
