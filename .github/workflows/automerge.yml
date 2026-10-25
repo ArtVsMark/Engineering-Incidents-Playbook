@@ -386,7 +386,7 @@ jobs:
             fi
             rc=0
             printf '%s\n' "$runs" | jq -s . \
-              | python3 scripts/merge_ready.py --required catalogue || rc=$?
+              | python3 scripts/merge_ready.py --required "catalogue,pipeline / pipeline" || rc=$?
             if [ "$rc" -eq 2 ]; then
               echo "::warning::Изменение #$PR: состояние проверок не прочитано — не сливаю."
               return 0
@@ -464,7 +464,7 @@ jobs:
             exit 0
           fi
           printf '%s\n' "$runs" | jq -s . \
-            | python3 scripts/merge_ready.py --required catalogue --await review || wrc=$?
+            | python3 scripts/merge_ready.py --required "catalogue,pipeline / pipeline" --await review || wrc=$?
           if [ "$wrc" -eq 1 ]; then
             echo "::warning::Изменение #$PR: жду вердикта внешнего взгляда — автомерж не взвожу. Перевзведёт прогон по завершении ревью либо разморозка."
             exit 0
