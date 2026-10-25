@@ -51,6 +51,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from typing import Any
 
 import proc
 
@@ -1231,7 +1232,7 @@ def suite_proposals() -> tuple[list[str], int]:
             (root / ".rules").mkdir(parents=True)
 
             v = dict(PROPOSAL_OK)
-            verdicts = {"owner/repo:slug": v}
+            verdicts: dict[str, dict[str, Any]] = {"owner/repo:slug": v}
             if spoil == "status":
                 v["status"] = "почти-принято"
             elif spoil == "no-rule":

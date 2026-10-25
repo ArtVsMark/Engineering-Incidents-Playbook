@@ -271,8 +271,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if находки:
         print("темп прогонов по расписанию разошёлся с бюджетом:", file=sys.stderr)
-        for n in находки:
-            print(f"  • {n}", file=sys.stderr)
+        for находка in находки:
+            print(f"  • {находка}", file=sys.stderr)
         print("\n  Арифметика по часам:", file=sys.stderr)
         for p in пики:
             print(p, file=sys.stderr)

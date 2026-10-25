@@ -135,7 +135,7 @@ def choose(root: Path, base: str, head: str = "HEAD") -> tuple[str | None, int, 
         return None, 1, f"сверх {base} коммитов нет"
 
     subjects, why = base_subjects(root, base)
-    if why:
+    if why or subjects is None:
         return None, 2, f"выбор не отработал: {why}"
 
     for sha in commits:

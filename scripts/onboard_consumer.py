@@ -185,7 +185,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"проверка не отработала: экспорт каталога не разобран — {e}", file=sys.stderr)
         return 2
     ref, err = pinned_ref(args.contract)
-    if err:
+    if err or ref is None:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
 

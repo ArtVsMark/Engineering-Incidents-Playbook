@@ -5,6 +5,7 @@
 ArtVsMark/Engineering-Incidents-Playbook#631, слитое 27.09.
 """
 
+from collections.abc import Sequence
 from pathlib import Path
 
 import check_retelling as cr
@@ -19,7 +20,7 @@ import pytest
 """
 
 
-def прогон(tmp_path: Path, тело: str, пути: list[str] = ()) -> int:
+def прогон(tmp_path: Path, тело: str, пути: Sequence[str] = ()) -> int:
     (tmp_path / "p.txt").write_text("\n".join(пути), encoding="utf-8")
     (tmp_path / "b.md").write_text(тело, encoding="utf-8")
     return cr.main(

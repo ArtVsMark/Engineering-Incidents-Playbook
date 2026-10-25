@@ -218,10 +218,10 @@ def достигнутые(мод: dict[str, Модуль]) -> set[Имя]:
         if имя in видели:
             continue
         видели.add(имя)
-        м = мод.get(имя[0])
-        узел = м.объявлено.get(имя[1]) if м else None
-        if узел is not None:
-            очередь += м.обращения(узел)
+        хозяин = мод.get(имя[0])
+        узел = хозяин.объявлено.get(имя[1]) if хозяин else None
+        if хозяин is not None and узел is not None:
+            очередь += хозяин.обращения(узел)
     return видели
 
 
@@ -398,7 +398,8 @@ def selftest() -> int:
             for имя, текст in файлы.items():
                 (корень / "scripts" / f"{имя}.py").write_text(текст, encoding="utf-8")
             мод, _ = модули(корень)
-            вышло = {имя for _, имя in сироты(мод, корень)}
+            # Самопроверка пишет дерево сама: отказ разбора здесь — пустой итог.
+            вышло = {имя for _, имя in сироты(мод, корень)} if мод is not None else set()
         print(f"  {'находка ' if вышло else 'чисто   '} — {что}")
         if вышло != ждём:
             плохо.append(f"{что}: ждали {sorted(ждём)}, вышло {sorted(вышло)}")
@@ -424,11 +425,11 @@ def main(argv: list[str] | None = None) -> int:
         return selftest()
 
     записи, err = соседи(args.root)
-    if err:
+    if err or записи is None:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
     мод, err = модули(args.root)
-    if err:
+    if err or мод is None:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
 

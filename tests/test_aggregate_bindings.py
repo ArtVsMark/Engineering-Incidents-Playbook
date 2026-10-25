@@ -22,6 +22,7 @@ import email.message
 import email.utils
 import json
 from pathlib import Path
+from typing import Literal
 
 import aggregate_bindings as ab
 from conftest import write
@@ -1028,7 +1029,7 @@ class ОтветЗаглушка:
     def __enter__(self) -> ОтветЗаглушка:
         return self
 
-    def __exit__(self, *_) -> bool:
+    def __exit__(self, *_) -> Literal[False]:
         return False
 
     def read(self) -> bytes:

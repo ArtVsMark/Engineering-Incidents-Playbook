@@ -251,7 +251,7 @@ def main() -> int:
         return 2
 
     rules, err = fetch_rules(args.catalogue, args.ref)
-    if err:
+    if err or rules is None:
         print(f"не отработал: экспорт каталога не прочитан — {err}", file=sys.stderr)
         return 2
 

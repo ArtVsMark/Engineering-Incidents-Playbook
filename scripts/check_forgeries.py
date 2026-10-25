@@ -90,7 +90,7 @@ def швы(source: str) -> list[str]:
             continue
         второй = node.args[1]
         if isinstance(второй, ast.Constant) and второй.value in ШВЫ:
-            найдено.add(второй.value)
+            найдено.add(str(второй.value))
     return sorted(найдено)
 
 

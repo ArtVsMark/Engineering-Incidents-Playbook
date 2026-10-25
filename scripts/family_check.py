@@ -54,7 +54,7 @@ import re
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import family
 import python_badge
@@ -357,8 +357,9 @@ def шаги(root: Path, сводка: dict) -> list[Связь]:
     if (m := ДИАПАЗОН_RE.search(текст)) is None:
         return серый(None, "диапазон контракта шагов не объявлен")
     диапазон = m[1].strip()
-    условия = [УСЛОВИЕ_RE.match(часть) for часть in диапазон.split(",")]
-    if not all(условия):
+    найдено = [УСЛОВИЕ_RE.match(часть) for часть in диапазон.split(",")]
+    условия = [у for у in найдено if у is not None]
+    if len(условия) != len(найдено):
         return серый(диапазон, "диапазон не той формы: ждутся условия вида >=0.5,<0.9")
     if len(претенденты(сводка, ПРИЗНАК_ИЗДАТЕЛЯ["EPM"])) > 1:
         return серый(диапазон, "контракт steps отдают несколько проектов — сверять не с кем")
@@ -379,7 +380,11 @@ def шаги(root: Path, сводка: dict) -> list[Связь]:
     # `==` ВЫШЕ ОПУБЛИКОВАННОГО — ТОЖЕ НИЖНЯЯ ГРАНИЦА. «==0.8» при свежем 0.7
     # опережает сводку так же, как «>=0.8», и красить его красным значило
     # бы судить одну запись по-разному в двух формах (обзор #831).
-    if all(у[1] in СНИЗУ or (у[1] == "==" and свежий_н < номер(у[2])) for у in мимо):
+    # Число условия УСЛОВИЕ_RE уже проверил: номер() вернёт кортеж, не None.
+    if all(
+        у[1] in СНИЗУ or (у[1] == "==" and свежий_н < cast(tuple[int, ...], номер(у[2])))
+        for у in мимо
+    ):
         return [
             Связь(
                 "family",
@@ -584,7 +589,7 @@ def разобрать(root: Path, сводка: dict, свой: str) -> dict[st
         "pairs": "парных связей не объявлено" if not по_сегментам["pairs"] else "",
         "external": внешнее[1],
     }
-    разбор = {
+    разбор: dict[str, Any] = {
         "schema": family.FAMILY_SCHEMA,
         "project": свой,
         "segments": {

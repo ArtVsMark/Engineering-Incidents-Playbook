@@ -363,7 +363,7 @@ def check(root: Path) -> int:
         )
         return 2
     found, err = tags(root)
-    if err:
+    if err or found is None:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
 
@@ -440,7 +440,7 @@ def check(root: Path) -> int:
 def snapshot_or_none(root: Path, tag: str, problems: list[str]) -> dict | None:
     """Снимок по тегу; неудача выгрузки — находка с адресом, а не трассировка."""
     files, err = files_at_tag(root, tag)
-    if err:
+    if err or files is None:
         problems.append(f"{err}. Сверить строку не с чем")
         return None
     return snapshot(files)
@@ -476,7 +476,7 @@ def add(root: Path, tag: str, key: str, at_tag: bool) -> int:
         return 1
 
     files, err = files_at_tag(root, tag) if at_tag else files_in_tree(root)
-    if err:
+    if err or files is None:
         print(f"снимок не собрался: {err}", file=sys.stderr)
         return 2
     snap = snapshot(files)
@@ -548,7 +548,13 @@ def recount(root: Path) -> int:
         )
         return 2
 
-    known = {release(tag): tag for tag in tags(root)[0]}
+    теги, err = tags(root)
+    if err or теги is None:
+        # Раньше чтение тегов здесь не проверялось: отказ git падал трассой
+        # на переборе None, а не называл себя (075).
+        print(f"пересчёт не отработал: {err}", file=sys.stderr)
+        return 2
+    known = {release(tag): tag for tag in теги}
     changed = 0
     for row in rows:
         got = cells(row)
@@ -557,7 +563,7 @@ def recount(root: Path) -> int:
             print(f"пересчитывать нечего: строка {got[0]} — тега такого нет", file=sys.stderr)
             return 2
         files, err = files_at_tag(root, tag)
-        if err:
+        if err or files is None:
             print(f"пересчёт не отработал: {err}", file=sys.stderr)
             return 2
         fresh = "| " + " | ".join([got[0], *snapshot(files).values(), got[-1]]) + " |"

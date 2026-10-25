@@ -21,6 +21,7 @@ import pytest
 
 ХУК = Path(__file__).resolve().parent.parent / ".claude" / "hooks" / "push_guard.py"
 _spec = importlib.util.spec_from_file_location("push_guard", ХУК)
+assert _spec is not None and _spec.loader is not None, ХУК
 pg = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(pg)
 

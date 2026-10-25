@@ -200,7 +200,7 @@ def совпало_без_летучего(было: str, стало: str, name:
     return was == now
 
 
-def differ(root: Path) -> tuple[list[str] | None, str, list[str]]:
+def differ(root: Path) -> tuple[list[str], str, list[str]]:
     """Производные, отличающиеся от того, что ОПУБЛИКОВАНО. И жалобы по пути.
 
     Не «что изменил этот запуск». Разница видна на втором запуске подряд:

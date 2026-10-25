@@ -17,6 +17,7 @@ import pytest
 КОРЕНЬ = Path(__file__).resolve().parent.parent
 ХУК = КОРЕНЬ / ".claude" / "hooks" / "skill_log.py"
 _spec = importlib.util.spec_from_file_location("skill_log", ХУК)
+assert _spec is not None and _spec.loader is not None, ХУК
 sl = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(sl)
 СЕЙЧАС = datetime(2026, 10, 16, 12, 0, tzinfo=UTC)

@@ -238,7 +238,9 @@ def main(argv: list[str] | None = None) -> int:
     release, full = got
     if args.pin:
         tag = latest_tag()
-        problem = pin(tag)
+        # Тег version() выше уже нашёл; None здесь — гонка с чужим `git tag -d`, и
+        # называется она отказом, а не трассой из pin() (075).
+        problem = pin(tag) if tag else "релизного тега для закрепления не видно"
         if problem:
             print(f"проверка не отработала: {problem}", file=sys.stderr)
             return 2

@@ -179,11 +179,11 @@ def main(argv: list[str] | None = None) -> int:
         return selftest()
 
     записи, err = список(args.root)
-    if err:
+    if err or записи is None:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
     найдено, err = копии(args.root)
-    if err:
+    if err or найдено is None:
         print(f"проверка не отработала: {err}", file=sys.stderr)
         return 2
 

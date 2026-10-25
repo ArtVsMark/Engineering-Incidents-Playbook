@@ -94,6 +94,7 @@ import argparse
 import ast
 import sys
 from pathlib import Path
+from typing import Any, cast
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -323,7 +324,8 @@ def _режет_не_по_nul(call: ast.Call) -> bool:
     Разделитель-переменная находкой не считается: чему она равна, разбор
     исходника не знает, и красное на ней было бы догадкой (051).
     """
-    if call.func.attr == "splitlines":
+    # Зовущий сюда передаёт только вызов метода (`n.func` — ast.Attribute).
+    if cast(ast.Attribute, call.func).attr == "splitlines":
         return True
     sep = (
         call.args[0]
@@ -348,7 +350,8 @@ def _узлы_области(корень: ast.AST) -> list[ast.AST]:
     elif isinstance(корень, ast.Lambda):
         стек = [корень.body]
     else:
-        стек = list(корень.body)
+        # Остальные области — функции: у них тело есть всегда.
+        стек = list(cast(Any, корень).body)
     out: list[ast.AST] = []
     while стек:
         n = стек.pop()
@@ -403,13 +406,20 @@ def unsplit(source: str) -> list[tuple[int, str]]:
     области = [tree, *(n for n in ast.walk(tree) if isinstance(n, ОБЛАСТИ))]
     for область in области:
         # Привязка срабатывает в КОНЦЕ правой части: она вычисляется раньше.
-        события: list[tuple[tuple[int, int], int, str, ast.AST]] = []
+        # Узел события — ast.Name или ast.Call: разбор ниже по виду события.
+        события: list[tuple[tuple[int, int], int, str, Any]] = []
 
-        def привязка(где: ast.AST, цель: ast.AST, связать: bool, события: list = события) -> None:
+        def привязка(
+            где: ast.expr,
+            цель: ast.AST,
+            связать: bool,
+            события: list[tuple[tuple[int, int], int, str, Any]] = события,
+        ) -> None:
             for имя in _имена(цель):
                 события.append(
                     (
-                        (где.end_lineno, где.end_col_offset),
+                        # Разобранному исходнику ast проставляет конец всегда.
+                        (cast(int, где.end_lineno), cast(int, где.end_col_offset)),
                         1,
                         "связать" if связать else "развязать",
                         ast.Name(id=имя),

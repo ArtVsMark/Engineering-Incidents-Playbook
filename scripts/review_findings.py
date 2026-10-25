@@ -373,7 +373,7 @@ def main(argv: list[str] | None = None) -> int:
     # ── уборка: снятое механизмом уходит из задачи ─────────────────────────
     if args.sweep:
         было_снято, почему = снятые(args.repo)
-        if почему:
+        if почему or было_снято is None:
             print(f"не отработал: {почему}", file=sys.stderr)
             return 2
         номер, тело, почему = live_issue(args.repo)
@@ -397,7 +397,7 @@ def main(argv: list[str] | None = None) -> int:
         return code if code == 2 else (0 if not осталось else 1)
 
     записи, почему = comments(args.repo, args.pr)
-    if почему:
+    if почему or записи is None:
         print(f"не отработал: {почему}", file=sys.stderr)
         return 2
 

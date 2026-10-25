@@ -362,6 +362,9 @@ def проба_неверна(rec: dict, schema: object) -> str | None:
     if "refuted_by" not in rec and not isinstance(rec.get(ДИАЛЕКТ_ПРОБЫ), dict):
         return "`absent` — объект `{substring, globs}` (диалект до 1.9)"
     п = проба(rec)
+    if п is None:
+        # `refuted_by: null` в ответе ниже 1.9: пробы нет, а форма заявлена.
+        return "`refuted_by.globs` — непустой список масок путей"
     маски, строки = п["globs"], п["contains"]
     if (
         not isinstance(маски, list)
@@ -571,15 +574,16 @@ def даты_неверны(rec: dict) -> list[str]:
         сырое = rec.get(поле)
         if сырое in (None, ""):
             continue
-        if дата(сырое) is None:
+        когда = дата(сырое)
+        if когда is None:
             out.append(
                 f"`{поле}` — не дата вида ГГГГ-ММ-ДД: «{str(сырое)[:40]}». Даты "
                 "в ответе сравнивает машина, а «16.09» и «Sep 16» она сравнить "
                 "не может"
             )
-        elif дата(сырое) > СЕГОДНЯ:
+        elif когда > СЕГОДНЯ:
             out.append(
-                f"`{поле}` в будущем — {дата(сырое).isoformat()}. Сверка, "
+                f"`{поле}` в будущем — {когда.isoformat()}. Сверка, "
                 "которой ещё не было, записана как бывшая"
             )
     сверено, решено = дата(rec.get("analysed")), дата(rec.get("decided"))

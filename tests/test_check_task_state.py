@@ -37,7 +37,7 @@ def test_chitaetsya_postranichno_i_po_elementu(monkeypatch: pytest.MonkeyPatch) 
 
     monkeypatch.setattr(cts, "gh", поддельный)
     pulls, почему = cts.pulls_for("abc")
-    assert почему == ""
+    assert почему == "" and pulls is not None
     assert [p["number"] for p in pulls] == [7, 8]
     (args,) = вызовы
     assert "--paginate" in args
