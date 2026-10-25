@@ -10,10 +10,9 @@
 import json
 from pathlib import Path
 
-import pytest
-
 import answer_form as af
 import check_answer as ca
+import pytest
 
 ИСТОЧНИК = "o/r:scripts/x.py@0123abc"
 

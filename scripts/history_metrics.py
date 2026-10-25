@@ -71,12 +71,11 @@ import sys
 import tarfile
 from pathlib import Path
 
-import proc
-
 # Определение локальной ссылки берётся у гейта ссылок, а не переписывается:
 # две формулировки одной территории расходятся молча, а разойдясь
 # здесь, они дали бы расхождение чисел на ровном месте.
 import check_links
+import proc
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -419,7 +418,7 @@ def check(root: Path) -> int:
                 "о себе самой"
             )
 
-    for num, row in written.items():
+    for num in written:
         problems.append(
             f"строка v{num}: такого тега нет. Строка пережила выпуск либо "
             "поставлена вперёд него и обещает то, чего не было"

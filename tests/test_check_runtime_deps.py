@@ -6,9 +6,8 @@
 и она удаляется в том же тесте.
 """
 
-import pytest
-
 import check_runtime_deps as m
+import pytest
 
 БЕЗ_УСТАНОВКИ = "jobs:\n  catalogue:\n    steps:\n      - run: python scripts/{s}\n"
 С_УСТАНОВКОЙ = (

@@ -41,7 +41,10 @@ TIMED_OUT: Final = 124
 
 
 def _как_вызов(data: bytes | str | None, текстом: bool) -> bytes | str:
-    """Вывод того же рода, что ждёт вызывающий: у `TimeoutExpired` он бывает байтами и при `text=True`."""
+    """Вывод того же рода, что ждёт вызывающий.
+
+    У `TimeoutExpired` он бывает байтами и при `text=True`.
+    """
     if data is None:
         data = b""
     if текстом:

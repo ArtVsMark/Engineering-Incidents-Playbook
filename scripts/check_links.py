@@ -121,11 +121,14 @@ def main() -> int:
                 problems.append(f"{rel}: ссылка в никуда → {raw}")
                 continue
             # Якорь проверяем только у документов: у каталога его быть не может.
-            if anchor and path.is_file() and path.suffix == ".md":
-                if re.sub(r"[^\w-]", "", anchor.lower()) not in {
-                    re.sub(r"[^\w-]", "", a) for a in anchors(path)
-                }:
-                    problems.append(f"{rel}: якоря нет → {raw}")
+            if (
+                anchor
+                and path.is_file()
+                and path.suffix == ".md"
+                and re.sub(r"[^\w-]", "", anchor.lower())
+                not in {re.sub(r"[^\w-]", "", a) for a in anchors(path)}
+            ):
+                problems.append(f"{rel}: якоря нет → {raw}")
 
     if checked == 0:
         print(

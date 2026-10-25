@@ -12,10 +12,9 @@ import json
 import re
 from pathlib import Path
 
-import pytest
-
 import build_text_widths as btw
 import consumers_picture as cp
+import pytest
 import python_badge as pb
 import text_width as tw
 

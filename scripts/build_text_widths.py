@@ -29,8 +29,8 @@ import argparse
 import hashlib
 import json
 import sys
-from pathlib import Path
 from collections.abc import Callable
+from pathlib import Path
 
 ТАБЛИЦА = Path(__file__).resolve().parent / "text_widths.json"
 

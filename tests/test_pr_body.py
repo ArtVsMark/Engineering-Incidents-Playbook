@@ -13,9 +13,8 @@
 import re
 from pathlib import Path
 
-import pytest
-
 import pr_body as pb
+import pytest
 from conftest import write
 
 TRAILERS = "Co-Authored-By: Claude <noreply@anthropic.com>"

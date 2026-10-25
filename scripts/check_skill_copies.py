@@ -92,7 +92,7 @@ def расхождения(эталон: Path, копия: Path) -> list[str]:
         строки_а = а[путь].decode("utf-8", "replace").splitlines()
         строки_б = б[путь].decode("utf-8", "replace").splitlines()
         номер = next(
-            (i for i, (x, y) in enumerate(zip(строки_а, строки_б), 1) if x != y),
+            (i for i, (x, y) in enumerate(zip(строки_а, строки_б, strict=False), 1) if x != y),
             min(len(строки_а), len(строки_б)) + 1,
         )
         out.append(f"{путь} расходится с каталогом, первая разная строка {номер}")

@@ -33,7 +33,6 @@
 import argparse
 import json
 import re
-import subprocess
 import sys
 from pathlib import Path
 
@@ -46,7 +45,7 @@ RULE_RE = re.compile(r"^(\d{3})-([a-z0-9-]+)\.md$")
 SLUG_RE = re.compile(r"^[a-z][a-z0-9-]*$")
 #: «Адрес или проза» — один предикат на каталог: тот же, что судит след
 #: предложения и половиной — `where` в ответах потребителей.
-from check_bindings import разрешимый_адрес, ЗАДАЧА_RE  # noqa: E402
+from check_bindings import ЗАДАЧА_RE, разрешимый_адрес  # noqa: E402
 from collect_changelog import ЗАГЛУШКА_ФРАГМЕНТА  # noqa: E402
 
 #: Каркас английской стороны. Заготовка в репозитории одна и русская; делать
@@ -91,7 +90,7 @@ EN_SKELETON = """# <One-line rule: a claim, not a topic>
 {trail}
 
 See also: <neighbouring rules>.
-"""
+"""  # noqa: E501 — строка «Portable beyond…» в шаблоне: перенос изменил бы вывод
 
 
 def existing(root: Path) -> dict[str, str]:
@@ -150,10 +149,7 @@ def trail_resolves(trail: str, root: Path) -> bool:
         }
     except OSError, ValueError, KeyError, TypeError:
         return False
-    for repo in known:
-        if trail.startswith(repo) and разрешимый_адрес(trail[len(repo) :]):
-            return True
-    return False
+    return any(trail.startswith(repo) and разрешимый_адрес(trail[len(repo) :]) for repo in known)
 
 
 def proposal(root: Path, key: str) -> tuple[dict, str | None]:
@@ -411,8 +407,8 @@ def main(argv: list[str] | None = None) -> int:
         "  • утверждение, инцидент с числами, механизм поломки;\n"
         "  • граница «НЕ работает» — без неё гейт полноты не пропустит;\n"
         "  • английская сторона по существу, а не подстрочником;\n"
-        f"  • вердикт о соседях в .rules/neighbours.json по ГОТОВОМУ тексту,\n"
-        f"    а не по этому черновику — гейт сверяет именно готовый;\n"
+        "  • вердикт о соседях в .rules/neighbours.json по ГОТОВОМУ тексту,\n"
+        "    а не по этому черновику — гейт сверяет именно готовый;\n"
         "  • ответ о правиле в .rules/bindings.json вместо «не рассмотрено».\n"
         "Потом: закоммитить, затем python scripts/build_rules_index.py —\n"
         "дата берётся из истории файла, и до коммита её нет."

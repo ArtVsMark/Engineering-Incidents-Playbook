@@ -107,7 +107,7 @@ def problems(table: list[list[str]]) -> list[str]:
                 "какой из них нет, читателю не видно"
             )
             continue
-        for имя, значение in zip(COLUMNS, row[1:]):
+        for имя, значение in zip(COLUMNS, row[1:], strict=False):
             if not значение:
                 out.append(f"{роль}: колонка «{имя}» пуста")
         возражение = row[2]

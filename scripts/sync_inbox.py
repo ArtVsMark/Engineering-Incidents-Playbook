@@ -50,15 +50,14 @@
 
 import argparse
 import json
-import re
 import os
-import subprocess
+import re
 import sys
+import urllib.error
+import urllib.request
 
 import ghcli
 from build_rules_index import действующие_в_выгрузке
-import urllib.error
-import urllib.request
 
 #: По этой метке задача находится снова. Заголовок для этого не годится: его
 #: правят руками, и тогда прогон заведёт вторую задачу вместо обновления.
@@ -603,7 +602,9 @@ def body_for(
         lines += [f"- {x}" for x in расхождения]
         lines += [
             "",
-            "Это [правило 157](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/157-a-contract-version-bump-is-a-re-read.md): "
+            "Это [правило "
+            # Адрес — одним литералом: набор и гейты ищут его в исходнике целиком.
+            "157](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/blob/main/rules/ru/157-a-contract-version-bump-is-a-re-read.md): "  # noqa: E501
             "смена версии чужого контракта — повод перечитать ОТВЕТЫ, а не "
             "только поправить формат. Пока номера расходятся, ответы ниже "
             "собраны под другой контракт.",

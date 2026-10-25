@@ -250,20 +250,23 @@ def advise(facts: object, schema: dict, current: str) -> list[str]:
                 f"{name}: поле вне договора в корне — место ему в exchange.<тема> со своей schema"
             )
     published = facts.get("schema")
-    if isinstance(published, str) and re.fullmatch(r"\d+\.\d+", published):
+    if (
+        isinstance(published, str)
+        and re.fullmatch(r"\d+\.\d+", published)
         # не проза: номер версии «мажор.минор[.патч]».
-        if tuple(map(int, published.split("."))) < tuple(map(int, current.split("."))):
-            said.append(
-                f"schema: формат {published} при договоре {current} — файл отстал"
-                + (
-                    MOVED
-                    # не проза: номер версии «мажор.минор[.патч]».
-                    if published.split(".")[0] < current.split(".")[0]
-                    # не проза: номер версии «мажор.минор[.патч]».
-                    and current.split(".")[0] == "2"
-                    else ""
-                )
+        and tuple(map(int, published.split("."))) < tuple(map(int, current.split(".")))
+    ):
+        said.append(
+            f"schema: формат {published} при договоре {current} — файл отстал"
+            + (
+                MOVED
+                # не проза: номер версии «мажор.минор[.патч]».
+                if published.split(".")[0] < current.split(".")[0]
+                # не проза: номер версии «мажор.минор[.патч]».
+                and current.split(".")[0] == "2"
+                else ""
             )
+        )
     return said
 
 
@@ -635,7 +638,8 @@ def selftest() -> int:
             globals()["CONTRACT_PATH"] = saved_path
             sys.argv = saved_argv
     print(
-        f"  {'да ' if len(broken) == before else 'НЕТ'} — --contract: старый номер в прозе — 1, верный — 0"
+        f"  {'да ' if len(broken) == before else 'НЕТ'} — --contract: "
+        "старый номер в прозе — 1, верный — 0"
     )
 
     for bad in ("1.4", "v1.4.0", " ", "1.4.0.1"):
@@ -666,7 +670,7 @@ def selftest() -> int:
     # образцом, — ровно так он лежит в выпуске, — работает без дерева каталога.
     # Обе стороны: образец — исход 0, испорченный образец — исход 1.
     import shutil  # noqa: PLC0415
-    import subprocess  # noqa: PLC0415
+
     import proc  # noqa: PLC0415
 
     with tempfile.TemporaryDirectory(dir=os.environ.get("RUNNER_TEMP")) as tmp:

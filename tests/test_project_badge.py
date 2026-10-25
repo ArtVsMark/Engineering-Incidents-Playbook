@@ -4,9 +4,8 @@ import json
 import re
 from pathlib import Path
 
-import pytest
-
 import project_badge as pb
+import pytest
 import python_badge
 
 
@@ -105,7 +104,11 @@ def test_растяжка_поровну_на_части():
     ]
     свои = [python_badge._ширина(т) for т in "abc"]
     assert sum(ширины) - sum(свои) == 10
-    assert max(a - b for a, b in zip(ширины, свои)) - min(a - b for a, b in zip(ширины, свои)) <= 1
+    assert (
+        max(a - b for a, b in zip(ширины, свои, strict=False))
+        - min(a - b for a, b in zip(ширины, свои, strict=False))
+        <= 1
+    )
 
 
 def test_без_зон_выравнивать_нечего():

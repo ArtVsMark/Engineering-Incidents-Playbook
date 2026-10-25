@@ -12,7 +12,6 @@ from pathlib import Path
 import build_facts as bf
 from conftest import write, замер
 
-
 ПРОГОН = """\
 name: ci
 on:
@@ -314,7 +313,7 @@ def test_договор_фактов_свой_и_номер_один():
     """
     номер = (bf.ROOT / "export" / "facts" / "facts.version").read_text(encoding="utf-8")
     # не проза: номер версии «мажор.минор[.патч]».
-    assert bf.SCHEMA == ".".join(номер.strip().split(".")[:2])
+    assert ".".join(номер.strip().split(".")[:2]) == bf.SCHEMA
     прогон = (bf.ROOT / ".github" / "workflows" / "badges.yml").read_text(encoding="utf-8")
     assert "python scripts/check_facts.py --file .github/badges/facts.json" in прогон
     assert "releases/download" not in прогон
@@ -343,9 +342,12 @@ def test_токен_записи_живёт_только_в_шаге_публи�
 
 
 def test_серия_договора_одна_и_без_перевода_строки():
-    """Номер ``2.0\\n`` и ``2.0.0\\n`` разбирает один код, и серия не несёт перевода строки (обзор #901)."""
-    import pytest
+    """Номер ``2.0\\n`` и ``2.0.0\\n`` разбирает один код.
+
+    Серия не несёт перевода строки (обзор #901).
+    """
     import check_facts
+    import pytest
 
     assert check_facts.contract_series("2.0.0\n") == "2.0"
     with pytest.raises(ValueError):

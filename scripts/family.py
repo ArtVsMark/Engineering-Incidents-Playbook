@@ -58,8 +58,8 @@ import argparse
 import datetime as dt
 import json
 import sys
-from pathlib import Path
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 from aggregate_bindings import fetch

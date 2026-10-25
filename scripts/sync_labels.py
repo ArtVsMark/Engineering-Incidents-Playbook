@@ -25,9 +25,11 @@
 """
 
 import argparse
-import json
 import os
-import subprocess
+
+# Не мёртвый: набор подменяет `sync_labels.subprocess.run` — тот же объект, что
+# зовёт обёртка процесса (tests/test_sync_labels.py).
+import subprocess  # noqa: F401
 import sys
 from pathlib import Path
 
@@ -60,11 +62,11 @@ def declared() -> tuple[list[dict], str | None]:
             out[-1]["color"] = _value(line.split(":", 1)[1])
         elif out and line.startswith("description:"):
             out[-1]["description"] = _value(line.split(":", 1)[1])
-    bad = [l for l in out if not l.get("color")]
+    bad = [метка for метка in out if not метка.get("color")]
     if bad:
         return [], (
             "без цвета объявлены: "
-            + ", ".join(l["name"] for l in bad)
+            + ", ".join(метка["name"] for метка in bad)
             + " — файл разобран неверно или запись неполна"
         )
     return out, None
@@ -110,7 +112,7 @@ def main() -> int:
     if code != 0:
         print(f"проверка не отработала: список меток не прочитан — {почему}", file=sys.stderr)
         return 2
-    have = {l["name"]: l for l in метки}
+    have = {метка["name"]: метка for метка in метки}
 
     created, fixed = [], []
     for label in want:
@@ -161,7 +163,7 @@ def main() -> int:
                     )
                     return 2
 
-    extra = sorted(set(have) - {l["name"] for l in want})
+    extra = sorted(set(have) - {метка["name"] for метка in want})
 
     verb = "завелись бы" if args.dry_run else "заведены"
     if created:

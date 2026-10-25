@@ -58,8 +58,8 @@ FONT = "Inter,Segoe UI,Helvetica,Arial,sans-serif"
 # Словарь механизмов — один на весь проект (правило 209). Импорт, а не копия:
 # копия молча отстанет, и первым это увидит читатель картинки.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_bindings import MECHANISM_ORDER, МАШИННЫЕ  # noqa: E402
 import text_width  # noqa: E402
+from check_bindings import MECHANISM_ORDER, МАШИННЫЕ  # noqa: E402
 
 #: Устаревшие слова, которые ещё отдают потребители. Показываются, пока ими
 #: отвечают: подмена устаревшего слова одним из новых была бы догадкой за

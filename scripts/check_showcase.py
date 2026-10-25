@@ -61,7 +61,6 @@
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -96,6 +95,7 @@ def badges_in_tree(root) -> list[str]:
     рисует их локально и обязан это делать — он кладёт их на свою ветку.
     """
     import subprocess
+
     import proc  # noqa: PLC0415
 
     try:

@@ -23,7 +23,8 @@ HTTPS, без API и без клона, и сводятся в одну табл
   004 — расхождение ответа потребителя — штатное состояние сводки, а не авария прогона;
   016 — длинный список находок обрезается с маркером обрыва, а не молча;
   079 — срок свежести ответа считается от успешного чтения, а не от объявления потребителя;
-  096 — .rules разведён по жизненному циклу: реестр, ответ, предложения и набор витрины — разные файлы;
+  096 — .rules разведён по жизненному циклу: реестр, ответ, предложения и набор
+        витрины — разные файлы;
   146 — обязательная проверка сверяет сводку с ОТВЕТОМ на диске, а не саму с собой;
   164 — номер версии говорит, чего он версия: расхождение версий формата у
         потребителей и у своей заготовки называется на КАЖДОМ изменении;
@@ -49,6 +50,7 @@ HTTPS, без API и без клона, и сводятся в одну табл
 """
 
 import argparse
+import contextlib
 import datetime as dt
 import email.utils
 import json
@@ -57,8 +59,8 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from pathlib import Path
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 # Словарь механизмов живёт в одном месте (правило 209). Импорт, а не копия:
@@ -797,15 +799,13 @@ def schema_findings(slices: list[dict]) -> tuple[list[str], list[str]]:
     # ВЕРСИЯ ВЫГРУЗКИ ЧИТАЕТСЯ ЖИВОЙ, ИЗ САМОЙ ВЫГРУЗКИ. Константа рядом
     # разошлась бы с ней молча — тот же приём, что и у номера ответа (049).
     export_ver = ""
-    try:
+    with contextlib.suppress(OSError, ValueError):
         export_ver = (
             json.loads((ROOT / "export" / "rules.json").read_text(encoding="utf-8"))
             .get("contracts", {})
             .get("export")
             or ""
         )
-    except OSError, ValueError:
-        pass
     чужое = schema_lag(slices, own)
     if export_ver:
         чужое += export_lag(slices, export_ver)

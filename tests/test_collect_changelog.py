@@ -8,9 +8,8 @@
 import subprocess
 from pathlib import Path
 
-import pytest
-
 import collect_changelog as cc
+import pytest
 from conftest import write
 
 

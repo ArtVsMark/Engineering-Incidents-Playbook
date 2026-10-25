@@ -64,7 +64,6 @@
 
 import argparse
 import re
-import subprocess
 import sys
 from pathlib import Path
 
@@ -215,7 +214,10 @@ def diff_of(диапазон: str) -> tuple[str | None, str]:
 
 def selftest() -> int:
     """Гейт прогоняется тем, что обязан найти И что обязан пропустить (140)."""
-    ДИФФ = lambda было, стало: "\n".join([f"-{s}" for s in было] + [f"+{s}" for s in стало])
+
+    def ДИФФ(было, стало):
+        return "\n".join([f"-{s}" for s in было] + [f"+{s}" for s in стало])
+
     случаи = [
         # ── обязан НАЙТИ ──────────────────────────────────────────────────
         (

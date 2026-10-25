@@ -10,9 +10,8 @@
 `.github/workflows/*.yml`.
 """
 
-import pytest
 import check_python_version as cv
-
+import pytest
 
 ПЛАНКА = (3, 12)
 
@@ -433,11 +432,13 @@ def _матрица(tmp_path, матрица: str, установка: str = "")
             [(3, 14), (3, 15)],
         ),
         (
-            '      matrix:\n        include:\n          - os: ubuntu-latest\n            python: "3.14"\n',
+            "      matrix:\n        include:\n          - os: ubuntu-latest\n "
+            '           python: "3.14"\n',
             [(3, 14)],
         ),
         (
-            '      matrix:\n        python:\n          - "3.14"  # планка\n          - 3.15 # обязательная\n',
+            '      matrix:\n        python:\n          - "3.14" '
+            " # планка\n          - 3.15 # обязательная\n",
             [(3, 14), (3, 15)],
         ),  # комментарии у ячеек (обзор #928)
         (
@@ -493,7 +494,8 @@ def test_гейт_называет_отказ_матрицы(tmp_path, capsys):
     with open(корень / ".github" / "workflows" / "ci.yml", "a", encoding="utf-8") as f:
         f.write(
             "  lint:\n    runs-on: ubuntu-latest\n    steps:\n"
-            '      - uses: actions/setup-python@v6\n        with:\n          python-version: "3.14"\n'
+            "      - uses: actions/setup-python@v6\n        with:\n "
+            '         python-version: "3.14"\n'
         )
     assert cv.main(["--root", str(корень)]) == 1
     assert "не формы X.Y" in capsys.readouterr().err

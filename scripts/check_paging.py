@@ -56,9 +56,10 @@ import argparse
 import ast
 import json
 import re
-import shell_words
 import sys
 from pathlib import Path
+
+import shell_words
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -148,7 +149,7 @@ def звенья(путь: str) -> list[str]:
         # `repos/владелец/имя/…` буквально — два звена репозитория
         if части and not any(подстановка[:2]) and len(части) > 2:
             части, подстановка = части[2:], подстановка[2:]
-    return ["*" if п else ч for ч, п in zip(части, подстановка)]
+    return ["*" if п else ч for ч, п in zip(части, подстановка, strict=False)]
 
 
 def разбор_api(слова: list[str]) -> tuple[str | None, bool, bool]:

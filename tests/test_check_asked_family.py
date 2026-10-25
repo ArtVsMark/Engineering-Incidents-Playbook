@@ -3,9 +3,8 @@
 import subprocess
 from pathlib import Path
 
-import pytest
-
 import check_asked_family as af
+import pytest
 
 
 def git(root: Path, *args: str) -> str:

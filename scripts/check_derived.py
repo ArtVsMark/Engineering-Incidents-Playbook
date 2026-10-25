@@ -40,7 +40,6 @@ scripts/aggregate_bindings.py». Запрет читался как «не пр�
 """
 
 import argparse
-import subprocess
 import sys
 from pathlib import Path
 

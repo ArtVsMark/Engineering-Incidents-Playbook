@@ -13,11 +13,9 @@
 ступень, и заметить это может только тот, кто помнит границу.
 """
 
-import pytest
-
 import coverage_badge as cb
+import pytest
 from conftest import write, замер
-
 
 # ── порог цвета: граница проверяется с обеих сторон ────────────────────────
 

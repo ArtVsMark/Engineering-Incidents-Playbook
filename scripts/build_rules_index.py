@@ -185,8 +185,10 @@ AREA_RE = {
 AREAS = {
     "аудит": {
         "en": "audit",
-        "about_ru": "как искать неизвестное и что делать с найденным: поверхности, статус находки, вердикты",
-        "about_en": "finding the unknown and handling what turns up: surfaces, finding status, verdicts",
+        "about_ru": "как искать неизвестное и что делать с найденным: "
+        "поверхности, статус находки, вердикты",
+        "about_en": "finding the unknown and handling what turns up: "
+        "surfaces, finding status, verdicts",
     },
     "документация": {
         "en": "documentation",
@@ -195,13 +197,17 @@ AREAS = {
     },
     "процесс": {
         "en": "process",
-        "about_ru": "как устроена сама работа: чем правило держится, откуда берётся план, чем доказано завершение",
-        "about_en": "how the work itself is arranged: what backs a rule, where the plan comes from, what proves completion",
+        "about_ru": "как устроена сама работа: чем правило держится, "
+        "откуда берётся план, чем доказано завершение",
+        "about_en": "how the work itself is arranged: what backs a rule, "
+        "where the plan comes from, what proves completion",
     },
     "код": {
         "en": "code",
-        "about_ru": "решения внутри кода: блокировки, запись, уборка после сбоя, переходные состояния",
-        "about_en": "decisions inside the code: locks, writes, cleanup after failure, transient states",
+        "about_ru": "решения внутри кода: блокировки, запись, уборка "
+        "после сбоя, переходные состояния",
+        "about_en": "decisions inside the code: locks, writes, cleanup "
+        "after failure, transient states",
     },
     "параллельная работа": {
         "en": "parallel work",
@@ -236,7 +242,8 @@ AREAS = {
     "архитектура": {
         "en": "architecture",
         "about_ru": "границы и швы: где обобщать, куда поднимать общее, чем платит заглушка",
-        "about_en": "boundaries and seams: when to generalise, where shared code goes, what a shim costs",
+        "about_en": "boundaries and seams: when to generalise, where "
+        "shared code goes, what a shim costs",
     },
     "надёжность": {
         "en": "reliability",
@@ -245,13 +252,15 @@ AREAS = {
     },
     "безопасность": {
         "en": "security",
-        "about_ru": "недоверенный вход и права: списки разрешённого, изоляция, осознанное ослабление",
+        "about_ru": "недоверенный вход и права: списки разрешённого, "
+        "изоляция, осознанное ослабление",
         "about_en": "untrusted input and privilege: allowlists, isolation, deliberate weakening",
     },
     "гейты": {
         "en": "gates",
         "about_ru": "устройство самих проверок: что ловят, чем краснеют, куда двигают бюджет",
-        "about_en": "how the guards themselves work: what they catch, when they go red, which way the budget moves",
+        "about_en": "how the guards themselves work: what they catch, "
+        "when they go red, which way the budget moves",
     },
     "агентские сессии": {
         "en": "agent sessions",
@@ -260,13 +269,17 @@ AREAS = {
     },
     "интерфейс": {
         "en": "interface",
-        "about_ru": "что видит и понимает получатель: пустое состояние, сообщения, завершённость действия",
-        "about_en": "what the recipient sees and understands: empty states, messages, whether an action finished",
+        "about_ru": "что видит и понимает получатель: пустое состояние, "
+        "сообщения, завершённость действия",
+        "about_en": "what the recipient sees and understands: empty "
+        "states, messages, whether an action finished",
     },
     "контракты": {
         "en": "contracts",
-        "about_ru": "договор между частями: что значит сигнал, что такое отмена, как контракт меняется",
-        "about_en": "the agreement between parts: what a signal means, what cancellation is, how a contract may change",
+        "about_ru": "договор между частями: что значит сигнал, что такое "
+        "отмена, как контракт меняется",
+        "about_en": "the agreement between parts: what a signal means, "
+        "what cancellation is, how a contract may change",
     },
     "релиз": {
         "en": "release",
@@ -296,7 +309,8 @@ AREAS = {
     "продукт": {
         "en": "product",
         "about_ru": "решения в пользу пользователя: умолчания, право удалить, момент показа",
-        "about_en": "decisions made in the user's favour: defaults, the right to delete, when to show it",
+        "about_en": "decisions made in the user's favour: defaults, "
+        "the right to delete, when to show it",
     },
     "роли": {
         "en": "roles",
@@ -306,7 +320,8 @@ AREAS = {
     "ИИ": {
         "en": "AI",
         "about_ru": "модель как часть продукта: чем проверяют сгенерированное, что уходит в промпт",
-        "about_en": "the model as part of the product: what verifies generated output, what goes into the prompt",
+        "about_en": "the model as part of the product: what verifies "
+        "generated output, what goes into the prompt",
     },
     "витрины": {
         "en": "showcases",
@@ -361,7 +376,8 @@ AREAS = {
     "заимствование": {
         "en": "borrowing",
         "about_ru": "перенос чужого решения и границы «у автора работает»",
-        "about_en": "adopting somebody else's solution, and the limits of \u201cit works for the author\u201d",
+        "about_en": "adopting somebody else's solution, and the limits "
+        "of \u201cit works for the author\u201d",
     },
     "история": {
         "en": "history",
@@ -459,20 +475,30 @@ TIERS = {
     1: {
         "ru": "правила и роли",
         "en": "rules and roles",
-        "about_ru": "как правило заводится, живёт, доезжает до потребителя и умирает — и кто на всё это смотрит: формат, вердикты, контракт, миграции, состав ролей",
-        "about_en": "how a rule is born, lives, reaches a consumer and dies — and who looks at all of it: format, verdicts, contract, migrations, the set of roles",
+        "about_ru": "как правило заводится, живёт, доезжает до потребителя "
+        "и умирает — и кто на всё это смотрит: формат, вердикты, "
+        "контракт, миграции, состав ролей",
+        "about_en": "how a rule is born, lives, reaches a consumer and "
+        "dies — and who looks at all of it: format, verdicts, "
+        "contract, migrations, the set of roles",
     },
     2: {
         "ru": "конвейер и CI",
         "en": "the pipeline and CI",
-        "about_ru": "чем изменение доезжает до общей ветки и чем оно по дороге проверяется: очередь, слияние, выпуск, атрибуция, квоты, прогоны",
-        "about_en": "how a change reaches the shared branch and what checks it on the way: queue, merge, release, attribution, quotas, CI runs",
+        "about_ru": "чем изменение доезжает до общей ветки и чем оно "
+        "по дороге проверяется: очередь, слияние, выпуск, "
+        "атрибуция, квоты, прогоны",
+        "about_en": "how a change reaches the shared branch and what "
+        "checks it on the way: queue, merge, release, attribution, "
+        "quotas, CI runs",
     },
     3: {
         "ru": "гейты и процессы",
         "en": "gates and processes",
-        "about_ru": "чем правило держится и как устроена работа вокруг него: исходы проверки, роли, трекер",
-        "about_en": "what backs a rule and how the work around it is arranged: check outcomes, roles, tracker",
+        "about_ru": "чем правило держится и как устроена работа вокруг "
+        "него: исходы проверки, роли, трекер",
+        "about_en": "what backs a rule and how the work around it is "
+        "arranged: check outcomes, roles, tracker",
     },
     4: {
         "ru": "код и тесты",
@@ -483,7 +509,8 @@ TIERS = {
     5: {
         "ru": "всё остальное",
         "en": "everything else",
-        "about_ru": "нужное, но не блокирующее подключение: документация, витрины, приватность, продукт",
+        "about_ru": "нужное, но не блокирующее подключение: документация, "
+        "витрины, приватность, продукт",
         "about_en": "needed but not blocking adoption: documentation, showcases, privacy, product",
     },
 }
@@ -815,12 +842,12 @@ def check_pairs(found: dict[str, dict[str, Path]]) -> list[str]:
     problems = []
     for num in sorted(found):
         slot = found[num]
-        missing = [l for l in LANGS if l not in slot]
+        missing = [lang for lang in LANGS if lang not in slot]
         if missing:
             have = next(iter(slot.values())).name
             problems.append(f"{num}: нет перевода на {', '.join(missing)} — есть только {have}")
         elif len({p.name for p in slot.values()}) > 1:
-            names = " / ".join(f"{l}:{slot[l].name}" for l in LANGS)
+            names = " / ".join(f"{lang}:{slot[lang].name}" for lang in LANGS)
             problems.append(f"{num}: имена файлов расходятся — {names}")
     return problems
 
@@ -871,10 +898,10 @@ def check_tiers(found: dict[str, dict[str, Path]]) -> tuple[dict[str, int], list
     result: dict[str, int] = {}
     for num in sorted(found):
         slot = found[num]
-        if not all(l in slot for l in LANGS):
+        if not all(lang in slot for lang in LANGS):
             continue  # об этом уже скажет check_pairs
         got: dict[str, tuple[int | None, str]] = {lang: tier_of(slot[lang], lang) for lang in LANGS}
-        missing = [l for l in LANGS if got[l][0] is None]
+        missing = [lang for lang in LANGS if got[lang][0] is None]
         if missing:
             for lang in missing:
                 problems.append(
@@ -896,9 +923,9 @@ def check_tiers(found: dict[str, dict[str, Path]]) -> tuple[dict[str, int], list
             )
             continue
         wrong = [
-            f"{l} «{got[l][1]}» ждёт «{TIERS[tier][l]}»"
-            for l in LANGS
-            if got[l][1] != TIERS[tier][l]
+            f"{lang} «{got[lang][1]}» ждёт «{TIERS[tier][lang]}»"
+            for lang in LANGS
+            if got[lang][1] != TIERS[tier][lang]
         ]
         if wrong:
             problems.append(f"{num}: имя ступени разошлось со словарём — {'; '.join(wrong)}")
@@ -917,7 +944,7 @@ def check_areas(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list[str]]
     result: dict[str, list[str]] = {}
     for num in sorted(found):
         slot = found[num]
-        if not all(l in slot for l in LANGS):
+        if not all(lang in slot for lang in LANGS):
             continue  # об этом уже скажет check_pairs
         ru = areas_of(slot["ru"], "ru")
         en = areas_of(slot["en"], "en")
@@ -1638,7 +1665,7 @@ def check_trails(found: dict[str, dict[str, Path]]) -> tuple[dict[str, list], li
     KNOWN.update(known)
     for num in sorted(found):
         slot = found[num]
-        if not all(l in slot for l in LANGS):
+        if not all(lang in slot for lang in LANGS):
             continue
         ru, err_ru = trails_of(slot["ru"], "ru", known)
         en, err_en = trails_of(slot["en"], "en", known)

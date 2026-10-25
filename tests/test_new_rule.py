@@ -369,7 +369,10 @@ def test_anglijskaya_zagotovka_povtoryaet_razdely_russkoy():
 
     корень = Path(__file__).resolve().parent.parent
     ru = (корень / "templates" / "rule-template.md").read_text(encoding="utf-8")
-    разделы = lambda t: [s for s in t.splitlines() if s.startswith("## ")]
+
+    def разделы(t):
+        return [s for s in t.splitlines() if s.startswith("## ")]
+
     assert len(разделы(ru)) == len(разделы(nr.EN_SKELETON))
     assert ("**Переносится вне Claude Code.**" in ru) == (
         "**Portable beyond Claude Code.**" in nr.EN_SKELETON

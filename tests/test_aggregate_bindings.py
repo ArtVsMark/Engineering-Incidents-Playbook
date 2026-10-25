@@ -384,9 +384,9 @@ def cell(md: str, project: str, head: str) -> str:
     вслух, о какой колонке речь.
     """
     lines = md.splitlines()
-    header = next(l for l in lines if l.startswith("| Проект"))
+    header = next(строка for строка in lines if строка.startswith("| Проект"))
     names = [c.strip() for c in header.split("|")[1:-1]]
-    row = next(l for l in lines if l.startswith(f"| `{project}`"))
+    row = next(строка for строка in lines if строка.startswith(f"| `{project}`"))
     return [c.strip() for c in row.split("|")[1:-1]][names.index(head)]
 
 
@@ -460,7 +460,7 @@ def test_чужой_механизм_виден_там_где_у_соседа_н
 
     assert "## Чем держат другие" in md
     assert "s/g.py" in md
-    строка = next(l for l in md.splitlines() if l.startswith("| 001 |"))
+    строка = next(с for с in md.splitlines() if с.startswith("| 001 |"))
     assert "`a` — гейт: s/g.py" in строка and "`b`" in строка
 
 
@@ -588,9 +588,9 @@ def test_след_есть_а_потребитель_не_подключён(mon
 
     ab.main()
     строка = next(
-        l
-        for l in (repo / "export" / "where.md").read_text(encoding="utf-8").splitlines()
-        if l.startswith("| `тихий`")
+        с
+        for с in (repo / "export" / "where.md").read_text(encoding="utf-8").splitlines()
+        if с.startswith("| `тихий`")
     )
 
     assert "| не подключён | 1 |" in строка
@@ -887,10 +887,6 @@ def test_sled_i_proishozhdenie_schitayutsya_otdelno():
 # ── версия ответа сверяется с издателем (157) ──────────────────────────────
 
 
-def срез(repo: str, schema: str) -> dict:
-    return {"repo": repo, "schema": schema, "rules": {"001": "active"}}
-
-
 def test_otstavshaya_shema_eto_nahodka():
     """52 ответа грейдера из 153 стояли расколотым словом, и его гейт был
     зелёным: он сравнивал свою версию со своей же константой."""
@@ -923,6 +919,8 @@ def test_nepodklyuchyonnyy_ne_schitaetsya():
 # файл попал номер схемы ВЫГРУЗКИ вместо номера схемы ОТВЕТА.
 
 
+# Один срез на оба раздела: до #958 их было два с одним именем, и второй
+# молча перекрывал первый (F811).
 def срез(repo, schema, rules=None):
     return {"repo": repo, "schema": schema, "rules": rules or {"001": "active"}}
 
@@ -939,7 +937,7 @@ def test_otvet_nizhe_nashego_eto_nahodka():
     assert чужие and "0.1" in чужие[0]
 
 
-def test_otvet_bez_versii_eto_nahodka():
+def test_otvet_bez_versii_eto_nahodka_v_svodke_versiy():
     """«Версии нет» и «версия совпала» — разные ответы: подъём контракта
     такой потребитель не заметит."""
     чужие, _ = ab.schema_findings([срез("o/них", "")])

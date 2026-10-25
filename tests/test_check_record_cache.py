@@ -2,9 +2,8 @@
 
 from pathlib import Path
 
-import pytest
-
 import check_record_cache as rc
+import pytest
 
 
 def дерево(tmp_path: Path, файлы: dict[str, str]) -> Path:

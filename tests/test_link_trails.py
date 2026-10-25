@@ -23,9 +23,8 @@
 `gh` подменяется.
 """
 
-import pytest
-
 import link_trails as lt
+import pytest
 
 ME = "ArtVsMark/ArtVsMark"
 

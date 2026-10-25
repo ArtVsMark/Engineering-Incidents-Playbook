@@ -5,8 +5,8 @@
 прогонов — форма своих же `.github/workflows/*.yml`.
 """
 
-import python_badge as pb
 import pytest
+import python_badge as pb
 
 
 @pytest.fixture(autouse=True)

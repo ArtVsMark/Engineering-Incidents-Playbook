@@ -14,9 +14,8 @@
 
 from pathlib import Path
 
-import pytest
-
 import check_candidates as cc
+import pytest
 from conftest import write
 
 GOOD = """# Модель выбирается под задачу, а не берётся самая большая
@@ -222,7 +221,7 @@ def test_у_кандидата_в_выгрузке_нет_поля_номера(
     запись = bri.candidates_export()[0]
 
     assert "id" not in запись
-    assert not any(k for k in запись if "id" == k.lower() or k.endswith("_id"))
+    assert not any(k for k in запись if k.lower() == "id" or k.endswith("_id"))
 
 
 def test_чем_подтвердится_едет_вместе_с_гипотезой(repo, monkeypatch):

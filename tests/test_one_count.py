@@ -23,8 +23,6 @@ import json
 import re
 from pathlib import Path
 
-import pytest
-
 import aggregate_bindings as ab
 import audit_catalogue as ac
 import build_rules_index as b
@@ -34,6 +32,7 @@ import consumers_picture as cp
 import history_metrics as hm
 import onboard_consumer as oc
 import project_badge as pb
+import pytest
 import sync_inbox as si
 from conftest import write
 from test_sync_inbox import arm

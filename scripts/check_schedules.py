@@ -121,7 +121,7 @@ def интервал_минут(cron: str) -> int | None:
     моменты = sorted(ч * 60 + м for ч in часы for м in минуты)
     if len(моменты) == 1:
         return 24 * 60
-    промежутки = [b - a for a, b in zip(моменты, моменты[1:])]
+    промежутки = [b - a for a, b in zip(моменты, моменты[1:], strict=False)]
     промежутки.append(моменты[0] + 24 * 60 - моменты[-1])
     return min(промежутки)
 
@@ -273,7 +273,7 @@ def main(argv: list[str] | None = None) -> int:
         print("темп прогонов по расписанию разошёлся с бюджетом:", file=sys.stderr)
         for n in находки:
             print(f"  • {n}", file=sys.stderr)
-        print(f"\n  Арифметика по часам:", file=sys.stderr)
+        print("\n  Арифметика по часам:", file=sys.stderr)
         for p in пики:
             print(p, file=sys.stderr)
         return 1

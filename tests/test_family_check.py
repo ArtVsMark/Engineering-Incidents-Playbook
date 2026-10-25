@@ -9,10 +9,9 @@
 import json
 from pathlib import Path
 
-import pytest
-
 import family
 import family_check as fc
+import pytest
 
 КАТАЛОГ = family.своё_имя()
 МЕХ = "ArtVsMark/Engineering-Pipeline-Mechanisms"

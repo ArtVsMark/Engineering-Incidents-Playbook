@@ -66,11 +66,13 @@ def невидимые(текст: str) -> list[tuple[int, str]]:
     out: list[tuple[int, str]] = []
     for i, c in enumerate(текст):
         код = ord(c)
-        if c in ЗАПОЛНИТЕЛИ or unicodedata.category(c) == "Cf":
-            out.append((i, c))
-        elif 0xE0100 <= код <= 0xE01EF:
-            out.append((i, c))
-        elif 0xFE00 <= код <= 0xFE0F and not _селектор_законен(текст, i):
+        if (
+            c in ЗАПОЛНИТЕЛИ
+            or unicodedata.category(c) == "Cf"
+            or 0xE0100 <= код <= 0xE01EF
+            or 0xFE00 <= код <= 0xFE0F
+            and not _селектор_законен(текст, i)
+        ):
             out.append((i, c))
     return out
 

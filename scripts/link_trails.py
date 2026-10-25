@@ -148,12 +148,15 @@ def selftest() -> int:
     комментарий уезжает в чужую задачу, и «правило выросло отсюда» о чужом
     месте читатель уже не проверит.
     """
-    R = lambda i, repo, issue, slug="x": {
-        "id": i,
-        "slug": slug,
-        "title": {"ru": f"правило {i}"},
-        "trails": [{"repo": repo, "issue": issue}],
-    }
+
+    def R(i, repo, issue, slug="x"):
+        return {
+            "id": i,
+            "slug": slug,
+            "title": {"ru": f"правило {i}"},
+            "trails": [{"repo": repo, "issue": issue}],
+        }
+
     ME = "ArtVsMark/ArtVsMark"
     cases = [
         ("след ведёт сюда", [R("005", ME, "7")], {"7": ["005"]}),

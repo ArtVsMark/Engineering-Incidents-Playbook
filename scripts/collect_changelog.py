@@ -45,15 +45,13 @@
 import argparse
 import datetime as dt
 import re
-import subprocess
 import sys
 from pathlib import Path
-
-import proc
 
 # Что считается тегом выпуска, решает одно место на весь каталог: у второго
 # выражения разъехались бы границы, а разъехавшись — молча (правило 090).
 import history_metrics
+import proc
 
 # Что считается ответом о соседях, решает гейт, который его требует: сборка
 # режет ровно то, что он принимает (214).
@@ -175,7 +173,7 @@ def split_verdict(text: str) -> tuple[str, str]:
         (verdict if line.lstrip().startswith(VERDICT_PREFIX) else body).append(line)
     return (
         "\n".join(body).strip(),
-        " ".join(l.lstrip().lstrip(VERDICT_PREFIX).strip() for l in verdict).strip(),
+        " ".join(строка.lstrip().lstrip(VERDICT_PREFIX).strip() for строка in verdict).strip(),
     )
 
 

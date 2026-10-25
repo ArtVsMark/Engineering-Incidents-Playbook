@@ -9,11 +9,9 @@ https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest
 
 import json
 
-import pytest
-
 import check_python_next as pn
 import main_red
-
+import pytest
 from conftest import SCRIPTS
 
 #: Снимок 02.10 по существу: 3.14 стабильна, 3.15 — только пробные.

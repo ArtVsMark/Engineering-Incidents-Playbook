@@ -3,9 +3,8 @@
 import json
 from pathlib import Path
 
-import pytest
-
 import check_hook_interpreter as hi
+import pytest
 
 НАСТРОЙКИ = {
     "hooks": {
