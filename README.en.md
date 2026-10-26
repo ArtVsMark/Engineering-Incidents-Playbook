@@ -108,9 +108,9 @@ project agrees with the rest:
 
 | Project | Role in the family |
 |---|---|
-| **Engineering-Incidents-Playbook** (`EIP`, here) | the rules and their export, the answer contract, the upstream proposals channel, the `facts.json` contract, the family summary |
-| [Engineering-Pipeline-Mechanisms](https://github.com/ArtVsMark/Engineering-Pipeline-Mechanisms) (`EPM`) | pipeline steps called by a tagged address: facts, drift, automerge |
-| [ArtVsMark](https://github.com/ArtVsMark/ArtVsMark) (`AVM`) | the profile showcase — reads every project's facts; the facts contract has been held by the catalogue since 2.0 |
+| **Engineering-Incidents-Playbook** (`EIP`, here) | the rules and their export, the answer contract, the upstream proposals channel, the family summary |
+| [Engineering-Pipeline-Mechanisms](https://github.com/ArtVsMark/Engineering-Pipeline-Mechanisms) (`EPM`) | pipeline steps called by a tagged address: facts, drift, automerge; the `facts.json` contract — since 2.1 |
+| [ArtVsMark](https://github.com/ArtVsMark/ArtVsMark) (`AVM`) | the profile showcase — reads every project's facts; the facts contract has been held by the mechanisms since 2.1 |
 | [Stepik-Python-Grader](https://github.com/ArtVsMark/Stepik-Python-Grader) | consumer; most of the catalogue's rules were born here |
 | [Glossary-Python](https://github.com/ArtVsMark/Glossary-Python) | consumer, paired with the grader |
 | [Claude-Code_Usage-Token](https://github.com/ArtVsMark/Claude-Code_Usage-Token) | consumer |
