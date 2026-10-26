@@ -1,6 +1,6 @@
 {
   "schema": "1.2",
-  "generated": "2026-10-25",
+  "generated": "2026-10-26",
   "projects": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -72,11 +72,11 @@
       },
       "gives": {
         "steps": "0.13",
-        "facts": "2.1"
+        "facts": "2.2"
       },
       "takes": [],
       "links": {
-        "EIP": "behind",
+        "EIP": "ok",
         "EPM": "unknown"
       }
     }
