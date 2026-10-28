@@ -17,7 +17,7 @@
 | `ArtVsMark` | подключён | 33 | 18 | 215 | 0 | 0 | 169 | 130 | 32 | 0 | 7 | 0 | 69 |  |
 | `Claude-Code_Usage-Token` | подключён | 18 | 15 | 205 | 10 | 0 | 174 | 93 | 9 | 0 | 55 | 17 | 106 |  |
 | `Glossary-Python` | подключён | 2 | 0 | 205 | 10 | 0 | 162 | 77 | 14 | 0 | 59 | 12 | 116 |  |
-| `Engineering-Pipeline-Mechanisms` | подключён | 21 | 16 | 215 | 0 | 0 | 208 | 183 | 18 | 3 | 4 | 0 | 272 |  |
+| `Engineering-Pipeline-Mechanisms` | подключён | 21 | 16 | 215 | 0 | 0 | 208 | 183 | 18 | 3 | 4 | 0 | 274 |  |
 
 ## Чем держат другие · How others enforce it
 
@@ -564,7 +564,7 @@
 | `Engineering-Pipeline-Mechanisms` | `tests/test_steps_speak_outward.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_subprocess_deadline.py` | 2 |
 | `Engineering-Pipeline-Mechanisms` | `tests/test_token_paths.py` | 2 |
-| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 123 механизмов по одному правилу; без названного адреса: 0 из 220 |
+| `Engineering-Pipeline-Mechanisms` | _остальные_ · _the rest_ | 125 механизмов по одному правилу; без названного адреса: 0 из 220 |
 
 ## Заметки и замеры проектов · Project notes and metrics
 
