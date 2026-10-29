@@ -9,7 +9,7 @@
 **The rule.** An uncaught exception exits with the interpreter's own code — 1 in
 Python — and in a mechanism that has declared 1 as "findings", a crash reads
 as "found something". A mechanism's entry point catches any exception and
-returns the "did not run" outcome, naming what failed. This is held by a walk
+returns the "did not run" outcome, naming what failed. This must be held by a walk
 over the tree — every mechanism with outcome 1 has a guarded entry point — not
 by each author remembering it.
 
@@ -20,7 +20,7 @@ with `set -e`.
 ## The incident
 
 **The measurement of the neighbour the proposal came from** (the mechanisms
-project). One kind of failure, three times in six weeks, each time caught by an
+project). One kind of failure, three times in ten days, each time caught by an
 outside review rather than a gate:
 
 - 17.10.2026 — the push guard exited with a traceback and code 1
@@ -74,8 +74,9 @@ passes through.
   in each;
 - a standalone module without shared imports catches the exception in its own
   entry point;
-- a walk over the tree holds it, not review: "every mechanism with outcome 1
-  has a guarded entry point".
+- a walk over the tree must hold it, not review: "every mechanism with
+  outcome 1 has a guarded entry point". The catalogue has no such walk yet —
+  its answer to 229 waits for the mechanisms' shared step.
 
 ## Where it applies
 
