@@ -1,7 +1,7 @@
 {
   "schema": "1.9",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-29T17:26:36+00:00",
+  "generated_at": "2026-10-29T18:24:57+00:00",
   "contracts": {
     "export": "1.9",
     "bindings": "1.9",
@@ -11,7 +11,7 @@
     "where": "1.7",
     "family": "1.2"
   },
-  "count": 229,
+  "count": 230,
   "active": 217,
   "rules": [
     {
@@ -2626,7 +2626,8 @@
         }
       ],
       "origin": "ArtVsMark/Stepik-Python-Grader",
-      "status": "active",
+      "status": "superseded",
+      "superseded_by": "231",
       "mentioned_by": [
         "065",
         "128",
@@ -5983,7 +5984,8 @@
       "mentioned_by": [
         "129",
         "157",
-        "172"
+        "172",
+        "231"
       ]
     },
     {
@@ -7098,7 +7100,8 @@
         "132"
       ],
       "mentioned_by": [
-        "132"
+        "132",
+        "231"
       ]
     },
     {
@@ -7629,7 +7632,8 @@
         "173",
         "191",
         "197",
-        "223"
+        "223",
+        "231"
       ]
     },
     {
@@ -12487,6 +12491,58 @@
         "085",
         "188",
         "210"
+      ]
+    },
+    {
+      "id": "231",
+      "slug": "a-gate-blocks-what-the-change-brought",
+      "title": {
+        "ru": "Блокирует то, что достоверно принесло само изменение; остальное — предупреждение",
+        "en": "A gate blocks what the change itself has certainly brought; everything else is a warning"
+      },
+      "areas": {
+        "ru": [
+          "гейты"
+        ],
+        "en": [
+          "gates"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Запрет ставят только на нарушение, которое доказано и которое принесло само изменение: его гасит правка этого же изменения. Сигнал, который в законных случаях срабатывает впустую, и расхождение, уже жившее в дереве до изменения, — предупреждение, а не запрет. Принесённое меряется приростом: строк с предметом прибыло больше, чем ушло, а не «файл тронут».",
+        "en": "A block is placed only on a violation that is proven and that the change itself brought in: an edit to that same change removes it. A signal that fires uselessly in legitimate cases, and a discrepancy that already lived in the tree before the change, are warnings, not blocks. What the change brought is measured by its increment: more lines with the subject arrived than left — not \"the file was touched\"."
+      },
+      "applies": {
+        "ru": "**Работает** для гейтов на изменении: эвристики (пересечения работ,\nподозрительные шаблоны, метрики с размытой границей) — предупреждением;\nдостоверное нарушение, принесённое изменением, — запретом; прежнее расхождение\nтого же предмета — дрейфом и предупреждением.\n\n**Не работает** для проверки общей ветки целиком, вне изменения: прироста\nтам нет, и судится состояние — это предмет дежурного по общей ветке\n([142](142-a-scheduled-red-needs-an-addressee.md)). **Не работает** и там, где\nнарушение достоверно и опасно независимо от того, кто его принёс —\nсломанный синтаксис, упавший тест, утёкший секрет: такое блокирует всегда.\n\n**Признак ошибки в выборе:** гейт регулярно обходят, и обход считается\nнормальной практикой; или изменение вносит расхождение, которое видит только\nдрейф после слияния.",
+        "en": "**Works** for gates on a change: heuristics (overlapping work, suspicious\npatterns, metrics with a blurry boundary) — as a warning; a certain violation\nthe change brought — as a block; an earlier discrepancy of the same subject —\nas drift and a warning.\n\n**Does not work** for checking the whole main branch, outside a change: there\nis no increment there, and the state is judged — that is the subject of the\nmain-branch duty ([142](142-a-scheduled-red-needs-an-addressee.md)). **Does\nnot work** either where a violation is certain and dangerous regardless of who\nbrought it — broken syntax, a failing test, a leaked secret: that always\nblocks.\n\n**Sign of a wrong choice:** the gate is regularly bypassed and the bypass is\nconsidered normal practice; or a change brings in a discrepancy that only\ndrift sees after the merge."
+      },
+      "added": "2026-10-29",
+      "files": {
+        "ru": "rules/ru/231-a-gate-blocks-what-the-change-brought.md",
+        "en": "rules/en/231-a-gate-blocks-what-the-change-brought.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Stepik-Python-Grader",
+          "doc": "CONTRIBUTING.md",
+          "section": "Две линии работ"
+        },
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "scripts/check_action_pins.py"
+        }
+      ],
+      "origin": "ArtVsMark/Stepik-Python-Grader",
+      "status": "active",
+      "mentions": [
+        "114",
+        "133",
+        "142"
       ]
     }
   ],
