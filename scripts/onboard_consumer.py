@@ -54,6 +54,14 @@ WORKFLOW = """# Входящие правила каталога {catalogue}.
 # Своего скрипта здесь нет намеренно: реализация одна и живёт у автора
 # каталога. Копия генератора в каждом проекте — это N реализаций одного
 # алгоритма, и первая же правка разведёт их.
+#
+# ПРОЕКТ НА КОНВЕЙЕРЕ МЕХАНИЗМОВ отвечает в своём .pipeline.yml по каждой
+# работе дерева, и эта — не исключение. Запись в разделе beyond_the_change:
+#
+#   inbox:
+#     class: advisory
+#     why: входящие правила каталога, раз в сутки
+#     addressee: .github/workflows/rules-inbox.yml
 name: rules-inbox
 
 on:
@@ -77,6 +85,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          # Учётные данные git работе не нужны: задачу ведёт токен входа
+          # действия. Оставленные в дереве, они видны каждому шагу.
+          persist-credentials: false
       - uses: {catalogue}@{ref}
         with:
           token: ${{{{ secrets.GITHUB_TOKEN }}}}
@@ -201,6 +213,10 @@ def main(argv: list[str] | None = None) -> int:
         path.write_text(body, encoding="utf-8")
         print(f"  {rel}")
     print(f"набор для {args.repo} собран: правил {len(ids)}, действие закреплено на {ref}")
+    print(
+        "\nПроект на конвейере механизмов (.pipeline.yml есть): добавьте запись `inbox` "
+        "в beyond_the_change — образец в шапке rules-inbox.yml."
+    )
     print(
         "\nПоложите эти файлы в репозиторий проекта, затем добавьте его в "
         "реестр каталога\n.rules/consumers.json одной записью:\n"
