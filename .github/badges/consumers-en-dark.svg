@@ -16,8 +16,8 @@
 <text x="36" y="148" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Engineering-Pipeline-</text>
 <text x="36" y="167" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Mechanisms</text>
 <text x="375" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">215</text>
-<text x="457" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">21</text>
-<text x="529" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">16</text>
+<text x="457" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">22</text>
+<text x="529" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">17</text>
 <text x="635" y="159" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">183</text>
 <text x="711" y="159" fill="#3FB950" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">18</text>
 <text x="778" y="159" fill="#D29922" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">3</text>
@@ -26,14 +26,14 @@
 <rect x="36" y="177" width="928" height="1" fill="#30363D" opacity="0.55"/>
 <text x="36" y="194" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Engineering-Incidents-</text>
 <text x="36" y="213" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">Playbook</text>
-<text x="375" y="205" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">215</text>
+<text x="375" y="205" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">216</text>
 <text x="457" y="205" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">77</text>
 <text x="529" y="205" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">45</text>
 <text x="635" y="205" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">152</text>
 <text x="711" y="205" fill="#3FB950" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">13</text>
 <text x="778" y="205" fill="#D29922" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">5</text>
 <text x="853" y="205" fill="#A371F7" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">19</text>
-<text x="939" y="205" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">26</text>
+<text x="939" y="205" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">27</text>
 <rect x="36" y="223" width="928" height="1" fill="#30363D" opacity="0.55"/>
 <text x="36" y="249" fill="#F0F6FC" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.4">ArtVsMark</text>
 <text x="375" y="251" fill="#58A6FF" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">215</text>
@@ -74,5 +74,5 @@
 <text x="778" y="389" fill="#D29922" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">0</text>
 <text x="853" y="389" fill="#A371F7" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">59</text>
 <text x="939" y="389" fill="#F85149" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="800" text-anchor="middle">54</text>
-<text x="36" y="440" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="500">each project&apos;s own answer on all 215 catalogue rules — not our assessment of them</text>
+<text x="36" y="440" fill="#7D8590" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="16" font-weight="500">each project&apos;s own answer on all 216 catalogue rules — not our assessment of them</text>
 </svg>

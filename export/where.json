@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-29T16:28:08+00:00",
+  "generated_at": "2026-10-29T17:12:09+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -10,9 +10,9 @@
       "answers_to": "1.9",
       "state": "подключён",
       "read_at": "2026-10-29",
-      "answered": 215,
+      "answered": 216,
       "by_status": {
-        "active": 199,
+        "active": 200,
         "not-applicable": 16
       },
       "by_mechanism": {
@@ -20,7 +20,7 @@
         "pipeline": 13,
         "skill": 5,
         "document": 19,
-        "none": 10
+        "none": 11
       },
       "rules": {
         "001": "active",
@@ -249,7 +249,8 @@
         "225": "active",
         "226": "active",
         "227": "active",
-        "228": "active"
+        "228": "active",
+        "229": "active"
       },
       "holds": {
         "001": {
@@ -2568,6 +2569,17 @@
           "holdable": "not-yet",
           "awaiting": "",
           "analysed": "2026-10-21",
+          "decided": "",
+          "skill": "",
+          "origin": "",
+          "origin_kind": ""
+        },
+        "229": {
+          "mechanism": "none",
+          "where": "",
+          "holdable": "conditional",
+          "awaiting": "шаг механизмов, который судит дерево потребителя «у всякого механизма с исходом 1 вход защищён», подключённый каталогом тегом; до него — задача механизмам навыком ask-the-family-first.",
+          "analysed": "2026-10-29",
           "decided": "",
           "skill": "",
           "origin": "",
@@ -14525,8 +14537,8 @@
           "note": "Правило заменено правилом 226 в выгрузке 1.8 (superseded_by): действующий ответ — запись 226, эта — состояние на день замены, а не находка (export/README.md каталога). Правится ответ 226, а не этот: два ответа на один вопрос, правленные порознь, разойдутся молча (071)."
         }
       },
-      "trails": 21,
-      "born": 16,
+      "trails": 22,
+      "born": 17,
       "findings": [
         "отвечает о заменённых правилах — 002 → 224, 005 → 222, 057 → 224, 119 → 225, 125 → 225, 127 → 222, 131 → 221, 135 → 221, 155 → 223, 175 → 226, 197 → 223, 205 → 226. Это состояние, а не находка: ответ верен для того, что было. Перенести его или нет, решает потребитель"
       ]
