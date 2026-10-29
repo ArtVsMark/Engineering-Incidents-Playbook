@@ -105,6 +105,25 @@ def test_рабочий_процесс_разбирается_как_yaml(repo):
     assert "workflow_dispatch" in doc[True]
 
 
+def test_выкачка_не_оставляет_учётных_данных(repo):
+    """Гейт форм прогонов механизмов отвергает выкачку без явного persist-credentials
+    в работе с правом записи — набор потребителя проходит его как есть."""
+    import yaml
+
+    assert run(repo) == 0
+    текст = (repo / "out" / ".github" / "workflows" / "rules-inbox.yml").read_text(encoding="utf-8")
+    шаги = yaml.safe_load(текст)["jobs"]["inbox"]["steps"]
+    выкачка = next(ш for ш in шаги if str(ш.get("uses", "")).startswith("actions/checkout@"))
+    assert выкачка["with"]["persist-credentials"] is False
+
+
+def test_шапка_несёт_запись_для_конвейера_механизмов(repo):
+    """У потребителя на конвейере механизмов каждая работа дерева нуждается в ответе."""
+    assert run(repo) == 0
+    текст = (repo / "out" / ".github" / "workflows" / "rules-inbox.yml").read_text(encoding="utf-8")
+    assert "beyond_the_change" in текст and "addressee: .github/workflows/rules-inbox.yml" in текст
+
+
 # ── предметы, которые генератор обязан отвергнуть ──────────────────────────
 
 
