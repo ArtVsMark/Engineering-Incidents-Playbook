@@ -9,7 +9,9 @@ change itself brought in: an edit to that same change removes it. A signal
 that fires uselessly in legitimate cases, and a discrepancy that already lived
 in the tree before the change, are warnings, not blocks. What the change
 brought is measured by its increment: more lines with the subject arrived than
-left — not "the file was touched".
+left — not "the file was touched". There is one exception — a violation
+dangerous in itself (broken syntax, a failing test, a leaked secret): it
+blocks whoever brought it.
 
 ## The incident
 
@@ -32,7 +34,8 @@ have named it a day after the merge. The argument holds for a pre-existing
 discrepancy and fails for a brought-in one: it was enough to write the line
 with the version standing next to it.
 
-**A measurement over history** (mechanisms, 28.10.2026), with the same
+**A measurement over history** (mechanisms, 28.10.2026; the figures are taken
+from their proposal and are not reproducible in the catalogue's tree), with the same
 predicate — every merged change that touched workflows, against its parent: of
 337 mechanisms changes 11 were named, all of one kind (`actions/checkout@v4`
 next to `v7.0.1`); of 515 changes in the family, two
@@ -44,7 +47,8 @@ increment, each for its own reason: `check_asked_family.py` asks about the
 family only for a mechanism the change adds; `check_duplicates.py` requires a
 neighbours answer only for rules newer than `baseline`; `check_attribution.py`
 checks history with `--since`; `check_narrowing.py` judges the change's range.
-None refers to a common rule: each derived the technique anew.
+Before this record none referred to a common rule: each derived the technique
+anew.
 
 ## Why
 

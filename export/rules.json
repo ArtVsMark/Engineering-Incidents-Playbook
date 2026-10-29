@@ -1,7 +1,7 @@
 {
   "schema": "1.9",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-29T18:24:57+00:00",
+  "generated_at": "2026-10-29T18:33:44+00:00",
   "contracts": {
     "export": "1.9",
     "bindings": "1.9",
@@ -12514,8 +12514,8 @@
         "en": "gates and processes"
       },
       "claim": {
-        "ru": "Запрет ставят только на нарушение, которое доказано и которое принесло само изменение: его гасит правка этого же изменения. Сигнал, который в законных случаях срабатывает впустую, и расхождение, уже жившее в дереве до изменения, — предупреждение, а не запрет. Принесённое меряется приростом: строк с предметом прибыло больше, чем ушло, а не «файл тронут».",
-        "en": "A block is placed only on a violation that is proven and that the change itself brought in: an edit to that same change removes it. A signal that fires uselessly in legitimate cases, and a discrepancy that already lived in the tree before the change, are warnings, not blocks. What the change brought is measured by its increment: more lines with the subject arrived than left — not \"the file was touched\"."
+        "ru": "Запрет ставят только на нарушение, которое доказано и которое принесло само изменение: его гасит правка этого же изменения. Сигнал, который в законных случаях срабатывает впустую, и расхождение, уже жившее в дереве до изменения, — предупреждение, а не запрет. Принесённое меряется приростом: строк с предметом прибыло больше, чем ушло, а не «файл тронут». Исключение одно — нарушение, опасное само по себе (сломанный синтаксис, упавший тест, утёкший секрет): оно блокирует, кто бы его ни принёс.",
+        "en": "A block is placed only on a violation that is proven and that the change itself brought in: an edit to that same change removes it. A signal that fires uselessly in legitimate cases, and a discrepancy that already lived in the tree before the change, are warnings, not blocks. What the change brought is measured by its increment: more lines with the subject arrived than left — not \"the file was touched\". There is one exception — a violation dangerous in itself (broken syntax, a failing test, a leaked secret): it blocks whoever brought it."
       },
       "applies": {
         "ru": "**Работает** для гейтов на изменении: эвристики (пересечения работ,\nподозрительные шаблоны, метрики с размытой границей) — предупреждением;\nдостоверное нарушение, принесённое изменением, — запретом; прежнее расхождение\nтого же предмета — дрейфом и предупреждением.\n\n**Не работает** для проверки общей ветки целиком, вне изменения: прироста\nтам нет, и судится состояние — это предмет дежурного по общей ветке\n([142](142-a-scheduled-red-needs-an-addressee.md)). **Не работает** и там, где\nнарушение достоверно и опасно независимо от того, кто его принёс —\nсломанный синтаксис, упавший тест, утёкший секрет: такое блокирует всегда.\n\n**Признак ошибки в выборе:** гейт регулярно обходят, и обход считается\nнормальной практикой; или изменение вносит расхождение, которое видит только\nдрейф после слияния.",
