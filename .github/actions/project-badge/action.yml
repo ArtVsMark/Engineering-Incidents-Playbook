@@ -1,112 +1,54 @@
-# Значок проекта в две строки (#844): сверху «CI │ Python │ ОС │ coverage │
-# release / PyPI │ version», снизу «rules │ machine │ own │ taken» и
-# «family │ … │ EIP · EPM».
-#
-# Скрипты исполняются из каталога на теге из строки uses: (GITHUB_ACTION_PATH),
-# а не копией в проекте: копия разошлась бы с каталогом при первой правке
-# (095). Считается дерево ПРОЕКТА: его прогоны, его ответ каталогу, его
-# манифест; извне приходит только сводка семьи — эталон для сверки.
-#
-# Действие рисует три картинки рядом: python.svg, family.svg с разбором
-# family-check.json, python.zones.json и project.svg — две строки: `rules`
-# кончается под `mac`, правее свободно. Куда их публиковать,
-# решает проект, как и у python-badge и family-badge. Цвет — данные, а не исход
-# шага: красный значок рисуется, а не роняет прогон (004). Код выхода 2 —
-# значок не собран: площадка не ответила о прогонах или сводка семьи не
-# прочитана; прежний значок публикацией лучше не трогать.
-name: Значок проекта каталога
+# ПЕРЕХОДНИК, А НЕ РЕАЛИЗАЦИЯ (этап 3 #930, решение владельца 29.10). Значки
+# и факты держат механизмы; рисует их действие механизмов с тем же именем и
+# теми же входами. Здесь — только передача входов, чтобы проект, поднявший тег
+# каталога, не сломался до своего перехода. Второго рисовальщика нет (214):
+# своего кода у переходника нет. Переходите на `step-facts` механизмов —
+# переходник снимется, когда на него не останется вызовов.
+name: project-badge
 description: >-
   Рисует значок проекта в две строки: проверки, Python, ОС, покрытие, выпуск и
-  версия сверху; правила машиной, механизмы и сверка с семьёй снизу. Серое —
-  не прочитано, с причиной в подсказке.
-
+  версия сверху; правила машиной, механизмы и сверка с семьёй снизу. Серое — не
+  прочитано, с причиной в подсказке.
+  Переходник: передаёт входы действию механизмов с тем же именем.
 inputs:
   out-dir:
-    description: >-
-      Папка для картинок относительно корня проекта: python.svg, family.svg,
-      family-check.json и project.svg.
-    required: false
+    description: Папка для картинок относительно корня проекта.
     default: .github/badges
   ci-workflow:
     description: Файл основного CI в .github/workflows — как у python-badge.
-    required: false
     default: ci.yml
   coverage-json:
     description: Файл значка покрытия (shields endpoint); пусто — зона серая.
-    required: false
     default: ""
   coverage-all-json:
     description: Покрытие, сведённое по всем ОС; задан — второе число в зоне.
-    required: false
     default: ""
   version-json:
     description: Файл значка версии (shields endpoint); пусто — зона серая.
-    required: false
     default: ""
   suites:
     description: Наборы проверок основного CI — как у python-badge.
-    required: false
     default: ""
   pypi:
-    description: Имя пакета на PyPI; пусто — зона «release / PyPI» серая.
-    required: false
+    description: Имя пакета на PyPI; пусто — зона «release / PyPI» показывает выпуск площадки.
     default: ""
   family:
     description: Адрес или путь сводки семьи; пусто — сводка каталога.
-    required: false
     default: ""
   token:
     description: Токен для чтения прогонов (нужно право actions read).
-    required: false
     default: ${{ github.token }}
-
 runs:
   using: composite
   steps:
-    - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+    - uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/actions/project-badge@v1.11.0
       with:
-        python-version: "3.14"
-
-    - name: нарисовать значок проекта
-      shell: bash
-      env:
-        GH_TOKEN: ${{ inputs.token }}
-        OUT_DIR: ${{ inputs.out-dir }}
-        CI_WORKFLOW: ${{ inputs.ci-workflow }}
-        COVERAGE_JSON: ${{ inputs.coverage-json }}
-        COVERAGE_ALL_JSON: ${{ inputs.coverage-all-json }}
-        VERSION_JSON: ${{ inputs.version-json }}
-        PYPI: ${{ inputs.pypi }}
-        SUITES: ${{ inputs.suites }}
-        FAMILY: ${{ inputs.family }}
-        REPO: ${{ github.repository }}
-      run: |
-        set -uo pipefail
-        dir="$GITHUB_WORKSPACE/$OUT_DIR"
-        mkdir -p "$dir"
-        # Строка 1 — тот же расчёт, что у python-badge.
-        args=(--root "$GITHUB_WORKSPACE" --ci "$CI_WORKFLOW" --out "$dir/python.svg")
-        [ -n "$COVERAGE_JSON" ] && args+=(--coverage-json "$GITHUB_WORKSPACE/$COVERAGE_JSON")
-        [ -n "$COVERAGE_ALL_JSON" ] && args+=(--coverage-all-json "$GITHUB_WORKSPACE/$COVERAGE_ALL_JSON")
-        [ -n "$VERSION_JSON" ] && args+=(--version-json "$GITHUB_WORKSPACE/$VERSION_JSON")
-        [ -n "$PYPI" ] && args+=(--pypi "$PYPI")
-        [ -n "$SUITES" ] && args+=(--suites "$SUITES")
-        python_rc=0
-        python "$GITHUB_ACTION_PATH/../../../scripts/python_badge.py" "${args[@]}" || python_rc=$?
-        # Зоны семьи — тот же расчёт, что у family-badge; имя проекта — от
-        # площадки, а не умолчание скрипта: умолчание — каталог.
-        fargs=(--root "$GITHUB_WORKSPACE" --repo "$REPO" --out "$dir/family.svg")
-        [ -n "$FAMILY" ] && fargs+=(--family "$FAMILY")
-        family_rc=0
-        python "$GITHUB_ACTION_PATH/../../../scripts/family_check.py" "${fargs[@]}" || family_rc=$?
-        # Склейка — даже при отказе одной из частей: на её месте серое с причиной.
-        project_rc=0
-        python "$GITHUB_ACTION_PATH/../../../scripts/project_badge.py" --root "$GITHUB_WORKSPACE" \
-          --python-zones "$dir/python.zones.json" --family-json "$dir/family-check.json" \
-          --out "$dir/project.svg" || project_rc=$?
-        if [ "$python_rc" -eq 2 ] || [ "$family_rc" -eq 2 ] || [ "$project_rc" -eq 2 ]; then
-          echo "::error::значок проекта не собран целиком: python $python_rc, family $family_rc, project $project_rc"
-          exit 2
-        fi
-        [ "$project_rc" -eq 1 ] && echo "::warning::значок проекта собран с серыми частями — причины выше"
-        exit 0
+        out-dir: ${{ inputs.out-dir }}
+        ci-workflow: ${{ inputs.ci-workflow }}
+        coverage-json: ${{ inputs.coverage-json }}
+        coverage-all-json: ${{ inputs.coverage-all-json }}
+        version-json: ${{ inputs.version-json }}
+        suites: ${{ inputs.suites }}
+        pypi: ${{ inputs.pypi }}
+        family: ${{ inputs.family }}
+        token: ${{ inputs.token }}

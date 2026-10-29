@@ -31,7 +31,6 @@ import check_duplicates as cd
 import consumers_picture as cp
 import history_metrics as hm
 import onboard_consumer as oc
-import project_badge as pb
 import pytest
 import sync_inbox as si
 from conftest import write
@@ -93,11 +92,6 @@ def test_метрики_выпуска(n):
     }
     files[".rules/bindings.json"] = ОТВЕТ.read_text(encoding="utf-8")
     assert int(hm.snapshot(files)["правил"]) == n
-
-
-def test_значок(n, tmp_path):
-    svg, _ = pb.собрать(ROOT, tmp_path / "нет.json", tmp_path / "нет.json")
-    assert число(svg, r"machine \d+/(\d+)") == n
 
 
 def test_картинка_потребителей(n, tmp_path, capsys):

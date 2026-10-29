@@ -78,7 +78,7 @@ REGISTRY = Path(".rules") / "consumers.json"
 АДРЕС = "https://raw.githubusercontent.com/{repo}/badges/.github/badges/contracts.json"
 #: Где разбор значка соседа: та же ветка, рядом с манифестом.
 РАЗБОР_АДРЕС = "https://raw.githubusercontent.com/{repo}/badges/.github/badges/family-check.json"
-#: Свой разбор — в дереве сборки, на месте, где его кладёт family_check.py.
+#: Свой разбор — в дереве сборки, если он там есть; рисует его `step-facts` механизмов.
 РАЗБОР = Path(".github") / "badges" / "family-check.json"
 #: Ключи манифеста и их тип. Форма проверяется этим, а не схемой JSON:
 #: зависимостей набора каталог не заводит (тесты — только от объявленного).

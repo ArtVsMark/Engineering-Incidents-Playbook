@@ -64,7 +64,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import check_facts
 import proc
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -116,7 +115,6 @@ CONTRACTS_ORDER = (
     "showcase",
     "where",
     "family",
-    "facts",
 )
 
 #: ЗНАЧКА С ЧИСЛОМ ПРАВИЛ БОЛЬШЕ НЕТ, и это решение владельца 1 октября, а
@@ -1083,9 +1081,6 @@ CONTRACT_FILES = {
     "showcase": ".rules/showcase.json",
 }
 
-#: Номер договора фактов семьи — тремя числами, одно место (035, #843).
-FACTS_VERSION = Path("export") / "facts" / "facts.version"
-
 #: Номера, которые берутся у СБОРЩИКА, а не у файла. Сводка «где действует»
 #: живёт на ветке `badges` и в дереве общей ветки отсутствует — прочитать её
 #: `schema` отсюда нельзя, и попытка давала «ключа нет, значит не прочитали»:
@@ -1131,29 +1126,6 @@ def contracts_now(root: Path | None = None) -> dict[str, str]:
         номер = данные.get("schema")
         if isinstance(номер, str) and номер:
             out[имя] = номер
-    # ДОГОВОР ФАКТОВ — С 2.0 У КАТАЛОГА (#843). Номер живёт в
-    # export/facts/facts.version тремя числами, контракт отдаётся серией: её
-    # же издатель пишет в `schema` своего facts.json.
-    try:
-        out["facts"] = check_facts.contract_series(
-            (база / FACTS_VERSION).read_text(encoding="utf-8")
-        )
-    except OSError:
-        pass
-    except UnicodeDecodeError as exc:
-        # Не прочитан — не «не той формы»: UnicodeDecodeError — подкласс
-        # ValueError и иначе попал бы в ветку ниже с чужой причиной (обзор #907).
-        print(
-            f"проверка не отработала: {FACTS_VERSION} не прочитан как UTF-8 — {exc}",
-            file=sys.stderr,
-        )
-        raise SystemExit(2) from exc
-    except ValueError as exc:
-        # Номер есть, но не той формы — это не «договора нет», а сломанный
-        # предмет: молчать нельзя (039), трассировка вместо причины — тоже
-        # (обзор #904). Исход 2: чинится правкой файла, а не правил.
-        print(f"проверка не отработала: {FACTS_VERSION} — {exc}", file=sys.stderr)
-        raise SystemExit(2) from exc
     for имя, (модуль, поле) in CONTRACT_MODULES.items():
         try:
             номер = getattr(__import__(модуль), поле)
