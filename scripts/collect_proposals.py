@@ -875,13 +875,13 @@ def body_for(pending: list[dict], problems: list[str]) -> str:
                 out.append(f"**Замер в работе.** {quote(p['measurement'])}")
                 out.append("")
                 if p["amends"]:
-                    out.append(
-                        f"**Дорабатывает.** {quote(p['amends'], 120)} от {quote(p['base'] or 'версия не названа', 120)}"
-                    )
+                    от = quote(p["base"] or "версия не названа", 120)
+                    out.append(f"**Дорабатывает.** {quote(p['amends'], 120)} от {от}")
                     out.append("")
                 out.append(f"**Описание.** {quote(p['description'])}")
                 out.append("")
-                out.append(f"**Текст.** {quote(p['url'], 300) if p['url'] else 'не прочитан — см. ниже'}")
+                текст = quote(p["url"], 300) if p["url"] else "не прочитан — см. ниже"
+                out.append(f"**Текст.** {текст}")
                 out.append("")
                 continue
             out.append(f"### {quote(p['repo'], 120)} · {quote(p['slug'], 120)}")
