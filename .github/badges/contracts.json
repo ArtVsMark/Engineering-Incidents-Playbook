@@ -2,8 +2,8 @@
   "schema": "1.2",
   "project": "ArtVsMark/Engineering-Incidents-Playbook",
   "release": {
-    "tag": "v2.1.0",
-    "sha": "42eb3df6276d3ef321700524daf35524e00d82b0"
+    "tag": "v2.2.0",
+    "sha": "23b78fea2f1f0eea88c952c3d1862d1b716fb945"
   },
   "gives": {
     "export": "1.9",
