@@ -7,6 +7,8 @@
 **The rule.** A signal that fires on legitimate cases must be a warning and must
 **not block**. Only what is proven blocks.
 
+**Superseded by.** 231
+
 ## The incident
 
 A tool shows where your work overlaps with somebody else's: which files a
