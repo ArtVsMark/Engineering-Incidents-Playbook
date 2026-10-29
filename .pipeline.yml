@@ -105,16 +105,20 @@ beyond_the_change:
     addressee: .github/workflows/attribution-history.yml
   publish:
     class: advisory
-    why: рисует значки на ветке badges; до этапа 3 #930
+    why: рисует свои значки и сводки каталога на ветке badges
+    addressee: .github/workflows/badges.yml
+  "facts / facts":
+    class: advisory
+    why: факты, значок проекта и разбор семьи — общим шагом механизмов (этап 3 #930)
+    addressee: .github/workflows/badges.yml
+  showcase:
+    class: advisory
+    why: ссылки витрины ведут в файлы, которые на ветке badges есть (196)
     addressee: .github/workflows/badges.yml
   aggregate:
     class: advisory
     why: сводка «где действует» по ответам потребителей
     addressee: .github/workflows/consumers-sync.yml
-  facts-release:
-    class: advisory
-    why: кнопка выпуска договора фактов; до этапа 3 #930
-    addressee: .github/workflows/facts-release.yml
   apply:
     class: advisory
     why: метки площадки из дерева

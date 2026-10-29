@@ -1034,7 +1034,7 @@ repository settings.
   <!--m:contracts-->"schema": "1.9",
   "contracts": {
     "export": "1.9", "bindings": "1.9", "consumers": "1.1", "proposals": "1.4",
-    "showcase": "1.1", "where": "1.7", "family": "1.2", "facts": "2.0"
+    "showcase": "1.1", "where": "1.7", "family": "1.2"
   },<!--/m:contracts-->
   "generated_at": "2026-09-03T09:24:00+00:00"  // момент сборки, пример
                                                // build time, example value
@@ -1097,27 +1097,12 @@ formats that never moved.
 семьи перешли на него — со связью `✓`, `✗` или `◐`, — из всех остальных; не
 прочитанные в «перешли» не идут и названы в подсказке (владелец 15.10, #844).
 
-**Семейный значок.** Проект сверяет себя сам: `scripts/family_check.py`
-находит в своём дереве, на чём он стоит (`uses: <издатель>/…@<ссылка>`,
-номера `.rules/bindings.json`, номер своих фактов, диапазон контракта
-шагов `contract:` в `.pipeline.yml` против `steps` механизмов, парные
-`takes`), и
-сравнивает со свежими версиями из `family.json`. Сегменты: `gives` (отдаю),
-`family` (беру у семьи), `pairs` (беру парно), `external` (внешний мир по
-своим фактам: метка исполнителя `…-latest` в `python.os` — красный, ОС
-сменится без изменения в дереве; фактов или раздела нет — серый). Любое
-отставание по семье и парам — красный, минор тоже; `gives` красный, когда манифест не той формы или называет не последний
-тег; нечего сверять, не прочитано или моё новее опубликованного — серый.
-Справа — блок издателей контрактов семьи: `EIP` (каталог: правила, ответ,
-предложения, манифест, факты) и `EPM` (механизмы: шаги). Блока `AVM` с facts 2.0
-нет — витрина читает факты, а не издаёт договор (#843). Связь `facts` при
-номере 1.x против договора 2.x — серая: форма та же, подъём ждёт витрину (#845). `✓` — связь с ним сходится, `✗` — отстаёт,
-`?` — издатель не опубликовал манифест, `—` — связи нет, и отказ не
-объявлен (красный), `·` — отказ объявлен в `skips` своего манифеста с
-причиной (серый, с 1.1), `◐` — у механизмов: шаги взяты, а конвейер не
-подключён, `.pipeline.yml` нет (серый, решение владельца 14.10). Значок каталога —
-[`family.svg`](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/family.svg),
-разбор — `family-check.json` рядом.
+**Семейный значок** — у механизмов (этап 3
+[#930](https://github.com/ArtVsMark/Engineering-Incidents-Playbook/issues/930)):
+сверку проекта с этой сводкой делает их `family_check.py` внутри общего шага
+[`step-facts`](https://github.com/ArtVsMark/Engineering-Pipeline-Mechanisms/blob/v1.11.0/.github/workflows/step-facts.yml),
+и там же объяснено, как читать сегменты и цвета. Каталог отдаёт ему только эту
+сводку; разбор каталога о себе — `family-check.json` на его ветке `badges`.
 
 Every family project publishes `.github/badges/contracts.json` on its `badges`
 branch: what it gives, its latest release and the pairwise links that cannot

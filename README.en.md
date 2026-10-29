@@ -119,8 +119,8 @@ project agrees with the rest:
 (what it takes from the publishers), `pairs` (paired links) and `ext` (the
 outside world, judged from the project's own facts: a floating `…-latest`
 runner label is red), with the publishers block `EIP · EPM` on the right.
-Each project puts it up itself with the `family-badge` action; how to read the
-colours is in the [contract](export/README.md).
+It is drawn by the mechanisms' shared `step-facts` step as part of the project
+badge; what the family summary gives it is in the [contract](export/README.md).
 
 ## Consumers
 

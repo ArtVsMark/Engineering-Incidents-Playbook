@@ -541,30 +541,6 @@ def test_predshestvenniki_tranzitivny(tmp_path):
     assert b.предшественники(tmp_path) == {"003": {"001", "002"}, "004": {"001", "002", "003"}}
 
 
-def test_номер_договора_фактов_не_той_формы_третий_исход(tmp_path, capsys):
-    """`facts.version` вида «2.0» — исход 2 с причиной, а не трассировка (обзор #904)."""
-    import pytest
-
-    (tmp_path / "export" / "facts").mkdir(parents=True)
-    (tmp_path / "export" / "facts" / "facts.version").write_text("2.0\n", encoding="utf-8")
-    with pytest.raises(SystemExit) as выход:
-        b.contracts_now(tmp_path)
-    assert выход.value.code == 2
-    assert "facts.version" in capsys.readouterr().err
-
-
-def test_нечитаемый_номер_договора_не_той_формы_не_называется(tmp_path, capsys):
-    """Не UTF-8 — «не прочитан», а не «не той формы» (обзор #907)."""
-    import pytest
-
-    (tmp_path / "export" / "facts").mkdir(parents=True)
-    (tmp_path / "export" / "facts" / "facts.version").write_bytes(b"\xff\xfe2.0.0")
-    with pytest.raises(SystemExit) as выход:
-        b.contracts_now(tmp_path)
-    assert выход.value.code == 2
-    assert "не прочитан как UTF-8" in capsys.readouterr().err
-
-
 def test_deystvuyushchie_v_vygruzke_ne_berut_zameshchyonnye():
     """Кто читает экспорт, а не дерево, считает тем же правилом: без `superseded_by` (17.10)."""
     export = {
