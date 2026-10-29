@@ -214,8 +214,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  {rel}")
     print(f"набор для {args.repo} собран: правил {len(ids)}, действие закреплено на {ref}")
     print(
-        "\nПроект на конвейере механизмов (.pipeline.yml есть): добавьте запись `inbox` "
-        "в beyond_the_change — образец в шапке rules-inbox.yml."
+        "\nЕсли проект на конвейере механизмов (в корне есть .pipeline.yml), добавьте "
+        "запись `inbox` в beyond_the_change — образец в шапке rules-inbox.yml."
     )
     print(
         "\nПоложите эти файлы в репозиторий проекта, затем добавьте его в "
