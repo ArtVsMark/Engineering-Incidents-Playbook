@@ -1,7 +1,7 @@
 {
   "schema": "1.9",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-29T15:27:02+00:00",
+  "generated_at": "2026-10-29T16:51:09+00:00",
   "contracts": {
     "export": "1.9",
     "bindings": "1.9",
@@ -11,8 +11,8 @@
     "where": "1.7",
     "family": "1.2"
   },
-  "count": 227,
-  "active": 215,
+  "count": 228,
+  "active": 216,
   "rules": [
     {
       "id": "001",
@@ -1970,6 +1970,9 @@
       "mentions": [
         "010"
       ],
+      "refined_by": [
+        "229"
+      ],
       "mentioned_by": [
         "075",
         "128",
@@ -1987,7 +1990,8 @@
         "203",
         "207",
         "208",
-        "226"
+        "226",
+        "229"
       ]
     },
     {
@@ -7728,7 +7732,8 @@
       "mentioned_by": [
         "170",
         "186",
-        "211"
+        "211",
+        "229"
       ]
     },
     {
@@ -8430,7 +8435,8 @@
         "075"
       ],
       "mentioned_by": [
-        "174"
+        "174",
+        "229"
       ]
     },
     {
@@ -12371,6 +12377,59 @@
         "087",
         "210",
         "215"
+      ]
+    },
+    {
+      "id": "229",
+      "slug": "an-uncaught-exception-is-not-a-finding",
+      "title": {
+        "ru": "Непойманное исключение — не находка: вход механизма ловит любое и отдаёт «не отработал»",
+        "en": "An uncaught exception is not a finding: a mechanism's entry point catches everything and reports \"did not run\""
+      },
+      "areas": {
+        "ru": [
+          "код",
+          "диагностика",
+          "надёжность"
+        ],
+        "en": [
+          "code",
+          "diagnostics",
+          "reliability"
+        ]
+      },
+      "tier": {
+        "n": 4,
+        "ru": "код и тесты",
+        "en": "code and tests"
+      },
+      "claim": {
+        "ru": "Непойманное исключение выходит своим кодом интерпретатора — у Python это 1, — и у механизма, где 1 объявлен находкой, сбой читается как «нашли». Вход механизма ловит любое исключение и отдаёт исход «не отработал» с названным предметом. Держит это обход по дереву — у каждого механизма с исходом 1 вход защищён, — а не память автора каждого входа.",
+        "en": "An uncaught exception exits with the interpreter's own code — 1 in Python — and in a mechanism that has declared 1 as \"findings\", a crash reads as \"found something\". A mechanism's entry point catches any exception and returns the \"did not run\" outcome, naming what failed. This is held by a walk over the tree — every mechanism with outcome 1 has a guarded entry point — not by each author remembering it."
+      },
+      "applies": {
+        "ru": "**Работает** для механизма, у которого код выхода читается как вердикт и\nкод, который даёт непойманное исключение, совпадает с одним из объявленных\nисходов: гейт, сторож, проверка в шаге конвейера.\n\n**Не работает** для скрипта, чей код выхода никто не читает как вердикт:\nсборщик производного, кнопка, разовая утилита. Там трасса и есть честный\nотказ. **Не работает** и там, где исход 1 не объявлен вовсе: тогда трасса уже\nотличима от любого вердикта, и это предмет [039](039-three-outcomes-not-two.md),\nа не этого правила.\n\n**Признак нарушения:** механизм объявляет исход 1 находкой, а его вход\nотдаёт трассу непойманного исключения тем же кодом 1.",
+        "en": "**Works** for a mechanism whose exit code is read as a verdict and where the\ncode an uncaught exception produces coincides with one of the declared\noutcomes: a gate, a guard, a check in a pipeline step.\n\n**Does not work** for a script whose exit code nobody reads as a verdict: a\nbuilder of derived files, a button, a one-off utility. There the traceback is\nan honest failure. **Does not work** either where outcome 1 is not declared\nat all: the traceback is then already distinct from every verdict, and that is\nthe subject of [039](039-three-outcomes-not-two.md), not of this rule.\n\n**Sign of a violation:** a mechanism declares outcome 1 as findings, and its\nentry point lets an uncaught exception's traceback out with the same code 1."
+      },
+      "added": "2026-10-29",
+      "files": {
+        "ru": "rules/ru/229-an-uncaught-exception-is-not-a-finding.md",
+        "en": "rules/en/229-an-uncaught-exception-is-not-a-finding.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "scripts/main_guard.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "status": "active",
+      "refines": "039",
+      "mentions": [
+        "039",
+        "145",
+        "158"
       ]
     }
   ],
