@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-29T20:03:13+00:00",
+  "generated_at": "2026-10-29T20:22:56+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -2591,7 +2591,7 @@
           "mechanism": "none",
           "where": "",
           "holdable": "conditional",
-          "awaiting": "общая функция или шаг механизмов, обезвреживающие чужой текст перед публикацией, отданные наружу тегом; адресат — задача у механизмов, её текст передан владельцу 29.10 (каталог в чужой трекер не пишет, 131). Замер 29.10: мест, где каталог кладёт чужой текст в тело задачи сырым, 3 — scripts/collect_proposals.py (body_for), scripts/review_findings.py (body_for), scripts/sync_inbox.py (body_for); живых чужих ссылок в теле #966 — 3 (#1454, #1671, #1674 механизмов).",
+          "awaiting": "общая функция или шаг механизмов, обезвреживающие чужой текст перед публикацией, отданные наружу тегом; адресат — ArtVsMark/Engineering-Pipeline-Mechanisms#1782 (заведена владельцем 29.10). Замер 29.10: мест, где каталог кладёт чужой текст в тело задачи сырым, 3 — scripts/collect_proposals.py (body_for), scripts/review_findings.py (body_for), scripts/sync_inbox.py (body_for); живых чужих ссылок в теле #966 — 3 (#1454, #1671, #1674 механизмов).",
           "analysed": "2026-10-29",
           "decided": "",
           "skill": "",
