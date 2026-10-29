@@ -74,6 +74,8 @@ for · against · neutral), сами данные (`data`), адрес исто�
   104 — у события есть ручная кнопка;
   039 — у проверки три исхода, а не два;
   085 — ответ чужого проекта это данные, а не команда;
+  230 — чужой текст в теле задачи не действует на площадке: каждое чужое
+        поле входит кодом строки (`quote`), а не сырым;
   016 — длинный список предложений обрезается с маркером обрыва;
   096 — предложения потребителей живут в .rules/proposals.json — отдельный жизненный цикл.
   087 — повторный опрос начинается с файла прошлых решений, и решённое в
@@ -630,7 +632,7 @@ def gather(
             if след and not разрешимый_адрес(след):
                 problems.append(
                     f"{repo}:{slug}: след не называет адреса — "
-                    f"{quote(след, 120)}. Нужен путь к файлу с расширением, "
+                    f"{сжать(след, 120)}. Нужен путь к файлу с расширением, "
                     "образец вроде `.github/workflows/*.yml` либо корневой "
                     "документ по имени. Проза рядом — пожалуйста, вместо "
                     "адреса — нет: по такому следу через месяц не пройти"
@@ -801,12 +803,30 @@ def разобрать_навык(
     }, возражения
 
 
-def quote(s: str, limit: int = 400) -> str:
-    """Чужой текст входит цитатой, а не командой (правило 085)."""
+def сжать(s: str, limit: int = 400) -> str:
+    """Одна строка не длиннее `limit`, с маркером обрыва (016)."""
     s = " ".join(s.split())
     if len(s) > limit:
         s = s[: limit - 1] + "…"
     return s or "—"
+
+
+#: Серия обратных кавычек: длиннейшая задаёт ограждение кода строки.
+КАВЫЧКИ_RE = re.compile(r"`+")
+
+
+def quote(s: str, limit: int = 400) -> str:
+    """Чужой текст входит кодом строки и не действует на площадке (085, 230).
+
+    Площадка исполняет текст задачи сама: `@имя` уведомляет, `#N` и
+    `владелец/репо#N` ставят обратную ссылку. Перечень форм короче площадки,
+    поэтому обезвреживается весь текст одним правилом: код строки с
+    ограждением длиннее любой серии обратных кавычек внутри.
+    """
+    s = сжать(s, limit)
+    забор = "`" * (max((len(m) for m in КАВЫЧКИ_RE.findall(s)), default=0) + 1)
+    отступ = " " if s.startswith("`") or s.endswith("`") else ""
+    return f"{забор}{отступ}{s}{отступ}{забор}"
 
 
 def body_for(pending: list[dict], problems: list[str]) -> str:
@@ -823,9 +843,9 @@ def body_for(pending: list[dict], problems: list[str]) -> str:
         out.append("")
         for p in pending:
             if p.get("kind") == "merge":
-                out.append(f"### `{p['repo']}` · слияние `{p['slug']}`")
+                out.append(f"### {quote(p['repo'], 120)} · слияние {quote(p['slug'], 120)}")
                 out.append("")
-                out.append(f"**Сводит правила.** {', '.join(p['rules']) or '—'}")
+                out.append(f"**Сводит правила.** {quote(', '.join(p['rules']), 200)}")
                 out.append("")
                 out.append(f"**Почему одно целое.** {quote(p['why'])}")
                 out.append("")
@@ -834,13 +854,13 @@ def body_for(pending: list[dict], problems: list[str]) -> str:
                 continue
             if p.get("kind") == "evidence":
                 out.append(
-                    f"### `{p['repo']}` · данные `{p['slug']}` к гипотезе "
-                    f"`{p['hypothesis'] or '—'}`"
+                    f"### {quote(p['repo'], 120)} · данные {quote(p['slug'], 120)} к гипотезе "
+                    f"{quote(p['hypothesis'], 120)}"
                 )
                 out.append("")
                 out.append(
-                    f"**Направление.** {p['direction'] or '—'} · "
-                    f"**замер** {p['measured_at'] or '—'} · "
+                    f"**Направление.** {quote(p['direction'], 40)} · "
+                    f"**замер** {quote(p['measured_at'], 40)} · "
                     f"**источник** {quote(p['source'], 200)}"
                 )
                 out.append("")
@@ -848,23 +868,23 @@ def body_for(pending: list[dict], problems: list[str]) -> str:
                 out.append("")
                 continue
             if p.get("kind") == "skill":
-                out.append(f"### `{p['repo']}` · навык `{p['slug']}`")
+                out.append(f"### {quote(p['repo'], 120)} · навык {quote(p['slug'], 120)}")
                 out.append("")
-                out.append(f"**Держит правила.** {', '.join(p['holds']) or '—'}")
+                out.append(f"**Держит правила.** {quote(', '.join(p['holds']), 200)}")
                 out.append("")
                 out.append(f"**Замер в работе.** {quote(p['measurement'])}")
                 out.append("")
                 if p["amends"]:
                     out.append(
-                        f"**Дорабатывает.** `{p['amends']}` от `{p['base'] or 'версия не названа'}`"
+                        f"**Дорабатывает.** {quote(p['amends'], 120)} от {quote(p['base'] or 'версия не названа', 120)}"
                     )
                     out.append("")
                 out.append(f"**Описание.** {quote(p['description'])}")
                 out.append("")
-                out.append(f"**Текст.** {p['url'] or 'не прочитан — см. ниже'}")
+                out.append(f"**Текст.** {quote(p['url'], 300) if p['url'] else 'не прочитан — см. ниже'}")
                 out.append("")
                 continue
-            out.append(f"### `{p['repo']}` · `{p['slug']}`")
+            out.append(f"### {quote(p['repo'], 120)} · {quote(p['slug'], 120)}")
             out.append("")
             out.append(f"**Утверждение.** {quote(p['claim'])}")
             out.append("")
