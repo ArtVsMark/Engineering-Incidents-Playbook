@@ -4,7 +4,7 @@
 
 [![Project: checks, Python, OS, coverage, release and version on top; rules held by mechanisms — own and taken — and the family check below](https://raw.githubusercontent.com/ArtVsMark/Engineering-Incidents-Playbook/badges/.github/badges/project.svg)](#the-project-family)
 
-**A catalogue of <!--m:rules-->216<!--/m:rules--> rules for Claude Code and GitHub,
+**A catalogue of <!--m:rules-->217<!--/m:rules--> rules for Claude Code and GitHub,
 where every one grew out of a real failure.** Agent sessions and the project rulebook (`CLAUDE.md`), the
 GitHub delivery pipeline, parallel executors, audits. Every record comes with its
 history: what broke, how it surfaced, what it cost.

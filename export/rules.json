@@ -1,7 +1,7 @@
 {
   "schema": "1.9",
   "catalogue": "https://github.com/ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-29T17:09:07+00:00",
+  "generated_at": "2026-10-29T17:26:36+00:00",
   "contracts": {
     "export": "1.9",
     "bindings": "1.9",
@@ -11,8 +11,8 @@
     "where": "1.7",
     "family": "1.2"
   },
-  "count": 228,
-  "active": 216,
+  "count": 229,
+  "active": 217,
   "rules": [
     {
       "id": "001",
@@ -4460,7 +4460,8 @@
         "070"
       ],
       "mentioned_by": [
-        "129"
+        "129",
+        "230"
       ]
     },
     {
@@ -10061,6 +10062,9 @@
         "039",
         "049",
         "186"
+      ],
+      "mentioned_by": [
+        "230"
       ]
     },
     {
@@ -11301,7 +11305,8 @@
       ],
       "mentioned_by": [
         "218",
-        "228"
+        "228",
+        "230"
       ]
     },
     {
@@ -12430,6 +12435,58 @@
         "039",
         "145",
         "158"
+      ]
+    },
+    {
+      "id": "230",
+      "slug": "foreign-text-we-publish-does-not-act-for-us",
+      "title": {
+        "ru": "Чужой текст, который механизм публикует от своего имени, не действует",
+        "en": "Foreign text a mechanism publishes under its own name does not act"
+      },
+      "areas": {
+        "ru": [
+          "безопасность",
+          "автоматика",
+          "трекер"
+        ],
+        "en": [
+          "security",
+          "automation",
+          "tracker"
+        ]
+      },
+      "tier": {
+        "n": 3,
+        "ru": "гейты и процессы",
+        "en": "gates and processes"
+      },
+      "claim": {
+        "ru": "Чужой текст, который механизм публикует на площадке от своего имени — в тело живой задачи, в комментарий, — не действует: не упоминает людей, не ссылается на задачи и не складывается в метку или служебный блок механизма. Обезвреживается он одним правилом на весь текст — кодом строки с ограждением длиннее любой серии обратных кавычек внутри, — а не перечнем форм: форм у ссылки и упоминания больше, чем знает перечень.",
+        "en": "Foreign text that a mechanism publishes on the platform under its own name — in the body of a live issue, in a comment — does not act: it does not mention people, does not link to issues, and does not form a label or a service block of the mechanism. It is neutralised by one rule for the whole text — inline code with a fence longer than any run of backticks inside — and not by a list of forms: a link and a mention have more forms than any list knows."
+      },
+      "applies": {
+        "ru": "**Работает** для механизма, который публикует от своего имени текст, пришедший\nсо стороны: тело живой задачи, комментарий, описание изменения, сводку в\nтрекере.\n\n**Не работает** для текста, который механизм сочинил сам, даже со ссылками и\nупоминаниями: их действие и есть цель. **Не работает** для чужого текста в\nпромпте модели — это [085](085-content-from-the-subject-is-untrusted-input-to-the-prompt.md).\n**Не работает** и для файла в дереве, который площадка не исполняет: ссылка в\nMarkdown репозитория обратной ссылки не ставит.\n\n**Признак нарушения:** в теле задачи или комментарии, который пишет механизм,\nстоит живая ссылка `#N`, `владелец/репо#N` или упоминание `@имя` из чужого\nтекста.",
+        "en": "**Works** for a mechanism that publishes, under its own name, text that came\nfrom outside: the body of a live issue, a comment, a change description, a\nsummary in the tracker.\n\n**Does not work** for text the mechanism composed itself, even with links and\nmentions: their action is the point. **Does not work** for foreign text in a\nmodel's prompt — that is\n[085](085-content-from-the-subject-is-untrusted-input-to-the-prompt.md).\n**Does not work** either for a file in the tree that the platform does not\nexecute: a link in a repository's Markdown creates no backlink.\n\n**Sign of a violation:** the body of an issue or a comment that a mechanism\nwrites carries a live `#N`, `owner/repo#N` link or an `@name` mention from\nforeign text."
+      },
+      "added": "2026-10-29",
+      "files": {
+        "ru": "rules/ru/230-foreign-text-we-publish-does-not-act-for-us.md",
+        "en": "rules/en/230-foreign-text-we-publish-does-not-act-for-us.md"
+      },
+      "trails": [
+        {
+          "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "doc": "scripts/feedback_registry.py"
+        }
+      ],
+      "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+      "portable": "yes",
+      "status": "active",
+      "mentions": [
+        "085",
+        "188",
+        "210"
       ]
     }
   ],
