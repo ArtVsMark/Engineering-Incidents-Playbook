@@ -3,110 +3,9 @@
   "project": "ArtVsMark/Engineering-Incidents-Playbook",
   "segments": {
     "gives": {
-      "state": "ok",
-      "why": "",
-      "links": [
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "release",
-          "mine": "v2.2.0",
-          "latest": "v2.2.0",
-          "where": ".github/badges/contracts.json",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "form",
-          "mine": "1.2",
-          "latest": "1.2",
-          "where": ".github/badges/contracts.json",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "bindings",
-          "mine": "1.9",
-          "latest": "1.9",
-          "where": "сводка семьи",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "consumers",
-          "mine": "1.1",
-          "latest": "1.1",
-          "where": "сводка семьи",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "export",
-          "mine": "1.9",
-          "latest": "1.9",
-          "where": "сводка семьи",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "facts",
-          "mine": "2.0",
-          "latest": "2.0",
-          "where": "сводка семьи",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "family",
-          "mine": "1.2",
-          "latest": "1.2",
-          "where": "сводка семьи",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "proposals",
-          "mine": "1.4",
-          "latest": "1.4",
-          "where": "сводка семьи",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "showcase",
-          "mine": "1.1",
-          "latest": "1.1",
-          "where": "сводка семьи",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "gives",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "where",
-          "mine": "1.7",
-          "latest": "1.7",
-          "where": "сводка семьи",
-          "state": "ok",
-          "why": ""
-        }
-      ]
+      "state": "unknown",
+      "why": "манифеста нет — проект не издатель",
+      "links": []
     },
     "family": {
       "state": "behind",
@@ -117,7 +16,17 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.12.0",
+          "latest": "v1.13.0",
+          "where": ".github/workflows/badges.yml",
+          "state": "behind",
+          "why": ""
+        },
+        {
+          "segment": "family",
+          "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "what": "release",
+          "mine": "v1.11.0",
+          "latest": "v1.13.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -127,7 +36,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.12.0",
+          "latest": "v1.13.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -137,7 +46,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.12.0",
+          "latest": "v1.13.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -147,7 +56,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.12.0",
+          "latest": "v1.13.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -157,7 +66,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.12.0",
+          "latest": "v1.13.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -167,8 +76,38 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.12.0",
+          "latest": "v1.13.0",
           "where": ".github/workflows/ci.yml",
+          "state": "behind",
+          "why": ""
+        },
+        {
+          "segment": "family",
+          "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "what": "release",
+          "mine": "v1.11.0",
+          "latest": "v1.13.0",
+          "where": ".github/actions/family-badge/action.yml",
+          "state": "behind",
+          "why": ""
+        },
+        {
+          "segment": "family",
+          "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "what": "release",
+          "mine": "v1.11.0",
+          "latest": "v1.13.0",
+          "where": ".github/actions/project-badge/action.yml",
+          "state": "behind",
+          "why": ""
+        },
+        {
+          "segment": "family",
+          "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
+          "what": "release",
+          "mine": "v1.11.0",
+          "latest": "v1.13.0",
+          "where": ".github/actions/python-badge/action.yml",
           "state": "behind",
           "why": ""
         },
@@ -189,16 +128,6 @@
           "mine": "1.9",
           "latest": "1.9",
           "where": ".rules/bindings.json",
-          "state": "ok",
-          "why": ""
-        },
-        {
-          "segment": "family",
-          "publisher": "ArtVsMark/Engineering-Incidents-Playbook",
-          "what": "facts",
-          "mine": "2.0",
-          "latest": "2.0",
-          "where": ".github/badges/facts.json",
           "state": "ok",
           "why": ""
         },
@@ -220,34 +149,23 @@
       "links": []
     },
     "external": {
-      "state": "ok",
-      "why": "",
-      "links": [
-        {
-          "segment": "external",
-          "publisher": "runner",
-          "what": "ubuntu-26.04",
-          "mine": "ubuntu-26.04",
-          "latest": "ubuntu-26.04",
-          "where": ".github/badges/facts.json:python.os",
-          "state": "ok",
-          "why": ""
-        }
-      ]
+      "state": "unknown",
+      "why": "фактов нет: .github/badges/facts.json не прочитан",
+      "links": []
     }
   },
   "publishers": [
     {
       "code": "EIP",
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
-      "state": "ok",
+      "state": "unknown",
       "why": "свой: состояние отдачи"
     },
     {
       "code": "EPM",
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
       "state": "behind",
-      "why": "release: v1.11.0 → v1.12.0 (связей 6, .github/workflows/ci.yml); steps: >=0.13,<0.14 → 0.14 (.pipeline.yml:contract)"
+      "why": "release: v1.11.0 → v1.13.0 (связей 10, .github/actions/family-badge/action.yml, .github/actions/project-badge/action.yml, .github/actions/python-badge/action.yml, .github/workflows/badges.yml, .github/workflows/ci.yml); steps: >=0.13,<0.14 → 0.14 (.pipeline.yml:contract)"
     }
   ],
   "uptake": {

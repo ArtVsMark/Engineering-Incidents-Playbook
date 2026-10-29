@@ -1,43 +1,30 @@
 {
-  "schema": "2.0",
-  "schema_of": "формат ЭТОГО файла — факты каталога по договору фактов семьи (export/facts/facts-contract.md). Не версия каталога, не номер выпуска и не схема выгрузки правил: ключ `schema` в этой экосистеме носят четыре разных предмета (выгрузка, ответ потребителя, сводка, факты) — правило 164",
+  "schema": "2.1",
+  "schema_of": "договор фактов семьи ArtVsMark/Engineering-Pipeline-Mechanisms — export/facts/facts-contract.md",
   "repo": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-29T14:54:46+00:00",
-  "commit": "23b78fea2f1f0eea88c952c3d1862d1b716fb945",
+  "generated_at": "2026-10-29T16:12:38+00:00",
+  "commit": "5d33477e655b906423d7add913d1e0142c85fbc9",
   "ci": {
     "workflow": "ci.yml"
   },
-  "version": "2.2.0",
+  "version": "2.2.1",
   "release": "2.2",
-  "tests": {
-    "functions": 1827,
-    "modules": 84
+  "coverage_percent": 77.1,
+  "none": {
+    "checks_per_pr": "проект не отдал показатель во входе extra-facts общего шага step-facts",
+    "python": "матрица версий Python не названа входом шага — версии не названы, а не пусты",
+    "tests": "проект не отдал показатель во входе extra-facts общего шага step-facts"
   },
-  "checks_per_pr": {
-    "count": 10,
-    "names": [
-      "arm",
-      "catalogue",
-      "catalogue-next-stable",
-      "journal",
-      "lint",
-      "pipeline",
-      "pr-meta",
-      "review",
-      "rulebook-fresh",
-      "window-lifetime"
-    ],
-    "counts_": "работы прогонов, просыпающихся на событие pull_request. Проверок у коммита может быть видно больше: работа, разбуженная толчком в ветку, попадает в ту же голову, но изменением не вызвана"
-  },
-  "python": {
-    "supported": [
-      "3.14",
-      "3.15"
-    ],
-    "floor": "3.14",
-    "os": [
-      "ubuntu-26.04"
-    ]
-  },
-  "coverage_percent": 78.4
+  "exchange": {
+    "steps": {
+      "schema": "1.0",
+      "schema_of": "общий шаг фактов механизмов: детали покрытия и полнота версии",
+      "coverage": {
+        "read": true,
+        "covered": 8846,
+        "lines": 11326
+      },
+      "version_whole": true
+    }
+  }
 }
