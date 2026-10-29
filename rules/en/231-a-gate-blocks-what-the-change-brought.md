@@ -42,11 +42,14 @@ next to `v7.0.1`); of 515 changes in the family, two
 (ArtVsMark/Glossary-Python#12, ArtVsMark/Stepik-Python-Grader#40). False
 positives — zero.
 
-**We had the technique, not the rule.** Four catalogue gates already judge the
-increment, each for its own reason: `check_asked_family.py` asks about the
-family only for a mechanism the change adds; `check_duplicates.py` requires a
-neighbours answer only for rules newer than `baseline`; `check_attribution.py`
-checks history with `--since`; `check_narrowing.py` judges the change's range.
+**We had the technique, not the rule.** Three catalogue gates already judge
+the increment against the change's base, each for its own reason:
+`check_asked_family.py` asks about the family only for a mechanism the change
+adds; `check_attribution.py` checks history with `--since`;
+`check_narrowing.py` judges the change's range. A fourth,
+`check_duplicates.py`, is a neighbouring technique: only rules newer than
+`baseline` must answer about neighbours, so the past is declared debt by
+number rather than separated by an increment.
 Before this record none referred to a common rule: each derived the technique
 anew.
 
