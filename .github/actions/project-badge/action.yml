@@ -1,0 +1,54 @@
+# ПЕРЕХОДНИК, А НЕ РЕАЛИЗАЦИЯ (этап 3 #930, решение владельца 29.10). Значки
+# и факты держат механизмы; рисует их действие механизмов с тем же именем и
+# теми же входами. Здесь — только передача входов, чтобы проект, поднявший тег
+# каталога, не сломался до своего перехода. Второго рисовальщика нет (214):
+# своего кода у переходника нет. Переходите на `step-facts` механизмов —
+# переходник снимется, когда на него не останется вызовов.
+name: project-badge
+description: >-
+  Рисует значок проекта в две строки: проверки, Python, ОС, покрытие, выпуск и
+  версия сверху; правила машиной, механизмы и сверка с семьёй снизу. Серое — не
+  прочитано, с причиной в подсказке.
+  Переходник: передаёт входы действию механизмов с тем же именем.
+inputs:
+  out-dir:
+    description: Папка для картинок относительно корня проекта.
+    default: .github/badges
+  ci-workflow:
+    description: Файл основного CI в .github/workflows — как у python-badge.
+    default: ci.yml
+  coverage-json:
+    description: Файл значка покрытия (shields endpoint); пусто — зона серая.
+    default: ""
+  coverage-all-json:
+    description: Покрытие, сведённое по всем ОС; задан — второе число в зоне.
+    default: ""
+  version-json:
+    description: Файл значка версии (shields endpoint); пусто — зона серая.
+    default: ""
+  suites:
+    description: Наборы проверок основного CI — как у python-badge.
+    default: ""
+  pypi:
+    description: Имя пакета на PyPI; пусто — зона «release / PyPI» показывает выпуск площадки.
+    default: ""
+  family:
+    description: Адрес или путь сводки семьи; пусто — сводка каталога.
+    default: ""
+  token:
+    description: Токен для чтения прогонов (нужно право actions read).
+    default: ${{ github.token }}
+runs:
+  using: composite
+  steps:
+    - uses: ArtVsMark/Engineering-Pipeline-Mechanisms/.github/actions/project-badge@v1.11.0
+      with:
+        out-dir: ${{ inputs.out-dir }}
+        ci-workflow: ${{ inputs.ci-workflow }}
+        coverage-json: ${{ inputs.coverage-json }}
+        coverage-all-json: ${{ inputs.coverage-all-json }}
+        version-json: ${{ inputs.version-json }}
+        suites: ${{ inputs.suites }}
+        pypi: ${{ inputs.pypi }}
+        family: ${{ inputs.family }}
+        token: ${{ inputs.token }}

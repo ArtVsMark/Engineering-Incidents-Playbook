@@ -86,6 +86,9 @@ python scripts/onboard_consumer.py --repo владелец/имя --out ПАПК
 | `uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/attribution@<!--m:ref-->v2.2.0<!--/m:ref-->` | сверяет авторство коммитов со списком согласованных имён | в репозитории потребителя |
 | `uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/skills@<!--m:ref-->v2.2.0<!--/m:ref-->` | сверяет копии навыков каталога в `.claude/skills/` с навыками плагина на том же теге: в облачном окне плагин не загружается, и навык доезжает копией. Вход `skills` обязателен — список имён и есть объявление копий: `with: { skills: answer-a-rule }` ([`plugins/catalogue`](plugins/catalogue/README.md)) | в репозитории потребителя |
 | `uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/answer@<!--m:ref-->v2.2.0<!--/m:ref-->` | сверяет `.rules/bindings.json` проекта с формой контракта ответа — тем же модулем, что ответ каталога о себе и сводку: словари, причины, происхождение механизма (с 1.9 обязательно у `gate`/`pipeline`), `refuted_by`, `note`, `metric`, закрытый список ключей — и прогоняет пробы «не применимо» по дереву проекта. Ставится в прогон на изменении: ответ по форме до слияния, а не после сводки | в репозитории потребителя |
+| `uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/python-badge@<!--m:ref-->v2.2.0<!--/m:ref-->` | **переходник** на одноимённое действие механизмов с теми же входами: единый значок «CI │ Python │ ОС │ coverage │ release / PyPI │ version». Своего кода нет, рисуют механизмы; переходите на их `step-facts` | в репозитории потребителя |
+| `uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/family-badge@<!--m:ref-->v2.2.0<!--/m:ref-->` | **переходник** на одноимённое действие механизмов с теми же входами: семейный значок «family │ gives │ family │ pairs │ ext │ EIP · EPM» и разбор `family-check.json`. Своего кода нет, рисуют механизмы; переходите на их `step-facts` | в репозитории потребителя |
+| `uses: ArtVsMark/Engineering-Incidents-Playbook/.github/actions/project-badge@<!--m:ref-->v2.2.0<!--/m:ref-->` | **переходник** на одноимённое действие механизмов с теми же входами: значок проекта в две строки — проверки и выпуск сверху, правила машиной и семья снизу. Своего кода нет, рисуют механизмы; переходите на их `step-facts` | в репозитории потребителя |
 | `scripts/check_skill_copies.py` | то же самое напрямую; с `--apply` кладёт или обновляет копию навыка | в репозитории потребителя, из клона каталога на нужном теге |
 
 **Значки и факты проекта — у механизмов, не здесь** (этап 3
@@ -94,9 +97,10 @@ python scripts/onboard_consumer.py --repo владелец/имя --out ПАПК
 рисует и сверяет общий шаг
 [`step-facts`](https://github.com/ArtVsMark/Engineering-Pipeline-Mechanisms/blob/v1.11.0/.github/workflows/step-facts.yml)
 механизмов; публикует проект на своей ветке `badges`, как и раньше. Действия
-каталога `python-badge`, `family-badge` и `project-badge` сняты в v3.0.0:
-прибитый к прежнему тегу вызов работает, новых выпусков у них не будет.
-Каталог рисует свой значок тем же шагом.
+каталога `python-badge`, `family-badge` и `project-badge` с v3.0.0 —
+переходники: тот же адрес и те же входы, а рисует действие механизмов. Поднять
+тег каталога можно, ничего не меняя; дальше — переход на `step-facts`, после
+которого переходник не нужен. Каталог рисует свой значок тем же шагом.
 
 Версия в примерах закреплена тегом и подставляется сборкой, а не вписывается
 руками ([035](rules/ru/035-version-is-never-edited-by-hand.md)): смотреть на неё надо в
