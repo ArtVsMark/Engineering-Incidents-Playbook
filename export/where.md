@@ -12,7 +12,7 @@
 
 | Проект · Project | Состояние · State | Следов · Trails | Родил · Born | Ответов · Answers | Без ответа · Unanswered | Лишних · Stale | Действует · Active | Гейтом · Gate | Конвейером · Pipeline | Навыком · Skill | Документом · Document | Ничем · Nothing | Механизмов · Mechanisms | Почему · Why |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `Engineering-Incidents-Playbook` | подключён | 77 | 45 | 217 | 0 | 0 | 201 | 152 | 14 | 5 | 19 | 11 | 145 |  |
+| `Engineering-Incidents-Playbook` | подключён | 77 | 45 | 217 | 0 | 0 | 201 | 152 | 13 | 5 | 19 | 12 | 144 |  |
 | `Stepik-Python-Grader` | подключён | 195 | 133 | 205 | 12 | 0 | 200 | 85 | 43 | 0 | 72 | 0 | 146 |  |
 | `ArtVsMark` | подключён | 33 | 18 | 215 | 2 | 0 | 169 | 130 | 32 | 0 | 7 | 0 | 69 |  |
 | `Claude-Code_Usage-Token` | подключён | 18 | 15 | 205 | 12 | 0 | 174 | 93 | 9 | 0 | 55 | 17 | 106 |  |
@@ -83,9 +83,9 @@
 | `Engineering-Incidents-Playbook` | `.github/workflows/agent-pr.yml` | 8 |
 | `Engineering-Incidents-Playbook` | `export/README.md` | 8 |
 | `Engineering-Incidents-Playbook` | `scripts/check_charter.py` | 8 |
-| `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 8 |
 | `Engineering-Incidents-Playbook` | `scripts/check_showcase.py` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/check_subprocess.py` | 7 |
+| `Engineering-Incidents-Playbook` | `scripts/collect_proposals.py` | 7 |
 | `Engineering-Incidents-Playbook` | `scripts/link_trails.py` | 7 |
 | `Engineering-Incidents-Playbook` | `.rules/consumers.json` | 6 |
 | `Engineering-Incidents-Playbook` | `CONTRIBUTING.md` | 6 |
@@ -153,7 +153,7 @@
 | `Engineering-Incidents-Playbook` | `templates/README.md` | 2 |
 | `Engineering-Incidents-Playbook` | `templates/bindings.json` | 2 |
 | `Engineering-Incidents-Playbook` | `tests/test_aggregate_bindings.py` | 2 |
-| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 64 механизмов по одному правилу; без названного адреса: 0 из 202 |
+| `Engineering-Incidents-Playbook` | _остальные_ · _the rest_ | 63 механизмов по одному правилу; без названного адреса: 0 из 201 |
 | `Stepik-Python-Grader` | `CLAUDE.md` | 48 |
 | `Stepik-Python-Grader` | `.github/workflows/ci.yml` | 21 |
 | `Stepik-Python-Grader` | `scripts/check_rule_bindings.py` | 19 |

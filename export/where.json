@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-29T17:54:22+00:00",
+  "generated_at": "2026-10-29T18:06:17+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -17,10 +17,10 @@
       },
       "by_mechanism": {
         "gate": 152,
-        "pipeline": 14,
+        "pipeline": 13,
         "skill": 5,
         "document": 19,
-        "none": 11
+        "none": 12
       },
       "rules": {
         "001": "active",
@@ -2587,15 +2587,15 @@
           "origin_kind": ""
         },
         "230": {
-          "mechanism": "pipeline",
-          "where": "scripts/collect_proposals.py — функция quote(): весь чужой текст предложения во «входящих» (утверждение, инцидент, след, данные, замер, описание, слаг, репозиторий, адрес, номера правил) входит кодом строки с ограждением длиннее любой серии обратных кавычек внутри; набор — tests/test_collect_proposals.py (формы инцидента: @имя, #N, владелец/репо#N, полный адрес, GH-N, кавычки внутри). ГРАНИЦА ОХВАТА: заголовок находки в живой задаче находок #473 и текст каталога в задаче-«входящих» потребителя пока входят сырыми — названы, не построены",
-          "holdable": "",
-          "awaiting": "",
+          "mechanism": "none",
+          "where": "",
+          "holdable": "conditional",
+          "awaiting": "общая функция или шаг механизмов, обезвреживающие чужой текст перед публикацией, отданные наружу тегом. Замер 29.10: мест, где каталог кладёт чужой текст в тело задачи сырым, 3 — scripts/collect_proposals.py (body_for), scripts/review_findings.py (body_for), scripts/sync_inbox.py (body_for); живых чужих ссылок в теле #966 — 3 (#1454, #1671, #1674 механизмов).",
           "analysed": "2026-10-29",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms:scripts/feedback_registry.py@7d4fd308bc02",
-          "origin_kind": "adapted"
+          "origin": "",
+          "origin_kind": ""
         }
       },
       "notes": {},
