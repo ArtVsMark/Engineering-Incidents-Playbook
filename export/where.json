@@ -1,7 +1,7 @@
 {
   "schema": "1.7",
   "catalogue": "ArtVsMark/Engineering-Incidents-Playbook",
-  "generated_at": "2026-10-29T14:54:46+00:00",
+  "generated_at": "2026-10-29T16:12:09+00:00",
   "consumers": [
     {
       "repo": "ArtVsMark/Engineering-Incidents-Playbook",
@@ -16,8 +16,8 @@
         "not-applicable": 16
       },
       "by_mechanism": {
-        "gate": 153,
-        "pipeline": 12,
+        "gate": 152,
+        "pipeline": 13,
         "skill": 5,
         "document": 19,
         "none": 10
@@ -2024,15 +2024,15 @@
           "origin_kind": "own"
         },
         "174": {
-          "mechanism": "gate",
-          "where": "scripts/build_facts.py — сводные факты каталога о себе публикуются в .github/badges/facts.json на ветке `badges`, по контракту витрины: schema строкой, generated_at обязателен, неизмеренный раздел ОТСУТСТВУЕТ, а не выставлен в ноль; scripts/build_rules_index.py — выгрузка export/rules.json собирается издателем и читается потребителями (витрина берёт числа оттуда, а не считает их клоном); scripts/aggregate_bindings.py — то же для сводки export/where.json",
+          "mechanism": "pipeline",
+          "where": ".github/workflows/badges.yml — работа `facts` зовёт общий шаг механизмов step-facts по тегу v1.11.0: факты каталога о себе собираются из дерева и публикуются в .github/badges/facts.json на ветке `badges`, по договору фактов семьи у механизмов (schema строкой, неизмеренный раздел ОТСУТСТВУЕТ с причиной в `none`, а не выставлен в ноль); scripts/build_rules_index.py — выгрузка export/rules.json собирается издателем и читается потребителями (витрина берёт числа оттуда, а не считает их клоном); scripts/aggregate_bindings.py — то же для сводки export/where.json",
           "holdable": "",
           "awaiting": "",
-          "analysed": "2026-10-08",
+          "analysed": "2026-10-29",
           "decided": "",
           "skill": "",
-          "origin": "ArtVsMark/ArtVsMark:.rules/facts.schema.json@c17e09433443",
-          "origin_kind": "copied"
+          "origin": "ArtVsMark/Engineering-Pipeline-Mechanisms:.github/workflows/step-facts.yml@96c2c93b52cd",
+          "origin_kind": "called"
         },
         "175": {
           "mechanism": "gate",
