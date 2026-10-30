@@ -200,3 +200,9 @@ def test_заготовка_без_замещённых(repo):
     )
     d = json.loads((repo / "out" / ".rules" / "bindings.json").read_text(encoding="utf-8"))
     assert set(d["rules"]) == {"002"}
+
+
+def test_подсказка_не_велит_перезаписать_чужой_канал(repo, capsys):
+    """Канал предложений у проекта мог положить заход подключения механизмов."""
+    assert run(repo) == 0
+    assert "уже есть .rules/proposals.json" in capsys.readouterr().out
