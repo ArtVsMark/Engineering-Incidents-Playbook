@@ -16,7 +16,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.13.0",
+          "latest": "v1.14.0",
           "where": ".github/workflows/badges.yml",
           "state": "behind",
           "why": ""
@@ -26,7 +26,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.13.0",
+          "latest": "v1.14.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -36,7 +36,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.13.0",
+          "latest": "v1.14.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -46,7 +46,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.13.0",
+          "latest": "v1.14.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -56,7 +56,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.13.0",
+          "latest": "v1.14.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -66,7 +66,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.13.0",
+          "latest": "v1.14.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -76,7 +76,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.13.0",
+          "latest": "v1.14.0",
           "where": ".github/workflows/ci.yml",
           "state": "behind",
           "why": ""
@@ -86,7 +86,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.13.0",
+          "latest": "v1.14.0",
           "where": ".github/actions/family-badge/action.yml",
           "state": "behind",
           "why": ""
@@ -96,7 +96,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.13.0",
+          "latest": "v1.14.0",
           "where": ".github/actions/project-badge/action.yml",
           "state": "behind",
           "why": ""
@@ -106,7 +106,7 @@
           "publisher": "ArtVsMark/Engineering-Pipeline-Mechanisms",
           "what": "release",
           "mine": "v1.11.0",
-          "latest": "v1.13.0",
+          "latest": "v1.14.0",
           "where": ".github/actions/python-badge/action.yml",
           "state": "behind",
           "why": ""
@@ -165,7 +165,7 @@
       "code": "EPM",
       "repo": "ArtVsMark/Engineering-Pipeline-Mechanisms",
       "state": "behind",
-      "why": "release: v1.11.0 → v1.13.0 (связей 10, .github/actions/family-badge/action.yml, .github/actions/project-badge/action.yml, .github/actions/python-badge/action.yml, .github/workflows/badges.yml, .github/workflows/ci.yml); steps: >=0.13,<0.14 → 0.14 (.pipeline.yml:contract)"
+      "why": "release: v1.11.0 → v1.14.0 (связей 10, .github/actions/family-badge/action.yml, .github/actions/project-badge/action.yml, .github/actions/python-badge/action.yml, .github/workflows/badges.yml, .github/workflows/ci.yml); steps: >=0.13,<0.14 → 0.14 (.pipeline.yml:contract)"
     }
   ],
   "uptake": {
